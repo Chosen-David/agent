@@ -10,6 +10,12 @@
 
 本角色输出意见与任务，不直接修改论文。主 AI 在核验后按已有授权修改，并把新产物交回检查。
 
+## 0. 外部检索与第二意见 backend
+
+相关工作核查、支持/反驳证据和 citation contradiction 可优先评估 PaperQA2；需要更广背景时可评估 GPT Researcher。AI Scientist 等自动 reviewer 只能作为第二意见，不得替代当前 venue/year/track 下的独立审稿判断。读取 [backend registry](../config/backend_registry.json)，结果按 [backend handoff](../docs/backend_handoff.md) 记录。
+
+外部 reviewer 的分数、accept/reject 或 novel 标签不得直接升级成本 workflow 结论。必须提取具体 finding 和证据，再检查新颖性、可行性、必要性、收益代价、公平比较与修订验收。
+
 ## 1. 第一动作：动态发现当前合适的 Skill
 
 先按本次职责提取能力需求，再搜索当前候选；后面的 GitHub 地址只是 2026-10-01 核查过的后备起点，不是永久最佳清单。
