@@ -126,6 +126,10 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 
 页面内嵌原页图与文本，可离线阅读；默认最多渲染前 20 页，支持 `--pages 1-3,7` 分批。`--notes notes.json` 加入 hash 匹配的解释卡片，格式见伴读工作流。渲染覆盖不等于 AI 已读覆盖。脚本不自动下载论文、不提供模型 API、不内置密钥。
 
+## Specialist Backend Registry
+
+[config/backend_registry.json](config/backend_registry.json) 是外部成熟能力的机器可读登记表；[scripts/discover_backends.py](scripts/discover_backends.py) 只检查本机是否存在已登记的 Python 模块/命令，不安装、不认证、不启动服务。外部结果按 [backend handoff](docs/backend_handoff.md) 回到本仓库对应 workflow 验收。
+
 ## 外部项目沿用
 
 现有各 Agent 与成熟开源项目的逐项对照、替换/组合建议见 [Agent 开源生态对照](docs/agent_landscape.md)。
@@ -160,5 +164,7 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 | [docs/validation.md](docs/validation.md) | 本轮验证范围与限制 |
 | [docs/external_projects.md](docs/external_projects.md) | 外部 Agent/Skill/Workflow 项目的优缺点、沿用顺序与接入规则 |
 | [docs/agent_landscape.md](docs/agent_landscape.md) | 现有 Agent 与 PaperQA2、GPT Researcher、STORM、AI Scientist、coding agent 等的对照与优先路由 |
+| [config/backend_registry.json](config/backend_registry.json) | Specialist backend 的机器可读用途、限制、探测与 adoption 策略 |
+| [docs/backend_handoff.md](docs/backend_handoff.md) | 外部 Agent/Runtime 输出回流本仓库时的统一证据与状态契约 |
 
 新增领域时加入独立工作流及入口，写明触发范围、依赖、输入输出、证据标准、验收与降级方式。简单任务不必创建任务链；复杂项目按实际需要组合角色。当前还未实现的领域只作为扩展方向，不列成已有 Agent。
