@@ -26,7 +26,7 @@
 
 ## 旅行规划
 
-[旅行规划工作流](workflows/travel_planning_workflow.md) 会结合天气、开放/营业时间、逐段交通、用户已订酒店/活动、体力与午休约束生成可执行行程；长任务支持阶段状态与断点续跑。插件入口位于 [plugins/travel-assistant/](plugins/travel-assistant/)。
+[旅行规划工作流](workflows/travel_planning_workflow.md) 会结合天气、开放/营业时间、逐段交通、用户已订酒店/活动、体力与午休约束生成可执行行程；复杂旅行采用 JourneyPilot 风格的 RequestContract → 候选研究/准入/选择 → 行程 → Intent Fidelity Gate → DeliveryBundle，并支持阶段状态与断点续跑。插件入口位于 [plugins/travel-assistant/](plugins/travel-assistant/)。
 
 ## 科研与论文生产
 
