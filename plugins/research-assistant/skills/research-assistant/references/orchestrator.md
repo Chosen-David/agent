@@ -20,6 +20,7 @@
 按各工作流第 1 节探索当前相关 Skill；后备网址只是检索起点。
 比较任务匹配、实际入口、依赖、可验证质量和运行条件；发现有证据的更佳替代再换。
 记录查询日期、URL、精确版本、本地状态和验证程度；同项目继续时复用已锁定版本。
+优先读取仓库 backend registry：网页深研可评估 GPT Researcher，多论文证据检索可评估 PaperQA2，多视角主题梳理可评估 STORM/Co-STORM，repo patch 可评估成熟 coding agent/OpenHands；AI Scientist 仅用于明确授权的隔离自动实验。外部结果按 backend handoff 回到对应 workflow 验收。
 不把下载成功当安装成功，不把安装成功当能力已经验证。
 无网络或依赖不足时用现有可行工具继续，明确实际限制。
 
