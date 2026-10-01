@@ -2,7 +2,7 @@
 
 一个按**场景与能力**组织的通用 Agent 仓库。主 AI 根据用户目标选择工作流，保持通用身份；科研助手是其中一个专业组合，论文伴读与知识讲解也可以独立使用。
 
-适用于具备相应工具能力的 ChatGPT/Codex、Claude 及其他主 AI。当前提供 **8 个专业角色 + 1 个科研协调技能**，并附完整工作流、可复制 Prompt 和科研助手插件包。未来可增加编程、学习、产品等领域的独立分类，不必改写主 AI 的身份。
+适用于具备相应工具能力的 ChatGPT/Codex、Claude 及其他主 AI。当前提供 **9 个专业角色 + 1 个科研协调技能**，并附完整工作流、可复制 Prompt 和科研助手、旅游助手插件包。未来可增加编程、学习、产品等领域的独立分类，不必改写主 AI 的身份。
 
 ## 从你的目标开始
 
@@ -13,15 +13,34 @@
 | 上传论文，边读英文原文边提问 | [论文伴读](workflows/paper_reading_companion_workflow.md) |
 | 理解概念、公式、图或技术机制 | [知识点讲解](workflows/concept_explanation_workflow.md) |
 | 单独实现代码或提高性能 | [实现与优化](workflows/implementation_optimization_workflow.md) |
+| 规划旅游、住宿区域、运动或主题出游，结合天气生成行程 | [旅游规划](workflows/travel_planning_workflow.md) |
 | 没有匹配的工作流 | 主 AI 用通用能力处理，按需发现新 Skill，不强行转成科研任务 |
 
 **分类是导航，不是限制。** 实现优化可以用于普通软件任务；知识讲解可以脱离论文；科研项目也可以调用伴读。安装专业技能不应让所有聊天都变成科研流程。
 
 ## 模式：默认编排，灵活调用
 
-支持通用/自动、科研助手、论文伴读、代码实现与优化、知识学习等模式。模式选择默认流程，Agent 按能力跨模式复用。科研中随时调用知识讲解；伴读中可以调用代码实现；临时任务结束后回到原来的研究任务或阅读位置，不必反复切换整个模式。
+支持通用/自动、科研助手、论文伴读、代码实现与优化、知识学习、旅游规划等模式。模式选择默认流程，Agent 按能力跨模式复用。科研中随时调用知识讲解；伴读中可以调用代码实现；临时任务结束后回到原来的研究任务或阅读位置，不必反复切换整个模式。
 
 用户可直接说“进入科研模式”“陪我读这篇论文”，也可以只提出任务让主 AI 判断。模式不增加权限或预算。完整规则见 [模式与跨模式调用](prompts/modes.md)。
+
+## 旅游与出行
+
+| Agent | 主要交付 | 工作流 |
+| --- | --- | --- |
+| 旅游规划 | 需求补全、住宿区域、指定活动、天气与营业时间核验、可行路线、Word等行程文件 | [travel_planning_workflow.md](workflows/travel_planning_workflow.md) |
+
+支持已有酒店、只有集合点、尚未决定酒店和无景点清单的情况。先锁定预约与返程，再安排用户想做的项目；新增集合时间、午休需求或餐厅后重算关联路线，不只是替换文字。小红书、点评等经验贴用于辅助判断动线、人流和拍照，保留日期与读取范围，不代替当前营业信息。
+
+```text
+使用旅游规划模式，读取 workflows/travel_planning_workflow.md。
+我们[人数]，准备[年份和日期]去[地点]，约[时间]在[集合点]见面，[返程时间和站点]返回。
+酒店[已订的分店/地址，或没订/无需住宿]；希望[写真、运动、安静公园、指定店等]。
+每天留[午休时长]，按体力减少步行。结合天气、营业/最后入场时间与交通，参考可查的近期经验贴，生成Word行程。
+已有信息别重复问，其余只追问影响安排的关键项。
+```
+
+[旅行简报](templates/travel_brief.md)可选填写。[旅游助手插件](plugins/travel-assistant/)含 `travel-planner` 技能；独立于科研包。它按环境发现查询、地图和文档Skill，**不内置美团/小红书/点评连接器，不代表账号已连接或已订位**。平台不可访问时采用公开来源或用户提供的必要截图；Word生成依赖实际文档工具，缺失时明确降级。测试范围见[旅游验证记录](docs/travel_validation.md)。
 
 ## 科研与论文生产
 
@@ -87,7 +106,7 @@ cd agent
 
 - `plugin.json`：可移植插件描述与 OpenAI 界面元数据。
 - `.agents/plugins/marketplace.json`：本仓库的插件目录，配置 `INSTALLED_BY_DEFAULT`。
-- `.codex/config.toml`：支持该机制且信任本项目的本地客户端中，配置该插件 `enabled = true`。
+- `.codex/config.toml`：支持该机制且信任本项目的本地客户端中，配置相应插件 `enabled = true`。
 
 这些是**分发配置，不是账户安装证明**。克隆仓库不会把插件自动注册到所有 GPT 会话。ChatGPT 的技能保存、插件连接和公开目录发布是不同操作；平台审核仍需正常通过。官方机制会变化，使用时查 [构建插件](https://developers.openai.com/plugins/build/plugins) 与 [连接 ChatGPT](https://developers.openai.com/plugins/deploy/connect-chatgpt)。
 
@@ -141,8 +160,10 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 | [prompts/research_orchestrator.md](prompts/research_orchestrator.md) | 科研组合调度 |
 | [workflows/](workflows/) | 按角色独立的完整规范与 Prompt |
 | [plugins/research-assistant/](plugins/research-assistant/) | 科研与论文学习的 9 技能插件包 |
-| [templates/](templates/) | 科研项目输入模板 |
+| [plugins/travel-assistant/](plugins/travel-assistant/) | 旅游规划技能包，不内置第三方平台连接器 |
+| [templates/](templates/) | 科研项目与旅行输入模板 |
 | [tests/](tests/) | 伴读生成器的边界检查 |
 | [docs/validation.md](docs/validation.md) | 本轮验证范围与限制 |
 
 新增领域时加入独立工作流及入口，写明触发范围、依赖、输入输出、证据标准、验收与降级方式。简单任务不必创建任务链；复杂项目按实际需要组合角色。当前还未实现的领域只作为扩展方向，不列成已有 Agent。
+
