@@ -128,6 +128,8 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 
 ## 外部项目沿用
 
+现有各 Agent 与成熟开源项目的逐项对照、替换/组合建议见 [Agent 开源生态对照](docs/agent_landscape.md)。
+
 本仓库不重新实现所有 Agent 框架。主 AI 在现有能力不足时，可按 [外部 Agent 项目沿用与能力发现](docs/external_projects.md) 进入经过筛选的项目读取当前实现，并区分方法论借鉴、Skill 复用、可选代码依赖与 runtime 接入。
 
 当前默认建议：Anthropic Skills 用作 Skill 组织参考；Superpowers 借鉴 Skill discovery 与回归测试；BMad 借鉴 right-sized workflow 与上下文延续；Fabric 作为单步 Pattern 补充库。OpenAI Agents SDK、LangGraph、Agency Swarm、MetaGPT 只在运行时需求真实出现时按需使用或参考，不作为全局依赖。
@@ -157,5 +159,6 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 | [tests/](tests/) | 伴读生成器的边界检查 |
 | [docs/validation.md](docs/validation.md) | 本轮验证范围与限制 |
 | [docs/external_projects.md](docs/external_projects.md) | 外部 Agent/Skill/Workflow 项目的优缺点、沿用顺序与接入规则 |
+| [docs/agent_landscape.md](docs/agent_landscape.md) | 现有 Agent 与 PaperQA2、GPT Researcher、STORM、AI Scientist、coding agent 等的对照与优先路由 |
 
 新增领域时加入独立工作流及入口，写明触发范围、依赖、输入输出、证据标准、验收与降级方式。简单任务不必创建任务链；复杂项目按实际需要组合角色。当前还未实现的领域只作为扩展方向，不列成已有 Agent。
