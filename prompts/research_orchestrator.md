@@ -14,6 +14,13 @@
 按各工作流第 1 节探索当前相关 Skill；后备网址只是检索起点。
 比较任务匹配、实际入口、依赖、可验证质量和运行条件；发现有证据的更佳替代再换。
 记录查询日期、URL、精确版本、本地状态和验证程度；同项目继续时复用已锁定版本。
+读取 docs/agent_landscape.md 选择成熟后端，不重复实现已经成熟的通用能力：
+- 广泛公开网页深研：优先评估 GPT Researcher；
+- 多论文/本地 scientific corpus 检索与证据问答：优先评估 PaperQA2；
+- 陌生主题多视角梳理/outline：优先评估 STORM/Co-STORM；
+- repo-level 常规 bug/feature：优先使用当前可用成熟 coding agent / OpenHands / SWE-agent 类执行器；
+- 自动科研实验：仅在用户明确要求、sandbox/container 和资源预算都具备时评估 AI Scientist。
+这些外部项目只负责其擅长的 backend；研究假设、实验判别、GPU/系统性能研究、模板写作、审稿任务链和最终 PDF 视觉 QA 仍由本仓库对应 workflow 负责。
 不把下载成功当安装成功，不把安装成功当能力已经验证。
 无网络或依赖不足时用现有可行工具继续，明确实际限制。
 
