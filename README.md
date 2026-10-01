@@ -99,6 +99,17 @@ codex plugin marketplace add Chosen-David/agent
 
 之后在该客户端确认实际安装和启用状态。没有此命令或 GPT 不支持仓库插件导入时，使用平台正式的技能安装方式；不能把配置复制到未知目录就声称完成安装。仓库不提供绕过平台审核的步骤。
 
+## 本地 Web 阅读器
+
+新增 [apps/paper-reader](apps/paper-reader/README.md)：在自己的电脑启动后，左侧看 PDF，右侧提问、保存讲解与笔记。可连接本机使用 ChatGPT 登录的 Codex 客户端，加载同一知识讲解规范；并非自动继承当前网页对话。支持 arXiv 导入与 QuantMLA 示例。真实模型连接需在运行电脑上登录验证。
+
+```bash
+python -m pip install -r apps/paper-reader/requirements.txt
+python apps/paper-reader/app.py
+```
+
+启动后在该电脑打开 `http://127.0.0.1:8765`；在线讲解另需官方 Codex CLI 和有效登录，详见应用 README。
+
 ## 生成离线伴读页
 
 需要本地 PDF、Python 和 PyMuPDF。按当前环境决定是否安装缺失依赖：
