@@ -18,6 +18,12 @@ description: "按实际顶会或期刊标准审阅论文贡献、正确性、方
 7. 输出写入当前项目适当目录，使用主 AI 提供的 run ID；没有时创建可区分本轮的命名空间。保留相关 RES/CODE/FIG/WRITE/REV/READ ID，不覆盖历史结果。
 8. 默认可在相关任务中自动选用；无关对话不触发，明确调用仍支持。启用技能不授予硬件访问、后台执行或第三方账户权限。
 
+## 外部能力复用
+
+相关工作核查、支持/反驳证据和 citation contradiction 可优先评估 PaperQA2；AI Scientist 等自动 reviewer 只能作为第二意见，不得替代当前 venue/year/track 下的独立审稿判断。需要更广的网页背景时可按 registry 评估 GPT Researcher。
+
+外部 reviewer 的分数、accept/reject 结论或“novel”标签不得直接写成本角色结论。按 [handoff 契约](../../../../docs/backend_handoff.md) 提取具体 finding 和证据，再由本角色检查新颖性、可行性、必要性、收益代价、公平比较与修订验收。
+
 ## 本角色关键验收
 
 默认只输出审阅意见和任务，不自行改稿。先按提交可见材料评价，再在允许时查辅助材料；适配实际 venue/year/track，不生成无依据分数或录用概率。疑点必须先核验，允许被反证驳回。

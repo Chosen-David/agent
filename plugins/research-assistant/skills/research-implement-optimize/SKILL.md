@@ -18,6 +18,12 @@ description: "端到端代码实现与性能优化，适用于算法或系统实
 7. 输出写入当前项目适当目录，使用主 AI 提供的 run ID；没有时创建可区分本轮的命名空间。保留相关 RES/CODE/FIG/WRITE/REV/READ ID，不覆盖历史结果。
 8. 默认可在相关任务中自动选用；无关对话不触发，明确调用仍支持。启用技能不授予硬件访问、后台执行或第三方账户权限。
 
+## 外部能力复用
+
+普通 repo-level bug、feature、测试修复或大范围代码编辑，可优先评估当前平台 coding agent，或 registry 中的 OpenHands 类代码执行 backend；Superpowers/BMad 可用于 TDD、debugging、right-sized planning 等方法论。外部 patch 按 [handoff 契约](../../../../docs/backend_handoff.md) 返回后，仍由本角色验收。
+
+涉及 CUDA kernel、GPU/CPU 性能、通信、roofline、ISA/PTX、算法复杂度和真实 benchmark 时不把 coding agent 的“测试通过”当成性能结论。本角色保留硬件探测、强基线、公平测量、正确性、性能回归和适用范围的最终责任。
+
 ## 本角色关键验收
 
 先明确硬约束与可反思方案，调研先进解法和强基线，映射算法/数据结构模式，再按实际 CPU/GPU 与 ISA 选库或原语。无 GPU 只报告未实测；低层指令、渐近分析和题库排名都不能替代真实工作负载测量。按预算自动完成实现→正确性→测量→优化→集成。
