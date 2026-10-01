@@ -15,6 +15,7 @@
 | [BMad Method](https://github.com/bmad-code-org/BMAD-METHOD) | **默认沿用：right-sized workflow 与 durable context** | 能按任务规模决定规划深度；强调显式决策、上下文延续和已有代码库接入 | 主要针对软件开发；完整流程用于普通问答会过重 | 借鉴“简单任务直达、复杂任务加深流程”的路由；科研/旅行等领域使用同一原则 |
 | [Fabric](https://github.com/danielmiessler/Fabric) | **推荐能力库：Pattern / 单任务 Prompt** | 大量现实任务 pattern；轻量、易复用、适合一次性转换/提取/总结 | 许多 pattern 仍是单轮 prompt；状态、工具编排和验收弱于完整 workflow | 当缺少某个单步能力时检索 Fabric pattern，抽取可验证的方法，不把整个 workflow 降级成 prompt collection |
 | [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) | **按需接入：可执行 Agent runtime** | Agent、tools、handoffs、sessions、tracing、human-in-the-loop 等运行能力完整，适合真正部署多 Agent | 引入代码依赖和运行环境；本仓库目前很多场景只需说明性 workflow，无需 runtime | 只有用户要部署长期运行、多 Agent handoff、session/tracing 时才考虑；工作流层保持独立，避免锁死单一 SDK |
+| [JourneyPilot](https://github.com/Lagom-TA/JourneyPilot) | **旅行领域优先参考 runtime/backend** | 专门面向旅行：Request Contract、并行 places/transport/context research、候选准入与选择、来源链、LangGraph checkpoint、地图/报告/PDF | 自托管栈较重；默认单机单用户；国内本地生活平台仍依赖可用 provider/浏览器 | 复杂多日旅行优先复用其架构；已部署时可作为 backend，未部署时沿用其合同与候选流水线 |
 | [LangGraph](https://github.com/langchain-ai/langgraph) | **按需接入：长时/有状态图工作流** | durable execution、state、interrupt、memory 适合断点续跑与复杂分支 | 抽象偏底层，学习和部署成本较高；小任务明显过重 | 需要可靠恢复、复杂分支、人机中断时作为 runtime 后端候选；普通 workflow 不依赖它 |
 | [Agency Swarm](https://github.com/VRSEN/agency-swarm) | **按需参考：角色化 multi-agent** | Agent 目录、工具与通信流清楚，适合显式团队角色 | 对角色划分依赖较强，易为了“多 Agent”而多 Agent；需要 Python runtime | 仅在任务真的需要长期角色分工与通信时参考，不把当前顺序执行伪装成并行专家团队 |
 | [MetaGPT](https://github.com/FoundationAgents/MetaGPT) | **架构参考：SOP + Team** | “Code = SOP(Team)”体现把组织流程程序化；软件项目端到端产物丰富 | 软件开发垂直、运行栈较重；固定角色模板对跨领域任务未必合适 | 借鉴 SOP 显式化与交付物链，不直接作为通用主 AI 的默认运行时 |
@@ -96,6 +97,17 @@
 - 结构化输出等。
 
 如果一个 Fabric Pattern 被多次证明有价值，应把它转化为本仓库的 Skill/辅助步骤，并补上工具、证据、状态和验收要求。
+
+### JourneyPilot
+
+旅行规划优先参考 `Lagom-TA/JourneyPilot`。当前核查的 main 分支使用 LangGraph + PostgreSQL checkpoint + MCP providers，把多日旅行拆成合同化意图、并行研究、候选准入/意图匹配/排序/选择、行程组合、意图保真验收和单一 DeliveryBundle。它还把 itinerary、sources、map、report、PDF 绑定到同一交付记录，支持中断恢复。
+
+本仓库沿用其**边界与数据流**，不复制实现：
+- 简单旅行问题仍直接回答；
+- 复杂多日旅行采用 RequestContract 与 CandidateSelectionPlan；
+- 本地环境已部署 JourneyPilot 时，可将其作为可选 backend/runtime；
+- 未部署时使用当前可用搜索、地图、天气和文档工具模拟相同阶段，不声称运行了 JourneyPilot；
+- 美团/点评/小红书仍按实际连接器、浏览器授权或公开网页能力处理。
 
 ### OpenAI Agents SDK / LangGraph / Agency Swarm
 
