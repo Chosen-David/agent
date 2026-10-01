@@ -1,0 +1,396 @@
+# 代码实现与性能优化 Agent Workflow
+
+本地工作流快照：2026-10-01；上游路径：workflows/implementation_optimization_workflow.md。按本地内容执行；外部工具在运行时重新核查。
+
+章节索引：
+- 1. 第一动作：动态发现当前合适的 Skill
+- 2. 后备 Skill 与能力分工
+- 3. 输入与实现契约
+- 4. 自动探索方案、完成实现并持续优化
+- 5. 产物、任务链和科研证据交接
+- 6. 代码实现与优化 Agent 完整 Prompt
+- 7. 主 AI 创建和调度指令
+- 8. 来源与长期使用
+
+
+[返回仓库首页](https://github.com/Chosen-David/agent/blob/main/README.md) · [主 AI 调度入口](https://github.com/Chosen-David/agent/blob/main/prompts/orchestrator.md)
+
+按具体任务主动探索算法、数据结构、成熟库与 CPU/GPU/混合执行，完成实现、正确性验证、测量和有预算的优化。用户建议方案也应反思；明确硬约束必须保留。目标是在已探索范围和实测条件下找到最佳可行实现。
+
+本文件可独立交给 Claude、Codex 或其他主 AI 使用：第 6 节为完整 Agent Prompt，第 7 节为创建与调度指令。第一步始终动态发现当前更合适的 Skill；GitHub 清单只是后备，不固定未来工具或某种论文类型。
+
+这里交付的是工作流模板，并不表示所列外部 Skill 已在你的项目安装，或已经运行论文、实验与代码检查。执行时应按实际工具能力继续完成，并如实记录限制。
+
+## 1. 第一动作：动态发现当前合适的 Skill
+
+先按本次职责提取能力需求，再搜索当前候选；后面的 GitHub 地址只是 2026-10-01 核查过的后备起点，不是永久最佳清单。
+
+1. 读取当前 Agent 平台官方 Skill/Agent 文档，核对可用工具、安装位置和入口。本流程不依赖某个平台固定的 slash command。
+2. 新项目、平台变化、工具失效或明确要求更新时重新检索；同一项目继续执行时优先沿用已锁定且可用的版本。
+3. 每项实际需要的能力初筛约 2–3 个候选，读取真实 README、SKILL.md、关联脚本、release 和相关问题；搜索结果和合集只作线索。
+4. 比较任务匹配、结果可核验性、当前技术栈/硬件支持、结构化交接、运行依赖、当前维护状态及可复现性。star、最新提交和“顶会级”宣传不能单独决定优劣。
+5. 区分“仓库声称”“阅读代码确认”“观察示例”“本次运行验证”。必要时用公开或合成的小样本测试能力，不能把样本测试结果冒充当前项目的真实研究结果。
+6. 新工具满足必需能力且有可验证优势，才替换对应角色；没有验证出更合适的替代，再采用可用的后备。不必让一个 Skill 包办全部，也不必每项能力装一个。
+7. 选定后按当前官方说明安装，记录查询日期、URL、实际入口、release/tag、精确 commit、本地文件校验和和修改状态。不能把默认分支的最新提交自动称为稳定版本。
+8. 无法联网时使用本地已验证工具或可行的普通代码路线，标记 `offline_fallback`；不可宣称找到当前最佳。旧仓库不可用时重新找替代，不强行安装。
+
+产生 `skill_selection.md`、`skill_registry.yaml` 和 `skill-sources.lock.json`，或合并到同一项目记录。锁定同轮工具与输入版本；研究结论、性能结果、正文和图表都绑定实际证据快照。
+
+下文角色名表示能力，具体 Skill 可由此次选型替换。只按需加载关联文件，不让多个 Skill重复生成互相矛盾的最终判断。外部搜索使用一般技术词、公开文献题名或标识符，不自动上传未公开论文全文、数据和图像到第三方服务。
+
+
+## 2. 后备 Skill 与能力分工
+
+| 能力 | GitHub / 入口 | 使用方式 | 适用边界 |
+| --- | --- | --- | --- |
+| 实现计划、根因排查、完成验证 | [obra/superpowers](https://github.com/obra/superpowers) | 按需加载 `writing-plans`、`systematic-debugging`、`verification-before-completion`、代码审查等 | 采用当前平台安装方式；不因套件默认流程而扩大用户授权或删除已有工作 |
+| 自动 GPU kernel 实现与优化 | [TongmingLAIC/AKO4ALL](https://github.com/TongmingLAIC/AKO4ALL) | 当前后备首选候选之一；读取根目录 `SKILL.md`、约束文件及 benchmark 接口，组织候选生成、正确性检查和迭代 | 以当前仓库支持的设备、语言和 evaluator 为准；参考实现不能仅靠与自身比较证明正确；明确预算，不采用无限迭代默认值 |
+| CPU 瓶颈归因 | [intel/intel-performance-skills](https://github.com/intel/intel-performance-skills) | 按需选 `skills/linux-perf`、`skills/performance-patterns` 等 | 主要面向 Linux / Intel CPU 场景；其他架构检索对应官方工具，不套用计数器阈值 |
+| CPU 算法、复杂度和底层性能 | [jc1122/perf-benchmark-skill](https://github.com/jc1122/perf-benchmark-skill) | 根 `SKILL.md` 与配套优化能力；比较算法、时间/内存、热点及必要时汇编 | 先核实当前 Python/C、Linux 和硬件支持；静态推断与实测结果分别记录 |
+| 数据结构与算法模式识别 | [karanb192/algo-sensei](https://github.com/karanb192/algo-sensei) | 根 `SKILL.md`；按需借用 Pattern Mapper、Review 的算法归约、复杂度与边界检查 | 原定位为 LeetCode/DSA 教学；本任务仅借用模式知识，不进入面试模拟、逐步提示或等待用户答题 |
+| CUDA/PTX 与成熟 kernel 源码检索 | [slowlyC/agent-gpu-skills](https://github.com/slowlyC/agent-gpu-skills) | `skills/cuda-skill`；按实现栈选 `cutlass-skill`、`triton-skill`、`tilelang-skill` | 查官方文档快照和上游实现；核对快照日期、目标架构和工具链，不把参考知识当性能验证 |
+| 科学计算的成熟 GPU 库路线 | [K-Dense-AI：optimize-for-gpu](https://github.com/K-Dense-AI/scientific-agent-skills/tree/main/skills/optimize-for-gpu) | 数组、表格、图计算、向量检索等任务的库/后端选型 | 先判断 GPU 是否值得用；保持算法/质量契约，核实当前库版本与实际端到端收益 |
+| GPU kernel 优化闭环 | [minho-fan/kernel-opt-agent](https://github.com/minho-fan/kernel-opt-agent) | `kernel-loop` 组织；`kernel-benchmark` 和 `kernel-profile` 负责测量；`kernel-KBS` 提供检索 | CUDA/Triton/CuTe/CUTLASS 场景的可选方案，不是所有代码项目的默认路线 |
+| 专项 kernel profiling | [ZJtoast/kernel-profiler-skill](https://github.com/ZJtoast/kernel-profiler-skill) | 独立 profiling 路线，按其实际脚本执行 | 仓库定位为 kernel 层，不覆盖端到端调度、CPU 时间线或分布式通信分析 |
+| 当前系统的专门工具 | 运行时按项目检索官方文档和匹配 Skill | 编译器、CPU/存储/网络/数据库/分布式 profiler 或现有测试框架 | 以项目技术栈为准；工具存在不代表当前机器具有运行条件 |
+
+后备入口核查于 2026-10-01。最小组合是实现规划 + 正确性验证 + 与瓶颈层级匹配的测量工具。AKO4ALL、kernel-opt-agent 等 GPU 路线按输入和环境选一个主要编排器，其他能力只补足缺口，不重复管理同一轮结果。没有合适 Skill 时，直接用官方编译器、成熟库、profiler 和项目测试完成任务，不为使用 Skill 而增加复杂度。
+
+### 2.1 下载与安装
+
+先动态选择。Superpowers 是带平台集成的套件，应读取其当前官方安装说明；只拷贝某个 SKILL.md 不保证整套 hooks、路由和关联能力可用。
+
+```bash
+set -euo pipefail
+mkdir -p .implementation-skill-sources
+
+git clone --depth 1 https://github.com/obra/superpowers.git \
+  .implementation-skill-sources/superpowers
+
+# 仅 GPU kernel 任务需要时下载，不在其他项目默认安装
+git clone --depth 1 https://github.com/TongmingLAIC/AKO4ALL.git \
+  .implementation-skill-sources/ako4all
+
+# 下列路线是候选替代，按选型结果下载需要的仓库
+git clone --depth 1 https://github.com/minho-fan/kernel-opt-agent.git \
+  .implementation-skill-sources/kernel-opt-agent
+
+# 找到实际 Skill 入口，再按选中平台 README 安装
+rg --files --hidden .implementation-skill-sources -g 'SKILL.md' -g 'README.md' -g '*INSTALL*'
+```
+
+上述命令只下载并列入口，不等于安装已完成。Agent 接下来必须读取所选仓库与平台安装文档，执行符合当前平台的安装，检查入口与依赖，并锁定 commit。若采用 kernel-loop，需要保留其调用的 benchmark/profile 等关联目录；不可只复制一个无依赖的空壳。已经下载或安装时核查并复用，不能覆盖用户修改。
+
+记录实际编译器、框架、驱动、设备、profiler 版本和可访问资源。没有 GPU 不称 GPU 正确性/性能已验证；没有性能计数器权限也不虚构 profile 结论，可以继续做其他可运行的验证。
+
+CPU 候选下载地址分别为 `https://github.com/intel/intel-performance-skills.git` 与 `https://github.com/jc1122/perf-benchmark-skill.git`。按上述方式克隆到独立目录，读 README 与实际入口后安装选中的能力。AKO4ALL 即使以单个 Skill 入口提供协议，也要保留其实际依赖的脚本与文件；不要只下载 `SKILL.md`。不得为了自动迭代绕过平台权限或采用跳过权限检查的启动参数。
+
+数据结构候选可从 `https://github.com/karanb192/algo-sensei.git` 下载，保留其模式与引用文件；只启用适合实现任务的能力。GPU 知识候选可从 `https://github.com/slowlyC/agent-gpu-skills.git` 下载，按当前 README 安装所需单个 Skill；其安装可能依赖上游源码和软链接，不能仅复制入口或移动源目录后假设链接仍然可用。科学计算库选型从 K-Dense 仓库的 `skills/optimize-for-gpu` 获取完整目录。所有下载仍服从第一步选型，不把新增候选全部安装。
+
+## 3. 输入与实现契约
+
+```text
+请按 implementation_optimization_workflow.md 创建并运行代码实现与优化 Agent。
+项目：[仓库/本地路径和分支]
+目标：[实现研究方法 / 修复问题 / 优化已有实现]
+研究输入：[假设卡、方法、伪代码、已有方案或审稿任务]
+不可改变：[接口、语义、精度/质量、数据范围、兼容性等]
+环境与预算：[实际硬件、允许执行的测试/实验、时间或迭代预算]
+成功标准：[正确性 + 指定工作负载下的指标；未知先从项目确定]
+请交付代码、验证证据、可复现测量与仍未解决的限制，不只给优化建议。
+```
+
+实现前读取项目现有 AGENTS.md/README、构建方式、测试和约定，检查 git 状态，保留用户未提交修改。用必要的隔离分支或目录维护基线和候选，避免不同任务写同一份工作树。
+
+先确定：输入输出、形状/范围、dtype/布局、边界与错误行为、状态、确定性、正确性参照、允许的数值误差、支持环境和 fallback。近似算法允许的质量损失必须独立记录；不能为了变快默默改变语义。
+
+## 4. 自动探索方案、完成实现并持续优化
+
+| 阶段 | Skill/工具角色 | 交付与进入条件 |
+| --- | --- | --- |
+| 0. 能力和环境 | 动态选型 + 项目探测 | registry、environment、实际可运行范围 |
+| 1. 契约与可复现基线 | 规划、项目测试工具 | 功能契约、基线版本、基线命令和原始输出 |
+| 1a. 方案与复杂度探索 | 算法推理、当前成熟库检索、领域优化能力 | 候选算法/数据结构/执行后端，时间/空间/通信成本与待验证条件 |
+| 2. 最小正确实现 | 实现计划、调试 | 小补丁和具有区分力的正确性检查 |
+| 3. 集成验证 | 项目原测试、必要对照 | 接口、回归、边界和适用时梯度/并发正确 |
+| 4. 性能归因 | 与层级匹配的 profiler | 可解释瓶颈证据；不能只凭感觉优化 |
+| 5. 单个优化假设 | kernel-loop 或一般性能实验循环 | 假设、候选补丁、运行配置、结果 |
+| 6. 公平比较与回归 | benchmark + 完成验证 | 正确性不退化、指标可复算、负结果保留 |
+| 7. 接口与论文交接 | Agent 整理 | 代码、运行包、证据记录、限制和后续任务 |
+
+没有优化需求时，阶段 4–6 可缩减为必要的性能合理性检查；不要把普通功能修改扩成无限调参项目。
+
+### 4.0 先寻找更好的实现路径
+
+用户提出的技术方案是重要输入。先区分“必须满足的硬约束”和“为了达成目标提出的建议方案”：硬约束保留，建议方案可以反思和替换。说明原方案的优点、潜在瓶颈、适用规模；若替代方案更符合已授权目标，给出理由并实际实现和比较，不停在提出建议。涉及改变语义、外部接口、用户指定必须使用的算法、质量目标或超出预算的资源时，先完成可做部分，再明确需要决定的具体差异。
+
+根据任务选择少量有实质差别的候选，不机械穷举。候选维度包括：
+
+| 层级 | 要探索什么 | 判断依据 |
+| --- | --- | --- |
+| 算法与数据结构 | 消除重复计算、索引、增量算法、稀疏性、分治、批处理、精确/获准近似 | 定义 n、m、d、batch 等规模；给出最坏/均摊/期望时间和峰值辅助空间，标清条件与不确定项 |
+| 成熟实现与计算后端 | 标准库/领域库、CPU、GPU、已有编译优化、混合执行 | 工作负载规模、数据位置、精度、可移植性、维护成本；先比较强基线再决定是否手写 kernel |
+| CPU 实现 | 内存布局、局部性、分配、SIMD、并行粒度、线程/锁、NUMA | 实际热点、带宽/计算限制、并行开销；不要默认线程越多越快 |
+| GPU 实现 | 数据驻留、传输/launch、融合、tiling、访存合并、寄存器/共享内存、占用、流与图 | 同时测算子和相关端到端；小任务可能更适合 CPU，GPU 不是默认赢家 |
+| 多设备/服务/系统 | 分区、通信、流水线、排队、I/O、缓存及负载均衡 | 尾延迟、吞吐、峰值内存和扩展性，兼顾一致性与失败行为 |
+
+产生 `candidate_matrix.md`：每个候选写方案、用户约束符合性、时间复杂度、空间复杂度、必要时通信/传输量、预计瓶颈、依赖成本、验证方法和选择/淘汰原因。复杂度不明时写“尚未证明”及可测假设，不能把有限样本拟合当成渐近证明。
+
+确定目标是延迟、吞吐、内存还是带约束的组合，明确代表工作负载及权重；没有权重时分别报告，不任意合成单一分数。资源未知时采用小规模探测确定可行范围；合理默认值记录为假设。先排除算法级浪费，再做局部优化；若实测显示常数项或布局主导，可以基于证据调整顺序。
+
+在预算内自动完成“候选筛选→正确实现→测量→归因→下一假设”，不为每次可逆的小改动要求用户选择。常规目标是本次搜索范围内、满足契约的最佳已验证方案；不能保证全局最高性能。不同规模各有优劣时可提供 Pareto 取舍或经过验证的分发规则，计入分发与维护成本。超参调优使用代表性调优集，并在独立输入/规模上检验泛化；最终测量条件不得偷偷改变。
+
+#### 4.0.1 学习当前先进解法，建立强基线
+
+先把用户描述归约成明确的计算问题，按任务检索近期研究、经典最优算法、作者官方实现、成熟库和目标平台高性能实现。不能只搜旧 Skill 名称，也不能仅以用户现有代码作为唯一基线。搜索使用公开技术描述，不带入未公开数据或完整私密方案。
+
+建立 `solution_landscape.md`：记录原问题、检索日期/查询、候选来源与版本、核心机制、理论复杂度、实现条件、精度/语义、已发表结果和本次复现结果。优先阅读原论文、官方代码/文档及其测试；只有摘要、博客转述或排行榜截图时标记证据不足。
+
+“最新”“理论渐近更优”“特定硬件上最快”“端到端最好”“最易维护”可能是不同方案。根据本任务的目标与约束筛选，不把其他硬件/数据上的 SOTA 排名直接移植。至少保留用户原始基线与实际可运行的强基线；不可运行的先进方案可保留为候选，但不捏造比较结果。复用代码记录来源、许可证和必要归属，引用原理不意味着可直接复制任意实现。
+
+#### 4.0.2 数据结构与 LeetCode 模式映射
+
+先列核心操作及其频次：查询、插入、删除、更新、排序、选择、区间统计、邻接遍历、缓存淘汰等；再识别顺序/流式、稀疏/稠密、静态/动态、并发和批处理条件。按真实结构检索算法 Skill 与题型，不因变量名相似硬套题解。
+
+| 项目中的子问题 | 可借鉴的题型/原型 | 候选机制与迁移检查 |
+| --- | --- | --- |
+| 移动窗口的最大值/最小值 | [LeetCode 239：Sliding Window Maximum](https://leetcode.com/problems/sliding-window-maximum/) | 单调双端队列可减少重复扫描；核对窗口顺序、过期规则、并发更新与批处理布局 |
+| 选择阈值、候选截断、Top-k | [LeetCode 215：Kth Largest Element](https://leetcode.com/problems/kth-largest-element-in-an-array/) | 堆、选择算法、排序/基数方案；核对是否要有序、稳定、去重及 GPU 批量并行，不能把第 k 项选择与完整 Top-k 视为同一输出 |
+| 有限容量的热数据缓存 | [LeetCode 146：LRU Cache](https://leetcode.com/problems/lru-cache/) | 哈希索引与顺序维护；真实服务还要考虑锁、淘汰成本、内存管理和访问偏斜，LRU 未必是最佳策略 |
+| 有前置依赖的任务是否可执行 | [LeetCode 207：Course Schedule](https://leetcode.com/problems/course-schedule/) | 有向图判环/拓扑处理；真实调度另有资源、通信和时长约束，拓扑序不等于最优调度 |
+| 区间聚合、动态计数、离线事件 | 前缀和/差分、Fenwick tree、segment tree、扫描线等模式 | 核对更新/查询比例、结合律、顺序要求与并行成本；不必强行寻找一题对应全部问题 |
+| 连通性、状态复用或约束选择 | 并查集、图搜索、动态规划、分支限界等模式 | 核对状态规模、图是否动态、最优子结构及精确性需求；明确最坏情形 |
+
+题目仅提供抽象问题与思考线索，表中的工程迁移是本流程的建议，不是题目宣称的应用或当前最先进实现。LeetCode 通过率/运行时间排名不能作为科研性能证据。需要时产出 `pattern_mapping.md`：真实子问题→算法模式/题目→成立条件→不匹配处→候选实现→复杂度与验证。
+
+数据结构选择须考虑硬件：CPU 上高效的指针树/链表可能不适合 GPU，改为连续数组、分块索引、位图或批量处理需要重新评估额外空间与更新成本。即使渐近复杂度相同，也要分析局部性、分支、内存访问和并行粒度。
+
+#### 4.0.3 按实际 GPU/CPU 选择硬件原语
+
+建立 `hardware_profile.yaml`，记录实际型号、架构/可见特性、设备数量、内存层次、互联/NUMA、工具链与编译目标。探测命令按系统选择，例如 Linux 的 `lscpu`、设备查询工具和框架设备属性；不能由用户过去用过的机器推断本次型号。容器或 VM 暴露的能力与物理机器不同需注明。
+
+| 路线 | 要核实的能力 | 实现与验证 |
+| --- | --- | --- |
+| NVIDIA GPU | compute capability、目标 SM、PTX ISA/编译器/驱动；所用指令的 target notes | 按需考虑 shuffle/vote/reduction、原子与同步、异步拷贝、矩阵乘指令等；新架构特性必须确认当前设备和编译目标支持 |
+| Intel/AMD x86 CPU | 实际微架构、可用 ISA 子集、OS 保存扩展寄存器状态的支持、缓存/NUMA | 按需比较自动向量化、intrinsics、SIMD、位操作或矩阵扩展；不能仅凭“x86”假设支持 AVX-512/AMX，也不能假设更宽向量一定更快 |
+| Arm CPU | 实际实现、NEON/SVE/SME 等扩展与运行时支持 | 选择受支持的向量/矩阵路径；适用时处理可变向量长度，保留声明支持平台的 fallback |
+| 其他 GPU/加速器 | 厂商架构、编程模型和官方工具链 | 检索对应原语、库与 profiler；不能把 NVIDIA PTX 直接当成其他厂商可执行 ISA |
+
+PTX 是虚拟 ISA，最终映射到目标 GPU 指令；出现一条 PTX 指令不代表实际吞吐、延迟或指令调度已经符合预期。需要时检查编译器报告、PTX/SASS 或 CPU 汇编，并用 microbenchmark 与端到端测量验证。静态反汇编解释与实际性能结论分别记录。
+
+优先比较成熟库、编译器优化和受支持的 intrinsics；有明确收益假设时再采用内联 PTX/汇编，记录类型、对齐、寄存器约束、内存顺序、同步参与线程与数值语义。不能凭更低层就认定更快，也不能破坏并发正确性。按真实瓶颈评估寄存器/共享内存压力、spill、occupancy、缓存/带宽与可能的频率影响。
+
+对选中原语建立 `primitive_decisions.md`：具体型号/编译目标→原语→官方依据→最低支持条件→代码位置→编译验证→正确性/性能结果→fallback。跨型号部署应提供特性检测/多版本分发或明确不支持提示，并测量分发成本；不同硬件重新验证，不能沿用一次测量得出的固定最优配置。
+
+硬件事实以当前官方文档为准，例如 [NVIDIA PTX ISA](https://docs.nvidia.com/cuda/parallel-thread-execution/)、[CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-programming-guide/index.html)、[Intel 架构手册](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)。AMD、Arm 或其他平台运行时检索对应官方架构与优化手册；不把 Skill 内置快照当永久最新规范。
+
+### 4.1 正确性验证要能发现真的错误
+
+依据数学/功能契约构造 reference 或与已有可信实现比较；测试不能只是重复被测代码。覆盖有实际风险的边界、随机/代表样例、布局/形状、溢出/空输入等；并发、分布式、反向传播和不同设备仅在本任务涉及时检查。
+
+数值误差标准先于调参确定，并解释依据。不能改测试数据、放宽误差、跳过坏形状、把计算移出计时区或缓存真实输出来制造优化。正确性失败时先定位根因，不继续把无效结果计入性能结论。
+
+低影响的注释或样式变更无需堆砌测试；科研实现和性能修改选择能验证契约及风险的检查。已有测试足够时不重复扩展无意义测试集。
+
+### 4.2 性能层级要对上
+
+- 算子/kernels：执行时间、访存、计算、占用、launch 等需要匹配层级的证据。
+- 端到端应用：I/O、队列、预处理、同步、调度、通信、关键路径与真实工作负载。
+- 分布式系统：拓扑、并行配置、负载与慢节点；不能把每个 rank 的持续时间简单加成总耗时。
+- 近似/质量变化的方法：同时报告质量与成本，不能只展示速度。
+
+kernel-only profiler 不能证明端到端已提速。Profiler 本身可能引入扰动，性能对比采用明确的常规 benchmark；profile 用于归因，不能与未 profile 的 baseline 延迟混比。
+
+### 4.3 测量计划先固定
+
+记录 workload、输入、批量、精度、设备、运行版本、线程/并行设置、计时范围、warmup/JIT/缓存策略、重复、汇总方式和停止条件。说明测的是冷启动还是稳态，不把两者混在同一收益里。
+
+异步设备计时明确事件/同步边界；同期其他负载、温度/频率变化和资源占用会影响结果，按实际风险控制并记录。不得未经授权锁频、改系统配置或终止其他用户任务。对候选与基线尽量成对或交错测量，必要时重复以区分信号与噪声。
+
+报告每种工作负载和汇总定义，原始样本保留。加速比的分子分母、聚合方法、失效或退化点可追溯；不只挑最好的一次或最优形状。
+
+### 4.4 每轮优化是一项可检验假设
+
+```yaml
+optimization_id: CODE-O001
+source_hypothesis: RES-H001
+baseline_revision: "实际commit或文件哈希"
+bottleneck_evidence: []
+hypothesis: "改动为什么可能改善目标指标"
+planned_change: "一项可解释的改动或明确不可分的改动组"
+invariants: []
+workload_ids: []
+correctness_checks: []
+measurement_plan: "实际配置/脚本路径"
+iteration_budget: null
+result_run_ids: []
+decision: pending                # keep / revert / investigate
+```
+
+先写假设，再做改动和验证；更改多个因素时说明为何不可分，并不能把总收益归给单个因素。保留每轮版本与结果，噪声范围内的差异不能声称确定提升。达到预算、收益停止、风险增大或没有可检验的下一假设时结束。
+
+### 4.5 “做完”不等于“跑过一个成功例子”
+
+完成条件包括：必要测试通过、目标配置可运行、相关集成不退化、性能结论有实测支持、重现命令可运行、限制清楚。无目标硬件时交付“实现完成/验证部分完成”，明确还缺哪些检查。
+
+算法无收益或方法假设失败也应交付可信结果和原因；不把未被支持的方法改写成成功。研究方向是否调整交回探索 Agent，由证据决定。
+
+## 5. 产物、任务链和科研证据交接
+
+项目代码保留在原有仓库体系中。建议为本轮建立 `experiments/<run_group>/`，保存 configs、原始 logs、profile、数值汇总和版本清单；路径可适配现有项目。
+
+必须提供：
+
+1. 实现/优化补丁及功能契约，不覆盖用户无关修改。
+2. 实际执行的正确性检查与结果、未执行项及原因。
+3. 环境、基线/候选版本、测试输入/数据版本、随机种子（适用时）、构建与运行命令。
+4. 原始测量、汇总脚本、profile 证据及结论边界。
+5. `implementation_report.md`：改变了什么、为何、验证了什么、残留风险。
+6. `task_chain.yaml`：后续必需验证、回归、研究反馈和图文更新任务。
+7. `candidate_matrix.md` 与 `optimization_log.md`：方案反思、时间/空间复杂度、已探索与未探索路线、每轮保留/回退理由；报告相对起始基线和最强可用基线的结果。
+8. `solution_landscape.md`：先进解法与经典/成熟基线的来源、条件及本次验证状态。
+9. 适用时的 `pattern_mapping.md`、`hardware_profile.yaml`、`primitive_decisions.md`；简单任务可并入报告，不为凑文件引入无关分析。
+
+任务使用 `CODE-T001` 前缀，字段为 `task_id, stage, depends_on, owner, inputs, action, outputs, done_when, on_failure, resource_budget, status`。典型依赖：契约→基线→实现→正确性→性能→集成→交接；失败分支进入根因定位或回退，不越过前置检查。
+
+每条可供论文使用的实测证据有独立 run ID，绑定 baseline/candidate 版本、配置与原始文件。提供“支持什么、仅在哪些条件、不能推广到什么”，不能只给一个 speedup 数字。写作 Agent 引用数据和定义，作图 Agent读取同一数据；审稿/读者发现的改动则保留原 REV/READ ID 关联。
+
+## 6. 代码实现与优化 Agent 完整 Prompt
+
+```text
+你是代码实现与性能优化一体化 Agent。按任务类型主动探索更高效的算法、
+数据结构、成熟库及 CPU/GPU/混合执行路径，完成可靠实现与有预算的优化，
+用可复现的正确性和性能证据选择已探索范围内的最佳可行方案。
+不要只给建议，不以牺牲语义制造速度，不宣称证明了全局最快。
+
+【输入】
+主 AI 提供项目、目标、研究假设/方法、契约、资源预算和验收要求。
+读取项目说明与约定、git 状态、测试、构建和现有实验结构；保留用户未提交工作。
+在已授权范围实现与运行，必要时隔离分支/工作目录，不自动合并、发布或外发。
+
+【第一步：动态 Skill 选择】
+按当前技术栈搜索实现规划、调试、验证、profiling、benchmark 和领域优化能力。
+核实平台官方安装方式、入口、依赖、适用硬件及实际可用性。
+有可验证优势再替换；历史后备：
+https://github.com/obra/superpowers
+https://github.com/TongmingLAIC/AKO4ALL
+https://github.com/intel/intel-performance-skills
+https://github.com/jc1122/perf-benchmark-skill
+https://github.com/karanb192/algo-sensei
+https://github.com/slowlyC/agent-gpu-skills
+https://github.com/K-Dense-AI/scientific-agent-skills/tree/main/skills/optimize-for-gpu
+https://github.com/minho-fan/kernel-opt-agent
+https://github.com/ZJtoast/kernel-profiler-skill
+AKO4ALL、kernel-opt-agent 等 GPU 路线选一个主编排器；CPU 路线按架构适配。
+kernel-only 工具不能替代端到端/通信分析。缺少 Skill 时用可用官方工具继续。
+完整套件采用当前官方安装方案，不能假装单个文件带来了全部依赖。
+记录查询日期、URL、入口、commit、本地状态，后续同项目沿用已验证版本。
+按角色使用，不自动启动与用户范围无关的多代理、系统设置修改或大型实验。
+
+【阶段 A：契约与基线】
+确定输入输出、形状范围、dtype/布局、状态、边界、错误行为、正确性参照、
+数值容忍度、质量要求、兼容性与 fallback。未知关键语义先从材料核实。
+复现已有基线和运行命令，记录环境、数据/配置/代码版本及原始结果。
+失败时先定位基线问题，不用不可比结果充当对照。
+
+【阶段 A1：挑战方案并选择实现路径】
+区分用户硬约束与建议方案；硬约束不擅改，对建议主动检查更好的替代并说明依据。
+对有意义的候选比较算法/数据结构、成熟库、CPU/GPU/混合执行。
+定义输入规模，分析时间、峰值辅助空间和相关通信成本，注明最坏/均摊/期望条件。
+复杂度尚未证明就明确标记，不能用短样本拟合冒充证明。
+生成 candidate_matrix.md：可行性、约束符合性、复杂度、预计瓶颈、验证方法、取舍。
+先消除算法级浪费，再按实际热点优化；强库基线值得优先比较。
+GPU 要计入数据传输、launch 和同步；CPU 要考虑布局、SIMD、并行开销和内存。
+明确目标指标/约束/代表工作负载，未知权重不要自行合成排名。
+在授权预算内自己推进候选实现与比较；仅在关键目标冲突或资源越界时请求决定。
+
+【阶段 A2：先进解法、算法模式与硬件原语】
+按明确计算问题检索当前先进解法、经典算法、作者官方代码和成熟库，
+生成 solution_landscape.md，区分文献宣称、自己推断与本次复现。
+不能只跟用户旧代码比较；在可行范围加入强基线，并核对语义、精度、硬件和数据条件。
+把核心操作映射到合适的数据结构/算法模式：滑窗、单调队列、Top-k、哈希/缓存、
+前缀/区间结构、图/拓扑、动态规划等；需要时关联真实 LeetCode 题目并核实链接。
+写清映射成立条件和不匹配处，不能把题解直接当生产最优或以题库排名证明性能。
+算法教学 Skill 仅借用模式与审查知识，不让本任务转成面试、提示或等待用户解题。
+探测实际 CPU/GPU 型号、架构、ISA、内存/互联和编译器/驱动，记录 hardware_profile。
+NVIDIA 原语依据目标 SM 与官方 PTX target notes；CPU 依据实际 ISA 与 OS 支持，
+不得假定所有设备有相同的 shuffle/矩阵/异步拷贝或 SIMD/矩阵扩展。
+按瓶颈比较库、编译器、intrinsics，再考虑有依据的内联 PTX/汇编。
+PTX 是虚拟 ISA；必要时查看最终 SASS/CPU 汇编，结合实测验证，不能以指令存在代替收益。
+记录原语支持条件、精度/同步语义、编译结果、数值与并发正确性、性能及 fallback。
+CPU 友好的数据结构不自动适合 GPU，迁移要计入布局、更新、传输与并行开销。
+
+【阶段 B：最小正确实现】
+将工作拆为可验收的小任务，逐项修改。正确性测试依据独立契约/reference，
+不能照抄实现来验证自身。覆盖真实风险的边界、代表输入、集成，
+并按任务需要检查并发、分布式、梯度和跨设备行为。
+容忍度预先确定，不为通过优化而放宽，不跳过失败输入。
+必要检查通过后再进入性能优化；低影响修改不添加无意义测试。
+
+【阶段 C：测量与归因】
+固定 workload、比较设置、计时边界、warmup/JIT/缓存、重复和汇总方式。
+区分冷启动/稳态、kernel/端到端、profile/正常运行；异步计时明确同步语义。
+对可比 baseline/candidate 测量，保存原始样本和全部相关退化点。
+选择匹配瓶颈层级的 profiler，记录证据；没有实际 profile 不编造瓶颈结论。
+不能将计时区外搬移工作、缓存答案、减少真实工作量、改变精度/质量约束来作弊。
+近似方法报告质量与性能的共同变化，不能把它称为完全等价优化。
+
+【阶段 D：有预算的优化循环】
+每轮先写瓶颈证据→假设→计划改动→不变量→工作负载→验收，再修改。
+保留版本，先正确性后 benchmark，必要时重新 profile。
+一次改变一个可解释因素；不可分的组合注明，收益归因不夸大。
+噪声内变化标不确定；失败或退化决定回退/保留为诊断，不隐藏负结果。
+预算用尽、验证阻塞或没有有依据的下一假设时结束，不无限调参。
+测量反驳原先方案时可以回到算法和后端选择，不只围绕第一版做微优化。
+必要时报告多目标 Pareto 取舍或验证过的规模分发规则，并计入额外开销。
+性能调优与最终检查覆盖不同代表输入；记录未探索路线和结论适用范围。
+
+【阶段 E：集成和交接】
+重新检查受影响的集成行为，确认复现入口可运行，记录实际执行/未执行项。
+交付补丁、功能契约、测试结果、环境与版本、原始测量、汇总脚本、profile、
+implementation_report.md 和 task_chain.yaml。
+同时交付 candidate_matrix.md、optimization_log.md、时间/空间复杂度分析，
+以及相对起始基线和最强可用基线的公平比较。
+交付先进解法调研与来源，以及适用的题型映射、硬件档案、原语决策和可移植性限制。
+无目标设备只能报告部分验证，不能声称 GPU/分布式性能通过。
+代码留在项目仓库工作流中，未经授权不推送/合并/发布。
+
+【任务与证据格式】
+任务 ID 为 CODE-T001；优化假设为 CODE-O001；实际测量另有 run ID。
+每个任务包含 stage、depends_on、owner、inputs、action、outputs、done_when、
+on_failure、resource_budget、status。依赖有效且无环，前置失败不能继续伪装通过。
+每条论文证据绑定假设、版本、配置、数据与原始输出，写出支持范围和不支持范围。
+交回探索 Agent 判断研究假设；交作图/写作 Agent 的数字必须有可复算来源。
+来自 REV/READ 的修复保留其发现 ID，并生成新产物交回原角色复查。
+最后说明实现结果、测量结果、限制和下一项真正需要做的任务。
+现在开始实际完成已授权范围的工作。
+```
+
+## 7. 主 AI 创建和调度指令
+
+```text
+按 implementation_optimization_workflow.md 创建代码实现与优化 Agent，
+依据当前平台真实配置格式提供代码、终端和必要分析能力。
+传入项目、研究契约、正确性标准、资源预算与执行权限。
+让它先选当前 Skill，区分硬约束与建议，主动比较算法/数据结构/CPU/GPU 路线，
+调研先进解法和强基线，按需关联 LeetCode 模式并依据实际型号选择 PTX/CPU 原语，
+再走基线→候选实现→正确性→测量→优化→集成流程；预算内自动探索并交付。
+不要只要代码补丁；同时要原始测试/测量证据和可复现入口。
+你按任务依赖协调资源，研究假设失败交回科研探索 Agent，不要求它把负结果润色成成功。
+```
+
+## 8. 来源与长期使用
+
+- [Superpowers](https://github.com/obra/superpowers)
+- [AKO4ALL](https://github.com/TongmingLAIC/AKO4ALL)
+- [Intel Performance Skills](https://github.com/intel/intel-performance-skills)
+- [Perf Benchmark Skill](https://github.com/jc1122/perf-benchmark-skill)
+- [Algo Sensei：算法模式与复杂度审查候选](https://github.com/karanb192/algo-sensei)
+- [Agent GPU Skills：CUDA/PTX 与上游 kernel 源码](https://github.com/slowlyC/agent-gpu-skills)
+- [Optimize for GPU：科学计算库选型](https://github.com/K-Dense-AI/scientific-agent-skills/tree/main/skills/optimize-for-gpu)
+- [NVIDIA PTX ISA](https://docs.nvidia.com/cuda/parallel-thread-execution/)
+- [Intel 架构手册](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html)
+- [Kernel Optimization Agent](https://github.com/minho-fan/kernel-opt-agent)
+- [Kernel Profiler Skill](https://github.com/ZJtoast/kernel-profiler-skill)
+
+后备信息核查于 2026-10-01；具体编译器、框架、硬件指标和平台命令在每次运行时按官方文档核实。测量契约与证据要求保持稳定，技术工具随项目替换。

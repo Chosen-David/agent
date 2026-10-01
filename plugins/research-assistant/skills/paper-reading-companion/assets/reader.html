@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>__DOCUMENT_TITLE__ · 论文伴读</title>
+<style>
+:root{color-scheme:light;font-family:system-ui,-apple-system,sans-serif;color:#172d3a;background:#eef2f4}*{box-sizing:border-box}body{margin:0}header{padding:18px 24px;background:#123745;color:white}h1{font-size:21px;margin:0 0 8px}header p{margin:0;color:#cce0e4;font-size:13px}nav{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:12px 24px;background:white;border-bottom:1px solid #d8e1e5}button,select{font:inherit;padding:8px 12px;border:1px solid #b6c9ce;border-radius:6px;background:white;color:#143c49;cursor:pointer}button:disabled{opacity:.4;cursor:default}button:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid #13a4a3}main{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(330px,1fr);height:calc(100vh - 160px);min-height:450px}.paper{overflow:auto;padding:22px;background:#e2e9ed}#pageImage{display:block;width:100%;max-width:none;height:auto;box-shadow:0 3px 20px #12374525}#plain{white-space:pre-wrap;line-height:1.65;background:white;padding:24px;font-family:ui-monospace,monospace}.side{overflow:auto;padding:22px;background:#f8fafb}h2{font-size:17px;margin:0 0 12px}h3{font-size:15px;margin:0 0 10px}.notice{font-size:13px;line-height:1.65;color:#506773;margin:8px 0 18px}.card{background:white;border:1px solid #d5e3e7;border-left:3px solid #12988c;border-radius:7px;padding:16px;margin:12px 0}.answer{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.75;font-size:14px}label{display:block;font-size:13px;margin:16px 0 7px}textarea{width:100%;resize:vertical;font:inherit;font-size:14px;padding:10px;border:1px solid #bbcbd1;border-radius:6px;min-height:70px}#copy{margin-top:12px;background:#126e6b;color:white;border:0}#status{font-size:13px;color:#395b61}a{color:#086e89;overflow-wrap:anywhere}#identity{word-break:break-all;font-size:11px;color:#637982;margin-top:22px}[hidden]{display:none!important}@media(max-width:800px){main{display:block;height:auto}.paper{max-height:65vh}.side{overflow:visible}header,nav{padding:14px}h1{font-size:18px}}
+</style></head><body>
+<header><h1 id="title">论文伴读</h1><p>英文原页 × 有依据的讲解 · 离线阅读页</p></header>
+<nav aria-label="阅读控制"><button id="prev">上一页</button><label for="pageSelect" style="margin:0">物理页</label><select id="pageSelect"></select><button id="next">下一页</button><button id="mode">查看提取文本</button><button id="zoomOut" aria-label="缩小原页">−</button><button id="zoomIn" aria-label="放大原页">＋</button><span id="coverage"></span></nav>
+<main><section class="paper" aria-label="论文原文"><img id="pageImage" alt=""><pre id="plain" hidden></pre></section>
+<aside class="side"><h2>读到这里，想问什么？</h2><p class="notice">本页没有模型连接。复制上下文到 GPT 提问，答案由论文伴读与知识讲解角色生成；保存解释卡片后可重新生成此页。提取文本可能打乱公式或双栏顺序，请以原页为准。</p>
+<div id="cards"></div><label for="quote">原文片段或定位（可选）</label><textarea id="quote" placeholder="例如：Eq. 2 / Fig. 3 / 复制不理解的一句话"></textarea>
+<label for="question">你的问题</label><textarea id="question" placeholder="例如：这个假设为什么必要？能否画图解释？"></textarea><button id="copy">复制提问上下文</button><p id="status" role="status"></p><textarea id="fallback" aria-label="可手动复制的提问上下文" hidden readonly></textarea><p id="identity"></p>
+</aside></main>
+<script id="reader-data" type="application/json">__READER_DATA__</script>
+<script>
+'use strict';
+const data=JSON.parse(document.getElementById('reader-data').textContent);
+const el=id=>document.getElementById(id);let index=0,zoom=100,textMode=false;
+const key='paper-reader:'+data.sha256;const drafts={};
+try{const saved=Number(localStorage.getItem(key));const found=data.pages.findIndex(p=>p.number===saved);if(found>=0)index=found}catch(e){}
+el('title').textContent=data.title;
+for(const p of data.pages){const option=document.createElement('option');option.value=String(p.number);option.textContent=String(p.number)+(p.label?' · 印刷 '+p.label:'');el('pageSelect').append(option)}
+el('coverage').textContent='已渲染 '+data.pages.length+' / '+data.total_pages+' 页（不表示已读）';
+el('identity').textContent='PDF SHA-256: '+data.sha256;
+function saveDraft(){drafts[data.pages[index].number]={quote:el('quote').value,question:el('question').value}}
+function render(){const p=data.pages[index];el('pageSelect').value=String(p.number);el('prev').disabled=index===0;el('next').disabled=index===data.pages.length-1;el('pageImage').src='data:image/png;base64,'+p.image;el('pageImage').alt='论文原页：物理第 '+p.number+' 页';el('pageImage').style.width=zoom+'%';el('plain').textContent=p.text||'本页未提取出文本，请看原页图。';el('plain').hidden=!textMode;el('pageImage').hidden=textMode;el('mode').textContent=textMode?'查看原页图片':'查看提取文本';el('cards').replaceChildren();
+const cards=data.cards.filter(c=>c.page===p.number);
+if(!cards.length){const note=document.createElement('p');note.className='notice';note.textContent='这一页尚未保存解释卡片。';el('cards').append(note)}
+for(const card of cards){const node=document.createElement('article');node.className='card';const heading=document.createElement('h3');heading.textContent=card.id+' · '+card.anchor;node.append(heading);const q=document.createElement('p');q.textContent=card.question;node.append(q);const answer=document.createElement('div');answer.className='answer';answer.textContent=card.answer;node.append(answer);for(const source of card.sources||[]){try{const url=new URL(source.url);if(!['https:','http:'].includes(url.protocol))continue;const p=document.createElement('p');const a=document.createElement('a');a.href=url.href;a.target='_blank';a.rel='noopener noreferrer';a.textContent=source.label;p.append(a);node.append(p)}catch(e){}}el('cards').append(node)}
+const draft=drafts[p.number]||{};el('quote').value=draft.quote||'';el('question').value=draft.question||'';el('fallback').hidden=true;el('status').textContent='';try{localStorage.setItem(key,String(p.number))}catch(e){}
+}
+function go(i){saveDraft();index=i;render();document.querySelector('.paper').scrollTop=0}
+el('prev').onclick=()=>go(Math.max(0,index-1));el('next').onclick=()=>go(Math.min(data.pages.length-1,index+1));el('pageSelect').onchange=()=>go(data.pages.findIndex(p=>p.number===Number(el('pageSelect').value)));
+el('mode').onclick=()=>{saveDraft();textMode=!textMode;render()};el('zoomIn').onclick=()=>{zoom=Math.min(250,zoom+25);el('pageImage').style.width=zoom+'%'};el('zoomOut').onclick=()=>{zoom=Math.max(50,zoom-25);el('pageImage').style.width=zoom+'%'};
+el('copy').onclick=async()=>{const question=el('question').value.trim();if(!question){el('status').textContent='请先输入你的问题。';return}const p=data.pages[index];const prompt=['请使用论文伴读和知识点讲解角色回答。','论文：'+data.title,'PDF SHA-256：'+data.sha256,'物理页：'+p.number+' / '+data.total_pages,'印刷页：'+(p.label||'未识别'),'原文/锚点：'+(el('quote').value.trim()||'未提供，请查看该页'),'问题：'+question,'优先核查原文，区分背景、推导与假设，必要时联网查证并画直观图。'].join('\n');try{await navigator.clipboard.writeText(prompt);el('status').textContent='已复制，请粘贴回 GPT；尚未发送给模型。'}catch(e){el('fallback').hidden=false;el('fallback').value=prompt;el('fallback').focus();el('fallback').select();el('status').textContent='浏览器未允许自动复制，请手动复制下方文本到 GPT。'}};
+render();
+</script></body></html>

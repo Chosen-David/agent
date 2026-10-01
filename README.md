@@ -1,121 +1,137 @@
-# Research Agent Workflows
+# Agent Workflows
 
-面向科研全过程的通用 Agent 工作流与 Prompt：**科研探索 → 代码实现与优化 → 作图 → 论文写作 → 审稿与逐页读者检查 → 核验修订**。
+一个按**场景与能力**组织的通用 Agent 仓库。主 AI 根据用户目标选择工作流，保持通用身份；科研助手是其中一个专业组合，论文伴读与知识讲解也可以独立使用。
 
-适用于 Claude、Codex 及其他具备相应工具能力的主 AI。覆盖不同学科与论文类型，也支持算法、CPU/GPU、系统和 Infra 研究，不绑定某个模型、设备、技术点或会议。
+适用于具备相应工具能力的 ChatGPT/Codex、Claude 及其他主 AI。当前提供 **8 个专业角色 + 1 个科研协调技能**，并附完整工作流、可复制 Prompt 和科研助手插件包。未来可增加编程、学习、产品等领域的独立分类，不必改写主 AI 的身份。
 
-每个新项目先寻找并评估当前更合适的 Skill，确认没有更合适且经过验证的替代，再采用文档中的后备候选。同一项目持续执行时锁定已验证版本，兼顾长期可用与结果可复现。
+## 从你的目标开始
 
-> 本仓库提供可直接交给主 AI 的执行规范与完整 Prompt。克隆仓库不会自动安装第三方 Skill，也不会自动注册 Agent；实际运行由当前平台支持的工具与权限决定。
+| 目标 | 路由 |
+| --- | --- |
+| 让主 AI 根据各种任务选择合适 Agent | [通用主 AI 调度](prompts/orchestrator.md) |
+| 推进科研项目，串起多个角色 | [科研项目调度](prompts/research_orchestrator.md) |
+| 上传论文，边读英文原文边提问 | [论文伴读](workflows/paper_reading_companion_workflow.md) |
+| 理解概念、公式、图或技术机制 | [知识点讲解](workflows/concept_explanation_workflow.md) |
+| 单独实现代码或提高性能 | [实现与优化](workflows/implementation_optimization_workflow.md) |
+| 没有匹配的工作流 | 主 AI 用通用能力处理，按需发现新 Skill，不强行转成科研任务 |
 
-## 六类 Agent
+**分类是导航，不是限制。** 实现优化可以用于普通软件任务；知识讲解可以脱离论文；科研项目也可以调用伴读。安装专业技能不应让所有聊天都变成科研流程。
 
-| Agent | 解决什么问题 | 主要交付 | 完整工作流 |
-| --- | --- | --- | --- |
-| 科研探索 | Idea 是否值得做、与已有工作有什么区别、怎样最小化验证 | 文献证据、可证伪假设、判别实验、研究任务链 | [research_workflow.md](workflows/research_workflow.md) |
-| 实现与优化 | 如何从需求到正确且高效的实现 | 方案比较、代码、复杂度分析、CPU/GPU 测量与优化记录 | [implementation_optimization_workflow.md](workflows/implementation_optimization_workflow.md) |
-| 论文作图 | 如何用图回答研究问题、解释方法并呈现真实结果 | 图规划、可编辑图源、绘图脚本、图注与视觉检查 | [figure_workflow.md](workflows/figure_workflow.md) |
-| 论文写作 | 如何按证据和指定模板完成完整论文 | 正文、源文件、引用核验、可构建 PDF、证据底账 | [paper_writing_workflow.md](workflows/paper_writing_workflow.md) |
-| 审稿 | 按目标会议/期刊标准检查贡献、方法和证据 | 有依据的审稿意见、核验→修订→复查任务链 | [reviewer_workflow.md](workflows/reviewer_workflow.md) |
-| 读者 | 最终 PDF 有没有生成错误，以及图文是否真正讲清楚 | 逐页图片阅读记录、视觉证据、理解疑点与修复任务 | [reader_workflow.md](workflows/reader_workflow.md) |
+## 模式：默认编排，灵活调用
+
+支持通用/自动、科研助手、论文伴读、代码实现与优化、知识学习等模式。模式选择默认流程，Agent 按能力跨模式复用。科研中随时调用知识讲解；伴读中可以调用代码实现；临时任务结束后回到原来的研究任务或阅读位置，不必反复切换整个模式。
+
+用户可直接说“进入科研模式”“陪我读这篇论文”，也可以只提出任务让主 AI 判断。模式不增加权限或预算。完整规则见 [模式与跨模式调用](prompts/modes.md)。
+
+## 科研与论文生产
+
+| Agent | 主要交付 | 工作流 |
+| --- | --- | --- |
+| 科研探索 | 查新证据、可证伪假设、最小判别实验、研究任务链 | [research_workflow.md](workflows/research_workflow.md) |
+| 实现与优化 | 先进解法比较、正确代码、复杂度、CPU/GPU 实测与优化 | [implementation_optimization_workflow.md](workflows/implementation_optimization_workflow.md) |
+| 论文作图 | 图规划、真实数据图、可编辑图源、图注与视觉检查 | [figure_workflow.md](workflows/figure_workflow.md) |
+| 论文写作 | 指定模板下的源稿、引用核验、证据账本与可构建 PDF | [paper_writing_workflow.md](workflows/paper_writing_workflow.md) |
+| 论文审稿 | 最新文献核验、贡献价值比较、科学审阅与修订任务链 | [reviewer_workflow.md](workflows/reviewer_workflow.md) |
+| 最终 PDF 读者检查 | 实际逐页看图，检查乱码、重叠、图文含义与叙事理解 | [reader_workflow.md](workflows/reader_workflow.md) |
+
+审稿人每轮按当前日期核查领域知识与相关文献，逐贡献评估**新颖性、可行性、必要性和收益代价**。它比较强基线与替代路线，区分投稿时贡献和今天的研究价值；可比性不足时不能仅凭 SOTA 数字否定工作。最终输出核验 → 判别实验/修订 → 复查的任务链。
+
+## 论文阅读与学习
+
+| Agent | 主要交付 | 工作流 |
+| --- | --- | --- |
+| 论文伴读 | PDF/链接接入、英文原文定位、双栏阅读页、阅读状态和问题交接 | [paper_reading_companion_workflow.md](workflows/paper_reading_companion_workflow.md) |
+| 科研知识点讲解 | 核查来源、直觉、小例子、公式推导、图解和解释卡片 | [concept_explanation_workflow.md](workflows/concept_explanation_workflow.md) |
+
+伴读服务用户阅读节奏；最终 PDF 读者检查服务论文质量验收，两者不混用。伴读中的知识问题交给讲解角色；没有独立 Agent 功能的平台可顺序执行相同流程，不能声称已启动另一个模型。
+
+双栏 HTML 左侧保留 PDF 原页，右侧保存讲解卡片，并生成带论文 hash、页码和问题的提问上下文。**目前没有实时模型后端：复制上下文回聊天问答，再由主 AI 更新卡片。** 不保证能改变 ChatGPT 的原生界面布局。
 
 ## 快速开始
-
-### 1. 获取工作流
 
 ```bash
 git clone https://github.com/Chosen-David/agent.git
 cd agent
 ```
 
-将仓库路径或相应 Markdown 文件交给主 AI。聊天平台不能访问本地目录时，上传需要的工作流文件和研究材料。仅贴仓库网址不保证模型能读取完整内容，应确认它实际打开了所需文件。
-
-### 2. 选择单个 Agent
-
-例如让主 AI 完成代码实现与优化：
+通用主 AI 入口：
 
 ```text
-读取 workflows/implementation_optimization_workflow.md，
-依据其中的完整 Prompt 和创建/调度指令创建并运行代码实现与优化 Agent。
-
-项目路径：[填写]
-任务与目标：[填写]
-用户建议方案：[可选；指出哪些是硬约束，哪些允许改进]
-正确性/质量与兼容性要求：[填写]
-目标硬件、代表输入、资源预算：[填写已知信息]
-
-先动态评估当前相关 Skill，再比较算法、数据结构、成熟库与 CPU/GPU 路线。
-在授权预算内完成实现、正确性验证、profiling 和优化，不只给建议。
-最终交付代码、时间/空间复杂度、可复现测量、取舍与未验证项。
+读取 README.md 和 prompts/orchestrator.md。
+根据我的当前目标选择需要的工作流，保持通用助手身份。
+目标：[填写]
+已有材料：[路径、上传文件或链接]
+约束/交付要求：[填写已知信息]
+在授权范围执行到交付完成，不强制启动所有角色。
 ```
 
-只做其他任务时，将路径换成表中对应文件并提供相关材料即可。作图/科研探索/实现优化/写作的完整 Agent Prompt 在各文件第 6 节；审稿和读者的完整 Prompt 在第 7 节。
-
-### 3. 串起整个研究流程
-
-复制 [主 AI 总调度 Prompt](prompts/orchestrator.md)，填写或直接提供 [项目输入模板](templates/project_brief.md) 所需材料：
+论文伴读：
 
 ```text
-读取 README.md、prompts/orchestrator.md 和相关 workflows 文件。
-按总调度 Prompt 推进我的项目，只执行当前需要的阶段。
-
-材料/项目位置：[填写]
-当前阶段：[只有 Idea / 已有代码数据 / 已有草稿 / 已有最终 PDF]
-本轮目标：[填写]
-必须保留的约束：[填写]
-可执行资源与预算：[填写]
-目标 venue 和具体模板：[可选]
-
-在已授权范围推进，不因材料未整理成固定目录停工。
-把不确定项列成可检验任务；每项结论、图表与文字关联实际证据版本。
+按 workflows/paper_reading_companion_workflow.md 陪我读这篇论文。
+保留英文原文，优先显示原文与讲解并排的阅读界面。
+知识问题使用 concept_explanation_workflow.md 核查并解释，必要时画直观图。
+论文：[上传 PDF 或链接]
+当前问题：[可选]
 ```
 
-已有结果可从作图或写作开始；已有最终 PDF 可直接进入审稿与读者检查。无需每次从选题重走全部阶段。
+单独科研任务读取对应 workflow 中的完整 Prompt 即可。完整科研项目使用 [科研专用调度](prompts/research_orchestrator.md) 与 [项目输入模板](templates/project_brief.md)。聊天平台不能读本地仓库时上传相应 Markdown；只贴网址不能保证模型已经读到文件。
 
-## 协作与闭环
+## 科研助手插件包
 
-```mermaid
-flowchart TD
-    A[科研探索] --> B[实现与优化]
-    B --> C[作图与写作]
-    C --> D[审稿与读者检查]
-    D --> E[主 AI 核验与修订]
-    E -->|更新实验或方法| B
-    E -->|更新图文| C
-    E -->|新版本复查| D
-    B -->|负结果或机制变化| A
+[plugins/research-assistant/](plugins/research-assistant/) 包含 9 个技能：
+
+`research-assistant`、`research-explore`、`research-implement-optimize`、`research-figures`、`research-write`、`research-review`、`research-read-pdf`、`paper-reading-companion`、`explain-research-concepts`。
+
+这是面向科研与论文学习的技能包，不是通用主 AI 的替代品。仓库顶层通用调度独立存在。每个 Skill 有触发范围、完整参考流程和 `allow_implicit_invocation: true`，表示在相关任务中允许自动选择；并非每条消息都执行科研流程。
+
+- `plugin.json`：可移植插件描述与 OpenAI 界面元数据。
+- `.agents/plugins/marketplace.json`：本仓库的插件目录，配置 `INSTALLED_BY_DEFAULT`。
+- `.codex/config.toml`：支持该机制且信任本项目的本地客户端中，配置该插件 `enabled = true`。
+
+这些是**分发配置，不是账户安装证明**。克隆仓库不会把插件自动注册到所有 GPT 会话。ChatGPT 的技能保存、插件连接和公开目录发布是不同操作；平台审核仍需正常通过。官方机制会变化，使用时查 [构建插件](https://developers.openai.com/plugins/build/plugins) 与 [连接 ChatGPT](https://developers.openai.com/plugins/deploy/connect-chatgpt)。
+
+当前支持该命令的 Codex 客户端可先核对 `codex plugin marketplace --help`，再添加仓库目录：
+
+```bash
+codex plugin marketplace add Chosen-David/agent
 ```
 
-主 AI 负责维护任务依赖和共享证据。审稿/读者 Agent 提出的疑点先核验，允许被反证驳回；确认问题后修改，再对新产物复查。不能把意见直接当事实，也不能只凭“代码或文字已经改了”关闭任务。
+之后在该客户端确认实际安装和启用状态。没有此命令或 GPT 不支持仓库插件导入时，使用平台正式的技能安装方式；不能把配置复制到未知目录就声称完成安装。仓库不提供绕过平台审核的步骤。
 
-若平台支持子 Agent，可按所需角色配置；不支持时，使用分开的执行阶段、记录和报告完成同样流程，不声称启动了不存在的 Agent。多个角色修改同一产物时，由主 AI 明确写入负责人，避免相互覆盖。
+## 生成离线伴读页
 
-## 关键约定
+需要本地 PDF、Python 和 PyMuPDF。按当前环境决定是否安装缺失依赖：
 
-- **Skill 可替换。** 先按能力检索当前候选，核实真实入口、依赖和效果。star 数、更新时间和宣传不是质量证明。
-- **方案可反思。** 实现 Agent 保留用户硬约束，主动挑战建议方案；比较算法、数据结构与执行后端，而非只做局部调参。
-- **学习先进解法。** 检索原始论文、官方实现与成熟库，建立强基线；按需关联 LeetCode 算法模式，写清真实场景与题目的对应和差异。
-- **按硬件优化。** 先识别 CPU/GPU 型号和可用特性，再选择 PTX、矩阵/异步原语或 CPU SIMD 等路径；检查编译结果、正确性和实际收益，保留必要的 fallback。
-- **性能靠测量。** 分析时间、空间及必要的通信复杂度，固定正确性与测量口径，记录负结果；最优结论限于实际探索范围与工作负载。
-- **证据贯穿全程。** 假设、预测、实测与结论分开；论文数字与图表使用同一来源，不虚构实验或引用。
-- **模板优先。** 写作优先使用用户给定的具体模板；未提供时查当前目标 venue 的官方规则，不能沿用过时页数或格式。
-- **PDF 真正逐页读。** 读者 Agent 打开最终 PDF 的每页渲染图，检查乱码、重叠、图表含义和跨页理解；提取文本、编译成功或生成截图都不等于完成阅读。
-- **工作流输出可执行。** 任务有输入、依赖、负责人、动作、验收和失败处理；缺资源则标记阻塞并继续其他可做任务。
+```bash
+python -m pip install pymupdf
+python plugins/research-assistant/skills/paper-reading-companion/scripts/build_reader.py paper.pdf --out reading/paper.html --pages 1-8
+```
 
-## Skill 安装与长期维护
+页面内嵌原页图与文本，可离线阅读；默认最多渲染前 20 页，支持 `--pages 1-3,7` 分批。`--notes notes.json` 加入 hash 匹配的解释卡片，格式见伴读工作流。渲染覆盖不等于 AI 已读覆盖。脚本不自动下载论文、不提供模型 API、不内置密钥。
 
-每份工作流第 1 节规定动态选型，第 2 节提供后备 GitHub 地址及安装说明。实现优化的后备候选覆盖 AKO4ALL、CPU 性能分析、算法模式识别、CUDA/PTX 和成熟 GPU 库选型；实际选择以当前任务和环境为准。
+## 共同约定
 
-运行时保存选型理由、查询日期、仓库入口、精确 commit、依赖和本地修改状态。新项目、平台变化、原工具失效或明确要求更新时重新评估；同一项目持续执行时复用已验证版本，不在每张图、每次修订前盲目更新。
+- **动态选型。** 先寻找当前更适合的 Skill，有证据的优势才替换后备。同项目锁定已验证版本，文献和技术事实按本轮时效核查。
+- **方案可反思。** 保留用户硬约束，比较先进算法、数据结构、成熟库和 CPU/GPU 路线；按需关联 LeetCode 模式，说明工程场景的差异。
+- **硬件与性能靠证据。** 核实型号/ISA 后选 PTX 或 CPU 原语，正确性、复杂度和实际测量分开报告；无 GPU 不声称 GPU 已验证。
+- **讲解不猜。** 区分论文原话、外部事实、推导与教学例子。图形帮助理解，不能代替证据或真实测量。
+- **模板与原页优先。** 写作遵循用户模板，最终 PDF 检查实际查看每页图片，提取文本或编译成功不等于验收。
+- **意见先核验。** 审稿/读者的疑点可能被反证推翻；确认后再改，生成新产物后复查，保留稳定 ID 和依赖。
+- **权限不扩张。** 技能启用不自动授予第三方账户、昂贵实验、后台运行或公开发布权限。
 
-后备资料最初核查于 **2026-10-01**；这不是对未来可用性的保证。第三方代码不随本仓库分发，下载和使用时遵守对应项目许可证、依赖和平台要求。仓库不提供“一次安装所有候选”的脚本，避免引入无关依赖。
+后备入口最初核查于 2026-10-01。第三方 Skill 不随本仓库分发；安装前检查其当下依赖、权限与许可证。没有“永久最好”的固定清单，也没有一次安装所有候选的脚本。
 
-## 仓库导航
+## 目录与扩展
 
 | 路径 | 用途 |
 | --- | --- |
-| [workflows/](workflows/) | 六份独立、完整的角色工作流及 Prompt |
-| [prompts/orchestrator.md](prompts/orchestrator.md) | 主 AI 的阶段选择、任务管理和跨角色交接 |
-| [templates/project_brief.md](templates/project_brief.md) | 可选的项目输入模板；不要求所有字段先填齐 |
+| [prompts/orchestrator.md](prompts/orchestrator.md) | 通用主 AI 路由 |
+| [prompts/research_orchestrator.md](prompts/research_orchestrator.md) | 科研组合调度 |
+| [workflows/](workflows/) | 按角色独立的完整规范与 Prompt |
+| [plugins/research-assistant/](plugins/research-assistant/) | 科研与论文学习的 9 技能插件包 |
+| [templates/](templates/) | 科研项目输入模板 |
+| [tests/](tests/) | 伴读生成器的边界检查 |
+| [docs/validation.md](docs/validation.md) | 本轮验证范围与限制 |
 
-早期独立文件中的作图 `workflow.md` 在本仓库统一为 `workflows/figure_workflow.md`。各工作流内提到的其他工作流文件名，均指向同一 `workflows/` 目录。
+新增领域时加入独立工作流及入口，写明触发范围、依赖、输入输出、证据标准、验收与降级方式。简单任务不必创建任务链；复杂项目按实际需要组合角色。当前还未实现的领域只作为扩展方向，不列成已有 Agent。

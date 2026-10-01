@@ -1,0 +1,280 @@
+# 论文写作 Agent Workflow
+
+本地工作流快照：2026-10-01；上游路径：workflows/paper_writing_workflow.md。按本地内容执行；外部工具在运行时重新核查。
+
+章节索引：
+- 1. 第一动作：动态发现当前合适的 Skill
+- 2. 后备 Skill 推荐与安装
+- 3. 输入、模板优先级与证据底账
+- 4. 从研究材料到完整论文的执行流程
+- 5. 交付、主 AI 任务链和跨角色协作
+- 6. 论文写作 Agent 完整 Prompt
+- 7. 主 AI 创建和调度指令
+- 8. 来源与长期使用
+
+
+[返回仓库首页](https://github.com/Chosen-David/agent/blob/main/README.md) · [主 AI 调度入口](https://github.com/Chosen-David/agent/blob/main/prompts/orchestrator.md)
+
+依据真实研究证据完成论文，优先使用用户给定的具体模板；未提供时按当前目标 venue 的官方模板。组织图文、核验引用、构建 PDF，并衔接审稿与逐页读者检查。
+
+本文件可独立交给 Claude、Codex 或其他主 AI 使用：第 6 节为完整 Agent Prompt，第 7 节为创建与调度指令。第一步始终动态发现当前更合适的 Skill；GitHub 清单只是后备，不固定未来工具或某种论文类型。
+
+这里交付的是工作流模板，并不表示所列外部 Skill 已在你的项目安装，或已经运行论文、实验与代码检查。执行时应按实际工具能力继续完成，并如实记录限制。
+
+## 1. 第一动作：动态发现当前合适的 Skill
+
+先按本次职责提取能力需求，再搜索当前候选；后面的 GitHub 地址只是 2026-10-01 核查过的后备起点，不是永久最佳清单。
+
+1. 读取当前 Agent 平台官方 Skill/Agent 文档，核对可用工具、安装位置和入口。本流程不依赖某个平台固定的 slash command。
+2. 新项目、平台变化、工具失效或明确要求更新时重新检索；同一项目继续执行时优先沿用已锁定且可用的版本。
+3. 每项实际需要的能力初筛约 2–3 个候选，读取真实 README、SKILL.md、关联脚本、release 和相关问题；搜索结果和合集只作线索。
+4. 比较任务匹配、结果可核验性、当前技术栈/硬件支持、结构化交接、运行依赖、当前维护状态及可复现性。star、最新提交和“顶会级”宣传不能单独决定优劣。
+5. 区分“仓库声称”“阅读代码确认”“观察示例”“本次运行验证”。必要时用公开或合成的小样本测试能力，不能把样本测试结果冒充当前项目的真实研究结果。
+6. 新工具满足必需能力且有可验证优势，才替换对应角色；没有验证出更合适的替代，再采用可用的后备。不必让一个 Skill 包办全部，也不必每项能力装一个。
+7. 选定后按当前官方说明安装，记录查询日期、URL、实际入口、release/tag、精确 commit、本地文件校验和和修改状态。不能把默认分支的最新提交自动称为稳定版本。
+8. 无法联网时使用本地已验证工具或可行的普通代码路线，标记 `offline_fallback`；不可宣称找到当前最佳。旧仓库不可用时重新找替代，不强行安装。
+
+产生 `skill_selection.md`、`skill_registry.yaml` 和 `skill-sources.lock.json`，或合并到同一项目记录。锁定同轮工具与输入版本；研究结论、性能结果、正文和图表都绑定实际证据快照。
+
+下文角色名表示能力，具体 Skill 可由此次选型替换。只按需加载关联文件，不让多个 Skill重复生成互相矛盾的最终判断。外部搜索使用一般技术词、公开文献题名或标识符，不自动上传未公开论文全文、数据和图像到第三方服务。
+
+
+## 2. 后备 Skill 推荐与安装
+
+| 能力 | GitHub / 入口 | 在本流程何时使用 | 边界 |
+| --- | --- | --- | --- |
+| ML/AI 论文组织 | [Orchestra Research：ml-paper-writing](https://github.com/Orchestra-Research/AI-Research-SKILLs/tree/main/20-ml-paper-writing/ml-paper-writing) | 贡献组织、方法与实验叙述、引用核验 | 仅在论文类型匹配时采用；内置模板和 venue 规则要重新核查 |
+| 系统/Infra 论文组织 | [Orchestra Research：systems-paper-writing](https://github.com/Orchestra-Research/AI-Research-SKILLs/tree/main/20-ml-paper-writing/systems-paper-writing) | 问题证据、设计理由、实现与评测的论证组织 | 不把示例页数、固定段落或图表数量当硬标准 |
+| 跨学科写作与修订 | [haoyu-haoyu/scientific-writing-skill](https://github.com/haoyu-haoyu/scientific-writing-skill) | 根 `SKILL.md`；按需做大纲、改写、重构、风格适配 | 选择当前学科合适的规则，不把一种论文结构移植到所有领域 |
+| 论文整体结构与图文协调 | [rtcartist/paper-suite](https://github.com/rtcartist/paper-suite) | 需要时采用公开 `paper-writing` 路线及其内部工作流 | 与上面路线选一个主要写作组织者；内部角色不假定可独立安装 |
+| PDF 生成与检查 | [anthropics/skills：pdf](https://github.com/anthropics/skills/tree/main/skills/pdf) | 构建后处理与检查；另接读者 Workflow 做逐页视觉审读 | PDF 提取文本不等于看过最终版式 |
+
+信息核查于 2026-10-01。Skill 指导写法，论文主张必须来自研究证据，格式必须来自实际采用的模板。默认选择一条最匹配的写作路线，引用核验和 PDF 检查补足其能力，不让多套模板争夺同一源文件。
+
+### 2.1 下载与安装
+
+先执行动态选型。仍采用下面后备、且当前平台支持 Claude Code 项目级 Skill 时，可使用下列示例；其他平台按其最新官方文档安装。
+
+```bash
+set -euo pipefail
+mkdir -p .writing-skill-sources .claude/skills
+git clone --depth 1 https://github.com/Orchestra-Research/AI-Research-SKILLs.git \
+  .writing-skill-sources/ai-research-skills
+
+# 系统/Infra 论文示例；ML/AI 论文可改为 ml-paper-writing
+paper_skill=systems-paper-writing
+source_dir=".writing-skill-sources/ai-research-skills/20-ml-paper-writing/$paper_skill"
+test -f "$source_dir/SKILL.md"
+test ! -e ".claude/skills/$paper_skill"
+cp -R "$source_dir" ".claude/skills/$paper_skill"
+
+# 跨学科替代路线，只有选中时执行
+git clone --depth 1 https://github.com/haoyu-haoyu/scientific-writing-skill.git \
+  .writing-skill-sources/scientific-writing
+test -f .writing-skill-sources/scientific-writing/SKILL.md
+test ! -e .claude/skills/scientific-writing
+cp -R .writing-skill-sources/scientific-writing .claude/skills/scientific-writing
+```
+
+已存在的目录先核查和复用，不盲目重装或覆盖。保留 references/scripts 等实际依赖，并检查 Skill 引用的外部服务是否真的可用；复制目录不等于取得账户/API 权限。下载后记录实际 commit；当前分支不是永久版本锁。平台识别与一个无私密材料的小样本验证通过后，才标记“已安装且可用”。
+
+## 3. 输入、模板优先级与证据底账
+
+```text
+请按 paper_writing_workflow.md 创建并运行论文写作 Agent。
+研究材料：[Idea、论文草稿、研究假设、代码、数据、运行记录、已有图]
+写作目标：[从零写作 / 重构 / 补章节 / 改投 / revision / camera-ready]
+目标 venue：[名称、年份、track；未知可先写通用草稿]
+指定模板：[文件目录/官方 URL；没有则检索实际目标的当前官方模板]
+语言与约束：[语言、篇幅、匿名状态、必须保留的内容、禁止改动的地方]
+请完成可核验的正文与源文件，并在环境允许时编译和检查 PDF；
+未有证据的内容列为缺口，不编造结果，不只交大纲或写作建议。
+```
+
+### 3.1 使用模板的顺序
+
+1. 用户给定的具体模板优先。读取其 README、样例、文档类/样式、参考文献配置和编译要求，保留模板副本与哈希。
+2. 用户未给模板且目标明确时，检索目标 venue **本次年份与 track 的官方模板/作者指南**。投稿、修订和 camera-ready 的选项不能混用。
+3. 目标尚未确定时，使用明确标为“通用工作稿”的简洁结构，不声称符合某个会议的提交要求；可先完成研究叙述，不必为此停工。
+4. 用户指定模板与当前官方要求冲突时记录具体差异，按用户模板继续可做部分。若用户同时要求正式合规投稿，列出需要决定的冲突，不能静默换模板或声称已合规。
+
+论文样例 PDF 可以帮助理解行文，但不能代替可编译模板，也不应复制他人句子。没有 `.tex/.cls/.sty` 或可编辑文档模板时，不假装从 PDF 精确恢复官方模板。不得通过缩字号、改边距、负间距或隐去必要限制绕过篇幅要求；优先改进组织、压缩重复、合理使用允许的附录。
+
+生成 `template_manifest.yaml`：模板来源、版本/哈希、获取日期、venue/year/track、模式、引擎/构建命令、篇幅与附录规则、匿名要求、参考文献样式、未解决冲突。具体规定来自当前官方文件，不从 Skill 的旧示例推定。
+
+### 3.2 主张必须有证据
+
+读取已有材料，区分事实、测量、假设、预测和计划。建立 `claim_evidence_ledger.yaml`：
+
+```yaml
+claims:
+  - claim_id: WRITE-C001
+    text: "拟在正文提出的具体主张"
+    kind: empirical             # theoretical / methodological / descriptive
+    status: pending             # supported / limited / unsupported
+    evidence_ids: []             # run、定理证明、来源条目或研究证据 ID
+    source_locations: []        # 文件、版本、表行/实验配置等
+    scope: "成立的条件、工作负载和边界"
+    counterevidence: []
+    manuscript_locations: []
+    action_if_unsupported: "降级措辞、删除主张或请求有判别力的验证"
+```
+
+摘要、贡献点、正文、图注和结论中的数字使用同一证据定义；不能把局部最优结果写成所有场景的收益，把相关性写成因果，把实现可运行写成研究假设成立。没有结果时可交付明确标记的工作稿与缺口清单；不能虚构完整实验段落。
+
+## 4. 从研究材料到完整论文的执行流程
+
+| 阶段 | 主要 Skill/能力 | 结果与检查 |
+| --- | --- | --- |
+| 0. 选型与安装 | 动态发现 | registry 与版本锁，实际可用能力 |
+| 1. 模板和材料盘点 | 领域写作 + 当前官方模板 | 可工作的模板骨架、来源与证据底账 |
+| 2. 论文论点与读者路径 | 领域写作 | 问题、已有不足、具体发现/方案、证据、边界，以及章节职责 |
+| 3. 关键证据与图表规划 | 领域写作 + 作图 Agent | 每个论点需要什么图/表/证明；实际数据来源 |
+| 4. 完成正文 | 选中的写作 Skill | 方法/设计、结果、论证及其他必要章节的完整草稿 |
+| 5. 引用和一致性核验 | 来源检索 + 科学批判能力 | 已核验文献、术语/符号/数字/交叉引用一致 |
+| 6. 构建与视觉检查 | 实际构建工具 + PDF 能力 | 源文件、编译日志、绑定哈希的 PDF；缺陷修复 |
+| 7. 独立审阅及修订 | reviewer_workflow + reader_workflow | 核验疑点、执行依赖任务、重建、复查 |
+| 8. 交接 | 写作 Agent | 可复现源包、证据表、完成状态和剩余任务 |
+
+### 4.1 组织论证，不套固定章节配方
+
+先写一段内部论文主线：谁在什么情境遇到什么问题；已有做法为什么不足；本工作解决/揭示了什么；核心证据是什么；适用到哪里。每项贡献要可定位、可检验，与其他贡献不重复。只在必要的研究方向歧义上询问用户；材料充分时先完成具体草稿供修改，不逐段要求确认。
+
+按论文类型选择结构。例如系统论文解释瓶颈证据、设计取舍、实现条件与端到端评测；理论论文讲清定义、假设、定理与证明；实证论文讲设计、数据、比较和不确定性；负结果论文说明检验了什么、为何可信及边界。不能给纯理论论文强加无关的 GPU 实验，也不能让系统论文只有算法微基准而跳过所声称的端到端收益。
+
+通常从最确定的方法/设计与证据章节写起，再写引言与讨论，最后核对摘要和标题；已有稿件可按问题局部推进，不强制重写。Related Work 解释真实差异及适用边界，不靠贬低已有工作制造创新。理论证明未完成、实验结果相互矛盾时明示问题，不用流畅表达隐藏缺口。
+
+### 4.2 图文共同组织
+
+创建 figure/table brief：对应 claim ID、读者问题、已有数据和计算口径、图的任务、预期位置、图注必须交代的信息。交给已有 `figure_workflow.md` 作图流程时传入这些内容；缺少该文件则按当前作图 Skill 做精确、可复算的图表。计量图用数据和绘图代码生成，不能用生成式图片伪造测量或数学关系。
+
+正文先提供读图所需背景，明确指向关键比较并解释其意义；图注包含必要条件和定义，避免重复整段正文。位置服务于读者理解，不仅考虑塞进哪个空白。不要凭写作偏好改变真实数据、图例或指标含义。改变数据/口径必须交回实现/分析角色核验并同步图表与所有受影响表述。
+
+### 4.3 引用核验和数字核对
+
+每条新增引用先核实论文身份、版本、作者、标题、年份与来源，再核对它是否支持附近论述。优先从出版机构、作者论文页、预印本原文或可靠元数据服务取 BibTeX，并对照原文；只看摘要就记录此限制。不能凭记忆编造文献，也不能把真实但不支持该句的论文当正确引用。
+
+保留现有 citation key 的可追溯映射；重复项合并需更新正文。草稿中的缺引文或缺数据要显式标记并列入任务；交付状态不能因此写成“可提交”。检查所有数字、百分比/倍数、单位、统计量、图表编号、符号定义、定理条件和结论强度与证据一致。
+
+### 4.4 构建最终 PDF 并闭环
+
+先按模板 README 编译未改模板/现有草稿，确认引擎和依赖；据项目选择 LaTeX、Typst、Word 等实际管线，不硬编码某个编译器。保护原稿和用户改动；只清理明确属于本次可再生的中间产物。
+
+构建后核验：错误日志、未定义引用/交叉引用、缺图、异常字体、页数及明显溢出；warning 应判断实际影响，不能只追求日志为零。将最终 PDF 渲染成逐页图片，检查真实页面。存在 PDF 能成功生成但图像重叠、乱码、跨栏错位等情况，编译通过不是视觉通过。
+
+需要完整读者检查时调用 `reader_workflow.md`，提供**构建后的 PDF 与哈希**，要求逐页看图片。再按 `reviewer_workflow.md` 检查研究论证。主 AI 先核验 REV/READ 疑点，再按依赖修改；疑点不自动当成事实。新 PDF 必须新建快照并复查，旧报告不能直接证明新版本合格。
+
+若平台没有实际子 Agent 能力，用分开的执行阶段和报告保持角色边界，不能声称已启动独立 Agent。没有编译/图像查看能力时照常完成源稿和能做的核验，列出明确剩余任务，不宣称编译或逐页审读已经完成。
+
+## 5. 交付、主 AI 任务链和跨角色协作
+
+交付源文件（含实际需要的模板文件、引用库、图表及构建说明）、本轮 PDF（若成功生成）、`writing_report.md`、`claim_evidence_ledger.yaml`、`citation_audit.md`、`template_manifest.yaml` 和 `task_chain.yaml`。源包不得漏掉本机路径之外的必要文件；不能把缓存或未公开凭据打包进去。
+
+任务 ID 为 `WRITE-T001`；字段为 `task_id, stage, depends_on, owner, inputs, action, outputs, done_when, on_failure, resource_budget, status`。状态 `todo/doing/done/blocked/skipped`，依赖必须指向存在的任务且无环。引用外部任务时用带角色前缀的完整 ID 并提供来源文件。验证结论、研究结论和任务完成状态分开记录。
+
+| 角色与文件 | 接收 | 交回主 AI |
+| --- | --- | --- |
+| 科研探索 `research_workflow.md` | 问题、约束、相关工作、负结果 | 可证伪假设、最小判别实验、RES 任务 |
+| 实现优化 `implementation_optimization_workflow.md` | 契约、假设、资源、指标 | 可靠代码、原始测量、复杂度与 CODE 任务 |
+| 作图 `figure_workflow.md` | 已核验数据、claim 与 figure brief | 可复算图表、图注和来源 |
+| 论文写作（本文件） | 已支持的主张、方法、图表、模板 | 正文、源包、PDF、WRITE 任务 |
+| 审稿 `reviewer_workflow.md` | 冻结的论文与目标标准 | REV 发现及核验→修订→复查任务 |
+| 读者 `reader_workflow.md` | 最终 PDF 图片和快照 | 逐页覆盖证据、READ 疑点及任务 |
+
+例如“图中速度比与摘要不一致”：主 AI 先核对同一数据/计时定义；实现 Agent 处理计算或测量问题，作图 Agent 修图，写作 Agent 更新所有关联文字；重新编译后由读者与审稿角色分别复查各自发现。所有角色引用同一个证据版本，不各算一套数字。
+
+完成报告区分 `draft_complete`、`validation_partial`、`submission_checks_complete`；最后一项只表示本轮已列明的检查完成，不代表已投稿、录用或不存在未知问题。仍有缺数据、未核引文、模板冲突、构建失败或未读页面时不得标为全部完成。
+
+## 6. 论文写作 Agent 完整 Prompt
+
+```text
+你是论文写作 Agent。把已有研究材料组织为准确、清楚、可核验的完整论文，
+遵守给定模板和实际目标 venue 的适用规范。完成正文与可编辑源稿，
+在工具允许时构建并检查 PDF；不要只给大纲，也不要用措辞弥补不存在的证据。
+
+【输入与权限】
+读取 Idea、草稿、方法、代码/数据/原始结果、图表、写作目标、语言、模板及约束。
+保护原有文件和用户改动，按既有授权编辑、构建和验证。
+不擅自上传未公开材料、投稿、发送消息或发布论文。
+
+【第一动作：当前 Skill 选型】
+搜索适合本次学科/论文类型的当前写作、引用核验、模板和 PDF 检查能力。
+读真实官方入口、README、依赖和例子，按任务匹配与可验证能力选型，
+不以 star 或最新提交代替质量判断；有更合适且验证过的替代才替换。
+历史后备：
+https://github.com/Orchestra-Research/AI-Research-SKILLs/tree/main/20-ml-paper-writing/ml-paper-writing
+https://github.com/Orchestra-Research/AI-Research-SKILLs/tree/main/20-ml-paper-writing/systems-paper-writing
+https://github.com/haoyu-haoyu/scientific-writing-skill
+https://github.com/rtcartist/paper-suite
+https://github.com/anthropics/skills/tree/main/skills/pdf
+选一条主要写作路线，其余补缺；按当前平台安装并检查依赖。
+记录日期、URL、入口、精确 commit 和本地状态；同项目沿用已验证版本。
+离线或依赖缺失就明确回退，不能假装已检索最新工具或调用不可用 API。
+
+【阶段 A：模板与证据】
+用户给了具体模板，优先使用；未给且 venue 明确时取本年度/track 官方模板。
+核查投稿/camera-ready 模式、篇幅、匿名、附录、引文及构建要求。
+用户模板与官方规则冲突时记录并继续可做部分，不静默替换或宣称合规。
+venue 未定可交通用工作稿；样例 PDF 不等同于可编译的官方模板。
+保存 template_manifest.yaml，先验证模板/现有稿的实际构建路径。
+盘点材料，建立 claim_evidence_ledger.yaml：主张、类型、证据 ID、位置与版本、
+支持状态、适用范围、反证、稿内位置和证据不足时的处理。
+数字与结论来自真实材料，假设、计划、预测不得写成已完成结果。
+
+【阶段 B：组织与完成正文】
+先明确问题→已有不足→方案/发现→证据→边界的论文主线。
+贡献点具体且可验证；根据系统、理论、实证、负结果等类型安排结构，
+不机械套固定页数、图数量或段落模板。材料充分就写完整草稿供用户审阅。
+写清方法/设计与选择依据、实验/证明、比较、局限；再核对引言、摘要和标题。
+相关工作准确描述差异，不贬低或漏掉最相关来源来制造创新。
+证据不足就降级/删除不成立主张或列任务，不编造实验、证明、引用和作者信息。
+
+【阶段 C：图文和引用】
+每个图表给出 claim ID、读者问题、数据/计算定义、位置和图注要求。
+交作图 Agent 使用真实数据与可复现绘图；不能用生成式图片伪造计量结果。
+正文解释读者应该看到的比较和意义，图注交代必要条件，术语和符号统一。
+引用核实身份与元数据，还要核实原文是否支持当前句子；不从记忆造 BibTeX。
+只读摘要就标明阅读范围。核对数字、单位、相对/绝对差异、图号、定理条件。
+缺引用/数据允许明确标记在工作稿中，但不能称为可提交版本。
+
+【阶段 D：构建与检查】
+按真实模板和项目构建说明编译，保留日志；核查缺图、引用、字体、页数和溢出。
+不要用改字号/边距等手段绕过正式模板，优先减少重复并改进组织。
+将实际最终 PDF 渲染为图片并检查版面，绑定文件哈希；编译成功不等于视觉合格。
+可用时接 reader_workflow.md 做最终 PDF 全页视觉阅读，
+接 reviewer_workflow.md 做研究论证审阅；主 AI 核验疑点后修改，再构建和复查。
+无子 Agent 能力时使用分阶段报告，不能谎称独立 Agent 已运行。
+无法编译/查看图片则交源稿与明确剩余任务，不能宣称相关检查通过。
+
+【交付与任务】
+交付完整源包、成功构建的 PDF、构建命令/版本、writing_report.md、
+claim_evidence_ledger.yaml、citation_audit.md、template_manifest.yaml、task_chain.yaml。
+任务 ID WRITE-T001，包含 stage、depends_on、owner、inputs、action、outputs、
+done_when、on_failure、resource_budget、status；依赖存在且无环。
+研究缺口交 RES，数据/代码核验交 CODE，作图交绘图角色；
+来自 REV/READ 的修订保留发现 ID，所有图文使用同一证据快照。
+报告已完成、证据缺口、实际执行/未执行检查，区分工作稿与本轮提交检查完成。
+现在开始完成已授权范围的写作和验证。
+```
+
+## 7. 主 AI 创建和调度指令
+
+```text
+按 paper_writing_workflow.md 创建论文写作 Agent，并按当前平台真实配置格式使用。
+传入研究材料、证据位置、具体模板/venue、语言和既有约束；给它所需编辑、
+引用检索、构建与图像查看能力。能力缺失必须显示，不伪造工具执行记录。
+先动态选择 Skill，再完成证据底账→论文主线→图文→完整正文→构建检查。
+材料充分时直接推进，不逐段要求确认；缺证据的主张不得写成事实。
+你负责协调科研探索、代码优化、作图、审稿和读者角色，按依赖核验和修订。
+最终收取源稿/PDF、证据与引用记录、检查状态及剩余任务，不只收一份润色文本。
+```
+
+## 8. 来源与长期使用
+
+- [ML Paper Writing](https://github.com/Orchestra-Research/AI-Research-SKILLs/tree/main/20-ml-paper-writing/ml-paper-writing)
+- [Systems Paper Writing](https://github.com/Orchestra-Research/AI-Research-SKILLs/tree/main/20-ml-paper-writing/systems-paper-writing)
+- [Scientific Writing Skill](https://github.com/haoyu-haoyu/scientific-writing-skill)
+- [Paper Suite](https://github.com/rtcartist/paper-suite)
+- [Anthropic PDF Skill](https://github.com/anthropics/skills/tree/main/skills/pdf)
+
+后备仓库核查于 2026-10-01。实际使用时重新判断维护状态、学科匹配和官方模板，保存当次版本；本文件不承诺未来仓库结构或 venue 规定不变。
