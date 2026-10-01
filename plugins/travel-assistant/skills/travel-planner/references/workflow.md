@@ -1,6 +1,6 @@
 # 旅游规划 Agent Workflow
 
-[返回首页](../README.md) · [通用调度](../prompts/orchestrator.md) · [输入模板](../templates/travel_brief.md)
+[技能入口](../SKILL.md) · [输入模板](travel_brief.md)
 
 把自然语言旅行愿望转成时间、路线、天气与营业条件都能对应的行程，按要求交付 Word、PDF、表格或聊天版。适用于约会、亲子、朋友出游、独自旅行、运动和主题旅行，以及行中改计划。只问一家店的时间时直接查询，不启动整套流程。
 

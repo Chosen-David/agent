@@ -1,24 +1,24 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "travel-assistant",
-  "version": "1.0.0",
-  "description": "旅行规划技能：结合天气、营业时间、交通、体验信息与体力约束，生成可执行且可断点续跑的行程。",
-  "author": {"name":"Chosen-David","url":"https://github.com/Chosen-David"},
+  "version": "0.1.0",
+  "description": "按用户约束、天气、营业时间与路线安排旅行，按需编排查询和文档技能交付行程。",
+  "author": {"name": "Chosen-David", "url": "https://github.com/Chosen-David"},
   "homepage": "https://github.com/Chosen-David/agent",
   "repository": "https://github.com/Chosen-David/agent",
-  "keywords": ["travel","itinerary","route","weather","trip-planning"],
+  "keywords": ["travel", "itinerary", "weather", "documents"],
   "extensions": {
     "com.openai": {
       "interface": {
-        "displayName": "旅行规划助手",
-        "shortDescription": "结合实时天气、营业信息、交通和休息约束规划真实可执行的旅行",
-        "longDescription": "适合情侣游、周末游和城市短途旅行。会优先复用酒店、集合时间和必做活动，按地理位置编排路线，明确逐段通勤与理由，加入午休和失败降级，并支持断点续跑。",
+        "displayName": "旅游助手",
+        "shortDescription": "结合住宿、指定活动、天气与营业时间规划旅行，并输出行程文档",
+        "longDescription": "包含旅游规划技能。先补全关键约束，再查询精确地点、天气与服务时间，检查路线可行性并按需生成Word等文件。不内置美团等服务连接，不自动预订或付款。",
         "developerName": "Chosen-David",
         "category": "Productivity",
         "defaultPrompt": [
-          "帮我规划这次旅行，结合天气、交通、营业时间和午休。",
-          "我已经订了酒店和部分活动，把它们合理安排进每天行程。",
-          "给我一个不过度赶场的情侣旅行计划，并输出成文档。"
+          "按我的日期、酒店和指定活动安排旅行，并生成Word行程。",
+          "我还没订酒店，请按到达点、预算和活动偏好推荐住宿区域。",
+          "结合今天的天气和景点开放情况，更新剩余行程。"
         ]
       }
     }
