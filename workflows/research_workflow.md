@@ -8,6 +8,12 @@
 
 这里交付的是工作流模板，并不表示所列外部 Skill 已在你的项目安装，或已经运行论文、实验与代码检查。执行时应按实际工具能力继续完成，并如实记录限制。
 
+## 0. Specialist backend 路由
+
+执行前读取 [backend registry](../config/backend_registry.json)。按子任务选最窄的成熟 backend：公开网页深研优先 GPT Researcher；多论文/本地科学语料证据检索优先 PaperQA2；陌生主题多视角问题与 outline 优先 STORM/Co-STORM；AI Scientist 只用于用户明确授权、隔离环境且资源预算明确的受控自动实验。
+
+外部输出按 [backend handoff](../docs/backend_handoff.md) 回流。本 workflow 不再重复实现 crawler、scientific RAG 或通用 agent runtime，但继续负责研究问题、可证伪假设、替代解释、最小判别实验、停止标准和最终研究判断。backend 不可用时使用当前可行工具降级，不为展示多 Agent 强制安装。
+
 ## 1. 第一动作：动态发现当前合适的 Skill
 
 先按本次职责提取能力需求，再搜索当前候选；后面的 GitHub 地址只是 2026-10-01 核查过的后备起点，不是永久最佳清单。
