@@ -2,7 +2,7 @@
 
 一个按**场景与能力**组织的通用 Agent 仓库。主 AI 根据用户目标选择工作流，保持通用身份；科研助手是其中一个专业组合，论文伴读与知识讲解也可以独立使用。
 
-适用于具备相应工具能力的 ChatGPT/Codex、Claude 及其他主 AI。当前提供 **8 个专业角色 + 1 个科研协调技能**，并附完整工作流、可复制 Prompt 和科研助手插件包。未来可增加编程、学习、产品等领域的独立分类，不必改写主 AI 的身份。
+适用于具备相应工具能力的 ChatGPT/Codex、Claude 及其他主 AI。当前提供科研/论文角色与独立旅行规划能力，并附完整工作流、可复制 Prompt 和插件包。未来可增加编程、学习、产品等领域的独立分类，不必改写主 AI 的身份。
 
 ## 从你的目标开始
 
@@ -13,15 +13,20 @@
 | 上传论文，边读英文原文边提问 | [论文伴读](workflows/paper_reading_companion_workflow.md) |
 | 理解概念、公式、图或技术机制 | [知识点讲解](workflows/concept_explanation_workflow.md) |
 | 单独实现代码或提高性能 | [实现与优化](workflows/implementation_optimization_workflow.md) |
+| 规划城市游、情侣旅行或周末行程 | [旅行规划](workflows/travel_planning_workflow.md) |
 | 没有匹配的工作流 | 主 AI 用通用能力处理，按需发现新 Skill，不强行转成科研任务 |
 
 **分类是导航，不是限制。** 实现优化可以用于普通软件任务；知识讲解可以脱离论文；科研项目也可以调用伴读。安装专业技能不应让所有聊天都变成科研流程。
 
 ## 模式：默认编排，灵活调用
 
-支持通用/自动、科研助手、论文伴读、代码实现与优化、知识学习等模式。模式选择默认流程，Agent 按能力跨模式复用。科研中随时调用知识讲解；伴读中可以调用代码实现；临时任务结束后回到原来的研究任务或阅读位置，不必反复切换整个模式。
+支持通用/自动、科研助手、论文伴读、代码实现与优化、知识学习、旅行规划等模式。模式选择默认流程，Agent 按能力跨模式复用。科研中随时调用知识讲解；伴读中可以调用代码实现；临时任务结束后回到原来的研究任务或阅读位置，不必反复切换整个模式。
 
 用户可直接说“进入科研模式”“陪我读这篇论文”，也可以只提出任务让主 AI 判断。模式不增加权限或预算。完整规则见 [模式与跨模式调用](prompts/modes.md)。
+
+## 旅行规划
+
+[旅行规划工作流](workflows/travel_planning_workflow.md) 会结合天气、开放/营业时间、逐段交通、用户已订酒店/活动、体力与午休约束生成可执行行程；长任务支持阶段状态与断点续跑。插件入口位于 [plugins/travel-assistant/](plugins/travel-assistant/)。
 
 ## 科研与论文生产
 
@@ -141,6 +146,7 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 | [prompts/research_orchestrator.md](prompts/research_orchestrator.md) | 科研组合调度 |
 | [workflows/](workflows/) | 按角色独立的完整规范与 Prompt |
 | [plugins/research-assistant/](plugins/research-assistant/) | 科研与论文学习的 9 技能插件包 |
+| [plugins/travel-assistant/](plugins/travel-assistant/) | 旅行规划技能插件包 |
 | [templates/](templates/) | 科研项目输入模板 |
 | [tests/](tests/) | 伴读生成器的边界检查 |
 | [docs/validation.md](docs/validation.md) | 本轮验证范围与限制 |
