@@ -8,6 +8,12 @@
 
 这里交付的是工作流模板，并不表示所列外部 Skill 已在你的项目安装，或已经运行论文、实验与代码检查。执行时应按实际工具能力继续完成，并如实记录限制。
 
+## 0. 外部调研与证据 backend
+
+前置资料搜集可优先评估 GPT Researcher；陌生主题的多视角结构和 outline 可评估 STORM；跨论文证据、引用支持或 contradiction 检查可评估 PaperQA2。先读取 [backend registry](../config/backend_registry.json)，外部材料按 [backend handoff](../docs/backend_handoff.md) 进入证据账本后再写作。
+
+外部系统生成的长文或 outline 只是草稿来源。本 workflow 继续控制用户模板、claim↔evidence 映射、图表与实验版本一致性、引用核验、LaTeX/Word 构建和最终稿；不得因为外部报告有引用就省略逐条证据检查。
+
 ## 1. 第一动作：动态发现当前合适的 Skill
 
 先按本次职责提取能力需求，再搜索当前候选；后面的 GitHub 地址只是 2026-10-01 核查过的后备起点，不是永久最佳清单。

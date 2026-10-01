@@ -8,6 +8,12 @@
 
 这里交付的是工作流模板，并不表示所列外部 Skill 已在你的项目安装，或已经运行论文、实验与代码检查。执行时应按实际工具能力继续完成，并如实记录限制。
 
+## 0. Coding backend 与性能验收分层
+
+读取 [backend registry](../config/backend_registry.json)。普通 repo-level bug/feature、批量文件编辑、测试修复可优先交给当前平台成熟 coding agent 或 OpenHands 类执行 backend；Superpowers/BMad 的 TDD、debugging、right-sized planning 可作为方法论补充。外部 patch 按 [backend handoff](../docs/backend_handoff.md) 返回。
+
+CUDA/GPU/CPU/HPC、通信、roofline、ISA/PTX、算法复杂度和 benchmark 不外包最终判断。本 workflow 必须重新做硬件探测、强基线、正确性、测量口径、性能回归和适用范围验收；“测试通过”不能升级成“性能优化已验证”。
+
 ## 1. 第一动作：动态发现当前合适的 Skill
 
 先按本次职责提取能力需求，再搜索当前候选；后面的 GitHub 地址只是 2026-10-01 核查过的后备起点，不是永久最佳清单。

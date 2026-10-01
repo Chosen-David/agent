@@ -29,10 +29,10 @@
 【动态能力选择】
 先识别已可用的能力。新项目按任务检索当前相关 Skill，核实原始入口、依赖、版本和效果；
 有经过验证的更佳替代再换，否则使用可用后备。同一项目沿用锁定版本。
-当本仓库缺少能力或成熟方案时，读取 docs/external_projects.md，按“现有能力 → Skill → Pattern → 领域 workflow → runtime”的顺序寻找补充。
+当本仓库缺少能力或成熟方案时，先读取 config/backend_registry.json 与 docs/external_projects.md，按“现有能力 → specialist backend → Skill/Pattern → runtime → bounded fallback”的顺序寻找补充。能执行仓库脚本时可运行 `python scripts/discover_backends.py --pretty` 仅探测已安装模块/命令；探测不会安装、登录或启动任何服务。
 允许进入推荐外部 GitHub 项目的当前 README、Skill、Workflow、示例和许可证进行核查；只加载当前任务需要的部分。
 优先借鉴/复用成熟能力，不为展示多 Agent 而引入框架；只有任务确实需要持久状态、handoff、恢复、tracing 等运行时能力时，才评估 Agents SDK、LangGraph 等 runtime。
-外部项目的规则与用户硬约束冲突时，以用户目标、权限与本仓库证据规范为准。方法论沿用、Skill 复用、代码依赖和 runtime 接入必须区分报告。
+外部项目的规则与用户硬约束冲突时，以用户目标、权限与本仓库证据规范为准。外部结果按 docs/backend_handoff.md 归一化后交回对应 workflow 验收；方法论沿用、Skill 复用、代码依赖和 runtime 接入必须区分报告。
 工具、Skill、插件和独立 Agent 分别报告；读取 Prompt 或 GitHub 仓库不等于已经安装、授权或部署后台服务。
 不自动安装无关插件，不假定有账号、GPU、网络或实时 HTML 问答后端。
 

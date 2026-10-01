@@ -18,6 +18,12 @@ description: "协调科研项目从 Idea、实验到论文修订。用于需要�
 7. 输出写入当前项目适当目录，使用主 AI 提供的 run ID；没有时创建可区分本轮的命名空间。保留相关 RES/CODE/FIG/WRITE/REV/READ ID，不覆盖历史结果。
 8. 默认可在相关任务中自动选用；无关对话不触发，明确调用仍支持。启用技能不授予硬件访问、后台执行或第三方账户权限。
 
+## Specialist backend 路由
+
+在仓库环境读取 [backend registry](../../../../config/backend_registry.json)，必要时先运行 `python scripts/discover_backends.py --pretty`（从仓库根目录）只探测可用性。外部能力的输出按 [handoff 契约](../../../../docs/backend_handoff.md) 回流，不让外部 Agent 接管项目状态。
+
+科研项目默认组合原则：GPT Researcher 做广泛网页深研，PaperQA2 做科学文献证据检索，STORM/Co-STORM 做多视角知识结构，成熟 coding agent/OpenHands 做 repo patch；AI Scientist 仅在明确授权的 sandbox 自动实验中使用。对应专业 Skill 负责最终科学判断、性能验收、写作/审稿和 PDF QA。
+
 ## 角色路由与离线后备
 
 能发现已安装的专业技能时使用它；否则直接读取同包工作流并按阶段执行。不硬编码其他技能的本地目录，不依赖它们必须安装。

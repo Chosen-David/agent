@@ -4,6 +4,12 @@
 
 目标：用户提供 PDF 或论文链接后，一边看英文原文，一边就当前页、段落、公式、图表提问。伴读服务用户理解；投稿前逐页质量检查另用 [reader_workflow.md](reader_workflow.md)。
 
+## 0. Specialist backend 路由
+
+执行前读取 [backend registry](../config/backend_registry.json)。单篇逐页阅读优先直接使用本 workflow 与原页；跨多篇论文、本地 scientific corpus 问答、支持/反驳证据检索时优先评估 PaperQA2；只有用户从单篇问题扩展到领域知识地图时才考虑 STORM/Co-STORM。
+
+外部结果按 [backend handoff](../docs/backend_handoff.md) 返回，但不能替代 PDF hash、物理页、公式/图表原页和 reading_state。RAG 命中不等于已看过当前页，也不等于最终 PDF 视觉内容正确。
+
 ## 1. 第一动作：动态寻找当前更合适的 Skill
 
 按运行日期查当前平台的 Skill、文档预览、PDF 阅读与交互图能力；先检查已安装能力，再查维护者的真实仓库与 SKILL.md。比较原文定位、数学识别、长论文分批阅读、证据追溯、可用依赖与实际效果。有验证优势才换，不能仅按 stars 或“最新”决定。新项目重新评估，同项目锁定已验证版本。
