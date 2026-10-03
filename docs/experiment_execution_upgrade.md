@@ -27,3 +27,16 @@ probe 不导入 GPU 框架；可选 nvidia-smi 是只读、超时、有 unknown 
 独立 review 找到并修复：首次调用计时被 reference 调用污染；resume 缺 runner/schema 身份与单次读取；累计历史验证反复运行 workload 导致预算放大（改 O(1) 闭式检查）。复审 focused suite 10/10 通过，无阻塞；全套验证另留日志。不用测试全绿声称 LLM 遵从或实际科研提升。
 
 SGlang checkout 保持只读，未运行用户 GPU、未修改/推送 sglang；论文和图形留给并行任务。建议固定默认/可选分支与 near/far/gate 配置，准确率协议不变，prefill/decode/indexer阶段/最终attention分层测量；这些仍是计划。
+
+### 实际验证记录（2026-10-03）
+
+在 `ec13603` 实现合并远端 `93c5823` 后的 `6aeaaa0` 上：
+
+- `python -m unittest discover -s tests -v`：**173/173**；[完整日志](experiment_evidence/tests.log)。包含原有静态契约与运行时测试，新增实验专项 10 项。
+- `python -m unittest discover -s apps/paper-reader/tests -v`：**3/3**；[日志](experiment_evidence/reader-tests.log)。
+- `python scripts/sync_plugin_references.py --check` 与 `git diff --check`：通过。
+- 独立 CPU fixture：2 workers、16 samples，**16/16 exact integer match**；[原始 receipt](experiment_evidence/cpu-accuracy.json)。
+- CPU performance fixture：20 组配对 raw ns，未独占，仅流程演示；[原始 receipt](experiment_evidence/cpu-performance.json)。不据此宣称科研系统性能提升。
+- 独立审查修复后通过；审查者再次核对五个 checkout、16 文件 SHA256 与采用依据一致。未执行这些上游代码。
+
+合并后采用新 supervisor 核心在私有 scratch 建立只读 release-evidence DAG，四个已有日志/receipt 的字节校验均 done；这仅核对已运行证据，未伪称核心启动实验。scheduler capabilities 为 `ready=false`（无 live serve/cloud adapter），没有启动或遗留 monitor，不影响当前会话完成发布。
