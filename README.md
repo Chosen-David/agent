@@ -18,7 +18,7 @@ python -m unittest discover -s tests -v
 python -m unittest discover -s apps/paper-reader/tests -v
 python scripts/sync_plugin_references.py --check
 python scripts/discover_backends.py --pretty
-python scripts/prepare_agent_eval.py --out /tmp/agent-eval-new-run
+python scripts/prepare_agent_eval.py --dev-eval --out /tmp/agent-eval-new-run
 ```
 
 后端探测只检查模块、命令和distribution元数据；`available`不代表模型、凭据、服务、语料或授权已就绪。测试准备脚本只产生隔离材料，需实际执行任务并复核产物后才能评分。科研引用由脚本维护；旅行入口保留最新main已对齐的共享契约，分别维护导航。

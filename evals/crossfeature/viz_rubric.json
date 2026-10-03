@@ -1,0 +1,25 @@
+{
+  "version": 3,
+  "frozen_before_execution": true,
+  "scope": "Synthetic controlled figures; program checks are instrumented fixture audits, not host model or general image understanding.",
+  "rules": {
+    "scale": "Linear bar chart baseline must include zero; logarithmic line chart is allowed when explicitly specified.",
+    "unit": "Axis unit and plotted values must match source milliseconds without silent rescaling.",
+    "uncertainty": "Each error bar must equal source sample SEM, not SD, and caption must identify SEM and sample count.",
+    "protocol": "Compared methods must use identical batch and warmup protocol.",
+    "palette": "Artist and legend colors must preserve the specified method-to-color mapping.",
+    "pdf_glyphs": "Chinese source label must survive actual PDF text extraction and actual PDF rendering must agree with its independently saved PNG; PNG success cannot certify PDF."
+  },
+  "budget": {
+    "development": 9,
+    "holdout": 3
+  },
+  "holdout_policy": "Distinct numeric data, a distinct multi-defect combination and a Chinese-render case withheld from host task input; no iteration on host output.",
+  "reporting": "One outcome per case with input/output hashes, actual reasons, FP/FN; existing declaration validator tracked separately. Host role execution requires real role provenance and is otherwise not_run.",
+  "render_threshold_before_final_run": {
+    "label_strip_width_px": 45,
+    "same_renderer_export_mae_threshold": 0.5,
+    "decision": "Pixel discrepancy above threshold is authoritative; missing extracted text is supporting evidence only."
+  },
+  "revision_reason": "Independent review of initial run required actual pixel decision. Type42 CJK rendered blank despite extractable text; use verified Type3 render and compare against PNG-stage reference. No host execution had occurred. Further independent overlay regression preserved extractable text while hiding visible glyphs, disproving the conjunction. V3 removes that text gate, preserves the previously frozen 0.5 pixel threshold and host input bytes; holdout results are regression verification after review, not pristine held-out mechanism validation."
+}

@@ -61,7 +61,7 @@ own the running process. A mock adapter never passes the real-task gate.
 ## Commands and directory interface
 
 ```bash
-python scripts/agent_eval_pipeline.py prepare --revision FULL_SHA --out /tmp/agent-eval
+python scripts/agent_eval_pipeline.py prepare --dev-eval --revision FULL_SHA --out /tmp/agent-eval
 # Optional: --repo /path/to/repo --tasks /path/tasks.json --rubric /path/rubric.json
 #           --fixture-root /path/fixtures --adapter /path/adapter.json
 python scripts/agent_eval_pipeline.py record-start --run /tmp/agent-eval \
@@ -185,3 +185,9 @@ effects actually observed.
 API equivalents are `prepare_run`, `record_start`, `collect`, `grade_attempt`,
 and `report`. See `tests/test_agent_eval_pipeline.py` for controlled behavioral
 checks; their generated receipts are test fixtures, never execution evidence.
+
+## Development-only boundary
+
+`prepare --dev-eval` is an explicit development/CI operation. Without the flag the CLI exits before creating outputs; the legacy preparer has the same gate. Python `prepare_run` is an explicit developer API, never called by ordinary runtime routing. Ordinary task execution must not load synthetic fixtures, hidden rubrics or benchmark gold. Task-required correctness, artifact/permission validation and the ten-exemplar prewriting contract remain mandatory where applicable. The flag is intent separation, not an authorization or security sandbox.
+
+The snapshot dependency allowlist includes the data-visualization validator imported by paper delivery. This closes an executable dependency, rather than treating two independently existing scripts as an integrated pipeline.

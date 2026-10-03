@@ -13,6 +13,7 @@ SNAPSHOT_DEPENDENCIES = {'docs/handoff_validation.md', 'docs/backend_handoff.md'
                          'docs/external_projects.md', 'scripts/validate_handoff.py',
                          'scripts/discover_backends.py', 'AGENTS.md',
                          'scripts/paper_exemplar_checks.py', 'scripts/validate_paper_delivery.py',
+                         'scripts/data_visualization_checks.py',
                          'docs/task_supervisor_validation.md', 'docs/experiment_execution_upgrade.md'}
 
 
@@ -416,6 +417,8 @@ def main():
     p.add_argument('--repo', type=Path, default=ROOT)
     p.add_argument('--revision', required=True)
     p.add_argument('--out', type=Path, required=True)
+    p.add_argument('--dev-eval', action='store_true',
+                   help='explicitly enable synthetic development evaluation (never ordinary task routing)')
     for flag in ('tasks', 'rubric', 'fixture-root', 'adapter'):
         p.add_argument('--' + flag, type=Path)
     for name in ('record-start', 'collect', 'grade', 'report'):
@@ -436,6 +439,8 @@ def main():
         if name == 'grade':
             p.add_argument('--grade', type=Path, required=True)
     args = parser.parse_args()
+    if args.command == 'prepare' and not args.dev_eval:
+        parser.error('prepare is development-only; pass --dev-eval explicitly')
     try:
         if args.command == 'prepare':
             result = prepare_run(args.repo, args.revision, args.out, args.tasks, args.rubric, args.fixture_root,

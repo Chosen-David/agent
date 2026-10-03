@@ -1,0 +1,70 @@
+{
+  "grader": "/root/runtime_coordination",
+  "case_id": "architecture",
+  "attempt": 1,
+  "output_hashes": {
+    "analysis.md": "4e2e0c790b9bdfa6a79560077c74f4f3724285cd7aa2627106be56f6d277c4e4",
+    "execution.md": "ce82ee34a33c75980febb5fa2191b76cc98428cb1e84b2c180b2bb2e3c85c0ec",
+    "loaded.json": "91d7da56e3088d62b49d5dd143d8d4a70d5056f71eb06451d4ea8f42f476a969",
+    "results.json": "530d0c5fa283fe302eb8ad01779ae6c826e9e86447b3e43d792ec5dfbe513128"
+  },
+  "checks": [
+    {
+      "criterion": "Trace default entry through selector to full-width consumer with exact file and line evidence",
+      "verdict": "pass",
+      "artifact_refs": [
+        "analysis.md",
+        "results.json"
+      ],
+      "evidence": [
+        "Read core.py lines 5-36 independently. analysis.md closed call/data paths 1/2/4 anchor encode, default select, index and full-width consume correctly; default independently re-executes selected=1 with width 4."
+      ]
+    },
+    {
+      "criterion": "Distinguish optional projection route and absent extension route from default execution",
+      "verdict": "pass",
+      "artifact_refs": [
+        "analysis.md",
+        "results.json"
+      ],
+      "evidence": [
+        "analysis.md paths 3/5/6 distinguishes projected=True, caller extension and missing-extension LookupError; it does not claim supplied callback was executed. Source lines 26-33 match."
+      ]
+    },
+    {
+      "criterion": "Report executed dtype and shape, including invalid width and empty inputs",
+      "verdict": "pass",
+      "artifact_refs": [
+        "analysis.md",
+        "results.json"
+      ],
+      "evidence": [
+        "Independently re-executed all seven saved inputs; all four returned dictionaries and three exception type/messages match results.json. array(f) itemsize=4; analysis distinguishes encoded float32 rounding from Python list output. Width and empty errors observed."
+      ]
+    },
+    {
+      "criterion": "Reconcile stale README with implementation; reduced indexing is not reduced final values",
+      "verdict": "pass",
+      "artifact_refs": [
+        "analysis.md",
+        "results.json"
+      ],
+      "evidence": [
+        "README claims default projection/width2/float64/accelerator contradict source. analysis.md cites exact implementing lines and explains reduced representation selects index while consume returns original encoded width4 values."
+      ]
+    },
+    {
+      "criterion": "Inspect distinct holdout inputs without modifying implementation or consulting oracle",
+      "verdict": "pass",
+      "artifact_refs": [
+        "analysis.md",
+        "results.json"
+      ],
+      "evidence": [
+        "Both holdout rows appear in results.json and were independently executed: reordered selects index0; float boundary 16777217 rounds to 16777216. All frozen input hashes unchanged. Worker execution record reports no oracle access; no independent sandbox access-trace proof beyond host worker record."
+      ]
+    }
+  ],
+  "independence": "Separate worker and reviewer; reviewer did not author architecture fixture. Re-execution is independent program evidence, not generalized LLM accuracy.",
+  "pinned_pipeline_sha256": "344eb90c2ee92ef6c6bd92d9ca985d0843ecacc908cf5e31d63222837c015d01"
+}

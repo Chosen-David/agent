@@ -11,7 +11,7 @@
 ## 原有手动准备方式
 
 1. 安装运行任务所需的实际环境。代码/文本任务只需Python；图任务需要Matplotlib；PDF/HTML任务需要PyMuPDF，PDF读者也可使用Poppler。使用当前环境支持的真实图像查看工具。不要自动安装无关后端。
-2. `python scripts/prepare_agent_eval.py --out /tmp/agent-eval-new-run`。目录必须全新，避免覆盖历史。可用 `--case research-write` 只准备受影响角色。
+2. `python scripts/prepare_agent_eval.py --dev-eval --out /tmp/agent-eval-new-run`。目录必须全新，避免覆盖历史。可用 `--case research-write` 只准备受影响角色。
 3. 为每个目录启动独立、空白上下文的执行器：读取 `skill/SKILL.md` 和 `task.txt`，只读取该目录的 `inputs/`，写入 `outputs/`。不要让执行者读取rubric、其他角色或旧产物；没有独立执行器则记录串行非隔离限制。
 4. 评审者读取 [rubric.json](rubric.json)，打开真正输出，复算数值、运行代码检查、观察图像和页面；检查执行记录，不能仅信“我已完成”。记录模型/宿主可见信息和是否重复运行，未提供的token/成本不编造。
 5. 保留失败和修订原因；变更技能后新目录、新上下文复跑。重要改动应加入不同输入的保留任务；统计提升需同条件旧版/新版重复A/B。
@@ -47,3 +47,5 @@ python scripts/sync_plugin_references.py --check
 `results/2026-10-03/execution_inputs.tar.gz` 保存每次执行真正收到的task、输入和技能快照（含首次与复跑），与哈希清单配合审计；该归档对应当时的12任务版本；当前catalog已包含代码阅读和代码组织角色，共14项。
 
 代码组织任务使用 `fixtures/organization/` 的合成目录：两组脚本/结果、历史 CODEMAP、活动输出和受保护孤儿笔记。只在任务 outputs 中生成文档与提案，输入目录不移动、不删除、不执行。
+
+本轮 [cross-feature 实测与开发边界](../docs/crossfeature_validation/README.md) 包含真实角色、程序正反例、已发现漏检和可重放证据。仅在显式开发评测/CI运行；日常任务保留必要自检但不加载合成评测或gold。

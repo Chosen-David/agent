@@ -1,0 +1,86 @@
+{
+  "case_id": "paper",
+  "layer": "real_host_artifact_judgments_independently_reviewed",
+  "positive_definition": "defect/unsupported claim requiring reject",
+  "items": [
+    {
+      "input": "item-a.md",
+      "expected": "accept",
+      "observed": "accept",
+      "classification": "true_negative",
+      "sufficient_reason": true,
+      "evidence": "judgments.md: bounded narrative with separate SVG"
+    },
+    {
+      "input": "item-b.md",
+      "expected": "reject",
+      "observed": "reject",
+      "classification": "true_positive",
+      "sufficient_reason": true,
+      "evidence": "judgments.md: byte-identical wholesale reference reuse"
+    },
+    {
+      "input": "item-c.md",
+      "expected": "accept",
+      "observed": "accept",
+      "classification": "true_negative",
+      "sufficient_reason": true,
+      "evidence": "judgments.md: attributed short quotation holdout"
+    },
+    {
+      "input": "item-d.md",
+      "expected": "reject",
+      "observed": "reject",
+      "classification": "true_positive",
+      "sufficient_reason": true,
+      "evidence": "judgments.md: audit under scientific headings"
+    },
+    {
+      "input": "learning-1.json",
+      "expected": "accept",
+      "observed": "accept",
+      "classification": "true_negative",
+      "sufficient_reason": true,
+      "evidence": "judgments.md: declaration completeness only, real-source certification rejected"
+    },
+    {
+      "input": "learning-2.json",
+      "expected": "reject",
+      "observed": "reject",
+      "classification": "true_positive",
+      "sufficient_reason": true,
+      "evidence": "judgments.md: abstract-only access"
+    },
+    {
+      "input": "learning-3.json",
+      "expected": "reject",
+      "observed": "reject",
+      "classification": "true_positive",
+      "sufficient_reason": true,
+      "evidence": "judgments.md: EX0 Fig1 missing"
+    },
+    {
+      "input": "event.json",
+      "expected": "reject",
+      "observed": "reject",
+      "classification": "true_positive",
+      "sufficient_reason": true,
+      "evidence": "judgments.md: synthetic queued dispatch cannot attest execution"
+    },
+    {
+      "input": "receipt.json",
+      "expected": "reject",
+      "observed": "reject",
+      "classification": "true_positive",
+      "sufficient_reason": true,
+      "evidence": "judgments.md: synthetic fixture start cannot attest execution"
+    }
+  ],
+  "counts": {
+    "true_positive": 6,
+    "true_negative": 3,
+    "false_positive": 0,
+    "false_negative": 0
+  },
+  "scope": "Nine decisions in one correlated host batch, not nine independent runs. Complete synthetic declaration accepted only as such; all real-source certification rejected. Does not merge with ten program cases."
+}

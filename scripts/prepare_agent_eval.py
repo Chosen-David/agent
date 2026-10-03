@@ -25,7 +25,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--case', action='append')
+    parser.add_argument('--dev-eval', action='store_true')
     args = parser.parse_args()
+    if not args.dev_eval:
+        parser.error('synthetic fixtures are development-only; pass --dev-eval explicitly')
     cases = json.loads((ROOT / 'evals/tasks.json').read_text())['cases']
     if args.case:
         missing = set(args.case) - {c['id'] for c in cases}

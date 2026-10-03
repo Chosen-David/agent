@@ -1,0 +1,63 @@
+{
+  "grader": "/root/runtime_coordination",
+  "case_id": "code-organization",
+  "attempt": 1,
+  "output_hashes": {
+    "CODEMAP.md": "93899eee8424944a48e4163d3ca863a9cc4852432a7196861d58157af6ba0e30",
+    "README.md": "329d19f80b69d87744c88520d5d825b0d980357b9f14e5f33d75ac1dd165f134",
+    "docs/README.md": "f615c1d52c97083d54dba8b4171a760f457ef95df3d2794c5a21085023be85f7",
+    "docs/reorg_proposal_2026-10-03.md": "eb6be5ac3049778070683aa86919e01be08ce4c0d02277410612e4348683c226",
+    "execution.md": "454e512c226d35ce4687ee2dc3a0b381c78d4b41fe58e4a9b196fe24344ac45b",
+    "experiments/README.md": "b608ed58adffcfef9de58c7983f00885cc8b409abb97c08d1b6ca3ae1b537565",
+    "inventory.json": "97d03372a5581fe9c171edc464206e721640a19fe718b1e2d9af9f2d20738355",
+    "loaded.json": "85baca193191508d2c25645f78c9cb6262be6f11a83cfb0b3ec21667edc85096",
+    "notes/README.md": "a891d1c466ce8d6873681974825475fec2de22d44ded01c302c4973dc9678b89",
+    "results/README.md": "d1b4f2beb6da87577bd527fcdeeb740a2fbf6129132c70b79cec4006ba0dd3d8",
+    "verification.json": "19a46deb8c901f98fcb495d5c091c1f0435271a8a4c7ff6f615ae04c2a69212e"
+  },
+  "checks": [
+    {
+      "criterion": "Preserve every input byte and all historical CODEMAP lines in order; no out-of-scope move/delete.",
+      "verdict": "pass",
+      "artifact_refs": [
+        "CODEMAP.md",
+        "inventory.json",
+        "execution.md"
+      ],
+      "evidence": [
+        "Independently recomputed every input hash against frozen manifest and every output hash against collection. CODEMAP preserves entire original as byte prefix including HIST-0. Proposal leaves active/protected files in place. No assertion about arbitrary external filesystem changes."
+      ]
+    },
+    {
+      "criterion": "Resolve alpha/beta result provenance from actual files and flag orphan uncertainty without guessing.",
+      "verdict": "pass",
+      "artifact_refs": [
+        "CODEMAP.md",
+        "inventory.json",
+        "docs/reorg_proposal_2026-10-03.md"
+      ],
+      "evidence": [
+        "Read all seven input files: alpha/beta comment line 1 matches JSON experiment/input/script. CODEMAP explicitly treats that as declared provenance, not executed experiment evidence. Proposal correctly recognizes orphan.txt protection in active_tasks.json and unknown experimental provenance; no missing historical source invented."
+      ]
+    },
+    {
+      "criterion": "Keep README documents at most ten lines and avoid redundant per-file commentary; output reviewable mapping/proposal.",
+      "verdict": "pass",
+      "artifact_refs": [
+        "README.md",
+        "experiments/README.md",
+        "notes/README.md",
+        "docs/README.md",
+        "results/README.md",
+        "docs/reorg_proposal_2026-10-03.md"
+      ],
+      "evidence": [
+        "Read five README files and counted lines: {'README.md': 6, 'experiments/README.md': 5, 'notes/README.md': 5, 'docs/README.md': 4, 'results/README.md': 6}. Brief directory summaries link CODEMAP, with no redundant per-file annotation blocks. Proposal supplies evidence/action/risk mappings, respects active output and protected file boundaries."
+      ]
+    }
+  ],
+  "independence": "Reviewer is a separate host worker context and did not author organization fixture/output. Single documentation task; archival actions untested.",
+  "provenance_gate_errors": [],
+  "qualification": "Original pinned runner SHA matches manifest and verify_run succeeds without modifying manifest. All collected output hashes independently rechecked.",
+  "pinned_pipeline_sha256": "344eb90c2ee92ef6c6bd92d9ca985d0843ecacc908cf5e31d63222837c015d01"
+}
