@@ -40,3 +40,13 @@ SGlang checkout 保持只读，未运行用户 GPU、未修改/推送 sglang；�
 - 独立审查修复后通过；审查者再次核对五个 checkout、16 文件 SHA256 与采用依据一致。未执行这些上游代码。
 
 合并后采用新 supervisor 核心在私有 scratch 建立只读 release-evidence DAG，四个已有日志/receipt 的字节校验均 done；这仅核对已运行证据，未伪称核心启动实验。scheduler capabilities 为 `ready=false`（无 live serve/cloud adapter），没有启动或遗留 monitor，不影响当前会话完成发布。
+
+## 可选 GPU runner 收尾（a223ffc 之后）
+
+在原有 CPU fixture 外新增 `scripts/gpu_adapter.py`，保持原接口不变：CLI 根据快照与请求给出设备分片 dry-run，或生成默认阻塞的项目 adapter；可信宿主显式调用 API 后可用真实 runner 执行。无需安装 torch/CUDA/后台服务，不自动加载 JSON 指定的代码。
+
+已实现准确率多设备 worker、稳定样本种子、批量 OOM 回退、覆盖检查；性能单设备顺序交错、同步计时和正确性回调；协作 flock、取得锁后再检查、运行前/中/后完整准入和撤销检查。runner ID 与 protocol SHA 必须匹配；完整资源可见性与性能排他调度器由可信宿主提供，并在回执中保留检查证据。计算进程快照和本地锁都不能证明空卡或独占，探测间隙仍可能漏掉外部活动。
+
+独立审查发现并修复 CSV 无表头/空输出/未知单位被误作可用资源的问题，以及 compute-only 查询不足以证明无外部进程的问题；复审通过。新增 **14 项 CPU/mock 测试**覆盖分片、种子不漂移、OOM、协作锁、授权撤销、晚到进程、最终调度器撤销和协议不匹配。全套 **187+3** 通过，[日志](experiment_evidence/gpu-adapter-tests.log)；离线同步与 diff 检查通过。实际执行 CLI 的 mock plan 与生成 scaffold，前者正确分片，后者明确 blocked，未探测/运行 GPU。
+
+真实 GPU/model 验证仍 `notrun`。剩余依赖：获准 UUID 与预算、项目模型 runner/冻结评测协议、完整进程/配额/内存准入 provider；性能还需实际排他调度器。宿主 adapter 负责线程安全、有限调用期限、取消、指标计算与回执落盘；本层不提供多机调度或模型断点恢复。不是新的平台框架，也没有把 CPU 合成通过改写为 GPU 通过。sglang 保持未修改/未执行。

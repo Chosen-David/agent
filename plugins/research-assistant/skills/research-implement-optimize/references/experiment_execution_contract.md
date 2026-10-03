@@ -36,8 +36,40 @@ python scripts/experiment.py run --config references/experiment.example.json --r
 python scripts/experiment.py run --config references/experiment.example.json --run-id cpu-002 --output results --resume-from results/cpu-001/checkpoint-0004.json
 ```
 
-从 skill 根目录运行；仓库内路径前缀是 `plugins/research-assistant/skills/research-implement-optimize/`。`probe --gpu` 仅尝试带超时的 `nvidia-smi` 只读查询，不分配 GPU；未知状态不当作 idle。默认不查询 GPU。`plan` 是 dry-run，不预留资源；GPU 一律 blocked，真实 owner/lease、quota/内存准入和模型 adapter 由现有项目/调度器负责接入。当前不存在自动 GPU shard 执行器。
+从 skill 根目录运行；仓库内路径前缀是 `plugins/research-assistant/skills/research-implement-optimize/`。`probe --gpu` 仅尝试带超时的 `nvidia-smi` 只读查询，不分配 GPU；未知状态不当作 idle。默认不查询 GPU。`plan` 是 dry-run，不预留资源；GPU 一律 blocked，真实 owner/lease、quota/内存准入和模型 adapter 由现有项目/调度器负责接入。此 CPU 入口不提供 GPU shard 执行；下节可选适配层由可信项目 runner 显式接入。
 
 `run` 只执行有界 CPU 整数平方和 fixture：闭式公式作独立 reference、准确率按 ID 并行、OOM 降 batch（合成故障测试）、不可覆盖的 checkpoint 与执行 receipt。`workers` 是显式预算上限（默认 1，安全帽 8），还受 affinity 和样本数限制，不自动占满主机。CPU 性能模式仅串行交错测量循环/闭式两种 toy 算法，第一调用和稳态分开，保存原始 ns、median/stdev；无独占保证，结果明确是受干扰 CPU 观测。无模型质量、真实 CUDA OOM、GPU 性能或调度器集成证明。
 
 恢复只支持准确率：从完整、校验通过的 checkpoint 在新 run ID 下继续，不修改父记录；损坏文件、协议/runner 指纹改变、样本重复或错误值拒绝；断点允许尚未完成的 ID，最终汇总缺失则拒绝。性能必须整轮重测。保留失败 receipt，不把派发/计划或半成品写 completed。checkpoint 写入途中中断可能留下坏文件，选上一个通过校验的完整 checkpoint；无外部作业超时管理器，fixture 由固定工作量上限约束。
+
+## 可选 GPU／模型 runner 适配层
+
+`experiment.py` 保持原 CPU 合成语义。另有同 skill 的 `scripts/gpu_adapter.py`，无需 torch/CUDA 依赖：CLI 只 dry-run 或生成未配置的 adapter 脚本，真实执行仅通过可信宿主显式调用 Python `run(request, adapter, lease_dir)`，不从 JSON 导入模块或执行 shell。
+
+```bash
+# skill 根目录；snapshot 来自获准的只读探测或明确标记的 mock。
+python scripts/gpu_adapter.py plan --request references/gpu-request.example.json --snapshot snapshot.json
+python scripts/gpu_adapter.py scaffold --output scripts/project_adapter.py
+```
+
+示例 UUID 和 protocol hash 必须替换。JSON 列出设备不是授权；`adapter.authorize` 每阶段读取宿主当前授权/撤销/截止时间。生成文件默认 ready=false、authorize=false、admission=false，核心方法抛 NotImplementedError，不能直接运行模型。已有项目 runner 只需接这组接口，不重写模型/指标或安装后台框架：
+
+| 接口 | 宿主必须提供的真实证据／行为 |
+| --- | --- |
+| `capabilities()` | ready、支持模式、非空 runner id、匹配请求的 protocol_sha256，以及 model/code 版本记录；未初始化不得 ready |
+| `authorize(request, uuids)` | 当前任务授权、资源范围、截止时间/取消；不读请求自称授权 |
+| `verify_admission(request, uuids)` | 完整 GPU 进程可见性（含图形/MPS 等）、资源归属/配额/内存准入；返回 allowed、真实 source 引用、observed_at。缺失/过期则 blocked |
+| `owns_exclusive_allocation(uuids)` | 性能模式每阶段向实际调度器核查排他分配有效；accuracy 不要求排他租约 |
+| `known_pids()` | 当前 run 确认拥有的进程；用于排除自身，不得把陌生进程列进去 |
+| `evaluate(uuid, ids, seeds, batch_size)` | ordered `{id,prediction}`，维持 protocol hash 所指数据/prompt/截断/解码/metric；仅确认的设备 OOM 转成 BatchOOM |
+| `run_variant(uuid, variant, seed)`／`synchronize(uuid)`／`equivalent(a,b)` | 同一工作负载 baseline/candidate、真正设备同步、独立正确性/误差判据 |
+
+plan 用新鲜、严格解析的 `nvidia-smi` 快照，在授权 UUID 清单内过滤已观察到忙碌/内存不足设备，准确率按稳定 ID 分片；性能限定单设备串行交错。计算进程查询**不证明空卡**，执行还必须通过上述完整准入接口。当前 parser 对未知表头/单位、MIG、缺字段、过期快照都 fail closed；需要相应 scheduler adapter 后再扩展，不猜测设备布局。
+
+本地 `flock` 仅协调同一主机、同一共享 lease 目录的参与者；稳定 inode 不删除，不做 TTL 强抢，异常退出释放。不是全局调度器，不能排除其他用户、不同目录、容器/NFS/多机或未合作进程。取得协作锁后重新探测，执行中和结束前再次准入；每次检查保留 snapshot 与宿主 receipt。外部进程在两次探测之间短暂出现仍可能漏检，性能结论依赖真实调度器排他保障，不能因 mock/空快照/布尔回调自称已独占。
+
+准确率每设备一个 worker，按 request 的授权清单、样本数与 batch 上限执行；按样本 ID 派生固定种子，OOM 只重试未提交 batch，不变更协议，最终按输入 ID 排序并核对覆盖。runner 必须线程安全或每设备封装独立实例，验证 batching 的数值/采样等价；调用需宿主设置有限期限和可合作取消。核心不强杀进程、不能中断挂起的外部库，不承担多机排程。
+
+性能 runner 用同步包围 wallclock，先 warmup，后保留交错 raw ns 与 correctness 检查；不将它称为 CUDA kernel events 或完整冷启动。宿主在每个 variant 内负责固定输入、状态/缓存与 seed。CLI 不运行 GPU。适配 API 返回 receipt；宿主用已有 run ID/不可覆盖写入接口保存成功或异常诊断。此适配层不实现模型 metric 聚合或跨进程断点恢复；旧 CPU fixture 的恢复能力不能外推。
+
+最小实机依赖是：获准 GPU UUID/资源预算、项目模型 runner 与冻结协议、完整资源可见性/准入 provider；性能另需真实排他调度器。当前仅 CPU mock 验证上述控制流；真实 GPU 和真实模型均 `notrun`，不能独立补造这些依赖。

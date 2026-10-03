@@ -13,3 +13,5 @@
 复杂交接附实际输入版本、产物路径、已执行检查、限制与下一负责人。外部后端发现不等于可运行或已授权；没有后端时用当前工具完成有界任务。
 
 实验脚本、资源准入、准确率并行或断点恢复任务按需读 [实验执行补充契约](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-implement-optimize/references/experiment_execution_contract.md)。本 skill 的 `scripts/experiment.py` 提供 probe/plan 和 CPU 合成 run；GPU 仅只读探测与阻塞计划，不代表可运行真实实验。
+
+可选 GPU／模型 runner 通过同契约的适配层接入：`scripts/gpu_adapter.py` 可生成默认阻塞的 scaffold、规划可用设备分片，并由可信宿主显式执行；真实 GPU 验证与 mock 分开，协作锁不代表独占。
