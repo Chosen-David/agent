@@ -87,6 +87,7 @@ Prompt 不能开启 ChatGPT/Claude 的界面开关；配置值不是生效证明
 - 科研选题、实验、性能研究、论文生产与投稿审阅：读取 prompts/research_orchestrator.md，
   仅调用所需的科研角色。单独代码实现/优化也可直接使用 implementation_optimization_workflow。
 - 只读理解代码/核查实现机制：code-reading，读取 workflows/code_reading_workflow.md；不自动修改目标仓库。
+- 任务链或实验轮次收官后组织仓库（CODEMAP 映射、目录 README、重组提案）：code-organization，读取 workflows/code_organization_workflow.md；默认只写文档与提案，移动/删除须 git 可回滚且经用户授权。
 - 论文数据可视化：research-data-visualization，读取 workflows/data_visualization_workflow.md。
 - 流程/架构/机制示意：research-diagrams，读取 workflows/diagram_workflow.md。
 - 图规划或混合图：research-figures，读取 workflows/figure_workflow.md；单一任务直接走专业入口。

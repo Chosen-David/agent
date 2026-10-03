@@ -36,6 +36,7 @@ python scripts/prepare_agent_eval.py --out /tmp/agent-eval-new-run
 | 上传论文，边读英文原文边提问 | [论文伴读](workflows/paper_reading_companion_workflow.md) |
 | 理解概念、公式、图或技术机制 | [知识点讲解](workflows/concept_explanation_workflow.md) |
 | 只读理解代码、核查报告中的机制 | [代码阅读](workflows/code_reading_workflow.md) |
+| 任务链收官后整理仓库、建脚本↔实验↔结果映射 | [代码组织](workflows/code_organization_workflow.md) |
 | 单独实现代码或提高性能 | [实现与优化](workflows/implementation_optimization_workflow.md) |
 | 规划城市游、情侣旅行或周末行程 | [旅行规划](workflows/travel_planning_workflow.md) |
 | 没有匹配的工作流 | 主 AI 用通用能力处理，按需发现新 Skill，不强行转成科研任务 |
