@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "analysis_json_required": {
+    "schema_version": "integer",
+    "project_id": "string",
+    "input_version": "string",
+    "source_files": "array of objects with path and sha256",
+    "aggregate_file": "object with path and sha256",
+    "findings": "array of evidence-bounded findings referring to workload rows",
+    "limitations": "array of strings",
+    "invalidated_work": "array of previous work IDs",
+    "retained_work": "array of previous work IDs"
+  },
+  "aggregate_csv_columns": [
+    "workload",
+    "n_baseline",
+    "n_candidate",
+    "baseline_median_ms",
+    "candidate_median_ms",
+    "speedup_ratio",
+    "latency_reduction_pct"
+  ],
+  "formulas": {
+    "speedup_ratio": "baseline_median_ms / candidate_median_ms",
+    "latency_reduction_pct": "100 * (baseline_median_ms - candidate_median_ms) / baseline_median_ms"
+  },
+  "handoff_rule": "Coordinator produces outputs/analysis.json and outputs/aggregate.csv. Host copies those actual files to writer inputs/ without editing values. A hash mismatch or missing file blocks dependent writing."
+}

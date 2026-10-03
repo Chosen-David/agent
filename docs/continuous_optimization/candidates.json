@@ -54,6 +54,60 @@
       "benefit_hypothesis": "read_bytes loads entire artifacts; iterative elimination repeatedly scans a chain",
       "cost": "Small, but profile representative artifacts first",
       "minimum_experiment": "Compare peak memory/time on bounded synthetic large artifacts and DAGs with identical validation decisions; no speculative performance claim."
+    },
+    {
+      "id": "CO-005",
+      "status": "adopted_after_program_tests_and_host_smoke",
+      "source": "rounds/2026-10-03-r2/papers.md",
+      "idea": "Bound host execution, actual artifact grading and fixed denominator in a lightweight pipeline",
+      "files": [
+        "scripts/agent_eval_pipeline.py",
+        "docs/agent_eval_pipeline.md"
+      ],
+      "minimum_experiment": "Program negative controls plus all-role real host smoke; distinguish execution from correctness",
+      "evidence": "rounds/2026-10-03-r2/round.md",
+      "measured_result": "25/25 program acceptance controls; 19 effective host model cases independently accepted, including 14 roles. No model success-rate improvement or cost gain claimed."
+    },
+    {
+      "id": "CO-006",
+      "status": "queued",
+      "source": "rounds/2026-10-03-r2/papers.md",
+      "idea": "Evidence-driven bounded repair, retain first/final and wrong-edit rate",
+      "files": [
+        "evals/"
+      ],
+      "minimum_experiment": "Same-budget current/retry/feedback three-arm test with heldout final checks"
+    },
+    {
+      "id": "CO-007",
+      "status": "queued",
+      "source": "rounds/2026-10-03-r2/papers.md",
+      "idea": "Measure selective Skill loading before reducing mirrored reference content",
+      "files": [
+        "scripts/sync_plugin_references.py",
+        "config/role_registry.json"
+      ],
+      "minimum_experiment": "Same task/model; trace loaded files and hard constraints; unknown token metrics remain unknown"
+    },
+    {
+      "id": "CO-008",
+      "status": "queued",
+      "source": "rounds/2026-10-03-r2/papers.md",
+      "idea": "Promote workflow memories only after independent acceptance and heldout regression",
+      "files": [
+        "evals/"
+      ],
+      "minimum_experiment": "Separate extraction from frozen evaluation; stale tool and false-success counterexamples"
+    },
+    {
+      "id": "CO-009",
+      "status": "queued",
+      "source": "rounds/2026-10-03-r2/papers.md",
+      "idea": "Measure task utility and forbidden side effects separately",
+      "files": [
+        "evals/"
+      ],
+      "minimum_experiment": "Paired clean/contaminated synthetic inputs, final artifacts and action trace; no real external side effects"
     }
   ]
 }

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "smoke-main-general",
+      "role": "main-general",
+      "entry_type": "prompt",
+      "skill": "prompts/orchestrator.md",
+      "prompt": "我和室友平摊日用品：纸巾18元，清洁剂26元，两袋垃圾袋每袋9元。我先付了42元，室友付了20元。算一下他还应转给我多少，并写一句自然的微信提醒，语气轻松。把计算和提醒保存到 outputs/answer.txt 即可。",
+      "fixtures": []
+    },
+    {
+      "id": "smoke-main-route",
+      "role": "main-route",
+      "entry_type": "prompt",
+      "skill": "prompts/orchestrator.md",
+      "prompt": "帮我看看 reading_excerpt.pdf。我现在读到物理第2页，卡在8变11这里：为什么会增加3？那最近窗口是不是永远更大？先围绕这一页解释，记住我的阅读位置，再给一个能离线打开、原页与解释并排的页面；我下一次想接着问。材料是合成教学例子，无需联网。产物放 outputs/。",
+      "fixtures": [
+        "reading_excerpt.pdf"
+      ]
+    },
+    {
+      "id": "chain-coordinator",
+      "role": "research-assistant",
+      "skill": "plugins/research-assistant/skills/research-assistant/SKILL.md",
+      "prompt": "推进 chain_project.json 的项目，原始合成测量见 chain_latencies.csv。请实际用CPU算出各工作负载的两版本中位延迟、speedup ratio和延迟降幅，按 handoff_fields.json 输出 outputs/analysis.json 与 outputs/aggregate.csv，供下一位写作者直接使用；保留输入及聚合文件的真实SHA256。说明旧工作失效与可保留部分，并写明数据能支持的结论和限制。本节点只完成分析与交接，不代替下一位写作，不联网或新增实验。",
+      "fixtures": [
+        "chain_project.json",
+        "chain_latencies.csv",
+        "handoff_fields.json"
+      ]
+    },
+    {
+      "id": "chain-writer",
+      "role": "research-write",
+      "skill": "plugins/research-assistant/skills/research-write/SKILL.md",
+      "prompt": "用前一节点实际交来的 inputs/analysis.json 与 inputs/aggregate.csv，写中文结果段落及英文短摘要，分别保存为 outputs/results_zh.md、outputs/abstract_en.md，并保存 outputs/claim_evidence.json，列明每条定量主张对应的输入文件及工作负载行。先核对analysis中聚合文件SHA256与当前文件一致；若文件缺失或版本/哈希不一致，记录阻塞，不能自行补造交接。交付是基于合成数据的工作稿，无需完整论文/PDF，不联网、不补文献、不运行新实验。",
+      "fixtures": [],
+      "depends_on": [
+        "chain-coordinator"
+      ],
+      "handoff_inputs": [
+        "analysis.json",
+        "aggregate.csv"
+      ]
+    },
+    {
+      "id": "heldout-travel",
+      "role": "travel-planner",
+      "skill": "plugins/travel-assistant/skills/travel-planner/SKILL.md",
+      "prompt": "仅依据 travel_revision.json 的合成事实，先完成原预约的一日安排，再应用摄影改约生成新版。请分别交时间表、逐段交通与简短理由、双人费用明细和范围，并交代未知项。我要能看出午休怎么被保留下来。产物放 outputs/，无需联网、Word或实际预订。",
+      "fixtures": [
+        "travel_revision.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+# Host worker protocol
+
+The controller supplies RUN, CASE, ACTOR and the exact role entry path. Execute the task as a real model worker in a fresh context; do not grade your own work. Use only the pinned repository role, not an installed same-name replacement.
+
+1. Read `RUN/cases/CASE/task.txt`. Read the role entry in `RUN/snapshot/`, its execution supplement and the task-relevant local workflow dependencies before doing the task. For main-AI cases, enter through the supplied general orchestrator and choose the appropriate capability yourself.
+2. Wait for `RUN/cases/CASE/attempts/0001/start.json` to exist before creating outputs (brief bounded polling is allowed). Do not create the attempt directory yourself. The host records its actual dispatch response; workers must not manufacture host receipts.
+3. Read only the case inputs and relevant snapshot material. Do not read the run rubric, other cases, previous outputs, source repository evaluation answers, or controller metadata. Inputs and snapshot are read-only. This is a context/access instruction, not an OS sandbox claim.
+4. Write only to `RUN/cases/CASE/attempts/0001/outputs/`. A task's `outputs/` means that directory. Before task execution save `loaded.json` with actually read snapshot paths, hashes, scope and observation time. Record additional dependencies when actually read; never invent a read or tool event.
+5. Carry out the task with real available tools. Execute required CPU checks. For image/PDF tasks, actually render and open the required images/pages through image tools. Save editable sources and useful execution outputs. Avoid modifying output files after reporting completion. Use `python -B` or `PYTHONDONTWRITEBYTECODE=1` to avoid changing read-only inputs through bytecode caches.
+6. Save `execution.md`: real commands, observed results, visual observations when relevant, and limitations. It is an executor account, not independent proof; the reviewer will directly inspect artifacts. Do not fabricate backend execution, metrics or hidden reasoning logs.
+7. No network, payments, booking, GPU, external runtime installation, or nested subagents for these synthetic smoke tasks. Available local Python, rendering and file tools are allowed. Target six minutes; if essential capability is missing, explain the blocker rather than claim success.
+8. Return actual artifact paths and a concise execution summary. Do not assign pass/fail or inspect the rubric.

@@ -1,122 +1,130 @@
 {
- "schema_version": 1,
- "cases": [
-  {
-   "id": "research-assistant",
-   "skill": "plugins/research-assistant/skills/research-assistant/SKILL.md",
-   "prompt": "按 project.json 和 measurements.csv 推进科研项目。列出受输入版本更新影响的工作和保留工作，给可执行依赖任务及验收。只做现有数据能完成的分析，不虚构新实验。",
-   "fixtures": [
-    "project.json",
-    "measurements.csv",
-    "concept.txt"
-   ]
-  },
-  {
-   "id": "research-explore",
-   "skill": "plugins/research-assistant/skills/research-explore/SKILL.md",
-   "prompt": "根据 manuscript.md 与 measurements.csv 判断这个优化方向是否应继续。提出机制假设、最强替代解释及最小判别实验，明确主要指标、停止条件与资源。只分析提供的合成材料，不联网查新，不认定首创。",
-   "fixtures": [
-    "manuscript.md",
-    "measurements.csv"
-   ]
-  },
-  {
-   "id": "research-implement-optimize",
-   "skill": "plugins/research-assistant/skills/research-implement-optimize/SKILL.md",
-   "prompt": "修复 buggy.py 的 moving_average，保留接口。写并运行独立正确性检查，覆盖边界与不修改输入；再分析 measurements.csv 能支持的性能结论。不跑 GPU，不编性能实测。交修复代码、检查和简短报告。",
-   "fixtures": [
-    "buggy.py",
-    "measurements.csv"
-   ]
-  },
-  {
-   "id": "research-figures",
-   "skill": "plugins/research-assistant/skills/research-figures/SKILL.md",
-   "prompt": "用 measurements.csv 与 architecture.json 生成两panel科研混合图：A为方法示意，B为性能结果。交各panel与整图可编辑源、SVG/PNG、caption、路由与整图QA。只用提供材料，不联网、不调用独立子Agent，不增加架构边或实验数据；实际打开最终整图检查。",
-   "fixtures": [
-    "measurements.csv",
-    "architecture.json"
-   ]
-  },
-  {
-   "id": "research-write",
-   "skill": "plugins/research-assistant/skills/research-write/SKILL.md",
-   "prompt": "根据 manuscript.md 与 measurements.csv 写中文结果段落和英文摘要，并附主张证据表。目标为通用工作稿，无需完整论文/PDF。准确表达收益、退化和限制；不增加文献或实验。",
-   "fixtures": [
-    "manuscript.md",
-    "measurements.csv"
-   ]
-  },
-  {
-   "id": "research-review",
-   "skill": "plugins/research-assistant/skills/research-review/SKILL.md",
-   "prompt": "审阅 manuscript.md 和 measurements.csv 的科学主张，给有位置的意见、证据和核验任务，允许撤销被附录解答的疑点。仅材料内审阅，不联网，不改原稿，不给录用概率。",
-   "fixtures": [
-    "manuscript.md",
-    "measurements.csv"
-   ]
-  },
-  {
-   "id": "research-read-pdf",
-   "skill": "plugins/research-assistant/skills/research-read-pdf/SKILL.md",
-   "prompt": "逐页审读 paper.pdf，包括附录。实际渲染并打开每页，交 PDF hash、逐页覆盖、可定位发现及核验任务；只用最终 PDF，不查看 make_pdf.py 或别的输入材料。",
-   "fixtures": [
-    "paper.pdf"
-   ]
-  },
-  {
-   "id": "paper-reading-companion",
-   "skill": "plugins/research-assistant/skills/paper-reading-companion/SKILL.md",
-   "prompt": "陪我读 paper.pdf 的物理第2页。我只想知道输出为何从5到7.5，以及这能证明RoPE在所有模型里都放大误差吗？看原页和必要上下文，保存当前位置与解释卡片，生成离线双栏阅读页，不要做全篇审稿。",
-   "fixtures": [
-    "paper.pdf"
-   ]
-  },
-  {
-   "id": "explain-research-concepts",
-   "skill": "plugins/research-assistant/skills/explain-research-concepts/SKILL.md",
-   "prompt": "回答 concept.txt 的问题，用给定教学模型推导与验算。无需联网；不把例子说成某篇论文实测。给中文短答案、公式、反例/边界。",
-   "fixtures": [
-    "concept.txt"
-   ]
-  },
-  {
-   "id": "travel-planner",
-   "skill": "plugins/travel-assistant/skills/travel-planner/SKILL.md",
-   "prompt": "仅用 travel.json 的合成事实规划一日行程，再应用 amendment，交两个版本的时间表、逐段通勤理由、双人预算和未知项。无需联网或Word，不实际预订，不把合成店铺说成真实商户。",
-   "fixtures": [
-    "travel.json"
-   ]
-  },
-  {
-   "id": "research-data-visualization",
-   "skill": "plugins/research-assistant/skills/research-data-visualization/SKILL.md",
-   "prompt": "用 measurements.csv 绘制论文结果图，交可编辑源、SVG/PNG、图注与数值/视觉检查。展示全部数据并区分计时范围，实际打开最终图。只用本地材料，无需联网或新增统计分析。",
-   "fixtures": [
-    "measurements.csv"
-   ]
-  },
-  {
-   "id": "research-diagrams",
-   "skill": "plugins/research-assistant/skills/research-diagrams/SKILL.md",
-   "prompt": "将 architecture.json 的拟议方法画成可编辑科研示意图。交SVG主源、PNG、caption和节点/边语义契约，实际渲染并查看最终图。不要补充输入未声明的连接，不联网、不执行模型。",
-   "fixtures": [
-    "architecture.json"
-   ]
-  },
-  {
-   "id": "code-reading",
-   "skill": "plugins/research-assistant/skills/code-reading/SKILL.md",
-   "prompt": "只读分析 synthetic_selector.py，对照其模块叙述，追踪 run 到最终 full_score。核对默认/可选投影、预算/范围、跳过含义、强制集合与最终计算。给源码行证据、调用与数据边和未知项。禁止修改输入；不运行目标，不把静态推断称实测。",
-   "fixtures": [
-    "synthetic_selector.py"
-   ]
-  },
-  {
-   "id": "code-organization",
-   "skill": "plugins/research-assistant/skills/code-organization/SKILL.md",
-   "prompt": "给定含多个实验脚本与结果 JSON 的目录，产出 CODEMAP 映射表与目录 README；对孤儿文件给提案不删除。验收：映射行有可核对锚点，README 不超过 10 行，无文件被移动或删除。",
-   "fixtures": []
-  }
- ]
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "research-assistant",
+      "skill": "plugins/research-assistant/skills/research-assistant/SKILL.md",
+      "prompt": "按 project.json 和 measurements.csv 推进科研项目。列出受输入版本更新影响的工作和保留工作，给可执行依赖任务及验收。只做现有数据能完成的分析，不虚构新实验。",
+      "fixtures": [
+        "project.json",
+        "measurements.csv",
+        "concept.txt"
+      ]
+    },
+    {
+      "id": "research-explore",
+      "skill": "plugins/research-assistant/skills/research-explore/SKILL.md",
+      "prompt": "根据 manuscript.md 与 measurements.csv 判断这个优化方向是否应继续。提出机制假设、最强替代解释及最小判别实验，明确主要指标、停止条件与资源。只分析提供的合成材料，不联网查新，不认定首创。",
+      "fixtures": [
+        "manuscript.md",
+        "measurements.csv"
+      ]
+    },
+    {
+      "id": "research-implement-optimize",
+      "skill": "plugins/research-assistant/skills/research-implement-optimize/SKILL.md",
+      "prompt": "修复 buggy.py 的 moving_average，保留接口。写并运行独立正确性检查，覆盖边界与不修改输入；再分析 measurements.csv 能支持的性能结论。不跑 GPU，不编性能实测。交修复代码、检查和简短报告。",
+      "fixtures": [
+        "buggy.py",
+        "measurements.csv"
+      ]
+    },
+    {
+      "id": "research-figures",
+      "skill": "plugins/research-assistant/skills/research-figures/SKILL.md",
+      "prompt": "用 measurements.csv 与 architecture.json 生成两panel科研混合图：A为方法示意，B为性能结果。交各panel与整图可编辑源、SVG/PNG、caption、路由与整图QA。只用提供材料，不联网、不调用独立子Agent，不增加架构边或实验数据；实际打开最终整图检查。",
+      "fixtures": [
+        "measurements.csv",
+        "architecture.json"
+      ]
+    },
+    {
+      "id": "research-write",
+      "skill": "plugins/research-assistant/skills/research-write/SKILL.md",
+      "prompt": "根据 manuscript.md 与 measurements.csv 写中文结果段落和英文摘要，并附主张证据表。目标为通用工作稿，无需完整论文/PDF。准确表达收益、退化和限制；不增加文献或实验。",
+      "fixtures": [
+        "manuscript.md",
+        "measurements.csv"
+      ]
+    },
+    {
+      "id": "research-review",
+      "skill": "plugins/research-assistant/skills/research-review/SKILL.md",
+      "prompt": "审阅 manuscript.md 和 measurements.csv 的科学主张，给有位置的意见、证据和核验任务，允许撤销被附录解答的疑点。仅材料内审阅，不联网，不改原稿，不给录用概率。",
+      "fixtures": [
+        "manuscript.md",
+        "measurements.csv"
+      ]
+    },
+    {
+      "id": "research-read-pdf",
+      "skill": "plugins/research-assistant/skills/research-read-pdf/SKILL.md",
+      "prompt": "逐页审读 paper.pdf，包括附录。实际渲染并打开每页，交 PDF hash、逐页覆盖、可定位发现及核验任务；只用最终 PDF，不查看 make_pdf.py 或别的输入材料。",
+      "fixtures": [
+        "paper.pdf"
+      ]
+    },
+    {
+      "id": "paper-reading-companion",
+      "skill": "plugins/research-assistant/skills/paper-reading-companion/SKILL.md",
+      "prompt": "陪我读 paper.pdf 的物理第2页。我只想知道输出为何从5到7.5，以及这能证明RoPE在所有模型里都放大误差吗？看原页和必要上下文，保存当前位置与解释卡片，生成离线双栏阅读页，不要做全篇审稿。",
+      "fixtures": [
+        "paper.pdf"
+      ]
+    },
+    {
+      "id": "explain-research-concepts",
+      "skill": "plugins/research-assistant/skills/explain-research-concepts/SKILL.md",
+      "prompt": "回答 concept.txt 的问题，用给定教学模型推导与验算。无需联网；不把例子说成某篇论文实测。给中文短答案、公式、反例/边界。",
+      "fixtures": [
+        "concept.txt"
+      ]
+    },
+    {
+      "id": "travel-planner",
+      "skill": "plugins/travel-assistant/skills/travel-planner/SKILL.md",
+      "prompt": "仅用 travel.json 的合成事实规划一日行程，再应用 amendment，交两个版本的时间表、逐段通勤理由、双人预算和未知项。无需联网或Word，不实际预订，不把合成店铺说成真实商户。",
+      "fixtures": [
+        "travel.json"
+      ]
+    },
+    {
+      "id": "research-data-visualization",
+      "skill": "plugins/research-assistant/skills/research-data-visualization/SKILL.md",
+      "prompt": "用 measurements.csv 绘制论文结果图，交可编辑源、SVG/PNG、图注与数值/视觉检查。展示全部数据并区分计时范围，实际打开最终图。只用本地材料，无需联网或新增统计分析。",
+      "fixtures": [
+        "measurements.csv"
+      ]
+    },
+    {
+      "id": "research-diagrams",
+      "skill": "plugins/research-assistant/skills/research-diagrams/SKILL.md",
+      "prompt": "将 architecture.json 的拟议方法画成可编辑科研示意图。交SVG主源、PNG、caption和节点/边语义契约，实际渲染并查看最终图。不要补充输入未声明的连接，不联网、不执行模型。",
+      "fixtures": [
+        "architecture.json"
+      ]
+    },
+    {
+      "id": "code-reading",
+      "skill": "plugins/research-assistant/skills/code-reading/SKILL.md",
+      "prompt": "只读分析 synthetic_selector.py，对照其模块叙述，追踪 run 到最终 full_score。核对默认/可选投影、预算/范围、跳过含义、强制集合与最终计算。给源码行证据、调用与数据边和未知项。禁止修改输入；不运行目标，不把静态推断称实测。",
+      "fixtures": [
+        "synthetic_selector.py"
+      ]
+    },
+    {
+      "id": "code-organization",
+      "skill": "plugins/research-assistant/skills/code-organization/SKILL.md",
+      "prompt": "只读盘点 inputs/organization 提供的合成目录，不执行任何目标脚本。先展示映射供调用方审阅，再在 outputs/ 交付增量 CODEMAP.md（保留历史行顺序）、必要目录 README（各不超过10行）和重组提案。核对活跃脚本、结果与真实来源，不猜未知项；孤儿只提案，不移动或删除任何输入。活动输出路径在 active_tasks.json。非交互场景：向父控制器展示表格后可在已授权的outputs中落盘文档。",
+      "fixtures": [
+        "organization/experiments/alpha.py",
+        "organization/experiments/beta.py",
+        "organization/results/alpha.json",
+        "organization/results/beta.json",
+        "organization/notes/orphan.txt",
+        "organization/CODEMAP.md",
+        "organization/active_tasks.json"
+      ]
+    }
+  ]
 }
