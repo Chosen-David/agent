@@ -37,3 +37,7 @@ Independent reviewer additionally tried 100 malformed field combinations without
 Task DAG was validated privately against agent_runtime.core. The host coding-action adapter and persistent scheduler are not bound, so no background monitor was claimed or started; authorized work continued in this active session.
 
 Latest user steering pauses manuscript work and prioritizes agents. Added a small-difference/noise handoff to research-review with location, delta, units, replication/noise gaps and a minimal discriminatory remeasurement plan. No experiment/reviewer core was modified, leaving the concurrent statistics upgrade independent. Empirical superiority declarations require traceable uncertainty plus reviewer statistical evidence; the program does not certify the test or estimate noise.
+
+## PDF/CJK follow-up
+
+Task owner reports a real worker incident: PNG looked correct but PDF CJK glyphs failed on a font/export path; a TrueType subset probe resolved that worker case. This history was supplied, not reproduced in this repository. Added actual per-chart/per-language PDF render, glyph and font-report declarations bound to the export hash; PNG-only success, stale review, missing font evidence and glyph failure cannot complete. No default font hack or global configuration change. Synthetic regression does not reproduce or claim to solve all font failures. Follow-up focused count: 32.
