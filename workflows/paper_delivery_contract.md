@@ -56,3 +56,5 @@
 记录 schema_version=1、requested_artifact、requested_languages、delivered_artifact、target（用户目标原文）、status（validation_partial / blocked / submission_checks_complete）、bindings、versions、blockers。bindings 每条含 state（completed / not_run / blocked）；未执行角色写 reason，不补造加载或回执，且不能用于完成声明。已执行角色含 start_receipt、result_receipt（path/sha256）、role、actor、mode（independent / staged）、loaded_before_execution=true、files（path/sha256）、revision、read_scope。files 应覆盖 SKILL.md、execution.md、workflow/orchestrator 与本契约；文件路径相对私密 RUN_DIR 的实际冻结指令副本。versions 每条含 language、snapshot（path/sha256）、checks、page_count、read_pages、reader_snapshot_sha256、reviewer_snapshot_sha256；checks 含上述七项及 format，每项含 verdict、location、reason、evidence。blockers 每条含 claim、missing、owner、next_action、resume_when。不把记录中的自述等同于执行证明；随附宿主工具记录，主 AI 检查时间顺序和文件内容。
 
 记录扩展：drafting_started、exemplar_learning 及每语言 implementation_map，字段见 [范文学习接口](paper_exemplar_learning.md)。bindings.files 同时冻结本前置规范；checks 包含 blueprint_application。
+
+数据图任务同时按 [数据图学习接口](data_visualization_learning.md) 记录 data_visualization_requested、data_visual_design、每语言 data_implementation_map 及 data_scientific_fidelity/data_visual_design 两项审阅；不能由架构图学习代替。

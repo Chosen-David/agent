@@ -22,6 +22,8 @@ measured、simulated、theoretical 分开。理论曲线记录公式、参数、
 
 ## 3. 美观设计与制作
 
+制作/全图重设计前执行 [数据图范文学习](data_visualization_learning.md)，根据真实相关图的比较任务和八维分析先形成 brief，再动笔；局部改图可复用已验证方案，不能把十篇要求泛化到所有 plot。
+
 完成简短设计说明再写图：主比较、最终尺寸/长宽比、typography、palette、visual_encoding、legend 和 whitespace。按共享规则主动设计，不只套默认主题。
 
 - 数据是视觉主体：轴线/网格退居辅助，数据线、点和误差区间权重清晰且克制；不通过夸张轴限或尺寸制造优势。柱长编码通常从零起；特殊坐标/截断需有科学理由和显著说明。

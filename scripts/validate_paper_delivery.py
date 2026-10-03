@@ -8,6 +8,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from paper_exemplar_checks import validate_learning
+from data_visualization_checks import validate_data_design
 
 ROLES = ('research-assistant', 'research-write', 'research-review', 'research-read-pdf')
 CRITERIA = ('artifact_fit', 'contribution', 'method', 'evidence', 'related_work',
@@ -39,6 +40,8 @@ def validate(record, root):
     need(text(record.get('target')), 'missing user target')
     complete = record.get('status') == 'submission_checks_complete'
     validate_learning(record, need, text, file_ok)
+    learning = record.get('exemplar_learning')
+    validate_data_design(record, learning if isinstance(learning, dict) else {}, need, text, file_ok)
     need(record.get('status') in ('validation_partial', 'blocked', 'submission_checks_complete'), 'invalid status')
     need(record.get('delivered_artifact') in ('working_paper', 'submission_paper'), 'audit cannot replace paper')
     if complete:
@@ -94,6 +97,8 @@ def validate(record, root):
         checks = v.get('checks') if isinstance(v.get('checks'), dict) else {}
         criteria = CRITERIA + (('diagram_scientific_accuracy', 'diagram_visual_design')
                                if record.get('architecture_requested') else ())
+        if record.get('data_visualization_requested'):
+            criteria += ('data_scientific_fidelity', 'data_visual_design')
         for criterion in criteria:
             c = checks.get(criterion)
             if not isinstance(c, dict):
@@ -105,6 +110,8 @@ def validate(record, root):
                 need(c.get('verdict') == 'pass', f'{language}/{criterion}: incomplete scientific/format check')
         if complete:
             need(file_ok(v.get('implementation_map')), f'{language}: blueprint implementation evidence required')
+            if record.get('data_visualization_requested'):
+                need(file_ok(v.get('data_implementation_map')), f'{language}: data design implementation evidence required')
             count, pages = v.get('page_count'), v.get('read_pages')
             need(type(count) is int and count > 0 and isinstance(pages, list) and
                  all(type(p) is int for p in pages) and sorted(pages) == list(range(1, count + 1)),

@@ -27,3 +27,5 @@ description: "兼容论文作图入口：按证据与表达目的路由到论文
 单独调用不增加权限；携带主 AI 当前决策、约束和已授权范围，重大接口/分析/结构改变回到对齐，不以切换角色绕过门禁。需要其他角色时交回主 AI；没有独立 Agent 能力就顺序执行。
 
 论文架构图任务衔接 [范文图示学习与协作](references/paper_exemplar_learning.md) 第 7 节：读取实际原图分析和 visual-design-brief，与 reader 真实协作选方案；原创实现，科学准确与视觉设计分别验收。
+
+论文数据图制作/重设计先读 [数据图范文学习](references/data_visualization_learning.md)：实际读相关原图，形成 data-visual-design-brief，再交 research-data-visualization 实施；科学保真与视觉设计分别验收。当前十篇任务复用既有语料，普通独立 plot 按任务适配。

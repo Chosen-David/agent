@@ -69,3 +69,7 @@ reader 把定位清楚的图像分析交给 `research-diagrams`（混合图由 `
 独立审阅分别判定 diagram_scientific_accuracy（节点/箭头/边界/符号与真实方法一致）和 diagram_visual_design（贡献是否醒目、层级/对齐/阅读顺序/编码/留白是否有效），均给最终图定位与理由。美观不能补救科学错误；正确但平庸的图也不能自动通过用户的视觉目标。保存 brief→方案→最终图的 implementation map，由原页阅读者与绘图角色复查。
 
 记录：顶层 architecture_requested 为 bool；为 true 且 exemplar_learning.state=completed 时，learning.visual_design 含 brief、reader_receipt、diagram_role_receipt、selection_evidence（path/sha256），mode（independent / staged）、reader_actor 与 diagram_actor；independent 时必须不同实际上下文，staged 时 reason 必填且只能 partial，未完成的独立协作验收列具体 blocker；source_figures 列表每项 identity、figure_id、page、pixel_read=true、receipt（path/sha256）。analysis 含 focus、hierarchy、abstraction、layout_flow、color_semantics、type_whitespace、panels，各项 source_location、observation、design_choice。每个最终 language version 的 checks 加入 diagram_scientific_accuracy 与 diagram_visual_design；完成态须 pass。不需要架构图的任务 architecture_requested=false，不能将本用户明确要求降级为 false 来跳过检查。读者/绘图回执仍需宿主核实真实性。
+
+## 8. 数据图专属分支
+
+包含数据图的论文还必须执行 [数据图范文学习](data_visualization_learning.md)。复用当前十篇完整语料的相关数据图，补八维观察、data-visual-design-brief、research-data-visualization 实际协作与最终数据/审美双验收；架构图分支不能代替它。

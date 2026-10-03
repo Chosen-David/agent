@@ -39,7 +39,7 @@ class PaperDeliveryTests(unittest.TestCase):
         self.good = dict(schema_version=1, requested_artifact='submission_paper',
             delivered_artifact='submission_paper', target='A complete bilingual research submission',
             requested_languages=['en', 'zh'], status='submission_checks_complete', blockers=[],
-            drafting_started=True, architecture_requested=False, exemplar_learning=learning,
+            drafting_started=True, architecture_requested=False, data_visualization_requested=False, exemplar_learning=learning,
             bindings=[dict(role=r, actor=r, state='completed', mode='independent', loaded_before_execution=True,
                 revision='fixture', read_scope='fixture instructions', files=files,
                 start_receipt=receipt, result_receipt=receipt) for r in m.ROLES],
@@ -117,6 +117,94 @@ class PaperDeliveryTests(unittest.TestCase):
             for criterion in ('diagram_scientific_accuracy','diagram_visual_design'):
                 v['checks'][criterion]=dict(verdict='pass',location='Fig1',reason='synthetic test only',evidence='fixture')
         return visual
+
+    def data_fixture(self):
+        self.good['data_visualization_requested']=True
+        receipt=self.good['exemplar_learning']['preflight_receipt']
+        data=dict(mode='independent', reader_actor='data-reader', visualization_actor='data-designer',
+            brief=receipt, reader_receipt=receipt, visualization_role_receipt=receipt,
+            selection_evidence=receipt, skill_selection=receipt,
+            source_figures=[dict(identity='EX0',figure_id='Fig1',page=1,pixel_read=True,receipt=receipt)],
+            analysis={d:dict(source_location='EX0 Fig1 p1', observation='synthetic comparison observation',
+                design_choice='synthetic target-specific choice') for d in
+                ('comparison_chart','axes_baselines','uncertainty','encoding_accessibility',
+                 'palette_legend','typography','layout_density','panels')},
+            charts=[dict(id='DATA1',source_kind='reported',presented_as='reported',source=receipt,
+                         comparison_claim='descriptive',
+                         exclusions=receipt,chart_type='bar',scale='linear',baseline='zero',
+                         uncertainty=dict(available=False,shown=False,definition='not provided; omit intervals'))])
+        self.good['exemplar_learning']['data_visual_design']=data
+        for v in self.good['versions']:
+            v['data_implementation_map']=receipt
+            for criterion in ('data_scientific_fidelity','data_visual_design'):
+                v['checks'][criterion]=dict(verdict='pass',location='Fig2',reason='synthetic only',evidence='fixture')
+        return data
+
+    def test_data_exemplars_require_pixels_not_links_or_palette_words(self):
+        self.data_fixture()
+        self.assertEqual(m.validate(self.good,self.root),[])
+        for change,error in [
+            (lambda d:d.update(source_figures=[]),'pixel reading'),
+            (lambda d:d['source_figures'][0].update(pixel_read=False),'pixel coverage'),
+            (lambda d:d['source_figures'][0].update(figure_id='unknown'),'pixel coverage'),
+            (lambda d:d.update(analysis={'palette_legend':'professional blue/orange'}),'concrete'),
+            (lambda d:d.pop('visualization_role_receipt'),'visualization_role_receipt'),
+            (lambda d:d.pop('skill_selection'),'skill_selection')]:
+            with self.subTest(error=error):
+                r=copy.deepcopy(self.good)
+                change(r['exemplar_learning']['data_visual_design'])
+                self.reject(r,error)
+        self.good['exemplar_learning']['papers'][0]['access']='abstract_only'
+        self.reject(self.good,'cannot count as read')
+
+    def test_data_provenance_uncertainty_and_bars(self):
+        self.data_fixture()
+        for change,error in [
+            (lambda c:c.update(baseline='truncated'),'baseline must be zero'),
+            (lambda c:c.update(presented_as='measured'),'type misrepresented'),
+            (lambda c:c.update(source_kind='placeholder',presented_as='placeholder'),'placeholder'),
+            (lambda c:c['uncertainty'].update(shown=True),'cannot be invented'),
+            (lambda c:c.pop('exclusions'),'exclusions evidence')]:
+            with self.subTest(error=error):
+                r=copy.deepcopy(self.good)
+                change(r['exemplar_learning']['data_visual_design']['charts'][0])
+                self.reject(r,error)
+
+    def test_reported_uncertainty_is_allowed_with_traceable_definition(self):
+        d=self.data_fixture()
+        d['charts'][0]['uncertainty']=dict(available=True,shown=True,definition='SD reported by source',
+            evidence=d['brief'],sample_size='5',sampling_unit='independent run')
+        self.assertEqual(m.validate(self.good,self.root),[])
+
+    def test_small_difference_without_uncertainty_cannot_claim_superiority(self):
+        d=self.data_fixture()
+        d['charts'][0]['comparison_claim']='superiority'
+        self.reject(self.good,'superiority needs reviewer')
+        d['charts'][0]['statistical_review']=d['brief']
+        self.reject(self.good,'missing uncertainty')
+
+    def test_data_aesthetics_cannot_override_scientific_failure_or_missing_map(self):
+        self.data_fixture()
+        self.good['versions'][0]['checks']['data_scientific_fidelity'].update(verdict='fail',
+            reason='Negative results were removed solely to simplify the panel',evidence='Reader compares source rows and plotted rows')
+        self.reject(self.good,'data_scientific_fidelity')
+        self.good['versions'][1].pop('data_implementation_map')
+        self.reject(self.good,'data design implementation')
+
+    def test_staged_data_design_partial_and_malformed(self):
+        self.test_limited_evidence_working_paper_remains_incomplete()
+        d=self.data_fixture()
+        d.update(mode='staged',reader_actor='one',visualization_actor='one',reason='no independent executor')
+        self.assertEqual(m.validate(self.good,self.root),[])
+        self.good.update(status='submission_checks_complete',blockers=[])
+        self.reject(self.good,'staged data visual')
+        for change in [lambda d:d.update(source_figures=[None]),
+                       lambda d:d.update(charts=[None]),
+                       lambda d:d['charts'][0].update(uncertainty=[]),
+                       lambda d:d.update(analysis=['palette'])]:
+            r=copy.deepcopy(self.good)
+            change(r['exemplar_learning']['data_visual_design'])
+            self.assertTrue(m.validate(r,self.root))
 
     def test_architecture_requires_pixels_role_result_and_concrete_design(self):
         visual=self.visual_fixture()
