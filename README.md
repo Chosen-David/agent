@@ -23,6 +23,8 @@ python scripts/prepare_agent_eval.py --out /tmp/agent-eval-new-run
 
 后端探测只检查模块、命令和distribution元数据；`available`不代表模型、凭据、服务、语料或授权已就绪。测试准备脚本只产生隔离材料，需实际执行任务并复核产物后才能评分。科研引用由脚本维护；旅行入口保留最新main已对齐的共享契约，分别维护导航。
 
+代码阅读新增独立轻量入口：[code-reading](plugins/research-assistant/skills/code-reading/SKILL.md)，可追踪 commit/函数/行号、默认与可选机制、控制与数据流。[采用依据与许可证](docs/code_reading_sources.md) · [验证与限制](docs/code_reading_validation.md)。
+
 ## 从你的目标开始
 
 | 目标 | 路由 |
@@ -31,6 +33,7 @@ python scripts/prepare_agent_eval.py --out /tmp/agent-eval-new-run
 | 推进科研项目，串起多个角色 | [科研项目调度](prompts/research_orchestrator.md) |
 | 上传论文，边读英文原文边提问 | [论文伴读](workflows/paper_reading_companion_workflow.md) |
 | 理解概念、公式、图或技术机制 | [知识点讲解](workflows/concept_explanation_workflow.md) |
+| 只读理解代码、核查报告中的机制 | [代码阅读](workflows/code_reading_workflow.md) |
 | 单独实现代码或提高性能 | [实现与优化](workflows/implementation_optimization_workflow.md) |
 | 规划城市游、情侣旅行或周末行程 | [旅行规划](workflows/travel_planning_workflow.md) |
 | 没有匹配的工作流 | 主 AI 用通用能力处理，按需发现新 Skill，不强行转成科研任务 |
@@ -121,9 +124,9 @@ cd agent
 
 ## 科研助手插件包
 
-[plugins/research-assistant/](plugins/research-assistant/) 包含 11 个技能：
+[plugins/research-assistant/](plugins/research-assistant/) 包含 12 个技能：
 
-`research-assistant`、`research-explore`、`research-implement-optimize`、`research-figures`、`research-data-visualization`、`research-diagrams`、`research-write`、`research-review`、`research-read-pdf`、`paper-reading-companion`、`explain-research-concepts`。
+`code-reading`、`research-assistant`、`research-explore`、`research-implement-optimize`、`research-figures`、`research-data-visualization`、`research-diagrams`、`research-write`、`research-review`、`research-read-pdf`、`paper-reading-companion`、`explain-research-concepts`。
 
 这是面向科研与论文学习的技能包，不是通用主 AI 的替代品。仓库顶层通用调度独立存在。每个 Skill 有触发范围、完整参考流程和 `allow_implicit_invocation: true`，表示在相关任务中允许自动选择；并非每条消息都执行科研流程。
 
@@ -190,7 +193,7 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 | [prompts/orchestrator.md](prompts/orchestrator.md) | 通用主 AI 路由 |
 | [prompts/research_orchestrator.md](prompts/research_orchestrator.md) | 科研组合调度 |
 | [workflows/](workflows/) | 按角色独立的完整规范与 Prompt |
-| [plugins/research-assistant/](plugins/research-assistant/) | 科研与论文学习的 11 技能插件包 |
+| [plugins/research-assistant/](plugins/research-assistant/) | 科研与论文学习的 12 技能插件包 |
 | [plugins/travel-assistant/](plugins/travel-assistant/) | 旅行规划技能插件包 |
 | [templates/](templates/) | 科研项目输入模板 |
 | [tests/](tests/) | 伴读生成器的边界检查 |

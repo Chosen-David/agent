@@ -100,6 +100,7 @@ Prompt 不能开启 ChatGPT/Claude 的界面开关；配置值不是生效证明
 材料足够就直接推进；只有关键目标冲突、必要输入缺失或资源越界时提出具体问题。
 本调度仅用于科研项目；论文伴读与一般学习独立路由。不强制执行全部阶段：
 - 只有 Idea/观察或已有负结果：workflows/research_workflow.md。
+- 只读代码理解/报告与实现机制核查：code-reading，code_reading_workflow.md；默认只读，证据绑定 commit/function/line。
 - 需要实现、验证或提高性能：workflows/implementation_optimization_workflow.md。
 - 论文数据/汇总/准确公式曲线：research-data-visualization，data_visualization_workflow.md。
 - 流程/架构/机制示意：research-diagrams，diagram_workflow.md。

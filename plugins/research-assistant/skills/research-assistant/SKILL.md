@@ -29,6 +29,7 @@ description: "协调科研项目从 Idea、实验到论文修订。用于需要�
 | 用户目标 | 首选技能 | 本地完整后备 |
 | --- | --- | --- |
 | 科研探索 | `research-explore` | [research_workflow.md](references/research_workflow.md) |
+| 只读代码理解/机制核查 | `code-reading` | [code_reading_workflow.md](references/code_reading_workflow.md) |
 | 代码实现与优化 | `research-implement-optimize` | [implementation_optimization_workflow.md](references/implementation_optimization_workflow.md) |
 | 论文数据可视化 | `research-data-visualization` | [data_visualization_workflow.md](references/data_visualization_workflow.md) |
 | 流程与架构示意 | `research-diagrams` | [diagram_workflow.md](references/diagram_workflow.md) |

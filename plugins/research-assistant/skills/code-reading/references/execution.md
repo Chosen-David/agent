@@ -1,0 +1,14 @@
+# 执行与验收
+
+先锁定源码 commit，再核对入口→配置→生产者→消费者。至少沿核心主张读到最终输出；搜索命中、注释和旧实验不替代函数体。记录形状、前后处理、默认/可选和分支条件；每条机制结论定位 commit/function/line。动态分发未闭合则写未知。
+
+辅助脚本（Python 标准库 + Git，无需安装第三方）：
+
+```bash
+python scripts/source_evidence.py --repo /path/to/repo --commit FULL_SHA --path src/example.py --symbol Engine.run
+python scripts/source_evidence.py --repo /path/to/repo --commit FULL_SHA --path src/kernel.cu --start 30 --end 60 --label kernel_name
+```
+
+命令仅从独立 `code-reading` 技能根目录运行；协调技能或实现技能的离线后备不含此可选脚本，缺少时用源码 SHA/函数/行号人工定位即可，不要求联网补装。stdout 重定向到目标仓库外。脚本只接受完整 commit ID，不读工作区内容，不运行目标代码；输出 `source_fact` 只表示片段确实来自该 blob，不证明分析结论。Python `--symbol` 包含函数装饰器；显式行范围可以配 `--symbol` 检查范围归属。非 Python 的 label 是人工标注。
+
+验收分开记录：脚本/路由静态契约测试；合成机制阅读任务；真实仓库只读分析；真实运行实验。前三者不证明真实系统性能、LLM 普遍读码质量或后端集成。没有运行日志时标静态推断，不报告通过 GPU/e2e。叙述冲突必须保留双方来源和适用条件；不得将未公开论文写进公共仓库。
