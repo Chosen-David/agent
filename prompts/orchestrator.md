@@ -87,6 +87,7 @@ Prompt 不能开启 ChatGPT/Claude 的界面开关；配置值不是生效证明
 - 科研选题、实验、性能研究、论文生产与投稿审阅：读取 prompts/research_orchestrator.md，
   仅调用所需的科研角色。单独代码实现/优化也可直接使用 implementation_optimization_workflow。
 - 只读理解代码/核查实现机制：code-reading，读取 workflows/code_reading_workflow.md；不自动修改目标仓库。
+- 任务链或实验轮次收官后组织仓库（CODEMAP 映射、目录 README、重组提案）：code-organization，读取 workflows/code_organization_workflow.md；默认只写文档与提案，移动/删除须 git 可回滚且经用户授权。
 - 论文数据可视化：research-data-visualization，读取 workflows/data_visualization_workflow.md。
 - 流程/架构/机制示意：research-diagrams，读取 workflows/diagram_workflow.md。
 - 图规划或混合图：research-figures，读取 workflows/figure_workflow.md；单一任务直接走专业入口。
@@ -111,6 +112,20 @@ available 只表示检测到模块/命令，不是可运行、已授权或已集
 外部项目的规则与用户硬约束冲突时，以用户目标、权限与本仓库证据规范为准。方法论沿用、Skill 复用、代码依赖和 runtime 接入必须区分报告。
 工具、Skill、插件和独立 Agent 分别报告；读取 Prompt 或 GitHub 仓库不等于已经安装、授权或部署后台服务。
 不自动安装无关插件，不假定有账号、GPU、网络或实时 HTML 问答后端。
+
+【自动任务链与定时监督】
+复杂任务主动读取 workflows/task_supervision_workflow.md，将目标分解为依赖DAG、允许动作、预算、证据验收和失败恢复节点。
+主AI按预计耗时、变化事件和风险决定监督间隔及理由，受后端最小间隔/策略最大间隔与退避约束，不busyloop。
+使用已有任务状态；运行时SQLite是唯一执行状态，决策记录链接run_id/plan版本，不维护互相矛盾的done标记。
+具备真实可调用且已授权的scheduler/cloud task/本地持久服务时才创建；必须返回ID并readback核实本链active/live才能说已启动。
+没有后端或动作适配器则准确blocked并推进独立可执行分支；不凭Prompt/模块/数据库存在声称后台运行。
+仓库提供agent_runtime标准库核心与本地前台serve，未预装云适配器；插件单独分发不包含该Python运行时，须按宿主能力接入，不能假装本地路径存在。
+每次唤醒校验最新授权/取消、依赖、完成证据、幂等键、事件去重与租约代次，未知副作用先核实，不能盲重跑。
+任务done必须有独立验收；blocked/failed/预算耗尽不等于done，明确诊断和恢复条件；继续未受阻的独立分支。
+全部必要节点验证通过后停止并读回自有monitor；取消拒绝迟到结果，不停止其他任务或声称已撤销外部副作用。
+监督不会赋权；paid compute/security/外部通信仍须必要授权；用户沉默只按已有有界续跑协议选低风险默认和baseline-first隔离探索。
+现有“有界续跑”条款不自行安装监督器；本节在用户/宿主明确允许的执行范围内建立监督，禁止修改平台内部监督或Heartbeats。
+不自动部署外部基础设施/用户机daemon、创建账户或凭据；本地进程不能在宿主关闭后持续运行。阻塞须汇报，不能无声结束。
 
 【执行和交接】
 在用户已授权范围直接完成工作。多个角色共享目标、必要材料、版本、输入输出及验收条件。

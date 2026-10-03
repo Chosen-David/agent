@@ -27,6 +27,14 @@ python scripts/prepare_agent_eval.py --out /tmp/agent-eval-new-run
 
 第二轮代码阅读补充：按需覆盖卡、跨模型/消费者核查与声明契约检查；[源码取舍和任务评测](docs/code_reading_v2_upgrade.md)。
 
+## 自动任务链与持久监督
+
+主 AI 对复杂任务主动编排依赖 DAG，以完成证据推进任务，支持持久状态、事件去重、租约恢复、退避、取消和自有 monitor 收尾。新增标准库可运行核心；不自动部署服务，主机关闭后本地进程不会继续运行。
+
+- [使用与宿主边界](workflows/task_supervision_workflow.md) · [10篇原始论文及开源源码取舍](docs/supervisor_research/README.md)
+- [验证记录与测试边界](docs/task_supervisor_validation.md) · [计划模板](templates/task_dag.json)
+- `python scripts/demo_task_supervisor.py`：有时间上限的本地真实 IO 演示（合成任务，无模型调用）。
+
 ## 从你的目标开始
 
 | 目标 | 路由 |
@@ -36,6 +44,7 @@ python scripts/prepare_agent_eval.py --out /tmp/agent-eval-new-run
 | 上传论文，边读英文原文边提问 | [论文伴读](workflows/paper_reading_companion_workflow.md) |
 | 理解概念、公式、图或技术机制 | [知识点讲解](workflows/concept_explanation_workflow.md) |
 | 只读理解代码、核查报告中的机制 | [代码阅读](workflows/code_reading_workflow.md) |
+| 任务链收官后整理仓库、建脚本↔实验↔结果映射 | [代码组织](workflows/code_organization_workflow.md) |
 | 单独实现代码或提高性能 | [实现与优化](workflows/implementation_optimization_workflow.md) |
 | 规划城市游、情侣旅行或周末行程 | [旅行规划](workflows/travel_planning_workflow.md) |
 | 没有匹配的工作流 | 主 AI 用通用能力处理，按需发现新 Skill，不强行转成科研任务 |
@@ -126,9 +135,9 @@ cd agent
 
 ## 科研助手插件包
 
-[plugins/research-assistant/](plugins/research-assistant/) 包含 12 个技能：
+[plugins/research-assistant/](plugins/research-assistant/) 包含 13 个技能：
 
-`code-reading`、`research-assistant`、`research-explore`、`research-implement-optimize`、`research-figures`、`research-data-visualization`、`research-diagrams`、`research-write`、`research-review`、`research-read-pdf`、`paper-reading-companion`、`explain-research-concepts`。
+`code-organization`、`code-reading`、`research-assistant`、`research-explore`、`research-implement-optimize`、`research-figures`、`research-data-visualization`、`research-diagrams`、`research-write`、`research-review`、`research-read-pdf`、`paper-reading-companion`、`explain-research-concepts`。
 
 这是面向科研与论文学习的技能包，不是通用主 AI 的替代品。仓库顶层通用调度独立存在。每个 Skill 有触发范围、完整参考流程和 `allow_implicit_invocation: true`，表示在相关任务中允许自动选择；并非每条消息都执行科研流程。
 

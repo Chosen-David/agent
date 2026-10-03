@@ -49,3 +49,5 @@ description: "协调科研项目从 Idea、实验到论文修订。用于需要�
 完整论文/投稿任务开始前读取 [论文交付契约](references/paper_delivery_contract.md)，绑定真实角色版本与用户 artifact 目标；验收科学内容、证据和全页阅读，不能用审计报告或排版通过替代投稿稿。
 
 完整新稿/全稿重写在动笔前执行 [10 篇范文学习](references/paper_exemplar_learning.md)：全文和图表真实覆盖，归纳并实施本稿蓝图；科学审稿独立检查蓝图落地，不能以链接数量代替学习。
+
+多步骤/需等待项目主动使用 [任务链与监督流程](references/task_supervision_workflow.md)，核查真实宿主后端、记录ID与readback；插件本身不带后台服务，不宣称已启动监督。

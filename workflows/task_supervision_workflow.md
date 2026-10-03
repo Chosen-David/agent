@@ -1,0 +1,49 @@
+# 自动编排与持久监督
+
+此流程补齐 [有界续跑协议](supervised_continuation_workflow.md) 的运行时能力，不改变它的授权门禁。简单一次答复不建链；多步骤、需要等待或可恢复任务由主 AI 主动编排。当前提供 [Python 核心](../agent_runtime/core.py)、[前台本地 scheduler](../agent_runtime/scheduler.py)；不代表已在当前宿主安装守护进程或绑定云任务。
+
+## 主 AI 执行步骤
+
+1. 读取最新用户指令与已有任务状态。维护唯一 run_id、用户目标、硬约束、当前权限/预算、输入版本、owner、依赖 DAG、action、outputs、done_when、最大尝试次数。主 AI 负责自然语言拆解；核心校验依赖/环/预算，不假装内置了 LLM。各独立支线都保留；基线验收必须是替代探索的前置节点。
+2. 已有 `task_chain.yaml` 的决定/假设/预算字段仍为主 AI 的决策记录；本轮在其 `runtime` 记录 DB 路径、run_id、plan SHA、monitor ID。运行后节点状态以 SQLite 为唯一执行状态，YAML/JSON 导出只是快照，禁止两边独立改 status。先为当前链构造 [task-dag/v1 JSON](../templates/task_dag.json)，不可变计划绑定 run_id。语义重规划建立新版本/新 run_id、显式关联旧链与验证后的产物，不能直接修改已执行的动作/验收或盲重放副作用。
+3. 选择宿主**实际可调用且已授权**的动作适配器与 scheduler。模块存在、Prompt、配置或磁盘数据库均不证明后台服务可用。当前 CLI 仅注册只读 `verify_artifacts`；真实动作通过可信 Python Handler 的 run/verify 与宿主 authorize 回调接入。没有动作接口就记 `blocked: host action adapter unavailable` 并继续其他支线；不可假装计划文字已执行。
+4. 主 AI 按预计耗时、风险、进度变化给出 min/max/rationale 和每任务 ETA/risk。核心以 ETA×0.25（高风险×0.1）作为工程初值，无进展指数退避，最终严格 clamp。参数并非论文测得最优。后端若最低一小时，主 AI 必须把有效下限提高到一小时；不要创建不支持的高频任务。可信变化事件可提前唤醒但不越过下限，重试截止仍有效。
+5. 只有 scheduler capability ready，create 返回真实 ID，且 readback 确认当前 run_id、active、live，才报告“已启动”。保存 receipt 与宿主限制。云/平台 scheduler 必须由宿主真实工具绑定执行环境、权限、状态持久路径、恢复入口并读回；本仓库没有这些平台的预装适配器。没有绑定就准确报告阻塞，当前会话继续可执行部分。禁止修改平台内部监督/Heartbeats，禁止自行开账户、凭据、部署基础设施或安装用户机 daemon。
+6. 每次可信 tick 去重、读取最新授权与取消、恢复过期租约、核对已有完成证据、只领取依赖就绪任务。执行与验收分离，只有验收器确认证据才能 done。Handler 的异常产生诊断和有限重试；非幂等未知副作用 blocked 等核实。模型自评、无 ready 节点、预算耗尽、用户沉默都不是完成条件。
+7. 权限阻塞不消耗尝试次数，继续其他已授权支线；定时检查退避且状态/原因保留，主 AI 明确汇报恢复条件。不会因未答复自动授权 paid compute/security/外发。可逆低风险默认及 baseline-first 隔离探索仍按既有有界续跑规则。宿主授权回调须在每次执行前检查最新批准/撤回，监督器不是权限源。
+8. 全部必要节点 verified done 才算任务目标完成；读回本链 monitor 已 stopped 才宣布收尾完成。failed/cancelled 分别报告，failed 需诊断、预算与恢复方案，不能无声停止或伪报 done。终态仅停止自有 monitor，不碰其他任务。取消使旧结果失效；外部工具已发生副作用不自动撤销，需合作取消/核实。
+
+## 本地使用与能力边界
+
+在仓库根目录运行，Python 3.10+，标准库 SQLite；真实运行状态置于被 gitignore 的私有目录：
+
+```bash
+python -m agent_runtime --db .agent-runs/my-task/state.sqlite init .agent-runs/my-task/plan.json
+python -m agent_runtime --db .agent-runs/my-task/state.sqlite capabilities
+python -m agent_runtime --db .agent-runs/my-task/state.sqlite tick my-run --artifact-root /absolute/authorized/project --event-id trusted-event-1
+python -m agent_runtime --db .agent-runs/my-task/state.sqlite status my-run
+```
+
+没有前台服务时 `arm` 正确返回 blocked。只有用户/宿主已经允许运行服务时，才在其管理的进程环境启动；以下是使用说明，本次仓库升级不替用户安装或启动常驻服务：
+
+```bash
+python -m agent_runtime --db .agent-runs/my-task/state.sqlite serve --artifact-root /absolute/authorized/project
+# 另一终端；成功输出必须含 monitor ID 和实时 readback
+python -m agent_runtime --db .agent-runs/my-task/state.sqlite arm my-run
+python -m agent_runtime --db .agent-runs/my-task/state.sqlite wake my-run --reference trusted-artifact-change
+python -m agent_runtime --db .agent-runs/my-task/state.sqlite cancel my-run --reference user-stop-instruction
+```
+
+`serve` 为前台进程，SIGTERM/SIGINT 正常退出；进程/主机关闭后不会执行。相同 DB 重启保留任务与定时记录并恢复；服务心跳最多30秒滞后，readback 是截至当时的存活证据，不是未来可用性保证。blocked 的 monitor 继续低频检查；failed 的 monitor 停止但失败在 state/journal 中保留，宿主负责读取并向用户报告。没有消息传输后端，不声称离线推送通知。
+
+`python scripts/demo_task_supervisor.py` 可运行十秒上限的真实本地 SQLite/文件/前台线程演示，最终停止服务，临时文件自动清理；任务本身为 synthetic deterministic fixture，不是 LLM 效果实验。
+
+## 适配器契约
+
+- 可信宿主注册固定 action→Handler，元数据 idempotent/required_capabilities 来自代码，不接受计划自行赋权。`authorize(plan, task, handler)` 默认拒绝；CLI 只对白名单 ArtifactHandler 及显式 root 授权。宿主需验证任务输入、真实工具权限、剩余预算与批准版本，plan 中 authorization_reference 只是引用。
+- `run(task, Context)` 返回 Outcome；`verify(task, evidence)` 必须只读、独立校验当前验收，不得仅返回模型的 true。内置 hash 验收只证明预声明字节一致，不能证明论文质量/业务语义。非预知输出需要宿主提供测试/评审验收器，不应事后随意更改预声明验收来过关。
+- Context 提供稳定 idempotency_key、代次 token、current()。适配器必须在副作用前检查 current，并让外部系统按键去重/按代次隔离；SQLite 只 fence 状态提交，不提供外部 exactly-once。长作业应使用短时间 submit/poll handler，持久化远端 job ID 到自己的幂等账本，不能阻塞超过 lease。没有这类后端时准确 blocked。
+- 调度/动作间崩溃使用过期租约恢复。只有代码声明幂等的 handler 自动重试；其他结果不明动作必须 `Engine.reconcile` 以真实证据核实，不能由模型口述标 done。重试次数耗尽 failed；要增加预算需新的明确授权与版本化恢复方案，不偷偷归零。
+- 此版本 SQLite 适于单宿主本地磁盘，多进程共享该文件；不承诺 NFS、多机分布式锁、时钟大幅跳变安全性、数据库丢失恢复、任意外部进程强制取消或生产 SLA。事务外副作用、最终验收后产物改动和恶意同权限进程不在核心保证内。日志可能含私有任务信息，不提交运行 DB/原始私密资料。
+
+研究来源与取舍见 [研究索引](../docs/supervisor_research/README.md)，实现验证见 [验证记录](../docs/task_supervisor_validation.md)。
