@@ -21,6 +21,13 @@ MAPPINGS = {
         f"plugins/research-assistant/skills/{role}/references/paper_delivery_contract.md"
         for role in ("research-assistant", "research-write", "research-review", "research-read-pdf")
     ],
+    "plugins/research-assistant/skills/code-reading/references/coverage.example.json": [
+        "plugins/research-assistant/skills/research-assistant/references/code_reading_coverage.example.json",
+    ],
+    "plugins/research-assistant/skills/code-reading/references/coverage.md": [
+        "plugins/research-assistant/skills/research-assistant/references/code_reading_coverage.md",
+        "plugins/research-assistant/skills/research-implement-optimize/references/code_reading_coverage.md",
+    ],
     "workflows/code_reading_workflow.md": [
         "plugins/research-assistant/skills/code-reading/references/workflow.md",
         "plugins/research-assistant/skills/research-assistant/references/code_reading_workflow.md",
@@ -126,7 +133,7 @@ def _rewrite_target(source: str, target: str, destination: str | None = None) ->
 
 def render(source: str, destination: str | None = None) -> str:
     text = (ROOT / source).read_text(encoding="utf-8")
-    if source in RAW_COPY_SOURCES:
+    if source in RAW_COPY_SOURCES or source.endswith('.json'):
         return text
     text = LINK_RE.sub(lambda m: m.group(1) + _rewrite_target(source, m.group(2), destination) + m.group(3), text)
     return GENERATED + text
