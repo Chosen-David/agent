@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "candidates": [
+    {
+      "id": "CO-001",
+      "status": "adopted_after_program_tests",
+      "source": "arxiv:2406.12045 §3, §5.2",
+      "idea": "Check actual listed task terminal states and artifact references, not only completed labels",
+      "files": [
+        "scripts/validate_handoff.py",
+        "docs/handoff_validation.md",
+        "tests/test_handoff.py"
+      ],
+      "benefit": "Reject false completion and provide recoverable diagnostics",
+      "cost": "Small stdlib-only correction",
+      "experiment": "Same 19 independently prepared CLI/API cases; old 6/19, new 19/19; retain six valid controls",
+      "evidence": "rounds/2026-10-03-r1/evidence/candidate.json"
+    },
+    {
+      "id": "CO-002",
+      "status": "queued",
+      "source": "arxiv:2406.12045 §3, C.2.3",
+      "idea": "Bind acceptance to a consumer-owned request and input version; detect omitted required work/stale outputs",
+      "files": [
+        "scripts/validate_handoff.py",
+        "scripts/prepare_agent_eval.py",
+        "docs/handoff_validation.md"
+      ],
+      "benefit_hypothesis": "Listed-task consistency does not catch omitted tasks or arbitrary input_version",
+      "cost": "Moderate; check producer/consumer contract before changing interface",
+      "minimum_experiment": "Keep artifact bytes constant, mutate request version or omit one required task; consumer must reject mismatches while accepting independent historical work. Use new held-out cross-role inputs."
+    },
+    {
+      "id": "CO-003",
+      "status": "queued_requires_controlled_model_runs",
+      "source": "arxiv:2406.12045 §3, Fig.4",
+      "idea": "Measure repeated complete-task reliability separately from best-of-k recovery",
+      "files": [
+        "evals/tasks.json",
+        "evals/README.md"
+      ],
+      "benefit_hypothesis": "Single successful role examples do not establish reliability",
+      "cost": "Need pinned model/tool/inputs and bounded repeated-run budget",
+      "minimum_experiment": "Pre-register 3 fresh cross-role tasks and 3 trials per version; report all outcomes and pass^k only for k<=n. Do not use deterministic validator repeats as model reliability."
+    },
+    {
+      "id": "CO-004",
+      "status": "candidate_not_benchmarked",
+      "source": "independent local audit",
+      "idea": "Measure streaming artifact hashing and large-DAG validation cost before optimizing",
+      "files": [
+        "scripts/validate_handoff.py"
+      ],
+      "benefit_hypothesis": "read_bytes loads entire artifacts; iterative elimination repeatedly scans a chain",
+      "cost": "Small, but profile representative artifacts first",
+      "minimum_experiment": "Compare peak memory/time on bounded synthetic large artifacts and DAGs with identical validation decisions; no speculative performance claim."
+    }
+  ]
+}

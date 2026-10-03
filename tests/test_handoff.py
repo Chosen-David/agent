@@ -2,6 +2,7 @@ import hashlib
 import importlib.util
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 SPEC = importlib.util.spec_from_file_location('handoff', Path(__file__).resolve().parents[1] / 'scripts/validate_handoff.py')
@@ -64,8 +65,57 @@ class HandoffTests(unittest.TestCase):
             self.assertTrue(M.validate(self.record,self.root))
 
     def test_long_valid_dag(self):
-        self.record['tasks']=[{'task_id':str(i),'status':'todo','depends_on':[str(i-1)] if i else []} for i in range(1100)]
+        self.record['tasks']=[{'task_id':str(i),'status':'done','evidence':['a1'],'depends_on':[str(i-1)] if i else []} for i in range(1100)]
         self.assertEqual(M.validate(self.record,self.root), [])
+
+    def test_completed_cannot_hide_pending_tasks(self):
+        for status in ('todo', 'doing', 'blocked'):
+            with self.subTest(status=status):
+                self.record['tasks'] = [dict(task_id='remaining', status=status, reason='waiting for input')]
+                self.record['status'] = 'completed'
+                self.assertIn('remaining: unfinished task on completed run', M.validate(self.record,self.root))
+                self.record['status'] = 'partial'
+                self.record['limitations'] = ['Finish remaining task before acceptance']
+                self.assertEqual(M.validate(self.record,self.root), [])
+                self.assertTrue(M.validate(self.record,self.root,True))
+
+    def test_task_evidence_must_reference_artifacts(self):
+        for evidence in ('a1', {'claim':'done'}, ['missing'], [True], [{}], [' '], []):
+            with self.subTest(evidence=evidence):
+                self.record['tasks'] = [dict(task_id='work', status='done', evidence=evidence)]
+                self.assertTrue(M.validate(self.record,self.root))
+        self.record['tasks'][0]['evidence'] = ['a1']
+        self.assertEqual(M.validate(self.record,self.root,True), [])
+
+    def test_explicit_skip_is_terminal_but_not_dependency_completion(self):
+        self.record['tasks'] = [dict(task_id='old', status='skipped', reason='not in current scope')]
+        self.assertEqual(M.validate(self.record,self.root,True), [])
+        self.record['tasks'].append(dict(task_id='new',status='done',depends_on=['old'],evidence=['a1']))
+        self.assertIn('new: done before dependency old', M.validate(self.record,self.root))
+
+    def test_reason_requires_nonblank_string(self):
+        self.record['status'] = 'partial'
+        self.record['limitations'] = ['needs input']
+        for status in ('skipped', 'blocked'):
+            for reason in (' ', True, ['input missing'], {}):
+                with self.subTest(status=status, reason=reason):
+                    self.record['tasks'] = [dict(task_id='work',status=status,reason=reason)]
+                    self.assertIn('work: reason/recovery required', M.validate(self.record,self.root))
+
+    def test_bad_artifact_paths_are_diagnostic(self):
+        (self.root/'loop').symlink_to('loop')
+        for path in ('loop', 'bad\0path', ' '):
+            with self.subTest(path=path):
+                self.record['artifacts'][0]['path'] = path
+                self.assertTrue(M.validate(self.record,self.root))
+
+    def test_unreadable_artifact_is_diagnostic(self):
+        with patch.object(Path, 'read_bytes', side_effect=PermissionError('denied')):
+            self.assertIn('artifact 0: cannot read path (PermissionError)', M.validate(self.record,self.root))
+
+    def test_looping_root_is_diagnostic(self):
+        (self.root/'loop').symlink_to('loop')
+        self.assertTrue(M.validate(self.record,self.root/'loop'))
 
     def test_malformed_input_is_diagnostic(self):
         for value in (None, [], {'schema_version':1}, {'status':[], 'artifacts':[{}], 'checks':[{'status':[]}], 'tasks':[{'task_id':'a','status':{}}]}):

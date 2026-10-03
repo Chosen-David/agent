@@ -10,7 +10,10 @@ from pathlib import Path
 
 def validate(record: dict, root: Path, require_complete: bool = False) -> list[str]:
     errors = []
-    root = root.resolve()
+    try:
+        root = root.resolve()
+    except (OSError, ValueError, RuntimeError) as exc:
+        return [f"root: cannot resolve path ({type(exc).__name__})"]
     if not isinstance(record, dict):
         return ["handoff must be an object"]
     if type(record.get("schema_version")) is not int or record["schema_version"] != 1:
@@ -41,22 +44,26 @@ def validate(record: dict, root: Path, require_complete: bool = False) -> list[s
             errors.append(f"artifact {index} must be an object")
             continue
         aid = artifact.get("id")
-        if not isinstance(aid, str) or not aid or aid in artifact_ids:
+        if not isinstance(aid, str) or not aid.strip() or aid in artifact_ids:
             errors.append(f"artifact {index}: missing/duplicate id")
         else:
             artifact_ids.add(aid)
         raw = artifact.get("path")
-        if not isinstance(raw, str) or not raw or Path(raw).is_absolute():
+        if not isinstance(raw, str) or not raw.strip() or "\0" in raw or Path(raw).is_absolute():
             errors.append(f"artifact {index}: path must be relative to root")
             continue
-        path = (root / raw).resolve()
-        if not path.is_relative_to(root):
-            errors.append(f"artifact {index}: path escapes root")
+        try:
+            path = (root / raw).resolve()
+            if not path.is_relative_to(root):
+                errors.append(f"artifact {index}: path escapes root")
+                continue
+            if not path.is_file():
+                errors.append(f"artifact {index}: file missing")
+                continue
+            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+        except (OSError, ValueError, RuntimeError) as exc:
+            errors.append(f"artifact {index}: cannot read path ({type(exc).__name__})")
             continue
-        if not path.is_file():
-            errors.append(f"artifact {index}: file missing")
-            continue
-        digest = hashlib.sha256(path.read_bytes()).hexdigest()
         if artifact.get("sha256") != digest:
             errors.append(f"artifact {index}: sha256 mismatch")
 
@@ -86,7 +93,7 @@ def validate(record: dict, root: Path, require_complete: bool = False) -> list[s
         tasks = []
     by_id = {}
     for task in tasks:
-        if not isinstance(task, dict) or not isinstance(task.get("task_id"), str) or not task["task_id"]:
+        if not isinstance(task, dict) or not isinstance(task.get("task_id"), str) or not task["task_id"].strip():
             errors.append("task missing task_id")
             continue
         tid = task["task_id"]
@@ -102,14 +109,20 @@ def validate(record: dict, root: Path, require_complete: bool = False) -> list[s
         graph[tid] = deps
         if not isinstance(task.get("status"), str) or task["status"] not in {"todo", "doing", "done", "blocked", "skipped"}:
             errors.append(f"{tid}: invalid task status")
+        if status == "completed" and task.get("status") not in ("done", "skipped"):
+            errors.append(f"{tid}: unfinished task on completed run")
         for dep in deps:
             if dep not in by_id:
                 errors.append(f"{tid}: unknown dependency {dep}")
             elif task.get("status") == "done" and by_id[dep].get("status") != "done":
                 errors.append(f"{tid}: done before dependency {dep}")
-        if task.get("status") == "done" and not task.get("evidence"):
+        evidence = task.get("evidence", [])
+        if not isinstance(evidence, list) or any(not isinstance(x, str) or x not in artifact_ids for x in evidence):
+            errors.append(f"{tid}: invalid evidence references")
+        elif task.get("status") == "done" and not evidence:
             errors.append(f"{tid}: done without evidence")
-        if task.get("status") in ("blocked", "skipped") and not task.get("reason"):
+        reason = task.get("reason")
+        if task.get("status") in ("blocked", "skipped") and (not isinstance(reason, str) or not reason.strip()):
             errors.append(f"{tid}: reason/recovery required")
     # Iterative topological elimination avoids recursion limits on a long DAG.
     pending = set(graph)

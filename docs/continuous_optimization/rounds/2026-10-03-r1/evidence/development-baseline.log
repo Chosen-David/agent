@@ -1,0 +1,248 @@
+test_bad_artifact_paths_are_diagnostic (new_tests.HandoffTests.test_bad_artifact_paths_are_diagnostic) ... 
+  test_bad_artifact_paths_are_diagnostic (new_tests.HandoffTests.test_bad_artifact_paths_are_diagnostic) (path='loop') ... ERROR
+  test_bad_artifact_paths_are_diagnostic (new_tests.HandoffTests.test_bad_artifact_paths_are_diagnostic) (path='bad\x00path') ... ERROR
+test_changed_or_missing_artifact (new_tests.HandoffTests.test_changed_or_missing_artifact) ... ok
+test_completed_cannot_hide_pending_tasks (new_tests.HandoffTests.test_completed_cannot_hide_pending_tasks) ... 
+  test_completed_cannot_hide_pending_tasks (new_tests.HandoffTests.test_completed_cannot_hide_pending_tasks) (status='todo') ... FAIL
+  test_completed_cannot_hide_pending_tasks (new_tests.HandoffTests.test_completed_cannot_hide_pending_tasks) (status='doing') ... FAIL
+  test_completed_cannot_hide_pending_tasks (new_tests.HandoffTests.test_completed_cannot_hide_pending_tasks) (status='blocked') ... FAIL
+test_cycle_missing_dependency_and_blocked_predecessor (new_tests.HandoffTests.test_cycle_missing_dependency_and_blocked_predecessor) ... ok
+test_dangling_or_absent_evidence (new_tests.HandoffTests.test_dangling_or_absent_evidence) ... ok
+test_explicit_skip_is_terminal_but_not_dependency_completion (new_tests.HandoffTests.test_explicit_skip_is_terminal_but_not_dependency_completion) ... ok
+test_false_completion_rejected (new_tests.HandoffTests.test_false_completion_rejected) ... ok
+test_long_valid_dag (new_tests.HandoffTests.test_long_valid_dag) ... ok
+test_looping_root_is_diagnostic (new_tests.HandoffTests.test_looping_root_is_diagnostic) ... ERROR
+test_malformed_input_is_diagnostic (new_tests.HandoffTests.test_malformed_input_is_diagnostic) ... ok
+test_paths_cannot_escape_root (new_tests.HandoffTests.test_paths_cannot_escape_root) ... ok
+test_reason_requires_nonblank_string (new_tests.HandoffTests.test_reason_requires_nonblank_string) ... 
+  test_reason_requires_nonblank_string (new_tests.HandoffTests.test_reason_requires_nonblank_string) (status='skipped', reason=' ') ... FAIL
+  test_reason_requires_nonblank_string (new_tests.HandoffTests.test_reason_requires_nonblank_string) (status='skipped', reason=True) ... FAIL
+  test_reason_requires_nonblank_string (new_tests.HandoffTests.test_reason_requires_nonblank_string) (status='skipped', reason=['input missing']) ... FAIL
+  test_reason_requires_nonblank_string (new_tests.HandoffTests.test_reason_requires_nonblank_string) (status='blocked', reason=' ') ... FAIL
+  test_reason_requires_nonblank_string (new_tests.HandoffTests.test_reason_requires_nonblank_string) (status='blocked', reason=True) ... FAIL
+  test_reason_requires_nonblank_string (new_tests.HandoffTests.test_reason_requires_nonblank_string) (status='blocked', reason=['input missing']) ... FAIL
+test_symlink_cannot_escape_root (new_tests.HandoffTests.test_symlink_cannot_escape_root) ... ok
+test_task_evidence_must_reference_artifacts (new_tests.HandoffTests.test_task_evidence_must_reference_artifacts) ... 
+  test_task_evidence_must_reference_artifacts (new_tests.HandoffTests.test_task_evidence_must_reference_artifacts) (evidence='a1') ... FAIL
+  test_task_evidence_must_reference_artifacts (new_tests.HandoffTests.test_task_evidence_must_reference_artifacts) (evidence={'claim': 'done'}) ... FAIL
+  test_task_evidence_must_reference_artifacts (new_tests.HandoffTests.test_task_evidence_must_reference_artifacts) (evidence=['missing']) ... FAIL
+  test_task_evidence_must_reference_artifacts (new_tests.HandoffTests.test_task_evidence_must_reference_artifacts) (evidence=[True]) ... FAIL
+  test_task_evidence_must_reference_artifacts (new_tests.HandoffTests.test_task_evidence_must_reference_artifacts) (evidence=[{}]) ... FAIL
+  test_task_evidence_must_reference_artifacts (new_tests.HandoffTests.test_task_evidence_must_reference_artifacts) (evidence=[' ']) ... FAIL
+test_unreadable_artifact_is_diagnostic (new_tests.HandoffTests.test_unreadable_artifact_is_diagnostic) ... ERROR
+test_valid_record (new_tests.HandoffTests.test_valid_record) ... ok
+
+======================================================================
+ERROR: test_bad_artifact_paths_are_diagnostic (new_tests.HandoffTests.test_bad_artifact_paths_are_diagnostic) (path='loop')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1250, in resolve
+    p.stat()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 840, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 40] Too many levels of symbolic links: '/tmp/tmpscpdgq29/loop'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 110, in test_bad_artifact_paths_are_diagnostic
+    self.assertTrue(M.validate(self.record,self.root))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/agent-round1/baseline_validate_handoff.py", line 52, in validate
+    path = (root / raw).resolve()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1252, in resolve
+    check_eloop(e)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1237, in check_eloop
+    raise RuntimeError("Symlink loop from %r" % e.filename)
+RuntimeError: Symlink loop from '/tmp/tmpscpdgq29/loop'
+
+======================================================================
+ERROR: test_bad_artifact_paths_are_diagnostic (new_tests.HandoffTests.test_bad_artifact_paths_are_diagnostic) (path='bad\x00path')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 110, in test_bad_artifact_paths_are_diagnostic
+    self.assertTrue(M.validate(self.record,self.root))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/agent-round1/baseline_validate_handoff.py", line 52, in validate
+    path = (root / raw).resolve()
+           ^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1240, in resolve
+    s = self._flavour.realpath(self, strict=strict)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen posixpath>", line 424, in realpath
+  File "<frozen posixpath>", line 468, in _joinrealpath
+ValueError: lstat: embedded null character in path
+
+======================================================================
+ERROR: test_looping_root_is_diagnostic (new_tests.HandoffTests.test_looping_root_is_diagnostic)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1250, in resolve
+    p.stat()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 840, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 40] Too many levels of symbolic links: '/tmp/tmpr3ies88x/loop'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 118, in test_looping_root_is_diagnostic
+    self.assertTrue(M.validate(self.record,self.root/'loop'))
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/agent-round1/baseline_validate_handoff.py", line 13, in validate
+    root = root.resolve()
+           ^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1252, in resolve
+    check_eloop(e)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1237, in check_eloop
+    raise RuntimeError("Symlink loop from %r" % e.filename)
+RuntimeError: Symlink loop from '/tmp/tmpr3ies88x/loop'
+
+======================================================================
+ERROR: test_unreadable_artifact_is_diagnostic (new_tests.HandoffTests.test_unreadable_artifact_is_diagnostic)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 114, in test_unreadable_artifact_is_diagnostic
+    self.assertIn('artifact 0: cannot read path (PermissionError)', M.validate(self.record,self.root))
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/agent-round1/baseline_validate_handoff.py", line 59, in validate
+    digest = hashlib.sha256(path.read_bytes()).hexdigest()
+                            ^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+PermissionError: denied
+
+======================================================================
+FAIL: test_completed_cannot_hide_pending_tasks (new_tests.HandoffTests.test_completed_cannot_hide_pending_tasks) (status='todo')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 76, in test_completed_cannot_hide_pending_tasks
+    self.assertIn('remaining: unfinished task on completed run', M.validate(self.record,self.root))
+AssertionError: 'remaining: unfinished task on completed run' not found in []
+
+======================================================================
+FAIL: test_completed_cannot_hide_pending_tasks (new_tests.HandoffTests.test_completed_cannot_hide_pending_tasks) (status='doing')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 76, in test_completed_cannot_hide_pending_tasks
+    self.assertIn('remaining: unfinished task on completed run', M.validate(self.record,self.root))
+AssertionError: 'remaining: unfinished task on completed run' not found in []
+
+======================================================================
+FAIL: test_completed_cannot_hide_pending_tasks (new_tests.HandoffTests.test_completed_cannot_hide_pending_tasks) (status='blocked')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 76, in test_completed_cannot_hide_pending_tasks
+    self.assertIn('remaining: unfinished task on completed run', M.validate(self.record,self.root))
+AssertionError: 'remaining: unfinished task on completed run' not found in []
+
+======================================================================
+FAIL: test_reason_requires_nonblank_string (new_tests.HandoffTests.test_reason_requires_nonblank_string) (status='skipped', reason=' ')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 103, in test_reason_requires_nonblank_string
+    self.assertIn('work: reason/recovery required', M.validate(self.record,self.root))
+AssertionError: 'work: reason/recovery required' not found in []
+
+======================================================================
+FAIL: test_reason_requires_nonblank_string (new_tests.HandoffTests.test_reason_requires_nonblank_string) (status='skipped', reason=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 103, in test_reason_requires_nonblank_string
+    self.assertIn('work: reason/recovery required', M.validate(self.record,self.root))
+AssertionError: 'work: reason/recovery required' not found in []
+
+======================================================================
+FAIL: test_reason_requires_nonblank_string (new_tests.HandoffTests.test_reason_requires_nonblank_string) (status='skipped', reason=['input missing'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 103, in test_reason_requires_nonblank_string
+    self.assertIn('work: reason/recovery required', M.validate(self.record,self.root))
+AssertionError: 'work: reason/recovery required' not found in []
+
+======================================================================
+FAIL: test_reason_requires_nonblank_string (new_tests.HandoffTests.test_reason_requires_nonblank_string) (status='blocked', reason=' ')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 103, in test_reason_requires_nonblank_string
+    self.assertIn('work: reason/recovery required', M.validate(self.record,self.root))
+AssertionError: 'work: reason/recovery required' not found in []
+
+======================================================================
+FAIL: test_reason_requires_nonblank_string (new_tests.HandoffTests.test_reason_requires_nonblank_string) (status='blocked', reason=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 103, in test_reason_requires_nonblank_string
+    self.assertIn('work: reason/recovery required', M.validate(self.record,self.root))
+AssertionError: 'work: reason/recovery required' not found in []
+
+======================================================================
+FAIL: test_reason_requires_nonblank_string (new_tests.HandoffTests.test_reason_requires_nonblank_string) (status='blocked', reason=['input missing'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 103, in test_reason_requires_nonblank_string
+    self.assertIn('work: reason/recovery required', M.validate(self.record,self.root))
+AssertionError: 'work: reason/recovery required' not found in []
+
+======================================================================
+FAIL: test_task_evidence_must_reference_artifacts (new_tests.HandoffTests.test_task_evidence_must_reference_artifacts) (evidence='a1')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 86, in test_task_evidence_must_reference_artifacts
+    self.assertTrue(M.validate(self.record,self.root))
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_task_evidence_must_reference_artifacts (new_tests.HandoffTests.test_task_evidence_must_reference_artifacts) (evidence={'claim': 'done'})
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 86, in test_task_evidence_must_reference_artifacts
+    self.assertTrue(M.validate(self.record,self.root))
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_task_evidence_must_reference_artifacts (new_tests.HandoffTests.test_task_evidence_must_reference_artifacts) (evidence=['missing'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 86, in test_task_evidence_must_reference_artifacts
+    self.assertTrue(M.validate(self.record,self.root))
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_task_evidence_must_reference_artifacts (new_tests.HandoffTests.test_task_evidence_must_reference_artifacts) (evidence=[True])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 86, in test_task_evidence_must_reference_artifacts
+    self.assertTrue(M.validate(self.record,self.root))
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_task_evidence_must_reference_artifacts (new_tests.HandoffTests.test_task_evidence_must_reference_artifacts) (evidence=[{}])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 86, in test_task_evidence_must_reference_artifacts
+    self.assertTrue(M.validate(self.record,self.root))
+AssertionError: [] is not true
+
+======================================================================
+FAIL: test_task_evidence_must_reference_artifacts (new_tests.HandoffTests.test_task_evidence_must_reference_artifacts) (evidence=[' '])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/643bcb955317/agent/tests/test_handoff.py", line 86, in test_task_evidence_must_reference_artifacts
+    self.assertTrue(M.validate(self.record,self.root))
+AssertionError: [] is not true
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.114s
+
+FAILED (failures=15, errors=4)
+Expected red baseline; failures: 15 errors: 4
