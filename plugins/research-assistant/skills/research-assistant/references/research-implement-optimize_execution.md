@@ -15,3 +15,5 @@
 实验脚本、资源准入、准确率并行或断点恢复任务按需读 [实验执行补充契约](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-implement-optimize/references/experiment_execution_contract.md)。本 skill 的 `scripts/experiment.py` 提供 probe/plan 和 CPU 合成 run；GPU 仅只读探测与阻塞计划，不代表可运行真实实验。
 
 可选 GPU／模型 runner 通过同契约的适配层接入：`scripts/gpu_adapter.py` 可生成默认阻塞的 scaffold、规划可用设备分片，并由可信宿主显式执行；真实 GPU 验证与 mock 分开，协作锁不代表独占。
+
+涉及微小差值、性能/准确率提升或噪声疑点时，按 [共享测量证据契约](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-implement-optimize/references/measurement_evidence_contract.md) 检查原始配对数据、独立单位、效应/区间与预设界限，再生成可验收的补实验任务。可调用同 skill 的 `scripts/measurement_review.py`；不能把门禁声明或合成通过当真实模型证据。
