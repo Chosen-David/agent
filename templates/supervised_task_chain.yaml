@@ -1,0 +1,84 @@
+# Template only: no supervisor, scheduler or experiment is started by this file.
+# Populate private project state; null is unknown, never unlimited authorization.
+run_id: null
+schema_version: supervised-continuation/v1
+supervisor_event:
+  event_id: null
+  task_chain_id: null
+  decision_version: null
+  source: null
+  occurred_at: null
+  evidence_reference: null
+  handled_event_ids: []
+user_goal: null
+hard_constraints: []
+latest_user_instruction_reference: null
+authorization_scope:
+  source_reference: null
+  allowed_actions: []
+  explicit_wait_or_stop: null # unknown until checked against actual latest instructions
+  allow_local_replacement: null
+  publication_authorization: null # separate, never inferred from exploration
+resource_budget:
+  authorized_reference: null
+  limits: {money: null, currency: null, compute: null, wall_time: null, retries: null, storage: null}
+  consumed: {}
+  remaining: {} # unknown remaining does not authorize an experiment
+  stop_conditions: []
+decision:
+  decision_id: null
+  unanswered_question_reference: null
+  asked_at: null
+  proposal_version: null
+  status: awaiting_alignment
+  assumptions:
+    - chosen_value: null
+      alternatives: []
+      rationale: null
+      evidence: []
+      uncertainty: null
+      status: default_assumed
+      user_confirmed: false
+      affected_tasks: []
+      reversible: null
+      rollback: null
+  baseline_task_id: null
+  baseline_revision: null
+  exploration_branch: null # agent-explore-<task-id>, or isolated directory if no Git
+  exploration_task_chain: null
+  evaluation_plan:
+    version: null
+    declared_before_experiment: null
+    data_hashes: []
+    baseline_artifact: null
+    environment: {}
+    parameters: {}
+    seeds: []
+    repetitions: null
+    primary_metric: {name: null, direction: null, improvement_threshold: null}
+    mandatory_non_regression: []
+    comparison_method: null
+    uncertainty_method: null
+    reproducible_commands: []
+    stop_conditions: []
+  evidence: [] # raw logs, runs, versions, costs, negative results, limitations
+  replacement_gate:
+    baseline_accepted: null
+    comparison_fair: null
+    evidence_complete: null
+    reproducible: null
+    primary_improvement: null
+    all_non_regression_pass: null
+    hard_constraints_pass: null
+    within_budget: null
+    no_inconclusive_findings: null
+    within_authorized_scope: null
+    rollback_verified: null
+    integrated_validation_pass: null
+    outcome: retained_baseline
+  rollback: {artifact: null, revision: null, restore_steps: [], verified: null}
+  next_action: null
+tasks: [] # task_id, stage, owner, inputs, depends_on, action, outputs,
+          # done_when, on_failure, resource_budget, status; dependency graph acyclic
+# Exploration implementation depends_on the completed, accepted baseline task.
+# Replayed supervisor events must reuse valid run records, not repeat side effects.

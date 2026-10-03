@@ -34,6 +34,10 @@
 
 旅行同步已按用户对齐方案采用 [插件内共享契约](plugins/travel-assistant/skills/travel-planner/references/planning_contract.md)，两种入口分别保留导航与详细工作流。设计依据见 [接口评估](docs/decisions/travel_workflow_sync.md)；没有接入 JourneyPilot runtime。
 
+## 监督触发时的有界续跑
+
+已有授权任务链被真实监督器触发、相关选择仍未答复时，低风险可逆细节可先选临时默认并记录；竞争思路先完成用户方案 A，再用独立 `agent-explore-<task-id>` 分支/任务链探索 B。只有预先确定的目标改善与全部必要非退化检查通过、权限与预算允许且可回滚，才替换工作产物。未确定优胜就保留 A；明确等待/停止及审批边界不被沉默覆盖。仓库只提供 [协议](workflows/supervised_continuation_workflow.md) 与 [记录模板](templates/supervised_task_chain.yaml)，没有安装监督器或自动运行实验。
+
 ## 旅行规划
 
 [旅行规划工作流](workflows/travel_planning_workflow.md) 会结合天气、开放/营业时间、逐段交通、用户已订酒店/活动、体力与午休约束生成可执行行程；复杂旅行采用 JourneyPilot 风格的 RequestContract → 候选研究/准入/选择 → 行程 → Intent Fidelity Gate → DeliveryBundle，并支持阶段状态与断点续跑。插件入口位于 [plugins/travel-assistant/](plugins/travel-assistant/)。
