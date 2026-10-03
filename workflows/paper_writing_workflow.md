@@ -1,4 +1,6 @@
 # 论文写作 Agent Workflow
+完整论文/投稿任务必须先执行 [论文交付契约](../workflows/paper_delivery_contract.md)：写作前绑定角色与目标，分别验收科研论证、证据和全页阅读；审计记录为私密伴随材料，不替代论文。
+
 
 
 执行本角色时先读 [执行与验收补充](../plugins/research-assistant/skills/research-write/references/execution.md)，按任务采用最小流程；已有可用能力足够时直接执行。补充规范不代表已安装外部 runtime。

@@ -45,3 +45,5 @@ description: "协调科研项目从 Idea、实验到论文修订。用于需要�
 ## 与通用主 AI 的边界
 
 此技能只协调科研项目，不替换通用主 AI。纯伴读优先 `paper-reading-companion`，知识讲解优先 `explain-research-concepts`；它们可独立使用，也可在科研任务中交接。缺少对应技能时读取 [伴读](references/paper_reading_companion_workflow.md) 或 [讲解](references/concept_explanation_workflow.md)。无关任务返回通用主 AI。
+
+完整论文/投稿任务开始前读取 [论文交付契约](references/paper_delivery_contract.md)，绑定真实角色版本与用户 artifact 目标；验收科学内容、证据和全页阅读，不能用审计报告或排版通过替代投稿稿。

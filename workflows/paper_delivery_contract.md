@@ -1,0 +1,51 @@
+# 论文交付契约 v1
+
+适用于完整论文/投稿稿任务；局部润色和显式技术审计不强制启动全管线。它是执行规范，校验器只查记录完整性，不证明模型已阅读或论文已达投稿水平。
+
+## 开始前绑定（先于写作）
+
+主 AI 建立私密 run record：requested_languages、用户原目标、requested_artifact（submission_paper / working_paper / technical_audit）、研究类型、venue/year/track、语言版本、篇幅/模板来源、允许动作与只读约束。不得因发现证据缺口把 submission_paper 改成 technical_audit；改变交付目标须用户明确同意。
+
+从真实 role registry/已安装入口加载 research-assistant → research-write；最终稿分别交 research-review 和 research-read-pdf。每个执行者先读自己的 SKILL.md、execution.md、工作流相关章节及本契约，记录真实路径、仓库 commit、文件 sha256、阅读范围、执行者与加载先于执行的时间/事件。未加载不能声称按库内 agent 执行；事后补读须重新执行受影响步骤，不能回填虚构记录。调度后核验真实 start_receipt 和 result_receipt（相对 RUN_DIR 的 path/sha256，保存宿主启动事件与实际结果）；send_message 给已结束角色不等于启动新 turn，必须用宿主的启动/续跑接口并等到实际结果，dispatch 不能当审稿完成。独立审稿和读者使用不同执行上下文且对稿件只读；不可用时如实写 staged，不能冒称独立。
+
+## 写作与伴随材料
+
+论文主线回答问题为何重要、已有方法缺什么、贡献/机制是什么、为何成立、证据支持到哪里。写作前用一段可反驳的论证和逐贡献证据映射固定主线，按研究类型组织方法、证明/实验、相关工作、边界，而非凑章节标题。
+
+源码可用性、来源核查、执行日志、错误报告、claim ledger、技能 manifest 和修复任务默认放私密伴随目录，不进入公开仓库或投稿源包。正文保留影响科学结论的实验设置、实现条件、可复现性与 limitations；不能把所有限制删掉来伪装完稿。只有当审计本身是用户同意的研究问题并有科学贡献时，才允许以审计为论文主题。
+
+缺实验时继续完成有证据的方法、相关工作、可审查的实验设计和工作稿；具体列 blocker：受影响主张/章节、缺什么数据或资源、最小补救、owner、恢复条件和下一可执行任务。计划/理想值/估计不得作为实测结果。保留用户投稿目标并标 validation_partial 或 blocked，不以技术核查报告替代论文，也不把工作稿说成 submission-ready。
+
+## 同一快照上的验收顺序
+
+1. 作者完成完整论证与 EN/ZH 等用户指定版本，冻结各版本稿件/PDF hash。
+2. 科学审稿先只读投稿可见稿，复述问题、贡献、机制和最强证据；然后核对辅助材料。逐项给出 pass / fail / unresolved，写具体位置、判断理由、证据、可能反例及最小补救：
+   - artifact_fit：开篇和全文在回答研究问题，还是在报告哪些材料已核查？删掉审计过程后是否仍有完整研究论证？
+   - contribution：相对最接近工作的增量/洞见是什么，是否有支持而非功能列表？
+   - method：定义、机制、推导/证明和设计选择能否复核？
+   - evidence：实验或证明能否支持实际主张；基线、口径、消融/反例、不确定性和范围是否合理？理论/定性研究按其类型说明适用证据，不能机械要求 GPU 实验。
+   - related_work：核实最接近原文，准确解释区别，未核查不能 pass。
+   - limitations：限制与结论一致，不掩盖关键证据缺口。
+   - language_parity：多语言版本主张、数字、限定和图表一致；单语说明不适用理由。
+3. 读者独立逐页读最终渲染，记录全部物理页（含引用/附录）的 read_complete、读到的内容、理解困难和 PDF hash。科学疑点回交审稿；全页覆盖不等于科学通过。
+4. 主 AI 核验意见，修订后对新 hash 复查。格式/模板/页数、科学内容、证据、全页阅读分别验收；仅 6+1 或 layout pass 不够。必须逐个验收所请求的语言版本。
+5. 只有上述适用项全通过且作者/审稿/读者为三个独立执行上下文且无未解决的关键 blocker 才可称 submission_checks_complete；该名称仅表示列明检查完成，不保证录用。否则交工作稿、具体阻塞及继续任务，不停止可做的独立工作。
+
+## 可审阅 case rubric（不是关键词分类器）
+
+| 案例 | 应有判断与理由 |
+| --- | --- |
+| 标题齐全、6+1 页、开篇说“本文核查源码可用性”，实验只罗列报告错误，没有研究问题或贡献验证 | artifact_fit/evidence fail；版面通过不救科学内容 |
+| 摘要流畅、章节齐全、声称加速 2 倍，唯一依据是理想带宽计算 | evidence fail；只能写有假设的预测，不能写实测 |
+| 微基准真实但宣称端到端普遍收益 | evidence fail；补端到端对照或收窄结论，并重新评价投稿目标是否仍满足 |
+| 有真实研究问题、明确方法与最接近工作比较，只有单机小样本且明确范围 | 不因出现 limitations/audit 字词自动 fail；检查结论是否仅限该设置、贡献是否足以支撑目标；不足为 unresolved/工作稿 |
+| 理论论文有完整条件、定理、证明和先例比较，无实测 | 按理论证据审，不因无性能表 fail |
+| 请求审计报告，输出定位清楚的审计记录 | 可通过审计任务；不冒称完成投稿论文 |
+
+自动回归只能验证这些结构性拒绝路径。真正的文体、贡献与论证判断必须由读完整稿的执行者给位置和理由，不能以标题/关键词计数、预填 pass 或多个模型一致替代。至少保留一个反例和一例有限证据稿的实际阅读判断供用户复核。
+
+## 记录接口
+
+仓库运行可使用 `scripts/validate_paper_delivery.py RECORD --root RUN_DIR`（并先运行通用 `validate_handoff.py` 检查产物完整性）。独立插件无脚本时依此契约逐项人工记录，明确 manual_contract_review；不能声称自动拦截已启用。
+
+记录 schema_version=1、requested_artifact、requested_languages、delivered_artifact、target（用户目标原文）、status（validation_partial / blocked / submission_checks_complete）、bindings、versions、blockers。bindings 每条含 state（completed / not_run / blocked）；未执行角色写 reason，不补造加载或回执，且不能用于完成声明。已执行角色含 start_receipt、result_receipt（path/sha256）、role、actor、mode（independent / staged）、loaded_before_execution=true、files（path/sha256）、revision、read_scope。files 应覆盖 SKILL.md、execution.md、workflow/orchestrator 与本契约；文件路径相对私密 RUN_DIR 的实际冻结指令副本。versions 每条含 language、snapshot（path/sha256）、checks、page_count、read_pages、reader_snapshot_sha256、reviewer_snapshot_sha256；checks 含上述七项及 format，每项含 verdict、location、reason、evidence。blockers 每条含 claim、missing、owner、next_action、resume_when。不把记录中的自述等同于执行证明；随附宿主工具记录，主 AI 检查时间顺序和文件内容。
