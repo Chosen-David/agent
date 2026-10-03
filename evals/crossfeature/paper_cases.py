@@ -143,12 +143,13 @@ def evaluate(root):
     outcomes = []
     for name, record in cases.items():
         errors = validator.validate(record, root)
-        actual = 'reject' if errors else 'accept'
+        missing_trust = any('external trusted semantic acceptance' in error for error in errors)
+        actual = 'unverified' if missing_trust else 'reject' if errors else 'accept'
         manuscript = root/'cases'/name/'manuscript.md'
         outcomes.append(dict(case_id=name, layer='program_declaration_control', expected=expected[name], actual=actual,
-            classification=('correct' if actual==expected[name] else 'false_negative' if actual=='accept' else 'false_positive'),
+            classification=('unverified' if missing_trust else 'correct' if actual==expected[name] else 'false_negative' if actual=='accept' else 'false_positive'),
             errors=errors, artifact_sha256=hashlib.sha256(manuscript.read_bytes()).hexdigest(),
-            reason='Validator validates declarations/hash integrity, not manuscript genre, copying, or receipt event semantics.',
+            reason='Missing trusted acceptance is unverified, not a semantic false positive. Historical expectations describe declaration-only controls; current gate checks event structure and bound independent judgments, not prose semantics.',
             model_execution='not_run'))
     return outcomes
 

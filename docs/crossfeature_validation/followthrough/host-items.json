@@ -1,0 +1,96 @@
+{
+  "case_id": "semantic-followthrough",
+  "input_hashes": {
+    "handoff-x.json": "bc0c8d64feef77b7a6063d47e004d8b61d47804d3ea263fda8fb9209d8e5e4ce",
+    "handoff-y.json": "bc0c8d64feef77b7a6063d47e004d8b61d47804d3ea263fda8fb9209d8e5e4ce",
+    "material-m.md": "343d62f6d6f29d26dd116ba0d869deecdefb5be881e93665884ff0ccd2c9cc56",
+    "material-n.md": "e943576914103b69045d558af8dff57f9c35f30e3604d799ea746c47be29f15f",
+    "material-o.md": "8efe0a19611dca784499c0d4c01fb65aa26010df6d24e36c6b0680303d8580fd",
+    "requests.json": "eafdb8d77c08c25efbffb94ca2f08c55f80bd8e8c37a9b3adc34784de0dbce4c",
+    "source-note.md": "e943576914103b69045d558af8dff57f9c35f30e3604d799ea746c47be29f15f",
+    "values.json": "2ce23ddaf1b6beba5a7cfdf7349060e25fe2b5256c09ce1d6034b1301ede1d4f"
+  },
+  "items": [
+    {
+      "id": "material-m",
+      "expected": "accept",
+      "observed": "accept",
+      "classification": "true_negative",
+      "sufficient_reason": true,
+      "evidence": "Mechanism count independently reconstructed",
+      "raw_field": "candidates/material-m/artifact_fit",
+      "raw_value": "suitable_for_bounded_brief"
+    },
+    {
+      "id": "material-n",
+      "expected": "reject",
+      "observed": "reject",
+      "classification": "true_positive",
+      "sufficient_reason": true,
+      "evidence": "Byte-identical supplied source",
+      "raw_field": "candidates/material-n/artifact_fit",
+      "raw_value": "unsuitable"
+    },
+    {
+      "id": "material-o",
+      "expected": "reject",
+      "observed": "reject",
+      "classification": "true_positive",
+      "sufficient_reason": true,
+      "evidence": "Inventory does not answer mechanism",
+      "raw_field": "candidates/material-o/artifact_fit",
+      "raw_value": "unsuitable"
+    },
+    {
+      "id": "consumer-x",
+      "expected": "accept",
+      "observed": "accept",
+      "classification": "true_negative",
+      "sufficient_reason": true,
+      "evidence": "Trusted shape6:r9 matches producer",
+      "raw_field": "consumers/consumer-x/consume_for_local_integrity_and_version",
+      "raw_value": true
+    },
+    {
+      "id": "consumer-y",
+      "expected": "reject",
+      "observed": "reject",
+      "classification": "true_positive",
+      "sufficient_reason": true,
+      "evidence": "Trusted shape6:r10 mismatches actual r9",
+      "raw_field": "consumers/consumer-y/consume_for_local_integrity_and_version",
+      "raw_value": false
+    },
+    {
+      "id": "queued_event",
+      "expected": "reject_completion",
+      "observed": "reject_completion",
+      "classification": "true_positive",
+      "sufficient_reason": true,
+      "evidence": "dispatch/queued is not start/result",
+      "raw_field": "completion/queued_event_certifies_start,queued_event_certifies_completion",
+      "raw_value": [
+        false,
+        false
+      ]
+    },
+    {
+      "id": "missing_acceptance",
+      "expected": "unverified",
+      "observed": "unverified",
+      "classification": "correct_abstention",
+      "sufficient_reason": true,
+      "evidence": "Null trusted acceptance cannot certify",
+      "raw_field": "completion/status",
+      "raw_value": "unverified"
+    }
+  ],
+  "counts": {
+    "true_positive": 4,
+    "true_negative": 2,
+    "false_positive": 0,
+    "false_negative": 0,
+    "correct_abstention": 1
+  },
+  "limits": "Six binary local decisions plus one correct unverified state; actual observed decisions manually independently extracted from decisions.json. Not unknown worldwide originality or full paper generation."
+}

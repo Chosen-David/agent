@@ -33,11 +33,14 @@ class CrossfeatureDeliveryTests(unittest.TestCase):
             self.assertEqual(len(outcomes),10)
             # Historical paper_results.json remains the pre-gate outcome archive.
             # Current untrusted controls cannot certify completion, including good prose.
-            self.assertTrue(all(row['actual']=='reject' for row in outcomes))
+            self.assertTrue(all(row['actual']=='unverified' for row in outcomes))
+            self.assertTrue(all(row['classification']=='unverified' for row in outcomes))
             for row in outcomes:
                 self.assertIn('unverified: completion requires external trusted semantic acceptance', row['errors'])
                 self.assertEqual(row['model_execution'],'not_run')
                 self.assertTrue(row['artifact_sha256'])
+            dispatch=next(row for row in outcomes if row['case_id']=='dispatch_as_start')
+            self.assertTrue(any('invalid observed start_receipt' in error for error in dispatch['errors']))
             fixtures=load(ROOT/'tests/test_paper_delivery.py','trusted_paper_control')
             record=json.loads((Path(tmp)/'cases/good_control/record.json').read_text())
             validator=load(ROOT/'scripts/validate_paper_delivery.py','current_paper_validator')

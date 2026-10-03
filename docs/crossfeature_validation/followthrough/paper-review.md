@@ -75,3 +75,29 @@ rechecks on the pinned new implementation remain a separate next step and are
 not credited by these program tests. Original run outcomes are unchanged. No
 production code edited by this reviewer; no further blocking protocol defect
 found within this bounded inspection.
+
+## Post-commit verification (5d220eb)
+
+Strict marker handling was independently reread and the **14 semantic tests
+passed again**: any present synthetic/fixture-only marker other than exact false
+rejects, including integer 0/1, null and strings. The documented schema matches
+the code; CLI reports completion as verified/unverified/not_requested and keeps
+its explicit non-authentication scope. Exact file-hash coverage rejects added or
+omitted acceptance bindings; all declared files are checked, even if a given
+review criterion does not directly use them.
+
+All **19 original tracked validation artifacts are byte-identical to b4fc439**,
+checked against Git blob bytes, including the original tar archive, reports,
+grades and logs. Original `host-evidence.tar.gz` SHA-256:
+`bfa1816976ce07060588bcb66d71baccff17a603376cb5db95d1a235b0e074bc`.
+
+The later worktree change to `paper_cases.evaluate()` appropriately distinguishes
+missing trust as `unverified`, rather than calling good prose a semantic false
+positive. It retains validator errors and `model_execution=not_run`. However,
+independent rerun found `test_crossfeature_delivery.py:36` still expected every
+actual result to be `reject`, causing **1/2 methods to fail**. This follow-up
+reporting/test mismatch was reported to the controller and corrected: the test
+now expects unverified for absent trusted acceptance while separately requiring
+the malformed dispatch error. Independent targeted rerun passed **2/2**. The
+initial failure log is preserved separately; it does not alter the passing
+committed semantic-gate checks above.
