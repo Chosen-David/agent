@@ -4,10 +4,14 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from paper_exemplar_checks import validate_learning
 
 ROLES = ('research-assistant', 'research-write', 'research-review', 'research-read-pdf')
 CRITERIA = ('artifact_fit', 'contribution', 'method', 'evidence', 'related_work',
-            'limitations', 'language_parity', 'format')
+            'limitations', 'language_parity', 'format', 'blueprint_application')
 
 
 def validate(record, root):
@@ -34,6 +38,7 @@ def validate(record, root):
     need(record.get('requested_artifact') == 'submission_paper', 'requires submission_paper request')
     need(text(record.get('target')), 'missing user target')
     complete = record.get('status') == 'submission_checks_complete'
+    validate_learning(record, need, text, file_ok)
     need(record.get('status') in ('validation_partial', 'blocked', 'submission_checks_complete'), 'invalid status')
     need(record.get('delivered_artifact') in ('working_paper', 'submission_paper'), 'audit cannot replace paper')
     if complete:
@@ -64,7 +69,7 @@ def validate(record, root):
         files = files if isinstance(files, list) else []
         need(bool(files) and all(file_ok(f) for f in files), f'{role}: instruction files/hash invalid')
         names = {Path(f['path']).name for f in files if isinstance(f, dict) and text(f.get('path'))}
-        need({'SKILL.md', 'execution.md', 'paper_delivery_contract.md'} <= names and
+        need({'SKILL.md', 'execution.md', 'paper_delivery_contract.md', 'paper_exemplar_learning.md'} <= names and
              bool({'workflow.md', 'orchestrator.md'} & names), f'{role}: incomplete instruction coverage')
         if role in ('research-review', 'research-read-pdf') and b.get('mode') == 'independent':
             need(b.get('actor') != actors.get('research-write'), f'{role}: independent actor equals writer')
@@ -87,7 +92,9 @@ def validate(record, root):
         need(file_ok(v.get('snapshot')), f'{language}: snapshot invalid')
         snapshot = v.get('snapshot') if isinstance(v.get('snapshot'), dict) else {}
         checks = v.get('checks') if isinstance(v.get('checks'), dict) else {}
-        for criterion in CRITERIA:
+        criteria = CRITERIA + (('diagram_scientific_accuracy', 'diagram_visual_design')
+                               if record.get('architecture_requested') else ())
+        for criterion in criteria:
             c = checks.get(criterion)
             if not isinstance(c, dict):
                 errors.append(f'{language}: missing {criterion}')
@@ -97,6 +104,7 @@ def validate(record, root):
             if complete:
                 need(c.get('verdict') == 'pass', f'{language}/{criterion}: incomplete scientific/format check')
         if complete:
+            need(file_ok(v.get('implementation_map')), f'{language}: blueprint implementation evidence required')
             count, pages = v.get('page_count'), v.get('read_pages')
             need(type(count) is int and count > 0 and isinstance(pages, list) and
                  all(type(p) is int for p in pages) and sorted(pages) == list(range(1, count + 1)),

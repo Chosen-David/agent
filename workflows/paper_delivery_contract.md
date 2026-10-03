@@ -1,4 +1,4 @@
-# 论文交付契约 v1
+# 论文交付契约 v2
 
 适用于完整论文/投稿稿任务；局部润色和显式技术审计不强制启动全管线。它是执行规范，校验器只查记录完整性，不证明模型已阅读或论文已达投稿水平。
 
@@ -7,6 +7,10 @@
 主 AI 建立私密 run record：requested_languages、用户原目标、requested_artifact（submission_paper / working_paper / technical_audit）、研究类型、venue/year/track、语言版本、篇幅/模板来源、允许动作与只读约束。不得因发现证据缺口把 submission_paper 改成 technical_audit；改变交付目标须用户明确同意。
 
 从真实 role registry/已安装入口加载 research-assistant → research-write；最终稿分别交 research-review 和 research-read-pdf。每个执行者先读自己的 SKILL.md、execution.md、工作流相关章节及本契约，记录真实路径、仓库 commit、文件 sha256、阅读范围、执行者与加载先于执行的时间/事件。未加载不能声称按库内 agent 执行；事后补读须重新执行受影响步骤，不能回填虚构记录。调度后核验真实 start_receipt 和 result_receipt（相对 RUN_DIR 的 path/sha256，保存宿主启动事件与实际结果）；send_message 给已结束角色不等于启动新 turn，必须用宿主的启动/续跑接口并等到实际结果，dispatch 不能当审稿完成。独立审稿和读者使用不同执行上下文且对稿件只读；不可用时如实写 staged，不能冒称独立。
+
+## 强制写作前范文学习
+
+完整新稿/全稿重写先执行 [10 篇范文学习](paper_exemplar_learning.md)：确认 venue/template → 10 篇相关已发表全文与全部图表的真实阅读证据 → 逐篇五维分析 → 跨文归纳 → 本稿写作蓝图。模板未核验、未读全或蓝图未完成时不得开始本轮正文写作或宣称端到端完成；明确 blocker 并继续可做的阅读/证据整理。科学审稿检查 blueprint_application 在实际稿件中的影响，不能只勾选 10 个链接。
 
 ## 写作与伴随材料
 
@@ -20,6 +24,7 @@
 
 1. 作者完成完整论证与 EN/ZH 等用户指定版本，冻结各版本稿件/PDF hash。
 2. 科学审稿先只读投稿可见稿，复述问题、贡献、机制和最强证据；然后核对辅助材料。逐项给出 pass / fail / unresolved，写具体位置、判断理由、证据、可能反例及最小补救：
+   - blueprint_application：五维学习决定是否实际影响本稿；逐项对照来源锚点、蓝图和稿内位置，不把借鉴当本稿科学证据。
    - artifact_fit：开篇和全文在回答研究问题，还是在报告哪些材料已核查？删掉审计过程后是否仍有完整研究论证？
    - contribution：相对最接近工作的增量/洞见是什么，是否有支持而非功能列表？
    - method：定义、机制、推导/证明和设计选择能否复核？
@@ -49,3 +54,5 @@
 仓库运行可使用 `scripts/validate_paper_delivery.py RECORD --root RUN_DIR`（并先运行通用 `validate_handoff.py` 检查产物完整性）。独立插件无脚本时依此契约逐项人工记录，明确 manual_contract_review；不能声称自动拦截已启用。
 
 记录 schema_version=1、requested_artifact、requested_languages、delivered_artifact、target（用户目标原文）、status（validation_partial / blocked / submission_checks_complete）、bindings、versions、blockers。bindings 每条含 state（completed / not_run / blocked）；未执行角色写 reason，不补造加载或回执，且不能用于完成声明。已执行角色含 start_receipt、result_receipt（path/sha256）、role、actor、mode（independent / staged）、loaded_before_execution=true、files（path/sha256）、revision、read_scope。files 应覆盖 SKILL.md、execution.md、workflow/orchestrator 与本契约；文件路径相对私密 RUN_DIR 的实际冻结指令副本。versions 每条含 language、snapshot（path/sha256）、checks、page_count、read_pages、reader_snapshot_sha256、reviewer_snapshot_sha256；checks 含上述七项及 format，每项含 verdict、location、reason、evidence。blockers 每条含 claim、missing、owner、next_action、resume_when。不把记录中的自述等同于执行证明；随附宿主工具记录，主 AI 检查时间顺序和文件内容。
+
+记录扩展：drafting_started、exemplar_learning 及每语言 implementation_map，字段见 [范文学习接口](paper_exemplar_learning.md)。bindings.files 同时冻结本前置规范；checks 包含 blueprint_application。
