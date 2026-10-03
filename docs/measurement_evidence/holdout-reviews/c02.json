@@ -1,0 +1,58 @@
+{
+  "grader": "judge",
+  "case_id": "c02",
+  "attempt": 1,
+  "output_hashes": {
+    "result.md": "7904f1c5edc42680b631df58c0938c064cc687b3aa1ea44d1e4db363f31c4038",
+    "loaded.json": "075335a4d5be680e7dbc114364aab753f78917a8d360be0d244a83e8dd66dde2",
+    "execution.md": "ba6d4df3f6cf0bd84078a389e0b922cbaa0d7304b53098010b0b140e03fd3b9c",
+    "analysis.json": "112ecbbba7384f37e505df825b7837dd5384a7489f654ba9b4f2258e9a93cc05"
+  },
+  "checks": [
+    {
+      "criterion": "expected_main",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json"
+      ],
+      "evidence": [
+        "Recomputed mean 3.0111883342880605, BCa95 [2.9852667687556345,3.0373067285745994], half-width 0.02601997990948246. Lower bound >1 and half-width <0.2 meet the declared criteria. Result supports this conditional synthetic target-distribution claim without rejecting it merely for being synthetic or demanding unrelated seed trials."
+      ]
+    },
+    {
+      "criterion": "input_evidence_location",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result cites evidence.md:1, pairs.csv rows 2\u201331 and ID0 40.629518\u219243.568039. Exact row0 values are 40.629518163771976 and 43.56803931928211; design/margin/precision declaration matches line1."
+      ]
+    },
+    {
+      "criterion": "actionable_redesign",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md"
+      ],
+      "evidence": [
+        "No unnecessary collection: CODE-T001 retain IDs/scorer/data/config provenance, verify fixed n30 and reproduce paired CPU bootstrap. Acceptance lower bound >1 and half-width <=0.2 plus provenance; reopen only on contradictory provenance."
+      ]
+    },
+    {
+      "criterion": "scope_honesty",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json",
+        "execution.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result explicitly limits interpretation to supplied synthetic/design assumptions, distinguishes descriptive observation from population/causal inference, and states no new experiment/GPU run. Reported BCa numbers independently reproduced using SciPy bootstrap of paired differences, 9999 resamples, NumPy default_rng(42), batch64. Output and loaded-file hashes were verified. Worker execution.md/loaded.json are accounts, not independent proof of historical tool execution or isolation; controller reports real spawn/completion observations. Review independently performed CPU checks, not GPU/model execution."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "grader": "judge",
+  "case_id": "c08",
+  "attempt": 1,
+  "output_hashes": {
+    "result.md": "b344c70f36787ebb38beeb08c2a4e8230d563c676f0ec2219195c39e27721862",
+    "loaded.json": "93651b0a61f90d18bf0c3f828a08cceffcf485145faab4213c5cd1acb884155d",
+    "execution.md": "890fb7e77ce1195d0a724214c01ff0aa6d15ce06458dcad57968373fdaef54a4",
+    "analysis.json": "0b3bbfc26185240f3436a18cb0775fbb2e3ef83e0992bab3a27e0705ea8ceaac"
+  },
+  "checks": [
+    {
+      "criterion": "expected_main",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json"
+      ],
+      "evidence": [
+        "Recomputed selected mean 1.0046290696001654 and confirmed all30 displayed paired gains positive. Evidence line1 nevertheless selects winner from30 on the same test set. Result rejects confirmatory winner-only interval and separates exploratory observation from effect absence; requires complete family or fresh frozen holdout."
+      ]
+    },
+    {
+      "criterion": "input_evidence_location",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result cites evidence.md:1 and rows2\u201331; same-test winner selection is explicitly in line1 and all cited rows are paired positive observations."
+      ]
+    },
+    {
+      "criterion": "actionable_redesign",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md"
+      ],
+      "evidence": [
+        "Freeze candidate/baseline and immutable split/config ledger; fresh independent holdout evaluated once, matched document/cluster pairs, independent pilot fixed N, no sizing from winner optimism. Acceptance prespecified domain margin m and h<=m/2 with lower bound >m and no reuse; 2N evaluations plus CPU; CODE-T001 implements freeze/scoring."
+      ]
+    },
+    {
+      "criterion": "scope_honesty",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json",
+        "execution.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result explicitly limits interpretation to supplied synthetic/design assumptions, distinguishes descriptive observation from population/causal inference, and states no new experiment/GPU run. No unsupported CI appears; available descriptive quantities independently recomputed or compared to original summaries. Output and loaded-file hashes were verified. Worker execution.md/loaded.json are accounts, not independent proof of historical tool execution or isolation; controller reports real spawn/completion observations. Review independently performed CPU checks, not GPU/model execution."
+      ]
+    }
+  ]
+}

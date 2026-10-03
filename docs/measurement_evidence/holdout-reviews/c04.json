@@ -1,0 +1,58 @@
+{
+  "grader": "judge",
+  "case_id": "c04",
+  "attempt": 1,
+  "output_hashes": {
+    "result.md": "f7d4ece00a6aedfdbb41bd1f548af5b767a70ce5e20bea183eb0b367be5cdd9b",
+    "loaded.json": "ca73b1e8805d3a969b61bdafdd4c01113b4e2c2cb0587bd3e5b16e54838d0dec",
+    "execution.md": "b62cccef960320f1fae4ba3a2adcc85906062aa5990397287cd610018221657b",
+    "analysis.json": "a5605e6a521698a2642a0f0d9596222a588d5c61179641448c6f48569ed43818"
+  },
+  "checks": [
+    {
+      "criterion": "expected_main",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json"
+      ],
+      "evidence": [
+        "Recomputed paired mean 0.4987041988545608 and BCa95 [0.49695526618872427,0.500710498781835], half-width 0.0018776162965553622. Paired positive evidence exceeds margin 0.2 and meets precision 0.05. Result correctly rejects equivalence/no-effect inference from unpaired nonsignificance."
+      ]
+    },
+    {
+      "criterion": "input_evidence_location",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result cites evidence.md:1 and rows 2\u201331; pairing declaration matches line1, baselines independently checked as 100,120,...,680 and paired gains near 0.5."
+      ]
+    },
+    {
+      "criterion": "actionable_redesign",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md"
+      ],
+      "evidence": [
+        "Existing-data correction: CODE-T001 preserve matched document IDs/scorer, replace unpaired test with paired document BCa; CPU only, no new collection. Acceptance reproduced lower bound >0.2, half-width <=0.05, corrected draft; reaggregate if dependence is uncovered."
+      ]
+    },
+    {
+      "criterion": "scope_honesty",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json",
+        "execution.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result explicitly limits interpretation to supplied synthetic/design assumptions, distinguishes descriptive observation from population/causal inference, and states no new experiment/GPU run. Reported BCa numbers independently reproduced using SciPy bootstrap of paired differences, 9999 resamples, NumPy default_rng(42), batch64. Output and loaded-file hashes were verified. Worker execution.md/loaded.json are accounts, not independent proof of historical tool execution or isolation; controller reports real spawn/completion observations. Review independently performed CPU checks, not GPU/model execution."
+      ]
+    }
+  ]
+}

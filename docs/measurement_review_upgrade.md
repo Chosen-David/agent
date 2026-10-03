@@ -31,3 +31,18 @@ pyperf 与所读 skill 根许可证 MIT；SciPy BSD-3-Clause，作为现有环�
 独立代码审查发现并修复：有限输入相减溢出/巨大 JSON 整数；停止规则未强制预设。新增固定样本数与 precision 半宽字段，序贯/可选停止转交专用分析。合成例不含用户私密分数或论文数据。
 
 开发例与留出盲测分开：`evals/noise_holdout/build.py` 固定 seed73019 生成12例，答案不发给被测角色。角色使用冻结 skill 快照实际调用宿主模型；10例 reviewer、2例 implementation CPU/mock。原始输出、输入指纹、dispatch和独立评分单独保存。它们证明本轮有限案例的实际表现，不证明普遍鲁棒或真实模型/GPU有效性。指令隔离不是 OS 访问隔离，独立人工/模型判断也不是密码学执行证明。
+
+## 本轮实际验收结果
+
+实现提交 `1237b28` 合并可视化 `15e633e` 后：全套 **239/239** + reader **3/3** 通过；[测试日志](measurement_evidence/tests.log)、[reader 日志](measurement_evidence/reader-tests.log)。新增测量专项11项，独立代码复审通过；offline sync 与 diff 检查通过。
+
+真实角色盲测：固定 seed73019，**10 个 reviewer 案例 + 2 个 implementation 案例**，288 条原始 paired rows（不是288个独立实验单位），另有2个 summary/config-only 审稿输入。两个被测角色均实际读取冻结 skill 并生成 artifacts；第三个全新上下文的独立 judge 重算 paired/cluster 统计和4个BCa区间，复跑2个CPU mock。结果 **12/12 cases、48/48 判据 pass、0 fail、0 ungradable**；不是关键词或 expected 填充 actual。controller 再验证全部 output_hashes、每例四项唯一判据与证据路径。
+
+- [分案例汇总](measurement_evidence/holdout-summary.json)
+- [独立评分说明与限制](measurement_evidence/holdout-reviews/judge-notes.md)
+- [角色输出](measurement_evidence/role-results/) 和 [逐项评分](measurement_evidence/holdout-reviews/)
+- [完整冻结输入/输出/角色快照/dispatch/评分包](measurement_evidence/noise-holdout-v1.tar.gz)，[归档指纹](measurement_evidence/artifact-manifest.json)
+
+案例包含真实大效应正例与零效应/配对误用/聚类相关/伪重复/混杂/缺CI/选择偏差/等效失败/漂移反例。c11 实际 mock OOM 后九个 ID、顺序、输出和种子与参考一致；c12 实际故意漏样本触发错误，没有 completed。独立评分记录了 RNG 描述和后续网格控制开销的轻微表述局限，未隐藏；这些未使预设判据失败。没有角色失败需重跑，开发阶段代码审查的两项缺陷及修复保留于上文。
+
+该结果只支持这12例的有限识别能力，不能称全部稳健、真实GPU有效或统计覆盖率经过校准。实际模型/GPU仍 notrun；精确宿主模型版本/完整历史工具 trace 未暴露。没有启动后台 monitor；仅以前台本地 DAG 核对已有测试日志字节，独立角色评分与其分开。正常用户任务不自动触发本开发验收套件。

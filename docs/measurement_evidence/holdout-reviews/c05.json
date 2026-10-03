@@ -1,0 +1,58 @@
+{
+  "grader": "judge",
+  "case_id": "c05",
+  "attempt": 1,
+  "output_hashes": {
+    "result.md": "8fde6bece1d77899aa341a30328cab55e4cdc8b6b1d03387c3c8fc353e354411",
+    "loaded.json": "d5257ca9ac84212ae78c0a46c7b67ef35f403c945f49dd27c312400e2e940276",
+    "execution.md": "1e895413293ceaea35c1cbfb60953f5f6629bed0354cf7518f1c16146ffe37e7",
+    "analysis.json": "9a5b10954b382b49ecf9d51d669716df9253b9ce3cac86c84fbdafb401f848dd"
+  },
+  "checks": [
+    {
+      "criterion": "expected_main",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json"
+      ],
+      "evidence": [
+        "Independently grouped 60 questions into doc0/doc1/doc2, twenty each, with all within-cluster differences -1/2/5 respectively and equal-document mean2. Result rejects n60 precision, states independent n3, reports descriptive results and withholds general superiority/CI. Future independent documents are recognized as necessary for expanded inference, while current no-more-documents constraint is honored."
+      ]
+    },
+    {
+      "criterion": "input_evidence_location",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result cites evidence.md:1 and row ranges 2\u201321,22\u201341,42\u201361. These exact groups and offsets match the CSV; equal-document metric and unavailable additional documents match input."
+      ]
+    },
+    {
+      "criterion": "actionable_redesign",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md"
+      ],
+      "evidence": [
+        "Concrete feasible redesign is descriptive document aggregation, counts and range via CODE-T001; one CPU scan, exact means -1/2/5, mean2/n3 and claim removal as acceptance. Future fixed-N independent-document study conditional on availability; no pseudoreplication by repeated questions."
+      ]
+    },
+    {
+      "criterion": "scope_honesty",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json",
+        "execution.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result explicitly limits interpretation to supplied synthetic/design assumptions, distinguishes descriptive observation from population/causal inference, and states no new experiment/GPU run. No unsupported CI appears; available descriptive quantities independently recomputed or compared to original summaries. Output and loaded-file hashes were verified. Worker execution.md/loaded.json are accounts, not independent proof of historical tool execution or isolation; controller reports real spawn/completion observations. Review independently performed CPU checks, not GPU/model execution."
+      ]
+    }
+  ]
+}

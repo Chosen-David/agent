@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import random
 import shutil
+import subprocess
 
 ROOT=Path(__file__).resolve().parents[2]
 parser=argparse.ArgumentParser(description=__doc__)
@@ -15,7 +16,7 @@ RUN=parser.parse_args().output
 rng=random.Random(73019)
 RUN.mkdir(parents=True,exist_ok=False)
 for role in ('research-review','research-implement-optimize'):
-    shutil.copytree(ROOT/'plugins/research-assistant/skills'/role,RUN/'snapshot'/role)
+    shutil.copytree(ROOT/'plugins/research-assistant/skills'/role,RUN/'snapshot'/role, ignore=shutil.ignore_patterns('__pycache__','*.pyc'))
 (RUN/'protocol').mkdir()
 for name in ('host_worker.md','host_reviewer.md'):
     shutil.copy2(ROOT/'evals/pipeline_smoke'/name,RUN/'protocol'/name)
@@ -58,5 +59,5 @@ case(11,'CPU mock task: use frozen gpu_adapter.py. Create a trusted fake runner 
 case(12,'CPU mock task: use frozen gpu_adapter.py. Runner deliberately omits one requested sample from an otherwise successful batch; device and authorization callbacks are synthetic. Execute the adapter, capture its actual error/status, and review whether completed is permissible. Save the harness and trace; do not query any GPU.',[],'Actually execute omission case; adapter must reject wrong ID/coverage and no completed receipt; concrete recovery task.', 'research-implement-optimize')
 (RUN/'controller-oracle.json').write_text(json.dumps(oracle,indent=2))
 manifest={str(p.relative_to(RUN)):hashlib.sha256(p.read_bytes()).hexdigest() for p in RUN.rglob('*') if p.is_file()}
-(RUN/'controller-manifest.json').write_text(json.dumps({'seed':73019,'base_commit':'da208c3','inputs_and_snapshot_sha256':manifest,'scope':'synthetic holdout independent of development packet; instruction isolation not OS sandbox'},indent=2))
+(RUN/'controller-manifest.json').write_text(json.dumps({'seed':73019,'base_commit':subprocess.check_output(['git','-C',str(ROOT),'rev-parse','HEAD'],text=True).strip(),'inputs_and_snapshot_sha256':manifest,'scope':'synthetic holdout independent of development packet; instruction isolation not OS sandbox'},indent=2))
 print(RUN)

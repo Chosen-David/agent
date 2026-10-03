@@ -1,0 +1,72 @@
+{
+  "grader": "judge",
+  "case_id": "c11",
+  "attempt": 1,
+  "output_hashes": {
+    "outcome.json": "da90a5e43f376f021365714aec3df35245a57f3c1355d00519a3ec3d262a804b",
+    "result.md": "d042d930411ef4e01190148a41cbfac29f3dd790a223dc7cbb385d570980d7b8",
+    "trace.json": "6189931579114c5d8c998da1748f32fe80aee0d1f95b03b28560fe774e366d29",
+    "receipt-a.json": "c5a31f9b719814d50a65ed43bbfce3d0841699931062a6eb3618f76a08486260",
+    "harness.py": "859c7ff7001dbf1d78b47f86b6fb82c11e00726bd5046d782e241e1eaa8ad27a",
+    "stdout.txt": "738044783c91494cd429a79cfebed500ce0b2a9f227352503cc100b98fa58461",
+    "loaded.json": "43003fdd2efa85165bd8d7a33efb4c0bcff8cf1cc40983cc2d9c50613453f4d1",
+    "execution.md": "14f7a30c34d4be450451652e8308b3a6c80f4a7f7cbd56152fb5136f39674d4b",
+    "receipt-b.json": "8d115b5c65a37d882dba48c988934500042be54f36a22a6d6baacf504c227b5d",
+    "lease-b/5e6cf86648cb44b08707897edebdda085810bcde304ce88236c607fc5d320cf5.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "lease-a/5e6cf86648cb44b08707897edebdda085810bcde304ce88236c607fc5d320cf5.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "lease-a/b3cdcac0e976b5824906275e55b66e61de64973a79787ef7e3a3da159279088b.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "checks": [
+    {
+      "criterion": "expected_main",
+      "verdict": "pass",
+      "artifact_refs": [
+        "harness.py",
+        "trace.json",
+        "receipt-a.json",
+        "receipt-b.json",
+        "outcome.json",
+        "result.md"
+      ],
+      "evidence": [
+        "Independently replayed identical harness with python -B under /workspace/scratch/noise-judge/c11/attempts/0001/outputs. Both adapter runs completed. Recomputed exact ordered IDs 0..8, squares, equal full outputs and SHA256-derived per-ID seeds for seed 19. Two batch-4 identified_oom events were followed by batch-2 requests; seven evaluate calls versus nine reference calls. Result limits support to finite CPU mock fixture."
+      ]
+    },
+    {
+      "criterion": "actionable_redesign",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md"
+      ],
+      "evidence": [
+        "Specifies counts 1/9/17, two orders, two seeds, batches 1/2/4 and two shard counts (72 configurations), paired by ID to batch-1 reference; exact coverage/seeds and retry acceptance; batch-1 OOM/non-OOM propagation controls; two threads/60 seconds/CPU only; CODE-T001 to parameterize harness. Exception/control overhead is additional to the 72-grid count, a minor budget ambiguity that does not negate the concrete bounded redesign."
+      ]
+    },
+    {
+      "criterion": "input_evidence_location",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "loaded.json",
+        "harness.py"
+      ],
+      "evidence": [
+        "Result cites inputs/evidence.md:1; independently read that exact single-line input and verified its hash in loaded.json. c11 input requests seed19/IDs0..8/batch4/two mock devices/fallback and batch1 reference; c12 input requests omission rejection. Harness and observed replay implement the respective input."
+      ]
+    },
+    {
+      "criterion": "scope_honesty",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "execution.md",
+        "loaded.json",
+        "harness.py",
+        "outcome.json"
+      ],
+      "evidence": [
+        "No CI or scientific/GPU performance claim. Explicit synthetic authorization, observations and admission; GPU/model notrun. Harness forbids real experiment.probe and supplies mock observations. Independently executed only CPU replay and verified output/load hashes. Worker execution.md and load declarations remain self-reports; parent reports actual worker spawn/completion observations, not cryptographic attestation or proof of historical tool isolation."
+      ]
+    }
+  ]
+}

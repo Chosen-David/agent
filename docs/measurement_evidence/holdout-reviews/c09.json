@@ -1,0 +1,58 @@
+{
+  "grader": "judge",
+  "case_id": "c09",
+  "attempt": 1,
+  "output_hashes": {
+    "result.md": "8d18d5a5890ce15787f01e0c8e8b800b4f4b7372136e631ff7cb84dc509c02b6",
+    "loaded.json": "3135e493ea15e72eb9a262e7d643635393fd1ec4bf7980686a0f41fe1721a5d7",
+    "execution.md": "5a77bb85d59c56c40a3695ae45ede6862d274947b97fedb6ff80882b09b44e83",
+    "analysis.json": "e31baa69b1743ea75f5710ab3f2311e56584c654f856c0058b8aef0f547e2da4"
+  },
+  "checks": [
+    {
+      "criterion": "expected_main",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json"
+      ],
+      "evidence": [
+        "Recomputed exact differences -4,+4,-3,+3,-2,+2,-1,+1, mean0 and BCa95 [-1.875,1.875]. It is far wider than \u00b10.1. Result rejects p>.05 as equivalence, notes small-n coverage limits, and does not claim evidence of inequivalence."
+      ]
+    },
+    {
+      "criterion": "input_evidence_location",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result cites evidence.md:1 and rows2\u20139; input fixes \u00b10.1 before collection and the eight row differences match exactly."
+      ]
+    },
+    {
+      "criterion": "actionable_redesign",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md"
+      ],
+      "evidence": [
+        "New fixed-N paired study planned from separate pilot with half-width0.05 and existing \u00b10.1 margin; prespecify TOST5%/90%CI or conservative95% containment without switching. CODE-T001 frozen stopping/paired records, 2N cost and resource cap; remain inconclusive if containment/precision not met."
+      ]
+    },
+    {
+      "criterion": "scope_honesty",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json",
+        "execution.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result explicitly limits interpretation to supplied synthetic/design assumptions, distinguishes descriptive observation from population/causal inference, and states no new experiment/GPU run. Reported BCa numbers independently reproduced using SciPy bootstrap of paired differences, 9999 resamples, NumPy default_rng(42), batch64. Output and loaded-file hashes were verified. Worker execution.md/loaded.json are accounts, not independent proof of historical tool execution or isolation; controller reports real spawn/completion observations. Review independently performed CPU checks, not GPU/model execution."
+      ]
+    }
+  ]
+}

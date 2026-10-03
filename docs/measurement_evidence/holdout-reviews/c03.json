@@ -1,0 +1,58 @@
+{
+  "grader": "judge",
+  "case_id": "c03",
+  "attempt": 1,
+  "output_hashes": {
+    "result.md": "23a3754de0dc285b09078dd704da3d9b358abf22c4872c1cc21d4a39de2d6494",
+    "loaded.json": "be4a7d029a37b41ed0aef6742856f9580b65dd4565f6086dc6314f3421312edd",
+    "execution.md": "ba9c952a274e328768333bc70bd81c8d783eec451331a1d1c875045c5fde596f",
+    "analysis.json": "4ea2ebe3acd9668183ff250e89b705eb7dd0623dad58726cd7a01b9ba435fb52"
+  },
+  "checks": [
+    {
+      "criterion": "expected_main",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json"
+      ],
+      "evidence": [
+        "All 60 rows have cluster session-A; independently recomputed candidate-baseline mean -0.9544157153278275 ms. Result explicitly rejects 60 independent model trials, withholds population CI with one session, and requires independent sessions plus independent model trials for any model-seed scope."
+      ]
+    },
+    {
+      "criterion": "input_evidence_location",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result cites evidence.md:1 and rows 2\u201361; the input states one process/model/input/no restarted sessions and every actual cluster is session-A."
+      ]
+    },
+    {
+      "criterion": "actionable_redesign",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md"
+      ],
+      "evidence": [
+        "Independent restarted-session pilot, randomized/interleaved matched methods, aggregate loops per session, frozen N targeting proposed 0.1 ms half-width and 0.2 ms margin; 2 methods \u00d7 sessions \u00d7 loops cost plus startup. CODE-T001 records sessions/loops; resource cap must be set before future execution."
+      ]
+    },
+    {
+      "criterion": "scope_honesty",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json",
+        "execution.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result explicitly limits interpretation to supplied synthetic/design assumptions, distinguishes descriptive observation from population/causal inference, and states no new experiment/GPU run. No unsupported CI appears; available descriptive quantities independently recomputed or compared to original summaries. Output and loaded-file hashes were verified. Worker execution.md/loaded.json are accounts, not independent proof of historical tool execution or isolation; controller reports real spawn/completion observations. Review independently performed CPU checks, not GPU/model execution."
+      ]
+    }
+  ]
+}

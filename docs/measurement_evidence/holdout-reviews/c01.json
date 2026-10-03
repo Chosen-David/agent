@@ -1,0 +1,58 @@
+{
+  "grader": "judge",
+  "case_id": "c01",
+  "attempt": 1,
+  "output_hashes": {
+    "result.md": "b77ec926878aae5ffdd8d0d28a5cb050099aa8a57097932608ef9db44c6e47b8",
+    "loaded.json": "e63a651d0aba44955620d37eda4974a87c543f8abd2648d1098854abd4978a5e",
+    "execution.md": "f3fd182e2cda3c1561e202d838783ad46c4454cdeee80c0143d5969f3b04626d",
+    "analysis.json": "25862045e3eec6b771cbe7854bee1369c8fe8bd21e01f90ee97a85d5d3fc17dd"
+  },
+  "checks": [
+    {
+      "criterion": "expected_main",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json"
+      ],
+      "evidence": [
+        "Independent recomputation from all 30 paired rows found fifteen +0.5 and fifteen -0.5, mean exactly 0, SD 0.5085476277156078; reproduced BCa95 [-0.16666666666666666,0.16666666666666666]. Result withholds positive improvement and separates nonsuperiority from equivalence; lower bound does not exceed margin 0.2."
+      ]
+    },
+    {
+      "criterion": "input_evidence_location",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result cites evidence.md:1 and pairs.csv rows 2\u201331. These are the actual fixed-n30 independent-document declaration and alternating offsets; all row locations checked."
+      ]
+    },
+    {
+      "criterion": "actionable_redesign",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md"
+      ],
+      "evidence": [
+        "Concrete claim narrowing first; optional independent pilot and fixed-N paired documents for 0.1-point half-width, 2N scorer cost plus CPU bootstrap, lower bound >0.2 and half-width <=0.1; CODE-T001 immutable paired capture and frozen stopping."
+      ]
+    },
+    {
+      "criterion": "scope_honesty",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json",
+        "execution.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result explicitly limits interpretation to supplied synthetic/design assumptions, distinguishes descriptive observation from population/causal inference, and states no new experiment/GPU run. Reported BCa numbers independently reproduced using SciPy bootstrap of paired differences, 9999 resamples, NumPy default_rng(42), batch64. Output and loaded-file hashes were verified. Worker execution.md/loaded.json are accounts, not independent proof of historical tool execution or isolation; controller reports real spawn/completion observations. Review independently performed CPU checks, not GPU/model execution."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "grader": "judge",
+  "case_id": "c12",
+  "attempt": 1,
+  "output_hashes": {
+    "outcome.json": "20468968333088e52ee58145c27f8105c0581e88e9b67404e1bd9f1f0a5882b8",
+    "result.md": "dfb7e3d0715ab7ba3e0c02ea75559f7df157162b5bc80925d139e0dc3cbffa32",
+    "trace.json": "2fcb1b3d767266e2af58e3120635e127a8cc4b55c30e2d41942dfad225a0b71a",
+    "harness.py": "859c7ff7001dbf1d78b47f86b6fb82c11e00726bd5046d782e241e1eaa8ad27a",
+    "stdout.txt": "7e546379a7e4f47292e943a136b6633a138cfd6df94bf01c163520dd9ab7a9ec",
+    "loaded.json": "7ddc6ac70cbf39d87b803b41a47e59dddffd0795db6477dc39eaf05318c553cf",
+    "execution.md": "5848658be9bb86155f6b06adf2360a825defed2031e89f8048c83d6eec136312",
+    "lease/5e6cf86648cb44b08707897edebdda085810bcde304ce88236c607fc5d320cf5.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "checks": [
+    {
+      "criterion": "expected_main",
+      "verdict": "pass",
+      "artifact_refs": [
+        "harness.py",
+        "trace.json",
+        "outcome.json",
+        "result.md"
+      ],
+      "evidence": [
+        "Independently replayed identical harness with python -B under /workspace/scratch/noise-judge/c12/attempts/0001/outputs: first request IDs 0,1,2,3 returned only 0,1,2. Frozen adapter line 212 raised ValueError runner output ID/order/coverage mismatch. Both saved and replay outcomes have adapter_returned=false, no receipt field/file. Result rejects completed and provides table-driven recovery task."
+      ]
+    },
+    {
+      "criterion": "actionable_redesign",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md"
+      ],
+      "evidence": [
+        "Defines complete positive control and seven negative controls (three omission positions, duplicate, reversed order, malformed schema, nonfinite), paired against full reference; exact acceptance of complete only, failure diagnostics, eight CPU invocations/one worker/30 seconds, and CODE-T001 to implement tests. Statistical intervals explicitly inapplicable."
+      ]
+    },
+    {
+      "criterion": "input_evidence_location",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "loaded.json",
+        "harness.py"
+      ],
+      "evidence": [
+        "Result cites inputs/evidence.md:1; independently read that exact single-line input and verified its hash in loaded.json. c11 input requests seed19/IDs0..8/batch4/two mock devices/fallback and batch1 reference; c12 input requests omission rejection. Harness and observed replay implement the respective input."
+      ]
+    },
+    {
+      "criterion": "scope_honesty",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "execution.md",
+        "loaded.json",
+        "harness.py",
+        "outcome.json"
+      ],
+      "evidence": [
+        "No CI or scientific/GPU performance claim. Explicit synthetic authorization, observations and admission; GPU/model notrun. Harness forbids real experiment.probe and supplies mock observations. Independently executed only CPU replay and verified output/load hashes. Worker execution.md and load declarations remain self-reports; parent reports actual worker spawn/completion observations, not cryptographic attestation or proof of historical tool isolation."
+      ]
+    }
+  ]
+}

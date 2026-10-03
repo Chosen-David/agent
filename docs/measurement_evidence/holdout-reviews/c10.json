@@ -1,0 +1,58 @@
+{
+  "grader": "judge",
+  "case_id": "c10",
+  "attempt": 1,
+  "output_hashes": {
+    "result.md": "f1896f71ef0047323b639f89406beda281c19998a37b8e85b95fccc0069b1457",
+    "loaded.json": "445a34f487ce483fac149385b06c85f9f1b04f6e17cddee27ee49f2c138e54f1",
+    "execution.md": "01e28f4b5b86eb616fc41e2b310fc8c3dbf1f9a2064142b4fe6933a048db6d5d",
+    "analysis.json": "d2257eb15d915d634f438f906716a2c39d6bf3f5e4e50964abe52115c220a786"
+  },
+  "checks": [
+    {
+      "criterion": "expected_main",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json"
+      ],
+      "evidence": [
+        "Independently grouped40 rows into four sessions of10; every paired offset and each session mean is -1ms. Result identifies baseline-first/candidate-last and time drift as causal confounding that clustering cannot cure; no n40 precision or degenerate CI claim."
+      ]
+    },
+    {
+      "criterion": "input_evidence_location",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result cites evidence.md:1 and ranges2\u201311,12\u201321,22\u201331,32\u201341; those exactly map to session0..3. Baseline-first order and downward latency drift are declared in line1, not fabricated telemetry."
+      ]
+    },
+    {
+      "criterion": "actionable_redesign",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md"
+      ],
+      "evidence": [
+        "Randomized/interleaved matched blocks or balanced AB/BA sessions, temperature/frequency/timestamps/process telemetry, scheduler receipts and cold/steady separation. CODE-T001 manifest schedule/collector blocks unauthorized GPU launch; pilot-based fixed N, proposed0.1ms precision/0.2ms margin, correctness and complete balanced-order receipts; planning-only cost2N blocks plus overhead."
+      ]
+    },
+    {
+      "criterion": "scope_honesty",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "analysis.json",
+        "execution.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result explicitly limits interpretation to supplied synthetic/design assumptions, distinguishes descriptive observation from population/causal inference, and states no new experiment/GPU run. No unsupported CI appears; available descriptive quantities independently recomputed or compared to original summaries. Output and loaded-file hashes were verified. Worker execution.md/loaded.json are accounts, not independent proof of historical tool execution or isolation; controller reports real spawn/completion observations. Review independently performed CPU checks, not GPU/model execution."
+      ]
+    }
+  ]
+}

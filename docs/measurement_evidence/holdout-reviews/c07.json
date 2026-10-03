@@ -1,0 +1,56 @@
+{
+  "grader": "judge",
+  "case_id": "c07",
+  "attempt": 1,
+  "output_hashes": {
+    "result.md": "dde1d94e47653693203eb0f51ae45dc82d6dac78caa0851eb8b8960219bbb963",
+    "loaded.json": "1d1c37de063d664acea8f2803ebd2fdd1453bc8024c5e8261f6a2e8a8c200d74",
+    "execution.md": "ec503f641492b4093ea8ba066767aec788737badbaf87dd642f5016382e2ab3c"
+  },
+  "checks": [
+    {
+      "criterion": "expected_main",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "execution.md"
+      ],
+      "evidence": [
+        "Input contains only rounded 70.12 and70.16. Independent arithmetic gives +0.04 score points and 0.057045065602% relative to70.12. Result correctly separates absolute and relative changes, accounts for rounding, and refuses CI/significance without raw data/provenance."
+      ]
+    },
+    {
+      "criterion": "input_evidence_location",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result cites evidence.md:1; both numbers and missing per-example/scorer/sampling/seed history are on that exact line. No raw CSV exists."
+      ]
+    },
+    {
+      "criterion": "actionable_redesign",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md"
+      ],
+      "evidence": [
+        "CODE-T001 first recover archived paired outputs/manifests and reproduce scoring with cluster/metric retention; capped archive audit and one scoring pass. If unavailable narrow to reported rounded +0.04; future fresh holdout, fixed N/margin/precision from independent pilot and budget required for stronger claim."
+      ]
+    },
+    {
+      "criterion": "scope_honesty",
+      "verdict": "pass",
+      "artifact_refs": [
+        "result.md",
+        "execution.md",
+        "loaded.json"
+      ],
+      "evidence": [
+        "Result explicitly limits interpretation to supplied synthetic/design assumptions, distinguishes descriptive observation from population/causal inference, and states no new experiment/GPU run. No unsupported CI appears; available descriptive quantities independently recomputed or compared to original summaries. Output and loaded-file hashes were verified. Worker execution.md/loaded.json are accounts, not independent proof of historical tool execution or isolation; controller reports real spawn/completion observations. Review independently performed CPU checks, not GPU/model execution."
+      ]
+    }
+  ]
+}
