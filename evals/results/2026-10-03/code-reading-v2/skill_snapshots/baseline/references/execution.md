@@ -12,5 +12,3 @@ python scripts/source_evidence.py --repo /path/to/repo --commit FULL_SHA --path 
 命令仅从独立 `code-reading` 技能根目录运行；协调技能或实现技能的离线后备不含此可选脚本，缺少时用源码 SHA/函数/行号人工定位即可，不要求联网补装。stdout 重定向到目标仓库外。脚本只接受完整 commit ID，不读工作区内容，不运行目标代码；输出 `source_fact` 只表示片段确实来自该 blob，不证明分析结论。Python `--symbol` 包含函数装饰器；显式行范围可以配 `--symbol` 检查范围归属。非 Python 的 label 是人工标注。
 
 验收分开记录：脚本/路由静态契约测试；合成机制阅读任务；真实仓库只读分析；真实运行实验。前三者不证明真实系统性能、LLM 普遍读码质量或后端集成。没有运行日志时标静态推断，不报告通过 GPU/e2e。叙述冲突必须保留双方来源和适用条件；不得将未公开论文写进公共仓库。
-
-复杂报告可用 [覆盖核查卡](coverage.md) 和 [最小契约示例](coverage.example.json)，运行 `python scripts/check_coverage.py report.json`。检查器只读报告，检查当前commit、证据/覆盖行引用、未决范围和执行记录，不读取或执行目标，也不证明证据内容及日志真实。`contract_valid` 不等于结论正确或覆盖完整；用 `source_evidence.py` 另核源码，独立审阅检查语义。已确认的跨模型/多入口结论不得覆盖 unresolved 行。

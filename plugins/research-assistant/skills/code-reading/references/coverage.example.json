@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "commit": "0000000000000000000000000000000000000000",
+  "evidence": [
+    {
+      "id": "E1",
+      "commit": "0000000000000000000000000000000000000000",
+      "path": "example.py",
+      "symbol": "Engine.one",
+      "start_line": 1,
+      "end_line": 2,
+      "blob_sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+    }
+  ],
+  "coverage": [
+    {
+      "id": "one",
+      "entry": "Engine.one",
+      "condition": "dynamic enabled; stat available",
+      "model": "ExampleModel; dimensions unknown",
+      "producer": "prefill writes stat",
+      "consumer": "one reads stat and updates gate",
+      "input": "q[B,H,D]; shape inferred",
+      "output": "positions; actual tensor unavailable",
+      "status": "inspected",
+      "evidence": [
+        "E1"
+      ]
+    },
+    {
+      "id": "many",
+      "entry": "Engine.many",
+      "condition": "batched route",
+      "model": "ExampleModel; dimensions unknown",
+      "producer": "prefill",
+      "consumer": "not yet located",
+      "input": "q[B,H,D]",
+      "output": "unknown",
+      "status": "unresolved",
+      "reason": "Need inspect batch consumer before generalizing",
+      "evidence": []
+    }
+  ],
+  "claims": [
+    {
+      "id": "C1",
+      "text": "Example source-scoped claim, not real analysis",
+      "level": "static_inference",
+      "covers": [
+        "one"
+      ],
+      "evidence": [
+        "E1"
+      ],
+      "runs": []
+    },
+    {
+      "id": "C2",
+      "text": "Batch behavior is unknown",
+      "level": "unknown",
+      "covers": [
+        "many"
+      ],
+      "evidence": [],
+      "runs": []
+    }
+  ],
+  "runs": []
+}

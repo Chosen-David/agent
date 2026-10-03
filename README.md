@@ -25,6 +25,8 @@ python scripts/prepare_agent_eval.py --out /tmp/agent-eval-new-run
 
 代码阅读新增独立轻量入口：[code-reading](plugins/research-assistant/skills/code-reading/SKILL.md)，可追踪 commit/函数/行号、默认与可选机制、控制与数据流。[采用依据与许可证](docs/code_reading_sources.md) · [验证与限制](docs/code_reading_validation.md)。
 
+第二轮代码阅读补充：按需覆盖卡、跨模型/消费者核查与声明契约检查；[源码取舍和任务评测](docs/code_reading_v2_upgrade.md)。
+
 ## 从你的目标开始
 
 | 目标 | 路由 |

@@ -1,0 +1,35 @@
+{
+  "grading": "0/1 per criterion, requires correctly located source and no contradictory conclusion; unanswered is 0. Task participants must not read this file; independent graders must read it. No runtime or quality generalization.",
+  "criteria": {
+    "dispatch": [
+      "fast maps to Index.one via REGISTRY, not flash",
+      "unknown mode invokes caller-supplied extension; implementation unknown and None can fail",
+      "stale heuristic graph edge is not runtime proof"
+    ],
+    "state": [
+      "prefill resets skip_far only if dynamic and always writes stat",
+      "one computes gate under dynamic+stat; many only consumes existing skip_far",
+      "many after fresh prefill does not threshold; earlier one can leave state consumed by many"
+    ],
+    "tensor": [
+      "default tail dims vs optional shared per-KV-head basis; calibration is uncentered far-K SVD, not query-trained",
+      "q projected B,H,r reshapes B,Hkv,G,r and sums G to B,Hkv,r; dot yields B,Hkv,T",
+      "run passes original q/k/v to final function; ops undefined and exact_attention only returns a symbolic tuple, no computed attention or executed tensor shapes"
+    ],
+    "models": [
+      "FullRotary declares full rotary_dim and rotate_half layout; fixture does not implement rotation",
+      "PartialRotary declares half rotary_dim and interleaved layout; generic paired-tail assumption is unestablished",
+      "tail_dims never reads model, no universal claim of unrotated second half"
+    ],
+    "configuration": [
+      "runtime near8 budget4 forced1 dynamicFalse with env overrides only near/dynamic",
+      "experiment changes near16/dynamicTrue without changing engine defaults",
+      "old commit run summary is not current executed evidence and does not show many route"
+    ],
+    "coverage": [
+      "trace both registered selectors and final exact_attention; extension/ops unknown",
+      "index commit differs and PDG absent so empty result is not absence of dependency",
+      "bounded scope and explicit missing consumers/dynamic targets; no claim complete call graph"
+    ]
+  }
+}

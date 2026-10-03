@@ -1,0 +1,855 @@
+{
+  "schema_version": 1,
+  "scope": "独立匿名静态评分；仅读取指定目录的 taskset.json、oracle.json、inputs 四文件、X.md、Y.md；未执行或导入输入。",
+  "method": "每条 oracle 为 0/1；核对答案结论及源码定位，跨段落的明确语义可合并判断，不按关键词、字数或文风奖励。未辨认匿名版本。",
+  "results": {
+    "X": {
+      "tasks": {
+        "dispatch": {
+          "scores": [
+            1,
+            1,
+            1
+          ],
+          "subtotal": 3,
+          "criteria": [
+            {
+              "criterion": "fast maps to Index.one via REGISTRY, not flash",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:52",
+                "inputs/engine.py:55-60"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:11",
+                  "text": "- **source_fact / static_inference**：在注册表未被外部修改的条件下，`run(index, 'fast', ...)` 从 `REGISTRY` 取得 `Index.one`（`engine.py` 模块级注册表:52；`run`:55–59），调用形式是 `selector(index, q, cache)`。随后 `Index.one`:29–32 可能更新 gate 并调用 `choose`；`choose`:10–11 返回带路径标签的元组。其返回值赋给 `positions`，再传入 `exact_attention`（`run`:59–60）。没有通向 `flash` 的已解析边。`run` 的 `mode` 是必填参数，并无 `mode='fast'` 的签名默认值。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "unknown mode invokes caller-supplied extension; implementation unknown and None can fail",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:55-59"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:12",
+                  "text": "- 未知 mode：注册表查找得到 `None` 时，采用 `extension`（`run`:56–59）。若保持默认 `extension=None`，调用不可调用对象会失败，最终 attention 不可达。若传入可调用 extension，则必须能接收 `(index,q,cache)`；其具体行为、返回值及是否间接调用 `flash` 均 unknown。直接把现有 `flash` 作为 extension 也不匹配：`flash(q,cache)` 仅接收两个参数（`engine.py:14–15`），而 selector 调用传三个。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "stale heuristic graph edge is not runtime proof",
+              "score": 1,
+              "source_locations": [
+                "inputs/notes.json:11-16"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:13",
+                  "text": "- `notes.json:3` 的叙述及 `notes.json:16` 的 run→flash 边不能证明调用。该边标注为置信度 0.25 的同名启发式，且图索引与请求 commit 不同（:11–12）。这既不是已解析调用，也不是运行观察。未解决项包括外部注册表变更、实际 extension、调用参数、目标版本和真实运行轨迹；未提供对应证据。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            }
+          ]
+        },
+        "state": {
+          "scores": [
+            1,
+            1,
+            1
+          ],
+          "subtotal": 3,
+          "criteria": [
+            {
+              "criterion": "prefill resets skip_far only if dynamic and always writes stat",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:24-27"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:20",
+                  "text": "| prefill(score) | dynamic 真时重置 `skip_far=False`；无论 dynamic 与否都设置 `stat=score` | 不做阈值比较，也不调用 choose | `Index.prefill:24–27` |"
+                },
+                {
+                  "location": "X.md:21",
+                  "text": "| one(q,cache) | 仅 dynamic 真且 stat 非 None 时写入 `stat < threshold` | choose 消费更新后或原有的 skip_far | `Index.one:29–32` |"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "one computes gate under dynamic+stat; many only consumes existing skip_far",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:29-35"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:21",
+                  "text": "| one(q,cache) | 仅 dynamic 真且 stat 非 None 时写入 `stat < threshold` | choose 消费更新后或原有的 skip_far | `Index.one:29–32` |"
+                },
+                {
+                  "location": "X.md:22",
+                  "text": "| many(q,cache) | 无生产、无重置、无比较 | choose 直接消费现存 skip_far | `Index.many:34–35` |"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "many after fresh prefill does not threshold; earlier one can leave state consumed by many",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:24-35"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:25",
+                  "text": "**static_inference**：同一实例且 dynamic 一直为真时，`prefill → many` 会用重置后的 False，即 near_and_far；不会根据新 stat 重算 gate。即使之前 one 把 gate 置为 True，随后这个 prefill 也会清除它。`one → many` 中若没有 intervening prefill / 状态变更，many 则继承 one 最后写入的 gate。dynamic 假时 prefill 不清 gate，one 也不刷新，因此若之前在 dynamic 真时得到了 True，再关开关，则该状态可继续被消费。stat 为 None 时 one 同样沿用旧 gate。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            }
+          ]
+        },
+        "tensor": {
+          "scores": [
+            1,
+            1,
+            1
+          ],
+          "subtotal": 3,
+          "criteria": [
+            {
+              "criterion": "default tail dims vs optional shared per-KV-head basis; calibration is uncentered far-K SVD, not query-trained",
+              "score": 1,
+              "source_locations": [
+                "inputs/config.py:12-15",
+                "inputs/engine.py:37-43",
+                "inputs/experiments.py:12-18"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:35",
+                  "text": "3. `experiments.py`, `calibrate:12–18` 逐 KV head 读取 `far_keys[:,h]`，对 `[T,D]` 做 `svd(...,full_matrices=False)`，取第三返回值 `vt[:rank].T`，最后 stack。若 ops 遵循常规实数 reduced SVD 且 `0<rank<=min(T,D)`，每个基为 `[D,rank]`，堆叠为 `[Hkv,D,rank]`。rank 超出可用奇异向量数时切片不会保证请求的 rank；负 rank、空输入和复数转置等情况没有处理或语义保证。代码没有减均值、没有 query 输入；这是以 far keys 为数据的未中心化 SVD 子空间构造，不是“每个 query 学得的中心化 PCA”（冲突叙述 `notes.json:6`）。calibrate 与 representation 之间也没有实际调用/传参边，调用者须提供 basis；当前运行是否校准未知。"
+                },
+                {
+                  "location": "X.md:33",
+                  "text": "1. 输入接口为 q `[B,H,D]`、k `[T,Hkv,D]`，且 `H=Hkv*G`（`representation:38`）。basis 缺省时，`Profile.tail_dims(D)` 返回 `[D//2-2,D//2-1,D-2,D-1]`（`config.py:12–15`）；`representation:40–42` 以最后轴索引双方。对支持这种索引且维度有效的 tensor，输出约为 q′ `[B,H,4]`、k′ `[T,Hkv,4]`，保持 head 轴。D=8 时选择 `[2,3,6,7]`。这不是任意小 D 都有四个互异合法坐标的保证；代码无尺寸校验，负索引、重叠和越界取决于 D 与 tensor API。"
+                },
+                {
+                  "location": "X.md:34",
+                  "text": "2. 可选 basis 声明为 `[Hkv,D,r]`，传给 `ops.project_grouped(q,basis)` 和 `ops.project_keys(k,basis)`（`representation:38,43`）。按该接口意图，投影输出应为 `[B,H,r]`、`[T,Hkv,r]`，query heads 使用所属 KV head 的基；实际分组映射、轴布局、dtype、stride、矩阵方向及算子实现不可用，不能断言实际返回此 shape。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "q projected B,H,r reshapes B,Hkv,G,r and sums G to B,Hkv,r; dot yields B,Hkv,T",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:45-49"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:36",
+                  "text": "4. `Index.score:45–49` 意图把 q′ reshape 成 `[B,Hkv,G,r]`，沿 G 轴求和得到 `[B,Hkv,r]`，再以 `'bhr,thr->bht'` 与 k′ `[T,Hkv,r]` 收缩，得到 `[B,Hkv,T]` 分数。这里 h 是 KV-head 轴，GQA 聚合是求和而非均值，不是把所有 H 混成一个 head。tail 分支在此以 r=4 理解；reshape 字符串中的尺寸如何绑定、head 排列是否满足分组前提、ops 的实际行为都 unknown。源码没有缩放、归一化、softmax 或 mask，也未说明这是某种上下界。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "run passes original q/k/v to final function; ops undefined and exact_attention only returns a symbolic tuple, no computed attention or executed tensor shapes",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:5-7",
+                "inputs/engine.py:37-49",
+                "inputs/engine.py:55-60"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:37",
+                  "text": "5. 最终调用明确是 `exact_attention(q, original_k, original_v, positions)`（`run:60`），不把 q′/k′ 传过去。`exact_attention:6` 的注释给出原始、已选 K/V `[B,Hkv,K,D]` 和输出 `[B,H,D]` 的接口意图；其函数体 :7 实际只返回 `('full_dimension_attention', q, original_k, original_v, positions)`，既不 gather 也不执行 attention。`choose:11` 返回的也不是已验证的位置索引。因此只能确定 full-D 原始参数的传递意图，不能确定实际选中 K 个 token、实际 GQA 扩展或数值输出。`notes.json:8` 所称 final 使用 projected keys 没有这条源码路径支持。"
+                },
+                {
+                  "location": "X.md:31",
+                  "text": "以下 shape 是声明的接口及在通常算子语义下的条件推导，不是运行 tensor 观察。`ops` 在 engine 中未定义、未导入，接口自身还注明不可用（`engine.py`, `Index.representation:38–43`）。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            }
+          ]
+        },
+        "models": {
+          "scores": [
+            1,
+            1,
+            1
+          ],
+          "subtotal": 3,
+          "criteria": [
+            {
+              "criterion": "FullRotary declares full rotary_dim and rotate_half layout; fixture does not implement rotation",
+              "score": 1,
+              "source_locations": [
+                "inputs/config.py:18-21"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:44",
+                  "text": "- 限制：这两个类仅存储元数据，没有真正的 RoPE 算子；实际旋转范围、q/k 在 RoPE 前还是后、频率排序、head_dim 与 model dim 的对应关系、TP 分片与布局转换均未知。奇数/小 D、不同 layout、局部旋转维数或位置编码流程变化都需另查，不能无条件泛化上述条件解释。"
+                },
+                {
+                  "location": "X.md:41",
+                  "text": "- `FullRotary.__init__` 默认 dim=8，设置 `rotary_dim=dim`、`layout='rotate_half'`（`config.py:18–21`）。在这些字段确实驱动标准全维 rotate_half、D 为有效偶数且 q/k 已处于对应表示的前提下，旋转配对是 `(i,i+D/2)`，tail_dims 选出最后两对；D=8 为 `(2,6)`、`(3,7)`。第二半也是旋转配对成员，**不是未旋转的半维**。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "PartialRotary declares half rotary_dim and interleaved layout; generic paired-tail assumption is unestablished",
+              "score": 1,
+              "source_locations": [
+                "inputs/config.py:24-27",
+                "inputs/config.py:12-15"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:42",
+                  "text": "- `PartialRotary.__init__` 默认 dim=8，设置 `rotary_dim=dim//2`、`layout='interleaved'`（`config.py:24–27`）。若标准 partial RoPE 仅旋转前 rotary_dim 个坐标，则后半可为未旋转坐标；但 interleaved 配对是相邻坐标而非跨半维。D=8 时 `[2,3,6,7]` 是一个旋转区域内的相邻对及两个未旋转坐标，不能解释成与 FullRotary 相同的两个 rotate_half 跨半配对。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "tail_dims never reads model, no universal claim of unrotated second half",
+              "score": 1,
+              "source_locations": [
+                "inputs/config.py:12-15",
+                "inputs/config.py:18-27"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:43",
+                  "text": "- `Profile.tail_dims:13–15` 明确假定 rotate_half，且没有接收或检查 model。`representation` 也不接收 model；两个模型类在所给 engine 中没有实例化或调用边。故“两个类都有未旋转后半，并共享相同 paired-tail 解释”（`notes.json:7`）不可成立。相同数值下标不等于相同旋转含义。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            }
+          ]
+        },
+        "configuration": {
+          "scores": [
+            1,
+            1,
+            1
+          ],
+          "subtotal": 3,
+          "criteria": [
+            {
+              "criterion": "runtime near8 budget4 forced1 dynamicFalse with env overrides only near/dynamic",
+              "score": 1,
+              "source_locations": [
+                "inputs/config.py:5-10"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:50",
+                  "text": "| near | `int(READ_NEAR)`，缺省字符串 `'8'` | `make_trial` 强制设 16 | 未见 engine 读取 near |"
+                },
+                {
+                  "location": "X.md:51",
+                  "text": "| budget | 4 | 未改，仍由 Profile 给定 | 未见消费 |"
+                },
+                {
+                  "location": "X.md:52",
+                  "text": "| forced | 1 | 未改，仍由 Profile 给定 | 未见消费 |"
+                },
+                {
+                  "location": "X.md:53",
+                  "text": "| dynamic | 仅 READ_DYNAMIC 精确等于 `'1'` 才真，缺省 `'0'` 即假 | `make_trial` 强制设 True | prefill 重置、one 条件判断 |"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "experiment changes near16/dynamicTrue without changing engine defaults",
+              "score": 1,
+              "source_locations": [
+                "inputs/experiments.py:1-9",
+                "inputs/config.py:5-10"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:60",
+                  "text": "`notes.json:4` 的默认 dynamic 真与 runtime 缺省假冲突；“每个 decode 刷新”也与 many 不刷新冲突。实验工具的 True/16 与 `notes.json:18` 的旧摘要 dynamic=true、near=16 相容，但不能据相同值证明调用了 make_trial；它们也可来自环境/外部修改。实验文件 :1 声明不由 runtime 调用，engine 中也未见导入或调用。"
+                },
+                {
+                  "location": "X.md:50",
+                  "text": "| near | `int(READ_NEAR)`，缺省字符串 `'8'` | `make_trial` 强制设 16 | 未见 engine 读取 near |"
+                },
+                {
+                  "location": "X.md:53",
+                  "text": "| dynamic | 仅 READ_DYNAMIC 精确等于 `'1'` 才真，缺省 `'0'` 即假 | `make_trial` 强制设 True | prefill 重置、one 条件判断 |"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "old commit run summary is not current executed evidence and does not show many route",
+              "score": 1,
+              "source_locations": [
+                "inputs/notes.json:11-12",
+                "inputs/notes.json:18",
+                "inputs/engine.py:52"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:62",
+                  "text": "旧摘要记录 mode=fast、passed=true、commit=111…；缺少命令、环境、输入、原始输出和 passed 的验收含义，且不绑定请求的 222… 版本。保留它作为旧报告，不能据此声称本次执行成功或当前 dynamic=true/near=16。当前实际 profile、环境、mode、extension、输入、basis、运行版本及输出均 unknown；本任务未运行目标。"
+                },
+                {
+                  "location": "X.md:68",
+                  "text": "| run → REGISTRY['fast'] → Index.one → choose → positions → exact_attention | 读取完整函数体；gate 可更新，返回元组沿 run 传递 | syntactic_call + resolved_target（注册表未修改条件）；未观察运行 |"
+                },
+                {
+                  "location": "X.md:69",
+                  "text": "| run → REGISTRY['batched'] → Index.many → choose → positions → exact_attention | 同样闭合至元组输出；gate 不刷新 | syntactic_call + resolved_target（同上） |"
+                }
+              ],
+              "judgment": "旧摘要明确仅记录 fast，且答案明确 fast→one 与 batched→many；结合两处可得旧摘要未展示 many 路径。未逐字明说该否定句，视为表述可加强而非实质漏项。旧版本与当前执行证据区别清楚。"
+            }
+          ]
+        },
+        "coverage": {
+          "scores": [
+            1,
+            1,
+            1
+          ],
+          "subtotal": 3,
+          "criteria": [
+            {
+              "criterion": "trace both registered selectors and final exact_attention; extension/ops unknown",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:5-7",
+                "inputs/engine.py:29-60"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:70",
+                  "text": "| run → 未知 mode → extension | 调用点明确，目标和返回行为未知；None / 不匹配签名可失败 | unresolved_target；最终消费者仅在调用成功后可达 |"
+                },
+                {
+                  "location": "X.md:68",
+                  "text": "| run → REGISTRY['fast'] → Index.one → choose → positions → exact_attention | 读取完整函数体；gate 可更新，返回元组沿 run 传递 | syntactic_call + resolved_target（注册表未修改条件）；未观察运行 |"
+                },
+                {
+                  "location": "X.md:69",
+                  "text": "| run → REGISTRY['batched'] → Index.many → choose → positions → exact_attention | 同样闭合至元组输出；gate 不刷新 | syntactic_call + resolved_target（同上） |"
+                },
+                {
+                  "location": "X.md:74",
+                  "text": "| score → reshape → sum → einsum → 返回 score | 读到返回表达式；无 score→prefill 或 score→choose 的源码边 | ops unresolved，后续消费者未提供 |"
+                },
+                {
+                  "location": "X.md:75",
+                  "text": "| run → exact_attention(q,original_k,original_v,positions) | 已读最终返回元组 | 不等于实现真实 gather/attention |"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "index commit differs and PDG absent so empty result is not absence of dependency",
+              "score": 1,
+              "source_locations": [
+                "inputs/notes.json:11-16",
+                "inputs/engine.py:52-59"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:78",
+                  "text": "空图查询不是无调用或无依赖证明。`notes.json:14–15` 查询的是 Index.one callers 且返回空；然而 `engine.py:52,56,59` 已能通过函数对象注册解析出 fast 条件下的调用边。快照索引版本不匹配（`notes.json:11–12`），PDG 层 absent（:13）；空 caller 结果更不能推出无控制/数据依赖。源码已有 `dynamic/stat` 控制 gate 更新、gate→choose、selector 返回→positions→exact_attention 的控制/数据流。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "bounded scope and explicit missing consumers/dynamic targets; no claim complete call graph",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:24-60",
+                "inputs/experiments.py:12-18",
+                "inputs/notes.json:11-16"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "X.md:80",
+                  "text": "要支持严格限定范围的否定命题，至少需要：确认目标源码与 indexed commit 相同；确认完整索引范围、查询过滤/截断、分析层和工具版本；验证对注册表、函数对象、extension、反射/外部入口的处理能力，并补充全授权范围的定义/引用与读写搜索。依赖否定还需真实存在且足够覆盖的控制/数据依赖分析，涵盖状态别名及跨函数流。有限运行 trace 最多证明该次输入未观察到调用，不能证明所有路径不存在调用。此任务范围不允许扩大搜索或重建索引，因此这些均为剩余缺口。"
+                },
+                {
+                  "location": "X.md:72",
+                  "text": "| representation 无 basis → tail_dims → q/k 选维 | 函数返回已读；没有内部调用者或连接 score 的调用边 | 接口 inspected，实际输入/API unknown |"
+                },
+                {
+                  "location": "X.md:74",
+                  "text": "| score → reshape → sum → einsum → 返回 score | 读到返回表达式；无 score→prefill 或 score→choose 的源码边 | ops unresolved，后续消费者未提供 |"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            }
+          ]
+        }
+      },
+      "total": 18,
+      "maximum": 18,
+      "extra_overreach": [],
+      "omissions": [
+        "未单独明说旧摘要没有展示 many 路径；已通过旧 fast 记录及注册表映射语义覆盖。"
+      ],
+      "limitations": [
+        "模型旋转说明均附标准布局/实际实现前提，且明确 fixture 只有属性没有旋转实现；不作为已执行旋转或无条件机制判断。",
+        "算子形状为接口与常规语义下的条件推断，未冒充数值运行结果。",
+        "执行与复读过程仅有答案自述，没有独立工具日志，不能认证这些过程事实。"
+      ]
+    },
+    "Y": {
+      "tasks": {
+        "dispatch": {
+          "scores": [
+            1,
+            1,
+            1
+          ],
+          "subtotal": 3,
+          "criteria": [
+            {
+              "criterion": "fast maps to Index.one via REGISTRY, not flash",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:52",
+                "inputs/engine.py:55-60"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:11",
+                  "text": "- **source_fact**：`engine.py:52` 的模块级 `REGISTRY` 将 `fast` 映射到 `Index.one`，`batched` 映射到 `Index.many`。`run` (`engine.py:55–60`) 先查表，只有查到 `None` 才采用 `extension`，随后在第 59 行以 `(index, q, cache)` 调用 selector。这里的 `run` 没有 `mode='fast'` 默认参数；题目所说的是显式传入该值。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "unknown mode invokes caller-supplied extension; implementation unknown and None can fail",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:55-59"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:13",
+                  "text": "- 未知 mode 时，`extension` 必须能接受三个实参，并成功返回结果；其实现及输出契约 **unknown**。默认 `extension=None` 时，第 59 行调用 `None` 将失败，不能到达最终 attention。显式直接传 `flash` 也不构成有效适配：`flash(q, cache)` 仅接受两个参数 (`engine.py:14–15`)，而分发传三个，按此定义会发生参数数量错误。自定义 wrapper 是否调用 flash 未知。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "stale heuristic graph edge is not runtime proof",
+              "score": 1,
+              "source_locations": [
+                "inputs/notes.json:11-16"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:14",
+                  "text": "- `notes.json:3` 的叙述与可见 fast 注册相冲突。`notes.json:16` 的 run→flash 是置信度 0.25 的同名启发式边，且索引与请求版本不一致 (`:11–12`)；它不能证明真实调用。可见 `run` 函数体无 flash 调用，flash 仅返回合成 tuple；外部注册表突变、extension wrapper、真实后端及当前运行 mode 均未验证。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            }
+          ]
+        },
+        "state": {
+          "scores": [
+            1,
+            1,
+            1
+          ],
+          "subtotal": 3,
+          "criteria": [
+            {
+              "criterion": "prefill resets skip_far only if dynamic and always writes stat",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:24-27"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:21",
+                  "text": "| `prefill(score)` 且 dynamic 真 | 先将 `skip_far=False`，再无条件保存 `stat=score` | `engine.py:24–27` |"
+                },
+                {
+                  "location": "Y.md:22",
+                  "text": "| `prefill(score)` 且 dynamic 假 | 保留旧 `skip_far`，仍保存 `stat` | 同上 |"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "one computes gate under dynamic+stat; many only consumes existing skip_far",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:29-35"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:23",
+                  "text": "| `one(q,cache)` 且 dynamic 真且 stat 非 None | 重算 `skip_far = stat < threshold` | `engine.py:29–32` |"
+                },
+                {
+                  "location": "Y.md:25",
+                  "text": "| `many(q,cache)` | 不读取 stat、不重算、不重置门 | `engine.py:34–35` |"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "many after fresh prefill does not threshold; earlier one can leave state consumed by many",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:24-35"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:29",
+                  "text": "**static_inference**（stat 与 threshold 可比较且所得值可用于条件判断）：dynamic 开启时，`prefill → many` 将消费重置后的 False，得到 near_and_far 标签；它不会根据新 stat 重算。若之前 `one` 已把门设为 True，则随后的 `many` 会复用 True，直到其它入口改变状态。若其间发生 dynamic 为真的 prefill，旧 True 会被清除，many 改用 False。若 prefill 时 dynamic 为假，旧门仍可保留；同样 one 在 dynamic 假或 stat 为 None 时也不会清除旧 True。全新实例在未发生更新时保持 False。多次 many 不刷新任何状态。比较是严格 `<`，等于 threshold 不跳过；stat 的具体类型、非标量比较语义和错误处理未验证。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            }
+          ]
+        },
+        "tensor": {
+          "scores": [
+            1,
+            1,
+            1
+          ],
+          "subtotal": 3,
+          "criteria": [
+            {
+              "criterion": "default tail dims vs optional shared per-KV-head basis; calibration is uncentered far-K SVD, not query-trained",
+              "score": 1,
+              "source_locations": [
+                "inputs/config.py:12-15",
+                "inputs/engine.py:37-43",
+                "inputs/experiments.py:12-18"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:40",
+                  "text": "4. 可选校准 `experiments.py::calibrate:12–18` 对每个 head 的 `far_keys[:,h]`（预期 `[T,D]`）进行 reduced SVD，取 `vt[:rank].T`，最后 stack。若 ops 为常规 SVD 且 `0<rank<=min(T,D)`，各基预期 `[D,rank]`，stack 后 `[Hkv,D,rank]`。rank 超限时常规切片会得到较小有效宽度；空输入、非正 rank、stack 轴及退化情况没有显式验证。没有中心化、没有 query 输入、没有按 query 拟合，所以 `notes.json:6` 的“中心化 PCA、每个 query 学习”不受支持。这是从远端 key 数据提取的可选 SVD 子空间接口；没有可见代码把 calibrate 输出自动送入 representation。"
+                },
+                {
+                  "location": "Y.md:37",
+                  "text": "1. 无 basis：以 q 的末维 D 调用 `Profile.tail_dims`，同时切 q/k 的最后一维 (`engine.py:40–42`; `config.py:12–15`)。在 D 为足够大的偶数、q/k 末维匹配、数组支持这种高级索引的前提下，四个索引为 `[D/2-2,D/2-1,D-2,D-1]`，预期 q′ `[B,H,4]`、k′ `[T,Hkv,4]`。这只是接口形状推断；类型和索引算子未提供，不能报告实测张量。"
+                },
+                {
+                  "location": "Y.md:38",
+                  "text": "2. 有 basis：第 43 行调用 `ops.project_grouped(q,basis)` 与 `ops.project_keys(k,basis)`。按名称、basis 注释及下游契约，预期每个 KV head 的基用于其 G 个 query heads，得到 q′ `[B,H,r]`、k′ `[T,Hkv,r]`；具体分组映射、乘法方向、输出布局及算子校验 **unknown**，不能仅靠名称证明实现。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "q projected B,H,r reshapes B,Hkv,G,r and sums G to B,Hkv,r; dot yields B,Hkv,T",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:45-49"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:39",
+                  "text": "3. `Index.score` (`engine.py:45–49`) 要求将 q′ 保留 KV-head 维度地重排为 `[B,Hkv,G,r]`，沿 axis=2 求和得 `[B,Hkv,r]`，再用 `bhr,thr->bht` 与 `[T,Hkv,r]` 的 k′ 得 `[B,Hkv,T]`。无 basis 路径中 r 在这段接口表示选取宽度 4。若 ops 遵循普通 reshape/sum/einsum 语义，分数为 `sum_g sum_j q′[b,h,g,j]*k′[t,h,j]`，不是跨 Hkv 求和，也不是对 G 求均值。这里没写缩放、softmax 或归一化。该条件表达式不是运行结果；ops 没有在 engine 中定义/导入，正常直接执行相关分支会遇到未定义符号，除非外部注入。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "run passes original q/k/v to final function; ops undefined and exact_attention only returns a symbolic tuple, no computed attention or executed tensor shapes",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:5-7",
+                "inputs/engine.py:37-49",
+                "inputs/engine.py:55-60"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:41",
+                  "text": "5. 最终 `run` 在 `engine.py:60` 调用 `exact_attention(q, original_k, original_v, positions)`，使用收到的原 q 和原始 k/v，并非 q′/k′。`exact_attention:5–7` 注释意图是 q `[B,H,D]`、选中原始 k/v `[B,Hkv,K,D]` 到输出 `[B,H,D]`；函数实际仅返回五元素标签 tuple。run 内没有 gather，choose 也没有返回数值索引，而是标签 tuple。因此是否已选中 K、positions 的真实格式、最终 GQA 广播、mask、缩放、softmax 和数值输出全未知，不能把注释的张量结果当作已实现。`notes.json:8` 的“最终用投影 keys”与可见传参冲突。"
+                },
+                {
+                  "location": "Y.md:39",
+                  "text": "3. `Index.score` (`engine.py:45–49`) 要求将 q′ 保留 KV-head 维度地重排为 `[B,Hkv,G,r]`，沿 axis=2 求和得 `[B,Hkv,r]`，再用 `bhr,thr->bht` 与 `[T,Hkv,r]` 的 k′ 得 `[B,Hkv,T]`。无 basis 路径中 r 在这段接口表示选取宽度 4。若 ops 遵循普通 reshape/sum/einsum 语义，分数为 `sum_g sum_j q′[b,h,g,j]*k′[t,h,j]`，不是跨 Hkv 求和，也不是对 G 求均值。这里没写缩放、softmax 或归一化。该条件表达式不是运行结果；ops 没有在 engine 中定义/导入，正常直接执行相关分支会遇到未定义符号，除非外部注入。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            }
+          ]
+        },
+        "models": {
+          "scores": [
+            1,
+            1,
+            1
+          ],
+          "subtotal": 3,
+          "criteria": [
+            {
+              "criterion": "FullRotary declares full rotary_dim and rotate_half layout; fixture does not implement rotation",
+              "score": 1,
+              "source_locations": [
+                "inputs/config.py:18-21"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:48",
+                  "text": "- `PartialRotary.__init__` (`config.py:24–27`) 声明 `rotary_dim=dim//2`、layout 为 interleaved。若实际实现按通常约定旋转前 rotary_dim 个坐标，其余坐标不旋转，则 D=8 后半 `[4,5,6,7]` 不旋转；但旋转区是相邻配对，所选 `[2,3]` 是旋转区的一对，`[6,7]` 是未旋转区，不能解释为和 FullRotary 相同的跨半区配对尾部。代码没有实现旋转或给出旋转坐标位置，故“不旋转的后半”在这里仍须上述实际实现前提，不能从字段断言全部布局语义。"
+                },
+                {
+                  "location": "Y.md:47",
+                  "text": "- `FullRotary.__init__` (`config.py:18–21`) 声明 `rotary_dim=dim`、layout 为 rotate_half。**static_inference**：如果实际旋转遵守常规 rotate_half、D 是适当偶数且全部 D 坐标被旋转，前后半区按偏移 D/2 配对，所选两半尾部构成配对尾维。例如 D=8 的配对是 (2,6)、(3,7)。第二半是旋转配对的另一半，不能称为“不旋转的后半”。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "PartialRotary declares half rotary_dim and interleaved layout; generic paired-tail assumption is unestablished",
+              "score": 1,
+              "source_locations": [
+                "inputs/config.py:24-27",
+                "inputs/config.py:12-15"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:48",
+                  "text": "- `PartialRotary.__init__` (`config.py:24–27`) 声明 `rotary_dim=dim//2`、layout 为 interleaved。若实际实现按通常约定旋转前 rotary_dim 个坐标，其余坐标不旋转，则 D=8 后半 `[4,5,6,7]` 不旋转；但旋转区是相邻配对，所选 `[2,3]` 是旋转区的一对，`[6,7]` 是未旋转区，不能解释为和 FullRotary 相同的跨半区配对尾部。代码没有实现旋转或给出旋转坐标位置，故“不旋转的后半”在这里仍须上述实际实现前提，不能从字段断言全部布局语义。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "tail_dims never reads model, no universal claim of unrotated second half",
+              "score": 1,
+              "source_locations": [
+                "inputs/config.py:12-15",
+                "inputs/config.py:18-27"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:45",
+                  "text": "`Profile.tail_dims` (`config.py:12–15`) 只使用 dim，注释假设 rotate_half 布局，不检查任何 model。D=8 时返回 `[2,3,6,7]`。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            }
+          ]
+        },
+        "configuration": {
+          "scores": [
+            1,
+            1,
+            1
+          ],
+          "subtotal": 3,
+          "criteria": [
+            {
+              "criterion": "runtime near8 budget4 forced1 dynamicFalse with env overrides only near/dynamic",
+              "score": 1,
+              "source_locations": [
+                "inputs/config.py:5-10"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:56",
+                  "text": "| near | `Profile.__init__`，`config.py:6`：环境 READ_NEAR 经 int，未设为 8；`make_trial` 在 `experiments.py:8` 覆盖为 16 | 输入中无 near 的选择消费；当前环境和运行值 unknown |"
+                },
+                {
+                  "location": "Y.md:57",
+                  "text": "| budget | `config.py:7`：4；make_trial 未覆盖 | 无可见消费；不能推断配额如何实现 |"
+                },
+                {
+                  "location": "Y.md:58",
+                  "text": "| forced | `config.py:8`：1；make_trial 未覆盖 | 无可见消费；不能推断保留哪些位置 |"
+                },
+                {
+                  "location": "Y.md:59",
+                  "text": "| dynamic | `config.py:9`：仅 READ_DYNAMIC 恰为字符串 `'1'` 时真，默认假；`make_trial:7` 强制 True | `Index.prefill:25`、`Index.one:30` 消费；many 不消费开关而读取旧门；当前值 unknown |"
+                }
+              ],
+              "judgment": "表格“环境 READ_NEAR 经 int，未设为 8”按上下文理解为环境变量未设置时取 8，并非声称默认不是 8；表头及 config.py:6 定位支持该读法。用“未设置时为 8”更清楚，不扣语义分。"
+            },
+            {
+              "criterion": "experiment changes near16/dynamicTrue without changing engine defaults",
+              "score": 1,
+              "source_locations": [
+                "inputs/experiments.py:1-9",
+                "inputs/config.py:5-10"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:62",
+                  "text": "**source_fact**：`make_trial:5–9` 先构造 Profile，再写 dynamic/near，返回该对象；runtime engine 中没有调用 make_trial。覆盖发生在构造之后，故 READ_NEAR 若不能转 int，会先在构造阶段失败，不能认为实验赋值消除了该错误。"
+                },
+                {
+                  "location": "Y.md:56",
+                  "text": "| near | `Profile.__init__`，`config.py:6`：环境 READ_NEAR 经 int，未设为 8；`make_trial` 在 `experiments.py:8` 覆盖为 16 | 输入中无 near 的选择消费；当前环境和运行值 unknown |"
+                },
+                {
+                  "location": "Y.md:59",
+                  "text": "| dynamic | `config.py:9`：仅 READ_DYNAMIC 恰为字符串 `'1'` 时真，默认假；`make_trial:7` 强制 True | `Index.prefill:25`、`Index.one:30` 消费；many 不消费开关而读取旧门；当前值 unknown |"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "old commit run summary is not current executed evidence and does not show many route",
+              "score": 1,
+              "source_locations": [
+                "inputs/notes.json:11-12",
+                "inputs/notes.json:18",
+                "inputs/engine.py:52"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:66",
+                  "text": "`notes.json:18` 旧汇总记载 fast、dynamic=true、near=16、passed=true，版本为 `111…111`。这些值与 make_trial 的赋值相容，但不能证明旧运行使用了 make_trial，也不能把 passed 当成已验证测试。该汇总没有完整命令、环境、输入、输出或 current commit 绑定；它与 requested `222…222` 不同。因此只能报告“旧摘要如此声明”，不能据此推断当前执行开启 dynamic、near=16 或通过。当前是否有执行本身也未知。"
+                },
+                {
+                  "location": "Y.md:75",
+                  "text": "| run → Index.one | `engine.py:52,56–59`，mode=fast 且注册表未变 | 静态可解析 |"
+                },
+                {
+                  "location": "Y.md:76",
+                  "text": "| run → Index.many | 同上，mode=batched 且注册表未变 | 静态可解析 |"
+                }
+              ],
+              "judgment": "旧摘要明确仅记录 fast，且答案明确 fast→one 与 batched→many；结合两处可得旧摘要未展示 many 路径。未逐字明说该否定句，视为表述可加强而非实质漏项。旧版本与当前执行证据区别清楚。"
+            }
+          ]
+        },
+        "coverage": {
+          "scores": [
+            1,
+            1,
+            1
+          ],
+          "subtotal": 3,
+          "criteria": [
+            {
+              "criterion": "trace both registered selectors and final exact_attention; extension/ops unknown",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:5-7",
+                "inputs/engine.py:29-60"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:77",
+                  "text": "| run → extension | `engine.py:57–59`，未注册 mode | unresolved：外部 callable；None 或签名不兼容会失败 |"
+                },
+                {
+                  "location": "Y.md:75",
+                  "text": "| run → Index.one | `engine.py:52,56–59`，mode=fast 且注册表未变 | 静态可解析 |"
+                },
+                {
+                  "location": "Y.md:76",
+                  "text": "| run → Index.many | 同上，mode=batched 且注册表未变 | 静态可解析 |"
+                },
+                {
+                  "location": "Y.md:82",
+                  "text": "| score → reshape → sum → einsum | `engine.py:47–49` | 表达式可见，ops unresolved；representation→score 无直接调用证据 |"
+                },
+                {
+                  "location": "Y.md:84",
+                  "text": "| run → exact_attention → 最终返回 | `engine.py:60,5–7` | 闭合到合成 tuple；没有真实后端运行 |"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "index commit differs and PDG absent so empty result is not absence of dependency",
+              "score": 1,
+              "source_locations": [
+                "inputs/notes.json:11-16",
+                "inputs/engine.py:52-59"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:88",
+                  "text": "空图查询不证明没有 callers，更不能证明没有控制/数据依赖：`notes.json:14–15` 只是一次 Index.one caller 查询的空结果，版本错配 (`:11–12`)，PDG 层明确 absent (`:13`)；而本地注册表加 selector 调用已给出条件可达路径。控制依赖可以直接见 run 的 fallback 分支、one 的动态条件、choose 的条件标签；数据依赖包括 stat→skip_far→choose→positions→exact_attention。图没有索引到不等于源码没有。"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            },
+            {
+              "criterion": "bounded scope and explicit missing consumers/dynamic targets; no claim complete call graph",
+              "score": 1,
+              "source_locations": [
+                "inputs/engine.py:24-60",
+                "inputs/experiments.py:12-18",
+                "inputs/notes.json:11-16"
+              ],
+              "answer_evidence": [
+                {
+                  "location": "Y.md:90",
+                  "text": "要支持某个有限范围内的否定结论，最少应取得与目标一致的源码 commit/工作区快照，证明索引覆盖全部相关文件与语言且构建成功，核实查询符号和范围、注册表/间接调用/插件/生成代码/FFI 的解析策略及漏报边界；若否定控制或数据依赖，还须存在并验证对应 PDG 层及分析覆盖。对外部 extension 和动态突变必须封闭环境或明确排除。特定输入的运行 trace 可补充某条路径是否发生，但有限 trace 不能证明所有可能路径不存在。以上均为建议证据，本次未收集、未执行。"
+                },
+                {
+                  "location": "Y.md:81",
+                  "text": "| representation → tail_dims 或 ops 投影 | `engine.py:40–43` | tail_dims 闭合；ops 实现 unresolved；representation 的调用者未见 |"
+                },
+                {
+                  "location": "Y.md:83",
+                  "text": "| calibrate → svd / stack → 返回 basis | `experiments.py:12–18` | 接口可见，ops 与 basis 消费者 unresolved |"
+                }
+              ],
+              "judgment": "源码定位准确，结论语义覆盖判据；未发现相反结论。"
+            }
+          ]
+        }
+      },
+      "total": 18,
+      "maximum": 18,
+      "extra_overreach": [],
+      "omissions": [
+        "未单独明说旧摘要没有展示 many 路径；已通过旧 fast 记录及注册表映射语义覆盖。"
+      ],
+      "limitations": [
+        "模型旋转说明均附标准布局/实际实现前提，且明确 fixture 只有属性没有旋转实现；不作为已执行旋转或无条件机制判断。",
+        "算子形状为接口与常规语义下的条件推断，未冒充数值运行结果。",
+        "执行与复读过程仅有答案自述，没有独立工具日志，不能认证这些过程事实。"
+      ]
+    }
+  },
+  "comparison": {
+    "X_total": 18,
+    "Y_total": 18,
+    "difference_X_minus_Y": 0,
+    "conclusion": "本组 18 条二元判据未区分两份答案，不能据此认定任一版本提升。",
+    "fairness": [
+      "两份使用同一 taskset、oracle 与四个源码 fixture，按同一语义标准评价；未读取其它 packet、原 skill 或仓库历史猜版本。",
+      "每份仅一次合成任务答案，样本量小且两份得分达到上限；没有重复运行、方差或统计显著性证据。",
+      "题目直接提示分发边、gate 时序、GQA、模型布局、旧摘要及空图风险；fixture 注释也提示算子不可用与模型无关选择。这更接近有提示的核对能力，不能外推无提示真实仓库发现能力。",
+      "X 自述第四次复核调用因 exec-server transport disconnected 未启动，Y 自述第四次复读成功。该服务差异限制过程可比性；两份均已有完整带行号首读，不因失败自动扣内容分，也不把成功复读当额外正确性分。",
+      "未获取原始工具日志，不独立确认服务失败、调用次数、权限遵守或复读质量；只据可见答案评价内容。",
+      "结果不支持 runtime 正确性、生产系统覆盖、性能或质量泛化，更不支持统计显著提升。"
+    ]
+  }
+}
