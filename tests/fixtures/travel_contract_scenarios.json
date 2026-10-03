@@ -1,0 +1,1554 @@
+{
+  "scope": "TEST_ONLY_SYNTHETIC_SPEC_EXAMPLES",
+  "limitations": "Reduced synthetic specification examples only: not a production runtime validator, not LLM behavior tests, not live travel verification, and not a JourneyPilot adapter. IDs, addresses, prices and times are invented. The test helpers illustrate a bounded subset of the written contract.",
+  "must_do": [
+    {
+      "id": "all_must_do_covered_optional_may_be_omitted",
+      "intents": [
+        {
+          "intent_id": "portrait",
+          "must_do": true
+        },
+        {
+          "intent_id": "dinner",
+          "must_do": true
+        },
+        {
+          "intent_id": "park",
+          "must_do": false
+        }
+      ],
+      "itinerary": [
+        {
+          "intent_ids": [
+            "portrait"
+          ]
+        },
+        {
+          "intent_ids": [
+            "dinner"
+          ]
+        }
+      ],
+      "expected": true
+    },
+    {
+      "id": "dinner_cannot_silently_disappear",
+      "intents": [
+        {
+          "intent_id": "portrait",
+          "must_do": true
+        },
+        {
+          "intent_id": "dinner",
+          "must_do": true
+        },
+        {
+          "intent_id": "park",
+          "must_do": false
+        }
+      ],
+      "itinerary": [
+        {
+          "intent_ids": [
+            "portrait",
+            "park"
+          ]
+        }
+      ],
+      "expected": false
+    },
+    {
+      "id": "new_must_do_invalidates_previous_coverage_claim",
+      "intents": [
+        {
+          "intent_id": "portrait",
+          "must_do": true
+        },
+        {
+          "intent_id": "dinner",
+          "must_do": true
+        },
+        {
+          "intent_id": "park",
+          "must_do": false
+        },
+        {
+          "intent_id": "museum",
+          "must_do": true
+        }
+      ],
+      "itinerary": [
+        {
+          "intent_ids": [
+            "portrait",
+            "dinner"
+          ]
+        }
+      ],
+      "expected": false
+    }
+  ],
+  "exact_entity": [
+    {
+      "id": "selected_branch_and_navigable_address",
+      "itinerary": [
+        {
+          "candidate_id": "candidate-synthetic-studio-east",
+          "navigable_address": "Example City, 1 Sample Road, East Branch, Room 201"
+        }
+      ],
+      "expected": true,
+      "candidates": [
+        {
+          "candidate_id": "candidate-synthetic-studio-east",
+          "entity_id": "synthetic-studio-east",
+          "navigable_address": "Example City, 1 Sample Road, East Branch, Room 201",
+          "admission": "admitted"
+        }
+      ],
+      "selection_plan": [
+        {
+          "intent_id": "portrait",
+          "primary": "candidate-synthetic-studio-east",
+          "alternatives": [],
+          "fallbacks": []
+        }
+      ]
+    },
+    {
+      "id": "same_brand_wrong_branch",
+      "itinerary": [
+        {
+          "candidate_id": "candidate-synthetic-studio-west",
+          "navigable_address": "Example City, 2 Sample Road, West Branch"
+        }
+      ],
+      "expected": false,
+      "candidates": [
+        {
+          "candidate_id": "candidate-synthetic-studio-east",
+          "entity_id": "synthetic-studio-east",
+          "navigable_address": "Example City, 1 Sample Road, East Branch, Room 201",
+          "admission": "admitted"
+        }
+      ],
+      "selection_plan": [
+        {
+          "intent_id": "portrait",
+          "primary": "candidate-synthetic-studio-east",
+          "alternatives": [],
+          "fallbacks": []
+        }
+      ]
+    },
+    {
+      "id": "selected_id_with_wrong_address",
+      "itinerary": [
+        {
+          "candidate_id": "candidate-synthetic-studio-east",
+          "navigable_address": "Example City, 2 Sample Road, West Branch"
+        }
+      ],
+      "expected": false,
+      "candidates": [
+        {
+          "candidate_id": "candidate-synthetic-studio-east",
+          "entity_id": "synthetic-studio-east",
+          "navigable_address": "Example City, 1 Sample Road, East Branch, Room 201",
+          "admission": "admitted"
+        }
+      ],
+      "selection_plan": [
+        {
+          "intent_id": "portrait",
+          "primary": "candidate-synthetic-studio-east",
+          "alternatives": [],
+          "fallbacks": []
+        }
+      ]
+    },
+    {
+      "id": "generic_placeholder_is_not_selected_entity",
+      "itinerary": [
+        {
+          "candidate_id": "candidate-some-photo-studio",
+          "navigable_address": "Near hotel"
+        }
+      ],
+      "expected": false,
+      "candidates": [
+        {
+          "candidate_id": "candidate-synthetic-studio-east",
+          "entity_id": "synthetic-studio-east",
+          "navigable_address": "Example City, 1 Sample Road, East Branch, Room 201",
+          "admission": "admitted"
+        }
+      ],
+      "selection_plan": [
+        {
+          "intent_id": "portrait",
+          "primary": "candidate-synthetic-studio-east",
+          "alternatives": [],
+          "fallbacks": []
+        }
+      ]
+    },
+    {
+      "id": "selected_entity_without_navigable_address",
+      "itinerary": [
+        {
+          "candidate_id": "candidate-unresolved-studio",
+          "navigable_address": ""
+        }
+      ],
+      "expected": false,
+      "candidates": [
+        {
+          "candidate_id": "candidate-unresolved-studio",
+          "entity_id": "unresolved-studio",
+          "navigable_address": "",
+          "admission": "admitted"
+        }
+      ],
+      "selection_plan": [
+        {
+          "intent_id": "portrait",
+          "primary": "candidate-unresolved-studio",
+          "alternatives": [],
+          "fallbacks": []
+        }
+      ]
+    }
+  ],
+  "service_windows": [
+    {
+      "id": "lunch_within_one_window",
+      "service_windows": [
+        {
+          "open": "2030-05-01T10:30:00+08:00",
+          "close": "2030-05-01T14:30:00+08:00"
+        },
+        {
+          "open": "2030-05-01T16:00:00+08:00",
+          "close": "2030-05-01T21:00:00+08:00",
+          "last_admission": "2030-05-01T20:00:00+08:00"
+        }
+      ],
+      "start": "2030-05-01T13:30:00+08:00",
+      "end": "2030-05-01T14:20:00+08:00",
+      "expected": true
+    },
+    {
+      "id": "lunch_crosses_midday_closure",
+      "service_windows": [
+        {
+          "open": "2030-05-01T10:30:00+08:00",
+          "close": "2030-05-01T14:30:00+08:00"
+        },
+        {
+          "open": "2030-05-01T16:00:00+08:00",
+          "close": "2030-05-01T21:00:00+08:00",
+          "last_admission": "2030-05-01T20:00:00+08:00"
+        }
+      ],
+      "start": "2030-05-01T14:00:00+08:00",
+      "end": "2030-05-01T15:00:00+08:00",
+      "expected": false
+    },
+    {
+      "id": "dinner_within_one_window",
+      "service_windows": [
+        {
+          "open": "2030-05-01T10:30:00+08:00",
+          "close": "2030-05-01T14:30:00+08:00"
+        },
+        {
+          "open": "2030-05-01T16:00:00+08:00",
+          "close": "2030-05-01T21:00:00+08:00",
+          "last_admission": "2030-05-01T20:00:00+08:00"
+        }
+      ],
+      "start": "2030-05-01T16:30:00+08:00",
+      "end": "2030-05-01T18:30:00+08:00",
+      "expected": true
+    },
+    {
+      "id": "meal_spans_both_open_windows",
+      "service_windows": [
+        {
+          "open": "2030-05-01T10:30:00+08:00",
+          "close": "2030-05-01T14:30:00+08:00"
+        },
+        {
+          "open": "2030-05-01T16:00:00+08:00",
+          "close": "2030-05-01T21:00:00+08:00",
+          "last_admission": "2030-05-01T20:00:00+08:00"
+        }
+      ],
+      "start": "2030-05-01T14:00:00+08:00",
+      "end": "2030-05-01T17:00:00+08:00",
+      "expected": false
+    },
+    {
+      "id": "before_close_but_after_last_admission",
+      "service_windows": [
+        {
+          "open": "2030-05-01T10:30:00+08:00",
+          "close": "2030-05-01T14:30:00+08:00"
+        },
+        {
+          "open": "2030-05-01T16:00:00+08:00",
+          "close": "2030-05-01T21:00:00+08:00",
+          "last_admission": "2030-05-01T20:00:00+08:00"
+        }
+      ],
+      "start": "2030-05-01T20:15:00+08:00",
+      "end": "2030-05-01T20:45:00+08:00",
+      "expected": false
+    },
+    {
+      "id": "exact_closing_boundary",
+      "service_windows": [
+        {
+          "open": "2030-05-01T10:30:00+08:00",
+          "close": "2030-05-01T14:30:00+08:00"
+        },
+        {
+          "open": "2030-05-01T16:00:00+08:00",
+          "close": "2030-05-01T21:00:00+08:00",
+          "last_admission": "2030-05-01T20:00:00+08:00"
+        }
+      ],
+      "start": "2030-05-01T13:30:00+08:00",
+      "end": "2030-05-01T14:30:00+08:00",
+      "expected": true
+    },
+    {
+      "id": "cross_midnight_with_explicit_dates",
+      "service_windows": [
+        {
+          "open": "2030-05-01T22:00:00+08:00",
+          "close": "2030-05-02T02:00:00+08:00"
+        }
+      ],
+      "start": "2030-05-01T23:30:00+08:00",
+      "end": "2030-05-02T00:30:00+08:00",
+      "expected": true
+    },
+    {
+      "id": "meal_may_end_after_last_order",
+      "service_windows": [
+        {
+          "open": "2030-05-01T16:00:00+08:00",
+          "close": "2030-05-01T21:00:00+08:00",
+          "last_order": "2030-05-01T20:00:00+08:00"
+        }
+      ],
+      "start": "2030-05-01T19:45:00+08:00",
+      "order_at": "2030-05-01T20:00:00+08:00",
+      "end": "2030-05-01T20:45:00+08:00",
+      "expected": true
+    },
+    {
+      "id": "cannot_order_after_last_order",
+      "service_windows": [
+        {
+          "open": "2030-05-01T16:00:00+08:00",
+          "close": "2030-05-01T21:00:00+08:00",
+          "last_order": "2030-05-01T20:00:00+08:00"
+        }
+      ],
+      "start": "2030-05-01T19:45:00+08:00",
+      "order_at": "2030-05-01T20:01:00+08:00",
+      "end": "2030-05-01T20:45:00+08:00",
+      "expected": false
+    },
+    {
+      "id": "unknown_order_time_requires_repair",
+      "service_windows": [
+        {
+          "open": "2030-05-01T16:00:00+08:00",
+          "close": "2030-05-01T21:00:00+08:00",
+          "last_order": "2030-05-01T20:00:00+08:00"
+        }
+      ],
+      "start": "2030-05-01T19:45:00+08:00",
+      "order_at": null,
+      "end": "2030-05-01T20:45:00+08:00",
+      "expected": false
+    }
+  ],
+  "rest": [
+    {
+      "id": "independent_75_minutes",
+      "covers_midday": true,
+      "blocks": [
+        {
+          "kind": "meal",
+          "start": "2030-05-01T12:00:00+08:00",
+          "end": "2030-05-01T13:00:00+08:00"
+        },
+        {
+          "kind": "rest",
+          "start": "2030-05-01T13:00:00+08:00",
+          "end": "2030-05-01T14:15:00+08:00"
+        }
+      ],
+      "expected": true
+    },
+    {
+      "id": "rest_minimum_60_minutes",
+      "covers_midday": true,
+      "blocks": [
+        {
+          "kind": "rest",
+          "start": "2030-05-01T13:00:00+08:00",
+          "end": "2030-05-01T14:00:00+08:00"
+        }
+      ],
+      "expected": true
+    },
+    {
+      "id": "rest_maximum_default_90_minutes",
+      "covers_midday": true,
+      "blocks": [
+        {
+          "kind": "rest",
+          "start": "2030-05-01T13:00:00+08:00",
+          "end": "2030-05-01T14:30:00+08:00"
+        }
+      ],
+      "expected": true
+    },
+    {
+      "id": "59_minutes_does_not_meet_default",
+      "covers_midday": true,
+      "blocks": [
+        {
+          "kind": "rest",
+          "start": "2030-05-01T13:00:00+08:00",
+          "end": "2030-05-01T13:59:00+08:00"
+        }
+      ],
+      "expected": false
+    },
+    {
+      "id": "meal_or_transport_is_not_rest",
+      "covers_midday": true,
+      "blocks": [
+        {
+          "kind": "meal",
+          "start": "2030-05-01T12:00:00+08:00",
+          "end": "2030-05-01T13:00:00+08:00"
+        },
+        {
+          "kind": "commute",
+          "start": "2030-05-01T13:00:00+08:00",
+          "end": "2030-05-01T14:15:00+08:00"
+        }
+      ],
+      "expected": false
+    },
+    {
+      "id": "overlapping_rest_and_activity",
+      "covers_midday": true,
+      "blocks": [
+        {
+          "kind": "rest",
+          "start": "2030-05-01T13:00:00+08:00",
+          "end": "2030-05-01T14:15:00+08:00"
+        },
+        {
+          "kind": "activity",
+          "start": "2030-05-01T13:30:00+08:00",
+          "end": "2030-05-01T14:30:00+08:00"
+        }
+      ],
+      "expected": false
+    },
+    {
+      "id": "fragmented_half_hours_are_not_independent_hour",
+      "covers_midday": true,
+      "blocks": [
+        {
+          "kind": "rest",
+          "start": "2030-05-01T13:00:00+08:00",
+          "end": "2030-05-01T13:30:00+08:00"
+        },
+        {
+          "kind": "commute",
+          "start": "2030-05-01T13:30:00+08:00",
+          "end": "2030-05-01T14:00:00+08:00"
+        },
+        {
+          "kind": "rest",
+          "start": "2030-05-01T14:00:00+08:00",
+          "end": "2030-05-01T14:30:00+08:00"
+        }
+      ],
+      "expected": false
+    },
+    {
+      "id": "explicit_user_waiver",
+      "covers_midday": true,
+      "blocks": [],
+      "waiver": {
+        "by": "user",
+        "explicit": true,
+        "reason": "I explicitly prefer no midday rest on this day."
+      },
+      "expected": true
+    },
+    {
+      "id": "assistant_cannot_waive_rest",
+      "covers_midday": true,
+      "blocks": [],
+      "waiver": {
+        "by": "assistant",
+        "explicit": true,
+        "reason": "The route is busy."
+      },
+      "expected": false
+    },
+    {
+      "id": "evening_only_has_no_midday_requirement",
+      "covers_midday": false,
+      "blocks": [
+        {
+          "kind": "activity",
+          "start": "2030-05-01T18:00:00+08:00",
+          "end": "2030-05-01T19:30:00+08:00"
+        }
+      ],
+      "expected": true
+    },
+    {
+      "id": "explicit_user_adjustment_allows_120_minute_rest",
+      "covers_midday": true,
+      "blocks": [
+        {
+          "kind": "rest",
+          "start": "2030-05-01T13:00:00+08:00",
+          "end": "2030-05-01T15:00:00+08:00"
+        }
+      ],
+      "rest_adjustment": {
+        "by": "user",
+        "explicit": true,
+        "minutes": 120
+      },
+      "expected": true
+    },
+    {
+      "id": "91_minutes_requires_explicit_adjustment_in_default_example",
+      "covers_midday": true,
+      "blocks": [
+        {
+          "kind": "rest",
+          "start": "2030-05-01T13:00:00+08:00",
+          "end": "2030-05-01T14:31:00+08:00"
+        }
+      ],
+      "expected": false
+    }
+  ],
+  "budget": [
+    {
+      "id": "two_people_fares_plus_one_car",
+      "people": 2,
+      "currency": "CNY",
+      "lines": [
+        {
+          "amount": "4.25",
+          "unit": "per_person",
+          "quantity": 2
+        },
+        {
+          "amount": "40.00",
+          "unit": "per_car",
+          "quantity": 1
+        }
+      ],
+      "expected": "48.50"
+    },
+    {
+      "id": "round_trip_car_quantity_not_people",
+      "people": 2,
+      "currency": "CNY",
+      "lines": [
+        {
+          "amount": "40.00",
+          "unit": "per_car",
+          "quantity": 1
+        },
+        {
+          "amount": "40.00",
+          "unit": "per_car",
+          "quantity": 1
+        }
+      ],
+      "expected": "80.00"
+    },
+    {
+      "id": "per_person_round_trip",
+      "people": 2,
+      "currency": "CNY",
+      "lines": [
+        {
+          "amount": "4.25",
+          "unit": "per_person",
+          "quantity": 2
+        },
+        {
+          "amount": "4.25",
+          "unit": "per_person",
+          "quantity": 2
+        }
+      ],
+      "expected": "17.00"
+    },
+    {
+      "id": "unknown_price_does_not_become_zero",
+      "people": 2,
+      "currency": "CNY",
+      "lines": [
+        {
+          "amount": null,
+          "unit": "per_person",
+          "quantity": 2
+        },
+        {
+          "amount": "40.00",
+          "unit": "per_car",
+          "quantity": 1
+        }
+      ],
+      "expected": null
+    }
+  ],
+  "amendment": [
+    {
+      "id": "add_must_do_amends_contract",
+      "before": {
+        "revision": 4,
+        "artifacts": {
+          "facts": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "candidates": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "selection_plan": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "itinerary": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "commutes": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "budget": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "intent_coverage": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "deliverables": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          }
+        }
+      },
+      "changed": [
+        "request_contract"
+      ],
+      "expected_revision": 5,
+      "expected_invalidated": [
+        "budget",
+        "candidates",
+        "commutes",
+        "deliverables",
+        "intent_coverage",
+        "itinerary",
+        "selection_plan"
+      ]
+    },
+    {
+      "id": "correct_service_window_reopens_candidates",
+      "before": {
+        "revision": 4,
+        "artifacts": {
+          "facts": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "candidates": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "selection_plan": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "itinerary": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "commutes": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "budget": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "intent_coverage": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "deliverables": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          }
+        }
+      },
+      "changed": [
+        "candidates"
+      ],
+      "expected_revision": 5,
+      "expected_invalidated": [
+        "budget",
+        "commutes",
+        "deliverables",
+        "intent_coverage",
+        "itinerary",
+        "selection_plan"
+      ]
+    },
+    {
+      "id": "switch_taxi_to_bus_recomputes_timing_and_cost",
+      "before": {
+        "revision": 4,
+        "artifacts": {
+          "facts": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "candidates": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "selection_plan": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "itinerary": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "commutes": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "budget": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "intent_coverage": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          },
+          "deliverables": {
+            "status": "COMPLETED",
+            "validity": "current",
+            "built_from_revision": 4,
+            "validated_for_revision": 4
+          }
+        }
+      },
+      "changed": [
+        "commutes"
+      ],
+      "expected_revision": 5,
+      "expected_invalidated": [
+        "itinerary",
+        "budget",
+        "intent_coverage",
+        "deliverables"
+      ]
+    }
+  ],
+  "artifact": [
+    {
+      "id": "same_revision_checked_delivery",
+      "current_revision": 5,
+      "artifact": {
+        "qa": "passed",
+        "dependencies": [
+          {
+            "id": "itinerary",
+            "recorded_revision": 5,
+            "actual_revision": 5,
+            "validity": "current"
+          }
+        ],
+        "bundle_revision": 5,
+        "validity": "current"
+      },
+      "expected": true
+    },
+    {
+      "id": "old_word_cannot_be_current_by_label",
+      "current_revision": 5,
+      "artifact": {
+        "qa": "passed",
+        "dependencies": [
+          {
+            "id": "itinerary",
+            "recorded_revision": 5,
+            "actual_revision": 5,
+            "validity": "current"
+          }
+        ],
+        "declared_current": true,
+        "bundle_revision": 4,
+        "validity": "current"
+      },
+      "expected": false
+    },
+    {
+      "id": "stale_even_with_current_revision",
+      "current_revision": 5,
+      "artifact": {
+        "qa": "passed",
+        "dependencies": [
+          {
+            "id": "itinerary",
+            "recorded_revision": 5,
+            "actual_revision": 5,
+            "validity": "current"
+          }
+        ],
+        "bundle_revision": 5,
+        "validity": "stale"
+      },
+      "expected": false
+    },
+    {
+      "id": "itinerary_updated_after_document_render",
+      "current_revision": 5,
+      "artifact": {
+        "qa": "passed",
+        "dependencies": [
+          {
+            "id": "itinerary",
+            "recorded_revision": 5,
+            "actual_revision": 6,
+            "validity": "current"
+          }
+        ],
+        "bundle_revision": 5,
+        "validity": "current"
+      },
+      "expected": false
+    },
+    {
+      "id": "generated_file_is_not_checked_delivery",
+      "current_revision": 5,
+      "artifact": {
+        "qa": "not_run",
+        "dependencies": [
+          {
+            "id": "itinerary",
+            "recorded_revision": 5,
+            "actual_revision": 5,
+            "validity": "current"
+          }
+        ],
+        "bundle_revision": 5,
+        "validity": "current"
+      },
+      "expected": false
+    }
+  ],
+  "resume": [
+    {
+      "id": "current_completed_dependency_closure_is_reusable",
+      "contract_revision": 5,
+      "now": "2030-05-01T10:00:00+08:00",
+      "nodes": {
+        "location_facts": {
+          "revision": 1,
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "weather": {
+          "revision": 2,
+          "expires_at": "2030-05-01T12:00:00+08:00",
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "candidates": {
+          "revision": 3,
+          "dependencies": {
+            "location_facts": 1
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "selection_plan": {
+          "revision": 4,
+          "dependencies": {
+            "candidates": 3
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "itinerary": {
+          "revision": 5,
+          "dependencies": {
+            "selection_plan": 4,
+            "weather": 2
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "deliverables": {
+          "revision": 6,
+          "dependencies": {
+            "itinerary": 5
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        }
+      },
+      "expected": {
+        "reuse": [
+          "candidates",
+          "deliverables",
+          "itinerary",
+          "location_facts",
+          "selection_plan",
+          "weather"
+        ],
+        "refresh": []
+      }
+    },
+    {
+      "id": "expired_weather_refreshes_only_dependent_branch",
+      "contract_revision": 5,
+      "now": "2030-05-01T12:00:00+08:00",
+      "nodes": {
+        "location_facts": {
+          "revision": 1,
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "weather": {
+          "revision": 2,
+          "expires_at": "2030-05-01T12:00:00+08:00",
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "candidates": {
+          "revision": 3,
+          "dependencies": {
+            "location_facts": 1
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "selection_plan": {
+          "revision": 4,
+          "dependencies": {
+            "candidates": 3
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "itinerary": {
+          "revision": 5,
+          "dependencies": {
+            "selection_plan": 4,
+            "weather": 2
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "deliverables": {
+          "revision": 6,
+          "dependencies": {
+            "itinerary": 5
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        }
+      },
+      "expected": {
+        "reuse": [
+          "candidates",
+          "location_facts",
+          "selection_plan"
+        ],
+        "refresh": [
+          "deliverables",
+          "itinerary",
+          "weather"
+        ]
+      }
+    },
+    {
+      "id": "changed_source_revision_invalidates_transitive_consumers",
+      "contract_revision": 5,
+      "now": "2030-05-01T10:00:00+08:00",
+      "nodes": {
+        "location_facts": {
+          "revision": 2,
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "weather": {
+          "revision": 2,
+          "expires_at": "2030-05-01T12:00:00+08:00",
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "candidates": {
+          "revision": 3,
+          "dependencies": {
+            "location_facts": 1
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "selection_plan": {
+          "revision": 4,
+          "dependencies": {
+            "candidates": 3
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "itinerary": {
+          "revision": 5,
+          "dependencies": {
+            "selection_plan": 4,
+            "weather": 2
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "deliverables": {
+          "revision": 6,
+          "dependencies": {
+            "itinerary": 5
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        }
+      },
+      "expected": {
+        "reuse": [
+          "location_facts",
+          "weather"
+        ],
+        "refresh": [
+          "candidates",
+          "deliverables",
+          "itinerary",
+          "selection_plan"
+        ]
+      }
+    },
+    {
+      "id": "interrupted_stage_is_not_completed",
+      "contract_revision": 5,
+      "now": "2030-05-01T10:00:00+08:00",
+      "nodes": {
+        "location_facts": {
+          "revision": 1,
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "weather": {
+          "revision": 2,
+          "expires_at": "2030-05-01T12:00:00+08:00",
+          "dependencies": {},
+          "status": "INTERRUPTED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "candidates": {
+          "revision": 3,
+          "dependencies": {
+            "location_facts": 1
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "selection_plan": {
+          "revision": 4,
+          "dependencies": {
+            "candidates": 3
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "itinerary": {
+          "revision": 5,
+          "dependencies": {
+            "selection_plan": 4,
+            "weather": 2
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "deliverables": {
+          "revision": 6,
+          "dependencies": {
+            "itinerary": 5
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        }
+      },
+      "expected": {
+        "reuse": [
+          "candidates",
+          "location_facts",
+          "selection_plan"
+        ],
+        "refresh": [
+          "deliverables",
+          "itinerary",
+          "weather"
+        ]
+      }
+    },
+    {
+      "id": "old_contract_results_cannot_resume_as_new_revision",
+      "contract_revision": 6,
+      "now": "2030-05-01T10:00:00+08:00",
+      "nodes": {
+        "location_facts": {
+          "revision": 1,
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "weather": {
+          "revision": 2,
+          "expires_at": "2030-05-01T12:00:00+08:00",
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "candidates": {
+          "revision": 3,
+          "dependencies": {
+            "location_facts": 1
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "selection_plan": {
+          "revision": 4,
+          "dependencies": {
+            "candidates": 3
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "itinerary": {
+          "revision": 5,
+          "dependencies": {
+            "selection_plan": 4,
+            "weather": 2
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "deliverables": {
+          "revision": 6,
+          "dependencies": {
+            "itinerary": 5
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        }
+      },
+      "expected": {
+        "reuse": [],
+        "refresh": [
+          "candidates",
+          "deliverables",
+          "itinerary",
+          "location_facts",
+          "selection_plan",
+          "weather"
+        ]
+      }
+    },
+    {
+      "id": "missing_dependency_blocks_current_claim",
+      "contract_revision": 5,
+      "now": "2030-05-01T10:00:00+08:00",
+      "nodes": {
+        "location_facts": {
+          "revision": 1,
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "weather": {
+          "revision": 2,
+          "expires_at": "2030-05-01T12:00:00+08:00",
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "candidates": {
+          "revision": 3,
+          "dependencies": {
+            "location_facts": 1
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "selection_plan": {
+          "revision": 4,
+          "dependencies": {
+            "candidates": 3
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "itinerary": {
+          "revision": 5,
+          "dependencies": {
+            "selection_plan": 4,
+            "weather": 2,
+            "missing_commute": 1
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "deliverables": {
+          "revision": 6,
+          "dependencies": {
+            "itinerary": 5
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        }
+      },
+      "expected": {
+        "reuse": [
+          "candidates",
+          "location_facts",
+          "selection_plan",
+          "weather"
+        ],
+        "refresh": [
+          "deliverables",
+          "itinerary"
+        ]
+      }
+    },
+    {
+      "id": "completed_but_stale_output_is_not_reusable",
+      "contract_revision": 5,
+      "now": "2030-05-01T10:00:00+08:00",
+      "nodes": {
+        "location_facts": {
+          "revision": 1,
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "weather": {
+          "revision": 2,
+          "expires_at": "2030-05-01T12:00:00+08:00",
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "stale",
+          "built_from_revision": 5
+        },
+        "candidates": {
+          "revision": 3,
+          "dependencies": {
+            "location_facts": 1
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "selection_plan": {
+          "revision": 4,
+          "dependencies": {
+            "candidates": 3
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "itinerary": {
+          "revision": 5,
+          "dependencies": {
+            "selection_plan": 4,
+            "weather": 2
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        },
+        "deliverables": {
+          "revision": 6,
+          "dependencies": {
+            "itinerary": 5
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 5
+        }
+      },
+      "expected": {
+        "reuse": [
+          "candidates",
+          "location_facts",
+          "selection_plan"
+        ],
+        "refresh": [
+          "deliverables",
+          "itinerary",
+          "weather"
+        ]
+      }
+    },
+    {
+      "id": "older_build_revalidated_for_current_revision_is_reusable",
+      "contract_revision": 5,
+      "now": "2030-05-01T10:00:00+08:00",
+      "nodes": {
+        "location_facts": {
+          "revision": 1,
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 4
+        },
+        "weather": {
+          "revision": 2,
+          "expires_at": "2030-05-01T12:00:00+08:00",
+          "dependencies": {},
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 4
+        },
+        "candidates": {
+          "revision": 3,
+          "dependencies": {
+            "location_facts": 1
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 4
+        },
+        "selection_plan": {
+          "revision": 4,
+          "dependencies": {
+            "candidates": 3
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 4
+        },
+        "itinerary": {
+          "revision": 5,
+          "dependencies": {
+            "selection_plan": 4,
+            "weather": 2
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 4
+        },
+        "deliverables": {
+          "revision": 6,
+          "dependencies": {
+            "itinerary": 5
+          },
+          "status": "COMPLETED",
+          "validated_for_revision": 5,
+          "validity": "current",
+          "built_from_revision": 4
+        }
+      },
+      "expected": {
+        "reuse": [
+          "candidates",
+          "deliverables",
+          "itinerary",
+          "location_facts",
+          "selection_plan",
+          "weather"
+        ],
+        "refresh": []
+      }
+    }
+  ],
+  "fixture_mapping": {
+    "general": "Cases are intentionally partial records, not valid complete local-travel/v1 bundles. Wrapper keys such as expected describe the test, not the production contract.",
+    "exact_entity": "Candidates and selection_plan use canonical IDs; itinerary also includes a rendered navigable_address projection to test exact branch/address preservation in output.",
+    "rest": "waiver/rest_adjustment are synthetic explicit-user-decision evidence. They illustrate an authorized amendment of request_contract.trip_brief.rest_preferences, not extra canonical fields.",
+    "budget": "Each line is one price record; quantity is actual people for per_person or vehicle count for per_car. Separate outward/return lines preserve that billing scope; no second multiplication by people occurs.",
+    "amendment": "Artifacts combine an earlier COMPLETED stage status with output validity. An amendment changes validity without rewriting historical completion. The changed node itself represents freshly updated input, and only its downstream consumers are invalidated here.",
+    "resume": "Each node combines a stage status and one output for a reduced graph. revision is that synthetic output version, validated_for_revision is the bundle revision it was checked against, and dependencies maps node IDs to recorded output versions. This is not a runtime state schema.",
+    "artifact": "Each dependency includes its recorded and actual synthetic output version. These stand in for checked depends_on references; qa denotes the documented QA state.",
+    "service_windows": "Examples test explicit same-window duration, last_admission and last_order. Exit buffers are assumed zero in these reduced examples; actual plans also include queue, transport and exit buffers."
+  }
+}

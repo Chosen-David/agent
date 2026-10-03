@@ -105,8 +105,8 @@
 本仓库沿用其**边界与数据流**，不复制实现：
 - 简单旅行问题仍直接回答；
 - 复杂多日旅行采用 RequestContract 与 CandidateSelectionPlan；
-- 本地环境已部署 JourneyPilot 时，可将其作为可选 backend/runtime；
-- 未部署时使用当前可用搜索、地图、天气和文档工具模拟相同阶段，不声称运行了 JourneyPilot；
+- 本地环境已部署 JourneyPilot 时，也须另行核验版本和公开接口、取得授权并实现适配，才能作为 backend/runtime；本仓库暂无 adapter，本地同名合同不兼容其 schema；
+- 未接入时按 [本地共享契约](../plugins/travel-assistant/skills/travel-planner/references/planning_contract.md) 使用当前可用搜索、地图、天气和文档工具，不声称运行了 JourneyPilot；
 - 美团/点评/小红书仍按实际连接器、浏览器授权或公开网页能力处理。
 
 ### OpenAI Agents SDK / LangGraph / Agency Swarm

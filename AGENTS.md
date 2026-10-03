@@ -11,4 +11,4 @@ python -m unittest discover -s tests -v
 python -m unittest discover -s apps/paper-reader/tests -v
 ```
 
-These checks include static prompt/config contracts and executable reader tests. They do not prove LLM compliance, live model access, plugin installation, or external runtime integration. Treat travel interface changes as pending the decision in `docs/decisions/travel_workflow_sync.md`; do not mechanically synchronize travel files.
+These checks include static prompt/config contracts and executable reader tests. They do not prove LLM compliance, live model access, plugin installation, or external runtime integration. Travel entry points share `plugins/travel-assistant/skills/travel-planner/references/planning_contract.md`; preserve their navigation and package-local link closure. The approved scope in `docs/decisions/travel_workflow_sync.md` covers portable instructions, not JourneyPilot runtime integration.

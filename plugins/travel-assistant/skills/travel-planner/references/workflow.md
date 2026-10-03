@@ -6,6 +6,10 @@
 
 这是编排规范，不是已部署的预订服务；不会自动安装美团等连接器、登录账号或替用户下单。
 
+## 0. 先读共享核心契约
+
+开始复杂规划前，必须读取 [旅行共享规划契约](planning_contract.md)，按其中的角色职责、合同字段、候选流水线、失效与恢复、验收和外部接口边界执行。本文件保留该入口的操作细节与导航，不另定义第二份核心契约。单点查询按最小流程处理。
+
 ## 1. 先读上下文并选择真实可用能力
 
 先读当前会话和用户指定的最新行程文件，复用日期、酒店、活动与格式。用户补充“还想吃牛New”时，保留原有写真与公园安排。
@@ -113,7 +117,7 @@ price:
 
 ### 3.2 营业时间必须支持多窗口
 
-餐饮、写真馆、票务、场馆的营业时间不能只保存为单个 `open-close`。至少支持：
+餐饮、写真馆、票务、场馆的营业时间不能只保存为单个 `open-close`。下面 HH:MM 仅为说明窗口的当地钟点示例；持久化到 Bundle 时须结合适用日期和目的地时区展开成带偏移量的完整 ISO 8601 时间，跨午夜用次日日期。至少支持：
 
 ```yaml
 service_windows:
@@ -143,7 +147,7 @@ meal_end   <= window.close
 4. 不能“取平均”或沿用更方便排程的旧值。
 
 
-关键事实记录 `entity_id / claim / value / applies_on / source_url / source_published_at / checked_at / timezone / status`。状态：`verified`（来源已核验且日期适用）、`reference`（常规或历史）、`estimate`、`unknown`、`conflict`；用户有效订单另记 `user_confirmed`。网页可读不自动等于 verified；摘要只作线索，尽可能打开原页。
+来源采集时可暂记 `entity_id / claim / value / applies_on / source_url / source_published_at / checked_at / timezone / status`；写入 Bundle 前必须按共享契约规范化：facts 使用 fact_id/source_ids，URL、发布/访问时间写入 sources，不持久维护可独立修改的 source_url 别名。状态：`verified`（来源已核验且日期适用）、`reference`（常规或历史）、`estimate`、`unknown`、`conflict`；用户有效订单另记 `user_confirmed`。网页可读不自动等于 verified；摘要只作线索，尽可能打开原页。
 
 比较来源先看同实体、同服务、日期适用和新鲜度，再看权威性：特定日期官方公告/有效订单优先，随后场馆商户官方、地图/点评/票务平台，旧攻略仅补背景。官网也可能留旧公告，爬取日期不等于发布日期。冲突保留双方来源与适用范围，查当前官方渠道；仍无结论就避开边界时段或设替代，不能取平均。
 
@@ -233,39 +237,9 @@ start_i <= last_admission_i  # 适用时区分入门、检票和预约报到
 
 ## 7. 状态 交付与增量修订
 
-复杂行程在用户指定私有位置维护以下状态，简单问题保留会话即可；空值不是已核验事实：
+复杂行程在用户指定私有位置维护 [共享契约](planning_contract.md) 定义的单一 DeliveryBundle；旧 trip_brief/activities 状态按其中映射迁移，不双写冲突字段。
 
-```yaml
-trip_id: null
-revision: 1
-as_of: null  # 更新时点，含时区
-trip_brief:
-  destination: null
-  timezone: null
-  dates: {start: null, end: null}
-  people: null
-  anchor: {kind: unknown, entity_id: null}  # hotel/station/activity/area/unknown
-  arrival: null
-  departure: null
-  budget: null
-  hard_constraints: []
-  desired_activities: []
-  optional_activities: []
-  rest_preferences: {default_enabled: true, midday_minutes: 75, needs_room: null, walking_tolerance: null}  # 75为可调规划默认值，非用户确认
-  assumptions: []
-capabilities: []  # 真实入口、版本、验证和限制
-facts: []  # 第3节字段
-experiences: []  # 帖子来源、实际读取范围、日期、观察、局限
-weather: []  # 日期、来源、发布时间、查询时间、状态、内容、影响
-activities: []  # id、实体、优先级、服务窗口、时长、预约状态
-commutes: []  # 起终点/入口、方式、线路/方向/换乘、全程时长、费用单位/人数、依据/状态、理由、备选
-itinerary: []  # 当地日期、起止、交通、缓冲、activity_id、A/B方案
-open_questions: []
-change_log: []
-deliverables: []  # 格式、路径、版本、渲染/已检查页数、QA状态
-```
-
-新酒店/集合时间/午休偏好/天气/指定项目/关闭信息：读最新版本 → 更新关联事实 → 重算交通/时间/预算/替代 → 同步总览、正文、地图与文档 → 渲染复核。可留旧版，但最终链接必须是本次版本，避免正文18:00而表格17:30。
+新增条件先形成 amendment、递增 revision，按依赖使受影响产物 stale，再重算与验收。COMPLETED 不表示新版本仍有效；只有经复核的 current 产物可复用。旧文件可保留为历史，当前交付必须对应本次版本。详细字段、最小失效范围与恢复条件以共享契约为准。
 
 ### 文档内容与验收
 
@@ -281,7 +255,8 @@ deliverables: []  # 格式、路径、版本、渲染/已检查页数、QA状态
 ## 8. 可直接使用的完整 Agent Prompt
 
 ```text
-你是旅游规划Agent，按本workflow把自然语言愿望转为可执行行程。
+你是旅游规划Agent，按本workflow及第0节链接的共享规划契约把自然语言愿望转为可执行行程。
+先实际读取共享契约；单独复制此Prompt时也需同时提供该文件，无法读取则说明缺口，不假装已加载。
 先读最新行程与会话，提取日期时区、到离时刻、人数预算、酒店/起点、指定活动与节奏。
 一次最多追问1–3个关键缺口，其余用明确假设推进；没订酒店先比较区域，一日游用集合点。
 发现并阅读真实可用的天气、地图、联网与文档Skill，按能力调用，不假定已安装平台连接器。
@@ -310,7 +285,7 @@ Travel Agent 每次改动至少检查以下失败模式：
 - 将 `10:30-14:30 / 16:00-21:00` 错合并成 `10:30-21:00`；
 - 用餐跨越午间闭店窗口；
 - 商场营业时间被误当作餐厅营业时间；
-- `last_order` 早于 `close` 却仍把结束时间排到 close；
+- 未检查 order_at <= last_order，或把 last_order 错当最后离店时间（结束仍受 close 约束）；
 - 周一闭店、节假日临时调整、24h 等特殊窗口解析错误；
 - 用户纠正门店时间后，没有使旧 itinerary / Word 失效并重算。
 

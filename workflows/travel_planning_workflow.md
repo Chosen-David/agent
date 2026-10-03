@@ -6,116 +6,9 @@
 
 这是编排规范，不是已部署的预订服务；不会自动安装美团等连接器、登录账号或替用户下单。
 
-## 0. JourneyPilot 风格的合同化规划架构
+## 0. 先读共享核心契约
 
-复杂多日旅行不再采用“搜索若干信息 → LLM 直接写行程”的单段流程。默认采用受 JourneyPilot 启发、但保持本仓库 runtime-neutral 的合同化候选流水线：
-
-```text
-Natural-language trip brief
-        ↓
-RequestContract
-        ↓
-ResearchQueryPlan
-   ├─ Places / dining / stays
-   ├─ Transport / routing
-   └─ Weather / open-web context
-        ↓
-Candidate Admission
-        ↓
-Intent Evaluation
-        ↓
-Hierarchical Ranking
-        ↓
-CandidateSelectionPlan
-        ↓
-Itinerary Composer
-        ↓
-Intent Fidelity Gate
-        ↓
-DeliveryBundle
-        ↓
-Chat / Word / PDF / map / source ledger
-```
-
-### 0.1 RequestContract：唯一意图真相
-
-把用户要求规范化为一次可追踪合同，而不是在每个子 Agent 中重新解释。至少包含：
-
-- hard constraints：日期、返程、已订酒店/预约、必须午休、禁止项；
-- desired intents：写真、餐饮、散步、安静、预算、风格等；
-- soft preferences：少步行、约会氛围、经济且方便；
-- unknowns：写真档期、节假日营业、返程车次等；
-- acceptance criteria：什么算“已满足”。
-
-后续 Worker 只读取该合同的投影；新增要求先形成 amendment，再决定哪些旧产物失效。
-
-### 0.2 ResearchQueryPlan：先规划要查什么
-
-不要让 Worker 自由决定“搜点什么”。主 Agent 为每个意图生成明确 research target：
-
-```yaml
-query_id:
-owner: places | transport | context
-intent:
-entity_scope:
-required_fields:
-preferred_sources:
-fallback_sources:
-done_when:
-```
-
-并行研究只返回 typed candidates / facts，不直接写最终日程。
-
-### 0.3 Candidate Pipeline：候选先过门再排日程
-
-候选必须经历四层：
-
-1. **Admission**：实体真实、地址/来源可追踪、没有违反硬约束；
-2. **Intent Evaluation**：与本次用户目标是否匹配，例如“情侣写真”而不是泛摄影；
-3. **Ranking**：硬条件不可被软分数补偿；优先同片区、可执行、证据完整；
-4. **Selection**：明确 Primary / Alternative / Fallback。Composer 只能消费 Selection Plan 中允许的候选。
-
-因此“酒店附近吃饭”“找一家写真馆”不是合法最终实体，不能进入最终行程。若候选缺价格/档期，可保留为候选，但字段标记 unknown 并生成 targeted repair。
-
-### 0.4 Intent Fidelity Gate：行程写完还要验收
-
-输出前逐条核对 RequestContract：
-
-- 所有 must-do 是否出现；
-- 午休是否被真正保留，且未被吃饭/乘车替代；
-- 每个实际到访点是否有具体实体和可导航地址；
-- 所有地点转换是否有交通时间与理由；
-- 天气/营业冲突是否有替代；
-- 返程余量是否被保留；
-- 未验证信息是否被错误写成已确认。
-
-候选不足回 Candidate Research；组合冲突回 Itinerary Composer；禁止型硬约束不得靠文案“解释过去”。
-
-### 0.5 DeliveryBundle 与恢复
-
-复杂任务生成一个单一版本的 DeliveryBundle，至少包含：
-
-```yaml
-request_contract:
-research_queries:
-facts:
-candidates:
-selection_plan:
-itinerary:
-intent_coverage:
-commutes:
-sources:
-open_questions:
-deliverables:
-run_state:
-```
-
-聊天正文、Word、PDF、地图必须由同一 Bundle 投影，避免正文和文档时间不一致。阶段状态至少支持 `PENDING / RUNNING / COMPLETED / FAILED / INTERRUPTED`；恢复时复用仍有效的 completed 结果，仅刷新真正过期的天气、营业或实时路线。
-
-### 0.6 JourneyPilot 的定位
-
-JourneyPilot（Lagom-TA/JourneyPilot）作为复杂旅行的**优先参考 runtime/backend**：它提供 LangGraph checkpoint、MCP provider、候选研究、来源链、地图、报告和 PDF。当前环境若已部署 JourneyPilot，可把本 workflow 的 RequestContract/DeliveryBundle 映射给它执行；未部署时，本仓库按同样边界使用现有工具完成，不假装 JourneyPilot 已运行。
-
+开始复杂规划前，必须读取 [旅行共享规划契约](../plugins/travel-assistant/skills/travel-planner/references/planning_contract.md)，按其中的角色职责、合同字段、候选流水线、失效与恢复、验收和外部接口边界执行。本文件保留该入口的操作细节与导航，不另定义第二份核心契约。单点查询按最小流程处理。
 
 ## 1. 先读上下文并选择真实可用能力
 
@@ -229,7 +122,7 @@ price:
 
 ### 3.2 营业时间必须支持多窗口
 
-餐饮、写真馆、票务、场馆的营业时间不能只保存为单个 `open-close`。至少支持：
+餐饮、写真馆、票务、场馆的营业时间不能只保存为单个 `open-close`。下面 HH:MM 仅为说明窗口的当地钟点示例；持久化到 Bundle 时须结合适用日期和目的地时区展开成带偏移量的完整 ISO 8601 时间，跨午夜用次日日期。至少支持：
 
 ```yaml
 service_windows:
@@ -259,7 +152,7 @@ meal_end   <= window.close
 4. 不能“取平均”或沿用更方便排程的旧值。
 
 
-关键事实记录 `entity_id / claim / value / applies_on / source_url / source_published_at / checked_at / timezone / status`。状态：`verified`（来源已核验且日期适用）、`reference`（常规或历史）、`estimate`、`unknown`、`conflict`；用户有效订单另记 `user_confirmed`。网页可读不自动等于 verified；摘要只作线索，尽可能打开原页。
+来源采集时可暂记 `entity_id / claim / value / applies_on / source_url / source_published_at / checked_at / timezone / status`；写入 Bundle 前必须按共享契约规范化：facts 使用 fact_id/source_ids，URL、发布/访问时间写入 sources，不持久维护可独立修改的 source_url 别名。状态：`verified`（来源已核验且日期适用）、`reference`（常规或历史）、`estimate`、`unknown`、`conflict`；用户有效订单另记 `user_confirmed`。网页可读不自动等于 verified；摘要只作线索，尽可能打开原页。
 
 比较来源先看同实体、同服务、日期适用和新鲜度，再看权威性：特定日期官方公告/有效订单优先，随后场馆商户官方、地图/点评/票务平台，旧攻略仅补背景。官网也可能留旧公告，爬取日期不等于发布日期。冲突保留双方来源与适用范围，查当前官方渠道；仍无结论就避开边界时段或设替代，不能取平均。
 
@@ -349,39 +242,9 @@ start_i <= last_admission_i  # 适用时区分入门、检票和预约报到
 
 ## 7. 状态 交付与增量修订
 
-复杂行程在用户指定私有位置维护以下状态，简单问题保留会话即可；空值不是已核验事实：
+复杂行程在用户指定私有位置维护 [共享契约](../plugins/travel-assistant/skills/travel-planner/references/planning_contract.md) 定义的单一 DeliveryBundle；旧 trip_brief/activities 状态按其中映射迁移，不双写冲突字段。
 
-```yaml
-trip_id: null
-revision: 1
-as_of: null  # 更新时点，含时区
-trip_brief:
-  destination: null
-  timezone: null
-  dates: {start: null, end: null}
-  people: null
-  anchor: {kind: unknown, entity_id: null}  # hotel/station/activity/area/unknown
-  arrival: null
-  departure: null
-  budget: null
-  hard_constraints: []
-  desired_activities: []
-  optional_activities: []
-  rest_preferences: {default_enabled: true, midday_minutes: 75, needs_room: null, walking_tolerance: null}  # 75为可调规划默认值，非用户确认
-  assumptions: []
-capabilities: []  # 真实入口、版本、验证和限制
-facts: []  # 第3节字段
-experiences: []  # 帖子来源、实际读取范围、日期、观察、局限
-weather: []  # 日期、来源、发布时间、查询时间、状态、内容、影响
-activities: []  # id、实体、优先级、服务窗口、时长、预约状态
-commutes: []  # 起终点/入口、方式、线路/方向/换乘、全程时长、费用单位/人数、依据/状态、理由、备选
-itinerary: []  # 当地日期、起止、交通、缓冲、activity_id、A/B方案
-open_questions: []
-change_log: []
-deliverables: []  # 格式、路径、版本、渲染/已检查页数、QA状态
-```
-
-新酒店/集合时间/午休偏好/天气/指定项目/关闭信息：读最新版本 → 更新关联事实 → 重算交通/时间/预算/替代 → 同步总览、正文、地图与文档 → 渲染复核。可留旧版，但最终链接必须是本次版本，避免正文18:00而表格17:30。
+新增条件先形成 amendment、递增 revision，按依赖使受影响产物 stale，再重算与验收。COMPLETED 不表示新版本仍有效；只有经复核的 current 产物可复用。旧文件可保留为历史，当前交付必须对应本次版本。详细字段、最小失效范围与恢复条件以共享契约为准。
 
 ### 文档内容与验收
 
@@ -397,7 +260,8 @@ deliverables: []  # 格式、路径、版本、渲染/已检查页数、QA状态
 ## 8. 可直接使用的完整 Agent Prompt
 
 ```text
-你是旅游规划Agent，按本workflow把自然语言愿望转为可执行行程。
+你是旅游规划Agent，按本workflow及第0节链接的共享规划契约把自然语言愿望转为可执行行程。
+先实际读取共享契约；单独复制此Prompt时也需同时提供该文件，无法读取则说明缺口，不假装已加载。
 先读最新行程与会话，提取日期时区、到离时刻、人数预算、酒店/起点、指定活动与节奏。
 一次最多追问1–3个关键缺口，其余用明确假设推进；没订酒店先比较区域，一日游用集合点。
 发现并阅读真实可用的天气、地图、联网与文档Skill，按能力调用，不假定已安装平台连接器。
@@ -426,7 +290,7 @@ Travel Agent 每次改动至少检查以下失败模式：
 - 将 `10:30-14:30 / 16:00-21:00` 错合并成 `10:30-21:00`；
 - 用餐跨越午间闭店窗口；
 - 商场营业时间被误当作餐厅营业时间；
-- `last_order` 早于 `close` 却仍把结束时间排到 close；
+- 未检查 order_at <= last_order，或把 last_order 错当最后离店时间（结束仍受 close 约束）；
 - 周一闭店、节假日临时调整、24h 等特殊窗口解析错误；
 - 用户纠正门店时间后，没有使旧 itinerary / Word 失效并重算。
 

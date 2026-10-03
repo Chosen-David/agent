@@ -32,7 +32,7 @@
 
 本仓库 `.codex/config.toml` 为支持该设置的 Codex 项目默认请求 `model_reasoning_effort = "high"`，不锁定模型。实际档位取决于模型、客户端、项目可信状态及更高优先级配置；不等于已开启 ChatGPT/Claude 的深度思考开关，不修改全局设置。部署和验证边界见 [验证记录](docs/main_ai_validation.md)。
 
-旅行同步的分析与待对齐建议见 [接口评估](docs/decisions/travel_workflow_sync.md)；本次主 AI 更新不自动实施该旅行改造。
+旅行同步已按用户对齐方案采用 [插件内共享契约](plugins/travel-assistant/skills/travel-planner/references/planning_contract.md)，两种入口分别保留导航与详细工作流。设计依据见 [接口评估](docs/decisions/travel_workflow_sync.md)；没有接入 JourneyPilot runtime。
 
 ## 旅行规划
 

@@ -79,3 +79,24 @@
 - 增加分段营业、周一闭店、24h、节假日覆盖和 last-order 回归用例。
 
 本案例后续排程以用户确认的牛 New 时间 **10:30-14:30 / 16:00-21:00** 为当前约束；旧 11:00-21:30 仅保留为历史来源，不再参与排程。
+
+## 2026-10-03：共享契约与入口修订
+
+本节取代前文“顶层/插件完整 workflow 一致”的当前断言；前文保留为历史验证记录。本次按用户对齐的 B 方案维护共同语义，不要求入口全文字节相同。
+
+- 唯一核心定义为 `plugins/travel-assistant/skills/travel-planner/references/planning_contract.md`；顶层 workflow、插件 workflow 和 SKILL 显式引用。入口导航与操作细节保留各自上下文，插件内部链接不得依赖仓库外目录。
+- 旧 `references/travel_planning_workflow.md` 保留为短兼容导航，不再形成第三份冲突规范。
+- RequestContract/DeliveryBundle 明确为 `local-travel/v1` 人与模型协作记录；旧简报/活动/事实的迁移映射、引用 ID、价格单位、revision、current/stale、阶段状态与 QA 状态分别定义。空示例不是有效已验收记录。
+- Amendment 先更新合同，再按依赖使候选/选择/交通/行程/预算/验收/文件失效；恢复复核来源有效期与依赖版本。完成状态不等于新版本有效，过期事实不得继续当当前依据。
+- last_order 指最后下单时刻，close 限制离店/活动结束；不再把最后点单误当最后离店。
+- JourneyPilot 仅做只读源码比较（固定版本见共享契约与设计记录），没有安装、部署、连接或上传私人行程；同名本地字段不声称 API 兼容。
+
+### 检查性质与范围
+
+`tests/test_travel_contract.py` 的入口/链接/字段检查是静态规范检查。`tests/fixtures/travel_contract_scenarios.json` 和测试内 oracle 是明确的合成规范示例，检查约束变更、不合法安排和记录状态的预期；它们不被生产应用加载，不是旅行运行时实现，不验证模型会执行这些规则，也不证明真实天气、门店、地图、预订或文件生成正确。
+
+实际模型行为、真实行程端到端验收、插件安装后加载情况和 JourneyPilot 适配仍未验证；本次不把之前合肥案例的联网结果算作重跑结果。
+
+### 本次本地结果
+
+Python 3.12.14 下运行 `python -m unittest discover -s tests -v`：24 项通过，其中新增旅行检查17项，合成规范场景50个；`python -m unittest discover -s apps/paper-reader/tests -v`：3项通过。`git diff --check` 通过，并经独立只读复核。上述数量包含静态/合成检查，不是50次真实旅行或模型试跑。既有主 AI 反思 Prompt 与 high 项目配置保持不变。
