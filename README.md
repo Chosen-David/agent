@@ -27,6 +27,14 @@ python scripts/prepare_agent_eval.py --out /tmp/agent-eval-new-run
 
 第二轮代码阅读补充：按需覆盖卡、跨模型/消费者核查与声明契约检查；[源码取舍和任务评测](docs/code_reading_v2_upgrade.md)。
 
+## 自动任务链与持久监督
+
+主 AI 对复杂任务主动编排依赖 DAG，以完成证据推进任务，支持持久状态、事件去重、租约恢复、退避、取消和自有 monitor 收尾。新增标准库可运行核心；不自动部署服务，主机关闭后本地进程不会继续运行。
+
+- [使用与宿主边界](workflows/task_supervision_workflow.md) · [10篇原始论文及开源源码取舍](docs/supervisor_research/README.md)
+- [验证记录与测试边界](docs/task_supervisor_validation.md) · [计划模板](templates/task_dag.json)
+- `python scripts/demo_task_supervisor.py`：有时间上限的本地真实 IO 演示（合成任务，无模型调用）。
+
 ## 从你的目标开始
 
 | 目标 | 路由 |

@@ -21,6 +21,9 @@ MAPPINGS = {
         f"plugins/research-assistant/skills/{role}/references/paper_exemplar_learning.md"
         for role in ("research-assistant", "research-write", "research-review", "research-read-pdf", "research-diagrams", "research-figures")
     ],
+    "workflows/task_supervision_workflow.md": [
+        "plugins/research-assistant/skills/research-assistant/references/task_supervision_workflow.md",
+    ],
     "workflows/paper_delivery_contract.md": [
         f"plugins/research-assistant/skills/{role}/references/paper_delivery_contract.md"
         for role in ("research-assistant", "research-write", "research-review", "research-read-pdf")

@@ -14,3 +14,9 @@ python -m unittest discover -s apps/paper-reader/tests -v
 ```
 
 These checks include static prompt/config contracts and executable reader tests. They do not prove LLM compliance, live model access, plugin installation, or external runtime integration. Travel entry points share `plugins/travel-assistant/skills/travel-planner/references/planning_contract.md`; preserve their navigation and package-local link closure. The approved scope in `docs/decisions/travel_workflow_sync.md` covers portable instructions, not JourneyPilot runtime integration.
+
+## Persistent user preferences and task supervision
+
+User preference recorded 2026-10-03: always pull the latest remote before starting repository edits, and fetch/pull again before every push; integrate concurrent changes without force-push and verify the remote SHA afterwards. Preserve unrelated changes. SGLang is explicitly out of scope and must not be modified.
+
+For authorized multi-step tasks, proactively use `workflows/task_supervision_workflow.md`: compose a validated DAG, evidence predicates and bounded adaptive supervision. The executable `agent_runtime` core does not grant host permissions or install a service. Announce a started monitor only after real ID plus matching live readback. No supported backend means a precise blocker; continue independent authorized work. Complete all required evidence checks, stop only owned monitors and read back cleanup. Never confuse blocked/failed/cancelled with done. Read the existing continuation protocol for low-risk defaults and baseline-first exploration; do not duplicate or relax its permission gates.

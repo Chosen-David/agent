@@ -82,3 +82,12 @@ tasks: [] # task_id, stage, owner, inputs, depends_on, action, outputs,
           # done_when, on_failure, resource_budget, status; dependency graph acyclic
 # Exploration implementation depends_on the completed, accepted baseline task.
 # Replayed supervisor events must reuse valid run records, not repeat side effects.
+
+# Optional executable binding; SQLite is authoritative for runtime task statuses.
+runtime:
+  schema_version: task-dag/v1
+  db_path: null # private .agent-runs path; do not commit actual state
+  run_id: null
+  plan_sha256: null
+  monitor_id: null
+  monitor_readback: null # actual backend receipt; null is not started

@@ -4,7 +4,7 @@
 
 ## 1. 目的与适用范围
 
-解决已有授权任务链因低风险选择未答复而停滞的问题。普通反思仍使用 EXECUTE / PROPOSE_AND_WAIT / VERIFY_OR_ASK；本节是用户预先允许的有界例外，不是“等得够久就自动同意”。仓库没有新增 supervisor、定时任务、付费实验服务或后台执行器；宿主是否真的触发、授权和执行，必须以实际事件为证。
+解决已有授权任务链因低风险选择未答复而停滞的问题。普通反思仍使用 EXECUTE / PROPOSE_AND_WAIT / VERIFY_OR_ASK；本节是用户预先允许的有界例外，不是“等得够久就自动同意”。本续跑协议本身没有新增 supervisor、定时任务、付费实验服务或后台执行器；宿主是否真的触发、授权和执行，必须以实际事件为证。
 
 同时满足才进入 `SUPERVISED_CONTINUE`：
 
@@ -75,3 +75,5 @@ B 的任务链依赖 A 验收完成，包含实现→验证→公平比较→替
 [模板](../templates/supervised_task_chain.yaml) 列出所需字段，既有 task_id/owner/inputs/depends_on/action/outputs/done_when/on_failure/resource_budget 保留。实际记录存项目私有运行区，公共仓库仅放无私人信息的模板。
 
 简短汇报：监督触发后推进了什么、哪些默认尚未用户确认、A 的状态、B 分支/任务链与已测结论、资源消耗、是否替换及回滚位置、仍需要决定的边界。没有新成果不重复发相同汇报。不能声称真实监督器已安装或实验已执行，除非有工具结果。
+
+运行时能力已另行补充：[自动任务链与持久监督](task_supervision_workflow.md)。该实现不会替代本协议的授权、默认选择或 baseline-first 边界。
