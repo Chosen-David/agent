@@ -136,9 +136,26 @@ class PaperDeliveryTests(unittest.TestCase):
         self.good['exemplar_learning']['data_visual_design']=data
         for v in self.good['versions']:
             v['data_implementation_map']=receipt
+            v['data_export_qa']=[dict(chart_id='DATA1',format='pdf',export=receipt,
+                rendered_pixels=receipt,read_receipt=receipt,font_report=receipt,
+                reviewed_sha256=receipt['sha256'],pixel_read=True,glyph_check='pass',font_check='pass')]
             for criterion in ('data_scientific_fidelity','data_visual_design'):
                 v['checks'][criterion]=dict(verdict='pass',location='Fig2',reason='synthetic only',evidence='fixture')
         return data
+
+    def test_png_success_cannot_replace_final_pdf_glyph_review(self):
+        self.data_fixture()
+        for change,error in [
+            (lambda x:x.update(format='png'),'actual PDF'),
+            (lambda x:x.update(pixel_read=False),'pixels/glyphs/fonts'),
+            (lambda x:x.update(glyph_check='fail'),'pixels/glyphs/fonts'),
+            (lambda x:x.pop('font_report'),'font_report required'),
+            (lambda x:x.update(reviewed_sha256='old'),'stale data PDF')]:
+            r=copy.deepcopy(self.good)
+            change(r['versions'][1]['data_export_qa'][0])
+            self.reject(r,error)
+        self.good['versions'][1]['data_export_qa']=[]
+        self.reject(self.good,'every chart/language')
 
     def test_data_exemplars_require_pixels_not_links_or_palette_words(self):
         self.data_fixture()

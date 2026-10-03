@@ -8,7 +8,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from paper_exemplar_checks import validate_learning
-from data_visualization_checks import validate_data_design
+from data_visualization_checks import validate_data_design, validate_pdf_exports
 
 ROLES = ('research-assistant', 'research-write', 'research-review', 'research-read-pdf')
 CRITERIA = ('artifact_fit', 'contribution', 'method', 'evidence', 'related_work',
@@ -112,6 +112,7 @@ def validate(record, root):
             need(file_ok(v.get('implementation_map')), f'{language}: blueprint implementation evidence required')
             if record.get('data_visualization_requested'):
                 need(file_ok(v.get('data_implementation_map')), f'{language}: data design implementation evidence required')
+                validate_pdf_exports(v, learning if isinstance(learning, dict) else {}, need, text, file_ok)
             count, pages = v.get('page_count'), v.get('read_pages')
             need(type(count) is int and count > 0 and isinstance(pages, list) and
                  all(type(p) is int for p in pages) and sorted(pages) == list(range(1, count + 1)),

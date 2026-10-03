@@ -57,3 +57,13 @@ analysis 为上述八组键，每项 source_location、observation、design_choi
 | Matplotlib 图型/多 panel 制作 | [tvhahn matplotlib](https://github.com/tvhahn/matplotlib-skill/tree/main/skills/matplotlib) | 已读 SKILL 与 P8-multi-panel 实现，MIT；借鉴最终渲染逐项检查，不采用默认 dropna/top-N、禁止单列、固定间距与强制洞见注释 |
 
 不复制外部代码或主题进本库，不自动安装外部 runtime。具体来源 commit/hash、许可证与测试边界见仓库 docs/data_visualization_sources.lock.json 和 docs/data_visualization_validation.md；离线插件可按此能力表使用现有本地工具，不把外网访问当启动前置。
+
+## 6. 实际导出 PDF 与图内中文检查
+
+PNG 正确不能推出 PDF 正确。每张实际导出的 PDF 都要单独冻结 hash、渲染为像素、打开查看并比对预期文字，检查嵌入/替代字体与字形；再检查最终论文 PDF 的嵌入效果。EN/ZH 分别覆盖轴标签、legend、注释、上下标、负号与数字，不只看标题。保存字体清单/嵌入检查（如 pdffonts 或可用 PDF 解析器）、渲染和阅读回执。PDF 文本提取正常也不能代替像素检查。
+
+若 PNG 正常但 PDF 中文乱码，先用同一字体、导出后端与实际所需字形做小型 probe，诊断字体格式/嵌入方式兼容性（包括 CFF 与 TrueType/Type42 路径）；验证后再选择兼容字体或局部导出设置，并重渲所有受影响文件。不把一次 TrueType glyph-subset 成功当所有字体的通用解，不默认引入字体 hack、强制所有文本轮廓化或修改全局配置。轮廓化需要按可编辑/可搜索要求权衡并说明，字体存在/嵌入清单通过也不能证明字形正确。
+
+科学叙述分开诊断性指标、质量指标和端到端系统收益；局部图不越界支撑系统 claim。同一比较的 facets 保持可比尺度与 method order；共享 legend 配合冗余 marker。离散测量点不伪装为已测连续插值，连线用途和模型预测分开标注。缺不确定性的小 delta 可用明确精度的 exact table/点值保留信息，不靠放大尺度制造优势；表格也不构成显著性或优越性证据。范文未给 uncertainty 不是本稿省略或编造的理由。统计判断继续交既有 reviewer/实验契约，不在绘图分支另造统计流程。
+
+完成态每个 language version 增加 data_export_qa 列表，覆盖全部 charts.id：chart_id、format=pdf、export（实际 PDF path/sha256）、rendered_pixels、read_receipt、font_report（均 path/sha256）、reviewed_sha256（等于 export.sha256）、pixel_read=true、glyph_check=pass、font_check=pass。失败/未检查只支持 partial；程序只核对声明和哈希，不认证文件格式或真实字形。最终论文的全页阅读仍绑定现有 reader_snapshot_sha256，导出图 QA 不能替代它。

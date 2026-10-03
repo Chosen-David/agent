@@ -4,6 +4,31 @@ DIMENSIONS = ('comparison_chart', 'axes_baselines', 'uncertainty', 'encoding_acc
               'palette_legend', 'typography', 'layout_density', 'panels')
 
 
+def validate_pdf_exports(version, learning, need, text, file_ok):
+    """Completion-only declared checks for each actual PDF export, not a PNG proxy."""
+    data = learning.get('data_visual_design')
+    charts = data.get('charts') if isinstance(data, dict) else []
+    charts = charts if isinstance(charts, list) else []
+    expected = [c.get('id') for c in charts if isinstance(c, dict) and text(c.get('id'))]
+    exports = version.get('data_export_qa')
+    exports = exports if isinstance(exports, list) else []
+    ids = []
+    for item in exports:
+        if not isinstance(item, dict):
+            need(False, 'invalid data PDF export QA'); continue
+        ids.append(item.get('chart_id'))
+        need(item.get('format') == 'pdf', 'data QA must inspect actual PDF, not PNG proxy')
+        for field in ('export', 'rendered_pixels', 'read_receipt', 'font_report'):
+            need(file_ok(item.get(field)), f'data PDF {field} required')
+        export = item.get('export')
+        need(isinstance(export, dict) and item.get('reviewed_sha256') == export.get('sha256'),
+             'stale data PDF glyph/font review')
+        need(item.get('pixel_read') is True and item.get('glyph_check') == 'pass' and
+             item.get('font_check') == 'pass', 'data PDF pixels/glyphs/fonts must pass separately')
+    need(bool(expected) and all(text(i) for i in ids) and
+         sorted(i for i in ids if text(i)) == sorted(expected), 'data PDF export coverage required for every chart/language')
+
+
 def validate_data_design(record, learning, need, text, file_ok):
     requested = record.get('data_visualization_requested')
     need(type(requested) is bool, 'data_visualization_requested must be explicit')
