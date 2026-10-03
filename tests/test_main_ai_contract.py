@@ -42,6 +42,12 @@ class MainAIContractChecks(unittest.TestCase):
             '生产者→消费者', '类型/单位/版本', '原始文献/官方文档',
             '观察、来源事实、推导、假设、估计和未知',
             '不输出私密思维链', '无需强制联网', '不改用户全局设置或安全权限',
+            '目的→合理性→接口/资源→方案比较→证据→决策',
+            '用代表性输入核对生产者实际输出能否被消费者接受',
+            '同一目标、硬约束、验收和资源预算', '结论与证据逐项对应',
+            '提案路径/版本和待决定项', '仅同意讨论或验证 B 不等于同意实施 B',
+            '续跑时先读取', '专业流程的自主优化只能在该授权内执行',
+            '不以角色切换绕过对齐',
         ):
             with self.subTest(clause=required):
                 self.assertIn(required, text)
@@ -56,7 +62,7 @@ class MainAIContractChecks(unittest.TestCase):
 
     def test_new_document_links_resolve(self):
         for name in ('README.md', 'prompts/decision_review.md', 'docs/main_ai_validation.md',
-                     'docs/decisions/travel_workflow_sync.md'):
+                     'docs/decisions/travel_workflow_sync.md', 'templates/decision_proposal.md'):
             source = ROOT / name
             for target in re.findall(r'\]\(([^)]+)\)', source.read_text()):
                 if '://' in target or target.startswith('#'):
