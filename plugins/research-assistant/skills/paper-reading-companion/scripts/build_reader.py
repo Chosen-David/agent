@@ -63,9 +63,12 @@ def main():
     if args.out.resolve() in {args.pdf.resolve(), args.notes.resolve() if args.notes else None}:
         parser.error('Output must not overwrite the PDF or notes')
     try:
-        import fitz
+        import pymupdf as fitz
     except ImportError:
-        parser.error('Install PyMuPDF in your project environment: python -m pip install pymupdf')
+        try:
+            import fitz
+        except ImportError:
+            parser.error('Install PyMuPDF in your project environment: python -m pip install pymupdf')
     digest = hashlib.sha256(args.pdf.read_bytes()).hexdigest()
     try:
         with fitz.open(args.pdf) as doc:

@@ -127,9 +127,9 @@ cd agent
 
 ## 科研助手插件包
 
-[plugins/research-assistant/](plugins/research-assistant/) 包含 12 个技能：
+[plugins/research-assistant/](plugins/research-assistant/) 包含 13 个技能：
 
-`code-reading`、`research-assistant`、`research-explore`、`research-implement-optimize`、`research-figures`、`research-data-visualization`、`research-diagrams`、`research-write`、`research-review`、`research-read-pdf`、`paper-reading-companion`、`explain-research-concepts`。
+`code-organization`、`code-reading`、`research-assistant`、`research-explore`、`research-implement-optimize`、`research-figures`、`research-data-visualization`、`research-diagrams`、`research-write`、`research-review`、`research-read-pdf`、`paper-reading-companion`、`explain-research-concepts`。
 
 这是面向科研与论文学习的技能包，不是通用主 AI 的替代品。仓库顶层通用调度独立存在。每个 Skill 有触发范围、完整参考流程和 `allow_implicit_invocation: true`，表示在相关任务中允许自动选择；并非每条消息都执行科研流程。
 
