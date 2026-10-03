@@ -1,0 +1,43 @@
+run_id: agent-forward-v1-research-explore
+scope: supplied_synthetic_materials_only
+literature_search:
+  status: skipped
+  reason: Task explicitly prohibits online novelty search
+  queries: []
+  date: '2026-10-03'
+  coverage: No external literature or prior art assessed
+sources:
+  - id: EVD-001
+    path: inputs/manuscript.md
+    read_scope: full
+    location: Method and Results
+    facts: [same CPU process and input configuration, no GPU measurements, one run per value, kernel timing included in end-to-end paths]
+  - id: EVD-002
+    path: inputs/measurements.csv
+    read_scope: all four data rows
+    kind: supplied synthetic observations
+    supports: [small single-run latency lower, medium single-run latency lower, large single-run latency higher, kernel-only ratio 2]
+    cannot_support: [repeatability, statistical significance, quality equivalence, per-workload kernel fraction, universal speedup]
+  - id: EVD-003
+    path: inputs/manuscript.md
+    read_scope: full
+    location: Appendix A
+    facts: [large regression explicitly documented, quality not measured, variance not measured]
+  - id: EVD-004
+    path: outputs/descriptive_metrics.json
+    kind: derived arithmetic, not a new experiment
+    generated_by: outputs/analyze.py
+    formulas: [speedup = baseline_ms / candidate_ms, latency_change_pct = 100 * (candidate_ms / baseline_ms - 1)]
+claims:
+  - claim: Abstract states 2x end-to-end on every workload without regression
+    status: contradicted_by_supplied_values
+    evidence: [EVD-002, EVD-004]
+  - claim: The candidate reliably improves small and medium
+    status: inconclusive
+    evidence: [EVD-001, EVD-002]
+  - claim: Extra overhead causes large regression
+    status: proposed
+    evidence: []
+  - claim: The method is novel
+    status: not_assessed
+    evidence: []

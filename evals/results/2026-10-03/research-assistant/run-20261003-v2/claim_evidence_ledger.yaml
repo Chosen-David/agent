@@ -1,0 +1,46 @@
+{
+  "run_id": "run-20261003-v2",
+  "claims": [
+    {
+      "claim_id": "RES-C001",
+      "kind": "observed supplied values plus arithmetic",
+      "status": "supported",
+      "text": "small/medium 报告耗时下降 20%/16.6667%，加速比 1.25/1.20",
+      "source": "measurements.csv@v2:lines 2-3",
+      "scope": "仅给定快照，计时与正确性未复验"
+    },
+    {
+      "claim_id": "RES-C002",
+      "kind": "observed supplied values plus arithmetic",
+      "status": "supported",
+      "text": "large 报告耗时增加 10%，加速比 10/11",
+      "source": "measurements.csv@v2:line 4",
+      "scope": "仅给定快照；回退原因未知"
+    },
+    {
+      "claim_id": "RES-C003",
+      "kind": "observed supplied values plus arithmetic",
+      "status": "supported",
+      "text": "kernel-only 报告耗时减半，加速比 2",
+      "source": "measurements.csv@v2:line 5",
+      "scope": "不支持端到端 2 倍或推断 kernel 对端到端耗时占比"
+    },
+    {
+      "claim_id": "RES-H001",
+      "kind": "hypothesis",
+      "status": "refuted",
+      "text": "候选在表内所有端到端报告值上均更快",
+      "source": "measurements.csv@v2:line 4",
+      "scope": "表内描述性假设；不等同反驳总体统计假设"
+    },
+    {
+      "claim_id": "RES-H002",
+      "kind": "hypothesis",
+      "status": "inconclusive",
+      "text": "候选总体性能改善且稳定",
+      "source": "未提供重复测量、分布权重和配置",
+      "scope": "当前数据无法检验",
+      "action_if_unsupported": "不在正文声称成立；等待 RES-T002"
+    }
+  ]
+}

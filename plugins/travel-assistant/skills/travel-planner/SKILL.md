@@ -8,6 +8,8 @@ description: "根据日期、目的地、酒店或集合点、预算与指定活
 复杂多日旅行默认采用 JourneyPilot 风格的合同化执行：`RequestContract → ResearchQueryPlan → typed candidates → Admission → Intent Evaluation → Ranking → Selection → Itinerary → Intent Fidelity Gate → DeliveryBundle`。不要让研究 Worker 直接自由生成最终行程。这些是本地编排记录与行为规范，不是 JourneyPilot API schema 或已部署服务。
 
 
+先读 [执行与验收补充](references/execution.md)，确定本次最小步骤与证据；已有能力足够时直接执行，不把外部技能发现当每次必需联网步骤。
+
 先读取 [共享规划契约](references/planning_contract.md)，再读取 [完整工作流](references/workflow.md)，按其中的输入补全、能力发现、证据、时间可行性和交付标准执行。
 
 先复用最新行程和会话。识别已订事项、用户想做的活动和未知项，一次只问1–3个关键问题。酒店未订先比较区域；一日游用集合点，不强加住宿。指定项目不能无声删除。

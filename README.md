@@ -4,6 +4,25 @@
 
 适用于具备相应工具能力的 ChatGPT/Codex、Claude 及其他主 AI。当前提供科研/论文角色与独立旅行规划能力，并附完整工作流、可复制 Prompt 和插件包。未来可增加编程、学习、产品等领域的独立分类，不必改写主 AI 的身份。
 
+## 2026-10-03：源码对照与逐角色执行验证
+
+本轮阅读8个上游项目的实际skills/相关实现，为全部12个技能补充执行与验收步骤，保留现有通用调度、证据和权限边界。不是把外部Agent原样替换进来，也没有自动部署第三方runtime。
+
+- [详细组织分析、上游取舍与逐角色改进](docs/comprehensive_upgrade_2026-10-03.md)
+- [可复跑任务集、实际产物与评测边界](evals/README.md)
+- [角色入口清单](config/role_registry.json) · [上游版本锁](docs/upstream_sources.lock.json)
+- [后端探测与候选](config/backend_registry.json) · [产物交接校验](docs/handoff_validation.md)
+
+```bash
+python -m unittest discover -s tests -v
+python -m unittest discover -s apps/paper-reader/tests -v
+python scripts/sync_plugin_references.py --check
+python scripts/discover_backends.py --pretty
+python scripts/prepare_agent_eval.py --out /tmp/agent-eval-new-run
+```
+
+后端探测只检查模块、命令和distribution元数据；`available`不代表模型、凭据、服务、语料或授权已就绪。测试准备脚本只产生隔离材料，需实际执行任务并复核产物后才能评分。科研引用由脚本维护；旅行入口保留最新main已对齐的共享契约，分别维护导航。
+
 ## 从你的目标开始
 
 | 目标 | 路由 |

@@ -1,5 +1,7 @@
 # 论文写作 Agent Workflow
 
+
+执行本角色时先读 [执行与验收补充](../plugins/research-assistant/skills/research-write/references/execution.md)，按任务采用最小流程；已有可用能力足够时直接执行。补充规范不代表已安装外部 runtime。
 [返回仓库首页](../README.md) · [主 AI 调度入口](../prompts/orchestrator.md)
 
 依据真实研究证据完成论文，优先使用用户给定的具体模板；未提供时按当前目标 venue 的官方模板。组织图文、核验引用、构建 PDF，并衔接审稿与逐页读者检查。

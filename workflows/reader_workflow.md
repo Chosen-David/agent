@@ -1,5 +1,7 @@
 # 最终 PDF 读者 Agent Workflow
 
+
+执行本角色时先读 [执行与验收补充](../plugins/research-assistant/skills/research-read-pdf/references/execution.md)，按任务采用最小流程；已有可用能力足够时直接执行。补充规范不代表已安装外部 runtime。
 [返回仓库首页](../README.md) · [主 AI 调度入口](../prompts/orchestrator.md)
 
 以目标读者的视角逐页打开最终 PDF 的渲染图片，从生成错误检查到图文解释与叙事，输出可定位的疑点和修复任务链。

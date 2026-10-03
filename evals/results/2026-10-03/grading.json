@@ -1,0 +1,465 @@
+{
+  "date": "2026-10-03",
+  "scope": "12 latest synthetic forward tasks; manual artifact review, not blind or production evaluation",
+  "reviewer": "primary Codex executor; task runners had separate contexts",
+  "criteria_count": 36,
+  "final_cases_passed": 12,
+  "cases": [
+    {
+      "case": "research-assistant",
+      "status": "pass",
+      "criteria": [
+        {
+          "criterion": "v2 invalidates dependent figure/write outputs; background retained",
+          "status": "pass",
+          "evidence": [
+            "research-assistant-v2/run-v2-20261003/retention_check.md",
+            "research-assistant-v2/run-v2-20261003/task_chain.yaml",
+            "research-assistant-v2/run-v2-20261003/qa.md"
+          ]
+        },
+        {
+          "criterion": "acyclic plan with bounded CPU budget; completed tasks do not depend on blocked/skipped execution tasks",
+          "status": "pass",
+          "evidence": [
+            "research-assistant-v2/run-v2-20261003/retention_check.md",
+            "research-assistant-v2/run-v2-20261003/task_chain.yaml",
+            "research-assistant-v2/run-v2-20261003/qa.md"
+          ]
+        },
+        {
+          "criterion": "no invented run, role or completed artifact",
+          "status": "pass",
+          "evidence": [
+            "research-assistant-v2/run-v2-20261003/retention_check.md",
+            "research-assistant-v2/run-v2-20261003/task_chain.yaml",
+            "research-assistant-v2/run-v2-20261003/qa.md"
+          ]
+        }
+      ],
+      "observation": "首次完成依赖不严谨，修订后独立复跑。7个已完成任务只依赖已完成项；3个缺资料的未来任务保持阻塞。"
+    },
+    {
+      "case": "research-explore",
+      "status": "pass",
+      "criteria": [
+        {
+          "criterion": "separates local kernel 2x from end-to-end results",
+          "status": "pass",
+          "evidence": [
+            "research-explore/research_brief.md",
+            "research-explore/hypotheses.yaml",
+            "research-explore/research_plan.md"
+          ]
+        },
+        {
+          "criterion": "rival explanation and discriminating experiment with fixed metric",
+          "status": "pass",
+          "evidence": [
+            "research-explore/research_brief.md",
+            "research-explore/hypotheses.yaml",
+            "research-explore/research_plan.md"
+          ]
+        },
+        {
+          "criterion": "bounded go/pivot/stop criteria, no novelty assertion",
+          "status": "pass",
+          "evidence": [
+            "research-explore/research_brief.md",
+            "research-explore/hypotheses.yaml",
+            "research-explore/research_plan.md"
+          ]
+        }
+      ],
+      "observation": "kernel-only 2x与端到端分开；给替代解释、预定指标与限额实验；未伪造新实验或新颖性。"
+    },
+    {
+      "case": "research-implement-optimize",
+      "status": "pass",
+      "criteria": [
+        {
+          "criterion": "moving_average([1,2,3],2)==[1.5,2.5] and full-window/empty/invalid covered",
+          "status": "pass",
+          "evidence": [
+            "research-implement-optimize/buggy.py",
+            "research-implement-optimize/check_moving_average.py",
+            "research-implement-optimize/implementation_report.md"
+          ]
+        },
+        {
+          "criterion": "independent tests actually run; input unchanged",
+          "status": "pass",
+          "evidence": [
+            "research-implement-optimize/buggy.py",
+            "research-implement-optimize/check_moving_average.py",
+            "research-implement-optimize/implementation_report.md"
+          ]
+        },
+        {
+          "criterion": "large workload regression and no GPU claim",
+          "status": "pass",
+          "evidence": [
+            "research-implement-optimize/buggy.py",
+            "research-implement-optimize/check_moving_average.py",
+            "research-implement-optimize/implementation_report.md"
+          ]
+        }
+      ],
+      "observation": "真实红绿检查及200随机整数案例；主执行者另做500浮点案例；保留输入和边界，未称GPU通过。"
+    },
+    {
+      "case": "research-figures",
+      "status": "pass",
+      "criteria": [
+        {
+          "criterion": "mixed route and unique final owner; no false independent agents",
+          "status": "pass",
+          "evidence": [
+            "research-figures-split/manifest.json",
+            "research-figures-split/caption.md",
+            "research-figures-split/figure.png",
+            "research-figures-split/compose.py",
+            "research-figures-split/panel_a.py",
+            "research-figures-split/panel_b.py"
+          ]
+        },
+        {
+          "criterion": "both scopes and exact architecture preserved in labeled panels",
+          "status": "pass",
+          "evidence": [
+            "research-figures-split/manifest.json",
+            "research-figures-split/caption.md",
+            "research-figures-split/figure.png",
+            "research-figures-split/compose.py",
+            "research-figures-split/panel_a.py",
+            "research-figures-split/panel_b.py"
+          ]
+        },
+        {
+          "criterion": "editable panel/assembly sources and final combined image actually viewed",
+          "status": "pass",
+          "evidence": [
+            "research-figures-split/manifest.json",
+            "research-figures-split/caption.md",
+            "research-figures-split/figure.png",
+            "research-figures-split/compose.py",
+            "research-figures-split/panel_a.py",
+            "research-figures-split/panel_b.py"
+          ]
+        }
+      ],
+      "observation": "新版混合图顺序本地执行，单一owner。主执行者看最终图，数值/范围与6节点5边正确。"
+    },
+    {
+      "case": "research-write",
+      "status": "pass",
+      "criteria": [
+        {
+          "criterion": "no all-workload 2x claim",
+          "status": "pass",
+          "evidence": [
+            "research-write/draft.md",
+            "research-write/claim_evidence_ledger.yaml",
+            "research-write/writing_report.md"
+          ]
+        },
+        {
+          "criterion": "large regression explicitly included",
+          "status": "pass",
+          "evidence": [
+            "research-write/draft.md",
+            "research-write/claim_evidence_ledger.yaml",
+            "research-write/writing_report.md"
+          ]
+        },
+        {
+          "criterion": "evidence mapping and one-run/no-quality limits",
+          "status": "pass",
+          "evidence": [
+            "research-write/draft.md",
+            "research-write/claim_evidence_ledger.yaml",
+            "research-write/writing_report.md"
+          ]
+        }
+      ],
+      "observation": "中英文保留large退化、单次记录及质量/GPU未测边界。"
+    },
+    {
+      "case": "research-review",
+      "status": "pass",
+      "criteria": [
+        {
+          "criterion": "rejects abstract end-to-end universal claim using numbers",
+          "status": "pass",
+          "evidence": [
+            "research-review/review_report.md",
+            "research-review/findings.yaml",
+            "research-review/task_chain.yaml"
+          ]
+        },
+        {
+          "criterion": "does not falsely claim appendix omitted large regression",
+          "status": "pass",
+          "evidence": [
+            "research-review/review_report.md",
+            "research-review/findings.yaml",
+            "research-review/task_chain.yaml"
+          ]
+        },
+        {
+          "criterion": "actionable located findings and no unsupported score",
+          "status": "pass",
+          "evidence": [
+            "research-review/review_report.md",
+            "research-review/findings.yaml",
+            "research-review/task_chain.yaml"
+          ]
+        }
+      ],
+      "observation": "摘要主张按数值驳回，附录已披露的退化未被错误指控为隐藏；不给无依据评分。"
+    },
+    {
+      "case": "research-read-pdf",
+      "status": "pass",
+      "criteria": [
+        {
+          "criterion": "all 3 pages actually opened and read",
+          "status": "pass",
+          "evidence": [
+            "research-read-pdf/76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9/reader_report.md",
+            "research-read-pdf/76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9/page_coverage.jsonl",
+            "research-read-pdf/76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9/findings.yaml"
+          ]
+        },
+        {
+          "criterion": "hash-bound physical coverage including appendix",
+          "status": "pass",
+          "evidence": [
+            "research-read-pdf/76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9/reader_report.md",
+            "research-read-pdf/76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9/page_coverage.jsonl",
+            "research-read-pdf/76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9/findings.yaml"
+          ]
+        },
+        {
+          "criterion": "overgeneralization on physical page 2 located, no invented layout defect",
+          "status": "pass",
+          "evidence": [
+            "research-read-pdf/76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9/reader_report.md",
+            "research-read-pdf/76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9/page_coverage.jsonl",
+            "research-read-pdf/76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9/findings.yaml"
+          ]
+        }
+      ],
+      "observation": "独立执行者实际打开全部3页，复查MuPDF排除Poppler显示伪影，定位第2页外推。"
+    },
+    {
+      "case": "paper-reading-companion",
+      "status": "pass",
+      "criteria": [
+        {
+          "criterion": "5 to 7.5 calculation correct and universal RoPE claim bounded",
+          "status": "pass",
+          "evidence": [
+            "paper-reading-companion/answer.md",
+            "paper-reading-companion/notes.json",
+            "paper-reading-companion/reader.html",
+            "paper-reading-companion/execution_report.md"
+          ]
+        },
+        {
+          "criterion": "physical page 2 retained; notes match PDF hash",
+          "status": "pass",
+          "evidence": [
+            "paper-reading-companion/answer.md",
+            "paper-reading-companion/notes.json",
+            "paper-reading-companion/reader.html",
+            "paper-reading-companion/execution_report.md"
+          ]
+        },
+        {
+          "criterion": "real offline HTML generated with no fake live backend",
+          "status": "pass",
+          "evidence": [
+            "paper-reading-companion/answer.md",
+            "paper-reading-companion/notes.json",
+            "paper-reading-companion/reader.html",
+            "paper-reading-companion/execution_report.md"
+          ]
+        }
+      ],
+      "observation": "第2页锚点/hash保留，5到7.5正确且限制RoPE外推；真实离线HTML，未称浏览器交互或模型服务验证。"
+    },
+    {
+      "case": "explain-research-concepts",
+      "status": "pass",
+      "criteria": [
+        {
+          "criterion": "softmax 0.5/0.5 to 0.25/0.75; outputs 5/7.5",
+          "status": "pass",
+          "evidence": [
+            "explain-research-concepts/EXPL-001.md",
+            "explain-research-concepts/verification.json"
+          ]
+        },
+        {
+          "criterion": "Jacobian (diag(p)-pp^T) and fixed-V scope correct",
+          "status": "pass",
+          "evidence": [
+            "explain-research-concepts/EXPL-001.md",
+            "explain-research-concepts/verification.json"
+          ]
+        },
+        {
+          "criterion": "no claim of RoPE-specific universal evidence",
+          "status": "pass",
+          "evidence": [
+            "explain-research-concepts/EXPL-001.md",
+            "explain-research-concepts/verification.json"
+          ]
+        }
+      ],
+      "observation": "数值、固定V的Jacobian与共同平移/相消边界正确；数值检查不冒充一般证明。"
+    },
+    {
+      "case": "travel-planner",
+      "status": "pass",
+      "criteria": [
+        {
+          "criterion": "both schedules honor lunch window, full duration and 16:00 booking",
+          "status": "pass",
+          "evidence": [
+            "travel-planner-v2/itinerary.md",
+            "travel-planner-v2/delivery_bundle_v1.json",
+            "travel-planner-v2/delivery_bundle_v2.json",
+            "travel-planner-v2/validation.json"
+          ]
+        },
+        {
+          "criterion": "75-minute independent hotel rest and all commutes in both revisions",
+          "status": "pass",
+          "evidence": [
+            "travel-planner-v2/itinerary.md",
+            "travel-planner-v2/delivery_bundle_v1.json",
+            "travel-planner-v2/delivery_bundle_v2.json",
+            "travel-planner-v2/validation.json"
+          ]
+        },
+        {
+          "criterion": "per-person meal, per-group photo, per-vehicle fare counted correctly; no real booking claim",
+          "status": "pass",
+          "evidence": [
+            "travel-planner-v2/itinerary.md",
+            "travel-planner-v2/delivery_bundle_v1.json",
+            "travel-planner-v2/delivery_bundle_v2.json",
+            "travel-planner-v2/validation.json"
+          ]
+        }
+      ],
+      "observation": "最新共享契约独立复跑，两版满足午餐、午休、摄影与交通；520–600已知小计，572–720含机动金，房费/币种明确未知或假设。"
+    },
+    {
+      "case": "research-data-visualization",
+      "status": "pass",
+      "criteria": [
+        {
+          "criterion": "all 4 rows and scopes preserved, including large regression",
+          "status": "pass",
+          "evidence": [
+            "research-data-visualization-split/fig_timing_20261003/plotted_values.csv",
+            "research-data-visualization-split/fig_timing_20261003/caption.md",
+            "research-data-visualization-split/fig_timing_20261003/timing.png",
+            "research-data-visualization-split/fig_timing_20261003/plot_timing.py"
+          ]
+        },
+        {
+          "criterion": "no invented error bars or statistical reliability",
+          "status": "pass",
+          "evidence": [
+            "research-data-visualization-split/fig_timing_20261003/plotted_values.csv",
+            "research-data-visualization-split/fig_timing_20261003/caption.md",
+            "research-data-visualization-split/fig_timing_20261003/timing.png",
+            "research-data-visualization-split/fig_timing_20261003/plot_timing.py"
+          ]
+        },
+        {
+          "criterion": "editable source and final render actually viewed",
+          "status": "pass",
+          "evidence": [
+            "research-data-visualization-split/fig_timing_20261003/plotted_values.csv",
+            "research-data-visualization-split/fig_timing_20261003/caption.md",
+            "research-data-visualization-split/fig_timing_20261003/timing.png",
+            "research-data-visualization-split/fig_timing_20261003/plot_timing.py"
+          ]
+        }
+      ],
+      "observation": "4行8个值与原输入一致，分面保留退化，没有编误差；执行者和主执行者均打开最终图。"
+    },
+    {
+      "case": "research-diagrams",
+      "status": "pass",
+      "criteria": [
+        {
+          "criterion": "exact 6 nodes and 5 directed data-flow edges; V bypasses softmax",
+          "status": "pass",
+          "evidence": [
+            "research-diagrams-split/semantic_contract.json",
+            "research-diagrams-split/architecture.svg",
+            "research-diagrams-split/architecture.png",
+            "research-diagrams-split/caption.md"
+          ]
+        },
+        {
+          "criterion": "proposed/schematic rather than implemented or measured",
+          "status": "pass",
+          "evidence": [
+            "research-diagrams-split/semantic_contract.json",
+            "research-diagrams-split/architecture.svg",
+            "research-diagrams-split/architecture.png",
+            "research-diagrams-split/caption.md"
+          ]
+        },
+        {
+          "criterion": "editable SVG, actual render and visual QA",
+          "status": "pass",
+          "evidence": [
+            "research-diagrams-split/semantic_contract.json",
+            "research-diagrams-split/architecture.svg",
+            "research-diagrams-split/architecture.png",
+            "research-diagrams-split/caption.md"
+          ]
+        }
+      ],
+      "observation": "源与图均为准确6节点5边，V直接进入output；proposed/synthetic清晰，实际两轮渲染修正文字间距。"
+    }
+  ],
+  "history": [
+    {
+      "case": "research-assistant",
+      "attempt": "v1",
+      "status": "fail",
+      "reason": "done QA task depended on skipped background execution; detected in artifact audit, criterion refined after first run, skill fixed and independent v2 run retained"
+    },
+    {
+      "case": "travel-planner",
+      "attempt": "v1",
+      "status": "pass_for_old_entry",
+      "reason": "new local-travel/v1 main entry evaluated in separate v2 run"
+    },
+    {
+      "case": "research-figures",
+      "attempt": "v1",
+      "status": "pass_for_old_data_task",
+      "reason": "remote main split role; old data-only success not used for new mixed route"
+    }
+  ],
+  "unverified": [
+    "old/new controlled A/B",
+    "live external MCP/API runtimes",
+    "GPU benchmarking",
+    "real merchants/weather/bookings",
+    "long real papers and submission outcomes",
+    "open-domain general-orchestrator routing",
+    "reader browser interaction and real model backend",
+    "independent blinded grading"
+  ]
+}

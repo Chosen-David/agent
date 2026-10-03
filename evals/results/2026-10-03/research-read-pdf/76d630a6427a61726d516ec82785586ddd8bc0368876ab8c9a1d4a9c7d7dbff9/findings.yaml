@@ -1,0 +1,76 @@
+schema_version: '1.0'
+agent: reader
+snapshot:
+  id: 76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9
+  pdf: /tmp/agent-forward-v1/research-read-pdf/inputs/paper.pdf
+findings:
+- finding_id: READ-F001
+  snapshot_id: 76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9
+  category: evidence
+  severity: major
+  confidence: high
+  assertion_type: reporting_gap
+  status: open
+  location:
+    physical_page: 2
+    printed_page: '1'
+    anchor: 'Final line beginning Claim:; compare Appendix: scope, physical page 3
+      / printed A1'
+  evidence:
+  - 'Page 2 states: Claim: this proves RoPE always amplifies error in every real model.'
+  - Page 3 explicitly calls the example invented and not empirical evidence, and says
+    no RoPE-specific model, data or experiment was studied.
+  - Pages 1–2 contain a shared-softmax example but no mapping from the paths a/b to
+    RoPE and no universal proof.
+  - evidence/mupdf-page-0002.png and evidence/mupdf-page-0003.png
+  why_it_matters: The strongest conclusion extends beyond the displayed evidence and
+    conflicts with the appendix scope. This is a support gap in this PDF, not a verdict
+    that the universal proposition is false.
+  verification: Main AI should verify the intended status of the final line (author
+    conclusion vs deliberately invalid teaching claim), and check whether any authorized
+    proof or RoPE-specific evidence exists. Do not infer a proof from the numerical
+    example.
+  resolution_options:
+  - Limit the conclusion to the illustrated dependence of shared softmax weights on
+    b; place the teaching-example scope next to it.
+  - If teaching an invalid inference, explicitly label the final line as an invalid
+    claim and explain why.
+  - If retaining a broader scientific claim, define its assumptions and supply appropriate
+    evidence/proof; experiments alone do not establish every real model.
+  acceptance:
+  - The final PDF labels the claim consistently with the appendix, or contains an
+    explicit justified argument covering its stated scope.
+  - Reader can identify the connection to RoPE if a RoPE claim is retained.
+  related_findings:
+  - READ-F002
+- finding_id: READ-F002
+  snapshot_id: 76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9
+  category: reporting
+  severity: major
+  confidence: high
+  assertion_type: reader_confusion
+  status: open
+  location:
+    physical_page: 2
+    printed_page: '1'
+    anchor: Output is 5; Output is 7.5; amplifies error
+  evidence:
+  - The PDF defines an output y and changes b, but supplies no target, reference output,
+    error metric, or amplification comparator.
+  - Direct calculation confirms y=5 then y=7.5; those numbers quantify an output change,
+    not a defined error.
+  - evidence/mupdf-page-0001.png and evidence/mupdf-page-0002.png
+  why_it_matters: Without a target and comparator, the reader cannot tell whether
+    the change improves or worsens accuracy, much less amplifies error.
+  verification: Check what error and reference the author intends, and whether b is
+    an error perturbation or an ordinary input change. Recompute the proposed metric
+    under explicit definitions.
+  resolution_options:
+  - Describe the observed quantity as output change, avoiding an error claim.
+  - If error amplification is intended, define reference, metric, perturbation, and
+    the amplification baseline before claiming it.
+  acceptance:
+  - The claim either concerns only output change or presents a defined, reproducible
+    error comparison; arithmetic and wording agree.
+  related_findings:
+  - READ-F001

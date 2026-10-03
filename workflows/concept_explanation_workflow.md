@@ -1,5 +1,7 @@
 # 科研知识点讲解 Agent Workflow
 
+
+执行本角色时先读 [执行与验收补充](../plugins/research-assistant/skills/explain-research-concepts/references/execution.md)，按任务采用最小流程；已有可用能力足够时直接执行。补充规范不代表已安装外部 runtime。
 [返回首页](../README.md) · [论文伴读](paper_reading_companion_workflow.md)
 
 目标：解释论文里的概念、公式、图和技术机制，让读者形成可核查的直觉，并能回到英文原文继续读。可独立使用，也可由伴读、实现或写作角色调用。

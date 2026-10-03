@@ -1,0 +1,67 @@
+{
+  "paper_sha256": "76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9",
+  "cards": [
+    {
+      "id": "EXPL-001",
+      "page": 2,
+      "anchor": "Example and a claim；前两句（印刷页1）；公式见物理页1",
+      "question": "输出为何从5到7.5？",
+      "answer": "[原文] 物理第1页（印刷 i）定义 y = softmax(a + b) V；a 和 b 先相加，再共同归一化，并不是两个各自独立的输出。物理第2页（印刷1）给出 a=(0,0)、V=(0,10)。\n[推导，log按自然对数解释] 初始 b=(0,0)，a+b=(0,0)，指数为(1,1)，除以总和2得权重(1/2,1/2)，因此 y=(1/2)×0+(1/2)×10=5。改为 b=(0,log(3)) 后，指数为(1,3)，除以总和4得权重(1/4,3/4)，因此 y=(1/4)×0+(3/4)×10=7.5。第二项权重从0.5升至0.75，所以输出增加2.5。\n[核验] verify_example.py 已运行，浮点结果为5.0、7.5。该核验只检查本例算术。",
+      "sources": [],
+      "source_locators": [
+        {
+          "paper_sha256": "76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9",
+          "physical_page": 1,
+          "printed_page": "i",
+          "anchor": "y = softmax(a + b) V."
+        },
+        {
+          "paper_sha256": "76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9",
+          "physical_page": 2,
+          "printed_page": "1",
+          "anchor": "Initial values and Change b sentences"
+        }
+      ],
+      "prerequisites": [
+        "softmax将指数值除以它们的总和",
+        "按权重对两个V值求和"
+      ],
+      "assumptions": [
+        "log denotes natural logarithm, consistent with the stated 7.5.",
+        "a and b each have two components; V has the two scalar values 0 and 10; y is scalar."
+      ],
+      "verification": "verify_example.py executed; see arithmetic_check.json",
+      "figure_source": null
+    },
+    {
+      "id": "EXPL-002",
+      "page": 2,
+      "anchor": "Example and a claim；末句（印刷页1）；范围见物理页3",
+      "question": "这能证明RoPE在所有模型里都放大误差吗？",
+      "answer": "[结论] 不能。第2页末句提出“所有真实模型里RoPE总会放大误差”，但这个数值例子没有证明它。\n[原文范围] 物理第3页（印刷 A1）明确说这是虚构教学例子，并未研究任何RoPE专属模型、数据或实验。\n[证据边界] 本例只展示特定 b 的变化经共同softmax使加权输出由5变为7.5；没有给出正确目标、误差定义或输入/输出误差度量，因此2.5只能叫输出变化，不能据此称为误差放大。文中也没有把 b 的变化推导为RoPE机制，且单个例子不能建立针对所有模型的全称命题。\n[自己的教学补充] 同一公式中若把 b 改成(1,1)，两个权重仍为1/2，输出仍是5（已验算）。这说明并非任意logit变化都会改变本公式的输出；它不是关于真实RoPE模型的反例或实验。\n[返回原文] 第2页前两句可读作一个softmax重分配权重的算例；末句泛化主张在这份材料中没有支持。",
+      "sources": [],
+      "source_locators": [
+        {
+          "paper_sha256": "76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9",
+          "physical_page": 2,
+          "printed_page": "1",
+          "anchor": "Claim: this proves RoPE always amplifies error in every real model."
+        },
+        {
+          "paper_sha256": "76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9",
+          "physical_page": 3,
+          "printed_page": "A1",
+          "anchor": "Appendix: scope；两句全文"
+        }
+      ],
+      "assumptions": [
+        "No external claims about actual RoPE behavior are made."
+      ],
+      "unresolved": [
+        "What definition of error and what RoPE model the universal claim could refer to are not specified."
+      ],
+      "verification": "Logical scope checked against original pages; common-shift teaching arithmetic executed.",
+      "figure_source": null
+    }
+  ]
+}

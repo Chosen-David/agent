@@ -1,0 +1,94 @@
+{
+  "claims": [
+    {
+      "claim_id": "run-v2-20261003/WRITE-C001",
+      "text": "small 延迟减少 20.0%，速度比 1.25×；medium 减少 16.7%，速度比 1.20×",
+      "kind": "derived_from_supplied_measurements",
+      "status": "limited",
+      "evidence_ids": [
+        "run-v2-20261003/CODE-T001"
+      ],
+      "source_locations": [
+        "measurements.csv@v2 lines 2-3",
+        "input_manifest.json"
+      ],
+      "scope": "给定两个 end_to_end 报告值",
+      "counterevidence": [],
+      "manuscript_locations": [
+        "results.md",
+        "figure_v2.png"
+      ],
+      "action_if_unsupported": "修正派生计算并重建受影响图文。"
+    },
+    {
+      "claim_id": "run-v2-20261003/WRITE-C002",
+      "text": "large 延迟增加 10.0%，速度比约 0.91×",
+      "kind": "derived_from_supplied_measurements",
+      "status": "limited",
+      "evidence_ids": [
+        "run-v2-20261003/CODE-T001"
+      ],
+      "source_locations": [
+        "measurements.csv@v2 line 4",
+        "input_manifest.json"
+      ],
+      "scope": "给定 large end_to_end 报告值",
+      "counterevidence": [],
+      "manuscript_locations": [
+        "results.md",
+        "figure_v2.png"
+      ],
+      "action_if_unsupported": "修正派生计算并重建受影响图文。"
+    },
+    {
+      "claim_id": "run-v2-20261003/WRITE-C003",
+      "text": "kernel 延迟减少 50.0%，速度比 2.00×",
+      "kind": "derived_from_supplied_measurements",
+      "status": "limited",
+      "evidence_ids": [
+        "run-v2-20261003/CODE-T001"
+      ],
+      "source_locations": [
+        "measurements.csv@v2 line 5",
+        "input_manifest.json"
+      ],
+      "scope": "kernel_only；不能代表端到端收益",
+      "counterevidence": [],
+      "manuscript_locations": [
+        "results.md",
+        "figure_v2.png"
+      ],
+      "action_if_unsupported": "修正派生计算并重建受影响图文。"
+    },
+    {
+      "claim_id": "run-v2-20261003/RES-C004",
+      "text": "优先诊断 large 回退，暂不宣称普遍提速或启动新实验。",
+      "kind": "decision_inference",
+      "status": "conditional",
+      "evidence_ids": [
+        "run-v2-20261003/CODE-T001"
+      ],
+      "source_locations": [
+        "measurements.csv@v2",
+        "project.json.budget"
+      ],
+      "scope": "本轮调度判断，非已验证优化效果",
+      "counterevidence": [
+        "small/medium 有收益，但权重未知；large 报告值变差"
+      ],
+      "manuscript_locations": [
+        "results.md",
+        "project_state.md"
+      ],
+      "action_if_unsupported": "新证据或目标权重明确后重新评估。"
+    }
+  ],
+  "unknowns": [
+    "重复次数与测量波动",
+    "硬件与代码版本",
+    "计时协议及公平性",
+    "large 回退原因",
+    "工作负载权重",
+    "旧背景正文"
+  ]
+}

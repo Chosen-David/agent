@@ -1,5 +1,7 @@
 # 论文伴读 Agent Workflow
 
+
+执行本角色时先读 [执行与验收补充](../plugins/research-assistant/skills/paper-reading-companion/references/execution.md)，按任务采用最小流程；已有可用能力足够时直接执行。补充规范不代表已安装外部 runtime。
 [返回首页](../README.md) · [知识点讲解](concept_explanation_workflow.md)
 
 目标：用户提供 PDF 或论文链接后，一边看英文原文，一边就当前页、段落、公式、图表提问。伴读服务用户理解；投稿前逐页质量检查另用 [reader_workflow.md](reader_workflow.md)。

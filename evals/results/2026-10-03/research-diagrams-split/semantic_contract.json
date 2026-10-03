@@ -1,0 +1,150 @@
+{
+  "figure_id": "FIG-two-path-logits",
+  "run_id": "agent-forward-figure-split",
+  "status": "proposed",
+  "evidence_type": "synthetic specification, not implemented",
+  "source": {
+    "path": "../inputs/architecture.json",
+    "sha256": "b08ecd9fc2bb9d8401db7a80f84ed07fcc22803d8fddfcbc9bc0d29a0aceabdb"
+  },
+  "nodes": [
+    {
+      "id": "a",
+      "label": "Path A logits a",
+      "type": "declared computational object",
+      "inputs": [],
+      "outputs": [
+        "sum"
+      ],
+      "source": "/nodes/0",
+      "shapes_and_units": "unspecified"
+    },
+    {
+      "id": "b",
+      "label": "Path B logits b",
+      "type": "declared computational object",
+      "inputs": [],
+      "outputs": [
+        "sum"
+      ],
+      "source": "/nodes/1",
+      "shapes_and_units": "unspecified"
+    },
+    {
+      "id": "sum",
+      "label": "z = a + b",
+      "type": "declared computational object",
+      "inputs": [
+        "a",
+        "b"
+      ],
+      "outputs": [
+        "softmax"
+      ],
+      "source": "/nodes/2",
+      "shapes_and_units": "unspecified"
+    },
+    {
+      "id": "softmax",
+      "label": "p = softmax(z)",
+      "type": "declared computational object",
+      "inputs": [
+        "sum"
+      ],
+      "outputs": [
+        "output"
+      ],
+      "source": "/nodes/3",
+      "shapes_and_units": "unspecified"
+    },
+    {
+      "id": "v",
+      "label": "Fixed values V",
+      "type": "declared computational object",
+      "inputs": [],
+      "outputs": [
+        "output"
+      ],
+      "source": "/nodes/4",
+      "shapes_and_units": "unspecified"
+    },
+    {
+      "id": "output",
+      "label": "y = p^T V",
+      "type": "declared computational object",
+      "inputs": [
+        "softmax",
+        "v"
+      ],
+      "outputs": [],
+      "source": "/nodes/5",
+      "shapes_and_units": "unspecified"
+    }
+  ],
+  "edges": [
+    {
+      "id": "edge-a-sum",
+      "source": "a",
+      "target": "sum",
+      "direction": "source_to_target",
+      "kind": "data_flow",
+      "label": null,
+      "evidence": "/edges/0"
+    },
+    {
+      "id": "edge-b-sum",
+      "source": "b",
+      "target": "sum",
+      "direction": "source_to_target",
+      "kind": "data_flow",
+      "label": null,
+      "evidence": "/edges/1"
+    },
+    {
+      "id": "edge-sum-softmax",
+      "source": "sum",
+      "target": "softmax",
+      "direction": "source_to_target",
+      "kind": "data_flow",
+      "label": null,
+      "evidence": "/edges/2"
+    },
+    {
+      "id": "edge-softmax-output",
+      "source": "softmax",
+      "target": "output",
+      "direction": "source_to_target",
+      "kind": "data_flow",
+      "label": null,
+      "evidence": "/edges/3"
+    },
+    {
+      "id": "edge-v-output",
+      "source": "v",
+      "target": "output",
+      "direction": "source_to_target",
+      "kind": "data_flow",
+      "label": null,
+      "evidence": "/edges/4"
+    }
+  ],
+  "groups": [],
+  "invariants": [
+    "A and B run in parallel, then merge",
+    "V bypasses softmax and enters only output",
+    "No feedback or edge from A to B",
+    "No measured performance or model accuracy is specified here"
+  ],
+  "label_changes": [],
+  "unknowns": [
+    "Tensor dimensions and units",
+    "Training/inference behavior",
+    "Implementation and empirical performance"
+  ],
+  "rendering_only_annotations": [
+    "Parallel paths",
+    "Bypass",
+    "Data flow legend"
+  ],
+  "semantic_changes": []
+}

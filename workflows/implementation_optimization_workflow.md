@@ -1,5 +1,7 @@
 # 代码实现与性能优化 Agent Workflow
 
+
+执行本角色时先读 [执行与验收补充](../plugins/research-assistant/skills/research-implement-optimize/references/execution.md)，按任务采用最小流程；已有可用能力足够时直接执行。补充规范不代表已安装外部 runtime。
 [返回仓库首页](../README.md) · [主 AI 调度入口](../prompts/orchestrator.md)
 
 按具体任务主动探索算法、数据结构、成熟库与 CPU/GPU/混合执行，完成实现、正确性验证、测量和有预算的优化。用户建议方案也应反思；明确硬约束必须保留。目标是在已探索范围和实测条件下找到最佳可行实现。

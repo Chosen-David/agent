@@ -1,0 +1,179 @@
+{
+  "schema_version": "1.0",
+  "agent": "reviewer",
+  "snapshot": {
+    "id": "REV-712dd94ef8f5-57201d75a6e7",
+    "review_date": "2026-10-03",
+    "inputs": {
+      "manuscript.md": "712dd94ef8f5ad0c1a6f5f36bb3735901fc6bce564a96381cf6e4cfdc68ce88e",
+      "measurements.csv": "57201d75a6e7ea0b7581c2d94f4bf46c2b9a66e37b5df94c8e6b4c5ef3924248"
+    },
+    "pdf": null,
+    "venue": null,
+    "track": null,
+    "rubric": "provisional rubric",
+    "scope": "仅给定正文、附录及 CSV；未联网、未改稿、未执行新性能实验",
+    "submission_cutoff": null,
+    "search_cutoff": null
+  },
+  "findings": [
+    {
+      "finding_id": "REV-F001",
+      "snapshot_id": "REV-712dd94ef8f5-57201d75a6e7",
+      "category": "correctness",
+      "severity": "major",
+      "confidence": "high",
+      "assertion_type": "confirmed_error",
+      "status": "confirmed",
+      "location": {
+        "physical_page": null,
+        "printed_page": null,
+        "anchor": "manuscript.md:4（Abstract）；measurements.csv:2–5；附录 manuscript.md:10"
+      },
+      "evidence": [
+        "摘要主张每个工作负载均有 2x 端到端加速且无退化。",
+        "small 100/80=1.25x；medium 120/100=1.20x；large 200/220=0.90909x，候选时延增加 10%。",
+        "kernel 20/10=2x，但 scope=kernel_only。Results 第8行明确核计时已包含在端到端路径中。",
+        "附录第10行承认 200→220 ms 退化，与 CSV 一致，但未消除摘要矛盾。"
+      ],
+      "why_it_matters": "给定观测直接反驳摘要的两个全称断言；微基准收益不能作为端到端收益。",
+      "verification": "按 baseline_ms/candidate_ms 逐行复算，只将 scope=end_to_end 行用于端到端主张；对照附录。已完成，证据为 numeric_checks.csv。",
+      "resolution_options": [
+        "最低充分处理：在后续获得改稿授权时，把摘要限制为给定 CPU 设置的单次观测，列明 1.25x/1.20x 及 large 时延增加10%，把2x明确限定为kernel-only。",
+        "如认为 CSV 标记或数值有误，先提供可追溯原始日志及新版本，不能凭猜测更改数据。"
+      ],
+      "acceptance": [
+        "摘要与所有三条端到端观测一致，并明确kernel-only范围。",
+        "若提供新证据推翻本输入，重新冻结快照并重算；仅重复摘要或引用附录不能撤销问题。"
+      ],
+      "related_findings": [],
+      "history": [
+        {
+          "state": "open",
+          "note": "材料内待核验项目；不是已成立的指控"
+        },
+        {
+          "state": "confirmed",
+          "note": "正文、附录与 CSV 全部核验后判定"
+        }
+      ]
+    },
+    {
+      "finding_id": "REV-F002",
+      "snapshot_id": "REV-712dd94ef8f5-57201d75a6e7",
+      "category": "evidence",
+      "severity": "major",
+      "confidence": "high",
+      "assertion_type": "reporting_gap",
+      "status": "confirmed",
+      "location": {
+        "physical_page": null,
+        "printed_page": null,
+        "anchor": "manuscript.md:4、8、10"
+      },
+      "evidence": [
+        "Results 第8行明确每个值只有一次运行，无独立重复；附录第10行明确未测量方差。",
+        "CSV 不含重复编号或重复样本；不同工作负载不是同一条件的独立重复。"
+      ],
+      "why_it_matters": "材料支持这四组单次时延的描述，无法估计条件内不确定性或判断收益、退化是否稳定；此证据不足独立于 F001 的算术矛盾。此处 reporting_gap 指支撑证据缺口，不指作者隐瞒。",
+      "verification": "检查正文与附录是否给出独立重复或方差，以及 CSV 是否含重复样本。已完成；这些材料未提供，不能由此断言作者从未做过其他实验。",
+      "resolution_options": [
+        "无需新增实验的最小处理：明确探索性、单次观测，只陈述观测结果，删除普遍或稳定收益的表述。",
+        "若保留稳定性能结论，作者补充同一配置下每种方法和工作负载的独立重复、运行顺序与预热/计时方法，并报告样本量、效应量及不确定性；预先确定精度目标，不临时挑选有利运行。"
+      ],
+      "acceptance": [
+        "选择描述性范围：所有相关结论明确限定为单次观测，保留方差未知，不宣称统计显著或稳定无退化。",
+        "或选择稳定性主张：提供原始重复测量与分析，并让结论与不确定性一致；不以不显著证明等效。"
+      ],
+      "related_findings": [
+        "REV-F001"
+      ],
+      "history": [
+        {
+          "state": "open",
+          "note": "材料内待核验项目；不是已成立的指控"
+        },
+        {
+          "state": "confirmed",
+          "note": "正文、附录与 CSV 全部核验后判定"
+        }
+      ]
+    },
+    {
+      "finding_id": "REV-F003",
+      "snapshot_id": "REV-712dd94ef8f5-57201d75a6e7",
+      "category": "reporting",
+      "severity": "minor",
+      "confidence": "high",
+      "assertion_type": "suspected_error",
+      "status": "rejected",
+      "location": {
+        "physical_page": null,
+        "printed_page": null,
+        "anchor": "manuscript.md:9–10"
+      },
+      "evidence": [
+        "反证核查：附录明确写出 large 从200 ms变为220 ms，且数值与CSV相符。"
+      ],
+      "why_it_matters": "“退化未报告/被隐藏”不成立；应把有效意见限定为摘要与已报告结果矛盾。",
+      "verification": "已读 Appendix A 并对照 CSV 第4行，疑点驳回。",
+      "resolution_options": [
+        "不因该疑点改稿；保留 F001 的摘要矛盾。"
+      ],
+      "acceptance": [
+        "附录中的退化报告与数据一致；本快照已满足。"
+      ],
+      "related_findings": [
+        "REV-F001"
+      ],
+      "history": [
+        {
+          "state": "open",
+          "note": "材料内待核验项目；不是已成立的指控"
+        },
+        {
+          "state": "rejected",
+          "note": "正文、附录与 CSV 全部核验后判定"
+        }
+      ]
+    },
+    {
+      "finding_id": "REV-F004",
+      "snapshot_id": "REV-712dd94ef8f5-57201d75a6e7",
+      "category": "correctness",
+      "severity": "minor",
+      "confidence": "high",
+      "assertion_type": "suspected_error",
+      "status": "rejected",
+      "location": {
+        "physical_page": null,
+        "printed_page": null,
+        "anchor": "manuscript.md:8；measurements.csv:2–5"
+      },
+      "evidence": [
+        "反证核查：正文明确 kernel-only pair 独立计时，已包含在端到端路径，要求不相加。"
+      ],
+      "why_it_matters": "不能将核计时再加到端到端时延，也不能指控稿件已重复计时；独立核计时不能解释所有端到端差异。",
+      "verification": "已核对 Results 原文与 scope 列；未发现文稿实施重复加和。",
+      "resolution_options": [
+        "无需修改该计时范围说明；性能解释仅保留可直接支持的范围。"
+      ],
+      "acceptance": [
+        "复算不把 kernel-only 行加进端到端数值；本轮 numeric_checks.csv 已满足。"
+      ],
+      "related_findings": [
+        "REV-F001"
+      ],
+      "history": [
+        {
+          "state": "open",
+          "note": "材料内待核验项目；不是已成立的指控"
+        },
+        {
+          "state": "rejected",
+          "note": "正文、附录与 CSV 全部核验后判定"
+        }
+      ]
+    }
+  ]
+}

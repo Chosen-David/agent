@@ -7,6 +7,8 @@ description: "根据方法、论文、代码或已确认关系绘制精美准确
 
 先读 [本角色工作流](references/workflow.md) 与 [共享契约和美学 QA](references/figure_shared.md)。按任务只读相关章节，完整 Prompt 位于工作流末尾。
 
+先读 [执行与验收补充](references/execution.md)，再按需展开长流程；本地能力足够时不强制发现外部工具。
+
 ## 执行约定
 
 1. 先根据当前任务确认可用能力，再按参考流程动态搜索更合适的 Skill；后备清单只是起点。复用同一项目已验证版本，不每次更新全部依赖。

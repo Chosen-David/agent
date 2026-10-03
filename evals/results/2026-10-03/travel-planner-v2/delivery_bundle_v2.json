@@ -1,0 +1,1303 @@
+{
+  "schema_version": "local-travel/v1",
+  "trip_id": "synthetic-travel-20261004",
+  "revision": 2,
+  "as_of": "2026-10-03T04:11:33.283482+00:00",
+  "request_contract": {
+    "trip_brief": {
+      "destination": "合成目的地（城市未知）",
+      "timezone": "Asia/Shanghai",
+      "dates": {
+        "start": "2026-10-04",
+        "end": "2026-10-04"
+      },
+      "people": 2,
+      "anchor": {
+        "kind": "hotel",
+        "entity_id": "hotel"
+      },
+      "arrival": "2026-10-04T11:00:00+08:00",
+      "departure": "2026-10-04T18:00:00+08:00",
+      "budget": {
+        "min": null,
+        "max": null,
+        "currency": null,
+        "scope": "双人，用户未给上限"
+      },
+      "rest_preferences": {
+        "default_enabled": true,
+        "midday_minutes": 75,
+        "needs_room": true,
+        "walking_tolerance": null
+      },
+      "assumptions": [
+        "起终点均为 Hotel H",
+        "CNY 为预算展示假设",
+        "每段通勤为一辆车，给定时长含步行候车",
+        "给定通勤价格不因仅修改时长而改变",
+        "写真16:00–17:00包含服务准备；无额外付费项目假设"
+      ]
+    },
+    "hard_constraints": [
+      {
+        "constraint_id": "h_available",
+        "content": "11:00–18:00 可活动",
+        "source": "travel.json:available",
+        "user_confirmed": true
+      },
+      {
+        "constraint_id": "h_photo",
+        "content": "Studio B 16:00–17:00 用户确认预约，不能改动",
+        "source": "travel.json:photo",
+        "user_confirmed": true
+      },
+      {
+        "constraint_id": "h_rest",
+        "content": "Hotel H 独立午休75分钟，用房可用",
+        "source": "travel.json:rest",
+        "user_confirmed": true
+      },
+      {
+        "constraint_id": "h_no_booking",
+        "content": "不实际预订，不联系商户，仅用合成事实",
+        "source": "task.txt / travel.json:amendment",
+        "user_confirmed": true
+      },
+      {
+        "constraint_id": "h_commute_v2",
+        "content": "每段通勤改为35分钟，保持写真和午休",
+        "source": "travel.json:amendment",
+        "user_confirmed": true
+      }
+    ],
+    "desired_intents": [
+      {
+        "intent_id": "lunch",
+        "goal": "Cafe A 午餐",
+        "must_do": true,
+        "acceptance_conditions": "完整60分钟，单个营业窗口，14:00前点单"
+      },
+      {
+        "intent_id": "photo",
+        "goal": "Studio B 写真",
+        "must_do": true,
+        "acceptance_conditions": "保持16:00–17:00预约"
+      },
+      {
+        "intent_id": "rest",
+        "goal": "Hotel H 午休",
+        "must_do": true,
+        "acceptance_conditions": "独立75分钟，不以交通/用餐代替"
+      }
+    ],
+    "soft_preferences": [],
+    "unknowns": [
+      {
+        "unknown_id": "u_currency",
+        "content": "币种未给；本报告暂用 CNY，需确认。",
+        "owner": "user"
+      },
+      {
+        "unknown_id": "u_room",
+        "content": "Hotel H 用房可用已给定；房费、是否已支付、午休是否新增收费未给。未按零计入。",
+        "owner": "user"
+      },
+      {
+        "unknown_id": "u_routes",
+        "content": "城市、入口、上车点、实际线路、替代交通费用和实时拥堵未给；以门牌为合成路线端点，每段时长暂视为含步行候车的全程。",
+        "owner": "fixture_author"
+      },
+      {
+        "unknown_id": "u_weather",
+        "content": "无天气资料、预警或室内外信息；不能验证实际天气适用性。",
+        "owner": "fixture_author"
+      },
+      {
+        "unknown_id": "u_services",
+        "content": "排队、最后接客、离店余量、写真准备时长及额外收费未知。暂留午餐前10分钟、用餐后5分钟；写真预约视为含准备的完整服务，提前10分钟报到，结束后5分钟离场。",
+        "owner": "fixture_author"
+      },
+      {
+        "unknown_id": "u_return",
+        "content": "18:00仅为可活动时间终点，无车站/航班要求；假设当天11:00从 Hotel H 出发并最终回 Hotel H。",
+        "owner": "user"
+      },
+      {
+        "unknown_id": "u_payment",
+        "content": "写真已有用户确认预约，但未给支付状态、套餐附加费用或总预算上限。已知报价列为计划费用，不认定未付或已付。",
+        "owner": "user"
+      }
+    ],
+    "acceptance_criteria": [
+      "保留三项必须活动",
+      "完整午餐在同一营业窗口内，点单不晚于14:00",
+      "四段通勤全部计时计价",
+      "18:00前回酒店",
+      "按人数/整单/整车正确计算费用",
+      "缺失信息不伪装已验证"
+    ]
+  },
+  "capabilities": [
+    {
+      "name": "local_file_read_write_and_python",
+      "version": "Python 3 standard library",
+      "permission": "本 case 本地读取，outputs 写入",
+      "verified_by": "读取 travel.json、生成 JSON/Markdown、执行静态检查",
+      "limits": "未联网、未调用地图天气平台、未预订、未生成 Word；无独立研究 Agent"
+    }
+  ],
+  "sources": [
+    {
+      "source_id": "s_fixture",
+      "url": null,
+      "source_type": "user_supplied_synthetic_fixture",
+      "published_at": null,
+      "checked_at": "2026-10-03T04:11:33.283482+00:00",
+      "access_scope": "full",
+      "scope": "仅本合成案例，不证明现实商户存在",
+      "path": "/tmp/agent-forward-travel-v2/travel-planner/inputs/travel.json",
+      "sha256": "b3f01dbf03e73d22aadd44dee96957059d9ea4754c2aad15ca4ce9d63885223d"
+    }
+  ],
+  "facts": [
+    {
+      "fact_id": "f_lunch_windows",
+      "entity_id": "lunch",
+      "claim": "service_windows",
+      "value": [
+        {
+          "open": "2026-10-04T10:30:00+08:00",
+          "close": "2026-10-04T14:30:00+08:00"
+        },
+        {
+          "open": "2026-10-04T16:00:00+08:00",
+          "close": "2026-10-04T21:00:00+08:00"
+        }
+      ],
+      "applies_on": "2026-10-04",
+      "timezone": "Asia/Shanghai",
+      "source_ids": [
+        "s_fixture"
+      ],
+      "checked_at": "2026-10-03T04:11:33.283482+00:00",
+      "status": "user_confirmed",
+      "built_from_revision": 1,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "s_fixture"
+      ],
+      "validity": "current"
+    },
+    {
+      "fact_id": "f_lunch_break",
+      "entity_id": "lunch",
+      "claim": "break_windows",
+      "value": [
+        {
+          "open": "2026-10-04T14:30:00+08:00",
+          "close": "2026-10-04T16:00:00+08:00"
+        }
+      ],
+      "applies_on": "2026-10-04",
+      "timezone": "Asia/Shanghai",
+      "source_ids": [
+        "s_fixture"
+      ],
+      "checked_at": "2026-10-03T04:11:33.283482+00:00",
+      "status": "user_confirmed",
+      "built_from_revision": 1,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "s_fixture"
+      ],
+      "validity": "current"
+    },
+    {
+      "fact_id": "f_lunch_order",
+      "entity_id": "lunch",
+      "claim": "last_order",
+      "value": "2026-10-04T14:00:00+08:00",
+      "applies_on": "2026-10-04",
+      "timezone": "Asia/Shanghai",
+      "source_ids": [
+        "s_fixture"
+      ],
+      "checked_at": "2026-10-03T04:11:33.283482+00:00",
+      "status": "user_confirmed",
+      "built_from_revision": 1,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "s_fixture"
+      ],
+      "validity": "current"
+    },
+    {
+      "fact_id": "f_photo_appointment",
+      "entity_id": "photo",
+      "claim": "appointment",
+      "value": {
+        "start": "2026-10-04T16:00:00+08:00",
+        "end": "2026-10-04T17:00:00+08:00"
+      },
+      "applies_on": "2026-10-04",
+      "timezone": "Asia/Shanghai",
+      "source_ids": [
+        "s_fixture"
+      ],
+      "checked_at": "2026-10-03T04:11:33.283482+00:00",
+      "status": "user_confirmed",
+      "built_from_revision": 1,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "s_fixture"
+      ],
+      "validity": "current"
+    },
+    {
+      "fact_id": "f_room",
+      "entity_id": "hotel",
+      "claim": "room_available",
+      "value": true,
+      "applies_on": "2026-10-04",
+      "timezone": "Asia/Shanghai",
+      "source_ids": [
+        "s_fixture"
+      ],
+      "checked_at": "2026-10-03T04:11:33.283482+00:00",
+      "status": "user_confirmed",
+      "built_from_revision": 1,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "s_fixture"
+      ],
+      "validity": "current"
+    },
+    {
+      "fact_id": "f_travel_time",
+      "entity_id": "transport",
+      "claim": "each_leg_minutes",
+      "value": 35,
+      "applies_on": "2026-10-04",
+      "timezone": "Asia/Shanghai",
+      "source_ids": [
+        "s_fixture"
+      ],
+      "checked_at": "2026-10-03T04:11:33.283482+00:00",
+      "status": "user_confirmed",
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "s_fixture"
+      ],
+      "validity": "current"
+    },
+    {
+      "fact_id": "f_travel_price",
+      "entity_id": "transport",
+      "claim": "each_leg_price",
+      "value": [
+        15,
+        25
+      ],
+      "applies_on": "2026-10-04",
+      "timezone": "Asia/Shanghai",
+      "source_ids": [
+        "s_fixture"
+      ],
+      "checked_at": "2026-10-03T04:11:33.283482+00:00",
+      "status": "user_confirmed",
+      "built_from_revision": 1,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "s_fixture"
+      ],
+      "validity": "current"
+    }
+  ],
+  "experiences": [],
+  "weather": [],
+  "research_queries": [
+    {
+      "query_id": "q_local",
+      "owner": "single_planner",
+      "intent_id": null,
+      "entity_scope": [
+        "hotel",
+        "lunch",
+        "photo",
+        "transport"
+      ],
+      "required_fields": [
+        "addresses",
+        "windows",
+        "duration",
+        "price",
+        "appointment",
+        "rest"
+      ],
+      "preferred_sources": [
+        "s_fixture"
+      ],
+      "fallback_sources": [],
+      "done_when": "已读取所有给定字段，未提供字段列 unknown",
+      "status": "COMPLETED",
+      "input_revision": 1,
+      "revalidated_for_revision": 2
+    }
+  ],
+  "candidates": [
+    {
+      "candidate_id": "c_rest",
+      "entity_id": "hotel",
+      "kind": "rest",
+      "name": "Hotel H",
+      "navigable_address": "1 Test Road",
+      "intent_ids": [
+        "rest"
+      ],
+      "fact_ids": [
+        "f_room"
+      ],
+      "price": {
+        "min": null,
+        "max": null,
+        "currency": "CNY",
+        "unit": "per_room",
+        "quantity": null,
+        "includes": [],
+        "excludes": [
+          "未提供的额外服务"
+        ],
+        "source_status": "unknown",
+        "checked_at": "2026-10-03T04:11:33.283482+00:00"
+      },
+      "duration_minutes": 75,
+      "admission": "admitted",
+      "admission_scope": "仅对合成场景给定事实及明示假设准入，非现实出行核验",
+      "unknowns": [
+        "u_room"
+      ],
+      "built_from_revision": 1,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "s_fixture"
+      ],
+      "validity": "current"
+    },
+    {
+      "candidate_id": "c_lunch",
+      "entity_id": "lunch",
+      "kind": "activity",
+      "name": "Cafe A",
+      "navigable_address": "2 Test Road",
+      "intent_ids": [
+        "lunch"
+      ],
+      "fact_ids": [
+        "f_lunch_windows",
+        "f_lunch_order"
+      ],
+      "price": {
+        "min": 80,
+        "max": 100,
+        "currency": "CNY",
+        "unit": "per_person",
+        "quantity": 2,
+        "includes": [],
+        "excludes": [
+          "未提供的额外服务"
+        ],
+        "source_status": "reference",
+        "checked_at": "2026-10-03T04:11:33.283482+00:00"
+      },
+      "duration_minutes": 60,
+      "admission": "admitted",
+      "admission_scope": "仅对合成场景给定事实及明示假设准入，非现实出行核验",
+      "unknowns": [
+        "u_services"
+      ],
+      "built_from_revision": 1,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "s_fixture"
+      ],
+      "validity": "current"
+    },
+    {
+      "candidate_id": "c_photo",
+      "entity_id": "photo",
+      "kind": "activity",
+      "name": "Studio B",
+      "navigable_address": "3 Test Road",
+      "intent_ids": [
+        "photo"
+      ],
+      "fact_ids": [
+        "f_photo_appointment"
+      ],
+      "price": {
+        "min": 300,
+        "max": 300,
+        "currency": "CNY",
+        "unit": "per_package",
+        "quantity": 1,
+        "includes": [],
+        "excludes": [
+          "未提供的额外服务"
+        ],
+        "source_status": "reference",
+        "checked_at": "2026-10-03T04:11:33.283482+00:00",
+        "original_unit": "per_group"
+      },
+      "duration_minutes": 60,
+      "admission": "admitted",
+      "admission_scope": "仅对合成场景给定事实及明示假设准入，非现实出行核验",
+      "unknowns": [
+        "u_services"
+      ],
+      "built_from_revision": 1,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "s_fixture"
+      ],
+      "validity": "current"
+    }
+  ],
+  "selection_plan": [
+    {
+      "intent_id": "lunch",
+      "primary": "c_lunch",
+      "alternatives": [],
+      "fallbacks": [],
+      "basis": "输入仅提供一个指定实体；不捏造额外商户或候选",
+      "conditions": [
+        "实际出行前修复 unknown；本次限合成规划"
+      ],
+      "built_from_revision": 1,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "c_lunch"
+      ],
+      "validity": "current"
+    },
+    {
+      "intent_id": "photo",
+      "primary": "c_photo",
+      "alternatives": [],
+      "fallbacks": [],
+      "basis": "输入仅提供一个指定实体；不捏造额外商户或候选",
+      "conditions": [
+        "实际出行前修复 unknown；本次限合成规划"
+      ],
+      "built_from_revision": 1,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "c_photo"
+      ],
+      "validity": "current"
+    },
+    {
+      "intent_id": "rest",
+      "primary": "c_rest",
+      "alternatives": [],
+      "fallbacks": [],
+      "basis": "输入仅提供一个指定实体；不捏造额外商户或候选",
+      "conditions": [
+        "实际出行前修复 unknown；本次限合成规划"
+      ],
+      "built_from_revision": 1,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "c_rest"
+      ],
+      "validity": "current"
+    }
+  ],
+  "open_questions": [
+    {
+      "unknown_id": "u_currency"
+    },
+    {
+      "unknown_id": "u_room"
+    },
+    {
+      "unknown_id": "u_routes"
+    },
+    {
+      "unknown_id": "u_weather"
+    },
+    {
+      "unknown_id": "u_services"
+    },
+    {
+      "unknown_id": "u_return"
+    },
+    {
+      "unknown_id": "u_payment"
+    }
+  ],
+  "change_log": [
+    {
+      "amendment_id": "amend_1",
+      "from_revision": 1,
+      "to_revision": 2,
+      "changed_fields": [
+        "facts.f_travel_time.value:20->35"
+      ],
+      "source": "travel.json:amendment",
+      "decision": "After making the first plan, increase each commute from 20 to 35 minutes. Keep photo booking and rest; show the changed plan and budget; do not book anything.",
+      "affected_ids": [
+        "f_travel_time",
+        "t1",
+        "t2",
+        "t3",
+        "t4",
+        "s1",
+        "s2",
+        "s3",
+        "s4",
+        "s5",
+        "s6",
+        "s7",
+        "s8",
+        "s9",
+        "s13",
+        "s14",
+        "budget",
+        "intent_coverage",
+        "deliverables"
+      ],
+      "reason": "每段通勤增长15分钟，4段共增长60分钟",
+      "invalidated_before_rebuild": [
+        "commutes",
+        "itinerary",
+        "budget",
+        "intent_coverage",
+        "deliverables"
+      ],
+      "reused_after_review": [
+        "lunch service windows/price",
+        "photo appointment/price",
+        "room availability",
+        "selection_plan",
+        "f_travel_price"
+      ],
+      "followup_tasks": [
+        "重算午餐及午休",
+        "提前前往写真",
+        "重算回酒店时间",
+        "重算同价交通总额",
+        "重新验收"
+      ]
+    }
+  ],
+  "itinerary": [
+    {
+      "slot_id": "s1",
+      "kind": "transfer",
+      "candidate_id": null,
+      "intent_ids": [],
+      "start": "2026-10-04T11:00:00+08:00",
+      "end": "2026-10-04T11:35:00+08:00",
+      "description": "前往 Cafe A",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [
+        "f_travel_time"
+      ],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract"
+      ],
+      "validity": "current"
+    },
+    {
+      "slot_id": "s2",
+      "kind": "buffer",
+      "candidate_id": null,
+      "intent_ids": [],
+      "start": "2026-10-04T11:35:00+08:00",
+      "end": "2026-10-04T11:45:00+08:00",
+      "description": "午餐报到/候位余量（估计）",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract"
+      ],
+      "validity": "current"
+    },
+    {
+      "slot_id": "s3",
+      "kind": "activity",
+      "candidate_id": "c_lunch",
+      "intent_ids": [
+        "lunch"
+      ],
+      "start": "2026-10-04T11:45:00+08:00",
+      "end": "2026-10-04T12:45:00+08:00",
+      "description": "午餐，到店后于本块开始时点单",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [
+        "f_lunch_windows",
+        "f_lunch_order"
+      ],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract",
+        "c_lunch"
+      ],
+      "validity": "current",
+      "order_at": "2026-10-04T11:45:00+08:00"
+    },
+    {
+      "slot_id": "s4",
+      "kind": "buffer",
+      "candidate_id": null,
+      "intent_ids": [],
+      "start": "2026-10-04T12:45:00+08:00",
+      "end": "2026-10-04T12:50:00+08:00",
+      "description": "午餐离店余量",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract"
+      ],
+      "validity": "current"
+    },
+    {
+      "slot_id": "s5",
+      "kind": "transfer",
+      "candidate_id": null,
+      "intent_ids": [],
+      "start": "2026-10-04T12:50:00+08:00",
+      "end": "2026-10-04T13:25:00+08:00",
+      "description": "回 Hotel H",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [
+        "f_travel_time"
+      ],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract"
+      ],
+      "validity": "current"
+    },
+    {
+      "slot_id": "s6",
+      "kind": "buffer",
+      "candidate_id": null,
+      "intent_ids": [],
+      "start": "2026-10-04T13:25:00+08:00",
+      "end": "2026-10-04T13:30:00+08:00",
+      "description": "回房整理",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract"
+      ],
+      "validity": "current"
+    },
+    {
+      "slot_id": "s7",
+      "kind": "rest",
+      "candidate_id": "c_rest",
+      "intent_ids": [
+        "rest"
+      ],
+      "start": "2026-10-04T13:30:00+08:00",
+      "end": "2026-10-04T14:45:00+08:00",
+      "description": "独立用房午休75分钟",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [
+        "f_room"
+      ],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract",
+        "c_rest"
+      ],
+      "validity": "current"
+    },
+    {
+      "slot_id": "s8",
+      "kind": "buffer",
+      "candidate_id": null,
+      "intent_ids": [],
+      "start": "2026-10-04T14:45:00+08:00",
+      "end": "2026-10-04T15:15:00+08:00",
+      "description": "酒店机动等候；可继续休息，不计入75分钟",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract"
+      ],
+      "validity": "current"
+    },
+    {
+      "slot_id": "s9",
+      "kind": "transfer",
+      "candidate_id": null,
+      "intent_ids": [],
+      "start": "2026-10-04T15:15:00+08:00",
+      "end": "2026-10-04T15:50:00+08:00",
+      "description": "前往 Studio B",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [
+        "f_travel_time"
+      ],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract"
+      ],
+      "validity": "current"
+    },
+    {
+      "slot_id": "s10",
+      "kind": "buffer",
+      "candidate_id": null,
+      "intent_ids": [],
+      "start": "2026-10-04T15:50:00+08:00",
+      "end": "2026-10-04T16:00:00+08:00",
+      "description": "写真提前报到",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract"
+      ],
+      "validity": "current"
+    },
+    {
+      "slot_id": "s11",
+      "kind": "activity",
+      "candidate_id": "c_photo",
+      "intent_ids": [
+        "photo"
+      ],
+      "start": "2026-10-04T16:00:00+08:00",
+      "end": "2026-10-04T17:00:00+08:00",
+      "description": "既定写真预约",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [
+        "f_photo_appointment"
+      ],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract",
+        "c_photo"
+      ],
+      "validity": "current"
+    },
+    {
+      "slot_id": "s12",
+      "kind": "buffer",
+      "candidate_id": null,
+      "intent_ids": [],
+      "start": "2026-10-04T17:00:00+08:00",
+      "end": "2026-10-04T17:05:00+08:00",
+      "description": "写真离场余量",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract"
+      ],
+      "validity": "current"
+    },
+    {
+      "slot_id": "s13",
+      "kind": "transfer",
+      "candidate_id": null,
+      "intent_ids": [],
+      "start": "2026-10-04T17:05:00+08:00",
+      "end": "2026-10-04T17:40:00+08:00",
+      "description": "回 Hotel H",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [
+        "f_travel_time"
+      ],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract"
+      ],
+      "validity": "current"
+    },
+    {
+      "slot_id": "s14",
+      "kind": "buffer",
+      "candidate_id": null,
+      "intent_ids": [],
+      "start": "2026-10-04T17:40:00+08:00",
+      "end": "2026-10-04T18:00:00+08:00",
+      "description": "已回酒店，距离18:00的返程余量",
+      "conditions": [
+        "合成场景及明示假设"
+      ],
+      "fact_dependencies": [],
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "request_contract"
+      ],
+      "validity": "current"
+    }
+  ],
+  "commutes": [
+    {
+      "commute_id": "t1",
+      "from_endpoint": "Hotel H, 1 Test Road",
+      "to_endpoint": "Cafe A, 2 Test Road",
+      "entrances": "未提供，不能编造入口/上下车点",
+      "mode": "合成车辆交通（具体车型/叫车方式未知）",
+      "route": "按给定起终点；道路、线路、方向、换乘未提供",
+      "duration_minutes": {
+        "min": 35,
+        "max": 35
+      },
+      "duration_scope": "暂按含步行候车的全程时长；时长外另排活动进出余量",
+      "price": {
+        "min": 15,
+        "max": 25,
+        "currency": "CNY",
+        "unit": "per_car",
+        "quantity": 1,
+        "includes": [],
+        "excludes": [
+          "未提供的额外服务"
+        ],
+        "source_status": "reference",
+        "checked_at": "2026-10-03T04:11:33.283482+00:00",
+        "original_unit": "per_vehicle"
+      },
+      "people": 2,
+      "source_ids": [
+        "s_fixture"
+      ],
+      "status": "reference",
+      "reason": "去指定午餐；只提供整车交通资料，双人共乘一辆车",
+      "alternatives": "未提供公交/地铁/步行时间费用，不能作真实经济性比较",
+      "slot_id": "s1",
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "f_travel_time",
+        "f_travel_price"
+      ],
+      "validity": "current"
+    },
+    {
+      "commute_id": "t2",
+      "from_endpoint": "Cafe A, 2 Test Road",
+      "to_endpoint": "Hotel H, 1 Test Road",
+      "entrances": "未提供，不能编造入口/上下车点",
+      "mode": "合成车辆交通（具体车型/叫车方式未知）",
+      "route": "按给定起终点；道路、线路、方向、换乘未提供",
+      "duration_minutes": {
+        "min": 35,
+        "max": 35
+      },
+      "duration_scope": "暂按含步行候车的全程时长；时长外另排活动进出余量",
+      "price": {
+        "min": 15,
+        "max": 25,
+        "currency": "CNY",
+        "unit": "per_car",
+        "quantity": 1,
+        "includes": [],
+        "excludes": [
+          "未提供的额外服务"
+        ],
+        "source_status": "reference",
+        "checked_at": "2026-10-03T04:11:33.283482+00:00",
+        "original_unit": "per_vehicle"
+      },
+      "people": 2,
+      "source_ids": [
+        "s_fixture"
+      ],
+      "status": "reference",
+      "reason": "回已知可用房间休息，保证75分钟独立午休",
+      "alternatives": "未提供公交/地铁/步行时间费用，不能作真实经济性比较",
+      "slot_id": "s5",
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "f_travel_time",
+        "f_travel_price"
+      ],
+      "validity": "current"
+    },
+    {
+      "commute_id": "t3",
+      "from_endpoint": "Hotel H, 1 Test Road",
+      "to_endpoint": "Studio B, 3 Test Road",
+      "entrances": "未提供，不能编造入口/上下车点",
+      "mode": "合成车辆交通（具体车型/叫车方式未知）",
+      "route": "按给定起终点；道路、线路、方向、换乘未提供",
+      "duration_minutes": {
+        "min": 35,
+        "max": 35
+      },
+      "duration_scope": "暂按含步行候车的全程时长；时长外另排活动进出余量",
+      "price": {
+        "min": 15,
+        "max": 25,
+        "currency": "CNY",
+        "unit": "per_car",
+        "quantity": 1,
+        "includes": [],
+        "excludes": [
+          "未提供的额外服务"
+        ],
+        "source_status": "reference",
+        "checked_at": "2026-10-03T04:11:33.283482+00:00",
+        "original_unit": "per_vehicle"
+      },
+      "people": 2,
+      "source_ids": [
+        "s_fixture"
+      ],
+      "status": "reference",
+      "reason": "按预约倒推发车，保留10分钟报到余量",
+      "alternatives": "未提供公交/地铁/步行时间费用，不能作真实经济性比较",
+      "slot_id": "s9",
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "f_travel_time",
+        "f_travel_price"
+      ],
+      "validity": "current"
+    },
+    {
+      "commute_id": "t4",
+      "from_endpoint": "Studio B, 3 Test Road",
+      "to_endpoint": "Hotel H, 1 Test Road",
+      "entrances": "未提供，不能编造入口/上下车点",
+      "mode": "合成车辆交通（具体车型/叫车方式未知）",
+      "route": "按给定起终点；道路、线路、方向、换乘未提供",
+      "duration_minutes": {
+        "min": 35,
+        "max": 35
+      },
+      "duration_scope": "暂按含步行候车的全程时长；时长外另排活动进出余量",
+      "price": {
+        "min": 15,
+        "max": 25,
+        "currency": "CNY",
+        "unit": "per_car",
+        "quantity": 1,
+        "includes": [],
+        "excludes": [
+          "未提供的额外服务"
+        ],
+        "source_status": "reference",
+        "checked_at": "2026-10-03T04:11:33.283482+00:00",
+        "original_unit": "per_vehicle"
+      },
+      "people": 2,
+      "source_ids": [
+        "s_fixture"
+      ],
+      "status": "reference",
+      "reason": "按假设回原锚点，保留18:00前机动时间",
+      "alternatives": "未提供公交/地铁/步行时间费用，不能作真实经济性比较",
+      "slot_id": "s13",
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "f_travel_time",
+        "f_travel_price"
+      ],
+      "validity": "current"
+    }
+  ],
+  "budget": {
+    "currency": "CNY",
+    "currency_assumption": true,
+    "people": 2,
+    "lines": [
+      {
+        "item": "午餐",
+        "price": {
+          "min": 80,
+          "max": 100,
+          "currency": "CNY",
+          "unit": "per_person",
+          "quantity": 2,
+          "includes": [],
+          "excludes": [
+            "未提供的额外服务"
+          ],
+          "source_status": "reference",
+          "checked_at": "2026-10-03T04:11:33.283482+00:00"
+        },
+        "total_min": 160,
+        "total_max": 200
+      },
+      {
+        "item": "写真",
+        "price": {
+          "min": 300,
+          "max": 300,
+          "currency": "CNY",
+          "unit": "per_package",
+          "quantity": 1,
+          "includes": [],
+          "excludes": [
+            "未提供的额外服务"
+          ],
+          "source_status": "reference",
+          "checked_at": "2026-10-03T04:11:33.283482+00:00",
+          "original_unit": "per_group"
+        },
+        "total_min": 300,
+        "total_max": 300
+      },
+      {
+        "item": "交通四段",
+        "price": {
+          "min": 15,
+          "max": 25,
+          "currency": "CNY",
+          "unit": "per_car",
+          "quantity": 4,
+          "includes": [],
+          "excludes": [
+            "未提供的额外服务"
+          ],
+          "source_status": "reference",
+          "checked_at": "2026-10-03T04:11:33.283482+00:00",
+          "original_unit": "per_vehicle"
+        },
+        "quantity_explanation": "1辆车 × 4段；不乘2位乘客",
+        "total_min": 60,
+        "total_max": 100
+      }
+    ],
+    "known_subtotal": {
+      "min": 520,
+      "max": 600
+    },
+    "contingency": {
+      "rate_min": 0.1,
+      "rate_max": 0.2,
+      "min": 52,
+      "max": 120
+    },
+    "known_total_with_contingency": {
+      "min": 572,
+      "max": 720
+    },
+    "unknown_items": [
+      "u_room",
+      "u_payment"
+    ],
+    "paid_total": null,
+    "new_spend_total": null,
+    "scope": "双人已知计划费用；含10%–20%机动金的部分预算，不是含未知房费/附加费的完整总价。已付与待付状态未知。",
+    "built_from_revision": 2,
+    "validated_for_revision": 2,
+    "depends_on": [
+      "c_lunch",
+      "c_photo",
+      "c_rest",
+      "t1",
+      "t2",
+      "t3",
+      "t4"
+    ],
+    "validity": "current"
+  },
+  "intent_coverage": [
+    {
+      "intent_id": "lunch",
+      "slot_ids": [
+        "s3"
+      ],
+      "outcome": "satisfied",
+      "evidence": "60分钟且离店余量仍在午市内；点单早于14:00",
+      "scope": "合成输入与假设内",
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "s3"
+      ],
+      "validity": "current"
+    },
+    {
+      "intent_id": "photo",
+      "slot_ids": [
+        "s11"
+      ],
+      "outcome": "satisfied",
+      "evidence": "16:00–17:00保持用户预约",
+      "scope": "合成输入与假设内",
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "s11"
+      ],
+      "validity": "current"
+    },
+    {
+      "intent_id": "rest",
+      "slot_ids": [
+        "s7"
+      ],
+      "outcome": "satisfied",
+      "evidence": "独立75分钟；用房可用",
+      "scope": "合成输入与假设内",
+      "built_from_revision": 2,
+      "validated_for_revision": 2,
+      "depends_on": [
+        "s7"
+      ],
+      "validity": "current"
+    }
+  ],
+  "deliverables": [
+    {
+      "format": "json",
+      "path": "/tmp/agent-forward-travel-v2/travel-planner/outputs/delivery_bundle_v2.json",
+      "bundle_revision": 2,
+      "validity": "current",
+      "qa_status": "limited",
+      "checked_pages": null,
+      "total_pages": null,
+      "limits": "结构、时间和算术可检查；现实营业、线路、币种和总费用无法核验",
+      "access_check": "本地读取成功"
+    }
+  ],
+  "run_state": {
+    "stages": [
+      {
+        "stage_id": "contract",
+        "status": "COMPLETED",
+        "input_revision": 2,
+        "depends_on": [],
+        "outputs": [
+          "request_contract"
+        ],
+        "error": null,
+        "blocked_reason": null
+      },
+      {
+        "stage_id": "local_research",
+        "status": "COMPLETED",
+        "input_revision": 2,
+        "depends_on": [
+          "contract"
+        ],
+        "outputs": [
+          "research_queries",
+          "facts",
+          "candidates"
+        ],
+        "error": null,
+        "blocked_reason": null
+      },
+      {
+        "stage_id": "admission_selection",
+        "status": "COMPLETED",
+        "input_revision": 2,
+        "depends_on": [
+          "local_research"
+        ],
+        "outputs": [
+          "selection_plan"
+        ],
+        "error": null,
+        "blocked_reason": null
+      },
+      {
+        "stage_id": "compose",
+        "status": "COMPLETED",
+        "input_revision": 2,
+        "depends_on": [
+          "admission_selection"
+        ],
+        "outputs": [
+          "itinerary",
+          "commutes",
+          "budget"
+        ],
+        "error": null,
+        "blocked_reason": null
+      },
+      {
+        "stage_id": "fidelity_gate",
+        "status": "COMPLETED",
+        "input_revision": 2,
+        "depends_on": [
+          "compose"
+        ],
+        "outputs": [
+          "intent_coverage"
+        ],
+        "error": null,
+        "blocked_reason": null
+      },
+      {
+        "stage_id": "delivery",
+        "status": "COMPLETED",
+        "input_revision": 2,
+        "depends_on": [
+          "fidelity_gate"
+        ],
+        "outputs": [
+          "deliverables"
+        ],
+        "error": null,
+        "blocked_reason": null
+      }
+    ],
+    "gate": {
+      "synthetic_schedule": "pass",
+      "real_world_execution": "limited",
+      "reason": "只验收给定合成事实及明示假设，不声称现实商户或完整费用已核验"
+    }
+  }
+}

@@ -98,6 +98,10 @@ Prompt 不能开启 ChatGPT/Claude 的界面开关；配置值不是生效证明
 - 复合任务可以跨组组合；只启动必要角色，以用户交付目标决定是否需要多 Agent。
 
 【动态能力选择】
+仓库内角色入口与执行补充见 config/role_registry.json；优先本地可用能力。
+外部能力缺口才查询 config/backend_registry.json，必要时运行 python scripts/discover_backends.py --pretty。
+available 只表示检测到模块/命令，不是可运行、已授权或已集成。外部结果按 docs/backend_handoff.md 复核。
+复杂任务的产物交接可按 docs/handoff_validation.md 运行本地完整性检查；它不验证语义真伪。
 先识别已可用的能力。新项目按任务检索当前相关 Skill，核实原始入口、依赖、版本和效果；
 有经过验证的更佳替代时按上述决策门禁处理，重大替代先对齐；否则使用可用后备。同一项目沿用锁定版本。
 当本仓库缺少能力或成熟方案时，读取 docs/external_projects.md，按“现有能力 → Skill → Pattern → 领域 workflow → runtime”的顺序寻找补充。

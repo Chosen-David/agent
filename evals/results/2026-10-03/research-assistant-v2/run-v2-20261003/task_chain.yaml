@@ -1,0 +1,216 @@
+{
+  "run_id": "run-v2-20261003",
+  "format_note": "JSON syntax is valid YAML 1.2",
+  "tasks": [
+    {
+      "task_id": "run-v2-20261003/RES-T001",
+      "stage": "input-audit",
+      "depends_on": [],
+      "owner": "本执行者",
+      "inputs": [
+        "inputs/project.json",
+        "inputs/measurements.csv@v2",
+        "inputs/concept.txt@v1"
+      ],
+      "action": "读取版本声明并校验 CSV；记录内容哈希，不重采集。",
+      "outputs": [
+        "input_manifest.json"
+      ],
+      "done_when": "4 行均通过有限正数、scope、唯一标签检查；三个输入哈希已记录。",
+      "on_failure": "保留原输入及已有产物；修正本任务后只重建依赖它的后续产物。",
+      "resource_budget": "仅本地 CPU；单项分析至多 60 秒；无新性能实验、GPU 或外部服务；资料缺失即停止依赖项。",
+      "status": "done"
+    },
+    {
+      "task_id": "run-v2-20261003/RES-T002",
+      "stage": "retention",
+      "depends_on": [
+        "run-v2-20261003/RES-T001"
+      ],
+      "owner": "本执行者",
+      "inputs": [
+        "project.json.state",
+        "concept.txt@v1"
+      ],
+      "action": "追踪测量变更的直接及传递依赖；保留历史状态并明确缺失产物。",
+      "outputs": [
+        "retention_check.md",
+        "historical_state.json",
+        "project_state.md"
+      ],
+      "done_when": "列出 collect/figure/write/background 的处置；不得把缺失 background 正文称为已验收。",
+      "on_failure": "保留原输入及已有产物；修正本任务后只重建依赖它的后续产物。",
+      "resource_budget": "仅本地 CPU；单项分析至多 60 秒；无新性能实验、GPU 或外部服务；资料缺失即停止依赖项。",
+      "status": "done"
+    },
+    {
+      "task_id": "run-v2-20261003/CODE-T001",
+      "stage": "analysis",
+      "depends_on": [
+        "run-v2-20261003/RES-T001"
+      ],
+      "owner": "本执行者",
+      "inputs": [
+        "measurements.csv@v2"
+      ],
+      "action": "运行 analyze.py，计算每行速度比及延迟变化，保留两类 scope。",
+      "outputs": [
+        "analyze.py",
+        "derived_metrics.csv"
+      ],
+      "done_when": "small=1.25×、medium=1.20×、large=0.90909×、kernel=2.00×；无混合范围总体收益。",
+      "on_failure": "保留原输入及已有产物；修正本任务后只重建依赖它的后续产物。",
+      "resource_budget": "仅本地 CPU；单项分析至多 60 秒；无新性能实验、GPU 或外部服务；资料缺失即停止依赖项。",
+      "status": "done"
+    },
+    {
+      "task_id": "run-v2-20261003/RES-T003",
+      "stage": "decision",
+      "depends_on": [
+        "run-v2-20261003/CODE-T001"
+      ],
+      "owner": "本执行者",
+      "inputs": [
+        "derived_metrics.csv",
+        "input_manifest.json"
+      ],
+      "action": "据已知值作有条件继续判断，列证据边界。",
+      "outputs": [
+        "results.md",
+        "claim_evidence_ledger.yaml"
+      ],
+      "done_when": "指出 large 回退；继续仅限补资料后诊断；不宣称因果、显著性或普遍提速。",
+      "on_failure": "保留原输入及已有产物；修正本任务后只重建依赖它的后续产物。",
+      "resource_budget": "仅本地 CPU；单项分析至多 60 秒；无新性能实验、GPU 或外部服务；资料缺失即停止依赖项。",
+      "status": "done"
+    },
+    {
+      "task_id": "run-v2-20261003/FIG-T001",
+      "stage": "figure",
+      "depends_on": [
+        "run-v2-20261003/CODE-T001"
+      ],
+      "owner": "本执行者",
+      "inputs": [
+        "measurements.csv@v2",
+        "derived_metrics.csv"
+      ],
+      "action": "使用 analyze.py 生成分范围的两面板图并实际查看 PNG。",
+      "outputs": [
+        "figure_v2.png",
+        "figure_v2.svg",
+        "figure_v2.pdf",
+        "qa.md"
+      ],
+      "done_when": "图含全部 8 个报告值、单位、分范围标签、零起点；无虚构误差棒；完成 PNG 视觉检查。",
+      "on_failure": "保留原输入及已有产物；修正本任务后只重建依赖它的后续产物。",
+      "resource_budget": "仅本地 CPU；单项分析至多 60 秒；无新性能实验、GPU 或外部服务；资料缺失即停止依赖项。",
+      "status": "done"
+    },
+    {
+      "task_id": "run-v2-20261003/WRITE-T001",
+      "stage": "writing",
+      "depends_on": [
+        "run-v2-20261003/RES-T003",
+        "run-v2-20261003/FIG-T001"
+      ],
+      "owner": "本执行者",
+      "inputs": [
+        "derived_metrics.csv",
+        "figure_v2.png",
+        "claim_evidence_ledger.yaml"
+      ],
+      "action": "撰写结果段落和图注；逐项核对数字、范围和限制。",
+      "outputs": [
+        "results.md"
+      ],
+      "done_when": "结果含 small/medium 收益、large 退化及 kernel 边界，标注重复次数和配置缺失。",
+      "on_failure": "保留原输入及已有产物；修正本任务后只重建依赖它的后续产物。",
+      "resource_budget": "仅本地 CPU；单项分析至多 60 秒；无新性能实验、GPU 或外部服务；资料缺失即停止依赖项。",
+      "status": "done"
+    },
+    {
+      "task_id": "run-v2-20261003/RES-T004",
+      "stage": "delivery",
+      "depends_on": [
+        "run-v2-20261003/RES-T002",
+        "run-v2-20261003/WRITE-T001"
+      ],
+      "owner": "本执行者",
+      "inputs": [
+        "本轮产物",
+        "task_chain.yaml"
+      ],
+      "action": "检查任务依赖存在、无环、done 产物存在；绑定文件哈希。",
+      "outputs": [
+        "qa.md",
+        "validation.json",
+        "artifact_hashes.json"
+      ],
+      "done_when": "所有 done 输出存在；依赖 DAG 无环；当前交付不依赖缺失的历史背景产物。",
+      "on_failure": "保留原输入及已有产物；修正本任务后只重建依赖它的后续产物。",
+      "resource_budget": "仅本地 CPU；单项分析至多 60 秒；无新性能实验、GPU 或外部服务；资料缺失即停止依赖项。",
+      "status": "done"
+    },
+    {
+      "task_id": "run-v2-20261003/RES-T005",
+      "stage": "restore-background",
+      "depends_on": [
+        "run-v2-20261003/RES-T002"
+      ],
+      "owner": "项目维护者",
+      "inputs": [
+        "background@v1（缺失）",
+        "concept.txt 历史版本（缺失）"
+      ],
+      "action": "仅在要复用背景时，找回旧正文及输入版本并核对。",
+      "outputs": [
+        "background_reuse_audit.md"
+      ],
+      "done_when": "实际正文与其输入版本可定位，完成内容审读再允许引用。",
+      "on_failure": "项目维护者提供原 background@v1 及来源；不需重采样，也不阻塞当前结果段落。",
+      "resource_budget": "仅本地 CPU；单项分析至多 60 秒；无新性能实验、GPU 或外部服务；资料缺失即停止依赖项。",
+      "status": "blocked"
+    },
+    {
+      "task_id": "run-v2-20261003/RES-T006",
+      "stage": "recover-existing-evidence",
+      "depends_on": [
+        "run-v2-20261003/RES-T003"
+      ],
+      "owner": "项目维护者",
+      "inputs": [
+        "原始配置、日志、代码（缺失）",
+        "目标权重与容许回退（未知）"
+      ],
+      "action": "补齐已有测量的硬件、代码版本、计时边界、重复次数、正确性记录；明确目标工作负载，不生成数据。",
+      "outputs": [
+        "measurement_context.md"
+      ],
+      "done_when": "每个字段提供原来源；没有资料明确记未知；仅在可比条件与定位材料齐备后解除下一项阻塞。",
+      "on_failure": "维护者提供现有资料；无法取得则停止优化诊断并保留本轮有边界结果。",
+      "resource_budget": "仅本地 CPU；单项分析至多 60 秒；无新性能实验、GPU 或外部服务；资料缺失即停止依赖项。",
+      "status": "blocked"
+    },
+    {
+      "task_id": "run-v2-20261003/CODE-T002",
+      "stage": "bounded-diagnosis",
+      "depends_on": [
+        "run-v2-20261003/RES-T006"
+      ],
+      "owner": "本执行者",
+      "inputs": [
+        "measurement_context.md",
+        "既有代码与日志"
+      ],
+      "action": "只对既有资料核对比较条件并检查 large 相关代码路径；归因必须有证据；若资料不足仍保持 inconclusive。",
+      "outputs": [
+        "large_diagnosis.md"
+      ],
+      "done_when": "给出代码/日志定位及证据，或明确无法定位；没有新实验不得标记优化成功；如需新运行另提有预算的方案。",
+      "on_failure": "待 RES-T006 满足资料条件；仅本地 CPU 读代码及现有日志；不在本轮创建新性能结果。",
+      "resource_budget": "仅本地 CPU；单项分析至多 60 秒；无新性能实验、GPU 或外部服务；资料缺失即停止依赖项。",
+      "status": "blocked"
+    }
+  ]
+}

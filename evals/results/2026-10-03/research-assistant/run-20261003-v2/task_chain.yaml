@@ -1,0 +1,174 @@
+{
+  "run_id": "run-20261003-v2",
+  "format": "JSON subset of YAML 1.2",
+  "tasks": [
+    {
+      "task_id": "run-20261003-v2:collect",
+      "stage": "input",
+      "depends_on": [],
+      "owner": "本轮执行者",
+      "inputs": [
+        "measurements.csv@v2",
+        "project.json"
+      ],
+      "action": "接收现成 v2；核验四行正有限耗时与 scope；不重新采集",
+      "outputs": [
+        "analysis_manifest.json"
+      ],
+      "done_when": "存在 v2 哈希，输入格式检查通过",
+      "on_failure": "停止受影响下游；保留输入与错误记录",
+      "resource_budget": "CPU only；单次本地处理；不运行新实验",
+      "status": "done",
+      "original_task_id": "collect"
+    },
+    {
+      "task_id": "run-20261003-v2:RES-T001",
+      "stage": "analysis",
+      "depends_on": [
+        "run-20261003-v2:collect"
+      ],
+      "owner": "本轮执行者",
+      "inputs": [
+        "measurements.csv@v2"
+      ],
+      "action": "计算 baseline/candidate 与耗时变化，分开计时范围",
+      "outputs": [
+        "metrics.csv",
+        "claim_evidence_ledger.yaml"
+      ],
+      "done_when": "四行逐项可复算；无虚构误差、聚合或新运行",
+      "on_failure": "停止受影响下游；保留输入与错误记录",
+      "resource_budget": "CPU only；单次本地处理；不运行新实验",
+      "status": "done"
+    },
+    {
+      "task_id": "run-20261003-v2:FIG-T001",
+      "stage": "figure",
+      "depends_on": [
+        "run-20261003-v2:RES-T001"
+      ],
+      "owner": "本轮执行者",
+      "inputs": [
+        "metrics.csv@run-20261003-v2"
+      ],
+      "action": "从同一快照重画并查看 PNG",
+      "outputs": [
+        "figure_v2.png",
+        "figure_v2.svg",
+        "figure_v2.pdf",
+        "analyze.py"
+      ],
+      "done_when": "保留全部四行；范围分栏、ms 与数值正确；视觉无明显裁切重叠",
+      "on_failure": "停止受影响下游；保留输入与错误记录",
+      "resource_budget": "CPU only；单次本地处理；不运行新实验",
+      "status": "done",
+      "original_task_id": "figure"
+    },
+    {
+      "task_id": "run-20261003-v2:WRITE-T001",
+      "stage": "writing",
+      "depends_on": [
+        "run-20261003-v2:RES-T001",
+        "run-20261003-v2:FIG-T001"
+      ],
+      "owner": "本轮执行者",
+      "inputs": [
+        "metrics.csv@run-20261003-v2",
+        "figure_v2.png"
+      ],
+      "action": "完成有边界结果段与图注",
+      "outputs": [
+        "results.md"
+      ],
+      "done_when": "正文百分比、加速比、回退及不确定性与数据一致",
+      "on_failure": "停止受影响下游；保留输入与错误记录",
+      "resource_budget": "CPU only；单次本地处理；不运行新实验",
+      "status": "done",
+      "original_task_id": "write"
+    },
+    {
+      "task_id": "run-20261003-v2:background",
+      "stage": "background",
+      "depends_on": [],
+      "owner": "本轮执行者",
+      "inputs": [
+        "concept.txt@v1",
+        "project.json historical state"
+      ],
+      "action": "保留原 background@v1 状态；不重新解释教学例题",
+      "outputs": [
+        "historical_state.json"
+      ],
+      "done_when": "独立背景工作不被测量更新失效；区分历史 done 声明与本轮未复验",
+      "on_failure": "停止受影响下游；保留输入与错误记录",
+      "resource_budget": "CPU only；单次本地处理；不运行新实验",
+      "status": "skipped",
+      "original_task_id": "background",
+      "historical_status": "done",
+      "skip_reason": "输入依赖未变，无需重做；历史实体缺失，不能新标验收通过"
+    },
+    {
+      "task_id": "run-20261003-v2:QA-T001",
+      "stage": "validation",
+      "depends_on": [
+        "run-20261003-v2:collect",
+        "run-20261003-v2:RES-T001",
+        "run-20261003-v2:FIG-T001",
+        "run-20261003-v2:WRITE-T001",
+        "run-20261003-v2:background"
+      ],
+      "owner": "本轮执行者",
+      "inputs": [
+        "task_chain.yaml",
+        "analysis_manifest.json",
+        "metrics.csv",
+        "results.md"
+      ],
+      "action": "核对依赖无环、done 产物、输入哈希和关键算术；记录实际视觉检查",
+      "outputs": [
+        "verification.json",
+        "project_state.md"
+      ],
+      "done_when": "依赖存在且无环；done 有产物；输入未变；算术检查通过",
+      "on_failure": "停止受影响下游；保留输入与错误记录",
+      "resource_budget": "CPU only；单次本地处理；不运行新实验",
+      "status": "done"
+    },
+    {
+      "task_id": "run-20261003-v2:RES-T002",
+      "stage": "recover_inputs",
+      "depends_on": [
+        "run-20261003-v2:RES-T001"
+      ],
+      "owner": "项目负责人",
+      "inputs": [
+        "未提供：代码提交、运行配置、正确性记录、重复测量、已有日志、业务权重及允许回退阈值"
+      ],
+      "action": "由项目负责人提供现有材料；登记版本与复用条件，不新做实验",
+      "outputs": [],
+      "done_when": "代码与配置可追溯；已有重复测量/日志已交付或明确不存在；目标工作负载与收益验收阈值明确",
+      "on_failure": "保持 blocked；仅保留描述性结论",
+      "resource_budget": "现有材料整理；不新运行，不外发",
+      "status": "blocked",
+      "resume_when": "上述现有材料到位；不要求虚构不存在的记录"
+    },
+    {
+      "task_id": "run-20261003-v2:CODE-T001",
+      "stage": "diagnosis",
+      "depends_on": [
+        "run-20261003-v2:RES-T002"
+      ],
+      "owner": "后续实现分析负责人",
+      "inputs": [
+        "RES-T002 提供的现有代码、配置、日志"
+      ],
+      "action": "在 CPU 上对已有代码和日志做静态/离线诊断，寻找 large 回退证据；不执行性能实验",
+      "outputs": [],
+      "done_when": "给出绑定代码/日志版本的可核验定位，或明确现有材料无法解释；不把猜测写成原因",
+      "on_failure": "缺证据则输出无法定位，保持推广结论未确认",
+      "resource_budget": "未来至多 30 分钟 CPU 静态/离线检查；无新测量，超时即停止",
+      "status": "blocked",
+      "resume_when": "RES-T002 完成；若需要新实验，另建协议与预算，当前任务不得代行"
+    }
+  ]
+}

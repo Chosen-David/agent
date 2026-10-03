@@ -1,0 +1,51 @@
+run_id: agent-forward-v1-research-explore
+hypotheses:
+  - hypothesis_id: RES-H001
+    question: Can real in-path kernel savings be offset by added overhead on large workloads?
+    mechanism: Candidate saves selected-kernel execution time but increases outside-kernel work enough to erase the savings on large.
+    scope: Supplied CPU workload configurations; no GPU extrapolation.
+    current_evidence: [EVD-002]
+    evidence_limit: Single-run sign pattern is compatible with this mechanism but does not identify it.
+    assumptions: [equivalent required output, comparable kernel work and call counts, separable timing regions]
+    alternative_explanations: [RES-H002, RES-H003, other unmeasured path changes]
+    predictions: [paired large regression persists across run order, in-path kernel saving is positive, extra outside-kernel duration exceeds kernel saving on large]
+    support_criteria: [repeatable end-to-end regression plus aligned timing decomposition, overhead control reproduces a positive outside-kernel penalty]
+    falsification_criteria: [a precise replicated decomposition shows no positive outside-kernel penalty, mapped selected kernel has no saving under equivalent work]
+    minimal_test: Compare baseline B, candidate C, and baseline kernel inside candidate overhead path O, using paired randomized CPU runs and separately instrumented paths.
+    controls: [same inputs and output requirements, fresh prepared state, randomized order, timer overhead check, warmup held fixed]
+    metrics_and_analysis: [per-workload log paired end-to-end speedup, in-path kernel duration and calls, outside-kernel duration, O minus B overhead]
+    resources: {available: unknown, proposed_budget: one engineer-day and one CPU-hour total}
+    failure_modes: [instrumentation perturbation, O changes semantics or execution path, timing overlap, unrepeatable state]
+    status: proposed
+  - hypothesis_id: RES-H002
+    question: Are the apparent improvements and large regression predominantly timing-state artifacts?
+    mechanism: Order, warmup, cache state or system disturbances dominate single-run differences.
+    scope: Existing CPU configurations.
+    current_evidence: [EVD-001]
+    assumptions: [timing state can be controlled or recorded]
+    alternative_explanations: [RES-H001, RES-H003]
+    predictions: [effect changes with balanced run order or state reset, original effect sizes do not persist across independent blocks]
+    support_criteria: [order or state reversal produces a consistent effect reversal, controlled estimates exclude the original effect size]
+    falsification_criteria: [adequately precise controlled effects persist in both balanced orders with small order interaction]
+    minimal_test: Balanced randomized independent paired blocks for B and C; record state and execution order, inspect predeclared order-stratified diagnostics.
+    controls: [fixed warmup, identical prepared inputs, no selective outlier removal]
+    metrics_and_analysis: [per-workload paired log speedup and uncertainty, order-stratified descriptive effects]
+    resources: {incremental_cost: included in RES-H001 experiment}
+    failure_modes: [too few blocks for precise uncertainty, hidden shared state]
+    status: proposed
+  - hypothesis_id: RES-H003
+    question: Does reduced work or quality account for the apparent speedup?
+    mechanism: Candidate changes outputs or omits required work.
+    scope: Same input and application correctness contract.
+    current_evidence: [EVD-003]
+    assumptions: [correctness or quality contract can be supplied before timing]
+    alternative_explanations: [valid equivalent-output acceleration]
+    predictions: [candidate violates locked output or work-completion requirements on at least one test]
+    support_criteria: [reproducible contract violation]
+    falsification_criteria: [passes supplied deterministic output and invariant checks on tested cases; does not establish universal equivalence]
+    minimal_test: Compare outputs against trusted baseline for all timed inputs and available boundary cases before accepting performance.
+    controls: [predeclared tolerance if required, identical inputs and required work]
+    metrics_and_analysis: [contract pass/fail, domain quality metric only if supplied]
+    resources: {incremental_cost: contract and checks within proposed engineering budget}
+    failure_modes: [missing quality oracle, inadequate cases]
+    status: proposed

@@ -1,5 +1,7 @@
 # 科研项目调度 Prompt
 
+
+执行本角色时先读 [执行与验收补充](../plugins/research-assistant/skills/research-assistant/references/execution.md)，按任务采用最小流程；已有可用能力足够时直接执行。补充规范不代表已安装外部 runtime。
 [返回 README](../README.md) · [项目输入模板](../templates/project_brief.md)
 
 将下面完整 Prompt 交给主 AI，并提供实际材料位置、目标及资源。路径相对于本仓库根目录；如果文件上传到聊天中，则按文件名读取。各角色完整规范以对应 workflow 为准。

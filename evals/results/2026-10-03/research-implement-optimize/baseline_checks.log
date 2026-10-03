@@ -1,0 +1,198 @@
+test_boundaries (__main__.MovingAverageChecks.test_boundaries) ... 
+  test_boundaries (__main__.MovingAverageChecks.test_boundaries) (values=[3], window=1) ... FAIL
+  test_boundaries (__main__.MovingAverageChecks.test_boundaries) (values=[1, 2], window=1) ... FAIL
+  test_boundaries (__main__.MovingAverageChecks.test_boundaries) (values=[1, 2, 3], window=3) ... FAIL
+  test_boundaries (__main__.MovingAverageChecks.test_boundaries) (values=[0, 0, 0], window=2) ... FAIL
+  test_boundaries (__main__.MovingAverageChecks.test_boundaries) (values=[-5, 4, -3, 2], window=2) ... FAIL
+test_floats_and_tuple (__main__.MovingAverageChecks.test_floats_and_tuple) ... FAIL
+test_integer_index_protocol (__main__.MovingAverageChecks.test_integer_index_protocol) ... ERROR
+test_last_window_regression (__main__.MovingAverageChecks.test_last_window_regression) ... FAIL
+test_noninteger_window (__main__.MovingAverageChecks.test_noninteger_window) ... 
+  test_noninteger_window (__main__.MovingAverageChecks.test_noninteger_window) (window=True) ... FAIL
+  test_noninteger_window (__main__.MovingAverageChecks.test_noninteger_window) (window=False) ... ERROR
+test_nonpositive_window (__main__.MovingAverageChecks.test_nonpositive_window) ... 
+  test_nonpositive_window (__main__.MovingAverageChecks.test_nonpositive_window) (values=[], window=0) ... FAIL
+  test_nonpositive_window (__main__.MovingAverageChecks.test_nonpositive_window) (values=[], window=-1) ... FAIL
+  test_nonpositive_window (__main__.MovingAverageChecks.test_nonpositive_window) (values=[], window=-10) ... FAIL
+  test_nonpositive_window (__main__.MovingAverageChecks.test_nonpositive_window) (values=[1, 2, 3], window=0) ... ERROR
+  test_nonpositive_window (__main__.MovingAverageChecks.test_nonpositive_window) (values=[1, 2, 3], window=-1) ... FAIL
+  test_nonpositive_window (__main__.MovingAverageChecks.test_nonpositive_window) (values=[1, 2, 3], window=-10) ... FAIL
+test_seeded_inputs (__main__.MovingAverageChecks.test_seeded_inputs) ... FAIL
+
+======================================================================
+ERROR: test_integer_index_protocol (__main__.MovingAverageChecks.test_integer_index_protocol)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 82, in test_integer_index_protocol
+    self.assertEqual(moving_average([1, 2, 3], Window()), [1.5, 2.5])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/tmp/agent-forward-v1/research-implement-optimize/inputs/buggy.py", line 5, in moving_average
+    return [sum(values[i:i + window]) / window for i in range(len(values) - window)]
+                                                              ~~~~~~~~~~~~^~~~~~~~
+TypeError: unsupported operand type(s) for -: 'int' and 'Window'
+
+======================================================================
+ERROR: test_noninteger_window (__main__.MovingAverageChecks.test_noninteger_window) (window=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 75, in test_noninteger_window
+    moving_average(values, window)
+  File "/tmp/agent-forward-v1/research-implement-optimize/inputs/buggy.py", line 5, in moving_average
+    return [sum(values[i:i + window]) / window for i in range(len(values) - window)]
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+ZeroDivisionError: division by zero
+
+======================================================================
+ERROR: test_nonpositive_window (__main__.MovingAverageChecks.test_nonpositive_window) (values=[1, 2, 3], window=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 67, in test_nonpositive_window
+    moving_average(values, window)
+  File "/tmp/agent-forward-v1/research-implement-optimize/inputs/buggy.py", line 5, in moving_average
+    return [sum(values[i:i + window]) / window for i in range(len(values) - window)]
+            ~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~
+ZeroDivisionError: division by zero
+
+======================================================================
+FAIL: test_boundaries (__main__.MovingAverageChecks.test_boundaries) (values=[3], window=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 49, in test_boundaries
+    self.check_case(values, window)
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 35, in check_case
+    self.assertEqual(len(actual), len(expected))
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_boundaries (__main__.MovingAverageChecks.test_boundaries) (values=[1, 2], window=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 49, in test_boundaries
+    self.check_case(values, window)
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 35, in check_case
+    self.assertEqual(len(actual), len(expected))
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_boundaries (__main__.MovingAverageChecks.test_boundaries) (values=[1, 2, 3], window=3)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 49, in test_boundaries
+    self.check_case(values, window)
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 35, in check_case
+    self.assertEqual(len(actual), len(expected))
+AssertionError: 0 != 1
+
+======================================================================
+FAIL: test_boundaries (__main__.MovingAverageChecks.test_boundaries) (values=[0, 0, 0], window=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 49, in test_boundaries
+    self.check_case(values, window)
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 35, in check_case
+    self.assertEqual(len(actual), len(expected))
+AssertionError: 1 != 2
+
+======================================================================
+FAIL: test_boundaries (__main__.MovingAverageChecks.test_boundaries) (values=[-5, 4, -3, 2], window=2)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 49, in test_boundaries
+    self.check_case(values, window)
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 35, in check_case
+    self.assertEqual(len(actual), len(expected))
+AssertionError: 2 != 3
+
+======================================================================
+FAIL: test_floats_and_tuple (__main__.MovingAverageChecks.test_floats_and_tuple)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 52, in test_floats_and_tuple
+    self.check_case([0.1, 0.2, 0.3, -0.4, 1.5], 3)
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 35, in check_case
+    self.assertEqual(len(actual), len(expected))
+AssertionError: 2 != 3
+
+======================================================================
+FAIL: test_last_window_regression (__main__.MovingAverageChecks.test_last_window_regression)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 42, in test_last_window_regression
+    self.assertEqual(moving_average([1, 2, 3], 2), [1.5, 2.5])
+AssertionError: Lists differ: [1.5] != [1.5, 2.5]
+
+Second list contains 1 additional elements.
+First extra element 1:
+2.5
+
+- [1.5]
++ [1.5, 2.5]
+
+======================================================================
+FAIL: test_noninteger_window (__main__.MovingAverageChecks.test_noninteger_window) (window=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 74, in test_noninteger_window
+    with self.assertRaises(TypeError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: TypeError not raised
+
+======================================================================
+FAIL: test_nonpositive_window (__main__.MovingAverageChecks.test_nonpositive_window) (values=[], window=0)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 66, in test_nonpositive_window
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_nonpositive_window (__main__.MovingAverageChecks.test_nonpositive_window) (values=[], window=-1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 66, in test_nonpositive_window
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_nonpositive_window (__main__.MovingAverageChecks.test_nonpositive_window) (values=[], window=-10)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 66, in test_nonpositive_window
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_nonpositive_window (__main__.MovingAverageChecks.test_nonpositive_window) (values=[1, 2, 3], window=-1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 66, in test_nonpositive_window
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_nonpositive_window (__main__.MovingAverageChecks.test_nonpositive_window) (values=[1, 2, 3], window=-10)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 66, in test_nonpositive_window
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_seeded_inputs (__main__.MovingAverageChecks.test_seeded_inputs)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 59, in test_seeded_inputs
+    self.check_case(values, rng.randint(1, len(values) + 3))
+  File "/tmp/agent-forward-v1/research-implement-optimize/outputs/check_moving_average.py", line 35, in check_case
+    self.assertEqual(len(actual), len(expected))
+AssertionError: 0 != 1
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.003s
+
+FAILED (failures=14, errors=3)

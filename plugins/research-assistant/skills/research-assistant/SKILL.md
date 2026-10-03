@@ -7,6 +7,8 @@ description: "协调科研项目从 Idea、实验到论文修订。用于需要�
 
 先读 [主 AI 调度规范](references/orchestrator.md)，按当前阶段选择需要的专业流程。已有材料可直接使用；需要整理输入时参考 [项目输入模板](references/project_brief.md)。
 
+先读 [执行与验收补充](references/execution.md)，确定本次最小步骤与证据；复杂/陌生任务再按下面入口加载工作流的相关章节。已有能力足够时直接执行，不把外部技能发现当每次必需联网步骤。
+
 ## 执行约定
 
 1. 先根据当前任务确认可用能力，再按参考流程动态搜索更合适的 Skill；后备清单只是起点。复用同一项目已验证版本，不每次更新全部依赖。
@@ -21,6 +23,8 @@ description: "协调科研项目从 Idea、实验到论文修订。用于需要�
 ## 角色路由与离线后备
 
 能发现已安装的专业技能时使用它；否则直接读取同包工作流并按阶段执行。不硬编码其他技能的本地目录，不依赖它们必须安装。
+
+作图后备同时读取对应的本包补充：[数据验收](references/research-data-visualization_execution.md)、[示意验收](references/research-diagrams_execution.md)或[整图协调](references/research-figures_execution.md)，只加载当前路线。
 
 | 用户目标 | 首选技能 | 本地完整后备 |
 | --- | --- | --- |

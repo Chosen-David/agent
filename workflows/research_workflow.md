@@ -1,5 +1,7 @@
 # 科研探索 Agent Workflow
 
+
+执行本角色时先读 [执行与验收补充](../plugins/research-assistant/skills/research-explore/references/execution.md)，按任务采用最小流程；已有可用能力足够时直接执行。补充规范不代表已安装外部 runtime。
 [返回仓库首页](../README.md) · [主 AI 调度入口](../prompts/orchestrator.md)
 
 把模糊方向、已有 Idea 或失败结果转成有来源的研究判断、可证伪假设、最小判别实验和主 AI 可执行的任务链。适用于算法、理论、系统/Infra 与其他学科，按任务选择证据标准。

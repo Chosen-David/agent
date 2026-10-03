@@ -1,0 +1,60 @@
+{
+  "status": "proposed",
+  "evidence_type": "synthetic specification, not implemented",
+  "title": "Two-path logit combination",
+  "nodes": [
+    {
+      "id": "a",
+      "label": "Path A logits a"
+    },
+    {
+      "id": "b",
+      "label": "Path B logits b"
+    },
+    {
+      "id": "sum",
+      "label": "z = a + b"
+    },
+    {
+      "id": "softmax",
+      "label": "p = softmax(z)"
+    },
+    {
+      "id": "v",
+      "label": "Fixed values V"
+    },
+    {
+      "id": "output",
+      "label": "y = p^T V"
+    }
+  ],
+  "edges": [
+    [
+      "a",
+      "sum"
+    ],
+    [
+      "b",
+      "sum"
+    ],
+    [
+      "sum",
+      "softmax"
+    ],
+    [
+      "softmax",
+      "output"
+    ],
+    [
+      "v",
+      "output"
+    ]
+  ],
+  "edge_kind": "data_flow",
+  "constraints": [
+    "A and B run in parallel, then merge",
+    "V bypasses softmax and enters only output",
+    "No feedback or edge from A to B",
+    "No measured performance or model accuracy is specified here"
+  ]
+}

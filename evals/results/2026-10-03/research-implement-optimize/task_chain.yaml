@@ -1,0 +1,35 @@
+run_id: CODE-20261003-moving-average
+tasks:
+  - task_id: CODE-T001
+    stage: contract_and_reproduction
+    depends_on: []
+    owner: implementation_agent
+    inputs: [inputs/buggy.py, task.txt]
+    action: reproduce missing final window and establish boundary contract
+    outputs: [outputs/minimal_reproduction.log, outputs/baseline_checks.log]
+    done_when: original defect reproduced and checks distinguish it
+    on_failure: inspect input contract
+    resource_budget: local Python only
+    status: completed
+  - task_id: CODE-T002
+    stage: implementation_and_correctness
+    depends_on: [CODE-T001]
+    owner: implementation_agent
+    inputs: [inputs/buggy.py]
+    action: fix inclusive window range and validate window
+    outputs: [outputs/buggy.py, outputs/check_moving_average.py, outputs/fixed_checks.log, outputs/fix.diff]
+    done_when: independent reference and boundary checks pass without input mutation
+    on_failure: revise diagnosis and fix
+    resource_budget: seven test groups with 200 seeded cases
+    status: completed
+  - task_id: CODE-T003
+    stage: existing_measurement_analysis_and_handoff
+    depends_on: [CODE-T002]
+    owner: implementation_agent
+    inputs: [inputs/measurements.csv]
+    action: calculate per-scope ratios and disclose inference limits
+    outputs: [outputs/analyze_measurements.py, outputs/measurement_analysis.log, outputs/implementation_report.md, outputs/execution_evidence.json]
+    done_when: formulas reproducible and no GPU or fresh performance claim made
+    on_failure: correct analysis
+    resource_budget: CSV arithmetic only
+    status: completed

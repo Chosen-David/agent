@@ -1,0 +1,111 @@
+snapshot_id: 76d630a6427a61726d516ec82785586ddd8bc0368876ab8c9a1d4a9c7d7dbff9
+tasks:
+- task_id: READ-T001
+  finding_ids:
+  - READ-F001
+  stage: verify
+  depends_on: []
+  owner: main_ai
+  preconditions:
+  - Matching input snapshot and evidence available
+  action: Main AI should verify the intended status of the final line (author conclusion
+    vs deliberately invalid teaching claim), and check whether any authorized proof
+    or RoPE-specific evidence exists. Do not infer a proof from the numerical example.
+  outputs:
+  - verify/READ-F001.md
+  done_when:
+  - Record confirmed/rejected/unresolved with evidence
+  on_missing_input: blocked; name missing input and owner, continue independent tasks
+  status: todo
+- task_id: READ-T002
+  finding_ids:
+  - READ-F001
+  stage: resolve
+  depends_on:
+  - READ-T001
+  owner: main_ai
+  preconditions:
+  - Predecessor result available
+  action: 'Use verification outcome: confirmed → smallest supported correction; rejected
+    → documented reason for no change; unresolved → record missing evidence. Do not
+    invent evidence.'
+  outputs:
+  - resolve/READ-F001.md
+  done_when:
+  - Record supported change or justified no-change outcome
+  on_missing_input: blocked; name missing input and owner, continue independent tasks
+  status: todo
+- task_id: READ-T003
+  finding_ids:
+  - READ-F001
+  stage: recheck
+  depends_on:
+  - READ-T002
+  owner: reader
+  preconditions:
+  - Predecessor result available
+  action: Compare the latest PDF hash, render and open all 3 pages if changed; verify
+    this finding’s acceptance conditions and cross-page consistency. Do not close
+    from source edits alone.
+  outputs:
+  - recheck/READ-F001.md
+  done_when:
+  - The final PDF labels the claim consistently with the appendix, or contains an
+    explicit justified argument covering its stated scope.
+  - Reader can identify the connection to RoPE if a RoPE claim is retained.
+  on_missing_input: blocked; name missing input and owner, continue independent tasks
+  status: todo
+- task_id: READ-T004
+  finding_ids:
+  - READ-F002
+  stage: verify
+  depends_on: []
+  owner: main_ai
+  preconditions:
+  - Matching input snapshot and evidence available
+  action: Check what error and reference the author intends, and whether b is an error
+    perturbation or an ordinary input change. Recompute the proposed metric under
+    explicit definitions.
+  outputs:
+  - verify/READ-F002.md
+  done_when:
+  - Record confirmed/rejected/unresolved with evidence
+  on_missing_input: blocked; name missing input and owner, continue independent tasks
+  status: todo
+- task_id: READ-T005
+  finding_ids:
+  - READ-F002
+  stage: resolve
+  depends_on:
+  - READ-T004
+  owner: main_ai
+  preconditions:
+  - Predecessor result available
+  action: 'Use verification outcome: confirmed → smallest supported correction; rejected
+    → documented reason for no change; unresolved → record missing evidence. Do not
+    invent evidence.'
+  outputs:
+  - resolve/READ-F002.md
+  done_when:
+  - Record supported change or justified no-change outcome
+  on_missing_input: blocked; name missing input and owner, continue independent tasks
+  status: todo
+- task_id: READ-T006
+  finding_ids:
+  - READ-F002
+  stage: recheck
+  depends_on:
+  - READ-T005
+  owner: reader
+  preconditions:
+  - Predecessor result available
+  action: Compare the latest PDF hash, render and open all 3 pages if changed; verify
+    this finding’s acceptance conditions and cross-page consistency. Do not close
+    from source edits alone.
+  outputs:
+  - recheck/READ-F002.md
+  done_when:
+  - The claim either concerns only output change or presents a defined, reproducible
+    error comparison; arithmetic and wording agree.
+  on_missing_input: blocked; name missing input and owner, continue independent tasks
+  status: todo

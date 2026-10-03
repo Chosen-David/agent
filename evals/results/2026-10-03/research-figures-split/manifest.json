@@ -1,0 +1,41 @@
+{
+  "run_id": "forward-figure-split",
+  "route": "mixed",
+  "owner": "single executing agent",
+  "execution": "Sequential local fallback workflows; no independent agents or network",
+  "dimensions_mm": [
+    180,
+    112
+  ],
+  "provisional_size": true,
+  "inputs": {
+    "measurements.csv": "57201d75a6e7ea0b7581c2d94f4bf46c2b9a66e37b5df94c8e6b4c5ef3924248",
+    "architecture.json": "b08ecd9fc2bb9d8401db7a80f84ed07fcc22803d8fddfcbc9bc0d29a0aceabdb"
+  },
+  "versions": {
+    "python": "3.12.14",
+    "matplotlib": "3.10.8"
+  },
+  "panels": [
+    {
+      "id": "A",
+      "route": "diagram",
+      "owner": "single executing agent",
+      "evidence_type": "proposed synthetic specification, not implemented",
+      "input": "architecture.json",
+      "editable_source": "panel_a.py",
+      "status": "ready-for-review"
+    },
+    {
+      "id": "B",
+      "route": "data_visualization",
+      "owner": "single executing agent",
+      "evidence_type": "provided tabulated timings; acquisition provenance unspecified",
+      "input": "measurements.csv",
+      "editable_source": "panel_b.py",
+      "status": "ready-for-review"
+    }
+  ],
+  "assembly_source": "compose.py",
+  "transforms": "No aggregation, normalization, exclusions, interpolation, or uncertainty estimation. Scope split only."
+}

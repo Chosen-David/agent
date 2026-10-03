@@ -1,0 +1,418 @@
+{
+  "schema_version": 1,
+  "updated_at": "2026-10-03",
+  "policy": {
+    "principle": "Keep Chosen-David/agent as the goal/workflow/evidence layer; reuse specialist backends only for capabilities they demonstrably implement better.",
+    "selection_order": [
+      "native_capability",
+      "specialist_backend",
+      "pattern_or_skill",
+      "runtime_adapter",
+      "bounded_fallback"
+    ],
+    "rules": [
+      "Do not install a backend merely because it exists in this registry.",
+      "Availability is not authorization: do not execute a backend if it would require network, account access, code execution, paid resources, or data disclosure beyond the current task permissions.",
+      "Check the current upstream README/release/license before first adoption in a project.",
+      "Pin the validated release or commit for repeated use in one project.",
+      "Return backend output through the shared handoff contract; external agents do not own project truth.",
+      "User constraints, permissions, evidence standards and final acceptance remain controlled by this repository."
+    ]
+  },
+  "backends": [
+    {
+      "id": "gpt-researcher",
+      "name": "GPT Researcher",
+      "repo": "https://github.com/assafelovic/gpt-researcher",
+      "category": "web_research",
+      "adoption": "prefer_when_available",
+      "use_when": [
+        "broad public-web deep research",
+        "multi-source fact gathering",
+        "long cited research reports"
+      ],
+      "avoid_when": [
+        "scientific hypothesis validation without experiments",
+        "private corpus that must not leave the environment"
+      ],
+      "strengths": [
+        "planner/execution/publisher pipeline",
+        "multi-source retrieval",
+        "MCP support",
+        "report export"
+      ],
+      "handoff_to": [
+        "research-explore",
+        "research-write"
+      ],
+      "detect": {
+        "python_modules": [
+          "gpt_researcher"
+        ],
+        "commands": [],
+        "python_distributions": [
+          "gpt-researcher"
+        ]
+      },
+      "notes": "Use as information-research backend; research judgment and experiment design stay in this repo.",
+      "review_scope": "selected_source_read_no_runtime_test",
+      "runtime_validated": false
+    },
+    {
+      "id": "paperqa2",
+      "name": "PaperQA2",
+      "repo": "https://github.com/Future-House/paper-qa",
+      "category": "scientific_rag",
+      "adoption": "prefer_when_available",
+      "use_when": [
+        "multi-paper or local scientific corpus QA",
+        "literature evidence retrieval",
+        "citation-aware synthesis",
+        "contradiction search"
+      ],
+      "avoid_when": [
+        "final PDF visual QA",
+        "single-page visual explanation where direct page inspection is enough"
+      ],
+      "strengths": [
+        "scientific literature RAG",
+        "agentic evidence gathering",
+        "metadata-aware reranking",
+        "local index reuse"
+      ],
+      "handoff_to": [
+        "research-explore",
+        "paper-reading-companion",
+        "research-review",
+        "research-write"
+      ],
+      "detect": {
+        "python_modules": [
+          "paperqa"
+        ],
+        "commands": [
+          "pqa"
+        ],
+        "python_distributions": [
+          "paper-qa"
+        ]
+      },
+      "notes": "Use retrieval results as evidence candidates; preserve source/page anchors and re-check claims before writing.",
+      "review_scope": "selected_source_read_no_runtime_test",
+      "runtime_validated": false
+    },
+    {
+      "id": "storm",
+      "name": "STORM / Co-STORM",
+      "repo": "https://github.com/stanford-oval/storm",
+      "category": "knowledge_curation",
+      "adoption": "prefer_for_broad_topic_exploration",
+      "use_when": [
+        "new-topic perspective discovery",
+        "multi-perspective question generation",
+        "research outline generation",
+        "long-form knowledge curation"
+      ],
+      "avoid_when": [
+        "publication-ready paper writing",
+        "experiment execution",
+        "narrow question already grounded in a supplied paper"
+      ],
+      "strengths": [
+        "perspective-guided questions",
+        "simulated expert conversation",
+        "outline generation",
+        "Co-STORM collaborative mind map"
+      ],
+      "handoff_to": [
+        "research-explore",
+        "explain-research-concepts",
+        "research-write"
+      ],
+      "detect": {
+        "python_modules": [
+          "knowledge_storm"
+        ],
+        "commands": [],
+        "python_distributions": [
+          "knowledge-storm"
+        ]
+      },
+      "notes": "Use for breadth and structure, not as final scientific authority.",
+      "review_scope": "selected_source_read_no_runtime_test",
+      "runtime_validated": false
+    },
+    {
+      "id": "openhands",
+      "name": "OpenHands / Software Agent SDK",
+      "repo": "https://github.com/OpenHands/OpenHands",
+      "category": "coding_runtime",
+      "adoption": "prefer_for_repo_execution",
+      "use_when": [
+        "repository-level bug fixes",
+        "feature implementation",
+        "test-driven repo edits",
+        "long-running coding automation"
+      ],
+      "avoid_when": [
+        "GPU performance claims without benchmarking",
+        "research-method judgment",
+        "tasks where current coding environment already provides equivalent execution"
+      ],
+      "strengths": [
+        "code workspace execution",
+        "sandbox options",
+        "multi-backend coding agents",
+        "automations"
+      ],
+      "handoff_to": [
+        "research-implement-optimize"
+      ],
+      "detect": {
+        "python_modules": [],
+        "commands": []
+      },
+      "notes": "Use for patch execution; performance methodology and acceptance remain in research-implement-optimize. No reliable local command signature validated; do not infer installation from agent-canvas.",
+      "review_scope": "inherited_candidate_not_revalidated_this_round",
+      "runtime_validated": false
+    },
+    {
+      "id": "ai-scientist",
+      "name": "AI Scientist",
+      "repo": "https://github.com/SakanaAI/AI-Scientist",
+      "category": "autonomous_research",
+      "adoption": "manual_only",
+      "use_when": [
+        "explicitly authorized automated experiments in supported templates",
+        "sandboxed idea-to-experiment research runs"
+      ],
+      "avoid_when": [
+        "unsandboxed environment",
+        "uncapped GPU/API budget",
+        "arbitrary domain with no validated template"
+      ],
+      "strengths": [
+        "idea-to-experiment-paper-review loop",
+        "experiment automation"
+      ],
+      "handoff_to": [
+        "research-explore",
+        "research-implement-optimize",
+        "research-write",
+        "research-review"
+      ],
+      "detect": {
+        "python_modules": [],
+        "commands": []
+      },
+      "requirements": [
+        "explicit_user_authorization",
+        "sandbox_or_container",
+        "resource_budget",
+        "code_execution_review"
+      ],
+      "notes": "Never auto-enable; upstream explicitly warns about executing LLM-written code.",
+      "review_scope": "inherited_candidate_not_revalidated_this_round",
+      "runtime_validated": false
+    },
+    {
+      "id": "journeypilot",
+      "name": "JourneyPilot",
+      "repo": "https://github.com/Lagom-TA/JourneyPilot",
+      "category": "travel_runtime",
+      "adoption": "optional_runtime",
+      "use_when": [
+        "self-hosted persistent travel workspace",
+        "connected itinerary/map/report/PDF",
+        "long-running resumable travel planning with MCP providers"
+      ],
+      "avoid_when": [
+        "one-off travel chat where native tools suffice",
+        "environment without its provider/database/runtime dependencies"
+      ],
+      "strengths": [
+        "evidence-backed delivery record",
+        "LangGraph orchestration",
+        "MCP provider integration",
+        "resume/bounded edits",
+        "map/report/PDF workspace"
+      ],
+      "handoff_to": [
+        "travel-planner"
+      ],
+      "detect": {
+        "python_modules": [],
+        "commands": []
+      },
+      "notes": "Reuse its runtime/workspace when deployed; keep this repo's rest, exact-stop, platform-evidence and commuting constraints as acceptance overlay.",
+      "review_scope": "selected_source_read_no_runtime_test",
+      "runtime_validated": false
+    },
+    {
+      "id": "openai-agents-sdk",
+      "name": "OpenAI Agents SDK",
+      "repo": "https://github.com/openai/openai-agents-python",
+      "category": "agent_runtime",
+      "adoption": "optional_runtime",
+      "use_when": [
+        "real multi-agent handoffs",
+        "sessions",
+        "tracing",
+        "human-in-the-loop",
+        "sandbox agents"
+      ],
+      "avoid_when": [
+        "documentation-only workflow",
+        "simple single-turn task"
+      ],
+      "strengths": [
+        "agents/tools/handoffs",
+        "sessions",
+        "tracing",
+        "human-in-the-loop",
+        "sandbox agents"
+      ],
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "detect": {
+        "python_modules": [
+          "agents"
+        ],
+        "commands": [],
+        "python_distributions": [
+          "openai-agents"
+        ]
+      },
+      "review_scope": "inherited_candidate_not_revalidated_this_round",
+      "runtime_validated": false
+    },
+    {
+      "id": "langgraph",
+      "name": "LangGraph",
+      "repo": "https://github.com/langchain-ai/langgraph",
+      "category": "agent_runtime",
+      "adoption": "optional_runtime",
+      "use_when": [
+        "durable stateful workflows",
+        "interrupt/resume",
+        "complex branching",
+        "persistent memory"
+      ],
+      "avoid_when": [
+        "simple chat workflow",
+        "task without durable runtime needs"
+      ],
+      "strengths": [
+        "durable execution",
+        "state graph",
+        "interrupts",
+        "memory"
+      ],
+      "handoff_to": [
+        "orchestrator",
+        "travel-planner"
+      ],
+      "detect": {
+        "python_modules": [
+          "langgraph"
+        ],
+        "commands": [],
+        "python_distributions": [
+          "langgraph"
+        ]
+      },
+      "review_scope": "inherited_candidate_not_revalidated_this_round",
+      "runtime_validated": false
+    },
+    {
+      "id": "superpowers",
+      "name": "Superpowers",
+      "repo": "https://github.com/obra/superpowers",
+      "category": "skill_methodology",
+      "adoption": "borrow_method",
+      "use_when": [
+        "skill authoring",
+        "TDD/debugging discipline",
+        "skill regression design"
+      ],
+      "avoid_when": [
+        "forcing every trivial task into a skill"
+      ],
+      "strengths": [
+        "skill discovery optimization",
+        "pressure-scenario regression",
+        "process skills"
+      ],
+      "handoff_to": [
+        "skill-maintenance"
+      ],
+      "detect": {
+        "python_modules": [],
+        "commands": []
+      },
+      "review_scope": "selected_source_read_no_runtime_test",
+      "runtime_validated": false
+    },
+    {
+      "id": "fabric",
+      "name": "Fabric",
+      "repo": "https://github.com/danielmiessler/Fabric",
+      "category": "pattern_library",
+      "adoption": "borrow_pattern",
+      "use_when": [
+        "single-step prompt/pattern capability is missing",
+        "lightweight transformation/extraction/analysis"
+      ],
+      "avoid_when": [
+        "stateful multi-step workflow already exists"
+      ],
+      "strengths": [
+        "large real-world pattern library",
+        "CLI integration",
+        "multi-provider support"
+      ],
+      "handoff_to": [
+        "orchestrator"
+      ],
+      "detect": {
+        "python_modules": [],
+        "commands": [
+          "fabric"
+        ]
+      },
+      "review_scope": "inherited_candidate_not_revalidated_this_round",
+      "runtime_validated": false
+    },
+    {
+      "id": "bmad",
+      "name": "BMad Method",
+      "repo": "https://github.com/bmad-code-org/BMAD-METHOD",
+      "category": "workflow_methodology",
+      "adoption": "borrow_method",
+      "use_when": [
+        "right-sized software planning",
+        "durable decision context",
+        "structured delivery workflows"
+      ],
+      "avoid_when": [
+        "copying software-company roles into unrelated domains"
+      ],
+      "strengths": [
+        "right-sized process",
+        "durable context",
+        "explicit decisions"
+      ],
+      "handoff_to": [
+        "orchestrator",
+        "research-implement-optimize"
+      ],
+      "detect": {
+        "python_modules": [],
+        "commands": []
+      },
+      "review_scope": "selected_source_read_no_runtime_test",
+      "runtime_validated": false
+    }
+  ]
+}

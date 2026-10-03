@@ -1,0 +1,306 @@
+{
+  "schema_version": "1.0",
+  "snapshot_id": "REV-712dd94ef8f5-57201d75a6e7",
+  "tasks": [
+    {
+      "task_id": "REV-T001",
+      "finding_ids": [
+        "REV-F001"
+      ],
+      "stage": "verify",
+      "depends_on": [],
+      "owner": "reviewer",
+      "preconditions": [
+        "相同快照可访问"
+      ],
+      "action": "按 baseline_ms/candidate_ms 逐行复算，只将 scope=end_to_end 行用于端到端主张；对照附录。已完成，证据为 numeric_checks.csv。",
+      "outputs": [
+        "review_report.md",
+        "numeric_checks.csv"
+      ],
+      "done_when": [
+        "confirmed；依据见 findings.yaml"
+      ],
+      "on_missing_input": "保持 blocked；列明缺失输入和恢复条件，不编造测量或修改记录。",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "task_id": "REV-T002",
+      "finding_ids": [
+        "REV-F001"
+      ],
+      "stage": "resolve",
+      "depends_on": [
+        "REV-T001"
+      ],
+      "owner": "main_ai_or_author",
+      "preconditions": [
+        "上一步证据可读",
+        "仅修改阶段需要后续改稿授权"
+      ],
+      "action": "仅在后续获得明确改稿授权后，依据核验结果选择最小充分处理；本轮任务仅审阅。",
+      "outputs": [
+        "future/REV-T002.md"
+      ],
+      "done_when": [
+        "摘要与所有三条端到端观测一致，并明确kernel-only范围。",
+        "若提供新证据推翻本输入，重新冻结快照并重算；仅重复摘要或引用附录不能撤销问题。"
+      ],
+      "on_missing_input": "保持 blocked；列明缺失输入和恢复条件，不编造测量或修改记录。",
+      "status": "blocked",
+      "blocker": "本轮不授权改稿；主 AI/作者获得后续改稿授权后恢复。"
+    },
+    {
+      "task_id": "REV-T003",
+      "finding_ids": [
+        "REV-F001"
+      ],
+      "stage": "recheck",
+      "depends_on": [
+        "REV-T002"
+      ],
+      "owner": "reviewer",
+      "preconditions": [
+        "上一步证据可读",
+        "仅修改阶段需要后续改稿授权"
+      ],
+      "action": "对新快照逐项检查该发现 acceptance，并同步检查摘要、Results 和附录。",
+      "outputs": [
+        "future/REV-T003.md"
+      ],
+      "done_when": [
+        "摘要与所有三条端到端观测一致，并明确kernel-only范围。",
+        "若提供新证据推翻本输入，重新冻结快照并重算；仅重复摘要或引用附录不能撤销问题。"
+      ],
+      "on_missing_input": "保持 blocked；列明缺失输入和恢复条件，不编造测量或修改记录。",
+      "status": "blocked",
+      "blocker": "缺少处理后的新快照；上游完成后恢复。"
+    },
+    {
+      "task_id": "REV-T004",
+      "finding_ids": [
+        "REV-F002"
+      ],
+      "stage": "verify",
+      "depends_on": [],
+      "owner": "reviewer",
+      "preconditions": [
+        "相同快照可访问"
+      ],
+      "action": "检查正文与附录是否给出独立重复或方差，以及 CSV 是否含重复样本。已完成；这些材料未提供，不能由此断言作者从未做过其他实验。",
+      "outputs": [
+        "review_report.md",
+        "numeric_checks.csv"
+      ],
+      "done_when": [
+        "confirmed；依据见 findings.yaml"
+      ],
+      "on_missing_input": "保持 blocked；列明缺失输入和恢复条件，不编造测量或修改记录。",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "task_id": "REV-T005",
+      "finding_ids": [
+        "REV-F002"
+      ],
+      "stage": "resolve",
+      "depends_on": [
+        "REV-T004"
+      ],
+      "owner": "main_ai_or_author",
+      "preconditions": [
+        "上一步证据可读",
+        "仅修改阶段需要后续改稿授权"
+      ],
+      "action": "仅在后续获得明确改稿授权后，依据核验结果选择最小充分处理；本轮任务仅审阅。",
+      "outputs": [
+        "future/REV-T005.md"
+      ],
+      "done_when": [
+        "选择描述性范围：所有相关结论明确限定为单次观测，保留方差未知，不宣称统计显著或稳定无退化。",
+        "或选择稳定性主张：提供原始重复测量与分析，并让结论与不确定性一致；不以不显著证明等效。"
+      ],
+      "on_missing_input": "保持 blocked；列明缺失输入和恢复条件，不编造测量或修改记录。",
+      "status": "blocked",
+      "blocker": "本轮不授权改稿；主 AI/作者获得后续改稿授权后恢复。"
+    },
+    {
+      "task_id": "REV-T006",
+      "finding_ids": [
+        "REV-F002"
+      ],
+      "stage": "recheck",
+      "depends_on": [
+        "REV-T005"
+      ],
+      "owner": "reviewer",
+      "preconditions": [
+        "上一步证据可读",
+        "仅修改阶段需要后续改稿授权"
+      ],
+      "action": "对新快照逐项检查该发现 acceptance，并同步检查摘要、Results 和附录。",
+      "outputs": [
+        "future/REV-T006.md"
+      ],
+      "done_when": [
+        "选择描述性范围：所有相关结论明确限定为单次观测，保留方差未知，不宣称统计显著或稳定无退化。",
+        "或选择稳定性主张：提供原始重复测量与分析，并让结论与不确定性一致；不以不显著证明等效。"
+      ],
+      "on_missing_input": "保持 blocked；列明缺失输入和恢复条件，不编造测量或修改记录。",
+      "status": "blocked",
+      "blocker": "缺少处理后的新快照；上游完成后恢复。"
+    },
+    {
+      "task_id": "REV-T007",
+      "finding_ids": [
+        "REV-F003"
+      ],
+      "stage": "verify",
+      "depends_on": [],
+      "owner": "reviewer",
+      "preconditions": [
+        "相同快照可访问"
+      ],
+      "action": "已读 Appendix A 并对照 CSV 第4行，疑点驳回。",
+      "outputs": [
+        "review_report.md",
+        "numeric_checks.csv"
+      ],
+      "done_when": [
+        "rejected；依据见 findings.yaml"
+      ],
+      "on_missing_input": "保持 blocked；列明缺失输入和恢复条件，不编造测量或修改记录。",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "task_id": "REV-T008",
+      "finding_ids": [
+        "REV-F003"
+      ],
+      "stage": "resolve",
+      "depends_on": [
+        "REV-T007"
+      ],
+      "owner": "main_ai_or_author",
+      "preconditions": [
+        "上一步证据可读",
+        "仅修改阶段需要后续改稿授权"
+      ],
+      "action": "驳回项不修改。",
+      "outputs": [
+        "review_report.md",
+        "numeric_checks.csv"
+      ],
+      "done_when": [
+        "有证据驳回，不修改原稿"
+      ],
+      "on_missing_input": "保持 blocked；列明缺失输入和恢复条件，不编造测量或修改记录。",
+      "status": "skipped",
+      "blocker": null
+    },
+    {
+      "task_id": "REV-T009",
+      "finding_ids": [
+        "REV-F003"
+      ],
+      "stage": "recheck",
+      "depends_on": [
+        "REV-T008"
+      ],
+      "owner": "reviewer",
+      "preconditions": [
+        "上一步证据可读",
+        "仅修改阶段需要后续改稿授权"
+      ],
+      "action": "已复核驳回依据，无需修改。",
+      "outputs": [
+        "review_report.md",
+        "numeric_checks.csv"
+      ],
+      "done_when": [
+        "有证据驳回，不修改原稿"
+      ],
+      "on_missing_input": "保持 blocked；列明缺失输入和恢复条件，不编造测量或修改记录。",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "task_id": "REV-T010",
+      "finding_ids": [
+        "REV-F004"
+      ],
+      "stage": "verify",
+      "depends_on": [],
+      "owner": "reviewer",
+      "preconditions": [
+        "相同快照可访问"
+      ],
+      "action": "已核对 Results 原文与 scope 列；未发现文稿实施重复加和。",
+      "outputs": [
+        "review_report.md",
+        "numeric_checks.csv"
+      ],
+      "done_when": [
+        "rejected；依据见 findings.yaml"
+      ],
+      "on_missing_input": "保持 blocked；列明缺失输入和恢复条件，不编造测量或修改记录。",
+      "status": "done",
+      "blocker": null
+    },
+    {
+      "task_id": "REV-T011",
+      "finding_ids": [
+        "REV-F004"
+      ],
+      "stage": "resolve",
+      "depends_on": [
+        "REV-T010"
+      ],
+      "owner": "main_ai_or_author",
+      "preconditions": [
+        "上一步证据可读",
+        "仅修改阶段需要后续改稿授权"
+      ],
+      "action": "驳回项不修改。",
+      "outputs": [
+        "review_report.md",
+        "numeric_checks.csv"
+      ],
+      "done_when": [
+        "有证据驳回，不修改原稿"
+      ],
+      "on_missing_input": "保持 blocked；列明缺失输入和恢复条件，不编造测量或修改记录。",
+      "status": "skipped",
+      "blocker": null
+    },
+    {
+      "task_id": "REV-T012",
+      "finding_ids": [
+        "REV-F004"
+      ],
+      "stage": "recheck",
+      "depends_on": [
+        "REV-T011"
+      ],
+      "owner": "reviewer",
+      "preconditions": [
+        "上一步证据可读",
+        "仅修改阶段需要后续改稿授权"
+      ],
+      "action": "已复核驳回依据，无需修改。",
+      "outputs": [
+        "review_report.md",
+        "numeric_checks.csv"
+      ],
+      "done_when": [
+        "有证据驳回，不修改原稿"
+      ],
+      "on_missing_input": "保持 blocked；列明缺失输入和恢复条件，不编造测量或修改记录。",
+      "status": "done",
+      "blocker": null
+    }
+  ]
+}

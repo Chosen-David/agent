@@ -1,0 +1,58 @@
+run_id: agent-forward-v1-research-explore
+tasks:
+  - task_id: RES-T001
+    stage: evidence audit
+    depends_on: []
+    owner: research-explore
+    inputs: [inputs/manuscript.md, inputs/measurements.csv]
+    action: Read supplied synthetic evidence and calculate descriptive ratios.
+    outputs: [outputs/research_brief.md, outputs/evidence_map.yaml, outputs/descriptive_metrics.json, outputs/provenance.json]
+    done_when: All four rows accounted for, timing scopes separated, conflicting claim identified.
+    on_failure: Mark missing or malformed inputs and stop numeric claims.
+    resource_budget: local CPU arithmetic only
+    status: done
+  - task_id: RES-T002
+    stage: runnable contract and locked protocol
+    depends_on: [RES-T001]
+    owner: main AI with implementation owner
+    inputs: [outputs/research_plan.md, runnable baseline and candidate, exact workload inputs, quality contract, CPU environment]
+    action: Obtain missing code and oracle, prepare B/C/O and lock metrics, seed, warmup and budgets before new timing.
+    outputs: [planned protocol.json, planned correctness_checks, planned version_manifest]
+    done_when: All versions run equivalent work and pass locked correctness checks; protocol and resources fixed.
+    on_failure: Remain blocked; resume only when runnable artifacts, correctness oracle and CPU resources are available.
+    resource_budget: within one engineer-day proposed total
+    status: blocked
+    missing_inputs: [runnable code and commands, workload artifacts, correctness oracle, CPU environment and resources]
+  - task_id: RES-T003
+    stage: minimal discrimination
+    depends_on: [RES-T002]
+    owner: implementation and measurement owner
+    inputs: [planned protocol.json, planned version_manifest]
+    action: Execute fixed paired randomized blocks and separate bounded timing diagnostics.
+    outputs: [planned raw_timings.csv, planned output_checks.json, planned timing_diagnostics.csv]
+    done_when: Fixed matrix finished or budget/quality stop logged; all runs preserved.
+    on_failure: Stop on contract failure or budget exhaustion; preserve partial data and report inconclusive where appropriate.
+    resource_budget: one CPU-hour total, at most 108 main and 108 diagnostic timed executions
+    status: todo
+  - task_id: RES-T004
+    stage: research decision
+    depends_on: [RES-T003]
+    owner: research-explore
+    inputs: [planned raw_timings.csv, planned output_checks.json, planned timing_diagnostics.csv, outputs/research_plan.md]
+    action: Apply locked per-workload criteria and distinguish observations from mechanism diagnostics.
+    outputs: [planned decision.md, planned hypothesis_update.yaml]
+    done_when: go/pivot/stop/inconclusive decision tied to actual evidence and uncertainty; all workloads reported.
+    on_failure: Mark inconclusive rather than changing metrics or discarding failures.
+    resource_budget: local analysis within proposed total engineering budget
+    status: todo
+  - task_id: RES-T005
+    stage: conditional expansion
+    depends_on: [RES-T004]
+    owner: main AI
+    inputs: [planned decision.md]
+    action: Only after go or justified pivot, propose broader validation or a workload selector with independent boundary tests.
+    outputs: [planned followup_scope.md]
+    done_when: New scope, resource needs and correctness requirements recorded before further implementation.
+    on_failure: Stop expansion and retain negative or inconclusive evidence.
+    resource_budget: not allocated; requires new bounded scope
+    status: todo
