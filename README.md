@@ -24,6 +24,14 @@
 
 用户可直接说“进入科研模式”“陪我读这篇论文”，也可以只提出任务让主 AI 判断。模式不增加权限或预算。完整规则见 [模式与跨模式调用](prompts/modes.md)。
 
+## 主 AI：先核验方案，再执行
+
+主调度先检查目标、假设、真实接口与可行性。原方案成立就执行；实质更优方案或重大设计分歧先写入项目临时区/方案文档，在对话简述依据，等用户对齐再实施。证据不足先验证，不编造数据或文献；简单任务不会强制变成研究项目。见 [反思与决策协议](prompts/decision_review.md)。
+
+本仓库 `.codex/config.toml` 为支持该设置的 Codex 项目默认请求 `model_reasoning_effort = "high"`，不锁定模型。实际档位取决于模型、客户端、项目可信状态及更高优先级配置；不等于已开启 ChatGPT/Claude 的深度思考开关，不修改全局设置。部署和验证边界见 [验证记录](docs/main_ai_validation.md)。
+
+旅行同步的分析与待对齐建议见 [接口评估](docs/decisions/travel_workflow_sync.md)；本次主 AI 更新不自动实施该旅行改造。
+
 ## 旅行规划
 
 [旅行规划工作流](workflows/travel_planning_workflow.md) 会结合天气、开放/营业时间、逐段交通、用户已订酒店/活动、体力与午休约束生成可执行行程；复杂旅行采用 JourneyPilot 风格的 RequestContract → 候选研究/准入/选择 → 行程 → Intent Fidelity Gate → DeliveryBundle，并支持阶段状态与断点续跑。插件入口位于 [plugins/travel-assistant/](plugins/travel-assistant/)。
