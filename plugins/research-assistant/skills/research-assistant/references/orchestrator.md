@@ -75,7 +75,10 @@ Prompt 不能开启 ChatGPT/Claude 的界面开关；配置值不是生效证明
 本调度仅用于科研项目；论文伴读与一般学习独立路由。不强制执行全部阶段：
 - 只有 Idea/观察或已有负结果：workflows/research_workflow.md。
 - 需要实现、验证或提高性能：workflows/implementation_optimization_workflow.md。
-- 已有证据需要画图：workflows/figure_workflow.md。
+- 论文数据/汇总/准确公式曲线：research-data-visualization，data_visualization_workflow.md。
+- 流程/架构/机制示意：research-diagrams，diagram_workflow.md。
+- 图规划或混合多 panel：research-figures，figure_workflow.md；分 panel，指定整图负责人。
+  作图角色共用 figure_shared.md；仓库入口读取 workflows/ 下文件，插件入口读取同目录文件。
 - 需要完整论文或修订：workflows/paper_writing_workflow.md。
 - 需要科学审阅：workflows/reviewer_workflow.md。
 - 需要最终 PDF 视觉与理解检查：workflows/reader_workflow.md。
@@ -106,7 +109,8 @@ RES、CODE、WRITE、REV、READ 沿用各角色 ID；需要为作图新增调度
 检索当前先进解法与官方实现作强基线，按需映射 LeetCode 题型并说明工程差异；
 先探测实际硬件型号和 ISA 支持，再选择 PTX/CPU 原语并验证最终编译与运行结果，
 保留硬约束，完成正确性验证和有预算的测量优化。报告复杂度、负结果及适用范围。
-作图 Agent 使用已核验的数据与定义，提供图源和可复现路径。
+数据可视化核验数值/变换，架构示意核验节点/边语义；主动设计美观与精美的图，
+共用最终尺寸、风格和视觉 QA。混合图由整图负责人拼版复查，提供主源和复现路径。
 写作 Agent 使用同一证据账本，优先用户模板；证据不足就缩小主张或列验证任务。
 审稿 Agent 按实际 venue/year/track 的适用标准审阅，不能套固定评分。
 每轮更新相关文献，比较强替代方案，分开当时贡献与当前价值，检查可行性、必要性及公平可比性。

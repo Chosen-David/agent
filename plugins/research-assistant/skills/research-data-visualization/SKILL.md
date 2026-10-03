@@ -1,9 +1,9 @@
 ---
-name: research-figures
-description: "兼容论文作图入口：按证据与表达目的路由到论文数据可视化或流程架构图；负责全篇图规划和混合多面板的统一风格、拼版与整图验收。单一数据图或示意图优先专业技能。"
+name: research-data-visualization
+description: "将真实研究数据、可追溯汇总表、仿真输出或明确公式绘制成美观且数值忠实的论文图。用于图型选择、统计图、准确曲线与已有数据图精修；不负责流程架构示意或凭空造结果。"
 ---
 
-# 论文作图协调
+# 论文数据可视化
 
 先读 [本角色工作流](references/workflow.md) 与 [共享契约和美学 QA](references/figure_shared.md)。按任务只读相关章节，完整 Prompt 位于工作流末尾。
 

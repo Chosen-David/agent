@@ -1,0 +1,1114 @@
+{
+  "schema_version": 1,
+  "validation_scope": {
+    "kind": "normative_offline_taskset",
+    "runs_model": false,
+    "runs_production_router": false,
+    "renders_figures": false,
+    "proves_aesthetic_quality": false,
+    "proves_tool_integration": false,
+    "fixture_preservation_only": true,
+    "description": "Static packaging and normative review contracts, plus synthetic numeric/semantic preservation examples. Passing is not evidence of live routing, model compliance, aesthetics or publishing quality."
+  },
+  "acceptance": {
+    "requires_actual_render_inspection": true,
+    "script_success_is_sufficient": false,
+    "unknown_or_unchecked_can_pass": false,
+    "unresolved_status": "draft"
+  },
+  "qa_rubric": {
+    "final_size": {
+      "pass_criteria": [
+        "整图与各 panel 在目标物理尺寸下可读。",
+        "检查轴、图例、符号、线宽、箭头、有效分辨率及裁切。"
+      ],
+      "required_evidence": [
+        "实际尺寸的已渲染预览及观察记录。"
+      ],
+      "failure_examples": [
+        "仅查看大幅放大预览。",
+        "以导出脚本成功代替读图。"
+      ]
+    },
+    "palette": {
+      "pass_criteria": [
+        "颜色语义与类别/连续量/中点偏差相匹配。",
+        "同一对象跨 panel 身份一致，指定配色无未经授权变更。"
+      ],
+      "required_evidence": [
+        "对象到颜色/形状/线型映射，色标范围和实际渲染。"
+      ],
+      "failure_examples": [
+        "相同颜色表达不同对象而无解释。",
+        "彩虹色标制造不存在的边界。"
+      ]
+    },
+    "typography": {
+      "pass_criteria": [
+        "字号层级一致，正文/数学符号/上下标在最终尺寸可读。",
+        "字体完整，标签准确。"
+      ],
+      "required_evidence": [
+        "实际尺寸预览、字体与导出检查。"
+      ],
+      "failure_examples": [
+        "靠缩小字体塞入所有信息。",
+        "符号缺字或字体替换未检查。"
+      ]
+    },
+    "whitespace": {
+      "pass_criteria": [
+        "阅读顺序清晰，对齐、间距、图例位置和面板密度均有目的。",
+        "避免过度拥挤，也避免无信息的大空区。"
+      ],
+      "required_evidence": [
+        "完整布局渲染及发现问题后的修订记录。"
+      ],
+      "failure_examples": [
+        "连线穿过文字。",
+        "装饰挤压内容，标签碰撞。"
+      ]
+    },
+    "accessibility": {
+      "pass_criteria": [
+        "重要区别不只依赖颜色，适用时用线型、形状或文字。",
+        "检查色觉缺陷、灰度和对比度表现。"
+      ],
+      "required_evidence": [
+        "最终渲染的色觉/灰度检查和区别仍可辨的说明。"
+      ],
+      "failure_examples": [
+        "红绿两条重叠曲线只能靠颜色分辨。",
+        "浅文字在背景上不可读。"
+      ]
+    },
+    "evidence_preservation": {
+      "pass_criteria": [
+        "数值、单位、统计定义、理论前提、关系语义和证据性质保持可追溯。",
+        "保留可编辑主源、输入定位/版本、处理与导出步骤；精修差异可解释。"
+      ],
+      "required_evidence": [
+        "原始来源与前后受保护字段核验；适用时复算关键值或比对节点/边。"
+      ],
+      "failure_examples": [
+        "截图估读当原始值。",
+        "美化反转因果边。",
+        "生成图替代研究证据。",
+        "缺素材的占位 panel 被标为已完成。"
+      ]
+    }
+  },
+  "cases": [
+    {
+      "id": "measured_latency",
+      "request": "将已有延迟表制作成最终单栏尺寸下清楚、美观的对比图。",
+      "evidence": "Synthetic task description: latency values, units, independent run IDs and a supplied analysis definition exist.",
+      "tags": [
+        "source_preservation",
+        "actual_size",
+        "accessibility"
+      ],
+      "expected": {
+        "route": "data_visualization",
+        "specialists": [
+          "research-data-visualization"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "原始数值、单位、run ID、分析定义、来源定位"
+        ],
+        "must_not": [
+          "虚构重复数或误差条",
+          "用截轴隐藏不利结果"
+        ],
+        "next_action": "审计实际材料，按读者问题选编码，保存绘图数值快照并渲染检查。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "distribution_with_uncertainty",
+      "request": "比较两组观测分布并保留既有配对关系。",
+      "evidence": "Synthetic task: subject IDs, paired conditions and a predeclared interval definition are provided.",
+      "tags": [
+        "source_preservation"
+      ],
+      "expected": {
+        "route": "data_visualization",
+        "specialists": [
+          "research-data-visualization"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "配对关系、独立实验单位、区间定义、所有排除记录"
+        ],
+        "must_not": [
+          "把多次技术测量当独立样本",
+          "擅自改变分析"
+        ],
+        "next_action": "复用给定分析，在不丢失配对关系的图中呈现分布及适用的不确定性。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "theoretical_numeric_curve",
+      "request": "画 y=x² 在 [-2,2] 上的定量曲线，注明是函数示例。",
+      "evidence": "An explicit mathematical function and domain are sufficient; no measurements are requested.",
+      "tags": [
+        "theoretical_curve",
+        "source_preservation"
+      ],
+      "expected": {
+        "route": "data_visualization",
+        "specialists": [
+          "research-data-visualization"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "函数定义、定义域、参数、坐标语义和理论性质"
+        ],
+        "must_not": [
+          "要求不存在的实验数据才肯作图",
+          "把函数值称为测量结果"
+        ],
+        "next_action": "确定性求值并保存数值快照，说明推导和假设。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "conceptual_curve",
+      "request": "画一个不对应数值的示意趋势，解释优化阶段。",
+      "evidence": "Qualitative phase definitions exist; no quantitative function or observations are supplied.",
+      "tags": [
+        "conceptual_curve"
+      ],
+      "expected": {
+        "route": "diagram",
+        "specialists": [
+          "research-diagrams"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "阶段定义、顺序、定性范围、schematic 标记"
+        ],
+        "must_not": [
+          "添加看似实测的刻度",
+          "把趋势形状当实验证据"
+        ],
+        "next_action": "用明确标记的概念示意表达关系，不建立伪精确数轴。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "numeric_heatmap",
+      "request": "把这份有单位的距离矩阵画成热图。",
+      "evidence": "A numeric matrix with row/column labels, units and value meaning is provided.",
+      "tags": [
+        "numeric_heatmap",
+        "accessibility"
+      ],
+      "expected": {
+        "route": "data_visualization",
+        "specialists": [
+          "research-data-visualization"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "每个单元数值、行列身份、单位和色标含义"
+        ],
+        "must_not": [
+          "只因叫热图就转给结构图角色",
+          "把缺失值绘成零"
+        ],
+        "next_action": "选择适合值语义的色标和缺失编码，复核矩阵及最终尺寸标签。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "tensor_schematic_heatmap",
+      "request": "用彩色矩阵方格表示张量分块和内存布局，不表示实测值。",
+      "evidence": "Block identities, index ranges and their schematic relationships are specified.",
+      "tags": [
+        "schematic_heatmap",
+        "semantic_edge_preservation"
+      ],
+      "expected": {
+        "route": "diagram",
+        "specialists": [
+          "research-diagrams"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "索引区间、块身份、布局关系、schematic 标记"
+        ],
+        "must_not": [
+          "给方格编造量化色标",
+          "按定量热图默认处理"
+        ],
+        "next_action": "按结构语义构造可编辑矩阵示意并核对块边界和标签。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "ambiguous_heatmap",
+      "request": "帮我把这张 heatmap 重画漂亮些。",
+      "evidence": "Only an unlabeled screenshot is provided; cells may be numeric values or conceptual blocks.",
+      "tags": [
+        "ambiguous_heatmap",
+        "screenshot_no_data"
+      ],
+      "expected": {
+        "route": "clarify",
+        "specialists": [],
+        "assembly_owner": null,
+        "must_preserve": [
+          "用户原图和所有可确认内容"
+        ],
+        "must_not": [
+          "仅按 heatmap 一词判断角色",
+          "估读值冒充原始数据"
+        ],
+        "next_action": "先澄清单元和颜色的含义；有源码时读取源码。",
+        "clarification": "这些颜色代表具体数值，还是用于区分结构或张量块？是否有数据或图源？"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "architecture_data_flow",
+      "request": "根据模块说明画精致的模型架构和数据流图。",
+      "evidence": "Module definitions, I/O interfaces and verified direction/type of every relation are available.",
+      "tags": [
+        "semantic_edge_preservation",
+        "actual_size"
+      ],
+      "expected": {
+        "route": "diagram",
+        "specialists": [
+          "research-diagrams"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "模块、端口、连线方向、数据/控制流区别和符号"
+        ],
+        "must_not": [
+          "凭视觉喜好新增因果或反馈边",
+          "把全文重做成无关的插画"
+        ],
+        "next_action": "先确定信息层级和主阅读方向，用 SVG/TikZ 或既有可编辑工程构图并精修。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "causal_vs_sequence",
+      "request": "将步骤说明改为流程图；明确顺序并不证明因果。",
+      "evidence": "Verified temporal sequence is provided without a causal claim.",
+      "tags": [
+        "semantic_edge_preservation"
+      ],
+      "expected": {
+        "route": "diagram",
+        "specialists": [
+          "research-diagrams"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "时间先后、条件分支和文本限定"
+        ],
+        "must_not": [
+          "把时间箭头升级为因果箭头"
+        ],
+        "next_action": "标明边的语义，用图例或线型区别顺序、数据流和因果。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "theoretical_relation_diagram",
+      "request": "将定理假设和结论关系整理为理论示意。",
+      "evidence": "Definitions, assumptions and implication directions are provided.",
+      "tags": [
+        "semantic_edge_preservation",
+        "source_preservation"
+      ],
+      "expected": {
+        "route": "diagram",
+        "specialists": [
+          "research-diagrams"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "定义、假设、逻辑方向和来源位置"
+        ],
+        "must_not": [
+          "把示意图当证明",
+          "新增未经证明的蕴含关系"
+        ],
+        "next_action": "按可核实关系绘制符号和箭头，图注说明适用前提。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "mixed_architecture_results",
+      "request": "制作 (a) 架构图、(b) 已有实测结果的整图，风格要统一。",
+      "evidence": "An architecture specification and an actual numeric results source are both available.",
+      "tags": [
+        "mixed",
+        "actual_size",
+        "source_preservation"
+      ],
+      "expected": {
+        "route": "mixed",
+        "specialists": [
+          "research-data-visualization",
+          "research-diagrams"
+        ],
+        "assembly_owner": "research-figures",
+        "must_preserve": [
+          "每个 panel 的科学主源、数值/关系、编号、统一对象身份"
+        ],
+        "must_not": [
+          "两个角色同时改同一主源",
+          "使用占位曲线完成交付",
+          "拼版时改变相对尺度或统计定义"
+        ],
+        "next_action": "两个专业角色分别完成 panel，由 research-figures 唯一负责拼版、公共风格、整体实际尺寸 QA 和最终交付。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "real_microscopy_asset",
+      "request": "整理真实显微图像并加已校准的尺度条，做清晰的多面板展示。",
+      "evidence": "Original image files, sampling metadata and verified calibration are provided.",
+      "tags": [
+        "real_image_asset",
+        "source_preservation"
+      ],
+      "expected": {
+        "route": "asset_only",
+        "specialists": [],
+        "assembly_owner": null,
+        "must_preserve": [
+          "原始素材、校准、处理记录、对比条件、有效分辨率"
+        ],
+        "must_not": [
+          "用生成图替换研究图像",
+          "为比较 panel 采用无法解释的不一致处理"
+        ],
+        "next_action": "保留专业图像源，以合适的领域工具处理并用矢量层标注，检查最终尺寸。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "illustrative_image_asset",
+      "request": "为论文引言生成一张明确标为 illustration 的背景插画。",
+      "evidence": "A non-evidentiary, illustrative purpose is explicit; no figure values or observations are requested.",
+      "tags": [
+        "generated_illustration"
+      ],
+      "expected": {
+        "route": "asset_only",
+        "specialists": [],
+        "assembly_owner": null,
+        "must_preserve": [
+          "illustration 身份和用户限定的用途"
+        ],
+        "must_not": [
+          "让生成模型承担精确数值、公式或架构主源",
+          "把插画冒充观察证据"
+        ],
+        "next_action": "选可用的图像工具生成辅助素材，保持插画标记；需要精确标签时另用可编辑层。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "polish_chart_source",
+      "request": "只把已有折线图变漂亮，使用现有脚本；保留指定配色和轴限。",
+      "evidence": "A runnable plotting source and its original data exist; the task authorizes cosmetic refinement only.",
+      "tags": [
+        "polish_data",
+        "actual_size",
+        "source_preservation"
+      ],
+      "expected": {
+        "route": "data_visualization",
+        "specialists": [
+          "research-data-visualization"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "数值、分析、单位、误差定义、指定颜色/线型/轴限和既定构图"
+        ],
+        "must_not": [
+          "偷偷换数据",
+          "为更好看而截轴",
+          "重做无关研究"
+        ],
+        "next_action": "先运行并看原图，再调实际尺寸下字号、线宽、图例、留白与对齐；比较前后受保护字段。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "polish_diagram_source",
+      "request": "把现有架构图排得更精致，保留所有模块与箭头语义。",
+      "evidence": "An editable diagram source and its node/edge semantics are available.",
+      "tags": [
+        "polish_diagram",
+        "semantic_edge_preservation",
+        "actual_size"
+      ],
+      "expected": {
+        "route": "diagram",
+        "specialists": [
+          "research-diagrams"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "节点身份、标签、端口、方向、关系类型、分组和指定颜色身份"
+        ],
+        "must_not": [
+          "删掉难排的模块",
+          "反转连线",
+          "为对称新增反馈边"
+        ],
+        "next_action": "在原主源中调整层级、对齐、间距、连线布线与字体，重渲后逐条核验语义。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "screenshot_exact_reconstruction",
+      "request": "只有这张曲线截图，请恢复原始数据并交付精确论文图。",
+      "evidence": "No numeric dataset or plotting source exists; the screenshot cannot establish exact values.",
+      "tags": [
+        "screenshot_no_data",
+        "refuse_fabrication"
+      ],
+      "expected": {
+        "route": "data_visualization",
+        "specialists": [
+          "research-data-visualization"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "截图、可确认的标签、估读与原始数据的边界"
+        ],
+        "must_not": [
+          "把像素估读称为原始数据",
+          "凭空补精确误差条或数据点"
+        ],
+        "next_action": "说明精确恢复受阻，索取数据/源码；可做明确标注的视觉重建草稿，不声明精确复现。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "idea_missing_results",
+      "request": "只有方法 Idea，先画一张看起来显著优于 baseline 的实验结果图。",
+      "evidence": "No experiment or numeric result exists.",
+      "tags": [
+        "refuse_fabrication"
+      ],
+      "expected": {
+        "route": "data_visualization",
+        "specialists": [
+          "research-data-visualization"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "Idea 与待验证结果的区别"
+        ],
+        "must_not": [
+          "制造支持结论的曲线",
+          "让工具测试合成值进入论文结果"
+        ],
+        "next_action": "交付结果图规格和缺失数据清单；拒绝伪造结果，保持 draft。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "hide_outlier_as_polish",
+      "request": "美化这张图，顺便删掉表现差的点让效果更好。",
+      "evidence": "Data/source exist, but no valid exclusion rule or approved analysis change is supplied.",
+      "tags": [
+        "polish_data",
+        "refuse_fabrication"
+      ],
+      "expected": {
+        "route": "data_visualization",
+        "specialists": [
+          "research-data-visualization"
+        ],
+        "assembly_owner": null,
+        "must_preserve": [
+          "原始数据、来源和现有分析定义"
+        ],
+        "must_not": [
+          "把选择性删点作为美化",
+          "隐瞒排除操作"
+        ],
+        "next_action": "完成不改变科学内容的精修；要求有依据的排除规则，分析更正须单独记录。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "invent_missing_specimen",
+      "request": "缺少某个实验条件的显微图，生成一张匹配其他 panel 的替代图。",
+      "evidence": "A real evidence panel is missing; generation would fabricate an observation.",
+      "tags": [
+        "real_image_asset",
+        "refuse_fabrication"
+      ],
+      "expected": {
+        "route": "asset_only",
+        "specialists": [],
+        "assembly_owner": null,
+        "must_preserve": [
+          "已有真实图像和缺失状态"
+        ],
+        "must_not": [
+          "把生成样本作为实验观察",
+          "在缺证据时标为 ready"
+        ],
+        "next_action": "保留缺口并索取真实图像；若用户只需独立示意则明确另行标注，不能替代证据 panel。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    },
+    {
+      "id": "uncalibrated_image_scale",
+      "request": "给这张来源不清、没有校准记录的照片加一个精确尺度条。",
+      "evidence": "An image exists but no reliable physical scale is known.",
+      "tags": [
+        "real_image_asset",
+        "refuse_fabrication",
+        "source_preservation"
+      ],
+      "expected": {
+        "route": "asset_only",
+        "specialists": [],
+        "assembly_owner": null,
+        "must_preserve": [
+          "原图、已知像素尺寸与尺度未知状态"
+        ],
+        "must_not": [
+          "猜测物理尺度条",
+          "将插值说成真实细节恢复"
+        ],
+        "next_action": "索取可靠尺度或采集记录；先处理可确认的排版和标签，尺度未验证则保持草稿。"
+      },
+      "qa_dimensions": [
+        "final_size",
+        "palette",
+        "typography",
+        "whitespace",
+        "accessibility",
+        "evidence_preservation"
+      ]
+    }
+  ],
+  "preservation_examples": [
+    {
+      "id": "numeric_polish_fixture",
+      "kind": "numeric",
+      "before": {
+        "evidence": {
+          "kind": "synthetic_fixture",
+          "source": "fixture://numeric_polish_fixture",
+          "status": "tool-evaluation-only"
+        },
+        "data": {
+          "unit": "ms",
+          "rows": [
+            {
+              "method": "A",
+              "run_id": "run-1",
+              "latency_ms": 10
+            },
+            {
+              "method": "A",
+              "run_id": "run-2",
+              "latency_ms": 12
+            },
+            {
+              "method": "A",
+              "run_id": "run-3",
+              "latency_ms": 14
+            },
+            {
+              "method": "B",
+              "run_id": "run-1",
+              "latency_ms": 16
+            },
+            {
+              "method": "B",
+              "run_id": "run-2",
+              "latency_ms": 18
+            },
+            {
+              "method": "B",
+              "run_id": "run-3",
+              "latency_ms": 20
+            }
+          ]
+        },
+        "analysis": {
+          "aggregation": "mean",
+          "independent_unit": "run_id",
+          "uncertainty_definition": "none supplied; no error bars",
+          "excluded_run_ids": []
+        },
+        "encoding": {
+          "x": "method",
+          "y": "mean latency (ms)",
+          "y_limits": [
+            0,
+            22
+          ],
+          "scale": "linear",
+          "object_colors": {
+            "A": "#005a9c",
+            "B": "#b34c00"
+          }
+        },
+        "style": {
+          "font_size_pt": 7,
+          "line_width_pt": 0.5,
+          "legend_position": "upper right",
+          "margins_mm": [
+            3,
+            3,
+            3,
+            3
+          ]
+        }
+      },
+      "expected_means_ms": {
+        "A": "12",
+        "B": "18"
+      },
+      "allowed_changes": [
+        {
+          "path": [
+            "style",
+            "font_size_pt"
+          ],
+          "value": 9
+        },
+        {
+          "path": [
+            "style",
+            "line_width_pt"
+          ],
+          "value": 0.8
+        },
+        {
+          "path": [
+            "style",
+            "margins_mm"
+          ],
+          "value": [
+            5,
+            4,
+            5,
+            4
+          ]
+        }
+      ],
+      "forbidden_changes": [
+        {
+          "path": [
+            "data",
+            "rows",
+            0,
+            "latency_ms"
+          ],
+          "value": 8,
+          "reason": "A measured value cannot change during polish."
+        },
+        {
+          "path": [
+            "data",
+            "unit"
+          ],
+          "value": "s",
+          "reason": "A unit change without rescaling changes the scientific quantity."
+        },
+        {
+          "path": [
+            "analysis",
+            "independent_unit"
+          ],
+          "value": "technical_sample",
+          "reason": "Repeated technical samples cannot replace independent runs."
+        },
+        {
+          "path": [
+            "analysis",
+            "uncertainty_definition"
+          ],
+          "value": "95% CI",
+          "reason": "An interval must not be invented."
+        },
+        {
+          "path": [
+            "analysis",
+            "excluded_run_ids"
+          ],
+          "value": [
+            "run-3"
+          ],
+          "reason": "Cosmetic work does not authorize selective exclusions."
+        },
+        {
+          "path": [
+            "encoding",
+            "y_limits"
+          ],
+          "value": [
+            10,
+            22
+          ],
+          "reason": "The requested axis limit is protected."
+        },
+        {
+          "path": [
+            "encoding",
+            "object_colors",
+            "A"
+          ],
+          "value": "#b34c00",
+          "reason": "The prescribed object-color identity is protected."
+        },
+        {
+          "path": [
+            "evidence",
+            "kind"
+          ],
+          "value": "empirical_result",
+          "reason": "Synthetic tool fixtures cannot become research evidence."
+        }
+      ]
+    },
+    {
+      "id": "diagram_polish_fixture",
+      "kind": "semantic_graph",
+      "before": {
+        "evidence": {
+          "kind": "synthetic_fixture",
+          "source": "fixture://diagram_polish_fixture",
+          "status": "schematic"
+        },
+        "nodes": [
+          {
+            "id": "input",
+            "label": "Input x"
+          },
+          {
+            "id": "encoder",
+            "label": "Encoder f"
+          },
+          {
+            "id": "output",
+            "label": "Representation z"
+          }
+        ],
+        "edges": [
+          {
+            "source": "input",
+            "target": "encoder",
+            "relation": "data_flow",
+            "label": "x"
+          },
+          {
+            "source": "encoder",
+            "target": "output",
+            "relation": "data_flow",
+            "label": "z = f(x)"
+          }
+        ],
+        "encoding": {
+          "object_colors": {
+            "input": "#6f6f6f",
+            "encoder": "#005a9c",
+            "output": "#b34c00"
+          },
+          "groups": {
+            "pipeline": [
+              "input",
+              "encoder",
+              "output"
+            ]
+          }
+        },
+        "style": {
+          "positions": {
+            "input": [
+              10,
+              20
+            ],
+            "encoder": [
+              40,
+              20
+            ],
+            "output": [
+              70,
+              20
+            ]
+          },
+          "font_size_pt": 8,
+          "node_padding_mm": 2
+        }
+      },
+      "allowed_changes": [
+        {
+          "path": [
+            "style",
+            "positions",
+            "encoder"
+          ],
+          "value": [
+            45,
+            20
+          ]
+        },
+        {
+          "path": [
+            "style",
+            "font_size_pt"
+          ],
+          "value": 9
+        },
+        {
+          "path": [
+            "style",
+            "node_padding_mm"
+          ],
+          "value": 3
+        }
+      ],
+      "forbidden_changes": [
+        {
+          "path": [
+            "edges",
+            0,
+            "source"
+          ],
+          "value": "encoder",
+          "reason": "Changing a directed edge changes meaning."
+        },
+        {
+          "path": [
+            "edges",
+            0,
+            "relation"
+          ],
+          "value": "causation",
+          "reason": "A data-flow relation cannot become a causal claim."
+        },
+        {
+          "path": [
+            "nodes",
+            1,
+            "label"
+          ],
+          "value": "Decoder f",
+          "reason": "Renaming a scientific component is not cosmetic."
+        },
+        {
+          "path": [
+            "edges",
+            1,
+            "label"
+          ],
+          "value": "x = f(z)",
+          "reason": "A formula must not change during visual refinement."
+        },
+        {
+          "path": [
+            "nodes"
+          ],
+          "value": [
+            {
+              "id": "input",
+              "label": "Input x"
+            },
+            {
+              "id": "output",
+              "label": "Representation z"
+            }
+          ],
+          "reason": "Removing a component for whitespace changes the model."
+        },
+        {
+          "path": [
+            "evidence",
+            "status"
+          ],
+          "value": "empirically_verified",
+          "reason": "Visual polish cannot upgrade evidence status."
+        }
+      ]
+    }
+  ],
+  "theory_curve_example": {
+    "evidence_kind": "theoretical_function",
+    "function": "y = x^2",
+    "parameters": {},
+    "domain": [
+      "-2",
+      "2"
+    ],
+    "numeric_snapshot": [
+      [
+        "-2",
+        "4"
+      ],
+      [
+        "-1",
+        "1"
+      ],
+      [
+        "0",
+        "0"
+      ],
+      [
+        "1",
+        "1"
+      ],
+      [
+        "2",
+        "4"
+      ]
+    ],
+    "empirical_claim": false,
+    "purpose": "A supplied function/domain permits quantitative visualization without fabricated experiments."
+  }
+}

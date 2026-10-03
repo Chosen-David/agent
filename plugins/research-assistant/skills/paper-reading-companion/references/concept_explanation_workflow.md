@@ -31,7 +31,7 @@
 | 原文定位 | [techdou/paper-reading](https://github.com/techdou/paper-reading)，根目录 SKILL.md | 针对真实单篇论文，不能拿摘要补全文 |
 | 论文/代码映射 | [research-paper-code-study-codex-skill](https://github.com/baizhanxu/research-paper-code-study-codex-skill)，根目录 SKILL.md | 解释实现时才选，代码版本必须匹配 |
 | 证据与推理审查 | [scientific-critical-thinking](https://github.com/K-Dense-AI/scientific-agent-skills/tree/main/skills/scientific-critical-thinking) | 按问题检查假设与证据，不把简单问题扩成完整研究综述 |
-| 直观图解 | 当前平台可用的交互可视化/科学绘图 Skill；本仓库 research-figures | 概念关系可 Mermaid，精确曲线用代码绘图；生成插画只辅助类比 |
+| 直观图解 | 当前平台可用的交互可视化/科学绘图 Skill；research-diagrams 负责关系示意，research-data-visualization 负责准确曲线，research-figures 负责混合图 | 概念关系可 Mermaid，精确曲线用代码绘图；生成插画只辅助类比 |
 
 ```bash
 mkdir -p .skill-sources

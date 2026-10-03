@@ -1,9 +1,9 @@
 ---
-name: research-figures
-description: "兼容论文作图入口：按证据与表达目的路由到论文数据可视化或流程架构图；负责全篇图规划和混合多面板的统一风格、拼版与整图验收。单一数据图或示意图优先专业技能。"
+name: research-diagrams
+description: "根据方法、论文、代码或已确认关系绘制精美准确的流程图、架构图、机制与理论示意。保留节点箭头语义和可编辑源；不负责真实统计结果图或虚构方法结构。"
 ---
 
-# 论文作图协调
+# 科研流程与架构图
 
 先读 [本角色工作流](references/workflow.md) 与 [共享契约和美学 QA](references/figure_shared.md)。按任务只读相关章节，完整 Prompt 位于工作流末尾。
 

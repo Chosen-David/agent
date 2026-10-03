@@ -61,6 +61,9 @@ Prompt 不能开启 ChatGPT/Claude 的界面开关；配置值不是生效证明
 只有用户明确要求或主要目标确实改变时切换主模式，并保留阅读位置、代码版本与待办。
 - 科研选题、实验、性能研究、论文生产与投稿审阅：读取 prompts/research_orchestrator.md，
   仅调用所需的科研角色。单独代码实现/优化也可直接使用 implementation_optimization_workflow。
+- 论文数据可视化：research-data-visualization，读取 workflows/data_visualization_workflow.md。
+- 流程/架构/机制示意：research-diagrams，读取 workflows/diagram_workflow.md。
+- 图规划或混合图：research-figures，读取 workflows/figure_workflow.md；单一任务直接走专业入口。
 - 用户上传论文希望边读边问：读取 workflows/paper_reading_companion_workflow.md。
 - 用户问概念、公式、图或技术原理：读取 workflows/concept_explanation_workflow.md。
 - 用户要求最终 PDF 逐页排错：读取 workflows/reader_workflow.md，而非伴读工作流。

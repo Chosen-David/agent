@@ -44,10 +44,14 @@
 | --- | --- | --- |
 | 科研探索 | 查新证据、可证伪假设、最小判别实验、研究任务链 | [research_workflow.md](workflows/research_workflow.md) |
 | 实现与优化 | 先进解法比较、正确代码、复杂度、CPU/GPU 实测与优化 | [implementation_optimization_workflow.md](workflows/implementation_optimization_workflow.md) |
-| 论文作图 | 图规划、真实数据图、可编辑图源、图注与视觉检查 | [figure_workflow.md](workflows/figure_workflow.md) |
+| 论文数据可视化 `research-data-visualization` | 真实数值、主动美学设计、可复现数据图与数值/视觉检查 | [data_visualization_workflow.md](workflows/data_visualization_workflow.md) |
+| 流程与架构图 `research-diagrams` | 精美布局、准确节点/箭头语义、可编辑源与最终尺寸检查 | [diagram_workflow.md](workflows/diagram_workflow.md) |
+| 作图协调 `research-figures` | 旧入口兼容、图规划、混合多 panel 风格/拼版与整图验收 | [figure_workflow.md](workflows/figure_workflow.md) |
 | 论文写作 | 指定模板下的源稿、引用核验、证据账本与可构建 PDF | [paper_writing_workflow.md](workflows/paper_writing_workflow.md) |
 | 论文审稿 | 最新文献核验、贡献价值比较、科学审阅与修订任务链 | [reviewer_workflow.md](workflows/reviewer_workflow.md) |
 | 最终 PDF 读者检查 | 实际逐页看图，检查乱码、重叠、图文含义与叙事理解 | [reader_workflow.md](workflows/reader_workflow.md) |
+
+作图角色共享 [证据、设计与 QA 契约](workflows/figure_shared.md)。单图直接调用专业技能；混合图按 panel 分工并指定唯一整图负责人。美观不允许改数据或虚构结构；实际尺寸读图与可编辑源是验收要求。测试与边界见 [作图验证记录](docs/figure_validation.md)。
 
 审稿人每轮按当前日期核查领域知识与相关文献，逐贡献评估**新颖性、可行性、必要性和收益代价**。它比较强基线与替代路线，区分投稿时贡献和今天的研究价值；可比性不足时不能仅凭 SOTA 数字否定工作。最终输出核验 → 判别实验/修订 → 复查的任务链。
 
@@ -94,9 +98,9 @@ cd agent
 
 ## 科研助手插件包
 
-[plugins/research-assistant/](plugins/research-assistant/) 包含 9 个技能：
+[plugins/research-assistant/](plugins/research-assistant/) 包含 11 个技能：
 
-`research-assistant`、`research-explore`、`research-implement-optimize`、`research-figures`、`research-write`、`research-review`、`research-read-pdf`、`paper-reading-companion`、`explain-research-concepts`。
+`research-assistant`、`research-explore`、`research-implement-optimize`、`research-figures`、`research-data-visualization`、`research-diagrams`、`research-write`、`research-review`、`research-read-pdf`、`paper-reading-companion`、`explain-research-concepts`。
 
 这是面向科研与论文学习的技能包，不是通用主 AI 的替代品。仓库顶层通用调度独立存在。每个 Skill 有触发范围、完整参考流程和 `allow_implicit_invocation: true`，表示在相关任务中允许自动选择；并非每条消息都执行科研流程。
 
@@ -163,7 +167,7 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 | [prompts/orchestrator.md](prompts/orchestrator.md) | 通用主 AI 路由 |
 | [prompts/research_orchestrator.md](prompts/research_orchestrator.md) | 科研组合调度 |
 | [workflows/](workflows/) | 按角色独立的完整规范与 Prompt |
-| [plugins/research-assistant/](plugins/research-assistant/) | 科研与论文学习的 9 技能插件包 |
+| [plugins/research-assistant/](plugins/research-assistant/) | 科研与论文学习的 11 技能插件包 |
 | [plugins/travel-assistant/](plugins/travel-assistant/) | 旅行规划技能插件包 |
 | [templates/](templates/) | 科研项目输入模板 |
 | [tests/](tests/) | 伴读生成器的边界检查 |
