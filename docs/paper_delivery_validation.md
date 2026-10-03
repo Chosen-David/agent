@@ -43,3 +43,7 @@ python -m unittest discover -s apps/paper-reader/tests -v
 ```
 
 Focused regression: 15 tests (artifact substitution; audit findings despite headings/layout; layout-only acceptance; unloaded role; missing result receipt; partial/stale reading; unsupported result finding; limited-evidence draft; language coverage; independent role separation; stale scientific review; honest not-run reviewer; malformed declarations). These test integrity/rejection behavior, not model compliance. Final merged suite counts are recorded in the release handoff.
+
+## Followthrough: completion now requires trusted semantic acceptance
+
+The earlier declaration-only misses are preserved in `docs/crossfeature_validation/` as historical evidence. Completion now requires an external trusted-controller acceptance object bound to the full canonical record, all referenced bytes, per-language snapshots, independent reviewer and concrete artifact-fit/originality verdicts. Use `--acceptance` outside the artifact root, or an explicitly trusted API argument. Missing/failed/stale acceptance is unverified. Actual role event shapes and run/task/attempt identities are checked; dispatch is not start. The canonical workflow documents the schema and controller obligations. This is enforcement of independently supplied judgments, **not** an automated paper-quality/plagiarism classifier or cryptographic host authentication. A false external trusted assertion can still lie; the host must protect and actually establish that trust.

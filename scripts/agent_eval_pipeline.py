@@ -14,6 +14,7 @@ SNAPSHOT_DEPENDENCIES = {'docs/handoff_validation.md', 'docs/backend_handoff.md'
                          'scripts/discover_backends.py', 'AGENTS.md',
                          'scripts/paper_exemplar_checks.py', 'scripts/validate_paper_delivery.py',
                          'scripts/data_visualization_checks.py',
+                         'scripts/semantic_acceptance.py',
                          'docs/task_supervisor_validation.md', 'docs/experiment_execution_upgrade.md'}
 
 

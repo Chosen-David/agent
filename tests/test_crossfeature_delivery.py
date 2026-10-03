@@ -31,12 +31,18 @@ class CrossfeatureDeliveryTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             outcomes=paper.evaluate(Path(tmp))
             self.assertEqual(len(outcomes),10)
-            gaps={x['case_id'] for x in outcomes if x['classification']=='false_negative'}
-            self.assertEqual(gaps,{'audit_disguised','copied_body','dispatch_as_start'})
-            self.assertFalse([x for x in outcomes if x['classification']=='false_positive'])
+            # Historical paper_results.json remains the pre-gate outcome archive.
+            # Current untrusted controls cannot certify completion, including good prose.
+            self.assertTrue(all(row['actual']=='reject' for row in outcomes))
             for row in outcomes:
+                self.assertIn('unverified: completion requires external trusted semantic acceptance', row['errors'])
                 self.assertEqual(row['model_execution'],'not_run')
                 self.assertTrue(row['artifact_sha256'])
+            fixtures=load(ROOT/'tests/test_paper_delivery.py','trusted_paper_control')
+            record=json.loads((Path(tmp)/'cases/good_control/record.json').read_text())
+            validator=load(ROOT/'scripts/validate_paper_delivery.py','current_paper_validator')
+            self.assertEqual(validator.validate(record,Path(tmp),
+                acceptance=fixtures.synthetic_acceptance(record)),[])
             self.assertTrue((Path(tmp)/'paper.pdf').read_bytes().startswith(b'%PDF-1.4'))
             self.assertIn('input', (Path(tmp)/'exemplar-3.md').read_text())
 

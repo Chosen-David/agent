@@ -2,7 +2,7 @@
 
 适用于复杂任务、评测或跨角色交付；简单回答不强制生成记录。不替代现有 research/travel 领域对象，也不是 JourneyPilot API schema。
 
-`python scripts/validate_handoff.py handoff.json --root outputs --require-complete`
+`python scripts/validate_handoff.py handoff.json --root outputs --require-complete --expected-input-version CURRENT_CONSUMER_VERSION`
 
 ```json
 {
@@ -39,3 +39,7 @@ skipped 仅用于允许跳过的范围，不能用来隐藏未完成要求，也
 这是显式调用的 CLI/API，不是自动挂接全部角色的执行引擎；当前入口是上面的命令。
 损坏路径、符号链接循环和文件读取失败返回完整性错误。校验时应使用稳定的本地输出目录；
 不把此工具当对恶意并发文件替换的安全沙箱，也不把文件哈希相符当作主张正确或权限充分。
+
+## Consumer acceptance boundary
+
+`--require-complete` now also requires `--expected-input-version CURRENT_CONSUMER_VERSION` (API keyword `expected_input_version=`). Supply this from the consumer's trusted task state, never from the producer handoff itself. A missing version is `unverified`; unequal identifiers are rejected exactly, including whitespace differences. No heuristic version aliasing occurs. Without completion mode, the legacy integrity-only inspection remains available, but CLI `completion_verified` is false. Matching a version does not prove scientific truth or authenticate the producer.

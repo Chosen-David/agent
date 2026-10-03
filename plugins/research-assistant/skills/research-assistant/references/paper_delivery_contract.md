@@ -60,3 +60,13 @@
 记录扩展：drafting_started、exemplar_learning 及每语言 implementation_map，字段见 [范文学习接口](paper_exemplar_learning.md)。bindings.files 同时冻结本前置规范；checks 包含 blueprint_application。
 
 数据图任务同时按 [数据图学习接口](data_visualization_learning.md) 记录 data_visualization_requested、data_visual_design、每语言 data_implementation_map 及 data_scientific_fidelity/data_visual_design 两项审阅；不能由架构图学习代替。
+
+### 外部可信验收门禁（完整交付 fail closed）
+
+`submission_checks_complete` 不再仅凭稿件记录中的自填 pass 放行。主控制器必须真实启动独立审稿上下文，检查其实际结果与宿主事件，把 acceptance 放在作者产物根目录以外、作者不可写的控制器存储中，再调用 `scripts/validate_paper_delivery.py RECORD --root RUN_DIR --acceptance TRUSTED_ACCEPTANCE`。Python API 使用显式 `acceptance=`；内嵌在 RECORD 的 acceptance 不授信。缺少可信结果、审阅失败或绑定不一致时为 unverified，不声称已完成。目录位置只是基础防误用，不能替代宿主权限隔离；同权限恶意进程或不诚实控制器不在其认证保证内。无法建立真实可信来源时不得传入自造的 acceptance。
+
+验收对象 schema_version=1，包含 `record_sha256`（整个记录以 sort_keys、紧凑 separators、ensure_ascii=False 的 UTF-8 JSON 规范化 SHA256）、`reviewer_actor`、`file_hashes`（记录中所有 path/sha256 的完整映射），以及每语言 `versions`：`language`、`snapshot_sha256`、`checks.artifact_fit` 和 `checks.originality`，各含独立评审的 verdict 与非空 evidence 位置/理由列表。reviewer 必须对应实际完成的独立 research-review binding 且不是作者。修改目标、记录或产物后必须重新审查，不能仅重算 hash 沿用旧判断。代码不按标题或关键词判断文体/复制，也不能自动证明原创；它只要求可信判断与当前字节一致。
+
+所有 completed binding 增加 `run_id`（与顶层记录相同）、`task_id`、正整数 `attempt`。start/result 文件必须是真实观察事件的 JSON：匹配 actor/role/revision/run_id/task_id/attempt，独立且不重复的 event_id，分别 kind=start,status=started 与 kind=complete,status=produced。dispatch/queued、fixture/mock/synthetic 明示回执、错 actor/任务/代次不能通过。控制器只能规范化真实已观察的事件，保留原始宿主证据；字段齐全或 hash 一致本身不证明角色真的执行。
+
+这些是实际任务交付必需的检查，不是自动启动开发 benchmark；十篇已发表范文的真实阅读、正文写作、独立全页阅读与科学验收要求均保留。没有脚本的独立插件仍必须人工核对同一可信证据，不能以手填对象替代执行。

@@ -53,19 +53,23 @@ def main():
     fixtures = ROOT / 'evals/crossfeature/coordination_inputs'
     record = json.loads((fixtures / 'producer.json').read_text())
     consumer = json.loads((fixtures / 'consumer.json').read_text())
-    actual_errors = validate(record, fixtures, True)
+    actual_errors = validate(record, fixtures)
+    consumer_errors = validate(record, fixtures, True,
+                               expected_input_version=consumer['input_version'])
     cases.append({'case_id': 'consumer_input_version_mismatch', 'mode': 'program',
                   'expected_semantic_decision': 'reject',
                   'actual_integrity_errors': actual_errors,
                   'actual_integrity_accept': not actual_errors,
+                  'actual_consumer_errors': consumer_errors,
+                  'actual_consumer_accept': not consumer_errors,
                   'producer_version': record['input_version'], 'consumer_version': consumer['input_version'],
-                  'outcome': 'known_gap' if not actual_errors else 'unexpected_rejection',
-                  'false_negative': not actual_errors,
-                  'sufficient_reason': False,
-                  'reason': 'Local validator is integrity-only and has no expected consumer-version argument; host must compare versions. This is not a semantic/model pass.'})
+                  'outcome': 'pass' if not actual_errors and 'consumer input version mismatch' in consumer_errors else 'fail',
+                  'false_negative': not consumer_errors,
+                  'sufficient_reason': not actual_errors and 'consumer input version mismatch' in consumer_errors,
+                  'reason': 'Trusted consumer version now independently checked; original producer byte integrity remains valid. Historical gap retained in runtime_results.json.'})
     summary = summarize(cases)
     report = {'schema_version': 1, 'skill_commit': subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
-              'rubric_sha256': hashlib.sha256((ROOT / 'evals/crossfeature/runtime_rubric.json').read_bytes()).hexdigest(),
+              'rubric_sha256': hashlib.sha256((ROOT / 'evals/crossfeature/runtime_followthrough_rubric.json').read_bytes()).hexdigest(),
               'host_model_results': 'not_in_this_program_report', 'summary': summary, 'cases': cases,
               'limitations': ['No semantic model certification.', 'No multi-host/NFS or large clock jump guarantees.',
                               'Terminal done artifact changes are outside runtime guarantee.',

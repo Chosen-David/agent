@@ -22,7 +22,7 @@ class HandoffTests(unittest.TestCase):
                            checks=[dict(criterion='arithmetic inspected',status='pass',artifact_ids=['a1'])], tasks=[])
 
     def test_valid_record(self):
-        self.assertEqual(M.validate(self.record, self.root, True), [])
+        self.assertEqual(M.validate(self.record, self.root, True, expected_input_version='fixture-v1'), [])
 
     def test_changed_or_missing_artifact(self):
         (self.root / 'answer.md').write_text('changed')
@@ -47,7 +47,7 @@ class HandoffTests(unittest.TestCase):
         self.record['status']='partial'
         self.record['limitations']=['need actual run']
         self.assertEqual(M.validate(self.record,self.root), [])
-        self.assertTrue(M.validate(self.record,self.root,True))
+        self.assertTrue(M.validate(self.record,self.root,True, expected_input_version='fixture-v1'))
 
     def test_dangling_or_absent_evidence(self):
         for refs in ([], ['missing']):
@@ -77,7 +77,7 @@ class HandoffTests(unittest.TestCase):
                 self.record['status'] = 'partial'
                 self.record['limitations'] = ['Finish remaining task before acceptance']
                 self.assertEqual(M.validate(self.record,self.root), [])
-                self.assertTrue(M.validate(self.record,self.root,True))
+                self.assertTrue(M.validate(self.record,self.root,True, expected_input_version='fixture-v1'))
 
     def test_task_evidence_must_reference_artifacts(self):
         for evidence in ('a1', {'claim':'done'}, ['missing'], [True], [{}], [' '], []):
@@ -85,11 +85,11 @@ class HandoffTests(unittest.TestCase):
                 self.record['tasks'] = [dict(task_id='work', status='done', evidence=evidence)]
                 self.assertTrue(M.validate(self.record,self.root))
         self.record['tasks'][0]['evidence'] = ['a1']
-        self.assertEqual(M.validate(self.record,self.root,True), [])
+        self.assertEqual(M.validate(self.record,self.root,True, expected_input_version='fixture-v1'), [])
 
     def test_explicit_skip_is_terminal_but_not_dependency_completion(self):
         self.record['tasks'] = [dict(task_id='old', status='skipped', reason='not in current scope')]
-        self.assertEqual(M.validate(self.record,self.root,True), [])
+        self.assertEqual(M.validate(self.record,self.root,True, expected_input_version='fixture-v1'), [])
         self.record['tasks'].append(dict(task_id='new',status='done',depends_on=['old'],evidence=['a1']))
         self.assertIn('new: done before dependency old', M.validate(self.record,self.root))
 

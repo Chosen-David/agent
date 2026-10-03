@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate declarations, not scientific quality or actual reading."""
+"""Fail closed as unverified without trusted acceptance; hashes do not authenticate review."""
 import argparse
 import hashlib
 import json
@@ -9,13 +9,14 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from paper_exemplar_checks import validate_learning
 from data_visualization_checks import validate_data_design, validate_pdf_exports
+from semantic_acceptance import validate_acceptance, validate_role_events
 
 ROLES = ('research-assistant', 'research-write', 'research-review', 'research-read-pdf')
 CRITERIA = ('artifact_fit', 'contribution', 'method', 'evidence', 'related_work',
             'limitations', 'language_parity', 'format', 'blueprint_application')
 
 
-def validate(record, root):
+def validate(record, root, *, acceptance=None):
     errors = []
     root = Path(root).resolve()
     def need(ok, message):
@@ -49,6 +50,7 @@ def validate(record, root):
     bindings = record.get('bindings')
     bindings = bindings if isinstance(bindings, list) else []
     actors = {}
+    observed_event_ids = []
     for role in ROLES:
         entries = [b for b in bindings if isinstance(b, dict) and b.get('role') == role]
         need(len(entries) == 1, f'{role}: unique binding required')
@@ -68,6 +70,9 @@ def validate(record, root):
         actors[role] = b.get('actor')
         for event in ('start_receipt', 'result_receipt'):
             need(file_ok(b.get(event)), f'{role}: actual {event} required')
+        event_errors, event_ids = validate_role_events(b, root, record.get('run_id'))
+        errors.extend(event_errors)
+        observed_event_ids.extend(event_ids)
         files = b.get('files')
         files = files if isinstance(files, list) else []
         need(bool(files) and all(file_ok(f) for f in files), f'{role}: instruction files/hash invalid')
@@ -78,7 +83,9 @@ def validate(record, root):
             need(b.get('actor') != actors.get('research-write'), f'{role}: independent actor equals writer')
         if complete and role in ('research-review', 'research-read-pdf'):
             need(b.get('mode') == 'independent', f'{role}: independent review required for completion')
+    need(len(set(observed_event_ids)) == len(observed_event_ids), 'role event IDs must be unique')
     if complete:
+        errors.extend(validate_acceptance(record, root, acceptance))
         need(len({actors.get(r) for r in ROLES[1:] if text(actors.get(r))}) == 3,
              'writer/reviewer/reader must use separate actors')
     versions = record.get('versions')
@@ -137,13 +144,21 @@ def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('record', type=Path)
     p.add_argument('--root', type=Path, required=True)
+    p.add_argument('--acceptance', type=Path, help='Trusted controller acceptance; never use worker-authored review as trusted evidence')
     args = p.parse_args()
+    record = None
     try:
-        errors = validate(json.loads(args.record.read_text()), args.root)
+        record = json.loads(args.record.read_text())
+        if args.acceptance and args.acceptance.resolve().is_relative_to(args.root.resolve()):
+            raise ValueError('trusted acceptance must be outside the worker artifact root')
+        acceptance = json.loads(args.acceptance.read_text()) if args.acceptance else None
+        errors = validate(record, args.root, acceptance=acceptance)
     except (OSError, ValueError) as exc:
         errors = [str(exc)]
-    print(json.dumps({'declarations_valid': not errors, 'errors': errors,
-                      'scope': 'record integrity only; not semantic or visual certification'}, indent=2))
+    completion_requested = isinstance(record, dict) and record.get('status') == 'submission_checks_complete'
+    completion_status = ('unverified' if errors else 'verified') if completion_requested else 'not_requested'
+    print(json.dumps({'declarations_valid': not errors, 'completion_status': completion_status, 'errors': errors,
+                      'scope': 'record integrity and trusted-controller acceptance binding; not independent authentication or visual certification'}, indent=2))
     return bool(errors)
 
 

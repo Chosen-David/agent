@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "frozen_before_execution": true,
+  "mode": "program_control_real_SQLite_files_and_processes; never_model_pass",
+  "scope": "Generic synthetic data only. Small deterministic sample, no generalization claim.",
+  "criteria": {
+    "duplicate_restart": "Persisted plan and duplicate event do not repeat action; new dependent event executes once.",
+    "stale_idempotent": "Expired lease may retry idempotent action with stable key; old result cannot commit.",
+    "stale_nonidempotent": "Unknown non-idempotent effect blocks; no automatic replay.",
+    "lease_exact_boundary_holdout": "Result at exact expiry is stale, and recovery after reopen claims once with same key.",
+    "permission": "Denied permission consumes zero attempts and independent branch can continue.",
+    "cancel": "Cancellation wins over inflight completion and stops only owned monitor.",
+    "artifact_good_missing_tampered": "Matching actual bytes pass, absent or changed bytes never complete.",
+    "empty_artifact_holdout": "An explicitly declared zero-byte artifact is allowed by byte-integrity verifier; semantic adequacy remains untested.",
+    "dependency_proof": "Changed upstream artifact prevents downstream dispatch and invalidates completed descendants.",
+    "handoff_good_corrupt": "Actual artifact digest mismatch rejects; valid original bytes accept.",
+    "handoff_version_mismatch": "Trusted consumer v2 versus producer v1 must reject with consumer input version mismatch while intact original byte integrity accepts. No trusted consumer version means unverified completion; inline producer consumer-version assertion grants nothing.",
+    "codeorganization": "Host must read active references and source content, preserve requested scope and historical CODEMAP rows, avoid deletion and redundant commentary. No program-level semantic certification."
+  },
+  "revision": "consumer-context-v2",
+  "supersedes": "runtime_rubric.json (historical, retained)"
+}

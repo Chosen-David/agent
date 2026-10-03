@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import importlib.util
+import json
 from pathlib import Path
 import tempfile
 import unittest
@@ -10,6 +11,16 @@ ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('paper_delivery', ROOT / 'scripts/validate_paper_delivery.py')
 m = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(m)
+
+
+def synthetic_acceptance(record):
+    """Explicit test-only controller assertion, never real reviewer provenance."""
+    from semantic_acceptance import canonical_record_sha256, declared_file_hashes
+    return dict(schema_version=1, record_sha256=canonical_record_sha256(record),
+        reviewer_actor='research-review', file_hashes=declared_file_hashes(record),
+        versions=[dict(language=v['language'], snapshot_sha256=v['snapshot']['sha256'],
+            checks={c:dict(verdict='pass',evidence=['Synthetic fixture section 1; test controller assertion'])
+                    for c in ('artifact_fit','originality')}) for v in record['versions']])
 
 
 class PaperDeliveryTests(unittest.TestCase):
@@ -36,7 +47,7 @@ class PaperDeliveryTests(unittest.TestCase):
             decisions=[dict(dimension=d, source_ids=['EX0','EX1'], source_locations='p1', decision='adapt',
                 rationale='synthetic choice', target_location='Introduction', own_evidence='OWN1')
                 for d in ('organization','claim_evidence','figures','rhetoric','content')])
-        self.good = dict(schema_version=1, requested_artifact='submission_paper',
+        self.good = dict(schema_version=1, run_id='synthetic-control-run', requested_artifact='submission_paper',
             delivered_artifact='submission_paper', target='A complete bilingual research submission',
             requested_languages=['en', 'zh'], status='submission_checks_complete', blockers=[],
             drafting_started=True, architecture_requested=False, data_visualization_requested=False, exemplar_learning=learning,
@@ -48,8 +59,23 @@ class PaperDeliveryTests(unittest.TestCase):
                 location='synthetic section', reason='synthetic declaration only', evidence='fixture')
                 for c in m.CRITERIA}) for l in ('en','zh')])
 
+        for binding in self.good['bindings']:
+            binding.update(run_id=self.good['run_id'], task_id=binding['role'], attempt=1)
+            for field, kind in (('start_receipt','start'), ('result_receipt','complete')):
+                path = self.root / (binding['role']+'-'+kind+'.json')
+                event = dict(event_id=binding['role']+'-'+kind, kind=kind,
+                             actor=binding['actor'], role=binding['role'], revision=binding['revision'],
+                             run_id=binding['run_id'], task_id=binding['task_id'], attempt=binding['attempt'],
+                             status='started')
+                if kind == 'complete': event['status']='produced'
+                path.write_text(json.dumps(event))
+                binding[field] = dict(path=path.name, sha256=hashlib.sha256(path.read_bytes()).hexdigest())
+
+    def check_with_synthetic_trust(self):
+        return m.validate(self.good, self.root, acceptance=synthetic_acceptance(self.good))
+
     def test_valid_declarations_only(self):
-        self.assertEqual(m.validate(self.good, self.root), [])
+        self.assertEqual(self.check_with_synthetic_trust(), [])
 
     def test_ten_exemplars_must_be_distinct_and_fully_read(self):
         for change, fragment in [
@@ -95,7 +121,7 @@ class PaperDeliveryTests(unittest.TestCase):
         self.test_limited_evidence_working_paper_remains_incomplete()
         self.good['drafting_started']=False
         self.good['exemplar_learning']={'state':'blocked','reason':'Two legal full texts unavailable; replace candidates'}
-        self.assertEqual(m.validate(self.good,self.root),[])
+        self.assertEqual(self.check_with_synthetic_trust(),[])
         self.good['drafting_started']=True
         self.reject(self.good,'must precede drafting')
 
@@ -159,7 +185,7 @@ class PaperDeliveryTests(unittest.TestCase):
 
     def test_data_exemplars_require_pixels_not_links_or_palette_words(self):
         self.data_fixture()
-        self.assertEqual(m.validate(self.good,self.root),[])
+        self.assertEqual(self.check_with_synthetic_trust(),[])
         for change,error in [
             (lambda d:d.update(source_figures=[]),'pixel reading'),
             (lambda d:d['source_figures'][0].update(pixel_read=False),'pixel coverage'),
@@ -191,7 +217,7 @@ class PaperDeliveryTests(unittest.TestCase):
         d=self.data_fixture()
         d['charts'][0]['uncertainty']=dict(available=True,shown=True,definition='SD reported by source',
             evidence=d['brief'],sample_size='5',sampling_unit='independent run')
-        self.assertEqual(m.validate(self.good,self.root),[])
+        self.assertEqual(self.check_with_synthetic_trust(),[])
 
     def test_small_difference_without_uncertainty_cannot_claim_superiority(self):
         d=self.data_fixture()
@@ -212,7 +238,7 @@ class PaperDeliveryTests(unittest.TestCase):
         self.test_limited_evidence_working_paper_remains_incomplete()
         d=self.data_fixture()
         d.update(mode='staged',reader_actor='one',visualization_actor='one',reason='no independent executor')
-        self.assertEqual(m.validate(self.good,self.root),[])
+        self.assertEqual(self.check_with_synthetic_trust(),[])
         self.good.update(status='submission_checks_complete',blockers=[])
         self.reject(self.good,'staged data visual')
         for change in [lambda d:d.update(source_figures=[None]),
@@ -225,7 +251,7 @@ class PaperDeliveryTests(unittest.TestCase):
 
     def test_architecture_requires_pixels_role_result_and_concrete_design(self):
         visual=self.visual_fixture()
-        self.assertEqual(m.validate(self.good,self.root),[])
+        self.assertEqual(self.check_with_synthetic_trust(),[])
         for change, error in [
             (lambda v:v['source_figures'][0].update(pixel_read=False), 'pixel coverage'),
             (lambda v:v.pop('diagram_role_receipt'), 'diagram_role_receipt'),
@@ -249,7 +275,7 @@ class PaperDeliveryTests(unittest.TestCase):
         visual=self.visual_fixture()
         visual.update(mode='staged',reader_actor='one-context',diagram_actor='one-context',
                       reason='No independent diagram executor; staged design only')
-        self.assertEqual(m.validate(self.good,self.root),[])
+        self.assertEqual(self.check_with_synthetic_trust(),[])
         self.good.update(status='submission_checks_complete',delivered_artifact='submission_paper',blockers=[])
         self.reject(self.good,'staged visual design')
 
@@ -306,7 +332,7 @@ class PaperDeliveryTests(unittest.TestCase):
             dict(claim='end-to-end speedup', missing='real end-to-end trials', owner='experiment role',
                  next_action='run matched workload baseline', resume_when='raw trial logs available')])
         self.good['versions'][0]['checks']['evidence']['verdict']='unresolved'
-        self.assertEqual(m.validate(self.good,self.root),[])
+        self.assertEqual(self.check_with_synthetic_trust(),[])
 
     def test_requested_language_missing(self):
         self.good['versions'].pop()
@@ -325,7 +351,7 @@ class PaperDeliveryTests(unittest.TestCase):
     def test_honest_pending_review_needs_no_fabricated_receipts(self):
         self.test_limited_evidence_working_paper_remains_incomplete()
         self.good['bindings'][2]={'role':'research-review', 'state':'not_run', 'reason':'draft incomplete'}
-        self.assertEqual(m.validate(self.good,self.root),[])
+        self.assertEqual(self.check_with_synthetic_trust(),[])
         self.good['status']='submission_checks_complete'
         self.reject(self.good,'incomplete execution')
 

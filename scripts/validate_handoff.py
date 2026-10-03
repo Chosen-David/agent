@@ -8,7 +8,8 @@ import json
 from pathlib import Path
 
 
-def validate(record: dict, root: Path, require_complete: bool = False) -> list[str]:
+def validate(record: dict, root: Path, require_complete: bool = False, *,
+             expected_input_version: str | None = None) -> list[str]:
     errors = []
     try:
         root = root.resolve()
@@ -21,6 +22,14 @@ def validate(record: dict, root: Path, require_complete: bool = False) -> list[s
     for key in ("run_id", "role", "input_version"):
         if not isinstance(record.get(key), str) or not record[key].strip():
             errors.append(f"missing {key}")
+    # Consumer intent is an independent input, never inferred from producer claims.
+    if expected_input_version is not None:
+        if not isinstance(expected_input_version, str) or not expected_input_version.strip():
+            errors.append("consumer input version must be a nonblank string")
+        elif record.get("input_version") != expected_input_version:
+            errors.append("consumer input version mismatch")
+    elif require_complete:
+        errors.append("unverified: expected consumer input version required for completion")
     status = record.get("status")
     if not isinstance(status, str) or status not in {"completed", "partial", "blocked", "failed", "not_run"}:
         errors.append("invalid status")
@@ -140,14 +149,19 @@ def main() -> int:
     parser.add_argument("record", type=Path)
     parser.add_argument("--root", type=Path, required=True)
     parser.add_argument("--require-complete", action="store_true")
+    parser.add_argument("--expected-input-version",
+                        help="trusted consumer version; required with --require-complete")
     args = parser.parse_args()
     try:
         record = json.loads(args.record.read_text(encoding="utf-8"))
-        errors = validate(record, args.root, args.require_complete)
+        errors = validate(record, args.root, args.require_complete,
+                          expected_input_version=args.expected_input_version)
     except (OSError, ValueError) as exc:
         errors = [str(exc)]
     print(json.dumps({"integrity_valid": not errors, "errors": errors,
-                      "scope": "local integrity only; no semantic or visual certification"}, ensure_ascii=False, indent=2))
+                      "completion_verified": not errors and args.require_complete,
+                      "consumer_version_checked": args.expected_input_version is not None,
+                      "scope": "local integrity and explicit consumer version only; no semantic or visual certification"}, ensure_ascii=False, indent=2))
     return 1 if errors else 0
 
 
