@@ -91,11 +91,13 @@ class LocalScheduler:
             db.execute('INSERT INTO services VALUES (?,?) ON CONFLICT(id) DO UPDATE SET expires=excluded.expires',
                        (service_id, self.clock() + ttl))
 
-    def drain_once(self, engine: Engine):
+    def drain_once(self, engine: Engine, run_id=None):
         """Atomic due reservation prevents duplicate timer delivery across processes."""
         now = self.clock()
         with self.store.transaction() as db:
-            row = db.execute("SELECT * FROM monitors WHERE status='active' AND due<=? ORDER BY due LIMIT 1", (now,)).fetchone()
+            row = db.execute("SELECT * FROM monitors WHERE status='active' AND due<=? "
+                             "AND (? IS NULL OR chain_id=?) ORDER BY due LIMIT 1",
+                             (now, run_id, run_id)).fetchone()
             if not row:
                 return False
             plan, state = self.store.load(db, row['chain_id'])

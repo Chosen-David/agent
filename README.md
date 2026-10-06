@@ -4,6 +4,17 @@
 
 适用于具备相应工具能力的 ChatGPT/Codex、Claude 及其他主 AI。当前提供科研/论文角色与独立旅行规划能力，并附完整工作流、可复制 Prompt 和插件包。未来可增加编程、学习、产品等领域的独立分类，不必改写主 AI 的身份。
 
+## Claude Code 快速接入
+
+[当前根任务清单](TASK.md) · [文件管理与跨 Agent 交接](workflows/code_organization_workflow.md)
+
+```bash
+git clone https://github.com/Chosen-David/agent.git
+python3 agent/setup.py --target /absolute/path/to/your-project
+```
+
+一次接入主 AI 调度、14 个 Skills 和 14 个 Claude 子 Agent；Skills 随 clone 下载，保留已有项目规则。进入目标项目启动 Claude，即可按仓库逻辑路由任务、读取 TASK.md，并由主 AI 配置 tmux 监督。安装本身不启动模型或后台任务。[完整接入与更新说明](SETUP.md)。
+
 ## 2026-10-03：源码对照与逐角色执行验证
 
 本轮阅读8个上游项目的实际skills/相关实现，为全部12个技能补充执行与验收步骤，保留现有通用调度、证据和权限边界。不是把外部Agent原样替换进来，也没有自动部署第三方runtime。
@@ -35,6 +46,15 @@ python scripts/prepare_agent_eval.py --dev-eval --out /tmp/agent-eval-new-run
 - [验证记录与测试边界](docs/task_supervisor_validation.md) · [计划模板](templates/task_dag.json)
 - `python scripts/demo_task_supervisor.py`：有时间上限的本地真实 IO 演示（合成任务，无模型调用）。
 
+## 2026-10-06：tmux 监督与 TASK.md 逐项核对
+
+主 AI 统一维护任务链、监督器、定时器和各 Agent。支持**自动从项目 TASK.md 编排**与**用户手动触发编排**；两者都保留需求映射、数据/产物、独立验收和剩余事项。
+
+- 默认用专用 detached tmux 会话启动监督器，SSH 断开后继续运行；worker 崩溃可在会话内重启并恢复同一 SQLite 状态。
+- 每个节点结束后更新 `progress.json`；全部要求验收通过且有结果报告后才生成 `final-report.json` 并退出。失败/清单变化保留监督，交由主 AI 恢复，不能伪报完成。
+- [启动、任务文件格式、主 AI 适配器和恢复说明](workflows/task_supervision_workflow.md#tmux-与-taskmd-闭环) · [TASK.md 模板](templates/TASK.md) · [验证记录](docs/tmux_supervisor_validation.md)
+- 需要服务器已具备 tmux、Python 和真实主 AI/工作 Agent 后端；仓库更新不会自动部署到用户服务器。tmux 不跨主机断电/重启保活，默认后端仅验证文件。
+
 ## 从你的目标开始
 
 | 目标 | 路由 |
@@ -44,7 +64,7 @@ python scripts/prepare_agent_eval.py --dev-eval --out /tmp/agent-eval-new-run
 | 上传论文，边读英文原文边提问 | [论文伴读](workflows/paper_reading_companion_workflow.md) |
 | 理解概念、公式、图或技术机制 | [知识点讲解](workflows/concept_explanation_workflow.md) |
 | 只读理解代码、核查报告中的机制 | [代码阅读](workflows/code_reading_workflow.md) |
-| 任务链收官后整理仓库、建脚本↔实验↔结果映射 | [代码组织](workflows/code_organization_workflow.md) |
+| 文件管理、跨 Agent 交接、目录规划与脚本↔实验↔结果映射 | [代码组织](workflows/code_organization_workflow.md) |
 | 单独实现代码或提高性能 | [实现与优化](workflows/implementation_optimization_workflow.md) |
 | 规划城市游、情侣旅行或周末行程 | [旅行规划](workflows/travel_planning_workflow.md) |
 | 没有匹配的工作流 | 主 AI 用通用能力处理，按需发现新 Skill，不强行转成科研任务 |

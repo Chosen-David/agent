@@ -2,7 +2,7 @@
 
 # 文件管理与代码组织工作流
 
-[返回](https://github.com/Chosen-David/agent/blob/main/README.md) · [技能入口](../SKILL.md)
+[返回](https://github.com/Chosen-David/agent/blob/main/README.md) · [技能入口](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/code-organization/SKILL.md)
 
 ## 职责与触发
 
@@ -61,7 +61,7 @@ TASK.md 只放稳定目标、约束、验收和产物索引；高频状态/日�
 
 文件管理 Agent 核对路径存在/位于项目约定目录、来源/哈希、同路径多作者、消费者引用、临时与正式版本。未生成的计划输出标 `planned`，不得写假哈希或说已交付。实际交接清单放 `.agent-runs/<run_id>/artifacts/<task_id>.json` 或项目现有 manifest 目录；汇总写 CODEMAP，不把同一二进制产物复制给每个消费者。
 
-产物报告继续满足 [监督工作流](https://github.com/Chosen-David/agent/blob/main/workflows/task_supervision_workflow.md) 的 summary/data/evidence 契约；整理通过不替代技术验收。文件管理返回缺失/孤儿/冲突及下一责任人，主 AI 编入修复节点后重新核对 TASK.md。
+产物报告继续满足 [监督工作流](task_supervision_workflow.md) 的 summary/data/evidence 契约；整理通过不替代技术验收。文件管理返回缺失/孤儿/冲突及下一责任人，主 AI 编入修复节点后重新核对 TASK.md。
 
 ## 每轮执行
 
@@ -76,4 +76,4 @@ TASK.md 只放稳定目标、约束、验收和产物索引；高频状态/日�
 
 本轮各 Agent 声明的产物应 **100% 登记或明确标缺失/unknown**；历史活跃脚本映射目标 ≥95%，缺口必须列出，不能用旧比例掩盖新产物丢失。确认单一根 TASK.md、无多作者覆盖、消费者引用有效、正式/临时数据区分、无活跃路径移动、删除项 0。不能证明的运行状态视为未知并保留路径，推进其他可安全整理部分。
 
-[执行与验收细则](execution.md)。
+[执行与验收细则](code-organization_execution.md)。

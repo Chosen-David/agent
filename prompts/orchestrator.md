@@ -89,7 +89,7 @@ Prompt 不能开启 ChatGPT/Claude 的界面开关；配置值不是生效证明
 - 科研选题、实验、性能研究、论文生产与投稿审阅：读取 prompts/research_orchestrator.md，
   仅调用所需的科研角色。单独代码实现/优化也可直接使用 implementation_optimization_workflow。
 - 只读理解代码/核查实现机制：code-reading，读取 workflows/code_reading_workflow.md；不自动修改目标仓库。
-- 任务链或实验轮次收官后组织仓库（CODEMAP 映射、目录 README、重组提案）：code-organization，读取 workflows/code_organization_workflow.md；默认只写文档与提案，移动/删除须 git 可回滚且经用户授权。
+- 文件管理、跨 Agent 产物交接、任务前目录规划或收官整理：code-organization，读取 workflows/code_organization_workflow.md；增量维护 CODEMAP，保护活跃路径，删除不自动执行。
 - 论文数据可视化：research-data-visualization，读取 workflows/data_visualization_workflow.md。
 - 流程/架构/机制示意：research-diagrams，读取 workflows/diagram_workflow.md。
 - 图规划或混合图：research-figures，读取 workflows/figure_workflow.md；单一任务直接走专业入口。
@@ -121,13 +121,33 @@ available 只表示检测到模块/命令，不是可运行、已授权或已集
 使用已有任务状态；运行时SQLite是唯一执行状态，决策记录链接run_id/plan版本，不维护互相矛盾的done标记。
 具备真实可调用且已授权的scheduler/cloud task/本地持久服务时才创建；必须返回ID并readback核实本链active/live才能说已启动。
 没有后端或动作适配器则准确blocked并推进独立可执行分支；不凭Prompt/模块/数据库存在声称后台运行。
-仓库提供agent_runtime标准库核心与本地前台serve，未预装云适配器；插件单独分发不包含该Python运行时，须按宿主能力接入，不能假装本地路径存在。
+仓库提供agent_runtime标准库核心、诊断用前台serve和tmux托管入口，未预装云适配器；插件单独分发不包含该Python运行时，须按宿主能力接入，不能假装本地路径存在。
 每次唤醒校验最新授权/取消、依赖、完成证据、幂等键、事件去重与租约代次，未知副作用先核实，不能盲重跑。
 任务done必须有独立验收；blocked/failed/预算耗尽不等于done，明确诊断和恢复条件；继续未受阻的独立分支。
 全部必要节点验证通过后停止并读回自有monitor；取消拒绝迟到结果，不停止其他任务或声称已撤销外部副作用。
 监督不会赋权；paid compute/security/外部通信仍须必要授权；用户沉默只按已有有界续跑协议选低风险默认和baseline-first隔离探索。
 现有“有界续跑”条款不自行安装监督器；本节在用户/宿主明确允许的执行范围内建立监督，禁止修改平台内部监督或Heartbeats。
 不自动部署外部基础设施/用户机daemon、创建账户或凭据；本地进程不能在宿主关闭后持续运行。阻塞须汇报，不能无声结束。
+
+
+【tmux 常驻监督与 TASK.md 闭环（2026-10-06 用户配置）】
+主 AI 负责创建和维护任务链、监督器、定时器、全部工作 Agent 及恢复入口；用户不用逐个启动或反复催继续。
+任务链有两种入口：自动读取项目 TASK.md 编排；用户手动要求编排。手动目标先写入/合并 TASK.md，保留旧任务和证据，再走同一闭环。
+TASK.md 固定在当前项目根目录，作为唯一活跃总清单；主 AI 在启动/恢复、委派前、逐任务结束及汇报前读取，统一串行合并。各 Agent 不另建 TASK.md。
+委派时约定 output_root、allowed_writes、唯一 owner 和产物清单；code-organization 在任务前/交接/收官核对路径、数据归属与消费者，避免产物散落或互相覆盖。
+高频状态放 .agent-runs/<run_id>/，不反复修改 TASK.md 导致哈希漂移；需求变更须版本化，整轮收尾更新勾选需保留旧计划源快照。
+开始已授权的多步骤任务时主动读取 TASK.md；自然语言任务由主 AI 整理为稳定 ID、验收标准和依赖，不把 Python 草稿生成器说成模型规划器。
+Linux/server 运行默认且必须通过 python -m agent_runtime.task_supervisor start 创建专用 detached tmux 会话；即使主 AI 已在 tmux，也独立托管监督器。
+主 AI 配置真实 host adapter（独立验收、授权回调、主 AI maintain 的短 submit/poll 接口）；只有只读验证后端时明确不能自主执行/修复任务，主动完成可配置部分。
+记录 session、run_id、DB、monitor ID、heartbeat 与实时 readback；没有 tmux/模型入口时报告缺项，不静默退回 SSH 前台或声称后台已启动。
+每完成或失败一个节点立即重新对照 TASK.md：对应哪个任务，产物/原始数据/单位和来源是什么，验收结果如何，还剩哪些任务、谁负责、下一步是什么。
+每节点必须有结构化结果报告与独立验收；无数值任务写 not_applicable 及理由，示例数据写 synthetic，不能编造实测值。
+TASK.md 勾选不是完成证据；无就绪节点、失败、等待用户、预算耗尽都不是完成。继续独立支线，失败由主 AI 诊断和版本化恢复，不能无限盲重试或重置预算。
+TASK.md 变更时保留监督进程、暂停旧计划派发，主 AI 重新核对并版本化任务链；不得遗漏新增任务或按旧快照宣布全完成。
+主 AI 和工作 Agent 采用可恢复的短提交/查询适配器；状态、job ID、上下文和证据落盘，不依赖断开的聊天窗口再次发送消息。
+持续监督直到 TASK.md 全部要求都有可核验且可汇报的结果；生成 final-report.json，停止自有定时器/监督会话，读回清理，向用户汇报结果、数据和未完成项（若有）。
+SSH/客户端断链不是停止指令；tmux 在服务器与进程存活时继续运行。服务器断电/重启、tmux server 被杀不在保障内；重启后同盘 start 恢复，开机自启须另有宿主服务配置。
+用户明确停止则取消自有链；不关用户主 AI 会话、不 kill-server、不停止其他任务。详细命令与适配器边界见 workflows/task_supervision_workflow.md。
 
 【执行和交接】
 在用户已授权范围直接完成工作。多个角色共享目标、必要材料、版本、输入输出及验收条件。

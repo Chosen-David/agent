@@ -49,3 +49,97 @@ python -m agent_runtime --db .agent-runs/my-task/state.sqlite cancel my-run --re
 - 此版本 SQLite 适于单宿主本地磁盘，多进程共享该文件；不承诺 NFS、多机分布式锁、时钟大幅跳变安全性、数据库丢失恢复、任意外部进程强制取消或生产 SLA。事务外副作用、最终验收后产物改动和恶意同权限进程不在核心保证内。日志可能含私有任务信息，不提交运行 DB/原始私密资料。
 
 研究来源与取舍见 [研究索引](https://github.com/Chosen-David/agent/blob/main/docs/supervisor_research/README.md)，实现验证见 [验证记录](https://github.com/Chosen-David/agent/blob/main/docs/task_supervisor_validation.md)。
+
+## tmux 与 TASK.md 闭环
+
+2026-10-06 用户配置覆盖上文旧版“仅前台 serve”的默认启动方式：在用户授权的 Linux/server 多步骤任务中，**主 AI 负责配置、启动、维护任务链、监督器、定时器和所有工作 Agent**，默认用下述 tmux 入口。旧 `serve` 保留用于诊断/已有 API，不再是主 AI 在 SSH 下启动正式监督的方式。本次提供可运行工具与配置；不等于已登录用户服务器或部署模型后端。
+
+### 两种入口，同一份任务依据
+
+1. **自动入口**：主 AI 开始项目工作时读取项目根 `TASK.md`，从目标、验收、限制、依赖编排任务链；已有链先读进度、证据、上下文，不能重新开始已完成工作。
+2. **手动入口**：用户说“编排任务链/继续完成这些任务”时，主 AI 将已授权目标合并到同一个 `TASK.md`，保留原有条目与证据，再编排。`mode=manual` 记录来源，不获得额外权限。
+
+`http://TASK.md` 在此指项目文件，不抓取同名网站。用户原始文件是自由文本时，由主 AI 保留原文并规范化为 `- [ ] [T1] 目标` 形式；每个可验收要求有稳定 ID，可附多行验收/数据说明。运行时要求源路径恰为当前项目根 `TASK.md`，拒绝把 Agent 子目录内的同名文件当总清单。所有复选框（包括已勾选项）都必须映射到 DAG，不能靠勾选跳过验证。非任务说明使用普通段落；代码围栏中的示例不当作任务。[模板](https://github.com/Chosen-David/agent/blob/main/templates/TASK.md)只用于新项目，不覆盖用户现有文件。
+
+主 AI 用 `prepare` 自动提取清单，得到**不可直接执行的规划草稿**；它不是自然语言 LLM，不推断依赖或凭空提供 Agent。主 AI 随即填好依赖、owner、action、输入、验收、report_path、风险/耗时/预算及现有授权引用，不把这一步留给用户逐项配置。
+
+```bash
+python -m agent_runtime.task_supervisor prepare \
+  --task-file /absolute/project/TASK.md --run-id project-v1 --mode auto \
+  --authorization-reference current-user-instruction \
+  --out /absolute/project/.agent-runs/project-v1/plan.json
+# 主 AI 完成草稿中的动作/依赖/验收配置，并准备真实 host adapter 后：
+python -m agent_runtime.task_supervisor start \
+  --plan /absolute/project/.agent-runs/project-v1/plan.json \
+  --project-root /absolute/project \
+  --state-dir /absolute/project/.agent-runs/project-v1 \
+  --adapter /absolute/project/host_adapter.py
+```
+
+没有 adapter 参数时仅注册 `verify_artifacts`；它不执行模型、实验或自动修复。`configure_host_action`/未配置验收的草稿拒绝启动。主 AI 必须实际配置可用后端，缺少模型接口/凭据/预算时准确报告缺项并继续可做工作，不假装“已经让 AI 常驻”。不要把凭据写进计划、TASK.md 或公共仓库。
+
+### 生命周期、定时与断线恢复
+
+- `start` 总是在独立 tmux server socket `agent-supervisors` 的自有 `agent-<hash>` 会话中 detached 启动 guard/worker，即使调用者已经在 tmux。独立会话避免主 AI pane 退出带走监督。路径按参数安全引用；重复启动相同配置复用会话，同一 state-dir 的启动锁与 worker 锁避免重复创建 Agent。
+- guard 将 stdout/stderr 追加到 `supervisor.log`；worker 意外非零退出后每 5 秒重启，同盘 DB/计划、幂等键、已完成证据和定时 due 保留。非幂等动作结果不明仍阻塞核实，不因重启盲重放。正常取消/全部完成返回 0，guard 退出后仅自有 session 自动消失。
+- 使用已有 SQLite 定时器及受 min/max 限制的自适应 due，不创建额外 cron。专用 worker 只 drain 自有 run_id。主 AI 根据实际 ETA、风险、等待状态调整下一版本策略，并维护所有远端 job/Agent ID 和取消方式。
+- `receipt.json` 记录实际 run_id/session/monitor 及读取到的 live；成功声明要求 tmux pane 存活、匹配 worker 心跳和 monitor 读回。状态不是未来可用性承诺。不要用 `$TMUX` 存在或磁盘文件存在代替活性核查。
+- SSH 客户端断开不会终止 detached 会话；服务器重启/断电、tmux server 或 guard 被杀仍会停止。主 AI/管理员重连后运行相同 `start` 恢复，不删 DB/重置尝试次数。若要求开机自动恢复，需要另行配置宿主开机服务；本配置没有安装 systemd/cron。OS logout 清理策略、磁盘空间和模型服务可用性也应由主 AI 检查。
+- `failed` 或 TASK.md 变化时 worker 保留，maintain 回调持续以受限间隔提交/查询主 AI 的诊断/恢复工作；耗尽尝试的动作不再盲跑。缺 maintain 后端会在进度中显示 `maintenance_available=false`，只能监测而不能自动修复。没有后端时不得许诺所有工作自动完成。
+
+```bash
+python -m agent_runtime.task_supervisor status \
+  --config /absolute/project/.agent-runs/project-v1/launch.json
+# session 名从 receipt.json 读取，不猜测，也不碰用户其他 session。
+tmux -L agent-supervisors attach -t agent-REPLACE_WITH_RECEIPT_HASH
+python -m agent_runtime.task_supervisor cancel \
+  --config /absolute/project/.agent-runs/project-v1/launch.json \
+  --reference explicit-user-stop
+```
+
+取消停止自有定时记录，worker 在下一轮退出；外部作业仍由适配器按 Context.current/job ID 合作取消，不声称强行撤销副作用。禁止 `kill-server` 或杀用户主 AI 会话。正常中断用于维护时再次 start 保留状态；SIGKILL 恢复仍遵循已有租约/未知副作用规则。
+
+### 每完成一项，对照 TASK.md
+
+每个 DAG 节点必须有 `task_refs`（对应 TASK.md 稳定 ID）和独立 `report_path`。同一要求可映射多个执行/审查节点，全部 done 才完成该要求。完整 TASK.md 内容哈希绑定到不可变计划；清单的任何变化均需主 AI 核对后新建版本/run_id，显式关联旧链与已验证产物，再停旧链。运行时不自动改用户清单勾选，避免把生成报告写入原文件造成自触发版本漂移。
+
+适配器完成工作时先写真实产物、完成独立验收，再原子写节点报告，最后返回 `Outcome('complete', evidence=...)`。报告示例：
+
+```json
+{
+  "task_id": "T1",
+  "summary": "完成该任务的实现并验收；此处必须替换为实际结论",
+  "data": [
+    {"kind": "not_applicable", "description": "此任务是配置修改，无性能测量；验收证据见 evidence"}
+  ]
+}
+```
+
+data 每项含 kind、description；kind 只能为 measured/derived/synthetic/not_applicable。数值数据还应记录 value/unit、原始日志、环境/配置和计算口径，适配器的专业 verifier 负责其正确性。结构检查与哈希一致性不证明论文质量或数值真实性。
+
+`ReportingHandler` 只有在底层独立 verifier 通过且报告有效时才允许 done；报告内容哈希进入 evidence，后续改写会失效。每个 tick/outcome 立即重读 TASK.md 并更新 `progress.json`，包含：
+
+- 对应 TASK.md 的哪个要求、执行节点和当前验收状态；
+- 本次结论、数据（或明确无数值）、可查证产物与哈希；
+- 剩余要求、失败/阻塞原因，供主 AI 安排下一步；
+- 清单版本是否变化、是否真的全部可汇报。
+
+全部要求映射完整、所有节点独立验收、最终重新校验证据和报告、清单未变才写 `final-report.json`；读回 monitor stopped，worker/guard 退出。主 AI 随后读报告向用户汇总结果和数据；本地文件不是已经发送通知，未配置消息通道时不声称离线推送。负结果只要满足预先定义的研究验收也可完成；失败/未知不能伪报完成。
+
+### 主 AI / Agent 宿主适配器
+
+`--adapter` 是主 AI 在现有授权下选定的可信 Python 文件，导出 `build(project_root, store, run_id)`，返回：
+
+```python
+return {
+    "handlers": {"experiment": experiment_handler, "review": review_handler},
+    "authorize": check_current_host_authorization,
+    "maintain": submit_or_poll_main_ai_recovery,
+}
+```
+
+handler 沿用现有 `run(task, Context)/verify(task, evidence)` 契约，report_path 是输出契约之一。authorize 接收原始 handler，不因包装器失去身份检查。maintain 接收最新 progress 对象，只做**短时间 submit/poll**，持久记录主 AI 请求 ID，不能每次计时都新建同一请求或阻塞等待模型数分钟。主 AI 持续读取当前任务/数据/待办，修复动作接口、派发依赖就绪 Agent、核验任务报告并维护恢复任务；改变语义/验收或增加超出授权的资源仍走既有决策协议。
+
+真实长作业应由后端独立运行并持久化 job ID，轮询预算与 ETA 匹配；现有核心把 pending/retry 都计入 max_attempts，主 AI 不应把秒级轮询套在数小时任务上，也不能靠无限放大预算隐藏失败。预算耗尽后保留监督并由 maintain 诊断、在授权范围内创建版本化恢复链。主 AI 所在 tmux 不会自动让 Web 聊天拥有远端模型执行能力。
+
+官方行为依据：[tmux 手册](https://man.openbsd.org/tmux.1)，2026-10-06 核查；说明 detached 会话能继续运行、连接断开后可重新附着。实际验证范围见[本次验证记录](https://github.com/Chosen-David/agent/blob/main/docs/tmux_supervisor_validation.md)。
