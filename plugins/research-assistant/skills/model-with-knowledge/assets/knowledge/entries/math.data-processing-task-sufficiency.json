@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "id": "math.data-processing-task-sufficiency",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "数据处理不等式、支撑条件与任务充分压缩",
+  "summary": "有限字母的同一随机通道不会增加KL可区分性；目标→原始数据→摘要的Markov关系给互信息上界。保持任务后验才是充分性，摘要短、重建损失小或样本正确都不等于充分。",
+  "aliases": [
+    "data processing sufficient statistic",
+    "信息 压缩 摘要 丢失 任务 后验",
+    "相同 随机 通道 概率 零 支撑",
+    "外部 检索 新证据 摘要 信息 增加",
+    "传感器 聚合 奇偶 故障 保留",
+    "reconstruction NLL mutual information proxy"
+  ],
+  "domains": [
+    "information-theory",
+    "statistics",
+    "agent-memory"
+  ],
+  "structures": [
+    "markov-chain",
+    "lossy-compression",
+    "posterior-sufficiency",
+    "support-mismatch",
+    "side-information"
+  ],
+  "assumptions": [
+    "本条结论限有限字母概率分布，使用同一对数底数；bit用log2",
+    "KL处理前后必须对P,Q应用同一行随机核K；p>0,q=0的项为正无穷",
+    "KL差值/后验等号公式要求P绝对连续于Q（有限字母下即支撑包含），避免无穷减无穷",
+    "任务Y、原数据X、摘要T满足Y→X→T；摘要随机性给定X不依赖Y",
+    "固定联合分布的任务充分性不能推广为所有任务/所有先验的统计充分性；引入外部R须扩展输入对象"
+  ],
+  "sources": [
+    {
+      "url": "https://ocw.mit.edu/courses/6-441-information-theory-spring-2016/184197ca5d5418da2415d37e929860b9_MIT6_441S16_chapter_2.pdf",
+      "locator": "Polyanskiy and Wu, MIT6.441 Spring2016, §2.2 Theorem2.2(2,3,6), eq(2.3), printed pp21–22 / PDF pp2–3; §2.4 chain rule",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://ocw.mit.edu/courses/6-441-information-theory-spring-2016/486b7d83cc428acf75b74323ecafcc11_MIT6_441S16_chapter_3.pdf",
+      "locator": "§3.1 Definition3.1 and Theorem3.1, printed p31 / PDF p1; all-priors sufficient-statistic characterization",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-information/verify.py",
+      "docs/knowledge_learning/2026-10-07-information/checks.json"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.symmetry-quotient"
+    },
+    {
+      "type": "related",
+      "id": "math.low-rank-svd"
+    }
+  ]
+}
