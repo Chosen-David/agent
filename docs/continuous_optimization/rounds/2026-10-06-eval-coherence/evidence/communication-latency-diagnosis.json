@@ -1,0 +1,46 @@
+{
+  "scope": "COH-T27 fixed180s receipt recovery, repair recipient only",
+  "events": [
+    {
+      "operation": "inbox",
+      "guard_at": "2026-10-06T15:46:19.267232+00:00",
+      "finished_at": "2026-10-06T15:46:19.305331+00:00",
+      "actual_invocation": true,
+      "host_span_seconds": 0.038099
+    },
+    {
+      "operation": "read-refs",
+      "guard_at": "2026-10-06T15:47:27.179968+00:00",
+      "finished_at": "2026-10-06T15:47:27.209694+00:00",
+      "actual_invocation": true,
+      "host_span_seconds": 0.029726
+    },
+    {
+      "operation": "read-refs",
+      "guard_at": "2026-10-06T15:47:27.247982+00:00",
+      "finished_at": "2026-10-06T15:47:27.279060+00:00",
+      "actual_invocation": true,
+      "host_span_seconds": 0.031078
+    },
+    {
+      "operation": "ack",
+      "guard_at": "2026-10-06T15:48:52.928352+00:00",
+      "finished_at": "2026-10-06T15:48:52.928399+00:00",
+      "actual_invocation": false,
+      "host_span_seconds": 4.7e-05
+    },
+    {
+      "operation": "ack",
+      "guard_at": "2026-10-06T15:48:52.963499+00:00",
+      "finished_at": "2026-10-06T15:48:52.963546+00:00",
+      "actual_invocation": false,
+      "host_span_seconds": 4.7e-05
+    }
+  ],
+  "first_guard_after_actor_start_seconds": 59.448832,
+  "last_request_after_start_seconds": 213.145099,
+  "summed_invoked_host_spans_seconds": 0.098903,
+  "interpretation": "Observed host subprocess/validation spans are small relative to actor wall time. Remaining time includes model, host scheduling, context and coordination; telemetry does not isolate them. No CPU/IO bottleneck or token/cost claim.",
+  "candidate": "Reduce unnecessary round trips and output volume by using one bounded inspect operation for inbox+hash-verified referenced artifacts, then one actor-owned explicit acknowledgement batch after actual reading. Keep exact actor identity, deadline, semantic acceptance separation, per-message results, refusal/no-reset and stale-version checks.",
+  "minimal_next_experiment": "Before changes: freeze old/new helper, fixed same180s wall budget, exact source/input/recipient/messages and independent rubric; one new recovery run with persistent old failures. Record request/execute/refusal times. Acceptance requires actual reader evidence and both actor-owned ACKs before deadline; failed phase remains failed, no rewrite. If no fair model snapshot, A/B inconclusive; measure observed task completion only."
+}

@@ -1,0 +1,336 @@
+{
+  "schema_version": 1,
+  "task_ref": "T25",
+  "prepared_at": "2026-10-06T13:44:33.073370+00:00",
+  "scope": "Three recent2026 conference/journal architecture stress cases; classics remain foundational only. Not exhaustiveallCCFAvenues. No architecture production or pass yet.",
+  "claims_boundary": "Architecture source reading only; not threeadditionaldeepreadAgentoptimizationpapers, no training/benchmark replication.",
+  "papers": [
+    {
+      "id": "gazing2026",
+      "title": "Attend Before Attention: Efficient and Scalable Video Understanding via Autoregressive Gazing",
+      "authors": "Baifeng Shi; Stephanie Fu; Long Lian; Hanrong Ye; David Eigen; Aaron Reite; Jan Kautz; Boyi Li; David M. Chan; Trevor Darrell; Pavlo Molchanov; Hongxu Yin",
+      "venue": "CVPR 2026",
+      "date": "June 2026",
+      "version": "CVF accepted-paper open-access version, pp.17022–17034",
+      "url": "https://openaccess.thecvf.com/content/CVPR2026/html/Shi_Attend_Before_Attention_Efficient_and_Scalable_Video_Understanding_via_Autoregressive_CVPR_2026_paper.html",
+      "pdf_url": "https://openaccess.thecvf.com/content/CVPR2026/papers/Shi_Attend_Before_Attention_Efficient_and_Scalable_Video_Understanding_via_Autoregressive_CVPR_2026_paper.pdf",
+      "file": "gazing.pdf",
+      "pages": 13,
+      "read_scope": "Main Sec.3.1–3.3, Eqs.1–4, Fig.1/3 and captions (physical pp.1,3–5); author arXiv v1 Appendix A/B pp.14–15 and Limitations G p.16 as explicitly distinct supplementary evidence.",
+      "pixel_pages": [
+        1,
+        3,
+        4,
+        5
+      ],
+      "figures": [
+        "Fig.1 architecture comparison",
+        "Fig.3 architecture and training"
+      ],
+      "difficulty": "Autoregressive temporal history; multi-scale index vocabulary; prediction-controlled stopping; training-only reconstruction reward; downstream pre-ViT selection.",
+      "source_conflicts": [
+        "CVF accepted PDF has a different author list from arXiv v1 (which additionally lists Song Han); use CVF authors for CVPR citation, do not silently conflate versions.",
+        "Main text says predicted loss falls below threshold; Fig.3 displays threshold ≤0.7. Label threshold rule generically or explicitly cite chosen comparator; equality must not be portrayed as a measured guarantee."
+      ],
+      "code": {
+        "repository": "https://github.com/NVlabs/AutoGaze",
+        "commit": "f00299408d547ed07055eaada539aab350173d40",
+        "read": [
+          "INTEGRATION.md sections Overview/gazing_info/patch embedding/mask",
+          "autogaze/models/autogaze/autogaze.py forward signature, state cache arguments and return payload"
+        ],
+        "not_executed": "No CUDA/model/weights installation; static interface reading only."
+      },
+      "facts": [
+        [
+          "G1",
+          "Frames are encoded sequentially by a lightweight convolutional encoder; an autoregressive transformer decodes patch indices using current/past frames and prior selections.",
+          "Sec.3.1 p.3; Fig.3 p.4"
+        ],
+        [
+          "G2",
+          "Multi-scale vocabulary uses resolutions32,64,112,224 pixels in Fig.3. These are image scales, not four patch side lengths; author Appendix A says patch side16 and 265 candidate positions.",
+          "Fig.3 p.4; authorv1 AppendixA p.14"
+        ],
+        [
+          "G3",
+          "Decoder has patch-index prediction and reconstruction-loss prediction outputs. User threshold controls stopping per frame, then move to next frame; preserve autoregressive selected-index feedback/history.",
+          "Sec.3.1 p.3–4"
+        ],
+        [
+          "G4",
+          "Actual reconstruction model is custom block-causal VideoMAE used for objective/training reward. Predicted reconstruction loss, not rerunning actual reconstruction at each inference step, controls stopping.",
+          "Sec.3 p.3; Sec.3.2 p.4"
+        ],
+        [
+          "G5",
+          "Stage1 next-token-prediction learns from greedy-search gazing sequences, with auxiliary squared loss on reconstruction-loss prediction. Stage2 on-policy GRPO uses negative reconstruction reward and auxiliary loss prediction supervision.",
+          "Sec.3.2 Eqs.3–4 p.4"
+        ],
+        [
+          "G6",
+          "Selected multi-scale patches are processed before downstream ViT, whose frame/position embeddings are interpolated per scale; tokens from16frames share a sequence and feed the MLLM.",
+          "Sec.3.3 p.4–5"
+        ],
+        [
+          "G7",
+          "Any-resolution/length inference tiles video into16×224×224 spatiotemporal blocks, runs gazing per tile, then merges positions.",
+          "Sec.3.3 p.4"
+        ],
+        [
+          "G8",
+          "Multi-token prediction uses several heads for multiple indices and corresponding losses; show it as an optional explicit inset/annotation, not replace history with fully parallel noncausal selection.",
+          "Sec.3.1 p.4"
+        ]
+      ],
+      "scientific": [
+        "Current/past frame features and selected-patch history feed autoregressive decoding; no future-frame leakage arrow.",
+        "Multi-scale indices, their gathered patches, and actual image scales are distinct objects; scale labels do not falsely become patch side lengths.",
+        "Loss prediction head and user threshold drive per-frame stop/advance control, separate from patch-index data output.",
+        "Selected indices feed back as autoregressive history and advance-to-next-frame preserves past context.",
+        "Actual VideoMAE reconstruction/reward is training-only in the depicted training path; it is not falsely a mandatory downstream inference pass.",
+        "NTP→RL training sequence, reconstruction reward and loss-prediction supervision are represented with correct direction and boundaries.",
+        "Gazing selection precedes downstream ViT→MLLM; multi-scale embedding/position adaptation and tile/merge scope are explicit.",
+        "Multi-token prediction annotation retains causal history; caption states schematic redraw and does not claim original empirical speedups were reproduced."
+      ],
+      "pdf_sha256": "7ccb3e8de6ec4731c294e6894d3f61b5ed15b0d3a1e139f934a0b1c7f93e9d11",
+      "access_date": "2026-10-06",
+      "status": "source_preflight_complete_not_executed",
+      "visual_rubric": [
+        "At declared 180 mm final width all primary labels are at least 8 pt and readable in full-page embedding; no crop, overlap or missing glyph.",
+        "Data/control/training-only edges and recurrent flow are visually distinct with explicit redundant legend; arrowheads land on intended nodes.",
+        "Hierarchy, grouping, alignment, whitespace and color are purposeful; grayscale retains semantic distinctions without decorative confusion.",
+        "Editable original source, vector PDF, color PNG, grayscale PNG, full-page PDF/PNG, source map, caption and exact rebuild command exist and rebuild succeeds."
+      ],
+      "producer_fixture_sha256": "88daeed9dc6e578932bbff93afbe231eb3c14df61b8957eaf12556adf427a863",
+      "source_files": {
+        "gazing-INTEGRATION.md": "3f2711670c6f9aeb48df7fe123b8888be8a474ab1e8f2616f0502f131b91a570",
+        "gazing-autogaze.py": "05ad2f12b5d2b92bf97a0f165d8b7d7bc8f2aae1c0a4abcf7b63b5b0e74a3bf1"
+      },
+      "source_visibility": "reference_visible"
+    },
+    {
+      "id": "doubt2026",
+      "title": "DOUBT: Decoupled Object-level Understanding and Bridging via vMF-based Trustworthiness for Hallucination Detection in MLLMs",
+      "authors": "Kaiqi Chen; Yang Qin; Changhao He; Xi Peng; Peng Hu",
+      "venue": "ICML 2026 / PMLR306",
+      "date": "2026-07-06/11",
+      "version": "PMLR306 pp.16418–16441, official24page PDF",
+      "url": "https://proceedings.mlr.press/v306/chen26dl.html",
+      "pdf_url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/chen26dl/chen26dl.pdf",
+      "file": "doubt.pdf",
+      "pages": 24,
+      "read_scope": "Sec.3 pp.3–5 in full, Fig.2 and Algorithm1 p.4, Eqs.1–6 p.4–5, implementation details p.6, stated object-error propagation p.4–5; conclusion and scope p.9–10. No claim of full24page deep reading.",
+      "pixel_pages": [
+        4,
+        5
+      ],
+      "figures": [
+        "Fig.2 complete pipeline",
+        "Algorithm1"
+      ],
+      "difficulty": "Parallel sampling versus sequential object bridging; frozen sentence encoder; normalization/operator order; two-set score fusion; threshold polarity; reference-answer/evaluation isolation.",
+      "source_conflicts": [
+        "PDF running title abbreviates the publication title; citation uses PMLR metadata.",
+        "The main prose sometimes calls scores uncertainty; Eq.5 and Algorithm1 clearly use high mean-resultant score as trustworthiness, flag1=non-hallucinatory.",
+        "The text labels the finite-sample resultant-length estimator unbiased; this property is not independently verified and must not be asserted by the redraw."
+      ],
+      "code": {
+        "repository": "https://github.com/XLearning-SCU/2026-ICML-DOUBT",
+        "commit": null,
+        "read": [],
+        "not_executed": "GitHub tree request403rate limit. No retry or unpinned code claims; diagram grounded in official algorithm and equations."
+      },
+      "facts": [
+        [
+          "D1",
+          "Input is image I and instruction/question t. Same black-box MLLM supplies a low-temperature reference answer A; this is an evaluated answer, not a score input.",
+          "Sec.3.1 p.3; Algorithm1 p.4"
+        ],
+        [
+          "D2",
+          "Direct path samples K answers from M(I,t). Object path first recognizes up to3 main objects r=M(I,p_obj).",
+          "Sec.3.2 p.4"
+        ],
+        [
+          "D3",
+          "Bridging then samples K answers from M(I,t||p_bri||r), retaining image and original question, not only the object list.",
+          "Sec.3.2 p.4; Algorithm1 lines2–4"
+        ],
+        [
+          "D4",
+          "Each response in each set is encoded by the same frozen nli-roberta-large sentence embedding model, then individually normalized to unit length.",
+          "Sec.3.3 p.5; Fig.2 snowflake"
+        ],
+        [
+          "D5",
+          "For each set separately compute R_set=||sum_k e_hat_k||/K. Then R_avg=(R_ori+R_bri)/2; do not pool all2K vectors before norm.",
+          "Eq.4 p.5; Algorithm1 lines5–7"
+        ],
+        [
+          "D6",
+          "R_avg>theta gives flag1, judged non-hallucinatory; R_avg≤theta gives flag0, hallucination. This is detection estimate, not truth guarantee.",
+          "Eq.5 p.5; Algorithm1 lines8–12"
+        ],
+        [
+          "D7",
+          "Ground truth compares correctness of reference A against detection flag only in offline evaluation; no gold answers, retrieval database, gradient or fine-tuning required by detection diagram.",
+          "Eq.6 p.5; Sec.3.1"
+        ],
+        [
+          "D8",
+          "Reported setup K10, reference temperature0.1, sample temperature0.5, top-k10/top-p0.99, threshold0.48 are experimental choices, not universal architecture constants. Object-recognition errors may propagate.",
+          "Implementation p.6; limitation p.4–5"
+        ]
+      ],
+      "scientific": [
+        "Image plus original question reach both sampling paths; object recognition precedes bridging and supplies the object list only to the bridged path.",
+        "The same black-box MLLM and K-sample multiplicities are clear; object recognition is not depicted as K independent gold annotations.",
+        "Separate reference answer and offline correctness assessment are not score inputs or deployed ground truth.",
+        "Both paths use frozen sentence embeddings and per-response unit normalization before score computation.",
+        "Mean-resultant length is computed independently within each K-set; output operators show norm(mean vectors) then scalar average across sets, not pooled-vector norm or vote.",
+        "Threshold polarity and equality are correct: >theta→flag1 non-hallucinatory; ≤theta→flag0 hallucination.",
+        "No invented model-training, retrieval, learned detector or feedback correction loop; optional OUB correction discussion is not the detection pipeline.",
+        "Schematic caption states score is proxy, may fail after object misidentification; no claims that high consistency guarantees truth or published accuracy was reproduced."
+      ],
+      "pdf_sha256": "635ee9cfbfd752499fe22f8d0ba934a9617b68409d606719d76e6123f9f44b68",
+      "access_date": "2026-10-06",
+      "status": "source_preflight_complete_not_executed",
+      "visual_rubric": [
+        "At declared 180 mm final width all primary labels are at least 8 pt and readable in full-page embedding; no crop, overlap or missing glyph.",
+        "Data/control/training-only edges and recurrent flow are visually distinct with explicit redundant legend; arrowheads land on intended nodes.",
+        "Hierarchy, grouping, alignment, whitespace and color are purposeful; grayscale retains semantic distinctions without decorative confusion.",
+        "Editable original source, vector PDF, color PNG, grayscale PNG, full-page PDF/PNG, source map, caption and exact rebuild command exist and rebuild succeeds."
+      ],
+      "producer_fixture_sha256": "809cc40e7778074e12b1a6ba6a236f17ea77b33b8557aa2d2a3d531eef949683",
+      "source_files": {},
+      "source_visibility": "reference_hidden"
+    },
+    {
+      "id": "ditfuse2026",
+      "title": "Towards Unified Semantic and Controllable Image Fusion: A Diffusion Transformer Approach",
+      "authors": "Jiayang Li; Chengjie Jiang; Junjun Jiang; Pengwei Liang; Jiayi Ma; Liqiang Nie",
+      "venue": "IEEE TPAMI48(4):3970–3987 (April2026)",
+      "date": "journal issue April2026; selected author manuscript2025-12-08",
+      "version": "arXiv2512.07170v1 author manuscript, associated DOI10.1109/TPAMI.2025.3642842; not claimed typeset IEEEversion",
+      "url": "https://ieeexplore.ieee.org/document/11297852/",
+      "pdf_url": "https://arxiv.org/pdf/2512.07170v1",
+      "file": "ditfuse.pdf",
+      "pages": 18,
+      "read_scope": "Method Sec.III pp.4–7, Fig.1/2 p.2, Fig.3 p.5, Fig.4/5 p.6, Fig.6 p.7 and captions/Eqs.1–5; supplementary evaluation pipeline Fig.13 p.12 read to distinguish from architecture. No full18page deep-read claim.",
+      "pixel_pages": [
+        2,
+        5,
+        6,
+        7,
+        12
+      ],
+      "figures": [
+        "Fig.1 pre/post/parallel comparison",
+        "Fig.3 train/inference model",
+        "Fig.4 M3 data pipeline",
+        "Fig.6 instruction schema",
+        "Fig.13 evaluation-only pipeline"
+      ],
+      "difficulty": "Two image conditions plus text and distinct noisy target; trainable-LoRA/frozen paths; hybrid block mask; recurrent50step inference; M3 corruption/target pipeline; paper/code version conflict.",
+      "source_conflicts": [
+        "Author PDF header JOURNAL OF LATEX CLASS FILES2021 is template boilerplate, not publication date; citation uses DOI/issue identity.",
+        "Paper Sec.III-A says LoRA all linear layers rank64 scaling0.5. Pinned train.py lines101–112 targets qkv_proj/o_proj with lora_alpha=lora_rank. Diagram must explicitly choose author-paper architecture and disclose this discrepancy, not assert exact code equivalence.",
+        "Sec.III-A prose broadly describes text queries accessing image keys, but explicit hybrid-mask rule and pinned processor are causal across sequence blocks with within-image bidirectionality. Use that explicit rule; do not draw all-to-all intermodal attention.",
+        "Source no-ground-truth claim concerns real fused targets; M3 has source-image targets and IVIF training mentions mean-fusion targets. Do not label all training unsupervised."
+      ],
+      "code": {
+        "repository": "https://github.com/Henry-Lee-real/DiTFuse",
+        "commit": "9a2d1b80ce5edecd8b5a4d7fe551a7cceb1ee0fb",
+        "read": [
+          "OmniGen/model.py forward314–357",
+          "OmniGen/processor.py create_mask169–206 and adjust_attention_for_input_images208–213",
+          "train.py LoRA101–115",
+          "test.py load_pipeline85–95"
+        ],
+        "not_executed": "Read-only static interface and discrepancy audit; no model weights/GPU/runtime installed."
+      },
+      "facts": [
+        [
+          "F1",
+          "Two distinct input images use VAE image encoding; instruction is tokenized. Conditions are combined with timestep and separate noisy target latent for DiT, not pre-added pixel fusion.",
+          "Fig.3 p.5; Sec.III-A pp.4–5; code model.forward"
+        ],
+        [
+          "F2",
+          "Paper architecture uses32Transformer layers, pre-trained OmniGen/Phi3 base, LoRA adaptation; VAE remains frozen and trainable adaptations are distinguished from inference use.",
+          "Sec.III-A pp.4–5; Fig.3"
+        ],
+        [
+          "F3",
+          "Condition images are represented as visual tokens inside image delimiters; timestep token and noisy target tokens follow the condition sequence in inspected code. Output target tokens alone are converted back to latent image, then VAE decoder.",
+          "Sec.III-A.2 p.5; model.forward314–357"
+        ],
+        [
+          "F4",
+          "Hybrid attention is causal across sequence order but bidirectional inside an image block. Processor additionally allows output-image tokens to attend all earlier condition/time and own output tokens, never reverse future edges.",
+          "Sec.III-A.3 p.5; processor169–213"
+        ],
+        [
+          "F5",
+          "Training uses target x and noise epsilon to form x_t=t*x+(1-t)*epsilon; predict velocity and squared loss against x-epsilon. Target enters loss/noisy-target construction, not as inference input.",
+          "Eqs.4–5 p.7"
+        ],
+        [
+          "F6",
+          "M3 duplicates a source image into two views, uses complementary corruption on75%patches and common corruption on25%, with noise-mask/Gaussian-noise/blur; target is original source forM3.",
+          "Fig.4 p.6; Sec.III-B.2 p.7"
+        ],
+        [
+          "F7",
+          "Multi-task targets depend on instruction: source forM3, brightness/contrast control target, semantic masked target, task-specific fusion targets. Distinguish this data construction from denoising network.",
+          "Fig.4/6 pp.6–7"
+        ],
+        [
+          "F8",
+          "Inference starts from noise under two-image/text conditions, iterates denoising (Fig.3 labels50steps), and decodes output; no training target/loss or repeatedparameter-update loop during inference.",
+          "Fig.3 p.5"
+        ],
+        [
+          "F9",
+          "GPT4o three-criterion segmentation evaluation in Fig.13 is outside DiTFuse model architecture. Do not add evaluator into generation loop.",
+          "Fig.13 p.12"
+        ]
+      ],
+      "scientific": [
+        "Two image-condition paths and instruction-token path remain distinct until sequence composition; noisy target and timestep are separately identified.",
+        "Train/inference panels and frozen VAE/base versus trained LoRA boundaries are explicit; code/paper LoRA mismatch is disclosed with chosen paper-version scope.",
+        "Hybrid-mask inset or precise annotation preserves sequence-causal cross-block and bidirectional intra-image behavior; no unrestricted intermodal loop.",
+        "Training noised target and velocity objective match x_t=t*x+(1-t)*epsilon and target x-epsilon; no target leakage to inference.",
+        "M3 source duplication,75/25complementary/common corruptions and original-source target are correct and contained in training-data path.",
+        "Task-specific target selection is not confused with parallel model inputs or inference outputs; no universally ground-truth-free claim.",
+        "Inference is repeated denoising under fixed conditions followed by VAE decode; paper50steps are a depicted setting, not50 stackedTransformer layers.",
+        "No GPT4o/evaluation module is inserted into model generation; caption identifies selected authorversion associated with journal article and unexecuted model results."
+      ],
+      "pdf_sha256": "742a48d608dd1cdfdc4a9e144759e16d352851fb5d4bdcfd1adda9ba0d0cedac",
+      "access_date": "2026-10-06",
+      "status": "source_preflight_complete_not_executed",
+      "visual_rubric": [
+        "At declared 180 mm final width all primary labels are at least 8 pt and readable in full-page embedding; no crop, overlap or missing glyph.",
+        "Data/control/training-only edges and recurrent flow are visually distinct with explicit redundant legend; arrowheads land on intended nodes.",
+        "Hierarchy, grouping, alignment, whitespace and color are purposeful; grayscale retains semantic distinctions without decorative confusion.",
+        "Editable original source, vector PDF, color PNG, grayscale PNG, full-page PDF/PNG, source map, caption and exact rebuild command exist and rebuild succeeds."
+      ],
+      "producer_fixture_sha256": "d119529bbc48e5967a93e613672589f778107aeb144be1273e5145d3114261d1",
+      "source_files": {
+        "ditfuse-OmniGen_processor.py": "25e173595dd53cfc7407ce02c728a9568840df1586e0b4b642b606d53d6165df",
+        "ditfuse-train.py": "b068b4f9fefedb9d01c85a6932ee2e13e066cd849dcfbe5677b0f639113ba7ad",
+        "ditfuse-test.py": "9b69a7a28bf71b931b98dfd57e1918e6d8c9baeeb3b2cd5ad85db7bd0104e973",
+        "ditfuse-OmniGen_model.py": "2544fb51a6b358515199c43eab98165261b5d2fafa4888fee70262642ec4d3ba"
+      },
+      "source_visibility": "reference_visible"
+    }
+  ],
+  "artifacts": {
+    "tasks_sha256": "db6b08a8a4c33a4bf4526cdce018d80f38f861a3ab08cdec38198a4684cc3e95",
+    "rubric_sha256": "25b32484d5caf8c39d2302dff8bb49ac98abb814ba2320630d43803182a27930"
+  },
+  "rubric_separation": "Producer fixtures contain source facts/conflicts/designbrief; private hostrubric separate; instruction separation not OSsecurity.",
+  "source_visibility_design": "AutoGaze/DiTFuse: source-visible original redesign. DOUBT: heldout reference-hidden method-to-diagram, originalfigure retained onlybygrader.",
+  "classification_record": "w4-ccf-classification.json; official2026CCF PDF rootpixels pp51,57"
+}

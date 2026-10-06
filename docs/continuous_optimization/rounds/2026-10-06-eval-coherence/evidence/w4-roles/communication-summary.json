@@ -1,0 +1,115 @@
+{
+  "task_id": "COH-T27",
+  "candidate_at_execution": "0150292b8712fb6e4351df7b0a910af464704088",
+  "latest_applicable_candidate": "263958510f78789e33dd29676d510a672900ce26",
+  "semantic_result": {
+    "original_v3": "3/4criteria pass;criterion3 fail",
+    "feedback_repair": "4/4 original criteria independently pass",
+    "finding": "COH-T27-F1 semantically closed by fresh independent reviewer",
+    "classification": "explicit feedback-assisted recovery, not clean first-pass/A-B or general Skill improvement"
+  },
+  "actual_chain": [
+    "original independent reviewer published real finding seq1",
+    "fresh repair actual inbox/SHAfullread/ACK then actual immutable document artifactseq2",
+    "fresh re-review SHAfullread/ACK and4criteria pass",
+    "actual seq2 completion consume failed incomplete/out-of-scope",
+    "actual same worker metadata correction outside collectedoutputs publishedseq3; actual request-scoped consume passed",
+    "original transportphase overrun/unverified; actual late reviewseq4 retained",
+    "new guarded reviewer recovery currentconsume/refread/publishedseq5 before own deadline",
+    "new repairrecipient SHAfullreads succeeded; two late ACKs refused without invocation",
+    "main currentconsume/refreads+all itsreceipts completed before own deadline"
+  ],
+  "event_count": 5,
+  "event_budget": 8,
+  "delivery_count": 9,
+  "receipt_count": 7,
+  "pending_receipts": [
+    {
+      "seq": 4,
+      "recipient": "code-organization-repair",
+      "reason": "fixed receipt-recovery deadline expired; guard refused actual invocation; no retry/reset"
+    },
+    {
+      "seq": 5,
+      "recipient": "code-organization-repair",
+      "reason": "fixed receipt-recovery deadline expired; guard refused actual invocation; no retry/reset"
+    }
+  ],
+  "full_receipt_protocol_complete": false,
+  "guarded_recovery_all_actors_complete": false,
+  "actors": [
+    {
+      "identity": "code-organization-repair",
+      "actor": "/root/final_role_controller/communication_repair",
+      "start": "2026-10-06T15:45:19.818400+00:00",
+      "deadline": "2026-10-06T15:48:19.818400+00:00",
+      "wall_allowance_seconds": 180,
+      "actual_invocations": 3,
+      "all_invoked_actions_finished_before_deadline": true,
+      "deadline_refusals": 2,
+      "phase_complete": false,
+      "last_actual_action": "2026-10-06T15:47:27.279060+00:00",
+      "receipt_file": "communication/receipt-recovery/code-organization-repair-deadline.json"
+    },
+    {
+      "identity": "main-controller",
+      "actor": "/root/final_role_controller",
+      "start": "2026-10-06T15:50:05.962771+00:00",
+      "deadline": "2026-10-06T15:53:05.962771+00:00",
+      "wall_allowance_seconds": 180,
+      "actual_invocations": 9,
+      "all_invoked_actions_finished_before_deadline": true,
+      "deadline_refusals": 0,
+      "phase_complete": true,
+      "last_actual_action": "2026-10-06T15:50:35.974635+00:00",
+      "receipt_file": "communication/receipt-recovery/main-controller-deadline.json"
+    },
+    {
+      "identity": "research-review-recheck",
+      "actor": "/root/final_role_controller/communication_reviewer",
+      "start": "2026-10-06T15:42:24.508298+00:00",
+      "deadline": "2026-10-06T15:45:24.508298+00:00",
+      "wall_allowance_seconds": 180,
+      "actual_invocations": 3,
+      "all_invoked_actions_finished_before_deadline": true,
+      "deadline_refusals": 0,
+      "phase_complete": true,
+      "last_actual_action": "2026-10-06T15:44:54.644656+00:00",
+      "receipt_file": "communication/receipt-recovery/research-review-recheck-deadline.json"
+    }
+  ],
+  "old_transport_budget_negative": {
+    "start_basis": "dated root phase authorization observation",
+    "started_at": "2026-10-06T15:30:42.849868+00:00",
+    "publication_at": "2026-10-06T15:34:35.277791+00:00",
+    "elapsed_seconds": 232.427923,
+    "wall_allowance_seconds": 180,
+    "overrun_seconds": 52.42792299999999,
+    "budget_compliant": false,
+    "actual_transport_success_preserved": true,
+    "release_transport_budget_status": "unresolved pending rootdecision; no silentreset",
+    "producer_outputs_changed": false
+  },
+  "program_only_probes": {
+    "fresh_process_restart_persistence": true,
+    "same_id_exact_duplicate_one_delivery": true,
+    "stale_version_rejected": true,
+    "same_id_changed_payload_rejected": true,
+    "ack_persists_and_removes_pending": true
+  },
+  "status_evidence": {
+    "path": "communication/receipt-recovery/host/main-controller-eb00984e-0f8f-45c8-9a75-2ea11291663a.json",
+    "sha256": "7a2b46c82b26cf2987b78f6e53056ba59cc1441a66b1d993cad43658194e048d"
+  },
+  "guard": {
+    "path": "communication/receipt-recovery/guard.py",
+    "sha256": "718201f71f6b95b20ecb5c6dfe577aec345c90c5c69a3a23bf1ca1489a5b0f71",
+    "deadline_enforcement": "checked immediately before subprocess invocation after request prep, timeout bounded by remaining, fixed exclusive per-actor deadlines, late calls refused; not a security sandbox"
+  },
+  "limits": [
+    "No model/token/cost estimate; host-reported observed tool/message receipts, not backend attestation.",
+    "ACK is handling, separate from content acceptance. Actual semantic repair passes despite two unresolved final consumer ACKs.",
+    "No new source/Skill edit, benchmark benefit or general communication quality improvement inferred.",
+    "Program probes use separate DB; genuine mailbox state and historical negative events retained."
+  ]
+}

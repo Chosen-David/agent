@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "id": "arxiv:2503.13657",
+  "dedup_key": "2503.13657",
+  "title": "Why Do Multi-Agent LLM Systems Fail?",
+  "authors": [
+    "Mert Cemri",
+    "Melissa Z. Pan",
+    "Shuyi Yang",
+    "Lakshya A. Agrawal",
+    "Bhavya Chopra",
+    "Rishabh Tiwari",
+    "Kurt Keutzer",
+    "Aditya Parameswaran",
+    "Dan Klein",
+    "Kannan Ramchandran",
+    "Matei Zaharia",
+    "Joseph E. Gonzalez",
+    "Ion Stoica"
+  ],
+  "version": "v3",
+  "version_date": "2025-10-26",
+  "first_submitted": "2025-03-17",
+  "read_at": "2026-10-06",
+  "full_text": "https://arxiv.org/html/2503.13657v3",
+  "pdf": "https://arxiv.org/pdf/2503.13657v3",
+  "pdf_sha256": "1b9e317a2a421e60ca2b2eda4a30844557a01e63286a790890c0ecef32d25460",
+  "pdf_pages": 47,
+  "scratch_pdf": "/workspace/scratch/c12f3d9f92bd/mast-research/mast-v3.pdf",
+  "read_status": "completed_original_full_text_with_bounded_visual_review",
+  "read_scope": [
+    "Main sections 1–6",
+    "Appendices A–N, including all L/M prompts and N.1–N.13 trace excerpts",
+    "Tables 1–9; Figures 1–11 captions/data",
+    "PDF visual pages 5,6,22,23,27,28,30"
+  ],
+  "not_read": [
+    "Full bibliography references as separate papers",
+    "Full external dataset trajectories and upstream implementation",
+    "Not all 47 pages visually reviewed"
+  ],
+  "dedup_check": {
+    "catalog": "docs/continuous_optimization/papers.json",
+    "matched": false
+  },
+  "repository_revision": "e8ee3dca5dc8cd076fc031dd4510dabde214e046",
+  "notes": "rounds/2026-10-06-eval-coherence/research/mast.md",
+  "method": {
+    "initial_traces": 150,
+    "initial_frameworks": 5,
+    "experts": 6,
+    "final_traces": 1642,
+    "final_frameworks": 7,
+    "failure_modes": 14,
+    "categories": 3,
+    "human_kappa": 0.88,
+    "ood_kappa": 0.79,
+    "fewshot_judge": {
+      "model": "o1",
+      "accuracy": 0.94,
+      "recall": 0.77,
+      "precision": 0.833,
+      "f1": 0.8,
+      "kappa": 0.77
+    },
+    "evidence": "§§3.1–3.4 pp5–6; Tables1–2"
+  },
+  "intervention_results": {
+    "source": "AppH pp26–28, Table5; AppL/M pp31–37",
+    "ag2_setup": "200 randomly selected GSM-Plus tasks, six repetitions, GPT-4 and GPT-4o; baseline/prompt/three-role topology",
+    "accuracy_percent": {
+      "gpt4": [
+        84.75,
+        89.75,
+        85.5
+      ],
+      "gpt4o": [
+        84.25,
+        89.0,
+        88.83
+      ],
+      "chatdev_programdev_v0": [
+        25.0,
+        34.4,
+        40.6
+      ],
+      "chatdev_humaneval": [
+        89.6,
+        90.3,
+        91.5
+      ]
+    },
+    "chatdev_programdev_v0_tasks": 32,
+    "gpt4_topology_wilcoxon_p": 0.4,
+    "gpt4o_both_interventions_p": 0.03,
+    "uncertainties": [
+      "ChatDev repeat/variance/significance not reported in Table5",
+      "No matched token/time/call cost comparison",
+      "Prompt edits combine hierarchy and task-specific testing; no single-factor attribution"
+    ]
+  },
+  "cost": {
+    "source": "§3 pp5–6; AppK p30 Table9",
+    "annotation_usd_per_trace_reported_average": 1.8,
+    "framework_range_usd": [
+      0.374,
+      4.1409
+    ],
+    "human_annotation_hours_each_expert": ">20",
+    "experts": 6,
+    "disagreement_discussion_hours_approx": 10,
+    "intervention_runtime_cost": "not reported; historical annotation price is not current price"
+  },
+  "limitations": [
+    "Diagnostic labels do not establish causal root causes or task truth",
+    "Successful traces contain verification failure labels; AppJ.1 Table7",
+    "Small calibrated human sample and imperfect automated recall",
+    "Heterogeneous tasks/frameworks/models do not support universal ranking",
+    "No repository rollback intervention evidence"
+  ],
+  "source_inconsistencies": [
+    {
+      "location": "AppH.3 p27 vs Fig10 p28",
+      "issue": "Text says both interventions decrease modes; AG2 prompt FC1/FC2 bars rise."
+    },
+    {
+      "location": "AppJ.2 p30 Table8 and Table1",
+      "issue": "Text says lower GSM inter-agent rate but table1.33 exceeds1.01/1.21; MMLU model differs GPT-4o vs GPT-4o-mini."
+    },
+    {
+      "location": "§3.4 vs AppB.3",
+      "issue": "Main wording includes Manus, appendix excludes it from primary trace dataset; Table1 seven frameworks used."
+    }
+  ],
+  "repository_comparison": {
+    "read_paths": [
+      "scripts/prepare_agent_eval.py",
+      "scripts/agent_eval_pipeline.py",
+      "docs/agent_eval_pipeline.md",
+      "plugins/research-assistant/skills/code-organization/SKILL.md",
+      "plugins/research-assistant/skills/code-organization/references/execution.md",
+      "workflows/code_organization_workflow.md",
+      "docs/continuous_optimization/candidates.json"
+    ],
+    "gap": "Hashes bind input/rubric bytes but cannot verify facts; organization requires reversible moves but lacks concrete recovery deliverable checks."
+  },
+  "candidates": [
+    {
+      "id": "CO-020",
+      "status": "pending_local_test",
+      "mechanism": "independent fixture-derived grading facts before freeze",
+      "minimum_experiment": "12 frozen known-valid/invalid fact cases covering sign, parity, units, stale facts, equivalent answers and missing data; compare false accept/reject and immutable runs",
+      "cost": "small standard-library CPU oracle plus material review; no model gain claim"
+    },
+    {
+      "id": "CO-016",
+      "status": "pending_local_test",
+      "mechanism": "path-specific guarded rollback artifacts",
+      "minimum_experiment": "4 heldout projects x baseline/candidate x2 fresh contexts, max16 dispatches; independent review plus replay on copies; forbid original mutation",
+      "cost": "bounded host calls and recovery review, not performed"
+    },
+    {
+      "id": "MAST-diagnostic-only",
+      "status": "adopt_as_research_record_rule_not_runtime_implementation",
+      "mechanism": "failure type plus evidence and uncertainty separate from correctness grade",
+      "minimum_experiment": "6 existing traces, two independent diagnoses, check whether label changes repair choice",
+      "cost": "read-only manual review; automated o1 annotator deferred"
+    }
+  ],
+  "rejected_transfers": [
+    "Universal three-role or cyclic topology",
+    "MAST labels as success oracle",
+    "Mandatory paid annotator on every task"
+  ],
+  "migration_status": "research_completed; candidates_pending; repository_benefit_unverified",
+  "implementation_changed": false,
+  "upstream_code_executed": false,
+  "local_benefit_measured": false,
+  "interpretation_cautions": [
+    "§5.1 says 1.56x more FC3; Fig9 77 vs30 means approximately156.7% more or2.57x total; not evidence of arithmetic error."
+  ]
+}

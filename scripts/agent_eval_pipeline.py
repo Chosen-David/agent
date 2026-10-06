@@ -78,8 +78,11 @@ def git(repo, *args):
     return subprocess.check_output(['git', '-C', str(repo), *args], stderr=subprocess.PIPE)
 
 
-def prepare_run(repo, revision, out, tasks=None, rubric=None, fixture_root=None, adapter=None):
+def prepare_run(repo, revision, out, tasks=None, rubric=None, fixture_root=None, adapter=None,
+                *, require_material_review=False):
     """Freeze tracked skills and inputs; optional catalogs are explicit local files."""
+    if type(require_material_review) is not bool:
+        raise ValueError('require_material_review must be boolean')
     repo, out = Path(repo), Path(out)
     sha = git(repo, 'rev-parse', '--verify', revision + '^{commit}').decode().strip()
     blob = lambda name: git(repo, 'show', sha + ':' + name)
@@ -167,6 +170,8 @@ def prepare_run(repo, revision, out, tasks=None, rubric=None, fixture_root=None,
         'rubric_hash': digest((out / 'rubric.json').read_bytes()),
         'trust': 'Host supplied receipts are records, not cryptographic execution attestation.',
         'isolation': 'Separate task directories and reviewer instructions; shared filesystem is NOT a security sandbox.'}
+    if require_material_review:
+        manifest['require_material_review'] = True
     write(out / 'tasks.json', task_data)
     write(out / 'manifest.json', manifest)
     return manifest
@@ -177,6 +182,8 @@ def verify_run(run):
     if run.is_symlink() or any(path.is_symlink() for path in run.rglob('*')):
         raise ValueError('symlink anywhere in run tree forbidden')
     manifest = object_record(read(run / 'manifest.json'))
+    if type(manifest.get('require_material_review', False)) is not bool:
+        raise ValueError('invalid material review policy')
     tasks = object_record(read(run / 'tasks.json')).get('cases')
     criteria = object_record(read(run / 'rubric.json')).get('criteria')
     if not isinstance(tasks, list) or not tasks or not isinstance(criteria, dict):
@@ -213,6 +220,103 @@ def context(run, case_id):
     if case_id not in manifest['expected_cases']:
         raise ValueError('unexpected case')
     return run, manifest, run / 'cases' / case_id / 'attempts'
+
+
+def material_bindings(run, manifest):
+    """Exact controller-side materials; never include review answers in a task."""
+    return {'manifest_sha256': digest((Path(run) / 'manifest.json').read_bytes()),
+            'tasks_hash': manifest['tasks_hash'], 'rubric_hash': manifest['rubric_hash'],
+            'cases': {cid: {key: manifest['cases'][cid][key]
+                            for key in ('task_hash', 'input_hashes')}
+                      for cid in manifest['expected_cases']}}
+
+
+def external_review_artifact(run, item):
+    """Relative controller paths are portable within run.parent, never the run."""
+    item = object_record(item)
+    if not nonempty(item.get('path')) or not nonempty(item.get('sha256')):
+        raise ValueError('material review artifact path/hash required')
+    path = Path(item['path'])
+    if not path.is_absolute():
+        path = Path(run).absolute().parent / safe_relative(item['path'])
+    if (any(parent.is_symlink() for parent in (path, *path.parents)) or
+            path.resolve().is_relative_to(Path(run).resolve())):
+        raise ValueError('material review evidence must be outside worker run')
+    data = path.read_bytes()
+    if digest(data) != item['sha256']:
+        raise ValueError('material review artifact changed')
+    return data
+
+
+def check_material_review(run, manifest, actor, trust):
+    """Verify controller-supplied trust, not arbitrary prose or reviewer identity.
+
+    The trusted host supplies path, independently obtained reviewer_actor and
+    expected sha256 separately from the review JSON. Same-user malicious writes
+    and a dishonest controller are outside this recorder's trust boundary.
+    """
+    trust = object_record(trust)
+    reviewer = trust.get('reviewer_actor')
+    if not nonempty(reviewer) or reviewer == actor:
+        raise ValueError('independent material reviewer required')
+    def unique_fields(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError('duplicate material review JSON field')
+            result[key] = value
+        return result
+    review = object_record(json.loads(external_review_artifact(run, trust),
+                                      object_pairs_hook=unique_fields))
+    if type(review.get('schema_version')) is not int or review['schema_version'] != 1:
+        raise ValueError('material review schema_version')
+    if review.get('reviewer_actor') != reviewer:
+        raise ValueError('material reviewer does not match trusted controller identity')
+    if review.get('material_hashes') != material_bindings(run, manifest):
+        raise ValueError('stale material review binding')
+    cases = object_record(review.get('cases'))
+    rubric = read(Path(run) / 'rubric.json')['criteria']
+    if set(cases) != set(rubric):
+        raise ValueError('material review must cover exact cases')
+    for cid, criteria in rubric.items():
+        checks = cases[cid]
+        if not isinstance(checks, list) or len(checks) != len(criteria):
+            raise ValueError('material review must cover exact criteria')
+        names = [object_record(check).get('criterion') for check in checks]
+        if (not all(map(nonempty, names)) or len(set(names)) != len(names)
+                or set(names) != set(criteria)):
+            raise ValueError('duplicate or mismatched material criterion')
+        for check in checks:
+            if check.get('kind') not in ('factual', 'behavioral'):
+                raise ValueError('material criterion kind required')
+            if check.get('status') not in ('supported', 'not_supported', 'unreviewed'):
+                raise ValueError('invalid material review status')
+            if check['status'] != 'supported':
+                raise ValueError('material criterion is ' + check['status'])
+            if not nonempty(check.get('reason')):
+                raise ValueError('material correspondence reason required')
+            if check.get('verification') not in ('executable_oracle', 'source_review', 'task_requirement'):
+                raise ValueError('material verification method required')
+            if check['kind'] == 'factual' and check['verification'] == 'task_requirement':
+                raise ValueError('factual criterion needs oracle or source review')
+            evidence = check.get('evidence')
+            if not isinstance(evidence, list) or not evidence:
+                raise ValueError('material evidence required')
+            for item in evidence:
+                if not nonempty(object_record(item).get('location')):
+                    raise ValueError('material evidence location required')
+                external_review_artifact(run, item)
+    return {key: trust[key] for key in ('path', 'sha256', 'reviewer_actor')}
+
+
+def authorize_dispatch(run, case_id, actor, *, material_review=None):
+    """Read-only host pre-spawn gate. Caller must invoke BEFORE spawning a worker."""
+    run, manifest, _ = context(run, case_id)
+    if not nonempty(actor):
+        raise ValueError('worker actor required')
+    if manifest.get('require_material_review', False):
+        return check_material_review(run, manifest, actor, material_review)
+    return None
 
 
 def validate_receipt(receipt, kind, case_id, attempt, actor=None):
@@ -253,6 +357,8 @@ def validate_start(run, manifest, directory, case_id):
         raise ValueError('start adapter or budget mismatch')
     if start.get('manifest_hash') != digest((run / 'manifest.json').read_bytes()):
         raise ValueError('manifest changed since dispatch')
+    if manifest.get('require_material_review', False):
+        check_material_review(run, manifest, start['actor'], start.get('material_review'))
     return start
 
 
@@ -267,10 +373,12 @@ def validate_collection(collection, start, case_id):
     return collection
 
 
-def record_start(run, case_id, actor, receipt_path):
+def record_start(run, case_id, actor, receipt_path, *, material_review=None):
     run, manifest, attempts = context(run, case_id)
     if not nonempty(actor):
         raise ValueError('worker actor required')
+    authorization = (check_material_review(run, manifest, actor, material_review)
+                     if manifest.get('require_material_review', False) else None)
     previous = sorted(attempts.iterdir())
     if previous and not (previous[-1] / 'collection.json').exists():
         raise ValueError('active attempt already exists')
@@ -285,8 +393,11 @@ def record_start(run, case_id, actor, receipt_path):
     directory = attempts / f'{attempt:04d}'
     directory.mkdir()
     (directory / 'outputs').mkdir()
-    write(directory / 'start.json', {'actor': actor, 'attempt': attempt, 'receipt': receipt,
-        'manifest_hash': digest((run / 'manifest.json').read_bytes())})
+    start = {'actor': actor, 'attempt': attempt, 'receipt': receipt,
+             'manifest_hash': digest((run / 'manifest.json').read_bytes())}
+    if authorization is not None:
+        start['material_review'] = authorization
+    write(directory / 'start.json', start)
     return directory
 
 
@@ -431,11 +542,12 @@ def main():
     p.add_argument('--repo', type=Path, default=ROOT)
     p.add_argument('--revision', required=True)
     p.add_argument('--out', type=Path, required=True)
+    p.add_argument('--require-material-review', action='store_true')
     p.add_argument('--dev-eval', action='store_true',
                    help='explicitly enable synthetic development evaluation (never ordinary task routing)')
     for flag in ('tasks', 'rubric', 'fixture-root', 'adapter'):
         p.add_argument('--' + flag, type=Path)
-    for name in ('record-start', 'collect', 'grade', 'report'):
+    for name in ('authorize-dispatch', 'record-start', 'collect', 'grade', 'report'):
         p = sub.add_parser(name)
         p.add_argument('--run', type=Path, required=True)
         if name == 'report':
@@ -446,8 +558,11 @@ def main():
             p.add_argument('--attempt', type=int, required=True)
         if name in ('record-start', 'collect'):
             p.add_argument('--receipt', type=Path, required=True)
-        if name == 'record-start':
+        if name in ('authorize-dispatch', 'record-start'):
             p.add_argument('--actor', required=True)
+            p.add_argument('--material-review', type=Path)
+            p.add_argument('--material-review-sha256')
+            p.add_argument('--material-reviewer')
         if name == 'collect':
             p.add_argument('--status', choices=('produced', 'infra_error', 'blocked'))
         if name == 'grade':
@@ -458,9 +573,16 @@ def main():
     try:
         if args.command == 'prepare':
             result = prepare_run(args.repo, args.revision, args.out, args.tasks, args.rubric, args.fixture_root,
-                                 read(args.adapter) if args.adapter else None)
+                                 read(args.adapter) if args.adapter else None,
+                                 require_material_review=args.require_material_review)
+        elif args.command == 'authorize-dispatch':
+            result = authorize_dispatch(args.run, args.case, args.actor, material_review={
+                'path': str(args.material_review) if args.material_review else None,
+                'sha256': args.material_review_sha256, 'reviewer_actor': args.material_reviewer})
         elif args.command == 'record-start':
-            result = str(record_start(args.run, args.case, args.actor, args.receipt))
+            result = str(record_start(args.run, args.case, args.actor, args.receipt, material_review={
+                'path': str(args.material_review) if args.material_review else None,
+                'sha256': args.material_review_sha256, 'reviewer_actor': args.material_reviewer}))
         elif args.command == 'collect':
             result = collect(args.run, args.case, args.attempt, args.receipt, args.status)
         elif args.command == 'grade':

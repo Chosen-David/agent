@@ -75,6 +75,8 @@ def prepare(task_file, run_id, mode, authorization_reference):
         'tasks': [{'task_id': item['id'], 'task_refs': [item['id']], 'owner': 'main-ai',
                    'action': 'configure_host_action', 'depends_on': [], 'risk': 'low',
                    'estimated_seconds': 120, 'max_attempts': 3, 'inputs': {'goal': item['title']},
+                   'wait_policy': {'max_polls': 120, 'max_seconds': 3600,
+                                   'diagnose_after_seconds': 300},
                    'outputs': [], 'done_when': {'configure_acceptance': True},
                    'report_path': f'.agent-runs/{hashlib.sha256(run_id.encode()).hexdigest()[:16]}/results/{item["id"]}.json'}
                   for item in items],
@@ -197,6 +199,7 @@ def review(snapshot, root):
                 continue
             node = state['tasks'][task['task_id']]
             entry = {'task_id': task['task_id'], 'status': node['status'],
+                     'task_refs': task['task_refs'],
                      'owner': task['owner'], 'action': task['action'],
                      'depends_on': task.get('depends_on', []),
                      'reason': node.get('reason'), 'evidence': node['evidence'], 'result': None,
@@ -205,6 +208,20 @@ def review(snapshot, root):
                                    'blocked': 'main AI resolves the recorded blocker',
                                    'failed': 'main AI diagnoses and versions authorized recovery',
                                    'cancelled': 'respect cancellation', 'done': 'verified result available'}[node['status']]}
+            entry['execution'] = {
+                'attempts': node.get('attempts'), 'max_attempts': task['max_attempts'],
+                'dispatches': node.get('dispatches'),
+                'pending_polls': node.get('pending_polls', 0 if task.get('wait_policy') else None),
+                'pending_since': node.get('pending_since'), 'last_pending_at': node.get('last_pending_at'),
+                'next_at': node.get('next_at'), 'wait_policy': task.get('wait_policy'),
+                'diagnosis_required': (node.get('diagnosis_required', False)
+                                       and node['status'] not in ('done', 'cancelled')
+                                       and state['status'] != 'cancelled'),
+                'diagnosis_scope': 'Elapsed/poll observation only; cause and optimization benefit unknown.'}
+            if (entry['execution']['diagnosis_required']
+                    and (node['status'] in ('todo', 'doing') or node.get('reason_kind') == 'wait_budget')):
+                entry['next_step'] = ('main AI inspects owned job progress, external waits and resource evidence; '
+                                      'validate any authorized acceleration against the same inputs and acceptance')
             if node['status'] == 'done':
                 try:
                     value, proof = result_report(root, task)

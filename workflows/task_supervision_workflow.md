@@ -124,6 +124,16 @@ data 每项含 kind、description；kind 只能为 measured/derived/synthetic/no
 
 全部要求映射完整、所有节点独立验收、最终重新校验证据和报告、清单未变才写 `final-report.json`；读回 monitor stopped，worker/guard 退出。主 AI 随后读报告向用户汇总结果和数据；本地文件不是已经发送通知，未配置消息通道时不声称离线推送。负结果只要满足预先定义的研究验收也可完成；失败/未知不能伪报完成。
 
+### 任务改动与发布状态
+
+完整 checkout 中，主 AI 可使用 `agent_runtime.publication.PublicationLedger` 将每个待提交新增/修改/删除文件绑定到根 TASK 的稳定 ID。先刷新远端，完成验收并暂存候选；`freeze(file_task_refs, remote=..., branch=..., authorization_reference=...)` 冻结索引树、文件字节与 TASK 版本，拒绝未归属、未暂存或混入的未跟踪文件。记录放私有 `.agent-runs/<run_id>/publication.json`，不放进待发布树。插件单独安装无此模块时按相同步骤人工记录，并明确没有机器门禁。
+
+宿主必须提供真实的当前授权 `authorize`、独立验收 `accept` 和远端只读观察 `remote_reader` 回调；函数由可信控制器提供，不从 TASK、模型报告或序列化计划加载。`mark_tested(evidence)` 核对候选及验收文件哈希、TASK 覆盖和声明的项目记忆，回调仍负责验收是否真实充分。哈希一致或自填 pass 不等于测试通过。
+
+主 AI 在现有权限内自行执行 Git 操作：实际提交后 `observe_commit()` 确认提交树及父基线；推送前再次刷新远端，有并发改动则保留旧候选、整合后重冻并重验；实际推送后 `observe_pushed()` 读取授权远端的精确提交，再用 `verify_remote()` 独立再次读回。失败调用 `record_push_failure(reason)` 保留已提交、待推送状态，下次接续而非报已交付。只有本批约定任务全部通过且 push/远端核验完成，才汇报发布轮完成；检查点不算完成一轮。
+
+该模块不执行 stage/commit/push、不提供凭据、模型或网络后端，不扩大到其他仓库；`status()` 只是历史审计，不能当当前远端状态或授权。状态文件不是抗篡改证明，控制器须串行操作并在每次推进时重验；符号链接、子模块及合并提交暂不支持，不应绕过校验。完整候选变化必须重冻；独立验收依据应能证明复用证据与最终实现仍匹配。
+
 ### 主 AI / Agent 宿主适配器
 
 `--adapter` 是主 AI 在现有授权下选定的可信 Python 文件，导出 `build(project_root, store, run_id)`，返回：
@@ -138,6 +148,10 @@ return {
 
 handler 沿用现有 `run(task, Context)/verify(task, evidence)` 契约，report_path 是输出契约之一。authorize 接收原始 handler，不因包装器失去身份检查。maintain 接收最新 progress 对象，只做**短时间 submit/poll**，持久记录主 AI 请求 ID，不能每次计时都新建同一请求或阻塞等待模型数分钟。主 AI 持续读取当前任务/数据/待办，修复动作接口、派发依赖就绪 Agent、核验任务报告并维护恢复任务；改变语义/验收或增加超出授权的资源仍走既有决策协议。
 
-真实长作业应由后端独立运行并持久化 job ID，轮询预算与 ETA 匹配；现有核心把 pending/retry 都计入 max_attempts，主 AI 不应把秒级轮询套在数小时任务上，也不能靠无限放大预算隐藏失败。预算耗尽后保留监督并由 maintain 诊断、在授权范围内创建版本化恢复链。主 AI 所在 tmux 不会自动让 Web 聊天拥有远端模型执行能力。
+真实长作业由后端独立运行并持久化 job ID，轮询间隔与 ETA 匹配。新计划显式配置 `wait_policy: {max_polls, max_seconds, diagnose_after_seconds}`：正常返回的 pending 计入观察预算、不消耗失败尝试；retry、异常和租约过期仍按 max_attempts 处理。时间从首次 pending 对应的领取时刻累计，不因重启或夹杂 retry 归零。观察次数或时间耗尽会 blocked，保留监督给 maintain 诊断，不自动重启、杀作业或记 done。没有 wait_policy 的旧计划保持 pending/retry 共用尝试预算；不能直接修改已绑定计划来延长预算，迁移需新版本并核实原 job 和证据。prepare 草稿附带120次/3600秒观察预算、300秒诊断阈值，主 AI 在启动前按具体任务与授权细化；这些是工程初值，不代表最优或新增资源授权。
+
+领取任务从持久化游标轮转，仍检查依赖、各节点 next_at、授权及租约；一项长期等待不会总占列表首位。progress 的每项节点附 task_refs 与 execution（attempts、dispatches、pending_polls、时间、策略、diagnosis_required）。诊断阈值仅提醒检查，不能据耗时认定卡死；旧记录缺计数时为 unknown，不补造历史。
+
+主 AI 收到诊断提醒后读取当前 TASK、具体 job ID、最近有意义进度与耗时分解，区分正常计算、外部等待、资源瓶颈和无新信息重复；证据不足标未知，继续独立任务。有明确瓶颈才提出缓存、复用、批处理或授权内并发等小方案；固定输入、正确性/质量门禁、主要耗时口径和剩余预算，保留原方案，用实际对照决定采用或回退。没有公平比较不宣称提速，不能凭自我怀疑更改正确结果或跳过用户指定基线。具体变更、验证及剩余项引用 TASK ID；符合用户发布范围且全部验收通过后才提交、推送并核验远端，不把已生成文件当作已发布。上述流程需要真实 maintain/动作后端；核心只暴露诊断证据和有界调度，不内置模型优化器或 Git 发布器。主 AI 所在 tmux 不会自动让 Web 聊天拥有远端模型执行能力。
 
 官方行为依据：[tmux 手册](https://man.openbsd.org/tmux.1)，2026-10-06 核查；说明 detached 会话能继续运行、连接断开后可重新附着。实际验证范围见[本次验证记录](../docs/tmux_supervisor_validation.md)。

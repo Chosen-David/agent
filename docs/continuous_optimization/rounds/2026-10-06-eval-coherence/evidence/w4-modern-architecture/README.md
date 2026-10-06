@@ -1,0 +1,13 @@
+# T26 — contemporary architecture task evaluation
+
+This targeted extension follows the user's request to challenge the visualization role with contemporary CCF-A papers, rather than treating classic Transformer/ResNet/U-Net redraws as sufficient. The selected 2026 cases are AutoGaze (CVPR), DOUBT (ICML) and DiTFuse (TPAMI issue48(4), using its explicitly identified author manuscript). This is a finite sample, not exhaustive venue coverage or a claim to use the absolutely newest paper in every field.
+
+The existing `agent_eval_pipeline.py` freezes candidate `25fc74b57a9c426cfac82fda2eaf727979adb137`, its Skill/dependencies, per-case inputs and36predeclared criteria. Root independently reviewed material-to-criterion correspondence and original critical figures/equations before dispatch. Two workers can see their source reference; DOUBT's fresh worker receives only grounded method text and cannot inspect the reference figure or grading material. Graders subsequently inspect originals, actual rendered outputs, immutable hashes and fresh rebuilds.
+
+The current Skill is tested unchanged. These are actual host-model diagram and writing tasks, not dry-run labels. No published neural-model accuracy, cost, latency or speedup is reproduced; no fair old/new Skill quality A/B is claimed. Model identifier/tokens/fees unavailable from the host are unknown. Actual local tool requests/builds and elapsed subprocess time are recorded, with the stated boundary that receipts are controller-observed records rather than cryptographic platform attestations.
+
+All initial failures and submitted attempts remain available in the local immutable run. DiTFuse's initial independent review rejected its missing explicit edge-style legend; a separately dispatched second attempt repairs it without relaxing the criterion. Final results and the dependent figure-to-writer handoff appear in the adjacent reports after independent acceptance.
+
+## Public evidence boundary
+
+Original paper PDFs, rendered paper pages and extracted original text are excluded. A few first-attempt DiTFuse output log copies contain source text: the public export explicitly omits those copies and preserves their original paths, SHA256, sizes and reasons in `redaction-manifest.json`. Original collection hashes are not rewritten. The complete local protected run is intact; exact public replay of the original trace would require those omitted logs. Retained generated figures, editable sources and relevant build evidence are checked byte-for-byte and rebuilt independently. This is an evidence-retention limitation, not an invented clean attempt or a claim that missing logs passed.

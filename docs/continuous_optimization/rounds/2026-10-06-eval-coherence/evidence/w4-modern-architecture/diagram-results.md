@@ -1,0 +1,21 @@
+# T26 contemporary architecture results
+
+Three actual fresh host-model producers exercised the unchanged research-diagrams Skill on2026papers. The initial result was2/3accepted; after an independently requested DiTFuse legend repair, the final result is3/3. Final scientific checks are24/24 and visual/delivery checks12/12. No first-pass failure is erased. This establishes finite task acceptance, not improved underlying model ability, broad CCF-A coverage or a fair old/new Skill A/B result.
+
+| Case and original | Version/date boundary | Scientific | Visual/delivery | Actual final artifacts |
+|---|---|---:|---:|---|
+| [AutoGaze — Attend Before Attention](https://openaccess.thecvf.com/content/CVPR2026/html/Shi_Attend_Before_Attention_Efficient_and_Scalable_Video_Understanding_via_Autoregressive_CVPR_2026_paper.html) | CVPR2026, June2026, CVF accepted-paper pp.17022–17034; selected source distinguishes author-v1 supplemental evidence |8/8|4/4 first attempt|[PDF](figures/gazing2026/figure.pdf), [PNG](figures/gazing2026/figure.png)|
+| [DOUBT](https://proceedings.mlr.press/v306/chen26dl.html) | ICML2026, PMLR306 pp.16418–16441, official24-page PDF |8/8|4/4 first attempt|[PDF](figures/doubt2026/figure.pdf), [PNG](figures/doubt2026/figure.png)|
+| [DiTFuse — Towards Unified Semantic and Controllable Image Fusion](https://ieeexplore.ieee.org/document/11297852/) | TPAMI48(4), April2026, pp.3970–3987; selected [arXiv2512.07170v1](https://arxiv.org/abs/2512.07170v1) author manuscript, DOI10.1109/TPAMI.2025.3642842, not IEEE typeset version |8/8 both attempts|3/4→4/4 after repair|[PDF](figures/ditfuse2026/figure.pdf), [PNG](figures/ditfuse2026/figure.png)|
+
+DOUBT's original paper/architecture/code stayed hidden from its producer: it received grounded method facts only. A fresh independent grader subsequently read the original figure, algorithm and equations and checked per-response normalization, separate-set resultant lengths, scalar averaging, threshold polarity and the offline reference-answer boundary. AutoGaze and DiTFuse were source-visible redraw tasks. These difficulty conditions must not be pooled into an undifferentiated claimed success benchmark.
+
+The first DiTFuse output lacked an explicit redundant edge-style legend. The independent grader failed the fixed visual criterion despite correct scientific topology. A separately dispatched second attempt added solid-data, dashed-training-update and repeated-inference legend entries; all scientific nodes/edges/invariants and attention-mask semantics remained unchanged. The grader rechecked all twelve criteria, rebuilt independently and viewed final color, grayscale and both embedded pages. First attempt and initial layout failures remain recorded.
+
+DiTFuse's selected paper says LoRA over all linear layers with rank64/scaling0.5; the inspected pinned training code targets qkv_proj/o_proj and uses alpha=rank. The figure explicitly follows the paper architecture and discloses this mismatch. It does not imply exact code equivalence or universal ground-truth-free training.
+
+Every final figure is180mm wide with measured minimum text8pt or greater; generated PDFs contain editable vector content and no pasted source figure raster. Makers and the independent grader actually opened all final color/grayscale/page renders. Rebuilds from copied source succeeded for all final cases and preserved page geometry/text; byte-identical PDF reproduction is not asserted. No original neural model, training, published accuracy or speedup was reproduced.
+
+Frozen pipeline candidate: `25fc74b57a9c426cfac82fda2eaf727979adb137`. Frozen manifest SHA256: `df42850270bdc6c0ae60670389479b066f643d908eb6dfb0110decb8d275ea4d`. Exact outputs, source versions, actual command receipts, grader identities and fixed checks are retained in the evidence archive. Public source-text log omissions are explicit; see README and archive redaction manifest. The full local protected run is intact, while exact replay of omitted original log bytes is outside the public export.
+
+The accepted-vector-figure→research-write→independent-reader handoff is a separate actual task with a six-check rubric; its result and complete manuscript are recorded in the adjacent final handoff report after acceptance.

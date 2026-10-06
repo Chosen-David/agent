@@ -1,0 +1,385 @@
+{
+  "schema_version": 1,
+  "batch_id": "2026-10-06-eval-coherence",
+  "reader": "writing_eval_papers",
+  "requirement_ids": [
+    "T20",
+    "T21",
+    "T24",
+    "T25"
+  ],
+  "status": "four_original_fulltext_research_readings_complete_with_explicit_scope_limits",
+  "count_new_papers": 4,
+  "global_ledger_modified_by_reader": false,
+  "private_manuscripts_used": false,
+  "upstream_runtime_installed": false,
+  "papers": [
+    {
+      "id": "arxiv:2604.01128",
+      "dedup_key": "2604.01128",
+      "title": "Paper Reconstruction Evaluation: Evaluating Presentation and Hallucination in AI-written Papers",
+      "authors": [
+        "Atsuyuki Miyai",
+        "Mashiro Toyooka",
+        "Zaiying Zhao",
+        "Kenta Watanabe",
+        "Toshihiko Yamasaki",
+        "Kiyoharu Aizawa"
+      ],
+      "version": "v1",
+      "version_date": "2026-04-01",
+      "full_text": "https://arxiv.org/html/2604.01128v1",
+      "pdf": "https://arxiv.org/pdf/2604.01128v1",
+      "read_scope": [
+        "Main sections1–6, physical pp1–10",
+        "AppendicesA–B physical pp14–25, including both overview examples and all rubric/writing/evaluation prompts",
+        "Selected annotated AppendixC examples physical pp37–39",
+        "Physical p9 visually inspected"
+      ],
+      "not_read": [
+        "Full bibliography",
+        "All generated papers in AppendixC pp26–43",
+        "Not all pages visually inspected",
+        "No source code execution or independent reproduction"
+      ],
+      "evidence_locations": [
+        "§3.1 pp4–5 curated assets and fixed input",
+        "§3.2.2 p5 same-section figure score shortcut",
+        "§3.2.3–3.2.5 pp5–6 claim categories and excluded Conclusion",
+        "Tables1–3 pp7–8 presentation, contradictions and citation keys",
+        "§5.3 p9 precision-only hallucination validation",
+        "§5.4/Table4 p9 input-length ablation on12 papers",
+        "AppendixB.4–B.5 pp22–25 writer and judge prompts"
+      ],
+      "reported_results": [
+        {
+          "result": "Sonnet4.6 presentation3.86, major contradictions10.4/paper; GPT5.4 3.59 and3.0",
+          "conditions": "51 curated CS papers, original assets and section template; five agent configurations; Tables1–2"
+        },
+        {
+          "result": "Sonnet4.6 short→long overview presentation3.83→4.17, major contradictions9.8→2.3",
+          "conditions": "12-paper subset; overview averages463→1492 words; Table4"
+        },
+        {
+          "result": "96% precision on97 flagged major contradictory claims",
+          "conditions": "Manual author review; recall not measured; §5.3"
+        }
+      ],
+      "cost": "No quantitative token/dollar/runtime budget reported in main or evaluation prompts; second pass batches flagged claims into one agent invocation.",
+      "nontransferable_conclusions": [
+        "Not proof of autonomous scientific novelty, source discovery, or new diagram generation",
+        "Precision cannot certify complete hallucination detection",
+        "Same-section figure inclusion does not establish visual/semantic correctness",
+        "Model/harness ranking is conditional on supplied evidence and templates"
+      ],
+      "candidate_ids": [
+        "WE-PR-01"
+      ],
+      "candidates": [
+        {
+          "id": "WE-PR-01",
+          "decision": "test",
+          "files": [
+            "workflows/paper_delivery_contract.md",
+            "workflows/figure_shared.md",
+            "evals/rubric.json"
+          ],
+          "mechanism": "Separate research narrative/coverage from evidence fidelity; semantic figure brief in handoff; include Abstract and Conclusion",
+          "minimal_experiment": "Three topic-matched old/new full drafts, independent read-only scoring plus short-correct/polished-false controls",
+          "cost": "Estimated six writing runs plus six independent reads; measure tokens and time",
+          "reject": "Same-section figure auto-pass; precision-as-completeness"
+        }
+      ],
+      "source_refs": [
+        "turn93view0",
+        "turn94view0"
+      ],
+      "read_at": "2026-10-06",
+      "batch_id": "2026-10-06-eval-coherence",
+      "notes": "rounds/2026-10-06-eval-coherence/research/writing-eval-papers.md",
+      "research_complete": true,
+      "effects_reproduced": false,
+      "migration_status": "research_completed; transfer_candidates_test_only; no local model or program gain established",
+      "pdf_sha256": "77c9e8eb213920f757951eb6f81360c6ce041fb2b71247ae8d54d1083c199ee6",
+      "pdf_pages": 43
+    },
+    {
+      "id": "arxiv:2404.17605",
+      "dedup_key": "2404.17605",
+      "title": "Autonomous LLM-driven research from data to human-verifiable research papers",
+      "authors": [
+        "Tal Ifargan",
+        "Lukas Hafner",
+        "Maor Kern",
+        "Ori Alcalay",
+        "Roy Kishony"
+      ],
+      "version": "v1",
+      "version_date": "2024-04-24",
+      "full_text": "https://arxiv.org/pdf/2404.17605v1",
+      "pdf": "https://arxiv.org/pdf/2404.17605v1",
+      "read_scope": [
+        "All main text and Methods physical pp1–16",
+        "Table1/Figures1–4 physical pp22–27",
+        "Supplementary FiguresS1–S8 and captions/examples physical pp28–38",
+        "Physical p27 Figure4 visually inspected"
+      ],
+      "not_read": [
+        "Bibliography not systematically read",
+        "External supplementary TablesS1–S9, all per-run manuscripts and code not fully retrieved/read",
+        "Not all PDF pages visually inspected",
+        "No model or code reproduction"
+      ],
+      "evidence_locations": [
+        "Implementation pp3–4 typed products and step-specific context",
+        "Open-goal results pp5–6 generic phrasing, inflated novelty and major errors",
+        "Fixed-goal challenge1/2 pp6–8 negative evidence and interpretation failures",
+        "Methods pp10–11 iterative metadata tuning, restarts and50 partially terminated runs",
+        "Methods information tracing pp12–13 links/formulas and later-added feature",
+        "Figure4 p27 task breadth/copilot",
+        "FigureS8 p38 goal-explicitness and breadth comparison"
+      ],
+      "reported_results": [
+        {
+          "result": "8/10 open-goal papers correct with minor wording imperfections;2 major failures",
+          "conditions": "Two datasets, five runs each; one fifth run restarted3 times after goal validation; pp5–6/10"
+        },
+        {
+          "result": "All10 fixed-goal treatment-policy analyses correct,8/10 conclusions correct",
+          "conditions": "Designed to test positive treatment-choice and null outcome reporting; two interpretation errors; p7"
+        },
+        {
+          "result": "90% error on broad model-comparison goal versus10–20% on simpler goals;3 copilot successes",
+          "conditions": "10 runs per breadth condition;3 copilot runs with2–3 short comments; p7/Fig4"
+        }
+      ],
+      "cost": "About one hour per open-goal cycle reported p5; no total dollar/token count.50 additional runs stopped after Title/Abstract to save API calls.",
+      "nontransferable_conclusions": [
+        "80–90% simple-task reliability is not a general publication-quality rate",
+        "Data-chaining feature was added after earlier manuscripts; no causal ablation of its benefit",
+        "Human copilot success n=3 is not a universal remedy",
+        "Correct numbers/provenance do not imply valid interpretation or novelty"
+      ],
+      "candidate_ids": [
+        "WE-DP-01"
+      ],
+      "candidates": [
+        {
+          "id": "WE-DP-01",
+          "decision": "test",
+          "files": [
+            "workflows/paper_delivery_contract.md",
+            "workflows/research_workflow.md"
+          ],
+          "mechanism": "Private numeric provenance plus explicit positive/null/adverse-result interpretation and allowed scope",
+          "minimal_experiment": "In same three-topic draft comparison include null effect, metric trade-off and scoped microbenchmark; check captions/Results/Abstract/Conclusion",
+          "cost": "Estimated one result-interpretation pass per draft; no full17-stage platform migration",
+          "reject": "Links-as-correctness; aborting all drafting because one number is unknown"
+        }
+      ],
+      "source_refs": [
+        "turn93view1"
+      ],
+      "read_at": "2026-10-06",
+      "batch_id": "2026-10-06-eval-coherence",
+      "notes": "rounds/2026-10-06-eval-coherence/research/writing-eval-papers.md",
+      "research_complete": true,
+      "effects_reproduced": false,
+      "migration_status": "research_completed; transfer_candidates_test_only; no local model or program gain established",
+      "pdf_sha256": "731aad4a0a12b6c8a38c4cf31243ca538a08f9e9701f25e17614e0658a79dbff",
+      "pdf_pages": 38
+    },
+    {
+      "id": "arxiv:2504.01848",
+      "dedup_key": "2504.01848",
+      "title": "PaperBench: Evaluating AI’s Ability to Replicate AI Research",
+      "authors": [
+        "Giulio Starace",
+        "Oliver Jaffe",
+        "Dane Sherburn",
+        "James Aung",
+        "Chan Jun Shern",
+        "Leon Maksin",
+        "Rachel Dias",
+        "Evan Mays",
+        "Benjamin Kinsella",
+        "Wyatt Thompson",
+        "Johannes Heidecke",
+        "Amelia Glaese",
+        "Tejal Patwardhan"
+      ],
+      "authors_note": "Chan Jun Shern is PDF v1 spelling/order; arXiv metadata also renders Jun Shern Chan.",
+      "version": "v1",
+      "version_date": "2025-04-02",
+      "full_text": "https://arxiv.org/html/2504.01848v1",
+      "pdf": "https://arxiv.org/pdf/2504.01848v1",
+      "read_scope": [
+        "Main sections1–8 physical pp1–10",
+        "AppendicesA–I.1 physical pp13–19",
+        "AppendixI Tables10–13 physical pp20–21",
+        "Physical p19 Figure6/Table9 visually inspected"
+      ],
+      "not_read": [
+        "Remaining per-model tables and full prompt panels pp22–30",
+        "Bibliography not systematically read",
+        "All pages visual audit",
+        "No benchmark/model execution"
+      ],
+      "evidence_locations": [
+        "§2.2–2.4 pp3–4 fresh execution and evidence types/Table1",
+        "§3 pp5–6 rubric creation and addendum",
+        "§4/Table3 p6 JudgeEval calibration",
+        "§5/Tables4–5 pp7–8 model-dependent intervention",
+        "§7 pp9–10 historical costs and limitations",
+        "AppendixD pp14–15 context/file filtering",
+        "AppendixG/Table8 p18 judge accuracy by requirement type",
+        "AppendixH/Fig6 pp18–19 pruning negative evidence",
+        "Table9 p19 code versus executed/result evidence and seed qualification"
+      ],
+      "reported_results": [
+        {
+          "result": "o3-mini SimpleJudge F1.83 overall, .72 CodeDevelopment, .94 ResultMatch",
+          "conditions": "JudgeEval expert-labelled partial replications of five papers; Tables3/8"
+        },
+        {
+          "result": "IterativeAgent o1 13.2→24.4, Claude3.5 21.0→16.1 average replication score",
+          "conditions": "20 papers, BasicAgent versus prompt/termination-modified IterativeAgent;12h allowance; not isolated single-component ablation"
+        },
+        {
+          "result": "Pruning depth3 reports10× lower grading cost; displayed score.30 vs full.25, human lower",
+          "conditions": "One displayed rice/0 submission,3 judge repeats; preliminary and unsatisfactory cases admitted; AppendixH/Fig6"
+        }
+      ],
+      "cost": "Historical estimates ~$66/paper grading with o3-mini and ~$400/paper for12h o1 IterativeAgent; many tens of expert-hours/rubric; full suite costs not a current-price quote.",
+      "nontransferable_conclusions": [
+        "Partial rubric score is not all-user-requirements fulfillment",
+        "CodeDev r=.48 with full score is not replacement for fresh execution",
+        "More runtime or forced continuation can worsen another model",
+        "One-paper pruning result does not justify general grading compression"
+      ],
+      "source_inconsistencies": [
+        "Table3 o1-mini overall F1.78 versus Table8 .77",
+        "Main describes3 runs/paper, Table9 standard-error note uses2 seeds for o1 IterativeAgent and Gemini BasicAgent"
+      ],
+      "candidate_ids": [
+        "WE-PB-01"
+      ],
+      "candidates": [
+        {
+          "id": "WE-PB-01",
+          "decision": "test_with_existing_CO-020",
+          "files": [
+            "scripts/agent_eval_pipeline.py",
+            "evals/rubric.json"
+          ],
+          "mechanism": "Calibrate actual grading path on independently sourced valid/invalid/equivalent outputs before accepting grade material",
+          "minimal_experiment": "Reuse2 historical fact errors and2 corrections plus equivalent-correct and polished-false controls; same grader/prompt/model; compare false rejection/acceptance",
+          "cost": "Estimated six grading cases per condition plus root reference review; no GPU/install",
+          "reject": "Whole-benchmark adoption, aggregate partial credit as completion, unvalidated pruning"
+        }
+      ],
+      "source_refs": [
+        "turn93view2",
+        "turn94view2"
+      ],
+      "read_at": "2026-10-06",
+      "batch_id": "2026-10-06-eval-coherence",
+      "notes": "rounds/2026-10-06-eval-coherence/research/writing-eval-papers.md",
+      "research_complete": true,
+      "effects_reproduced": false,
+      "migration_status": "research_completed; transfer_candidates_test_only; no local model or program gain established",
+      "pdf_sha256": "4f2f4a48dd27a1790ec322df759f5e319ece547227fc1b7d307fb36c10d31e79",
+      "pdf_pages": 30
+    },
+    {
+      "id": "arxiv:2601.12910",
+      "dedup_key": "2601.12910",
+      "title": "SciCoQA: Quality Assurance for Scientific Paper–Code Alignment",
+      "authors": [
+        "Tim Baumgärtner",
+        "Iryna Gurevych"
+      ],
+      "version": "ACL2026 published proceedings PDF, pages38740–38770",
+      "version_date": "2026-07",
+      "doi": "10.18653/v1/2026.acl-long.1795",
+      "full_text": "https://aclanthology.org/2026.acl-long.1795.pdf",
+      "pdf": "https://aclanthology.org/2026.acl-long.1795.pdf",
+      "read_scope": [
+        "Main sections1–8 physical pp1–10",
+        "AppendicesA–F physical pp15–31 including all extended results, taxonomy/examples and all prompts",
+        "Physical pp9/21 (printed38748/38760) Tables2/8 visually inspected"
+      ],
+      "not_read": [
+        "Bibliography not systematically read",
+        "Entire external dataset/code not inspected or executed",
+        "Not all PDF pages visually inspected"
+      ],
+      "evidence_locations": [
+        "§3 pp4–6 meaningful discrepancy taxonomy and collection",
+        "§4 p6 judge calibration1,039 annotations/143 matches",
+        "§5/Figs4–5 pp7–8 recall and code-only ablation",
+        "§5.2/Table2 pp8–9 pooled defects",
+        "AppendixA.3–A.7 pp15–16 version pinning, omitted figures, truncation and hardware",
+        "AppendixC.3–C.6 pp18–21 long context, synthetic generation bias and pool advantage",
+        "Tables9–11 pp22–23 full recall and ablation",
+        "AppendixF.6–F.7 p31 prediction scope and semantic matching"
+      ],
+      "reported_results": [
+        {
+          "result": "Best real discrepancy recall46.7%; GPT5 synthetic70.0%",
+          "conditions": "Published version92 real +543 synthetic discrepancies,22 evaluated models; Table10; do not mix preprint81+530/45.7%"
+        },
+        {
+          "result": "Removing paper reduces real recall19.2 percentage points averaged over top8 models",
+          "conditions": "Table11 paper+code versus code-only; repository comments may retain paper information"
+        },
+        {
+          "result": "GPT-OSS20B judge F1 87.5%±1.1; alternative Qwen32B70.0% against humans",
+          "conditions": "1,039 labels from top3 embedding-similar predictions on20 defects,5 repeated judge runs; not exhaustive random population"
+        }
+      ],
+      "cost": "Models use1–4 A10080GB or provider APIs; median combined input56,903 tokens. No total dollar or wall-time budget reported.",
+      "nontransferable_conclusions": [
+        "Low recall prohibits autonomous no-errors assurance",
+        "Real defects mostly CS/AI; synthetic non-CS cannot establish real-world recall",
+        "Figures omitted; diagram transfer is a hypothesis",
+        "Judge agreement not equivalent to human accuracy",
+        "Pooled ground truth is incomplete and structurally favors contributors"
+      ],
+      "source_inconsistencies": [
+        "MainTable2 reports GPT5 pooled P88.0/R51.2/F164.7; AppendixTable8 P84.1/R63.6/F172.4 for129 defects. AppendixC.6 allows any available wording; full reconciliation not explicit, so keep table-specific numbers.",
+        "AppendixF.6 excludes missing implementation while main taxonomy includes CodeOmission. Local controls must make intended scope explicit."
+      ],
+      "candidate_ids": [
+        "WE-SQ-01"
+      ],
+      "candidates": [
+        {
+          "id": "WE-SQ-01",
+          "decision": "test",
+          "files": [
+            "workflows/figure_shared.md",
+            "workflows/paper_delivery_contract.md",
+            "evals/rubric.json"
+          ],
+          "mechanism": "Material cross-artifact mismatch/omission controls plus benign semantic-equivalence controls",
+          "minimal_experiment": "Three topic bundles each with clean and two single-defect variants; independent reference annotation; frozen consumer review; report recall and false accusations",
+          "cost": "Estimated nine bounded read-only checks per compared workflow",
+          "reject": "Detector silence as scientific correctness; synthetic success as broad real-world recall"
+        }
+      ],
+      "source_refs": [
+        "turn94search0",
+        "turn94search13"
+      ],
+      "read_at": "2026-10-06",
+      "batch_id": "2026-10-06-eval-coherence",
+      "notes": "rounds/2026-10-06-eval-coherence/research/writing-eval-papers.md",
+      "research_complete": true,
+      "effects_reproduced": false,
+      "migration_status": "research_completed; transfer_candidates_test_only; no local model or program gain established",
+      "pdf_sha256": "d67fcfaf9247fe931a113658c93a8d223aeadc8f3486a3859a9e24c89e01d00e",
+      "pdf_pages": 31
+    }
+  ]
+}

@@ -54,6 +54,15 @@ def validate(plan):
             raise ValueError('bounded estimated_seconds required')
         if task.get('risk') not in ('low', 'medium', 'high'):
             raise ValueError('risk required')
+        if 'wait_policy' in task:
+            wait = task['wait_policy']
+            if (not isinstance(wait, dict)
+                    or set(wait) != {'max_polls', 'max_seconds', 'diagnose_after_seconds'}
+                    or type(wait.get('max_polls')) is not int
+                    or not 1 <= wait['max_polls'] <= 100000
+                    or not number(wait.get('max_seconds'), 1, 604800)
+                    or not number(wait.get('diagnose_after_seconds'), 1, wait['max_seconds'])):
+                raise ValueError('wait_policy requires bounded polls, elapsed time and diagnosis threshold')
     remaining, visited = {t['task_id']: set(t.get('depends_on', [])) for t in tasks}, set()
     while remaining:
         ready = {i for i, deps in remaining.items() if deps <= visited}
@@ -78,6 +87,18 @@ def interval(plan, state, changed=False):
     base = estimate * (0.1 if risky else 0.25)
     backoff = 1 if changed else 2 ** min(state.get('idle_ticks', 0), 10)
     return min(policy['max_seconds'], max(policy['min_seconds'], base * backoff))
+
+
+def wait_limit(task, node, now):
+    """Explicit opt-in observation budget; legacy plans retain attempt semantics."""
+    policy = task.get('wait_policy')
+    if policy is None or 'pending_since' not in node:
+        return None
+    if node.get('pending_polls', 0) >= policy['max_polls']:
+        return 'pending observation budget exhausted; main AI diagnosis required'
+    if now - node['pending_since'] >= policy['max_seconds']:
+        return 'pending elapsed budget exhausted; main AI diagnosis required'
+    return None
 
 
 class Store:
@@ -149,7 +170,7 @@ class Store:
             state['status'] = 'cancelled'
             for node in state['tasks'].values():
                 if node['status'] != 'done':
-                    node.update(status='cancelled', reason=reference, token=None)
+                    node.update(status='cancelled', reason=reference, token=None, diagnosis_required=False)
             self.save(db, run_id, state)
             db.execute("UPDATE monitors SET status='stopped' WHERE chain_id=?", (run_id,))
             self.log(db, run_id, time.time() if now is None else now, 'cancel', reference)
@@ -241,7 +262,7 @@ class Engine:
                     or not all(state['tasks'][d]['status'] == 'done' for d in task.get('depends_on', []))
                     or not handler.verify(task, evidence)):
                 raise ValueError('reconciliation not authorized or not verified')
-            node.update(status='done', token=None, evidence=evidence, reason=reference)
+            node.update(status='done', token=None, evidence=evidence, reason=reference, diagnosis_required=False)
             self._check_done(plan, state)
             self._summary(plan, state)
             self.store.save(db, run_id, state)
@@ -302,12 +323,28 @@ class Engine:
                                     reason='expired lease: external side effect unknown; reconciliation required')
                 if node.get('reason_kind') in ('permission', 'adapter'):
                     node.update(status='todo', reason_kind=None)
+                if (task.get('wait_policy') and 'pending_since' in node
+                        and node['status'] in ('todo', 'doing', 'blocked')
+                        and now - node['pending_since'] >= task['wait_policy']['diagnose_after_seconds']):
+                    # Observation diagnostics must not wait for another action claim.
+                    node['diagnosis_required'] = True
             self._summary(plan, state)
-            for task in plan['tasks']:
+            tasks = plan['tasks']
+            cursor = state.get('claim_cursor', 0) % len(tasks)
+            for offset in range(len(tasks)):
+                index = (cursor + offset) % len(tasks)
+                task = tasks[index]
                 node = state['tasks'][task['task_id']]
-                if node['status'] != 'todo' or node['next_at'] > now:
+                if node['status'] != 'todo':
                     continue
                 if not all(state['tasks'][d]['status'] == 'done' for d in task.get('depends_on', [])):
+                    continue
+                exhausted = wait_limit(task, node, now)
+                if exhausted:
+                    node.update(status='blocked', reason_kind='wait_budget', reason=exhausted,
+                                diagnosis_required=True)
+                    continue
+                if node['next_at'] > now:
                     continue
                 handler = self.handlers.get(task['action'])
                 if handler is None:
@@ -318,7 +355,11 @@ class Engine:
                     continue
                 token = uuid.uuid4().hex
                 node.update(status='doing', attempts=node['attempts'] + 1, token=token,
-                            lease_until=now + self.lease_seconds, reason=None, reason_kind=None)
+                            lease_until=now + self.lease_seconds, reason=None, reason_kind=None,
+                            dispatches=node.get('dispatches', 0) + 1)
+                # Persist fairness across restarts and concurrent claimants.
+                # Readiness, authorization and individual deadlines still gate each claim.
+                state['claim_cursor'] = (index + 1) % len(tasks)
                 key = hashlib.sha256((packed(plan) + '\0' + task['task_id']).encode()).hexdigest()
                 claim = (task, handler, Context(self.store, run_id, task['task_id'], token, key, self.clock))
                 break
@@ -351,11 +392,28 @@ class Engine:
                 if (node.get('token') == context.token and node['status'] == 'doing'
                         and node['lease_until'] > self.clock() and state['status'] != 'cancelled'):
                     status = {'complete': 'done', 'pending': 'todo', 'retry': 'todo'}.get(outcome.status, outcome.status)
+                    reason_kind = 'adapter_result'
+                    if outcome.status == 'pending' and task.get('wait_policy') is not None:
+                        # Only a successfully returned observation refunds this claim.
+                        # Crashes, unknown side effects and retry outcomes still cost attempts.
+                        node['attempts'] -= 1
+                        node['pending_polls'] = node.get('pending_polls', 0) + 1
+                        node.setdefault('pending_since', now)
+                        node['last_pending_at'] = self.clock()
+                        node['diagnosis_required'] = (
+                            self.clock() - node['pending_since'] >= task['wait_policy']['diagnose_after_seconds'])
+                        exhausted = wait_limit(task, node, self.clock())
+                        if exhausted:
+                            status, reason_kind = 'blocked', 'wait_budget'
+                            outcome.reason = exhausted
+                            node['diagnosis_required'] = True
                     if status == 'todo' and node['attempts'] >= task['max_attempts']:
                         status = 'failed'
                         outcome.reason = 'attempt budget exhausted: ' + outcome.reason
                     node.update(status=status, token=None, reason=outcome.reason,
-                                evidence=outcome.evidence or [], reason_kind='adapter_result')
+                                evidence=outcome.evidence or [], reason_kind=reason_kind)
+                    if status == 'done':
+                        node['diagnosis_required'] = False
                     state['idle_ticks'] = state['idle_ticks'] + 1 if status == 'todo' else 0
                     delay = interval(plan, state, status == 'done')
                     node['next_at'] = self.clock() + delay

@@ -105,6 +105,48 @@ class TaskManifestTests(unittest.TestCase):
         self.assertEqual(state['tasks']['T1']['status'], 'blocked')
         self.assertFalse(review(self.store.snapshot('test'), self.root)['all_reportable'])
 
+    def test_progress_exposes_bounded_wait_and_task_identity(self):
+        # No artifact yet: this is a real missing-file observation, not completion.
+        self.engine.tick('test', 'pending')
+        entry = review(self.store.snapshot('test'), self.root)['requirements'][0]['nodes'][0]
+        self.assertEqual(entry['task_refs'], ['T1'])
+        self.assertEqual(entry['execution']['attempts'], 0)
+        self.assertEqual(entry['execution']['pending_polls'], 1)
+        self.assertEqual(entry['execution']['dispatches'], 1)
+        self.assertEqual(entry['execution']['wait_policy']['max_seconds'], 3600)
+        self.assertFalse(entry['execution']['diagnosis_required'])
+        self.assertIsNone(entry['result'])
+
+    def diagnosed_wait(self):
+        clock = [1000.]
+        engine = Engine(self.store, {'verify_artifacts': self.handler},
+                        authorize=lambda *_: True, clock=lambda: clock[0])
+        engine.tick('test', 'wait-start')
+        clock[0] += 3600
+        engine.tick('test', 'wait-limit')
+        node = self.store.snapshot('test')['state']['tasks']['T1']
+        self.assertEqual(node['status'], 'blocked')
+        self.assertTrue(node['diagnosis_required'])
+        return engine
+
+    def test_cancelled_diagnosis_preserves_stop_instruction(self):
+        self.diagnosed_wait()
+        self.store.cancel('test', 'explicit-stop')
+        entry = review(self.store.snapshot('test'), self.root)['requirements'][0]['nodes'][0]
+        self.assertEqual(entry['status'], 'cancelled')
+        self.assertEqual(entry['next_step'], 'respect cancellation')
+        self.assertFalse(entry['execution']['diagnosis_required'])
+
+    def test_reconciled_diagnosis_preserves_verified_completion(self):
+        engine = self.diagnosed_wait()
+        self.proof('T1')
+        evidence = self.handler.run(self.plan['tasks'][0], None).evidence
+        engine.reconcile('test', 'T1', evidence, 'host checked completed artifact')
+        entry = review(self.store.snapshot('test'), self.root)['requirements'][0]['nodes'][0]
+        self.assertEqual(entry['status'], 'done')
+        self.assertEqual(entry['next_step'], 'verified result available')
+        self.assertFalse(entry['execution']['diagnosis_required'])
+
     def test_mutated_report_invalidates_done_and_dependencies(self):
         self.proof('T1')
         self.engine.tick('test', 'first')

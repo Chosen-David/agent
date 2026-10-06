@@ -135,6 +135,60 @@ semantic truth of its prose. An independent reviewer or executable domain oracle
 must establish that truth. Empty grading, same worker/grader ID, absent outputs,
 changed inputs/source/rubric, and outputs modified after collection cannot pass.
 
+## Material review before dispatch
+
+Release evaluations for continuous optimization enable `prepare
+--require-material-review` (Python: `prepare_run(...,
+require_material_review=True)`). Preparation freezes materials but does not
+authorize a worker. An independent reviewer must compare **each exact criterion**
+with its task and inputs. Numerical oracles compute task-specific facts;
+the reviewer checks whether the criterion actually corresponds to those facts.
+Checking a CSV while accepting arbitrary rubric text does not establish this.
+
+The controller keeps this review and supporting evidence outside the run's worker
+materials. The review contains `schema_version: 1`, `reviewer_actor`,
+`material_hashes` from `material_bindings(run, manifest)`, and `cases` mapping each
+case to all its criteria. Each entry includes exact `criterion`, `kind` (`factual`
+or `behavioral`), `status` (`supported`, `not_supported`, or `unreviewed`),
+`verification` (`executable_oracle`, `source_review`, or `task_requirement`), a
+concrete correspondence `reason`, and `evidence` entries with `path`, `sha256`
+and `location`. A factual claim cannot be supported only as a task requirement.
+Missing, unsupported or unreviewed criteria block authorization.
+
+Before invoking the host worker facility, call:
+
+```python
+trust = {"path": "controller-evidence/material-review.json",
+         "sha256": independently_frozen_review_sha256,
+         "reviewer_actor": actual_reviewer_identity}
+authorize_dispatch(run, case_id, planned_worker_identity, material_review=trust)
+# Only now invoke the host; obtain its actual start receipt and identity.
+record_start(run, case_id, actual_worker_identity, receipt_path,
+             material_review=trust)
+```
+
+The CLI equivalents accept `--material-review`, `--material-review-sha256` and
+`--material-reviewer` on `authorize-dispatch` and `record-start`. The controller
+supplies these trusted values separately from the worker; merely accepting an
+actor or hash written by the worker does not establish independence. All criteria,
+materials and supporting evidence are rechecked at start and subsequent record
+validation. The reviewer cannot also be the executor.
+
+For portable archives, relative review/evidence paths resolve under `run.parent`;
+use a sibling `controller-evidence/` directory and archive it with the run.
+Parent traversal, symlink ancestors and paths inside the run are rejected.
+Explicit absolute paths remain supported but require the same paths on replay.
+Rebinding changed inputs or rubric requires a new review; retain historical runs.
+
+This gate verifies an independently obtained review's bindings and completeness,
+not arbitrary prose truth or operating-system identity. A mistaken trusted
+reviewer can still authorize wrong materials. The host must enforce the
+pre-spawn order and preserve its trusted manifest/review identity; this recorder
+cannot prevent arbitrary external agent calls or malicious same-user writes.
+Legacy unprotected runs remain readable and are not retroactively described as
+having passed this gate. See `tests/test_eval_material_gate.py` for historical
+contradiction, heldout arithmetic, stale-binding and relocation controls.
+
 ## Recovery, reporting, and release
 
 An unfinished attempt blocks duplicate scheduling. After collection, the host may

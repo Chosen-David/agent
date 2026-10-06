@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "id": "arxiv:2507.02825",
+  "dedup_key": "2507.02825",
+  "title": "Establishing Best Practices for Building Rigorous Agentic Benchmarks",
+  "authors": ["Yuxuan Zhu", "Tengjun Jin", "Yada Pruksachatkun", "Andy Zhang", "Shu Liu", "Sasha Cui", "Sayash Kapoor", "Shayne Longpre", "Kevin Meng", "Rebecca Weiss", "Fazl Barez", "Rahul Gupta", "Jwala Dhamala", "Jacob Merizian", "Mario Giulianelli", "Harry Coppock", "Cozmin Ududec", "Jasjeet Sekhon", "Jacob Steinhardt", "Antony Kellermann", "Sarah Schwettmann", "Matei Zaharia", "Ion Stoica", "Percy Liang", "Daniel Kang"],
+  "version": "v5",
+  "version_date": "2025-08-07",
+  "first_submitted": "2025-07-03",
+  "read_at": "2026-10-06",
+  "metadata_url": "https://arxiv.org/abs/2507.02825v5",
+  "full_text": "https://arxiv.org/html/2507.02825v5",
+  "pdf": "https://arxiv.org/pdf/2507.02825v5",
+  "pdf_sha256": "6bee07172c55c1146fdc8a14e0a4839854f7b4be36616729fda3ee6d519a698b",
+  "physical_pages": 39,
+  "printed_page_mapping": "physical page equals printed page",
+  "dedup_check": {"file": "docs/continuous_optimization/papers.json", "result": "not_previously_registered"},
+  "read_status": "research_complete",
+  "read_scope": ["Main sections 1-6, physical pp1-10", "Appendices A-F, physical pp16-33, including all ten assessment reports, E.1-E.6 and F reporting example", "Appendix G author checklist pp33-39", "Visual inspection of physical pp5,6,8,9,24,31: Figures2,3,5,6, Table11, Equation1"],
+  "not_read": ["References pp10-15 only consulted for source locations, not full-text reading of cited works", "Not a page-by-page visual audit of all 39 pages", "Upstream code not executed or independently reproduced"],
+  "evidence_positions": [
+    {"pages": [3,4], "anchor": "Section3, Figure1", "claim": "Task validity and outcome validity are separate links"},
+    {"pages": [5], "anchor": "Section4.1, Figure2 T.5,T.7-T.10", "claim": "Ground truth isolation, correctness, solvability and oracle solver"},
+    {"pages": [5,6], "anchor": "Section4.2, Figure3 O.c.1,O.d.1", "claim": "Validate judge and tests rather than assume grading correctness"},
+    {"pages": [7], "anchor": "Figure4 R.13", "claim": "Report trivial-agent baselines"},
+    {"pages": [9,10], "anchor": "Section5.3, Figure6", "claim": "CVE-Bench scoring/environment corrections; not factorial checklist ablation"},
+    {"pages": [27,28], "anchor": "E.2,E.4", "claim": "Do-nothing/spamming and evaluator-file modification counterexamples"},
+    {"pages": [26,29,30,36], "anchor": "E preamble, E.6, G.7-8", "claim": "Hardware, generated tests/manual verification, deterministic-number and resource disclosures"},
+    {"pages": [16,31], "anchor": "A, F Equation1", "claim": "Coverage/version limitations and assumption-dependent reporting example"}
+  ],
+  "mechanism": "Validate raw task facts, task solvability, and actual grading behavior before freezing; separately test positive references and trivial/incorrect negative controls; isolate tested work from acceptance control.",
+  "conditions": ["Reference answers must be independently justified from original inputs", "Preflight must exercise the actual final grading path", "Correct alternative outputs must remain acceptable", "Changing fixtures, rubric, grader or oracle invalidates prior preflight"],
+  "cannot_transfer": ["Published benchmark rates are not this repository's error rates or improvement", "A different grader actor string does not establish semantic or security independence", "One reference solution is not all acceptable outcomes", "Appendix F noise correction cannot be applied without its assumptions", "Checklist average is not an empirically validated repository quality score"],
+  "experiments": {
+    "tau_bench": {"location": "E.2 pp27-28", "do_nothing_airline_retail_pct": [38,6], "spamming_airline_retail_pct": [40,9.6], "scope": "specific audited benchmark partitions, not repo result"},
+    "cve_bench": {"location": "Section5.3 pp9-10 Figure6", "reported_sql_overestimation_pct": 32.5, "reported_outbound_success_drop_pct": 10, "caution": "separate corrections; do not add or recast as universal relative improvement"},
+    "kernelbench": {"location": "E.6 pp29-30", "procedure": "three sampled generated kernels per level-1 task, o3-mini proposed tests, manual verification, apply to previous generations", "reported_overestimation_pct": 31},
+    "ablation": "No complete per-item factorial ablation of ABC; CVE-Bench is before/after case study",
+    "cost": "Intel E5-2630,128GB RAM; optional one H100 80GB; o3-mini and human verification used. Total tokens,dollars,wall time not provided."
+  },
+  "source_cautions": [
+    {"location": "p8 Section5.2 item3 vs p24 Table11 O.c.1", "issue": "Main text says WebArena judge not validated; table awards1 and cites quantitative validation", "status": "both original pages visually verified; unresolved"},
+    {"location": "p24 Table11 T.10/R.1", "issue": "Original PDF row overflows; no reconstruction of truncated number"},
+    {"location": "Section3/AppendixA vs AppendixB/Table3", "issue": "17 vs25 collection-stage counts not fully reconciled"},
+    {"location": "AppendixF pp30-33", "issue": "Modified reporting example, not all first-person claims are new measured results; Equation1 needs noise assumptions"}
+  ],
+  "repo_comparison": {
+    "revision": "e8ee3dca5dc8cd076fc031dd4510dabde214e046",
+    "file": "scripts/agent_eval_pipeline.py",
+    "observed": ["prepare_run: validates shapes and freezes hashes, no fact/oracle preflight", "verify_run: detects mutation, not original contradiction", "validate_grade: exact frozen criteria, distinct actor string, evidence references; no semantic oracle execution", "report: ungradable has null semantic verdict; material correction must not become model recovery"],
+    "archive": "docs/continuous_optimization/rounds/2026-10-06-scaling/evidence/model-eval/model-eval-evidence.tar.gz",
+    "archive_members_read": ["writer-run/rubric.json", "writer-run/cases/chain-writer/inputs/aggregate.csv", "writer-run/cases/chain-writer/attempts/0001/grade.json", "writer-corrected-run/rubric.json", "writer-corrected-run/cases/chain-writer/attempts/0001/grade.json", "run/rubric.json", "run/cases/smoke-main-general/task.txt", "run/cases/smoke-main-general/attempts/0001/grade.json"],
+    "verified_facts": ["medium80->80 is parity, contradicting old required regression", "90 split three ways with payments54/36/0 gives C->user24 and C->B6, opposite to stale B->user6 example"],
+    "effect_validated": false
+  },
+  "candidates": [
+    {"id": "ABC-C1", "parent_candidate": "CO-020", "name": "Freeze-time fact and actual-grader preflight", "status": "recommended_for_bounded_test_not_implemented", "minimum_experiment": "Two historical defects times four conditions(correct reference, stale wrong answer, input-only change, fully corrected bundle)=8; old vs candidate; add empty-output and semantically equivalent-answer controls through actual grader", "acceptance": "8/8 expected handling; both historical contradictions blocked before dispatch; valid variants retained; old archives unchanged", "cost": "small local CPU fixture work, target seconds; manual reference review; actual model judge calls if needed separately budgeted", "stop": "unknown truth, contradictory expected labels, unavailable actual grader, or exceeded authorization"},
+    {"id": "ABC-C2", "parent_candidate": "CO-020", "name": "Independent held-out sensitivity and equivalent-answer checks", "status": "pending_test", "minimum_experiment": "12 deterministic held-out variants spanning medium improvement/parity/regression and payer/direction permutations, authored from original inputs and consumer request", "acceptance": "grade changes when relevant truth changes and preserves correct equivalent outputs", "cost": "CPU-only local tests plus independent reviewer time; no external service", "stop": "reference labels cannot be independently justified"}
+  ],
+  "decision": "Research completed. Recommend C1 and C2 to main executor as bounded validation design; no implementation, model run or repository benefit demonstrated by this reading task.",
+  "notes": "rounds/2026-10-06-eval-coherence/research/abc.md"
+}

@@ -8,6 +8,8 @@
 
 新增的 [pipeline_smoke/tasks.json](pipeline_smoke/tasks.json) 包含主AI普通任务/路由、协调→写作真实文件交接与新的旅行修订输入；评分在相邻rubric中，不传给执行者。跨角色writer只有接收到真实producer文件后才能准备；缺依赖不能预填答案或记通过。当前更新仍须实际运行全部角色；合成smoke不是生产成功率估计。
 
+持续优化的发布评测使用 `prepare --require-material-review`：先由独立上下文逐条核对评分条件与实际输入，再由控制器调用 `authorize-dispatch`，通过后才派发。计算输入数值并不自动证明评分文字正确；对应关系、证据与版本必须一起核验。具体接口、可迁移归档和信任边界见运行说明的“Material review before dispatch”。旧记录保留原状态，不能补一份新回执就声称过去执行经过了新门禁。
+
 ## 原有手动准备方式
 
 1. 安装运行任务所需的实际环境。代码/文本任务只需Python；图任务需要Matplotlib；PDF/HTML任务需要PyMuPDF，PDF读者也可使用Poppler。使用当前环境支持的真实图像查看工具。不要自动安装无关后端。

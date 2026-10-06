@@ -1,0 +1,129 @@
+{
+  "grader": "/root/modern_architecture_controller/modern_handoff_reader",
+  "case_id": "modern-architecture-writing-handoff",
+  "attempt": 1,
+  "output_hashes": {
+    "BUILD.txt": "a2df21537533074b34a72c27ce0f89cbfe615a3e392add1b30736bcf5d0e395c",
+    "build-request.json": "6f663059bdbfcca5bd1bf4c6caa8e760a7981de312a69e7dbfdb3aeafdefe0ce",
+    "build-result.json": "274baad638436292a34689e65f004ccf5872c5f8a9ca66770dedbea114dac2ad",
+    "build.py": "6a4182ff0daf55bd8e050752f8a325fc029eb7a694dccfe2194cb3bb0171c1ba",
+    "figures/ditfuse2026.pdf": "9214f7b9a82edd6cc3e93c6e67587dec31ccd32672f72a079382d9ea4a704c62",
+    "figures/doubt2026.pdf": "e2a9d0ee2dd112ddad7287a92fc957b1545dfbb9c7316861e75463fc96fa74ab",
+    "figures/gazing2026.pdf": "8bc7243c54e2689ed758122971d3f203b069590f43637d39531cd47dc32543fb",
+    "handoff-receipt.json": "de71d29f0231fb497f15d9e1528b2a2533d09e4fff12ac9f7d4d641b5802fc3d",
+    "latex-pass-1.txt": "e4802b133fd4aa588e0918718685342d1f45dec5f2ddbc86d470c9fe427b1ad5",
+    "latex-pass-2.txt": "dd395b2abc1b876b2cefcb9961292b268883f9dea436eec5239f8521a9baf04b",
+    "manuscript.aux": "5c970f5ce8294016574206d2c1bc736492797287cdd1133f6031eaa498d5ec42",
+    "manuscript.log": "a535966814f010fe3cc51e1670f8205499c50998fdc5f078c221d73c2fe109e9",
+    "manuscript.out": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "manuscript.pdf": "15b9ab8f6e7eed44cd4235dfb9e036aad7fb519eff735d6987ecdac347fe30b1",
+    "manuscript.tex": "27836bcb89c6a4b5a5cd52150fb4fda026864b4e30711c3ed3dd57fe316af2a1",
+    "manuscript.txt": "9bca372794222724c0110253fc6a33886cc497b80d1ade0ac96213bf66dd07c2",
+    "pages/page-01.png": "701100e04e2c289000b8a3b68de1d90a170beead17dfc2819500aa9809914f91",
+    "pages/page-02.png": "11f6c1cfae9ffc74faf72109ebfb5b05896bfe1e8b69775b8bf70c0499deed10",
+    "pages/page-03.png": "87f069c327f43ede29cedac9cde9a9d04c04c80452fbf0c315ad8b48ef489666",
+    "pages/page-04.png": "5f126352cd598b40b163a1f15128b447b40bdce164c8436d8576dbeaa8dcaffd",
+    "pages/page-05.png": "4968548e2691d924605e1c6f0e7078d37be96f6221e8456fca3417c34a3496ea",
+    "pages/page-06.png": "70a5b152748e58eef22bb373ce7a56b83c0586b481b86a2bae914a98e68ab0d3"
+  },
+  "checks": [
+    {
+      "criterion": "The manuscript uses all three actual producer vector PDFs without altering them; a handoff receipt binds received and embedded file hashes and an executable inspection confirms their use.",
+      "verdict": "pass",
+      "evidence": [
+        "Independently recomputed all 22 entries in attempts/0001/collection.json; every SHA-256 matched, including the complete manuscript and all six page PNGs.",
+        "inputs/{gazing2026,doubt2026,ditfuse2026}/figure.pdf match collected figures/*.pdf byte for byte. handoff-receipt.json figure_handoffs received/included/source-stream/embedded-stream hashes all match independent recomputation.",
+        "manuscript.pdf physical pages 2/4/6 contain Forms 23/48/79 whose decoded streams equal the respective producer page contents. Independent inspection also matches extracted figure text and drawing counts (75/57/220), finds zero raster images, and verifies full form placement without clipping. Executable proof: handoff-review-work/verify_handoff.py; result: reviews/handoff-1-rebuild-evidence.json."
+      ],
+      "artifact_refs": [
+        "manuscript.pdf",
+        "handoff-receipt.json",
+        "figures/gazing2026.pdf",
+        "figures/doubt2026.pdf",
+        "figures/ditfuse2026.pdf"
+      ]
+    },
+    {
+      "criterion": "AutoGaze explanation preserves selection before downstream ViT/MLLM, causal history, predicted-loss stopping and training-only actual reconstruction without unsupported empirical reproduction claims.",
+      "verdict": "pass",
+      "evidence": [
+        "manuscript.pdf p1 section 1 and Figure 1 caption, p2 panels A/B: causal current/past frame features and selected-index prefix, append-history loop, strict predicted-loss threshold with frame advance, and selection before downstream ViT then MLLM are explicit.",
+        "p1 final mechanism paragraph/caption and p2 panel C: greedy-search supervision precedes on-policy GRPO; actual block-causal VideoMAE reconstruction supports training while predicted loss controls inference. No empirical gaze, reconstruction guarantee, or reproduced performance is asserted.",
+        "Crosschecked inputs/gazing2026/semantic_contract.json invariants 1-11 and nodes decoder, loss_head, stop, embedding, vit, reconstruction, stage1, stage2; inputs/gazing2026/figure_notes.md Scientific caption, Source and version, Limits and interpretation."
+      ],
+      "artifact_refs": [
+        "manuscript.pdf",
+        "manuscript.tex",
+        "pages/page-01.png",
+        "pages/page-02.png"
+      ]
+    },
+    {
+      "criterion": "DOUBT explanation preserves separate per-set normalized-vector resultant lengths then scalar averaging and correct threshold polarity, with no reference-answer or ground-truth leakage into detection.",
+      "verdict": "pass",
+      "evidence": [
+        "manuscript.pdf p3 Equation 1 normalizes each embedding, forms a norm-of-sum divided by K separately for ori and bri, then averages the two scalar lengths; p4 panel B draws these separate routes.",
+        "p3 threshold paragraph and p4 decision: greater than theta gives flag 1/non-hallucinatory; equality and lower scores give flag 0/hallucination. p3 offline paragraph and p4 panel C exclude A and ground truth from scoring.",
+        "p3 explains object-error propagation and proxy limitations, including a correct explicitly algebraic counterexample with internally constant u and -u sets. It does not claim unbiasedness, between-set agreement, source-paper inspection, or empirical reproduction.",
+        "Crosschecked inputs/doubt2026/semantic_contract.json invariants normalize-first, separate-resultants, threshold-polarity, a-excluded, no-gold-at-inference and source references D1-D8; inputs/doubt2026/figure_notes.md Scientific caption and Source conflicts and limits."
+      ],
+      "artifact_refs": [
+        "manuscript.pdf",
+        "manuscript.tex",
+        "pages/page-03.png",
+        "pages/page-04.png"
+      ]
+    },
+    {
+      "criterion": "DiTFuse explanation preserves condition/noisy-target separation, hybrid attention, training-only targets/M3 and repeated inference denoising, and explicitly scopes paper-versus-code LoRA discrepancy.",
+      "verdict": "pass",
+      "evidence": [
+        "manuscript.pdf p5 section 3 and p6 panels A/B distinguish two image/text conditions, timestep, and noisy target; target queries see preceding conditions/time and their own bidirectional image block while earlier blocks cannot see future target tokens.",
+        "p5 flow equation and p6 panel C preserve task-selected targets, M3 aligned corruption, original-source target, identical x and epsilon in interpolation and velocity objective, and LoRA-only training adaptation. p5 caption specifies task-dependent IVIF/MEF/MFF targets.",
+        "p5 LoRA paragraph explicitly separates paper all-linear rank 64/scaling 0.5 from supplied code-description qkv_proj/o_proj and lora_alpha=rank; it denies verified equivalence and independent code inspection. p6 panel D and p5 prose preserve fixed-weight noise initialization, repeated 50-step source-schematic sampling, and final decoding without training target/loss.",
+        "Crosschecked inputs/ditfuse2026/semantic_contract.json invariants 1-14, attention_inset, nodes lora/m3/target_selection_bus/interpolation/velocity_loss and source references S1-S3/B1; inputs/ditfuse2026/figure_notes.md Source and Scientific limits."
+      ],
+      "artifact_refs": [
+        "manuscript.pdf",
+        "manuscript.tex",
+        "pages/page-05.png",
+        "pages/page-06.png"
+      ]
+    },
+    {
+      "criterion": "The substantive text explains mechanisms and contrasts in coherent scientific prose, with source/version citations and bounded claims; provenance/audit logs remain a separate companion artifact.",
+      "verdict": "pass",
+      "evidence": [
+        "manuscript.pdf p1 opening/table, p3 final comparison paragraph and p5 closing comparison organize the mechanisms by controlled state and scalar meaning: evidence acquisition, answer trustworthiness estimation and conditional generation. These are explanatory comparisons rather than an audit checklist.",
+        "p3 derives a meaningful failure mode of the DOUBT reduction mathematically; p1 explains why selection precedes attention and why actual reconstruction does not govern stopping; p5 explains hybrid dependencies and task-selected supervision.",
+        "p1/p3/p5 captions anchor methods to source sections/figures/equations; p5 references identify the CVPR 2026 accepted version, PMLR 306 (2026) and arXiv:2512.07170v1 (8 December 2025). DOUBT proxy provenance and DiTFuse code limits are disclosed. No common-task accuracy/efficiency ranking or A/B improvement claim is made. Audit hashes/build history remain in the separate handoff-receipt.json."
+      ],
+      "artifact_refs": [
+        "manuscript.pdf",
+        "manuscript.tex",
+        "handoff-receipt.json"
+      ]
+    },
+    {
+      "criterion": "Editable source rebuilds the complete PDF successfully and every final page has been independently viewed at readable size; figures, captions and text contain no cropping, overlaps, missing glyphs or unsupported modifications.",
+      "verdict": "pass",
+      "evidence": [
+        "Personally opened and read all six full-page PNGs via view_image, two at a time, including all text, equations, diagrams, legends, captions and references; page coverage is recorded independently in reviews/handoff-1-page-coverage.jsonl. No cropping, label collision, missing glyph or unreadable caption was observed.",
+        "Copied only manuscript.tex, build.py and three adjacent figures/*.pdf to handoff-review-work/rebuild; executed python /workspace/scratch/c12f3d9f92bd/modern-architecture-controller/handoff-review-work/rebuild/build.py from a different working directory. Exit 0, six pages. All rebuilt 144-dpi pixel arrays and extracted page text equal the frozen manuscript; freshly rendered PNG hashes also equal all six collected PNG hashes.",
+        "Independent form-transform measurements give 180.008995 mm width for each figure (the 180 mm request within PDF rounding tolerance 0.02 mm), minimum font sizes 8.100405/8.004104/8.000400 pt, complete form bounding boxes inside A4 pages and no raster images. Rebuild PDF bytes differ with creation/modification dates and trailer ID; page contents/rendering remain equivalent."
+      ],
+      "artifact_refs": [
+        "manuscript.pdf",
+        "manuscript.tex",
+        "build.py",
+        "BUILD.txt",
+        "pages/page-01.png",
+        "pages/page-02.png",
+        "pages/page-03.png",
+        "pages/page-04.png",
+        "pages/page-05.png",
+        "pages/page-06.png"
+      ]
+    }
+  ]
+}

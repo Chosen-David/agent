@@ -1,0 +1,292 @@
+{
+  "transformer": {
+    "title": "Attention Is All You Need",
+    "authors": [
+      "Ashish Vaswani",
+      "Noam Shazeer",
+      "Niki Parmar",
+      "Jakob Uszkoreit",
+      "Llion Jones",
+      "Aidan N. Gomez",
+      "Łukasz Kaiser",
+      "Illia Polosukhin"
+    ],
+    "venue": "NIPS 2017 / Advances in Neural Information Processing Systems 30",
+    "url": "https://papers.nips.cc/paper_files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf",
+    "version": "conference-hosted full PDF downloaded 2026-10-06; not latest arXiv",
+    "figures": [
+      {
+        "figure": "1",
+        "pdf_page_1based": 3,
+        "printed_page": "3",
+        "crop_pdf_points": [
+          185,
+          64,
+          418,
+          417
+        ]
+      }
+    ],
+    "read_scope": "Full PDF obtained; selectively read architecture §§3.1–3.5 and visually inspected Fig.1 at full page.",
+    "code": {
+      "status": "not_read",
+      "commit": null,
+      "reason": "Paper architecture is authoritative; no code execution or implementation equivalence claimed."
+    },
+    "schema": "architecture-source-fixture/v1",
+    "task_id": "T25",
+    "case_id": "transformer",
+    "retrieved_date": "2026-10-06",
+    "paper_sha256": "d87d482d5ae7960e2e43d7dd6d21377e60e73e8fce1bf2a01aff7aca8a08c537",
+    "page_count": 11,
+    "method_sha256": "fe392930b7edd286d3668b48ffea59dcd295b18baf1cf183ad1014cddc49ab29",
+    "original_image": "original.png",
+    "original_image_sha256": "78da770b3db8d60723b29b813aa1186286ab550b94463cdde25c3ce4fd72520b",
+    "viewed_original": true,
+    "worker_allowed_files": [
+      "method.md"
+    ],
+    "reviewer_only_files": [
+      "paper.pdf",
+      "paper.txt",
+      "original.png",
+      "sources.json"
+    ],
+    "claim_types": [
+      "source_fact",
+      "static_inference"
+    ],
+    "experiment_claims": false,
+    "facts": [
+      {
+        "id": "T-F1",
+        "kind": "source_fact",
+        "fact": "Encoder has six layers, each self-attention then FFN with residual addition and post-LayerNorm. Decoder has six layers with masked self-attention, cross-attention, FFN and three post-norm residual paths.",
+        "evidence": "PDF pp.2–3 §3.1; visually verified Fig.1 p.3"
+      },
+      {
+        "id": "T-F2",
+        "kind": "source_fact",
+        "fact": "Encoder output provides cross-attention K/V; decoder stream provides Q. Shifted-right target input and causal mask preserve autoregression. Embeddings receive added positional encoding; decoder feeds linear+softmax.",
+        "evidence": "PDF pp.3,5–6 §§3.1,3.2.3,3.4,3.5; Fig.1"
+      },
+      {
+        "id": "T-F3",
+        "kind": "source_fact",
+        "fact": "Base d_model=512, N=6, h=8 and d_ff=2048.",
+        "evidence": "PDF pp.3,5 §§3.1–3.3"
+      }
+    ],
+    "limitations": [
+      "Source fixture preparation only; no paper reproduction/training/performance experiments.",
+      "Original images and source manifests are private evaluation references; only method.md is the drawing-worker handoff.",
+      "Complete PDFs acquired, selective architecture reading performed; no claim of complete-paper close reading."
+    ]
+  },
+  "resnet": {
+    "title": "Deep Residual Learning for Image Recognition",
+    "authors": [
+      "Kaiming He",
+      "Xiangyu Zhang",
+      "Shaoqing Ren",
+      "Jian Sun"
+    ],
+    "venue": "CVPR 2016, pp.770–778",
+    "url": "https://openaccess.thecvf.com/content_cvpr_2016/papers/He_Deep_Residual_Learning_CVPR_2016_paper.pdf",
+    "version": "CVF accepted conference version (open-access watermark); full PDF downloaded 2026-10-06",
+    "figures": [
+      {
+        "figure": "2",
+        "pdf_page_1based": 2,
+        "printed_page": "771",
+        "crop_pdf_points": [
+          85,
+          68,
+          295,
+          171
+        ]
+      },
+      {
+        "figure": "5",
+        "pdf_page_1based": 6,
+        "printed_page": "775",
+        "crop_pdf_points": [
+          305,
+          62,
+          554,
+          188
+        ]
+      }
+    ],
+    "read_scope": "Full PDF obtained; selectively read residual formulation, architecture, normalization and bottleneck subsections; visually inspected Fig.2 and Fig.5 full pages.",
+    "code": {
+      "status": "static_selective_read",
+      "repository": "https://github.com/KaimingHe/deep-residual-networks",
+      "commit": "a7026cb6d478e131b765b898c312e25f9f6dc031",
+      "path": "prototxt/ResNet-50-deploy.prototxt",
+      "local_file": "ResNet-50-deploy.prototxt",
+      "sha256": "2f8fb64f68c6bcda94eb2640f80aed94efb91664122e72a6b7587012cc57dedc",
+      "read_line_ranges": [
+        [
+          1,
+          354
+        ]
+      ],
+      "focused_identity_bottleneck_lines": [
+        225,
+        354
+      ],
+      "projection_contrast_lines": [
+        60,
+        223
+      ],
+      "executed": false,
+      "coverage_limits": "Official converted deploy model, not original training code; no complete network execution, kernels, solver or basic-block implementation inspected."
+    },
+    "schema": "architecture-source-fixture/v1",
+    "task_id": "T25",
+    "case_id": "resnet",
+    "retrieved_date": "2026-10-06",
+    "paper_sha256": "51b5de45eb0b558b19c3affe49503cff50cb170a32de602983d6e2ec286942a7",
+    "page_count": 9,
+    "method_sha256": "06a20335da38a76809436241adc66c0a6ca792140eb2d33657cd3a7fc6341969",
+    "original_image": "original.png",
+    "original_image_sha256": "48facd11aacf588d416d5a55702aa8707d3165b2aa3311c9ed44f8a661cf3623",
+    "viewed_original": true,
+    "worker_allowed_files": [
+      "method.md"
+    ],
+    "reviewer_only_files": [
+      "paper.pdf",
+      "paper.txt",
+      "original.png",
+      "sources.json"
+    ],
+    "claim_types": [
+      "source_fact",
+      "static_inference"
+    ],
+    "experiment_claims": false,
+    "facts": [
+      {
+        "id": "R-F1",
+        "kind": "source_fact",
+        "fact": "Residual and identity paths merge by elementwise addition before ReLU.",
+        "evidence": "Fig.2 PDF p.2 and §3.2 p.3"
+      },
+      {
+        "id": "R-F2",
+        "kind": "source_fact",
+        "fact": "Same-resolution basic example uses 64-channel input and two 3×3,64 layers; bottleneck uses 256-channel input, 1×1,64 then 3×3,64 then 1×1,256.",
+        "evidence": "Fig.5 PDF p.6; bottleneck discussion §4.1"
+      },
+      {
+        "id": "R-F3",
+        "kind": "source_fact",
+        "fact": "BN follows each convolution and precedes activation. Original Fig.5 omits BN boxes.",
+        "evidence": "§3.4 PDF p.4; viewed Fig.5"
+      },
+      {
+        "id": "R-C1",
+        "kind": "static_inference",
+        "fact": "Identity bottleneck res2b takes res2a both into branch2a and directly into Eltwise; the last branch stage ends BN/Scale, merge feeds ReLU.",
+        "evidence": "official deploy commit a7026cb6d478e131b765b898c312e25f9f6dc031 lines225–354",
+        "conditions": "Static deploy-definition interpretation; no Caffe execution."
+      },
+      {
+        "id": "R-C2",
+        "kind": "source_fact",
+        "fact": "res2a differs: shortcut branch1 is a 1×1 projection to 256. Its residual stages have 64,64,256 outputs.",
+        "evidence": "same code lines60–223",
+        "conditions": "Used only as variant contrast; target Fig.5 is identity block."
+      }
+    ],
+    "limitations": [
+      "Source fixture preparation only; no paper reproduction/training/performance experiments.",
+      "Original images and source manifests are private evaluation references; only method.md is the drawing-worker handoff.",
+      "Complete PDFs acquired, selective architecture reading performed; no claim of complete-paper close reading."
+    ]
+  },
+  "unet": {
+    "title": "U-Net: Convolutional Networks for Biomedical Image Segmentation",
+    "authors": [
+      "Olaf Ronneberger",
+      "Philipp Fischer",
+      "Thomas Brox"
+    ],
+    "venue": "MICCAI 2015, LNCS 9351, pp.234–241",
+    "url": "https://arxiv.org/pdf/1505.04597v1",
+    "version": "arXiv:1505.04597v1 (18 May 2015), author-linked preprint; not Springer typeset proceedings",
+    "figures": [
+      {
+        "figure": "1",
+        "pdf_page_1based": 2,
+        "printed_page": "2",
+        "crop_pdf_points": [
+          120,
+          104,
+          495,
+          400
+        ]
+      }
+    ],
+    "read_scope": "Full original v1 preprint obtained; selectively read architecture §2 and valid-convolution context; visually inspected Fig.1 full page.",
+    "code": {
+      "status": "no_code_read",
+      "commit": null,
+      "reason": "Author site advertises 2015-10-02 185MB Caffe release, but bounded task uses original paper only; did not download/inspect release or invent a commit.",
+      "available_source_archive": "https://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/u-net-release-2015-10-02.tar.gz"
+    },
+    "heldout": true,
+    "schema": "architecture-source-fixture/v1",
+    "task_id": "T25",
+    "case_id": "unet",
+    "retrieved_date": "2026-10-06",
+    "paper_sha256": "a3172b2124f38e260dc2c7ed968d87c31bc94dbc19a42a7ab3dcbd7534319c44",
+    "page_count": 8,
+    "method_sha256": "199295cf9bafd140bf5c9952fb7dbbc37e4df35dafff6031d60307f39567153c",
+    "original_image": "original.png",
+    "original_image_sha256": "4d3affe7af68abfe240d3797cbdf7faf34239ebfe7ddfb9c05e4bfda742b3b2e",
+    "viewed_original": true,
+    "worker_allowed_files": [
+      "method.md"
+    ],
+    "reviewer_only_files": [
+      "paper.pdf",
+      "paper.txt",
+      "original.png",
+      "sources.json"
+    ],
+    "claim_types": [
+      "source_fact",
+      "static_inference"
+    ],
+    "experiment_claims": false,
+    "facts": [
+      {
+        "id": "U-F1",
+        "kind": "source_fact",
+        "fact": "Four pools and four up-convolutions; two valid 3×3+ReLU convolutions per stage; cropped encoder features concatenate into each corresponding expanding stage. Final 1×1 maps64 features to classes.",
+        "evidence": "v1 PDF p.4 §2; Fig.1 p.2"
+      },
+      {
+        "id": "U-F2",
+        "kind": "source_fact",
+        "fact": "Shown input is572×572×1 and output388×388×2; channels64,128,256,512,1024,512,256,128,64.",
+        "evidence": "Visually read Fig.1 PDF p.2"
+      },
+      {
+        "id": "U-F3",
+        "kind": "static_inference",
+        "fact": "Skip endpoint dimensions568,280,136,64 crop to392,200,104,56; paired maps concatenate across channels, not elementwise sum.",
+        "evidence": "Fig.1 displayed shapes + §2 explicit concatenation/cropping",
+        "conditions": "Square-tile figure example, original unpadded model; no runtime shape test."
+      }
+    ],
+    "limitations": [
+      "Source fixture preparation only; no paper reproduction/training/performance experiments.",
+      "Original images and source manifests are private evaluation references; only method.md is the drawing-worker handoff.",
+      "Complete PDFs acquired, selective architecture reading performed; no claim of complete-paper close reading."
+    ]
+  }
+}

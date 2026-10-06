@@ -1,0 +1,35 @@
+{
+  "task": "COH-T27",
+  "created_at": "2026-10-06T15:05:50.047995+00:00",
+  "batch": "2026-10-06-eval-coherence",
+  "candidate": "0150292b8712fb6e4351df7b0a910af464704088",
+  "baseline": "eb2b4b460c8e93cd3d8da7f7b8798b781fd18189",
+  "problem": "Independent frozen v3 code-organization finding: proposal lacks concrete rollback and duplicate disposition. Preserve its original failure and prepare a separately registered feedback-assisted repair.",
+  "mechanism": "Actual published local Mailbox conveys immutable independent finding to genuine model repair worker; artifact reference goes to independent reviewer for original-finding revalidation.",
+  "counterfactual": "An ACK alone leaves original finding open; v3 failed output remains immutable.",
+  "acceptance": [
+    "Separate protected repair run, same candidate/task/input/rubric and explicit feedback, max_attempts=1",
+    "Genuine worker reads inbox and version/hash-checked original finding before repair",
+    "Independent context consumes actual repair and checks all original criteria, closes stable finding only on evidence",
+    "Stale-version rejection/idempotence/restart observed separately from model task results",
+    "Original frozen failures and unchanged-input hashes preserved; no unrelated source changes"
+  ],
+  "minimum_meaningful_improvement": "One originally failed finding correctly closed by artifact-grounded independent recheck, with all original case criteria passing. This is task recovery only, not general model performance.",
+  "unacceptable_regression": [
+    "Lost first judgment",
+    "Original protected files changed",
+    "ACK counted as scientific or task success",
+    "New duplicate done state",
+    "Unbounded retries"
+  ],
+  "budget": {
+    "maximum_events": 8,
+    "repair_attempts": 1,
+    "scope": "One existing failed code-organization case; synchronous authorized host adapter, no paid runtime or new persistent service"
+  },
+  "stop": "If repair fails or capacity unavailable, preserve checkpoint; no publication gate relaxation.",
+  "execution_owner": "/root/final_role_controller",
+  "platform_run_id": "not exposed",
+  "trigger_relation": "Same currently live batch owner observed; latest trigger continued rather than duplicated.",
+  "pre_dispatch_correction": "Controller initially reported v3 max_attempts=1; direct adapter inspection found max_attempts=2 while worker instructions allowed one attempt. No second v3 attempt started. Selected separate repair max_attempts=1 remains unchanged; no silent original-run mutation."
+}
