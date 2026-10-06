@@ -77,7 +77,10 @@ class IndexTests(unittest.TestCase):
 
     def test_stemming_and_engine_refresh(self):
         build_index(self.store,self.db)
-        self.assertEqual(indexed_search(self.store,self.db,'residuals')['results'][0]['id'], 'math.linear-system-stability')
+        plural = indexed_search(self.store,self.db,'residuals',limit=self.count)['results']
+        singular = indexed_search(self.store,self.db,'residual',limit=self.count)['results']
+        self.assertIn('math.linear-system-stability', [r['id'] for r in plural])
+        self.assertEqual({r['id'] for r in plural}, {r['id'] for r in singular})
         with sqlite3.connect(self.db) as con:
             con.execute("UPDATE meta SET value='old-engine' WHERE key='engine_version'")
         with self.assertRaisesRegex(KnowledgeError, 'stale index engine'):

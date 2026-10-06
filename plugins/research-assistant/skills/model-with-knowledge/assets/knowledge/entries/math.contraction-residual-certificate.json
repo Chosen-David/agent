@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "id": "math.contraction-residual-certificate",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "收缩迭代的残差误差证书与不精确求解边界",
+  "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+  "aliases": [
+    "fixed point residual certificate",
+    "迭代 步长 很小 解误差 停止",
+    "噪声 求解 残差 为零 误差下限",
+    "隐式积分 稳定 求解器 发散",
+    "谱半径 每步 误差 增长 nonnormal"
+  ],
+  "domains": [
+    "numerical-analysis",
+    "optimization",
+    "physics"
+  ],
+  "structures": [
+    "fixed-point",
+    "residual-error-bound",
+    "inexact-oracle",
+    "nonnormal-iteration"
+  ],
+  "assumptions": [
+    "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+    "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+    "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+  ],
+  "sources": [
+    {
+      "url": "https://www.voutsadakis.com/TEACH/LECTURES/FUNCTIONAL/Chapter5.pdf",
+      "locator": "Introduction to Functional Analysis, May 2023, pp7–11; iteration-error corollary p10 (PDF index9)",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://www.cs.cornell.edu/courses/cs4220/2026sp/lec/2026-03-27.html",
+      "locator": "David Bindel, CS4220, 2026-03-27, fixed-point convergence and linearization; derivative criterion needs convex/segment domain",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+      "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.linear-system-stability"
+    },
+    {
+      "type": "related",
+      "id": "physics.dimensionless"
+    }
+  ]
+}
