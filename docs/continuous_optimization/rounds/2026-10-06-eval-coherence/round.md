@@ -89,3 +89,9 @@ Root directly checked full read payloads, actor-authored receipts, invocation/fi
 Full declared acceptance is now supported; publication is still pending until the exact staged final content passes its ownership/acceptance binding, remote main is refreshed, and non-force main update plus remote SHA/content readback completes.
 
 Publication preparation: W5 actually used3toolturns vs2planned, due to an extra read-only guard-interface inspection. Two functional read/ACK batches and all original180-second/actor/fullread/receipt gates passed; deviation retained, no causal speedclaim. GitHub rejected original full-writing-archive base64 request above its16MiB MCP limit. Published archive parts reconstruct the exact16,379,932-byte archive with original SHA and evidence; source/scientific validation remains unchanged. See evidence/writing/split-archive.md.
+
+## Publication and completion
+
+Main implementation/evidence commit [69cb8f22d751d8196ae80555f0127cf2e7976395](https://github.com/Chosen-David/agent/commit/69cb8f22d751d8196ae80555f0127cf2e7976395), exact tree b651fd40844c6baa7aea862dfc5dc96e465b354e, was independently read back via GitHub and fresh Git remote reads. Actual publication observer reached tested→committed→pushed→remote_verified;191changedfiles have stableTASKownership. Final closure only records this already verified publication and preserves all runtime/Skill/evidence bytes. Once that metadata-only update is read back, this same batch is complete. Continuous task remains enabled, convergencecount0.
+
+Next batch: controlled CO-016 organization guidance/rollback heldouts and communication recipient-cost/quality experiments with independent findings, source/version rejection and finite budgets. Unknown model/token/cost telemetry and persistent Engine/tmux adapter remain explicit boundaries. Preserve negative cases rather than treat the successful feedback recovery as general improvement.
