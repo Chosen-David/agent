@@ -115,7 +115,7 @@ class HandoffTests(unittest.TestCase):
                 self.assertTrue(M.validate(self.record,self.root))
 
     def test_unreadable_artifact_is_diagnostic(self):
-        with patch.object(Path, 'read_bytes', side_effect=PermissionError('denied')):
+        with patch.object(Path, 'open', side_effect=PermissionError('denied')):
             self.assertIn('artifact 0: cannot read path (PermissionError)', M.validate(self.record,self.root))
 
     def test_looping_root_is_diagnostic(self):

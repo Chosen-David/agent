@@ -3,9 +3,19 @@
 from __future__ import annotations
 
 import argparse
+from collections import deque
 import hashlib
 import json
 from pathlib import Path
+
+
+def _sha256_file(path: Path) -> str:
+    """Hash stable local artifacts with bounded Python allocation, including short reads."""
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        while chunk := stream.read(1024 * 1024):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def _load_json(path: Path):
@@ -125,7 +135,7 @@ def validate(record: dict, root: Path, require_complete: bool = False, *,
             if not path.is_file():
                 errors.append(f"artifact {index}: file missing")
                 continue
-            digest = hashlib.sha256(path.read_bytes()).hexdigest()
+            digest = _sha256_file(path)
         except (OSError, ValueError, RuntimeError) as exc:
             errors.append(f"artifact {index}: cannot read path ({type(exc).__name__})")
             continue
@@ -197,14 +207,27 @@ def validate(record: dict, root: Path, require_complete: bool = False, *,
         reason = task.get("reason")
         if task.get("status") in ("blocked", "skipped") and (not isinstance(reason, str) or not reason.strip()):
             errors.append(f"{tid}: reason/recovery required")
-    # Iterative topological elimination avoids recursion limits on a long DAG.
-    pending = set(graph)
-    while pending:
-        ready = {tid for tid in pending if not (set(graph[tid]) & pending)}
-        if not ready:
-            errors.append("task dependency cycle")
-            break
-        pending -= ready
+    # Kahn elimination visits each known vertex/edge once; no repeated whole-DAG
+    # scans or recursion. As above, unknown dependencies have their own diagnostic.
+    # Duplicate dependencies count once here, matching the former set elimination.
+    remaining = {}
+    dependents = {tid: [] for tid in graph}
+    for tid, deps in graph.items():
+        known = {dep for dep in deps if dep in graph}
+        remaining[tid] = len(known)
+        for dep in known:
+            dependents[dep].append(tid)
+    ready = deque(tid for tid, count in remaining.items() if count == 0)
+    removed = 0
+    while ready:
+        tid = ready.popleft()
+        removed += 1
+        for dependent in dependents[tid]:
+            remaining[dependent] -= 1
+            if remaining[dependent] == 0:
+                ready.append(dependent)
+    if removed != len(graph):
+        errors.append("task dependency cycle")
     return errors
 
 
