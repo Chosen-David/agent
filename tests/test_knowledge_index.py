@@ -33,7 +33,8 @@ class IndexTests(unittest.TestCase):
         p=self.root/'entries/physics.dimensionless.json';d=json.loads(p.read_text());d['status']='deprecated';p.write_text(json.dumps(d))
         fresh=KnowledgeStore(self.root)
         self.assertEqual(build_index(fresh,self.db)['removed'],1)
-        self.assertEqual(indexed_search(fresh,self.db,'量纲')['results'],[])
+        results=indexed_search(fresh,self.db,'量纲',limit=len(fresh.records))['results']
+        self.assertNotIn('physics.dimensionless', [r['id'] for r in results])
         self.assertEqual(build_index(fresh,self.db,rebuild=True)['updated'],self.count-1)
 
     def test_index_search_pins_sections_filter_and_query_syntax(self):

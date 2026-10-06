@@ -1,0 +1,46 @@
+Initial full regression failure excerpt; complete local log in .agent-runs/math-betting/full-tests.log.
+FAIL: test_candidate_and_deprecated_are_not_normal_results (test_knowledge.KnowledgeTests.test_candidate_and_deprecated_are_not_normal_results) (status='candidate')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/1e3b490c36dd/agent/tests/test_knowledge.py", line 115, in test_candidate_and_deprecated_are_not_normal_results
+    self.assertEqual(store.search('量纲')['results'], [])
+AssertionError: Lists differ: [{'id': 'math.betting-test-martingale', 'v[669 chars]: 1}] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+{'id': 'math.betting-test-martingale', 'version': 1, 'sha256': 'a082de859efe25ad7cef832d8c8433aaf0f72cd92399d6601c24eebe37cb5ca9', 'title': '可预测下注、条件均值与序贯检验有效性', 'summary': '有界观测在零假设下具有固定条件均值时，合法且只使用过去信息的乘积证据构成非负鞅；由Ville界控制任意停止误报。边际均值相同不够。', 'status': 'published', 'assumptions': ['过滤族 F_t 包含当前全部可用历史；X_t∈[0,1] 几乎处处', '零假设下 E[X_t|F_(t-1)]=m，固定 m∈(0,1)，不能仅有边际均值m', 'lambda_t 是 F_(t-1) 可测，并满足 -1/(1-m)≤lambda_t≤1/m', '初始财富 W_0=1；错误预算 alpha∈(0,1) 在检验前规定'], 'verification': {'source': 'checked', 'proof': 'derivation-reviewed', 'checks': ['docs/knowledge_learning/2026-10-07-betting/verify.py', 'docs/knowledge_learning/2026-10-07-betting/checks.json']}, 'matches': [{'field': 'content', 'terms': ['量纲']}], 'score': 1}
+
+Diff is 894 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_candidate_and_deprecated_are_not_normal_results (test_knowledge.KnowledgeTests.test_candidate_and_deprecated_are_not_normal_results) (status='deprecated')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/1e3b490c36dd/agent/tests/test_knowledge.py", line 115, in test_candidate_and_deprecated_are_not_normal_results
+    self.assertEqual(store.search('量纲')['results'], [])
+AssertionError: Lists differ: [{'id': 'math.betting-test-martingale', 'v[669 chars]: 1}] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+{'id': 'math.betting-test-martingale', 'version': 1, 'sha256': 'a082de859efe25ad7cef832d8c8433aaf0f72cd92399d6601c24eebe37cb5ca9', 'title': '可预测下注、条件均值与序贯检验有效性', 'summary': '有界观测在零假设下具有固定条件均值时，合法且只使用过去信息的乘积证据构成非负鞅；由Ville界控制任意停止误报。边际均值相同不够。', 'status': 'published', 'assumptions': ['过滤族 F_t 包含当前全部可用历史；X_t∈[0,1] 几乎处处', '零假设下 E[X_t|F_(t-1)]=m，固定 m∈(0,1)，不能仅有边际均值m', 'lambda_t 是 F_(t-1) 可测，并满足 -1/(1-m)≤lambda_t≤1/m', '初始财富 W_0=1；错误预算 alpha∈(0,1) 在检验前规定'], 'verification': {'source': 'checked', 'proof': 'derivation-reviewed', 'checks': ['docs/knowledge_learning/2026-10-07-betting/verify.py', 'docs/knowledge_learning/2026-10-07-betting/checks.json']}, 'matches': [{'field': 'content', 'terms': ['量纲']}], 'score': 1}
+
+Diff is 894 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_incremental_noop_update_remove_and_rebuild (test_knowledge_index.IndexTests.test_incremental_noop_update_remove_and_rebuild)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/1e3b490c36dd/agent/tests/test_knowledge_index.py", line 36, in test_incremental_noop_update_remove_and_rebuild
+    self.assertEqual(indexed_search(fresh,self.db,'量纲')['results'],[])
+AssertionError: Lists differ: [{'id': 'math.betting-test-martingale', 'v[1241 chars]'}]}] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+{'id': 'math.betting-test-martingale', 'version': 1, 'sha256': 'a082de859efe25ad7cef832d8c8433aaf0f72cd92399d6601c24eebe37cb5ca9', 'title': '可预测下注、条件均值与序贯检验有效性', 'summary': '有界观测在零假设下具有固定条件均值时，合法且只使用过去信息的乘积证据构成非负鞅；由Ville界控制任意停止误报。边际均值相同不够。', 'status': 'published', 'assumptions': ['过滤族 F_t 包含当前全部可用历史；X_t∈[0,1] 几乎处处', '零假设下 E[X_t|F_(t-1)]=m，固定 m∈(0,1)，不能仅有边际均值m', 'lambda_t 是 F_(t-1) 可测，并满足 -1/(1-m)≤lambda_t≤1/m', '初始财富 W_0=1；错误预算 alpha∈(0,1) 在检验前规定'], 'verification': {'source': 'checked', 'proof': 'derivation-reviewed', 'checks': ['docs/knowledge_learning/2026-10-07-betting/verify.py', 'docs/knowledge_learning/2026-10-07-betting/checks.json']}, 'matches': [{'retriever': 'document-bm25', 'rank': 1}, {'retriever': 'section-bm25', 'rank': 1}], 'score': 0.03278688524590164, 'sections': [{'node': 's5', 'title': '任务映射、数值实现与限制', 'start_line': 22, 'end_line': 27, 'excerpt': '## 任务映射、数值实现与限制\n冻结Agent配对差值D_t∈[-1,1]可映射X_t=(D_t+1)/2，检验无正收益对应m=.5；需要任务采样与选择规则保证条件均值前提。边测边改模型、泄漏当前答案、复用旧缓存均不能自动认证。\n传感器Y_t确在[10,30]，X_t=(Y_t−10)/20，m=.5对应条件均值20；lambda与W无量纲。输入须按已知物理范围转换，不能使用观测极值代替真范围。\n优先累计log1p(lambda*(X−m))并与log(1/alpha)比较，显式处理因子0/非法输入；浮点临界比较需误差裕量或高精度复查。\nverify.py用有理数穷举有限路径检验条件均值、财富期望和停止概率，再以计数动态规划比较预定规则；不是一般证明或真实模型A/B。没有方差自适应最优性、样本效率或部署收益保证。相关alpha-spending条目是另一种保守方案，不是本条强前提。\n\n'}]}
+
+Diff is 1718 characters long. Set self.maxDiff to None to see it.
+
+----------------------------------------------------------------------
+Ran 472 tests in 34.771s
+
+FAILED (failures=3, skipped=8)

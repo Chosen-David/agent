@@ -112,8 +112,12 @@ class KnowledgeTests(unittest.TestCase):
             with self.subTest(status=status):
                 self.edit('physics.dimensionless', status=status)
                 store=KnowledgeStore(self.root)
-                self.assertEqual(store.search('量纲')['results'], [])
-                self.assertTrue(store.search('量纲', include_unpublished=True)['results'])
+                # Other published entries may legitimately discuss dimensions.
+                results=store.search('量纲', limit=len(store.records))['results']
+                self.assertNotIn('physics.dimensionless', [r['id'] for r in results])
+                included=store.search('量纲', include_unpublished=True,
+                                      limit=len(store.records))['results']
+                self.assertIn('physics.dimensionless', [r['id'] for r in included])
                 with self.assertRaises(KnowledgeError):
                     store.get('physics.dimensionless')
                 with self.assertRaises(KnowledgeError):

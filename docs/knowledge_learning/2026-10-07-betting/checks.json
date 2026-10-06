@@ -1,0 +1,173 @@
+{
+  "scope": "Authored finite numerical/structure checks; no independent LLM applicability test",
+  "checks": [
+    {
+      "name": "exact-paths-fixed",
+      "pass": true,
+      "data": {
+        "paths": 1024,
+        "expected_wealth": "1 at every t",
+        "crossing_probability": "1/256",
+        "dependent": false
+      }
+    },
+    {
+      "name": "exact-paths-adaptive",
+      "pass": true,
+      "data": {
+        "paths": 1024,
+        "expected_wealth": "1 at every t",
+        "crossing_probability": "1/256",
+        "dependent": false
+      }
+    },
+    {
+      "name": "exact-paths-adaptive-dependent",
+      "pass": true,
+      "data": {
+        "paths": 1024,
+        "expected_wealth": "1 at every t",
+        "crossing_probability": "1/512",
+        "dependent": true
+      }
+    },
+    {
+      "name": "exact-paths-zero",
+      "pass": true,
+      "data": {
+        "paths": 1024,
+        "expected_wealth": "1 at every t",
+        "crossing_probability": "0",
+        "dependent": false
+      }
+    },
+    {
+      "name": "current-result-leak-counterexample",
+      "pass": true,
+      "data": {
+        "n": 8,
+        "wealth": "6561/256",
+        "false_rejection_probability": 1,
+        "premise_failure": "bet uses current observation"
+      }
+    },
+    {
+      "name": "marginal-not-conditional-counterexample",
+      "pass": true,
+      "data": {
+        "repeated_Z_n": 8,
+        "false_rejection_probability": ".5",
+        "premise_failure": "conditional mean changes after observing Z"
+      }
+    },
+    {
+      "name": "one-step-mixture-not-posthoc-max",
+      "pass": true,
+      "data": {
+        "predeclared_equal_mixture_expected": 1,
+        "posthoc_max_expected": "3/2",
+        "conclusion": "max is not generally a test supermartingale"
+      }
+    },
+    {
+      "name": "wealth-zero-absorbing",
+      "pass": true,
+      "data": {
+        "log_wealth": "-Infinity",
+        "do_not_add_epsilon": true
+      }
+    },
+    {
+      "name": "sensor-affine-units",
+      "pass": true,
+      "data": {
+        "known_range": [
+          10,
+          30
+        ],
+        "null_mean": 20,
+        "log_wealth": 0.23556607131276697,
+        "same_dimensionless_result": true
+      }
+    },
+    {
+      "name": "log-stability",
+      "pass": true,
+      "data": {
+        "log_wealth": 810.9302162163212,
+        "direct_product_overflows": true
+      }
+    },
+    {
+      "name": "invalid-inputs",
+      "pass": true,
+      "data": {
+        "rejected": 2
+      }
+    },
+    {
+      "name": "null-risk-betting",
+      "pass": true,
+      "data": {
+        "p": 0.5,
+        "N": 200,
+        "rule": "betting",
+        "rejection_probability": 0.0411580655751116
+      }
+    },
+    {
+      "name": "null-risk-alpha-spending",
+      "pass": true,
+      "data": {
+        "p": 0.5,
+        "N": 200,
+        "rule": "alpha-spending",
+        "rejection_probability": 5.591006949726643e-06
+      }
+    },
+    {
+      "name": "real-knowledge-refs",
+      "pass": true,
+      "data": {
+        "refs": [
+          {
+            "id": "math.betting-test-martingale",
+            "version": 1,
+            "sha256": "a082de859efe25ad7cef832d8c8433aaf0f72cd92399d6601c24eebe37cb5ca9"
+          }
+        ]
+      }
+    }
+  ],
+  "comparison": [
+    {
+      "p": 0.5,
+      "N": 200,
+      "rule": "betting",
+      "rejection_probability": 0.0411580655751116
+    },
+    {
+      "p": 0.5,
+      "N": 200,
+      "rule": "alpha-spending",
+      "rejection_probability": 5.591006949726643e-06
+    },
+    {
+      "p": 0.65,
+      "N": 200,
+      "rule": "betting",
+      "rejection_probability": 0.8165673002366134
+    },
+    {
+      "p": 0.65,
+      "N": 200,
+      "rule": "alpha-spending",
+      "rejection_probability": 0.1788752705676521
+    }
+  ],
+  "seconds": 0.1073622370022349,
+  "model_calls": 0,
+  "tokens": null,
+  "formal_verification": false,
+  "runtime_production_changes": false
+}
