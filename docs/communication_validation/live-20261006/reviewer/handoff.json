@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "run_id": "communication-live-20261006T1432",
+  "role": "reviewer",
+  "input_version": "synthetic-v1",
+  "status": "completed",
+  "limitations": [
+    "Synthetic communication-validation data only; not measured system performance and cannot substantiate real-system benefit.",
+    "Sample SD describes sample dispersion; no confidence interval, inferential test or statistical-significance claim."
+  ],
+  "artifacts": [
+    {
+      "id": "input",
+      "path": "input.json",
+      "sha256": "717841545a501f17debeecd90262c1b6933723bc1f65c6e32c3347b7fb866af4"
+    },
+    {
+      "id": "original_review",
+      "path": "reviewer/review_v1.json",
+      "sha256": "924c054caed441e852f55593890e695ce1a54ae1eee7bd91a60f43ef7129a0fa"
+    },
+    {
+      "id": "reverification",
+      "path": "reviewer/review_v2.json",
+      "sha256": "d9eb6c9d35fbac714b7b8fc9d3dfbad55258b9f0cf5f06f151beaddbacbad5e6"
+    },
+    {
+      "id": "verified_results",
+      "path": "reviewer/verified_results_v2.json",
+      "sha256": "537a297cd15b4ba61f46cc6f260cfa3b2a2ed120652c55fd141c78425e826107"
+    },
+    {
+      "id": "review_code",
+      "path": "reviewer/reverify_v2.py",
+      "sha256": "8bf915e6d92930f122d512db3ccced9db5c0a7aaf50cbe1bc28b58ddcbc0ac3d"
+    },
+    {
+      "id": "rerun_results",
+      "path": "reviewer/recomputed_v2.json",
+      "sha256": "d6450e703722d339d1b8c58af0f273bc1c2673de9d96ef73eab1025aa74c63f2"
+    },
+    {
+      "id": "rerun_log",
+      "path": "reviewer/rerun_v2.log",
+      "sha256": "d6450e703722d339d1b8c58af0f273bc1c2673de9d96ef73eab1025aa74c63f2"
+    },
+    {
+      "id": "producer_handoff_v1",
+      "path": "implementer/handoff.json",
+      "sha256": "fc712e545e9b6993fbcb3893f5ad85c1f53f93ce7582cd6679189aee5b16f124"
+    },
+    {
+      "id": "producer_handoff_v2",
+      "path": "implementer/handoff_v2.json",
+      "sha256": "c6a2d879f319f31b543e5133d208f10682853948d683193fc6fb1bcca7b0ecd8"
+    },
+    {
+      "id": "producer_code_v2",
+      "path": "implementer/calculate_v2.py",
+      "sha256": "c8e90550e4b47e186c2d2cda5fd4ee24e411180d228687329c90854c7ce44ce6"
+    },
+    {
+      "id": "producer_results_v2",
+      "path": "implementer/results_v2.json",
+      "sha256": "d6450e703722d339d1b8c58af0f273bc1c2673de9d96ef73eab1025aa74c63f2"
+    },
+    {
+      "id": "producer_log_v2",
+      "path": "implementer/execution_v2.log",
+      "sha256": "d6450e703722d339d1b8c58af0f273bc1c2673de9d96ef73eab1025aa74c63f2"
+    },
+    {
+      "id": "producer_report_v2",
+      "path": "implementer/report_v2.md",
+      "sha256": "156c7466d348142bba012e27ac9640e7a8333a87542496cad6d46692c354a06e"
+    }
+  ],
+  "checks": [
+    {
+      "criterion": "Original v1 and revised v2 handoffs consumed with trusted request; referenced hashes valid",
+      "status": "pass",
+      "artifact_ids": [
+        "reverification",
+        "producer_handoff_v1",
+        "producer_handoff_v2"
+      ]
+    },
+    {
+      "criterion": "Independent arithmetic and actual producer rerun verify mean, n, SD with ddof=1, ms units and ratio-of-means definition",
+      "status": "pass",
+      "artifact_ids": [
+        "input",
+        "review_code",
+        "verified_results",
+        "rerun_results",
+        "rerun_log",
+        "producer_results_v2"
+      ]
+    },
+    {
+      "criterion": "Reviewer reverified all original conditions and closed EXP-1-SAMPLE-DISPERSION-001; synthetic limitation preserved",
+      "status": "pass",
+      "artifact_ids": [
+        "original_review",
+        "reverification",
+        "verified_results",
+        "producer_report_v2"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "EXP-1",
+      "depends_on": [],
+      "status": "done",
+      "evidence": [
+        "verified_results",
+        "reverification",
+        "review_code",
+        "rerun_results",
+        "rerun_log"
+      ]
+    }
+  ]
+}

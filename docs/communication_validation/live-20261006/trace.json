@@ -1,0 +1,126 @@
+{
+  "events": [
+    {
+      "seq": 1,
+      "run_id": "communication-live-20261006T1432",
+      "event_id": "EXP-1-implementer-descriptive-v1",
+      "body": {
+        "action": "reviewer 请 consume handoff 后独立读取输入、脚本和结果，审查描述性结果与合成数据边界；实现者尚未收到独立验收。",
+        "event_id": "EXP-1-implementer-descriptive-v1",
+        "input_version": "synthetic-v1",
+        "kind": "artifact",
+        "refs": [
+          {
+            "id": "handoff",
+            "path": "implementer/handoff.json",
+            "sha256": "fc712e545e9b6993fbcb3893f5ad85c1f53f93ce7582cd6679189aee5b16f124"
+          }
+        ],
+        "run_id": "communication-live-20261006T1432",
+        "sender": "implementer",
+        "summary": "合成配对数据每组 n=6；baseline 均值102 ms、candidate均值89 ms，均值比102/89=1.146067415730337。",
+        "task_id": "EXP-1"
+      }
+    },
+    {
+      "seq": 2,
+      "run_id": "communication-live-20261006T1432",
+      "event_id": "EXP-1-reviewer-dispersion-review-v1",
+      "body": {
+        "action": "Implementer: resolve original finding using reviewer/review_v1.json re-verification conditions; publish revised complete artifact handoff; preserve synthetic-data limitation. Reviewer will independently recheck and close finding.",
+        "event_id": "EXP-1-reviewer-dispersion-review-v1",
+        "input_version": "synthetic-v1",
+        "kind": "review",
+        "refs": [
+          {
+            "id": "review",
+            "path": "reviewer/review_v1.json",
+            "sha256": "924c054caed441e852f55593890e695ce1a54ae1eee7bd91a60f43ef7129a0fa"
+          }
+        ],
+        "run_id": "communication-live-20261006T1432",
+        "sender": "reviewer",
+        "summary": "EXP-1-SAMPLE-DISPERSION-001 open: required sample SD and ddof omitted; independently verified existing n, means, speedup and rerun.",
+        "task_id": "EXP-1"
+      }
+    },
+    {
+      "seq": 3,
+      "run_id": "communication-live-20261006T1432",
+      "event_id": "EXP-1-implementer-dispersion-v2",
+      "body": {
+        "action": "reviewer 请按原 finding_id=EXP-1-SAMPLE-DISPERSION-001 条件重新consume、独立复算和审查；仅reviewer有权关闭发现。",
+        "event_id": "EXP-1-implementer-dispersion-v2",
+        "input_version": "synthetic-v1",
+        "kind": "artifact",
+        "refs": [
+          {
+            "id": "handoff",
+            "path": "implementer/handoff_v2.json",
+            "sha256": "c6a2d879f319f31b543e5133d208f10682853948d683193fc6fb1bcca7b0ecd8"
+          }
+        ],
+        "run_id": "communication-live-20261006T1432",
+        "sender": "implementer",
+        "summary": "补充原发现 EXP-1-SAMPLE-DISPERSION-001：样本标准差 baseline=4.857983120596447 ms、candidate=2.898275349237888 ms，ddof=1；保留v1。",
+        "task_id": "EXP-1"
+      }
+    },
+    {
+      "seq": 4,
+      "run_id": "communication-live-20261006T1432",
+      "event_id": "EXP-1-reviewer-verified-artifact-v2",
+      "body": {
+        "action": "Writer: consume reviewer handoff with trusted request, read verified_results_v2 and review_v2; report n, mean, sample SD/ddof, ms units and ratio-of-means definition. Explicitly state synthetic communication data cannot demonstrate measured system benefits or statistical significance.",
+        "event_id": "EXP-1-reviewer-verified-artifact-v2",
+        "input_version": "synthetic-v1",
+        "kind": "artifact",
+        "refs": [
+          {
+            "id": "handoff",
+            "path": "reviewer/handoff.json",
+            "sha256": "ac8083c497fae1b56fe23adde64a6742718e0cdcf63187cdbc7a34c92a09b86d"
+          }
+        ],
+        "run_id": "communication-live-20261006T1432",
+        "sender": "reviewer",
+        "summary": "Independent reverification passed; reviewer closed EXP-1-SAMPLE-DISPERSION-001. Both sample SDs with ddof=1 verified, original v1 references remain valid.",
+        "task_id": "EXP-1"
+      }
+    }
+  ],
+  "deliveries": [
+    {
+      "seq": 1,
+      "recipient": "reviewer",
+      "receipt": {
+        "reason": "EXP-1-SAMPLE-DISPERSION-001: both groups lack sample SD and ddof; independent n/mean/speedup/rerun checks pass. Revision conditions in reviewer/review_v1.json; review event directs implementer to fix before writer handoff.",
+        "status": "needs_revision"
+      }
+    },
+    {
+      "seq": 2,
+      "recipient": "implementer",
+      "receipt": {
+        "reason": "已核对review seq=2引用哈希并读取原发现EXP-1-SAMPLE-DISPERSION-001，实际补算样本SD、ddof=1和公式，发布v2不可变交接供独立复验；此回执只表示处理，不关闭发现。",
+        "status": "consumed"
+      }
+    },
+    {
+      "seq": 3,
+      "recipient": "reviewer",
+      "receipt": {
+        "reason": "Independently reverified all original conditions for EXP-1-SAMPLE-DISPERSION-001; closed by reviewer in reviewer/review_v2.json. Original v1 references remain valid. Complete reviewer handoff published to writer as seq=4. Synthetic-only limitation retained.",
+        "status": "consumed"
+      }
+    },
+    {
+      "seq": 4,
+      "recipient": "writer",
+      "receipt": {
+        "reason": "Consumed seq=4 with trusted request and verified handoff hashes; directly read verified_results_v2.json, review_v2.json and input.json; wrote writer/result.md with n, means, sample SD/ddof=1, ratio-of-means definition and synthetic/inference limitations. Reviewer closure was read, not performed by writer.",
+        "status": "consumed"
+      }
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "run_id": "communication-live-20261006T1432",
+  "input_version": "synthetic-v1",
+  "reviewer": "reviewer",
+  "source_seq": 3,
+  "source_event_id": "EXP-1-implementer-dispersion-v2",
+  "decision": "pass",
+  "original_v1_references_valid": true,
+  "producer_rerun_matches_results_and_log": true,
+  "relative_tolerance": 1e-12,
+  "findings": [
+    {
+      "finding_id": "EXP-1-SAMPLE-DISPERSION-001",
+      "status": "closed",
+      "closed_by": "reviewer",
+      "original_review": "reviewer/review_v1.json",
+      "reverification": [
+        {
+          "condition": "Provide new immutable artifact event and complete handoff for synthetic-v1, EXP-1, with valid file hashes.",
+          "status": "pass",
+          "evidence": "New immutable event seq=3 consumed with complete producer handoff, trusted request and all SHA-256 checks passing; original seq=1 also successfully re-consumed, proving original v1 refs remain valid."
+        },
+        {
+          "condition": "Re-read original input and rerun revised script into reviewer-owned paths. Independently recompute both means, sample sizes and sample standard deviations; compare within 1e-12 relative tolerance.",
+          "status": "pass",
+          "evidence": "Read original input, recomputed n/mean/squared deviations/SD independently in this reviewer script; reran producer code into reviewer/recomputed_v2.json; stdout equals producer results and execution log."
+        },
+        {
+          "condition": "Verify reported sample SD uses sqrt(sum((x_i-mean)^2)/(n-1)), ddof=1, in ms; n=6 each, 6 paired observations.",
+          "status": "pass",
+          "evidence": "Both groups have n=6; baseline s=sqrt(118/5)=4.857983120596447 ms, candidate s=sqrt(42/5)=2.898275349237888 ms. Code/results/report use ddof=1 and n-1."
+        },
+        {
+          "condition": "Verify speedup is ratio of means 102/89, dimensionless, not mean of pairwise ratios; retain explicit synthetic-only/no measured-system-benefit limitation.",
+          "status": "pass",
+          "evidence": "Speedup is ratio of means 102/89=1.146067415730337 dimensionless. Code/results/report explicitly preserve synthetic-only boundary; no measured benefit or significance assertion accepted."
+        },
+        {
+          "condition": "Reviewer alone closes EXP-1-SAMPLE-DISPERSION-001 after all conditions pass.",
+          "status": "pass",
+          "evidence": "All original conditions passed; reviewer closes the original finding in this revision record. Original review_v1.json remains unchanged as historical evidence."
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Synthetic communication-validation data, not measured system performance; no real-system benefit follows.",
+    "Sample SD describes sample dispersion; no confidence interval or significance test has been performed."
+  ]
+}

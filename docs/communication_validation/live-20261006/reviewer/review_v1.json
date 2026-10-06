@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "run_id": "communication-live-20261006T1432",
+  "input_version": "synthetic-v1",
+  "reviewer": "reviewer",
+  "source_seq": 1,
+  "source_event_id": "EXP-1-implementer-descriptive-v1",
+  "decision": "needs_revision",
+  "independent_method": "Read supplied arrays and compute mean and sqrt(sum((x-mean)^2)/(n-1)); rerun producer script with output redirected into reviewer/.",
+  "verified": {
+    "baseline": {
+      "n": 6,
+      "mean_ms": 102.0,
+      "sum_squared_deviations_ms2": 118.0,
+      "sample_sd_ms": 4.857983120596447,
+      "ddof": 1
+    },
+    "candidate": {
+      "n": 6,
+      "mean_ms": 89.0,
+      "sum_squared_deviations_ms2": 42.0,
+      "sample_sd_ms": 2.898275349237888,
+      "ddof": 1
+    },
+    "speedup_ratio_of_means": 1.146067415730337
+  },
+  "checks": {
+    "baseline_n": true,
+    "baseline_mean": true,
+    "candidate_n": true,
+    "candidate_mean": true,
+    "speedup": true,
+    "unit": true,
+    "synthetic": true,
+    "implementation_rerun_matches": true,
+    "required_sample_sd_present": false
+  },
+  "limitations": [
+    "Synthetic communication validation data only; cannot demonstrate measured system performance or statistical significance."
+  ],
+  "findings": [
+    {
+      "finding_id": "EXP-1-SAMPLE-DISPERSION-001",
+      "status": "open",
+      "severity": "major",
+      "location": [
+        "implementer/calculate.py result object",
+        "implementer/results.json",
+        "implementer/report.md results table"
+      ],
+      "evidence": "Neither results nor report nor calculation contains sample standard deviations or ddof. Current mean, n, unit, and speedup calculations independently match input. Descriptive scope does not remove required sample dispersion.",
+      "requested_revision": "Implement sample standard deviation for both groups, with ms units, ddof=1 and formula; execute revised code and include results, log, report and updated hashed handoff. Preserve original mean/n/speedup definition and synthetic-data boundary.",
+      "reverification_conditions": [
+        "Provide new immutable artifact event and complete handoff for synthetic-v1, EXP-1, with valid file hashes.",
+        "Re-read original input and rerun revised script into reviewer-owned paths. Independently recompute both means, sample sizes and sample standard deviations; compare within 1e-12 relative tolerance.",
+        "Verify reported sample SD uses sqrt(sum((x_i-mean)^2)/(n-1)), ddof=1, in ms; n=6 each, 6 paired observations.",
+        "Verify speedup is ratio of means 102/89, dimensionless, not mean of pairwise ratios; retain explicit synthetic-only/no measured-system-benefit limitation.",
+        "Reviewer alone closes EXP-1-SAMPLE-DISPERSION-001 after all conditions pass."
+      ]
+    }
+  ]
+}
