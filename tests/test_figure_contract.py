@@ -131,15 +131,15 @@ class FigurePackageContractChecks(unittest.TestCase):
 
     def test_skill_entries_and_agent_metadata_are_wired(self):
         installed = {path.parent.name for path in SKILLS.glob('*/SKILL.md')}
-        self.assertEqual(len(installed), 13, 'Update advertised skill counts when the package changes.')
+        self.assertEqual(len(installed), 14, 'Update advertised skill counts when the package changes.')
         readme = read(ROOT / 'README.md')
-        self.require_pattern(r'包含\s+13\s+个技能', readme)
+        self.require_pattern(r'包含\s+14\s+个技能', readme)
         for skill in installed:
             self.require_token('`' + skill + '`', readme)
         plugin = json.loads(read(SKILLS.parent / 'plugin.json'))
         interface = plugin['extensions']['com.openai']['interface']
-        self.require_token('十三个技能', interface['shortDescription'])
-        self.require_token('十一个专业技能', interface['longDescription'])
+        self.require_token('十四个技能', interface['shortDescription'])
+        self.require_token('十三个专业技能', interface['longDescription'])
         for skill in ('research-figures', *SPECIALISTS):
             package = SKILLS / skill
             text = read(package / 'SKILL.md')

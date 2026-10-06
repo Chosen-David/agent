@@ -14,6 +14,7 @@ import tempfile
 
 from .core import Outcome, validate
 from .project_memory import check_task_memory
+from .knowledge import check_task_knowledge
 
 
 def digest(path):
@@ -110,6 +111,7 @@ def validate_contract(plan, root):
 
 def result_report(root, task):
     check_task_memory(root, task)
+    check_task_knowledge(root, task)
     path = (Path(root).resolve() / task['report_path']).resolve()
     if not path.is_relative_to(Path(root).resolve()):
         raise ValueError('result report outside project')
@@ -135,6 +137,7 @@ def result_report(root, task):
                 or not isinstance(item.get('description'), str) or not item['description'].strip()):
             raise ValueError('each datum needs kind and description; distinguish measured/synthetic/N/A')
     check_task_memory(root, task)
+    check_task_knowledge(root, task)
     return value, {'path': task['report_path'], 'sha256': hashlib.sha256(data).hexdigest()}
 
 
@@ -148,8 +151,9 @@ class ReportingHandler:
     def run(self, task, context):
         try:
             check_task_memory(self.root, task)
+            check_task_knowledge(self.root, task)
         except (OSError, ValueError) as exc:
-            return Outcome('blocked', f'project memory reconciliation required: {exc}')
+            return Outcome('blocked', f'project memory/knowledge reconciliation required: {exc}')
         outcome = self.handler.run(task, context)
         if outcome.status == 'complete':
             try:
@@ -167,6 +171,7 @@ class ReportingHandler:
             accepted = (proof == evidence[-1]['task_report']
                         and self.handler.verify(task, evidence[:-1]))
             check_task_memory(self.root, task)
+            check_task_knowledge(self.root, task)
             return accepted
         except (OSError, ValueError):
             return False

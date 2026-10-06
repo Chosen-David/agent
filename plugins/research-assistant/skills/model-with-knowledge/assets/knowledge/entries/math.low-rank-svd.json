@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "id": "math.low-rank-svd",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "截断 SVD 的最优低秩近似",
+  "summary": "谱范数和 Frobenius 范数下的低秩近似；不直接保证下游排序或加速。",
+  "aliases": [
+    "Eckart Young Mirsky",
+    "矩阵压缩",
+    "rank approximation",
+    "奇异值",
+    "低秩误差"
+  ],
+  "domains": [
+    "linear-algebra"
+  ],
+  "structures": [
+    "low-rank",
+    "error-bound"
+  ],
+  "assumptions": [
+    "有限实矩阵 A，r 为 0 到 min(m,n) 的整数",
+    "优化目标为谱范数或 Frobenius 范数，候选矩阵秩至多 r"
+  ],
+  "sources": [
+    {
+      "url": "https://www.cs.cornell.edu/courses/cs6210/2025fa/lec/2025-10-15.html",
+      "locator": "Low rank and Eckart–Young–Mirsky",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "同名 Markdown 中的命题、推导与边界；非形式化证明",
+      "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "application",
+      "id": "math.topk-margin"
+    }
+  ]
+}

@@ -247,3 +247,7 @@ on_failure、resource_budget、status。依赖有效且无环，写清 blocked �
 - [Scientific Critical Thinking](https://github.com/ckorhonen/claude-skills/blob/main/skills/scientific-critical-thinking/SKILL.md)
 
 未来新课题重新发现相关 Skill 与文献，保留这套研究目标、证据和任务关系。不要固定某个学科的术语、实验数量或预期提升幅度。
+
+## 按需使用基础知识
+
+当任务需要数学/物理结构、误差界、对称简化或量纲分析时转 `model-with-knowledge` 并遵循 [知识建模流程](https://github.com/Chosen-David/agent/blob/main/workflows/knowledge_modeling_workflow.md)。从任务结构检索、核对全部假设，再返回推导、反例与知识版本引用；知识相关性不是适用性，推导不是性能实测。无此需求不增加步骤。

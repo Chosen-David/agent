@@ -219,3 +219,7 @@ SSH/客户端断链不是停止指令；tmux 在服务器与进程存活时继�
 ## 项目记忆与结果入口
 
 跨会话与意图纠错读取 [项目记忆与纠错](../workflows/project_memory_workflow.md)。AGENTS.md 保留稳定协议，TASK.md 保留当前任务与结果索引；不要合成巨型记忆文件。主 AI 交接当前意图 ID、memory_refs、来源版本与暂停范围，验收时拒收 stale 结论；文件管理 Agent 同步受影响产物/消费者。通用报告发布入口见 [文件管理流程](../workflows/code_organization_workflow.md)，实际脚本存在才声称机器门禁已接入。
+
+## 基础知识的按需建模
+
+任务涉及误差界、矩阵近似、排序稳定性、群对称、量纲或其他数学/物理推导时，调用 `model-with-knowledge`，按 [知识建模流程](../workflows/knowledge_modeling_workflow.md) 从问题结构检索。知识保存在 `knowledge/`，不常驻加载全文；先核对前提，再推导并验证。任务记录实际使用的 knowledge_refs（含前置依赖）；项目私有观测仍进项目记忆。安装 Skill 自带快照，更新仓库后需同步分发；缺少语料时说明阻塞，不能假称已检索。

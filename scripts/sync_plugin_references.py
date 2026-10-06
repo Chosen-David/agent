@@ -130,6 +130,21 @@ for role, filename in FIGURE_SPECIALISTS.items():
         f'plugins/research-assistant/skills/research-assistant/references/{filename}',
     ]
 
+# Knowledge content is a byte-exact standalone snapshot, not a second source.
+KNOWLEDGE_SKILL = 'plugins/research-assistant/skills/model-with-knowledge'
+MAPPINGS['workflows/knowledge_modeling_workflow.md'] = [
+    KNOWLEDGE_SKILL + '/references/workflow.md',
+    'plugins/research-assistant/skills/research-assistant/references/knowledge_modeling_workflow.md',
+]
+MAPPINGS['docs/knowledge_upstreams.md'] = [KNOWLEDGE_SKILL + '/references/upstreams.md']
+for module in ('knowledge.py', 'knowledge_index.py', 'knowledge_ingest.py'):
+    MAPPINGS['agent_runtime/' + module] = [KNOWLEDGE_SKILL + '/scripts/' + module]
+for source_path in sorted((ROOT / 'knowledge').rglob('*')):
+    if source_path.is_file() and source_path.suffix in {'.md', '.json', '.txt'}:
+        source = source_path.relative_to(ROOT).as_posix()
+        MAPPINGS[source] = [KNOWLEDGE_SKILL + '/assets/' + source]
+        RAW_COPY_SOURCES.add(source)
+
 # The coordinator bundles role supplements for standalone/offline dispatch.
 import json
 for role in json.loads((ROOT / "config/role_registry.json").read_text())["roles"]:
@@ -190,6 +205,15 @@ def main() -> int:
             if not args.check:
                 path.parent.mkdir(parents=True, exist_ok=True)
                 path.write_text(expected, encoding="utf-8")
+    # Never silently keep deleted canonical entries in an installed snapshot.
+    expected_knowledge = {destination for source, destinations in MAPPINGS.items()
+                          if source.startswith('knowledge/') for destination in destinations}
+    extras = [p.relative_to(ROOT).as_posix()
+              for p in (ROOT / KNOWLEDGE_SKILL / 'assets/knowledge').rglob('*')
+              if p.is_file() and p.relative_to(ROOT).as_posix() not in expected_knowledge]
+    if extras:
+        print('orphan bundled knowledge: review and remove explicitly:', ', '.join(extras))
+        return 1
     if args.check and stale:
         print("stale generated references:")
         for item in stale:

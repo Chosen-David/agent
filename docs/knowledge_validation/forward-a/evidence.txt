@@ -1,0 +1,380 @@
+$ ['python', 'scripts/knowledge.py', '--root', 'assets/knowledge', 'search', '向量 压缩 点积 排名 误差', '--limit', '3']
+{
+  "schema_version": 1,
+  "snapshot": "5744245725a198e45a2b5b9c8da7df89617b09930442d2bbd66ae94fb9db46f6",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c",
+      "title": "Cauchy–Schwarz 与内积分数误差",
+      "summary": "由向量误差界推出查询与键的内积分数误差界。",
+      "status": "published",
+      "assumptions": [
+        "实向量 q、k、k_hat 维数相同，使用欧氏内积和二范数",
+        "已知键向量误差界；查询变化时必须另外计入误差"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 中的命题、推导与边界；非形式化证明",
+          "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "误差"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "误差"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "向量",
+            "误差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "向量",
+            "误差"
+          ]
+        }
+      ],
+      "score": 18
+    },
+    {
+      "id": "math.low-rank-svd",
+      "version": 1,
+      "sha256": "a62b7eb5702662d678165acad4d439826ac79260bc083dda8b8f7763681621b8",
+      "title": "截断 SVD 的最优低秩近似",
+      "summary": "谱范数和 Frobenius 范数下的低秩近似；不直接保证下游排序或加速。",
+      "status": "published",
+      "assumptions": [
+        "有限实矩阵 A，r 为 0 到 min(m,n) 的整数",
+        "优化目标为谱范数或 Frobenius 范数，候选矩阵秩至多 r"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 中的命题、推导与边界；非形式化证明",
+          "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "压缩",
+            "误差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "向量",
+            "误差"
+          ]
+        }
+      ],
+      "score": 12
+    },
+    {
+      "id": "math.topk-margin",
+      "version": 1,
+      "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792",
+      "title": "有界分数误差下的 Top-k 稳定性",
+      "summary": "用边界分数间隔判断近似排序能否保留 Top-k 集合。",
+      "status": "published",
+      "assumptions": [
+        "有限 n 个实分数，1≤k<n，原分数降序排列",
+        "每个分数均满足绝对误差≤ε，而不是仅平均误差",
+        "边界间隔 Δ=s_(k)−s_(k+1) 严格大于 2ε"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 中的命题、推导与边界；非形式化证明",
+          "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "误差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "误差"
+          ]
+        }
+      ],
+      "score": 6
+    }
+  ]
+}
+
+exit=0
+$ ['python', 'scripts/knowledge.py', '--root', 'assets/knowledge', 'show', 'math.low-rank-svd']
+{
+  "schema_version": 1,
+  "id": "math.low-rank-svd",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "截断 SVD 的最优低秩近似",
+  "summary": "谱范数和 Frobenius 范数下的低秩近似；不直接保证下游排序或加速。",
+  "aliases": [
+    "Eckart Young Mirsky",
+    "矩阵压缩",
+    "rank approximation",
+    "奇异值",
+    "低秩误差"
+  ],
+  "domains": [
+    "linear-algebra"
+  ],
+  "structures": [
+    "low-rank",
+    "error-bound"
+  ],
+  "assumptions": [
+    "有限实矩阵 A，r 为 0 到 min(m,n) 的整数",
+    "优化目标为谱范数或 Frobenius 范数，候选矩阵秩至多 r"
+  ],
+  "sources": [
+    {
+      "url": "https://www.cs.cornell.edu/courses/cs6210/2025fa/lec/2025-10-15.html",
+      "locator": "Low rank and Eckart–Young–Mirsky",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "同名 Markdown 中的命题、推导与边界；非形式化证明",
+      "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "application",
+      "id": "math.topk-margin"
+    }
+  ],
+  "content": "# 截断 SVD\n\n## 命题\nA=UΣVᵀ，奇异值按降序排列；保留前 r 项得到 A_r。\n在 rank(B)≤r 中，A_r 最小化 ‖A−B‖₂ 和 ‖A−B‖F。\n谱范数残差为 σ_(r+1)，Frobenius 残差平方为尾部奇异值平方和。\nr=min(m,n) 时残差为零。最优解不一定唯一。\n\n## 证明线索\n正交变换不改变这两种范数。谱范数下，对任意秩至多 r 的 B，\n前 r+1 个右奇异向量张成的空间中存在单位 x 满足 Bx=0，故\n‖A−B‖₂≥‖Ax‖₂≥σ_(r+1)；A_r 达到该界。\n这里只展开谱范数证明，Frobenius 结论依来源核对；不声称完整形式化验证。\n\n## 实例与边界\nA=diag(5,2,0.1)，r=2，谱/Frobenius 残差均为 0.1。\n这不是逐元素最大误差目标的最优性定理，也不保证截断前后 Top-k 相同。\n是否加速还取决于分解成本、复用次数、矩阵尺寸和具体实现，必须实测。\n",
+  "path": "entries/math.low-rank-svd.json",
+  "sha256": "a62b7eb5702662d678165acad4d439826ac79260bc083dda8b8f7763681621b8",
+  "knowledge_refs": [
+    {
+      "id": "math.low-rank-svd",
+      "version": 1,
+      "sha256": "a62b7eb5702662d678165acad4d439826ac79260bc083dda8b8f7763681621b8"
+    }
+  ]
+}
+
+exit=0
+$ ['python', 'scripts/knowledge.py', '--root', 'assets/knowledge', 'show', 'math.topk-margin']
+{
+  "schema_version": 1,
+  "id": "math.topk-margin",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "有界分数误差下的 Top-k 稳定性",
+  "summary": "用边界分数间隔判断近似排序能否保留 Top-k 集合。",
+  "aliases": [
+    "排序会不会变",
+    "ranking stability",
+    "top-k",
+    "候选筛选",
+    "近似分数",
+    "间隔"
+  ],
+  "domains": [
+    "linear-algebra",
+    "optimization"
+  ],
+  "structures": [
+    "ranking",
+    "error-bound"
+  ],
+  "assumptions": [
+    "有限 n 个实分数，1≤k<n，原分数降序排列",
+    "每个分数均满足绝对误差≤ε，而不是仅平均误差",
+    "边界间隔 Δ=s_(k)−s_(k+1) 严格大于 2ε"
+  ],
+  "sources": [
+    {
+      "url": "https://people.math.wisc.edu/~gemeyer/math340/Notes3.html",
+      "locator": "Theorem 5.3 仅支持内积误差上界；Top-k 命题为本条显式推导",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "同名 Markdown 中的命题、推导与边界；非形式化证明",
+      "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.low-rank-svd"
+    }
+  ],
+  "content": "# Top-k 的充分条件\n\n## 命题与推导\n若每项 |s_i−s_hat_i|≤ε 且 Δ=s_(k)−s_(k+1)>2ε，则 Top-k 集合不变。\n对任何原集合内 i 与集合外 j，\ns_hat_i−s_hat_j ≥ s_i−s_j−2ε ≥ Δ−2ε > 0。\n这保证集合，不保证集合内部顺序。本命题是本库给出的推导，不能冒称来源原文定理。\n\n## 实例\n原分数 (0.9,0.7,0.2)，k=2，ε=0.1，Δ=0.5>0.2，集合稳定。\n\n## 反例\n(0.501,0.500)，k=1，ε=0.001；扰动为 (−0.001,+0.001) 后变成\n(0.500,0.501)，排序翻转。Δ=2ε 时也可能出现并列，不能省去严格不等号。\n条件不满足只能说“此条件无法保证”，不能断言必然翻转。\n\n## 与矩阵近似的连接\nK 的每列为一个键，s=Kᵀq，固定 q；若 ‖K−K_hat‖₂≤δ，则\n每项分数误差≤‖q‖₂δ，可令 ε=‖q‖₂δ 再检查间隔。\n观测的平均误差、采样最大误差都不自动成为全体分数的保证。\n",
+  "path": "entries/math.topk-margin.json",
+  "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792",
+  "knowledge_refs": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c"
+    },
+    {
+      "id": "math.topk-margin",
+      "version": 1,
+      "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792"
+    }
+  ]
+}
+
+exit=0
+$ ['python', 'scripts/knowledge.py', '--root', 'assets/knowledge', 'show', 'math.cauchy-schwarz']
+{
+  "schema_version": 1,
+  "id": "math.cauchy-schwarz",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "Cauchy–Schwarz 与内积分数误差",
+  "summary": "由向量误差界推出查询与键的内积分数误差界。",
+  "aliases": [
+    "柯西施瓦茨",
+    "dot product error",
+    "inner product bound",
+    "查询键误差",
+    "分数扰动"
+  ],
+  "domains": [
+    "linear-algebra"
+  ],
+  "structures": [
+    "error-bound",
+    "inner-product"
+  ],
+  "assumptions": [
+    "实向量 q、k、k_hat 维数相同，使用欧氏内积和二范数",
+    "已知键向量误差界；查询变化时必须另外计入误差"
+  ],
+  "sources": [
+    {
+      "url": "https://people.math.wisc.edu/~gemeyer/math340/Notes3.html",
+      "locator": "Theorem 5.3；原页面部分不等号编码缺失，下面给出独立推导",
+      "accessed": "2026-10-06"
+    },
+    {
+      "url": "https://github.com/leanprover-community/mathlib4/blob/eb681fbdc4a4f09fe5385666cc194b335df59611/Mathlib/Analysis/InnerProductSpace/Basic.lean",
+      "locator": "文件文档的 inner_mul_inner_self_le 及 Cauchy–Schwarz 变体；仅检查源文件，未运行 Lean",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "同名 Markdown 中的命题、推导与边界；非形式化证明",
+      "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "content": "# 内积误差界\n\n## 命题与符号\n实向量 u,v 满足 |uᵀv| ≤ ‖u‖₂‖v‖₂。因此固定 q 时，\n|qᵀk − qᵀk_hat| ≤ ‖q‖₂‖k−k_hat‖₂。\n来源支持基础不等式；分数误差是本条直接推论。\n\n## 推导\nv=0 时显然。否则取 t=(uᵀv)/‖v‖₂²，由 ‖u−tv‖₂²≥0 得\n‖u‖₂²−(uᵀv)²/‖v‖₂²≥0。取平方根，再令 u=q、v=k−k_hat。\n\n## 实例\nq=(3,4)，k−k_hat=(0.06,0.08)，内积误差 0.5，范数乘积也是 0.5。\n\n## 误用与验证\n平均键误差不能替代每个键的上界。例：q=(1)，两个键误差为 0 和 2，\n均值为 1，却有分数误差 2。查询也变化时用分解\nqᵀk−q_hatᵀk_hat=(q−q_hat)ᵀk+q_hatᵀ(k−k_hat)，分别取界。\n范数界不自动保证排序、softmax 输出或模型任务精度。\n\n形式化来源索引：mathlib4 固定版本见元数据 sources。已阅读该文件的 Cauchy–Schwarz 变体说明；未运行 Lean，本条目的查询误差应用也没有形式化证明。\n",
+  "path": "entries/math.cauchy-schwarz.json",
+  "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c",
+  "knowledge_refs": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c"
+    }
+  ]
+}
+
+exit=0
+score_error_bound = 0.07500000000000001 generic_gap_threshold = 0.15000000000000002
+0.18 guaranteed: True 0.10 generic guarantee: False
+sharper spectral gap threshold = 0.10606601717798216
+Exact SVD construction: U=I; V^T rows=v1,v2; sigma= [0.15003385983535586, 0.025]
+K= [[0.09496862864437114, 0.11615127494135712], [0.019354176961923663, -0.015824532666923956]] q= (0.2447447650104062, 2.99) qnorm= 3.0
+original_scores= [0.0811120638170789, -0.018887936182921103] rank1_scores= [0.023243074700927145, 0.02842741649118153] original_gap= 0.1 rank1_gap= -0.005184341790254385
+0.10 unchanged example: K= [[0.03333333333333333, 0], [0, 0.025]] q= [3, 0] scores_before_after= [0.1, 0]
+Average-only failure: n=20, gap= 0.18 MAE= 0.01 boundary_scores_before= [0.18, 0] after= [0.07999999999999999, 0.1]
+Average-only failure: n=20, gap= 0.1 MAE= 0.01 boundary_scores_before= [0.1, 0] after= [0.0, 0.1]
+All concrete checks passed; refs.json generated from actual show outputs.
+
+$ python /tmp/knowledge-forward-a/check.py
+score_error_bound = 0.07500000000000001 generic_gap_threshold = 0.15000000000000002
+0.18 guaranteed: True 0.10 generic guarantee: False
+sharper spectral gap threshold = 0.10606601717798216
+Exact SVD construction: U=I; V^T rows=v1,v2; sigma= [0.15003385983535586, 0.025]
+K= [[0.09496862864437114, 0.11615127494135712], [0.019354176961923663, -0.015824532666923956]] q= (0.2447447650104062, 2.99) qnorm= 3.0
+original_scores= [0.0811120638170789, -0.018887936182921103] rank1_scores= [0.023243074700927145, 0.02842741649118153] original_gap= 0.1 rank1_gap= -0.005184341790254385
+0.10 unchanged example: K= [[0.03333333333333333, 0], [0, 0.025]] q= [3, 0] scores_before_after= [0.1, 0]
+Average-only failure: n=20, gap= 0.18 MAE= 0.01 boundary_scores_before= [0.18, 0] after= [0.07999999999999999, 0.1]
+Average-only failure: n=20, gap= 0.1 MAE= 0.01 boundary_scores_before= [0.1, 0] after= [0.0, 0.1]
+All concrete checks passed; refs.json generated from actual show outputs.
+exit=0
+
+$ python scripts/knowledge.py --root assets/knowledge check-refs /tmp/knowledge-forward-a/refs.json
+{
+  "valid": true,
+  "snapshot": "5744245725a198e45a2b5b9c8da7df89617b09930442d2bbd66ae94fb9db46f6",
+  "knowledge_refs": [
+    {
+      "id": "math.low-rank-svd",
+      "version": 1,
+      "sha256": "a62b7eb5702662d678165acad4d439826ac79260bc083dda8b8f7763681621b8"
+    },
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c"
+    },
+    {
+      "id": "math.topk-margin",
+      "version": 1,
+      "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792"
+    }
+  ],
+  "scope": "content identity and published prerequisites; applicability unchecked"
+}
+exit=0

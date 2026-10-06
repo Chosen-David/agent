@@ -387,3 +387,7 @@ on_failure、resource_budget、status。依赖有效且无环，前置失败不�
 - [Kernel Profiler Skill](https://github.com/ZJtoast/kernel-profiler-skill)
 
 后备信息核查于 2026-10-01；具体编译器、框架、硬件指标和平台命令在每次运行时按官方文档核实。测量契约与证据要求保持稳定，技术工具随项目替换。
+
+## 按需使用基础知识
+
+当任务需要数学/物理结构、误差界、对称简化或量纲分析时转 `model-with-knowledge` 并遵循 [知识建模流程](knowledge_modeling_workflow.md)。从任务结构检索、核对全部假设，再返回推导、反例与知识版本引用；知识相关性不是适用性，推导不是性能实测。无此需求不增加步骤。

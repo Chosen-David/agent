@@ -42,7 +42,7 @@ def block():
 
 仓库位置见 `.claude/agent-workflows/installation.json` 的 repository。
 主 AI 按导入的通用调度规则执行；其中 prompts/、workflows/、templates/、
-config/、scripts/ 与 agent_runtime 均相对该仓库解析，项目输入和 TASK.md 相对当前项目。
+config/、scripts/、knowledge/ 与 agent_runtime 均相对该仓库解析，项目输入和 TASK.md 相对当前项目。
 根目录 TASK.md 是当前项目唯一活跃总清单；启动/恢复、委派前和逐任务结束都要读取。
 用户手动要求编排时合并目标后走同一闭环；总清单由主 AI 串行维护，各 Agent 交接证据。
 code-organization 同时管理文件：规划输出目录、产物清单和消费者引用，防止散落和覆盖。

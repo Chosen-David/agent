@@ -13,7 +13,7 @@ git clone https://github.com/Chosen-David/agent.git
 python3 agent/setup.py --target /absolute/path/to/your-project
 ```
 
-一次接入主 AI 调度、14 个 Skills 和 14 个 Claude 子 Agent；Skills 随 clone 下载，保留已有项目规则。进入目标项目启动 Claude，即可按仓库逻辑路由任务、读取 TASK.md，并由主 AI 配置 tmux 监督。安装本身不启动模型或后台任务。[完整接入与更新说明](SETUP.md)。
+一次接入主 AI 调度、15 个 Skills 和 15 个 Claude 子 Agent；Skills 随 clone 下载，保留已有项目规则。进入目标项目启动 Claude，即可按仓库逻辑路由任务、读取 TASK.md，并由主 AI 配置 tmux 监督。安装本身不启动模型或后台任务。[完整接入与更新说明](SETUP.md)。
 
 ## 2026-10-03：源码对照与逐角色执行验证
 
@@ -155,7 +155,7 @@ cd agent
 
 ## 科研助手插件包
 
-[plugins/research-assistant/](plugins/research-assistant/) 包含 13 个技能：
+[plugins/research-assistant/](plugins/research-assistant/) 包含 14 个技能：
 
 `code-organization`、`code-reading`、`research-assistant`、`research-explore`、`research-implement-optimize`、`research-figures`、`research-data-visualization`、`research-diagrams`、`research-write`、`research-review`、`research-read-pdf`、`paper-reading-companion`、`explain-research-concepts`。
 
@@ -241,3 +241,9 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 [文件管理 Agent](workflows/code_organization_workflow.md) 协调生产者/消费者、参数化脚本和产物索引；[报告工具](scripts/publish_report.py) 保留不可变 run 快照和稳定 latest 入口。脚本与账本需实际接入，文件存在不证明模型自动遵守或服务器已部署。
 
 [2026-10-06 的 11 篇论文综合、实现与验证](docs/continuous_optimization/rounds/2026-10-06-memory/round.md) 记录采用理由、负结果和未验证项；后续接续 [持续优化台账](docs/continuous_optimization/README.md)，不以单次测试宣布性能到顶。
+
+## 可扩展基础知识库
+
+[知识库入口](knowledge/README.md) · [建模流程](workflows/knowledge_modeling_workflow.md) · [上游取舍与架构图](docs/knowledge_upstreams.md) · [持续学习任务 Prompt](prompts/math_knowledge_continuous_learning.md)。
+
+知识按 Git 管理的 JSON + Markdown 条目维护；`model-with-knowledge` 按问题结构检索、检查前提再推导。已提供 5 条数学/物理种子、只读检索器、版本依赖验收和独立 Skill 快照。已提供可重建的 SQLite FTS5/BM25 索引、结构排名融合、章节导航、增量更新和候选导入；无独立数据库服务。定时触发器尚未创建，语料规模和真实任务效果仍需后续评测。

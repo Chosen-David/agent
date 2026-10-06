@@ -1,0 +1,205 @@
+$ python -B /tmp/knowledge-forward-c/skill-final/scripts/knowledge.py --root /tmp/knowledge-forward-c/skill-final/assets/knowledge --help
+exit=0
+usage: knowledge.py [-h] --root ROOT
+                    {validate,snapshot,index,tree,section,ingest,search,show,related,check-refs}
+                    ...
+
+File-first knowledge retrieval, validation and explicit candidate maintenance.
+File search needs no database; the optional SQLite index is rebuildable. No
+operation makes network requests or downloads a model. Relevance is lexical,
+never evidence of applicability or mathematical correctness. The same API can
+be implemented by an indexed backend without changing consumers.
+
+positional arguments:
+  {validate,snapshot,index,tree,section,ingest,search,show,related,check-refs}
+
+options:
+  -h, --help            show this help message and exit
+  --root ROOT           explicit knowledge directory
+
+$ python -B /tmp/knowledge-forward-c/skill-final/scripts/knowledge.py --root /tmp/knowledge-forward-c/skill-final/assets/knowledge section physics.dimensionless s3
+exit=0
+{
+  "id": "physics.dimensionless",
+  "version": 1,
+  "sha256": "06d0c7f8b08727194bb340cae3dc9e31e2606e38a1b59a668b36430311f97dd3",
+  "section": {
+    "node": "s3",
+    "title": "实例",
+    "level": 2,
+    "start_line": 8,
+    "parent": "s1",
+    "end_line": 12,
+    "text": "## 实例\n只考虑单摆周期 T、长度 l、重力加速度 g，量纲分别为时间、长度、长度/时间²。\n可构造 Π=T√(g/l)，因此模型只给出 T=C√(l/g)，无法由量纲分析求 C。\n若振幅影响不能忽略，则无量纲角度也是变量，C 应成为角度的函数。\n\n"
+  },
+  "knowledge_refs": [
+    {
+      "id": "physics.dimensionless",
+      "version": 1,
+      "sha256": "06d0c7f8b08727194bb340cae3dc9e31e2606e38a1b59a668b36430311f97dd3"
+    }
+  ]
+}
+
+$ python -B /tmp/knowledge-forward-c/skill-final/scripts/knowledge.py --root /tmp/knowledge-forward-c/skill-final/assets/knowledge index --db /tmp/knowledge-forward-c/final-regression.sqlite
+exit=0
+{
+  "backend": "sqlite-fts5-rrf-v1",
+  "snapshot": "5744245725a198e45a2b5b9c8da7df89617b09930442d2bbd66ae94fb9db46f6",
+  "indexed": 5,
+  "updated": 5,
+  "removed": 0,
+  "unchanged": 0
+}
+
+$ python -B /tmp/knowledge-forward-c/skill-final/scripts/knowledge.py --root /tmp/knowledge-forward-c/skill-final/assets/knowledge search '单摆 周期 长度 重力 单位 量纲' --index /tmp/knowledge-forward-c/final-regression.sqlite --limit 3
+exit=0
+{
+  "schema_version": 1,
+  "snapshot": "5744245725a198e45a2b5b9c8da7df89617b09930442d2bbd66ae94fb9db46f6",
+  "backend": "sqlite-fts5-rrf-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "physics.dimensionless",
+      "version": 1,
+      "sha256": "06d0c7f8b08727194bb340cae3dc9e31e2606e38a1b59a668b36430311f97dd3",
+      "title": "量纲矩阵与无量纲化",
+      "summary": "以量纲矩阵零空间构造无量纲组，检查物理建模的变量完整性。",
+      "status": "published",
+      "assumptions": [
+        "物理关系在单位变换下保持一致，变量及相关参数已明确",
+        "量纲矩阵列对应变量，秩 r；单项式构造在变量为正的区域讨论"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 中的命题、推导与边界；非形式化证明",
+          "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 1
+        },
+        {
+          "retriever": "section-bm25",
+          "rank": 1
+        },
+        {
+          "retriever": "curated-structure",
+          "rank": 1
+        }
+      ],
+      "score": 0.04918032786885246,
+      "sections": [
+        {
+          "node": "s3",
+          "title": "实例",
+          "start_line": 8,
+          "end_line": 12,
+          "excerpt": "## 实例\n只考虑单摆周期 T、长度 l、重力加速度 g，量纲分别为时间、长度、长度/时间²。\n可构造 Π=T√(g/l)，因此模型只给出 T=C√(l/g)，无法由量纲分析求 C。\n若振幅影响不能忽略，则无量纲角度也是变量，C 应成为角度的函数。\n\n"
+        },
+        {
+          "node": "s4",
+          "title": "反例与验证",
+          "start_line": 13,
+          "end_line": 15,
+          "excerpt": "## 反例与验证\nT=l/g 的量纲是时间²，不是周期。T=C√(l/g) 虽然量纲正确，仍可能遗漏阻尼等变量。\n单位一致是必要检查，不是物理正确性的充分证据。变换单位后复算，随后用实验验证模型。\n"
+        }
+      ]
+    },
+    {
+      "id": "math.low-rank-svd",
+      "version": 1,
+      "sha256": "a62b7eb5702662d678165acad4d439826ac79260bc083dda8b8f7763681621b8",
+      "title": "截断 SVD 的最优低秩近似",
+      "summary": "谱范数和 Frobenius 范数下的低秩近似；不直接保证下游排序或加速。",
+      "status": "published",
+      "assumptions": [
+        "有限实矩阵 A，r 为 0 到 min(m,n) 的整数",
+        "优化目标为谱范数或 Frobenius 范数，候选矩阵秩至多 r"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 中的命题、推导与边界；非形式化证明",
+          "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 2
+        },
+        {
+          "retriever": "section-bm25",
+          "rank": 2
+        }
+      ],
+      "score": 0.03225806451612903,
+      "sections": [
+        {
+          "node": "s3",
+          "title": "证明线索",
+          "start_line": 9,
+          "end_line": 14,
+          "excerpt": "## 证明线索\n正交变换不改变这两种范数。谱范数下，对任意秩至多 r 的 B，\n前 r+1 个右奇异向量张成的空间中存在单位 x 满足 Bx=0，故\n‖A−B‖₂≥‖Ax‖₂≥σ_(r+1)；A_r 达到该界。\n这里只展开谱范数证明，Frobenius 结论依来源核对；不声称完整形式化验证。\n\n"
+        }
+      ]
+    }
+  ]
+}
+
+LOCAL INDEPENDENT COMPARISONS
+{
+  "help": {
+    "exit": 0,
+    "text": "usage: knowledge.py [-h] --root ROOT\n                    {validate,snapshot,index,tree,section,ingest,search,show,related,check-refs}\n                    ...\n\nFile-first knowledge retrieval, validation and explicit candidate maintenance.\nFile search needs no database; the optional SQLite index is rebuildable. No\noperation makes network requests or downloads a model. Relevance is lexical,\nnever evidence of applicability or mathematical correctness. The same API can\nbe implemented by an indexed backend without changing consumers.\n\npositional arguments:\n  {validate,snapshot,index,tree,section,ingest,search,show,related,check-refs}\n\noptions:\n  -h, --help            show this help message and exit\n  --root ROOT           explicit knowledge directory\n",
+    "obsolete_read_only_claim_absent": true
+  },
+  "section": {
+    "exit": 0,
+    "start_line": 8,
+    "end_line": 12,
+    "exact_byte_equality": true,
+    "returned_repr": "b'## \\xe5\\xae\\x9e\\xe4\\xbe\\x8b\\n\\xe5\\x8f\\xaa\\xe8\\x80\\x83\\xe8\\x99\\x91\\xe5\\x8d\\x95\\xe6\\x91\\x86\\xe5\\x91\\xa8\\xe6\\x9c\\x9f T\\xe3\\x80\\x81\\xe9\\x95\\xbf\\xe5\\xba\\xa6 l\\xe3\\x80\\x81\\xe9\\x87\\x8d\\xe5\\x8a\\x9b\\xe5\\x8a\\xa0\\xe9\\x80\\x9f\\xe5\\xba\\xa6 g\\xef\\xbc\\x8c\\xe9\\x87\\x8f\\xe7\\xba\\xb2\\xe5\\x88\\x86\\xe5\\x88\\xab\\xe4\\xb8\\xba\\xe6\\x97\\xb6\\xe9\\x97\\xb4\\xe3\\x80\\x81\\xe9\\x95\\xbf\\xe5\\xba\\xa6\\xe3\\x80\\x81\\xe9\\x95\\xbf\\xe5\\xba\\xa6/\\xe6\\x97\\xb6\\xe9\\x97\\xb4\\xc2\\xb2\\xe3\\x80\\x82\\n\\xe5\\x8f\\xaf\\xe6\\x9e\\x84\\xe9\\x80\\xa0 \\xce\\xa0=T\\xe2\\x88\\x9a(g/l)\\xef\\xbc\\x8c\\xe5\\x9b\\xa0\\xe6\\xad\\xa4\\xe6\\xa8\\xa1\\xe5\\x9e\\x8b\\xe5\\x8f\\xaa\\xe7\\xbb\\x99\\xe5\\x87\\xba T=C\\xe2\\x88\\x9a(l/g)\\xef\\xbc\\x8c\\xe6\\x97\\xa0\\xe6\\xb3\\x95\\xe7\\x94\\xb1\\xe9\\x87\\x8f\\xe7\\xba\\xb2\\xe5\\x88\\x86\\xe6\\x9e\\x90\\xe6\\xb1\\x82 C\\xe3\\x80\\x82\\n\\xe8\\x8b\\xa5\\xe6\\x8c\\xaf\\xe5\\xb9\\x85\\xe5\\xbd\\xb1\\xe5\\x93\\x8d\\xe4\\xb8\\x8d\\xe8\\x83\\xbd\\xe5\\xbf\\xbd\\xe7\\x95\\xa5\\xef\\xbc\\x8c\\xe5\\x88\\x99\\xe6\\x97\\xa0\\xe9\\x87\\x8f\\xe7\\xba\\xb2\\xe8\\xa7\\x92\\xe5\\xba\\xa6\\xe4\\xb9\\x9f\\xe6\\x98\\xaf\\xe5\\x8f\\x98\\xe9\\x87\\x8f\\xef\\xbc\\x8cC \\xe5\\xba\\x94\\xe6\\x88\\x90\\xe4\\xb8\\xba\\xe8\\xa7\\x92\\xe5\\xba\\xa6\\xe7\\x9a\\x84\\xe5\\x87\\xbd\\xe6\\x95\\xb0\\xe3\\x80\\x82\\n\\n'",
+    "source_repr": "b'## \\xe5\\xae\\x9e\\xe4\\xbe\\x8b\\n\\xe5\\x8f\\xaa\\xe8\\x80\\x83\\xe8\\x99\\x91\\xe5\\x8d\\x95\\xe6\\x91\\x86\\xe5\\x91\\xa8\\xe6\\x9c\\x9f T\\xe3\\x80\\x81\\xe9\\x95\\xbf\\xe5\\xba\\xa6 l\\xe3\\x80\\x81\\xe9\\x87\\x8d\\xe5\\x8a\\x9b\\xe5\\x8a\\xa0\\xe9\\x80\\x9f\\xe5\\xba\\xa6 g\\xef\\xbc\\x8c\\xe9\\x87\\x8f\\xe7\\xba\\xb2\\xe5\\x88\\x86\\xe5\\x88\\xab\\xe4\\xb8\\xba\\xe6\\x97\\xb6\\xe9\\x97\\xb4\\xe3\\x80\\x81\\xe9\\x95\\xbf\\xe5\\xba\\xa6\\xe3\\x80\\x81\\xe9\\x95\\xbf\\xe5\\xba\\xa6/\\xe6\\x97\\xb6\\xe9\\x97\\xb4\\xc2\\xb2\\xe3\\x80\\x82\\n\\xe5\\x8f\\xaf\\xe6\\x9e\\x84\\xe9\\x80\\xa0 \\xce\\xa0=T\\xe2\\x88\\x9a(g/l)\\xef\\xbc\\x8c\\xe5\\x9b\\xa0\\xe6\\xad\\xa4\\xe6\\xa8\\xa1\\xe5\\x9e\\x8b\\xe5\\x8f\\xaa\\xe7\\xbb\\x99\\xe5\\x87\\xba T=C\\xe2\\x88\\x9a(l/g)\\xef\\xbc\\x8c\\xe6\\x97\\xa0\\xe6\\xb3\\x95\\xe7\\x94\\xb1\\xe9\\x87\\x8f\\xe7\\xba\\xb2\\xe5\\x88\\x86\\xe6\\x9e\\x90\\xe6\\xb1\\x82 C\\xe3\\x80\\x82\\n\\xe8\\x8b\\xa5\\xe6\\x8c\\xaf\\xe5\\xb9\\x85\\xe5\\xbd\\xb1\\xe5\\x93\\x8d\\xe4\\xb8\\x8d\\xe8\\x83\\xbd\\xe5\\xbf\\xbd\\xe7\\x95\\xa5\\xef\\xbc\\x8c\\xe5\\x88\\x99\\xe6\\x97\\xa0\\xe9\\x87\\x8f\\xe7\\xba\\xb2\\xe8\\xa7\\x92\\xe5\\xba\\xa6\\xe4\\xb9\\x9f\\xe6\\x98\\xaf\\xe5\\x8f\\x98\\xe9\\x87\\x8f\\xef\\xbc\\x8cC \\xe5\\xba\\x94\\xe6\\x88\\x90\\xe4\\xb8\\xba\\xe8\\xa7\\x92\\xe5\\xba\\xa6\\xe7\\x9a\\x84\\xe5\\x87\\xbd\\xe6\\x95\\xb0\\xe3\\x80\\x82\\n\\n'"
+  },
+  "index": {
+    "exit": 0,
+    "result": {
+      "backend": "sqlite-fts5-rrf-v1",
+      "snapshot": "5744245725a198e45a2b5b9c8da7df89617b09930442d2bbd66ae94fb9db46f6",
+      "indexed": 5,
+      "updated": 5,
+      "removed": 0,
+      "unchanged": 0
+    }
+  },
+  "search": {
+    "exit": 0,
+    "backend": "sqlite-fts5-rrf-v1",
+    "top_id": "physics.dimensionless",
+    "top_sections": [
+      {
+        "node": "s3",
+        "title": "实例",
+        "start_line": 8,
+        "end_line": 12,
+        "excerpt": "## 实例\n只考虑单摆周期 T、长度 l、重力加速度 g，量纲分别为时间、长度、长度/时间²。\n可构造 Π=T√(g/l)，因此模型只给出 T=C√(l/g)，无法由量纲分析求 C。\n若振幅影响不能忽略，则无量纲角度也是变量，C 应成为角度的函数。\n\n"
+      },
+      {
+        "node": "s4",
+        "title": "反例与验证",
+        "start_line": 13,
+        "end_line": 15,
+        "excerpt": "## 反例与验证\nT=l/g 的量纲是时间²，不是周期。T=C√(l/g) 虽然量纲正确，仍可能遗漏阻尼等变量。\n单位一致是必要检查，不是物理正确性的充分证据。变换单位后复算，随后用实验验证模型。\n"
+      }
+    ]
+  },
+  "initial_artifacts_unchanged": true
+}

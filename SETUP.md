@@ -9,7 +9,7 @@ git clone https://github.com/Chosen-David/agent.git
 python3 agent/setup.py --target /absolute/path/to/your-project
 ```
 
-仓库的 Skills 随 clone 一起下载。脚本读取角色注册表，当前配置 14 个 Skills 和 14 个 `agent-*` 子 Agent，不需要逐个找文件。Python 3.10+，无 pip 依赖。Linux/WSL 推荐；Windows 原生环境需要目录符号链接权限，tmux 监督运行在 Linux/WSL/server。
+仓库的 Skills 随 clone 一起下载。脚本读取角色注册表，当前配置 15 个 Skills 和 15 个 `agent-*` 子 Agent，不需要逐个找文件。Python 3.10+，无 pip 依赖。Linux/WSL 推荐；Windows 原生环境需要目录符号链接权限，tmux 监督运行在 Linux/WSL/server。
 
 如果直接在本仓库工作：
 

@@ -55,3 +55,7 @@ description: "协调科研项目从 Idea、实验到论文修订。用于需要�
 论文数据图制作/重设计先读 [数据图范文学习](references/data_visualization_learning.md)：实际读相关原图，形成 data-visual-design-brief，再交 research-data-visualization 实施；科学保真与视觉设计分别验收。当前十篇任务复用既有语料，普通独立 plot 按任务适配。
 
 跨轮次任务、意图纠正或证据复用时读取 [项目记忆与纠错](references/project_memory_workflow.md)，交接当前意图与 memory_refs；旧结论失效后先核对依赖，再复用或重算。
+
+## 数学与物理知识建模
+
+需要界限推导、结构简化或量纲核对时调用 `model-with-knowledge`；流程见 [知识建模](references/knowledge_modeling_workflow.md)，验收见 [角色补充](references/model-with-knowledge_execution.md)。若该 Skill 未安装，按流程顺序建模并明确语料缺失，不假称本角色附带检索器。一般知识、项目记忆、执行状态分别维护；按需读取，避免全库注入。
