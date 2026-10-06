@@ -146,7 +146,21 @@ Infrastructure errors, blocked tasks, ungradable checks and absent executions
 remain visible. An integrity failure requires a new prepared run, not editing
 hashes to resume. The controller should explicitly record the recovery reason.
 
-`report` returns JSON: `expected`, `passed`, `first_pass`, `complete`,
+`report` also exposes `correct_to_wrong` and `wrong_to_correct`: case counts
+comparing the actual first attempt with the actual final attempt, only when
+there are at least two attempts and both endpoints have complete, valid,
+independent binary grading under the host adapter. An attempt's
+`semantic_verdict` is `pass` only if every criterion passes, `fail` if all
+criteria have binary verdicts and at least one fails, and `null` otherwise.
+Blocked, infrastructure-error, ungraded, ungradable, mock and invalid records
+cannot count as semantic errors or repairs. Any run-integrity error suppresses
+transition counts. A single attempt, or a temporary improvement followed by
+failure, is not a final repair. The counters are descriptive paired counts,
+not statistical estimates of model improvement; retained attempt records show
+intermediate regressions that the endpoint comparison does not summarize.
+
+`report` returns JSON: `expected`, `passed`, `first_pass`, `correct_to_wrong`,
+`wrong_to_correct`, `complete`,
 `integrity_errors`, and case/attempt details. Its CLI can successfully emit a
 report containing failures: **exit code zero means report generation, not task
 success**. Use `report --require-complete` for a nonzero exit when incomplete; consumers
@@ -191,3 +205,5 @@ checks; their generated receipts are test fixtures, never execution evidence.
 `prepare --dev-eval` is an explicit development/CI operation. Without the flag the CLI exits before creating outputs; the legacy preparer has the same gate. Python `prepare_run` is an explicit developer API, never called by ordinary runtime routing. Ordinary task execution must not load synthetic fixtures, hidden rubrics or benchmark gold. Task-required correctness, artifact/permission validation and the ten-exemplar prewriting contract remain mandatory where applicable. The flag is intent separation, not an authorization or security sandbox.
 
 The snapshot dependency allowlist includes the data-visualization validator imported by paper delivery. This closes an executable dependency, rather than treating two independently existing scripts as an integrated pipeline.
+It also includes `scripts/publish_report.py`, so the frozen organization workflow
+can use the same report publication entry point as the candidate repository.

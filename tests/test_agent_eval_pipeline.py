@@ -23,6 +23,7 @@ class PipelineTests(unittest.TestCase):
         self.git('config', 'user.name', 'Test')
         self.put('plugins/demo/SKILL.md', 'Read the task and produce result.')
         self.put('plugins/demo/tests/answer.txt', 'must not copy')
+        self.put('scripts/publish_report.py', '# pinned publication entry point\n')
         self.put('evals/fixtures/input.txt', 'original')
         self.tasks = {'cases': [{'id': c, 'skill': 'plugins/demo/SKILL.md', 'prompt': 'Compute an answer', 'fixtures': ['input.txt']} for c in ('a', 'b')]}
         self.rubric = {'criteria': {c: ['numeric correctness', 'source fidelity'] for c in ('a', 'b')}}
@@ -72,6 +73,8 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual((self.run / 'snapshot/plugins/demo/SKILL.md').read_text(), 'Read the task and produce result.')
         self.assertFalse((self.run / 'snapshot/evals').exists())
         self.assertFalse((self.run / 'snapshot/plugins/demo/tests').exists())
+        self.assertEqual((self.run / 'snapshot/scripts/publish_report.py').read_text(),
+                         '# pinned publication entry point\n')
 
     def test_happy_path_fixed_denominator(self):
         for cid in ('a', 'b'):
@@ -81,6 +84,82 @@ class PipelineTests(unittest.TestCase):
         result = pipeline.report(self.run)
         self.assertTrue(result['complete'])
         self.assertEqual((result['expected'], result['passed'], result['first_pass']), (2, 2, 2))
+        self.assertEqual((result['correct_to_wrong'], result['wrong_to_correct']), (0, 0))
+
+    def graded_attempt(self, cid, attempt, verdict, adapter='host'):
+        directory = self.start(cid, attempt, adapter=adapter)
+        self.finish(directory, cid, attempt, adapter=adapter)
+        self.grade(directory, cid, attempt,
+                   checks=[{'criterion': c, 'verdict': verdict, 'evidence': ['result.txt:1']}
+                           for c in self.rubric['criteria'][cid]])
+        return directory
+
+    def test_semantic_transitions_compare_first_with_final(self):
+        self.graded_attempt('a', 1, 'pass')
+        self.graded_attempt('a', 2, 'pass')
+        self.graded_attempt('a', 3, 'fail')
+        self.graded_attempt('b', 1, 'fail')
+        self.graded_attempt('b', 2, 'pass')
+        result = pipeline.report(self.run)
+        self.assertEqual((result['correct_to_wrong'], result['wrong_to_correct']), (1, 1))
+        self.assertEqual((result['expected'], result['first_pass'], result['passed']), (2, 1, 1))
+        self.assertFalse(result['complete'])
+        self.assertEqual(result['cases'][0]['attempts'][-1]['semantic_verdict'], 'fail')
+
+    def test_intermediate_repair_is_not_final_improvement(self):
+        self.graded_attempt('a', 1, 'fail')
+        self.graded_attempt('a', 2, 'pass')
+        self.graded_attempt('a', 3, 'fail')
+        result = pipeline.report(self.run)
+        self.assertEqual((result['correct_to_wrong'], result['wrong_to_correct']), (0, 0))
+        self.assertEqual(result['passed'], 0)
+
+    def test_ungradable_or_ungraded_is_not_wrong(self):
+        for cid, first, last in [('a', 'pass', 'ungradable'), ('b', 'ungradable', 'pass')]:
+            self.graded_attempt(cid, 1, first)
+            self.graded_attempt(cid, 2, last)
+        result = pipeline.report(self.run)
+        self.assertEqual((result['correct_to_wrong'], result['wrong_to_correct']), (0, 0))
+        directory = self.start('b', 3)
+        self.finish(directory, 'b', 3)
+        result = pipeline.report(self.run)
+        self.assertEqual(result['cases'][1]['attempts'][-1]['status'], 'ungraded')
+        self.assertIsNone(result['cases'][1]['attempts'][-1]['semantic_verdict'])
+        self.assertEqual((result['correct_to_wrong'], result['wrong_to_correct']), (0, 0))
+
+    def test_infrastructure_recovery_and_blocking_are_not_semantic_changes(self):
+        directory = self.start('a')
+        self.finish(directory, 'a', status='infra_error', output=False)
+        self.graded_attempt('a', 2, 'pass')
+        self.graded_attempt('b', 1, 'pass')
+        directory = self.start('b', 2)
+        self.finish(directory, 'b', 2, status='blocked', output=False)
+        result = pipeline.report(self.run)
+        self.assertEqual((result['correct_to_wrong'], result['wrong_to_correct']), (0, 0))
+        self.assertEqual((result['first_pass'], result['passed']), (1, 1))
+
+    def test_tampered_grade_and_snapshot_do_not_count_semantic_repair(self):
+        self.graded_attempt('a', 1, 'fail')
+        directory = self.graded_attempt('a', 2, 'pass')
+        self.assertEqual(pipeline.report(self.run)['wrong_to_correct'], 1)
+        (directory / 'outputs/result.txt').write_text('unreviewed')
+        result = pipeline.report(self.run)
+        self.assertEqual((result['correct_to_wrong'], result['wrong_to_correct']), (0, 0))
+        (directory / 'outputs/result.txt').write_text('42 with source input.txt')
+        self.assertEqual(pipeline.report(self.run)['wrong_to_correct'], 1)
+        (self.run / 'snapshot/plugins/demo/SKILL.md').write_text('tampered')
+        result = pipeline.report(self.run)
+        self.assertTrue(result['integrity_errors'])
+        self.assertEqual((result['correct_to_wrong'], result['wrong_to_correct']), (0, 0))
+
+    def test_mock_semantic_grades_do_not_count_as_real_repair(self):
+        self.run = self.base / 'mock-transitions'
+        pipeline.prepare_run(self.repo, self.sha, self.run, adapter={'name': 'mock'})
+        self.graded_attempt('a', 1, 'fail', adapter='mock')
+        self.graded_attempt('a', 2, 'pass', adapter='mock')
+        result = pipeline.report(self.run)
+        self.assertEqual((result['correct_to_wrong'], result['wrong_to_correct']), (0, 0))
+        self.assertTrue(all(a['semantic_verdict'] is None for a in result['cases'][0]['attempts']))
 
     def test_unexecuted_case_never_disappears(self):
         directory = self.start()

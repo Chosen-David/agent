@@ -77,3 +77,20 @@ TASK.md 只放稳定目标、约束、验收和产物索引；高频状态/日�
 本轮各 Agent 声明的产物应 **100% 登记或明确标缺失/unknown**；历史活跃脚本映射目标 ≥95%，缺口必须列出，不能用旧比例掩盖新产物丢失。确认单一根 TASK.md、无多作者覆盖、消费者引用有效、正式/临时数据区分、无活跃路径移动、删除项 0。不能证明的运行状态视为未知并保留路径，推进其他可安全整理部分。
 
 [执行与验收细则](execution.md)。
+
+## 脚本复用与报告更新
+
+优先查 CODEMAP/`rg` 定位同类实验脚本。算法、输入输出契约相同而只是数据集、seed、阈值或绘图样式不同，复用一个脚本配不同 JSON/YAML/CLI 参数；保留每次调用、配置哈希、代码 commit、环境版本与输出 run_id。先检查是否真的共享语义，不把不兼容的测量混成充满分支的万能脚本。临时原型验证有效后再合并公共函数；重构前保留旧运行，验证同输入数值/单位/边界一致，修复引用。不能仅凭文件名/哈希相似就删脚本。
+
+本库的 Agent 回归直接复用 `scripts/agent_eval_pipeline.py --help`：不同任务通过 `--tasks/--rubric/--fixture-root/--adapter` 配置，不每轮复制 runner。它接收真实宿主执行回执，不会自己调用模型。开发评测与用户科研实验明确分开；不拿评测gold给执行Agent。
+
+报告采用双层结构，沿用已有目录时记录对应映射：
+
+- `reports/<task_id>/runs/<run_id>/report.json` 与 `report.md` 是不可变本轮快照；引用原始数据、脚本和图的准确路径/哈希，不重复复制大文件。
+- `reports/<task_id>/latest.json` 是原子更新的稳定入口；CODEMAP/TASK 链接这个入口或对应确切版本。普通用户摘要可原位更新，但消费者、论文引用和验收绑定固定 run/哈希，禁止用移动中的 latest 证明旧结论。
+- 根文件不堆 `final_final_v3.md`。同一轮草稿可由唯一作者原位编辑；一旦交接/验收就冻结，后续修改创建新 run。保留失败与负结果；归档不等于删除。
+- 每个运行报告说清 `purpose`（为哪个目标）、`summary`、`data`（类型/值或可追溯描述/单位）、`meaning`（可支持什么）、`useful`（true/false/unknown）、`limitations` 与下一步。false 也可能是有价值的反证，不按“结果好看”筛掉。
+
+完整 checkout 可使用 `python scripts/publish_report.py publish --root PROJECT --manifest MANIFEST.json`，模板见 `templates/run_report.example.json`。发布前检查 artifact 哈希与 memory_refs，拒绝覆盖旧 run；`read --root PROJECT --task T1` 重新核验 latest 与来源/记忆。直接看历史 Markdown 不会自动刷新失效标记，纠错后主 AI 必须更新 TASK/CODEMAP 的状态并明确旧报告不可用于当前验收。脚本仅管项目内报告，不发布到外部服务，不代替技术审阅。
+
+仅插件安装时执行相同契约并明确脚本未安装；不要假设用户目录里有本仓库 `scripts/`。文件管理 Agent 将受更正影响的报告/图及消费者列表交给主 AI，按 [记忆纠错](project_memory_workflow.md) 重验后再更新稳定入口。

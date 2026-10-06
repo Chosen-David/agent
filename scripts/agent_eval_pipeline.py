@@ -14,6 +14,7 @@ SNAPSHOT_DEPENDENCIES = {'docs/handoff_validation.md', 'docs/backend_handoff.md'
                          'scripts/discover_backends.py', 'AGENTS.md',
                          'scripts/paper_exemplar_checks.py', 'scripts/validate_paper_delivery.py',
                          'scripts/data_visualization_checks.py',
+                         'scripts/publish_report.py',
                          'scripts/semantic_acceptance.py',
                          'docs/task_supervisor_validation.md', 'docs/experiment_execution_upgrade.md'}
 
@@ -375,7 +376,8 @@ def report(run):
             expected = len(object_record(read(run / 'tasks.json'))['cases'])
         except failures:
             expected = None
-        return {'expected': expected, 'passed': 0, 'first_pass': 0, 'complete': False,
+        return {'expected': expected, 'passed': 0, 'first_pass': 0,
+                'correct_to_wrong': 0, 'wrong_to_correct': 0, 'complete': False,
                 'integrity_errors': [str(exc)], 'cases': []}
     criteria = read(run / 'rubric.json')['criteria']
     results = []
@@ -387,7 +389,8 @@ def report(run):
             errors.append(cid + ': ' + str(exc))
             directories = []
         for directory in directories:
-            result = {'attempt': directory.name, 'status': 'not_collected', 'passed': False}
+            result = {'attempt': directory.name, 'status': 'not_collected', 'passed': False,
+                      'semantic_verdict': None}
             try:
                 start = validate_start(run, manifest, directory, cid)
                 collection = validate_collection(read(directory / 'collection.json'), start, cid)
@@ -400,14 +403,24 @@ def report(run):
                     validate_grade(grade, criteria[cid], cid, start['attempt'], start['actor'], collection['output_hashes'])
                     result['passed'] = not errors and manifest['adapter']['name'] == 'host' and all(c['verdict'] == 'pass' for c in grade['checks'])
                     result['status'] = 'passed' if result['passed'] else 'not_passed'
+                    if (not errors and manifest['adapter']['name'] == 'host'
+                            and all(c['verdict'] in ('pass', 'fail') for c in grade['checks'])):
+                        result['semantic_verdict'] = 'pass' if result['passed'] else 'fail'
             except failures as exc:
                 result['reason'] = str(exc)
             attempts.append(result)
         results.append({'case_id': cid, 'attempts': attempts, 'passed': bool(attempts) and attempts[-1]['passed'],
                         'first_pass': bool(attempts) and attempts[0]['passed']})
     passed = sum(r['passed'] for r in results)
+    # Compare the actual first and final attempts, never the best historical
+    # grade. Missing/blocked/ungradable work is not a semantic wrong answer.
+    transitions = [(r['attempts'][0]['semantic_verdict'], r['attempts'][-1]['semantic_verdict'])
+                   for r in results if len(r['attempts']) >= 2] if not errors else []
     return {'revision': manifest['revision'], 'expected': len(results), 'passed': passed,
-        'first_pass': sum(r['first_pass'] for r in results), 'complete': bool(results) and passed == len(results) and not errors,
+        'first_pass': sum(r['first_pass'] for r in results),
+        'correct_to_wrong': transitions.count(('pass', 'fail')),
+        'wrong_to_correct': transitions.count(('fail', 'pass')),
+        'complete': bool(results) and passed == len(results) and not errors,
         'integrity_errors': errors, 'cases': results, 'evidence_scope': 'host-reported model tasks, not backend attestation or production success'}
 
 

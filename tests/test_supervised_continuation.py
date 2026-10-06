@@ -200,7 +200,7 @@ class SupervisedContinuationDocumentationChecks(unittest.TestCase):
                     '依赖就绪且已授权任务继续', '可逆低风险细节',
                     'default_assumed、未获用户确认', 'A 未完成不抢跑 B',
                     '先完成安全、可行且已授权的 A 及其验收',
-                    'agent-explore-<task-id> 独立分支和单独任务链',
+                    'agent/<task-id>/<run-id> 独立分支和单独任务链',
                     '无Git时用隔离输出目录，不覆盖 A', '缺预算或权限则不运行该实验',
                     '主要改进指标及阈值、必要非退化指标、硬约束',
                     '代码/环境/参数/随机种子/原始日志及失败结果',

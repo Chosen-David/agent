@@ -53,3 +53,5 @@ description: "协调科研项目从 Idea、实验到论文修订。用于需要�
 多步骤/需等待项目主动使用 [任务链与监督流程](references/task_supervision_workflow.md)，核查真实宿主后端、记录ID与readback；插件本身不带后台服务，不宣称已启动监督。
 
 论文数据图制作/重设计先读 [数据图范文学习](references/data_visualization_learning.md)：实际读相关原图，形成 data-visual-design-brief，再交 research-data-visualization 实施；科学保真与视觉设计分别验收。当前十篇任务复用既有语料，普通独立 plot 按任务适配。
+
+跨轮次任务、意图纠正或证据复用时读取 [项目记忆与纠错](references/project_memory_workflow.md)，交接当前意图与 memory_refs；旧结论失效后先核对依赖，再复用或重算。
