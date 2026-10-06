@@ -21,8 +21,13 @@ class HandoffTests(unittest.TestCase):
                            artifacts=[dict(id='a1', path='answer.md', sha256=hashlib.sha256((self.root/'answer.md').read_bytes()).hexdigest())],
                            checks=[dict(criterion='arithmetic inspected',status='pass',artifact_ids=['a1'])], tasks=[])
 
+    def request(self, *, allow_skip=False):
+        # Explicit test consumer fixture, never production guidance to trust producer scope.
+        return dict(schema_version=1, input_version='fixture-v1', tasks=[
+            dict(task_id=t['task_id'], allow_skip=allow_skip) for t in self.record['tasks']])
+
     def test_valid_record(self):
-        self.assertEqual(M.validate(self.record, self.root, True, expected_input_version='fixture-v1'), [])
+        self.assertEqual(M.validate(self.record, self.root, True, expected_input_version='fixture-v1', consumer_request=self.request()), [])
 
     def test_changed_or_missing_artifact(self):
         (self.root / 'answer.md').write_text('changed')
@@ -47,7 +52,7 @@ class HandoffTests(unittest.TestCase):
         self.record['status']='partial'
         self.record['limitations']=['need actual run']
         self.assertEqual(M.validate(self.record,self.root), [])
-        self.assertTrue(M.validate(self.record,self.root,True, expected_input_version='fixture-v1'))
+        self.assertTrue(M.validate(self.record,self.root,True, expected_input_version='fixture-v1', consumer_request=self.request()))
 
     def test_dangling_or_absent_evidence(self):
         for refs in ([], ['missing']):
@@ -77,7 +82,7 @@ class HandoffTests(unittest.TestCase):
                 self.record['status'] = 'partial'
                 self.record['limitations'] = ['Finish remaining task before acceptance']
                 self.assertEqual(M.validate(self.record,self.root), [])
-                self.assertTrue(M.validate(self.record,self.root,True, expected_input_version='fixture-v1'))
+                self.assertTrue(M.validate(self.record,self.root,True, expected_input_version='fixture-v1', consumer_request=self.request()))
 
     def test_task_evidence_must_reference_artifacts(self):
         for evidence in ('a1', {'claim':'done'}, ['missing'], [True], [{}], [' '], []):
@@ -85,11 +90,11 @@ class HandoffTests(unittest.TestCase):
                 self.record['tasks'] = [dict(task_id='work', status='done', evidence=evidence)]
                 self.assertTrue(M.validate(self.record,self.root))
         self.record['tasks'][0]['evidence'] = ['a1']
-        self.assertEqual(M.validate(self.record,self.root,True, expected_input_version='fixture-v1'), [])
+        self.assertEqual(M.validate(self.record,self.root,True, expected_input_version='fixture-v1', consumer_request=self.request()), [])
 
     def test_explicit_skip_is_terminal_but_not_dependency_completion(self):
         self.record['tasks'] = [dict(task_id='old', status='skipped', reason='not in current scope')]
-        self.assertEqual(M.validate(self.record,self.root,True, expected_input_version='fixture-v1'), [])
+        self.assertEqual(M.validate(self.record,self.root,True, expected_input_version='fixture-v1', consumer_request=self.request(allow_skip=True)), [])
         self.record['tasks'].append(dict(task_id='new',status='done',depends_on=['old'],evidence=['a1']))
         self.assertIn('new: done before dependency old', M.validate(self.record,self.root))
 

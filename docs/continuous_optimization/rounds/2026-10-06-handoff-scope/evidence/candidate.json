@@ -1,0 +1,147 @@
+{
+  "validator_sha256": "142433ec0876f1d78c96b887534c4259e49b5cfa62bc40001c6757ec487ee262",
+  "cases_sha256": "b8e019ba2977dfe20040028acee4b5c1f6a94f9c5d32a942096bcc810169d9e8",
+  "consumer_request_supported": true,
+  "total": 16,
+  "matched": 16,
+  "raw_preserved": true,
+  "scope": "Deterministic structural acceptance comparison, not blind holdout, model accuracy or agent success rate.",
+  "results": [
+    {
+      "case": "all_required_done",
+      "expected_accepted": true,
+      "actual_accepted": true,
+      "matched": true,
+      "errors": []
+    },
+    {
+      "case": "required_task_omitted",
+      "expected_accepted": false,
+      "actual_accepted": false,
+      "matched": true,
+      "errors": [
+        "consumer task missing: B"
+      ]
+    },
+    {
+      "case": "whole_task_list_omitted",
+      "expected_accepted": false,
+      "actual_accepted": false,
+      "matched": true,
+      "errors": [
+        "consumer task missing: A",
+        "consumer task missing: B"
+      ]
+    },
+    {
+      "case": "unauthorized_skip",
+      "expected_accepted": false,
+      "actual_accepted": false,
+      "matched": true,
+      "errors": [
+        "B: skip not authorized by consumer"
+      ]
+    },
+    {
+      "case": "producer_allow_skip_forgery",
+      "expected_accepted": false,
+      "actual_accepted": false,
+      "matched": true,
+      "errors": [
+        "B: skip not authorized by consumer"
+      ]
+    },
+    {
+      "case": "consumer_authorized_skip",
+      "expected_accepted": true,
+      "actual_accepted": true,
+      "matched": true,
+      "errors": []
+    },
+    {
+      "case": "unexpected_task",
+      "expected_accepted": false,
+      "actual_accepted": false,
+      "matched": true,
+      "errors": [
+        "task outside consumer scope: C"
+      ]
+    },
+    {
+      "case": "explicit_empty_scope",
+      "expected_accepted": true,
+      "actual_accepted": true,
+      "matched": true,
+      "errors": []
+    },
+    {
+      "case": "no_request_completion",
+      "expected_accepted": false,
+      "actual_accepted": false,
+      "matched": true,
+      "errors": [
+        "unverified: consumer request required for completion"
+      ]
+    },
+    {
+      "case": "no_request_integrity",
+      "expected_accepted": true,
+      "actual_accepted": true,
+      "matched": true,
+      "errors": []
+    },
+    {
+      "case": "stale_version",
+      "expected_accepted": false,
+      "actual_accepted": false,
+      "matched": true,
+      "errors": [
+        "consumer input version mismatch"
+      ]
+    },
+    {
+      "case": "duplicate_consumer_id",
+      "expected_accepted": false,
+      "actual_accepted": false,
+      "matched": true,
+      "errors": [
+        "consumer task 2: missing/duplicate task_id"
+      ]
+    },
+    {
+      "case": "exact_identifier_mismatch",
+      "expected_accepted": false,
+      "actual_accepted": false,
+      "matched": true,
+      "errors": [
+        "consumer task missing: B ",
+        "task outside consumer scope: B"
+      ]
+    },
+    {
+      "case": "honest_partial_integrity",
+      "expected_accepted": true,
+      "actual_accepted": true,
+      "matched": true,
+      "errors": []
+    },
+    {
+      "case": "partial_cannot_complete",
+      "expected_accepted": false,
+      "actual_accepted": false,
+      "matched": true,
+      "errors": [
+        "completion gate: run is not completed"
+      ]
+    },
+    {
+      "case": "corrupt_digest",
+      "expected_accepted": false,
+      "actual_accepted": false,
+      "matched": true,
+      "errors": [
+        "artifact 0: sha256 mismatch"
+      ]
+    }
+  ]
+}

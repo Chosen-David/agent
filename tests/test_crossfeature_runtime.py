@@ -79,9 +79,9 @@ class CrossfeatureRuntime(unittest.TestCase):
                       'artifacts': [{'id': 'a', 'path': 'result',
                                      'sha256': hashlib.sha256(b'result v1').hexdigest()}],
                       'checks': [{'criterion': 'local bytes', 'status': 'pass', 'artifact_ids': ['a']}]}
-            self.assertEqual(validate(record, root, True, expected_input_version='v1'), [])
+            self.assertEqual(validate(record, root, True, expected_input_version='v1', consumer_request={'schema_version':1,'input_version':'v1','tasks':[]}), [])
             (root / 'result').write_bytes(b'result v2')
-            self.assertIn('artifact 0: sha256 mismatch', validate(record, root, True, expected_input_version='v1'))
+            self.assertIn('artifact 0: sha256 mismatch', validate(record, root, True, expected_input_version='v1', consumer_request={'schema_version':1,'input_version':'v1','tasks':[]}))
 
 
 if __name__ == '__main__':
