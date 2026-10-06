@@ -28,12 +28,16 @@
 
 实际发现并保留：code-organization首次缺可执行rollback，fresh feedback retry通过；wrong-to-correct1/correct-to-wrong0仅此样本；mixed figure缺cairosvg首次渲染exit1、用现有工具修复并保留before。Writer旧rubric medium-regression与新fixture medium-parity矛盾，原run标ungradable1，修正事实后另prepare/fresh执行，不追溯变pass、不算模型恢复。Main rubric错误转账例仍保留，按原条显式equivalent correct settlement与独立净额oracle判分，没有改manifest。
 
-根查看最终混合图、数据图PDF渲染、结构图及reader4物理页，核对writer实际接收到coordinator原字节/hash，复算主AI一般结算任务。详细矩阵与安全恢复/重放证据见 `evidence/model-eval/`，独立根复核见 `evidence/root-review.md`。全部模型门禁已通过；1.80MB共享快照归档，根实际安全恢复重放四run退出0，旧writer ungradable保留。最终回归仍为360总计352通过8跳过。发布/readback正在进行。
+根查看最终混合图、数据图PDF渲染、结构图及reader4物理页，核对writer实际接收到coordinator原字节/hash，复算主AI一般结算任务。详细矩阵与安全恢复/重放证据见 `evidence/model-eval/`，独立根复核见 `evidence/root-review.md`。全部模型门禁已通过；1.80MB共享快照归档，根实际安全恢复重放四run退出0，旧writer ungradable保留。最终回归仍为360总计352通过8跳过。发布/readback已核对。
 
 额外baseline代码阅读fresh任务与候选各1/1通过，case输入/任务/entry及该case rubric逐项相同；两版实际CLI均完成12MiB/1800链。20真实dispatch（≤21预算）。旧新程序A/B条件一致，原始指标如上；精确模型版本/seed/token/费用不可固定，因此模型收益A/B为inconclusive，不报告成功率提升。实际模型任务是合成/公开材料 smoke，实时backend、ClaudeCLI、GPU与目标服务器tmux/SSH断链未执行。
 
 ## TASK与下一步
 
-T15论文/来源完成，T16程序改进通过；T17全部角色/交接通过且归档独立重放通过；T18发布/readback进行中。优先继续CO-016具体回滚保留任务及CO-020评分事实一致性；候选 CO-017有效scope/status前置检索、CO-018版本/条件绑定程序复用、CO-019无新观测空转与有界探索待测。先用现有权限下的纠错/位置/单位保留输入验证，不自动增加付费服务或无限探索。
+T15论文/来源完成，T16程序改进通过；T17全部角色/交接通过且归档独立重放通过；T18发布/readback完成。优先继续CO-016具体回滚保留任务及CO-020评分事实一致性；候选 CO-017有效scope/status前置检索、CO-018版本/条件绑定程序复用、CO-019无新观测空转与有界探索待测。先用现有权限下的纠错/位置/单位保留输入验证，不自动增加付费服务或无限探索。
 
 本轮不是收敛轮次；没有完成全部模型门禁时不算有效无改进探索。持续优化保持启用，既有停止条件不变；没有新建重复自动化或声称已连接目标服务器监督器。
+
+## 发布读回
+
+普通非强制main更新已核对：`74f35be3ba1c05c23da69a9abe6a67c9e771745f`，tree `e924fc4f0cf826f628c157458b3d689e3e6c54d0`，与本地验收报告树完全相等；远端validator全文相等，Git拉取后的archive哈希相等。冻结本地candidate4ee5与远端可达candidate d72cb2bb8b3a3f1b87142b3361f008c83b10175e共享同一tree，原模型receipt不改写。详见evidence/publication.json。本文与根TASK的审计收尾只记录已经完成的发布，不新增性能/模型效果或服务器集成声明。
