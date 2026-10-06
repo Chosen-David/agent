@@ -1,0 +1,66 @@
+{
+  "baseline_commit": "cb3e133ded7f2c878b3eddb10a0e7876fe6cac2b",
+  "candidate_source_sha256": "d182adfa0d118d6245f0a58623114d8fbeb70dd6ab8fa3ea4c1d93754bcedf9d",
+  "predeclared_acceptance": {
+    "file_python_peak_reduction_at_least": 0.8,
+    "chain_median": "clear reduction",
+    "decisions": "identical"
+  },
+  "memory_reduction_fraction": 0.9686630814742836,
+  "chain_runtime_ratio_before_after": 337.19729634021127,
+  "file_python_peak_bytes": {
+    "before": 67114576,
+    "after": 2103164
+  },
+  "chain_seconds_median": {
+    "before": 3.6086524199999985,
+    "after": 0.010701901999709662
+  },
+  "correctness": {
+    "handoff_tests": 40,
+    "pass": 40,
+    "independent_random_graph_oracle_cases": 240,
+    "differential_cases": 366,
+    "identical": 366
+  },
+  "limitations": [
+    "Single CPU host synthetic validator only, not model latency/success rate",
+    "tracemalloc measures traced Python allocations, not process RSS",
+    "File runtime affected by unstandardized page cache; not claimed as I/O gain",
+    "Before/after measured sequentially, three repeats each; system load not controlled",
+    "Extra reverse-edge graph uses O(V+E) memory; peak graph memory not measured",
+    "Existing stable-directory caveat remains; no malicious concurrent replacement sandbox"
+  ],
+  "sources": [
+    {
+      "url": "https://docs.python.org/3.12/library/hashlib.html",
+      "version": "3.12.15 documentation as viewed 2026-10-06",
+      "read": "hash.update equivalence; file_digest binary mode/close responsibility; introduced 3.11"
+    },
+    {
+      "url": "https://docs.python.org/3.12/library/io.html",
+      "version": "3.12.15 documentation as viewed 2026-10-06",
+      "read": "binary streams/read semantics/context-manager close"
+    },
+    {
+      "url": "https://docs.python.org/3.12/library/graphlib.html",
+      "version": "3.12.15 documentation as viewed 2026-10-06",
+      "read": "TopologicalSorter get_ready/done, duplicate predecessors and cycles"
+    },
+    {
+      "url": "https://github.com/python/cpython/blob/v3.12.14/Lib/hashlib.py",
+      "version": "v3.12.14",
+      "read": "file_digest fixed reusable buffer/readinto loop",
+      "host_module_sha256": "6dbdebf270868b391080e21dc9687eddfaf321c965ad979f68d3f5c423c613ab",
+      "note": "Remote versioned full source fetched via GitHub connector and reviewed; host module hash recorded separately, not claimed equal without full-file byte comparison."
+    },
+    {
+      "url": "https://github.com/python/cpython/blob/v3.12.14/Lib/graphlib.py",
+      "version": "v3.12.14",
+      "read": "TopologicalSorter.add/get_ready/done/_find_cycle; predecessor count and reverse successors",
+      "host_module_sha256": "2a29e0adee584dc76251afef1236d7bedf250aca27911f91a4d442133ce81117",
+      "note": "Remote versioned full source fetched via GitHub connector and reviewed; host module hash recorded separately, not claimed equal without full-file byte comparison."
+    }
+  ],
+  "source_adaptation": "Own 1MiB read/update loop avoids requiring file_digest API for Python3.10 compatibility; own Kahn avoids TopologicalSorter treating unknown predecessors as valid extra nodes. No stdlib source copied."
+}

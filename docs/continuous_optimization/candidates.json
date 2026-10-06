@@ -48,7 +48,7 @@
     },
     {
       "id": "CO-004",
-      "status": "candidate_not_benchmarked",
+      "status": "validated_for_publication",
       "source": "independent local audit",
       "idea": "Measure streaming artifact hashing and large-DAG validation cost before optimizing",
       "files": [
@@ -56,7 +56,10 @@
       ],
       "benefit_hypothesis": "read_bytes loads entire artifacts; iterative elimination repeatedly scans a chain",
       "cost": "Small, but profile representative artifacts first",
-      "minimum_experiment": "Compare peak memory/time on bounded synthetic large artifacts and DAGs with identical validation decisions; no speculative performance claim."
+      "minimum_experiment": "Compare peak memory/time on bounded synthetic large artifacts and DAGs with identical validation decisions; no speculative performance claim.",
+      "evidence": "rounds/2026-10-06-scaling/evidence/scaling-summary.json",
+      "measured_result": "64MiB Python traced peak 67114576 to2103164 bytes;6000chain median3.60865 to0.01070s;3runs/version;366diagnostic multisets identical;240independentDFS cases;local synthetic only",
+      "remaining": "All14roles/main/actualhandoff gates passed;source/objecttree mapping and final publication readback pending. Model quality/end-to-end gain unclaimed."
     },
     {
       "id": "CO-005",
@@ -195,7 +198,62 @@
         "workflows/code_organization_workflow.md"
       ],
       "minimum_experiment": "Freeze two unseen projects (Git-enabled stopped outputs and unknown/non-Git consumers), compare current wording versus concrete rollback requirements in fresh contexts. Verify original files unchanged and no unsafe checkout/reset/delete instructions. Preserve both initial failure and feedback recovery.",
-      "reason": "This round discovered a real first-attempt omission; a feedback-assisted retry is not evidence that a prompt patch generalizes."
+      "reason": "This round discovered a real first-attempt omission; a feedback-assisted retry is not evidence that a prompt patch generalizes.",
+      "priority": "next_round_first",
+      "new_observation": "2026-10-06-scaling unseen attempt1 again omitted executable rollback; fixed rubric failed. Fresh feedback-assisted attempt2 included precise backup/reverse paths and hash/concurrency guards and passed document scope; no actual file migration or prompt generalization claim."
+    },
+    {
+      "id": "CO-017",
+      "status": "queued",
+      "source": "rounds/2026-10-06-scaling/research/synthesis.md;Mem0/MemoryBank/GenerativeAgents/Lost/RULER",
+      "idea": "Scope/status filter before bounded memory retrieval; cache summaries by effective intent/dependency revisions",
+      "files": [
+        "agent_runtime/project_memory.py",
+        "scripts/agent_eval_pipeline.py"
+      ],
+      "benefit_hypothesis": "Avoid old-intent leakage and scanning/loading irrelevant historical items",
+      "cost": "Moderate, require index and cache correctness without external service",
+      "minimum_experiment": "Freeze20noise/4stale-high-frequency/4valid memory entries; source positions first/middle/last; compare reads,latency,omissions,stale leakage and unrelated retention; independent expected/forbidden sets; then same-model task test."
+    },
+    {
+      "id": "CO-018",
+      "status": "queued",
+      "source": "rounds/2026-10-06-scaling/research/synthesis.md;Voyager/ExpeL",
+      "idea": "Version/precondition-bound parameterized procedure reuse; extract candidate experience only from accepted failure/repair evidence",
+      "files": [
+        "workflows/code_organization_workflow.md",
+        "agent_runtime/project_memory.py",
+        "scripts/agent_eval_pipeline.py"
+      ],
+      "benefit_hypothesis": "Reduce duplicate scripts without promoting wrong-user-intent procedures",
+      "cost": "Metadata maintenance and heldout model runs",
+      "minimum_experiment": "Same generic script8unseen parameter tasks+2obsoleteCLI+2unit-conflict controls; compare noexperience/allreflection/verifiedprocedures under same budget; check correct-to-wrong,sourceunits,reuse and old-intent leakage."
+    },
+    {
+      "id": "CO-019",
+      "status": "queued",
+      "source": "rounds/2026-10-06-scaling/research/synthesis.md;ReAct/Toolformer/LATS",
+      "idea": "Detect no-new-observation loops; bounded rollback-safe candidates only for demonstrated difficult tasks",
+      "files": [
+        "agent_runtime/task_supervisor.py",
+        "scripts/agent_eval_pipeline.py"
+      ],
+      "benefit_hypothesis": "Avoid wasted calls while preserving legitimate polling and recoverable transient failures",
+      "cost": "Moderate to high; normalized trace signatures and rollback assumptions",
+      "minimum_experiment": "Fourholdouts:emptysearch,transientAPI,legalpoll,newinformation; directrepair vs <=3candidates same total time/tool budget and hidden functional tests; never auto-markdone on repeated calls or replay external side effects."
+    },
+    {
+      "id": "CO-020",
+      "status": "queued_from_grading_material_error",
+      "source": "2026-10-06-scaling cross-role writer frozen rubric medium-regression vs actual medium-parity fixture;main54/36/0 settlement rubric wrong B->user example, valid equivalent-correct branch retained",
+      "idea": "Generate numeric task-specific grading facts from independently frozen inputs, retaining mismatch as ungradable rather than weakening scores",
+      "files": [
+        "scripts/prepare_agent_eval.py",
+        "evals/agent_model_rubric.json"
+      ],
+      "benefit_hypothesis": "Avoid inherited smoke rubric facts contradicting new heldout inputs",
+      "cost": "Small to moderate; separate factual checks from semantic rubric; no answer leakage",
+      "minimum_experiment": "Prepare changed-direction/unchanged metric holdouts and stale grading facts; preflight detects inconsistent factual references while allowing valid role-generic criteria; same run cannot retroactively change rubric. Model execution still required."
     }
   ]
 }
