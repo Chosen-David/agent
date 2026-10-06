@@ -108,6 +108,91 @@
         "evals/"
       ],
       "minimum_experiment": "Paired clean/contaminated synthetic inputs, final artifacts and action trace; no real external side effects"
+    },
+    {
+      "id": "CO-010",
+      "status": "adopted_after_program_tests_and_full_role_smoke",
+      "source": "arxiv:2501.13956 §2.1–2.2.3; arxiv:2410.10813 §3–5; engineering extension",
+      "idea": "Versioned source-linked memory; user-intent correction marks downstream interpretations stale and gates execution/acceptance",
+      "files": [
+        "agent_runtime/project_memory.py",
+        "agent_runtime/task_manifest.py",
+        "workflows/project_memory_workflow.md"
+      ],
+      "experiment": "Same eight deterministic synthetic ReportingHandler acceptance cases: baseline3/8 candidate8/8; raw bytes preserved. One fresh code-organization correction handoff inspected independently.",
+      "evidence": "rounds/2026-10-06-memory/evidence/memory-gate-comparison.json",
+      "limitations": [
+        "Explicitly declared deps only",
+        "No semantic-source authenticity proof",
+        "No model accuracy gain claimed"
+      ]
+    },
+    {
+      "id": "CO-011",
+      "status": "adopted_after_program_tests_and_full_role_smoke",
+      "source": "User requested artifact lifecycle; research synthesis RV-01/RV-02",
+      "idea": "Reuse parameterized scripts and publish immutable run report snapshots through an atomic stable pointer with hash/memory checks",
+      "files": [
+        "scripts/publish_report.py",
+        "workflows/code_organization_workflow.md"
+      ],
+      "experiment": "13 tests including concurrent same/different run IDs, latest failure preservation, symlinks, immutable snapshots, changed data and corrected memory",
+      "evidence": "rounds/2026-10-06-memory/evidence/unit-tests.log"
+    },
+    {
+      "id": "CO-012",
+      "status": "adopted_after_program_tests_and_full_role_smoke",
+      "source": "arxiv:2310.01798 Fig1; arxiv:2305.11738 Appendix D.2.2",
+      "idea": "First-to-final correct_to_wrong and wrong_to_correct reporting with independently graded binary endpoints",
+      "files": [
+        "scripts/agent_eval_pipeline.py"
+      ],
+      "experiment": "40 pipeline tests; graded regression/recovery, mock, ungradable, blocked and tamper boundaries",
+      "evidence": "rounds/2026-10-06-memory/evidence/unit-tests.log"
+    },
+    {
+      "id": "CO-013",
+      "status": "protocol_adapted_visual_gain_unmeasured",
+      "source": "arxiv:2402.11453 Tables1–2; arxiv:2406.09961 Table5/AppendixC",
+      "idea": "Numeric fidelity hard gate plus bounded independent visual comparison and rollback",
+      "files": [
+        "workflows/data_visualization_workflow.md"
+      ],
+      "minimum_experiment": "Six unseen data tasks, fixed arrays/transforms/size, blinded before/after reviewer; record visual preference separately from exact numeric fidelity and negative examples. No whole-agent beauty claim before repeated paired runs."
+    },
+    {
+      "id": "CO-014",
+      "status": "queued_not_adopted",
+      "source": "arxiv:2502.12110 §3; arxiv:2310.08560 §2",
+      "idea": "Automatically generated versioned retrieval indexes with task-relevant context paging",
+      "files": [
+        "workflows/project_memory_workflow.md"
+      ],
+      "minimum_experiment": "Same model and token/retrieval budget; frozen correction, historical lookup and abstention cases. Compare manual deps versus generated recall links. Generated similarity must not become causal dependencies.",
+      "reason": "Source preservation and explicit deps implemented first; automatic semantic linking/reorganization not shown locally beneficial."
+    },
+    {
+      "id": "CO-015",
+      "status": "protocol_only_model_gain_unmeasured",
+      "source": "arxiv:2305.20050 §3–4; arxiv:2408.06292 §6/8; arxiv:2501.04227 §4.1.1",
+      "idea": "Verifiable intermediate artifacts and scientific acceptance separate from self-review scores",
+      "files": [
+        "workflows/project_memory_workflow.md",
+        "workflows/experiment_execution_contract.md"
+      ],
+      "minimum_experiment": "Same-model corrected-intent holdouts and research claims with wrong units, metric direction, leakage and incomplete runs; report false acceptance, correct-to-wrong, abstention and cost. Do not interpret external workflow as PRM training."
+    },
+    {
+      "id": "CO-016",
+      "status": "queued_from_observed_model_failure",
+      "source": "2026-10-06 role model smoke: code-organization attempt1",
+      "idea": "Check that file-reorganization proposals include path-specific, executable rollback or an explicit reason no mutation is permitted, rather than a bare promise of a rollback point",
+      "files": [
+        "plugins/research-assistant/skills/code-organization/references/execution.md",
+        "workflows/code_organization_workflow.md"
+      ],
+      "minimum_experiment": "Freeze two unseen projects (Git-enabled stopped outputs and unknown/non-Git consumers), compare current wording versus concrete rollback requirements in fresh contexts. Verify original files unchanged and no unsafe checkout/reset/delete instructions. Preserve both initial failure and feedback recovery.",
+      "reason": "This round discovered a real first-attempt omission; a feedback-assisted retry is not evidence that a prompt patch generalizes."
     }
   ]
 }

@@ -1,17 +1,11 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-03",
-  "latest_round": "2026-10-03-r2",
-  "active_run": {
-    "round": "2026-10-06-memory",
-    "owner": "current-host/root",
-    "baseline_commit": "d208d1c3cd2f1d8d6f6659e8db6fb95e8db2298a",
-    "status": "reading_complete_implementation_and_validation",
-    "note": "Audit checkpoint, not a distributed lock. Check live host before overlapping."
-  },
-  "baseline_commit": "a3906ead554ab8ae84b9e3e777732e2f9d94c460",
-  "latest_validated_round": "rounds/2026-10-03-r2/round.md",
-  "publication_resolution": "Locate the commit adding this round via git log --diff-filter=A --format=%H -- docs/continuous_optimization/rounds/2026-10-03-r2/round.md, then verify it is reachable from freshly fetched origin/main. File status alone does not prove publication.",
+  "updated_at": "2026-10-06",
+  "latest_round": "2026-10-06-memory",
+  "active_run": null,
+  "baseline_commit": "d208d1c3cd2f1d8d6f6659e8db6fb95e8db2298a",
+  "latest_validated_round": "rounds/2026-10-06-memory/round.md",
+  "publication_resolution": "Locate the commit adding this round via git log --diff-filter=A --format=%H -- docs/continuous_optimization/rounds/2026-10-06-memory/round.md, then verify reachability from freshly fetched origin/main. Candidate local/remote commit equivalence is recorded in evidence/publication.json. File status alone does not prove publication.",
   "consecutive_no_valuable_improvement_rounds": 0,
   "converged": false,
   "papers_read": [
@@ -25,28 +19,39 @@
     "arxiv:2303.11366",
     "arxiv:2303.17651",
     "arxiv:2407.01489",
-    "arxiv:2409.07429"
+    "arxiv:2409.07429",
+    "arxiv:2410.10813",
+    "arxiv:2502.12110",
+    "arxiv:2310.08560",
+    "arxiv:2501.13956",
+    "arxiv:2408.06292",
+    "arxiv:2501.04227",
+    "arxiv:2402.11453",
+    "arxiv:2406.09961",
+    "arxiv:2310.01798",
+    "arxiv:2305.20050",
+    "arxiv:2305.11738"
   ],
   "candidate_queue": "candidates.json",
   "paper_ledger": "papers.json",
   "coverage": {
     "current_role_count": 14,
     "current_round": [
-      "All 14 role entries executed on synthetic tasks with independently graded artifacts",
-      "Two main-AI entries: general task and domain routing",
-      "Actual coordinator output bytes transferred to writer",
-      "Additional travel rescheduling constraint task",
-      "25 independent program acceptance controls; initial failures retained",
-      "Changed implementation rules reexecuted after concurrent main update"
+      "All 14 roles plus main-general and actual coordinator-to-writer handoff: latest17/17, first collected15/17,19 fresh contexts",
+      "Two first-attempt failures and visual QA before/after retained",
+      "340 program tests:332 pass,8 skipped; reader3/3",
+      "Eight deterministic gate cases baseline3/8,new8/8; not model A/B",
+      "Additional fresh-context corrected-intent handoff with unchanged raw inputs"
     ],
-    "evidence": "rounds/2026-10-03-r2/evidence/model_summary.json",
+    "evidence": "rounds/2026-10-06-memory/evidence/model-eval/summary.json",
     "representative_role_smoke_cycle_complete": true,
     "full_current_cycle_complete": false,
     "full_cycle_gap": "Normal/boundary/recovery/adversarial tasks for every role and strict controlled model A/B remain incomplete",
     "next_priority": [
-      "CO-002 consumer-owned request and input-version acceptance",
       "CO-003 controlled repeated model-level comparison",
-      "CO-007 selective skill-loading measurement before organization changes"
+      "CO-010/015 unseen corrected-intent and stale-evidence acceptance cases",
+      "CO-013 fixed-budget blind paired numeric/visual evaluation",
+      "CO-016 concrete rollback holdouts before changing prompts"
     ]
   },
   "limitations": [
@@ -55,8 +60,10 @@
     "No GPU or live third-party model backend run",
     "Host dispatch and tool proxy are real; records are trusted observations, not cryptographic attestation",
     "No current-chain host action adapter to persistent supervisor; no monitor claimed or created",
-    "State file is an audit record, not a distributed lock"
+    "State file is an audit record, not a distributed lock",
+    "Current tmux Unix socket integration skipped; no target server deployment",
+    "First collected model pass includes bounded tool-proxy QA repairs; no unassisted first-try rate claimed"
   ],
   "continuation": "Fetch main first; reuse this validated correction when reachable. Inspect active host executions before work; if another run owns the same baseline/candidate, do not duplicate it. If unreachable, inspect local checkpoint and publish/revalidate rather than repeat paper reading.",
-  "publication_base_commit": "a3906ead554ab8ae84b9e3e777732e2f9d94c460"
+  "publication_base_commit": "d208d1c3cd2f1d8d6f6659e8db6fb95e8db2298a"
 }

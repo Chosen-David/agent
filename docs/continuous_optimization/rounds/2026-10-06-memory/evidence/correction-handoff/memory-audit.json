@@ -1,0 +1,249 @@
+{
+  "all": {
+    "args": [
+      "list",
+      "--status",
+      "all"
+    ],
+    "exit_code": 0,
+    "response": [
+      {
+        "id": "LAT-intent-v1",
+        "kind": "intention",
+        "content": "User requires average latency",
+        "source": "synthetic prior interpretation",
+        "scope": [
+          "LAT"
+        ],
+        "evidence": "user_confirmed",
+        "status": "superseded",
+        "created_at": "2026-10-06T06:41:46.363Z",
+        "deps": []
+      },
+      {
+        "id": "samples-v1",
+        "kind": "observation",
+        "content": "Five recorded latency values in ms",
+        "source": "data/samples.csv",
+        "scope": [
+          "LAT"
+        ],
+        "evidence": "verified",
+        "status": "active",
+        "created_at": "2026-10-06T06:41:46.363Z",
+        "deps": []
+      },
+      {
+        "id": "LAT-report-v1",
+        "kind": "artifact",
+        "content": "Task finished per old mean report",
+        "source": "reports/old.md",
+        "scope": [
+          "LAT"
+        ],
+        "evidence": "verified",
+        "status": "stale",
+        "created_at": "2026-10-06T06:41:46.364Z",
+        "deps": [
+          "LAT-intent-v1",
+          "samples-v1"
+        ]
+      },
+      {
+        "id": "inventory-v1",
+        "kind": "claim",
+        "content": "CPU only fixture",
+        "source": "inventory.md",
+        "scope": [
+          "DOC"
+        ],
+        "evidence": "verified",
+        "status": "active",
+        "created_at": "2026-10-06T06:41:46.364Z",
+        "deps": []
+      },
+      {
+        "id": "LAT-intent-v2",
+        "kind": "intention",
+        "content": "User has always required p95 latency, with raw measurements and limitations; preserve unrelated running work. Average latency does not complete LAT.",
+        "source": "outputs/p95-correction-20261006/correction-source.json:quote; current user correction relayed by main AI",
+        "scope": [
+          "LAT"
+        ],
+        "evidence": "user_confirmed",
+        "status": "active",
+        "created_at": "2026-10-06T06:43:00.095Z",
+        "deps": []
+      }
+    ]
+  },
+  "old_history": {
+    "args": [
+      "history",
+      "LAT-intent-v1"
+    ],
+    "exit_code": 0,
+    "response": {
+      "entry": {
+        "id": "LAT-intent-v1",
+        "kind": "intention",
+        "content": "User requires average latency",
+        "source": "synthetic prior interpretation",
+        "scope": [
+          "LAT"
+        ],
+        "evidence": "user_confirmed",
+        "status": "superseded",
+        "created_at": "2026-10-06T06:41:46.363Z",
+        "deps": []
+      },
+      "events": [
+        {
+          "sequence": 1,
+          "entry_id": "LAT-intent-v1",
+          "action": "created",
+          "reason": "user_confirmed",
+          "source": "synthetic prior interpretation",
+          "related_id": null,
+          "created_at": "2026-10-06T06:41:46.363Z"
+        },
+        {
+          "sequence": 6,
+          "entry_id": "LAT-intent-v1",
+          "action": "corrected",
+          "reason": "Prior AI interpretation was wrong: the original and continuing target is p95, not average latency; TASK.md already states p95.",
+          "source": "outputs/p95-correction-20261006/correction-source.json:quote; current user correction relayed by main AI",
+          "related_id": "LAT-intent-v2",
+          "created_at": "2026-10-06T06:43:00.095Z"
+        }
+      ]
+    }
+  },
+  "new_history": {
+    "args": [
+      "history",
+      "LAT-intent-v2"
+    ],
+    "exit_code": 0,
+    "response": {
+      "entry": {
+        "id": "LAT-intent-v2",
+        "kind": "intention",
+        "content": "User has always required p95 latency, with raw measurements and limitations; preserve unrelated running work. Average latency does not complete LAT.",
+        "source": "outputs/p95-correction-20261006/correction-source.json:quote; current user correction relayed by main AI",
+        "scope": [
+          "LAT"
+        ],
+        "evidence": "user_confirmed",
+        "status": "active",
+        "created_at": "2026-10-06T06:43:00.095Z",
+        "deps": []
+      },
+      "events": [
+        {
+          "sequence": 5,
+          "entry_id": "LAT-intent-v2",
+          "action": "created",
+          "reason": "user_confirmed",
+          "source": "outputs/p95-correction-20261006/correction-source.json:quote; current user correction relayed by main AI",
+          "related_id": null,
+          "created_at": "2026-10-06T06:43:00.095Z"
+        },
+        {
+          "sequence": 7,
+          "entry_id": "LAT-intent-v2",
+          "action": "revision_of",
+          "reason": "Prior AI interpretation was wrong: the original and continuing target is p95, not average latency; TASK.md already states p95.",
+          "source": "outputs/p95-correction-20261006/correction-source.json:quote; current user correction relayed by main AI",
+          "related_id": "LAT-intent-v1",
+          "created_at": "2026-10-06T06:43:00.095Z"
+        }
+      ]
+    }
+  },
+  "impact": {
+    "args": [
+      "impact",
+      "LAT-intent-v1"
+    ],
+    "exit_code": 0,
+    "response": [
+      {
+        "id": "LAT-report-v1",
+        "kind": "artifact",
+        "content": "Task finished per old mean report",
+        "source": "reports/old.md",
+        "scope": [
+          "LAT"
+        ],
+        "evidence": "verified",
+        "status": "stale",
+        "created_at": "2026-10-06T06:41:46.364Z",
+        "deps": [
+          "LAT-intent-v1",
+          "samples-v1"
+        ]
+      }
+    ]
+  },
+  "valid_check": {
+    "args": [
+      "check",
+      "LAT-intent-v2",
+      "samples-v1",
+      "inventory-v1"
+    ],
+    "exit_code": 0,
+    "response": [
+      {
+        "id": "LAT-intent-v2",
+        "kind": "intention",
+        "content": "User has always required p95 latency, with raw measurements and limitations; preserve unrelated running work. Average latency does not complete LAT.",
+        "source": "outputs/p95-correction-20261006/correction-source.json:quote; current user correction relayed by main AI",
+        "scope": [
+          "LAT"
+        ],
+        "evidence": "user_confirmed",
+        "status": "active",
+        "created_at": "2026-10-06T06:43:00.095Z",
+        "deps": []
+      },
+      {
+        "id": "samples-v1",
+        "kind": "observation",
+        "content": "Five recorded latency values in ms",
+        "source": "data/samples.csv",
+        "scope": [
+          "LAT"
+        ],
+        "evidence": "verified",
+        "status": "active",
+        "created_at": "2026-10-06T06:41:46.363Z",
+        "deps": []
+      },
+      {
+        "id": "inventory-v1",
+        "kind": "claim",
+        "content": "CPU only fixture",
+        "source": "inventory.md",
+        "scope": [
+          "DOC"
+        ],
+        "evidence": "verified",
+        "status": "active",
+        "created_at": "2026-10-06T06:41:46.364Z",
+        "deps": []
+      }
+    ]
+  },
+  "stale_check": {
+    "args": [
+      "check",
+      "LAT-report-v1"
+    ],
+    "exit_code": 2,
+    "response": {
+      "error": "memory LAT-report-v1 is stale; reconciliation required"
+    }
+  }
+}

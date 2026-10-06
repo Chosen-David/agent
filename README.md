@@ -224,7 +224,7 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 | [prompts/orchestrator.md](prompts/orchestrator.md) | 通用主 AI 路由 |
 | [prompts/research_orchestrator.md](prompts/research_orchestrator.md) | 科研组合调度 |
 | [workflows/](workflows/) | 按角色独立的完整规范与 Prompt |
-| [plugins/research-assistant/](plugins/research-assistant/) | 科研与论文学习的 12 技能插件包 |
+| [plugins/research-assistant/](plugins/research-assistant/) | 按角色注册表同步的科研与论文学习插件包 |
 | [plugins/travel-assistant/](plugins/travel-assistant/) | 旅行规划技能插件包 |
 | [templates/](templates/) | 科研项目输入模板 |
 | [tests/](tests/) | 伴读生成器的边界检查 |
@@ -233,3 +233,11 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 | [docs/agent_landscape.md](docs/agent_landscape.md) | 现有 Agent 与 PaperQA2、GPT Researcher、STORM、AI Scientist、coding agent 等的对照与优先路由 |
 
 新增领域时加入独立工作流及入口，写明触发范围、依赖、输入输出、证据标准、验收与降级方式。简单任务不必创建任务链；复杂项目按实际需要组合角色。当前还未实现的领域只作为扩展方向，不列成已有 Agent。
+
+## 项目记忆、纠错与结果管理
+
+将稳定规则放根 `AGENTS.md`、当前目标/验收/结果索引放根 `TASK.md`。用户纠正意图后，主 AI 按 [项目记忆流程](workflows/project_memory_workflow.md) 撤销受影响的旧结论并重新核验，保留原始观测和无关成果。项目账本不等同于平台云端记忆。
+
+[文件管理 Agent](workflows/code_organization_workflow.md) 协调生产者/消费者、参数化脚本和产物索引；[报告工具](scripts/publish_report.py) 保留不可变 run 快照和稳定 latest 入口。脚本与账本需实际接入，文件存在不证明模型自动遵守或服务器已部署。
+
+[2026-10-06 的 11 篇论文综合、实现与验证](docs/continuous_optimization/rounds/2026-10-06-memory/round.md) 记录采用理由、负结果和未验证项；后续接续 [持续优化台账](docs/continuous_optimization/README.md)，不以单次测试宣布性能到顶。

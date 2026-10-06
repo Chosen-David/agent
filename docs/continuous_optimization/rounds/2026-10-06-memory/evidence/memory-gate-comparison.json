@@ -1,0 +1,188 @@
+{
+  "scope": "deterministic synthetic ReportingHandler gate; not model A/B or scientific performance",
+  "baseline": "d208d1c3cd2f1d8d6f6659e8db6fb95e8db2298a",
+  "candidate": "2bc1fc5",
+  "cases": [
+    {
+      "case": "corrected-intent",
+      "memory_refs": [
+        "intent-tail"
+      ],
+      "expected_accept": true,
+      "baseline": {
+        "accepted": true,
+        "matches_expected": true,
+        "status": "complete",
+        "reason": "fixture independent acceptance"
+      },
+      "candidate": {
+        "accepted": true,
+        "matches_expected": true,
+        "status": "complete",
+        "reason": "fixture independent acceptance"
+      }
+    },
+    {
+      "case": "raw-observation",
+      "memory_refs": [
+        "raw-observation"
+      ],
+      "expected_accept": true,
+      "baseline": {
+        "accepted": true,
+        "matches_expected": true,
+        "status": "complete",
+        "reason": "fixture independent acceptance"
+      },
+      "candidate": {
+        "accepted": true,
+        "matches_expected": true,
+        "status": "complete",
+        "reason": "fixture independent acceptance"
+      }
+    },
+    {
+      "case": "unrelated",
+      "memory_refs": [
+        "unrelated"
+      ],
+      "expected_accept": true,
+      "baseline": {
+        "accepted": true,
+        "matches_expected": true,
+        "status": "complete",
+        "reason": "fixture independent acceptance"
+      },
+      "candidate": {
+        "accepted": true,
+        "matches_expected": true,
+        "status": "complete",
+        "reason": "fixture independent acceptance"
+      }
+    },
+    {
+      "case": "superseded-intent",
+      "memory_refs": [
+        "intent-throughput"
+      ],
+      "expected_accept": false,
+      "baseline": {
+        "accepted": true,
+        "matches_expected": false,
+        "status": "complete",
+        "reason": "fixture independent acceptance"
+      },
+      "candidate": {
+        "accepted": false,
+        "matches_expected": true,
+        "status": "blocked",
+        "reason": "project memory reconciliation required: memory intent-throughput is superseded; reconciliation required"
+      }
+    },
+    {
+      "case": "stale-claim",
+      "memory_refs": [
+        "old-claim"
+      ],
+      "expected_accept": false,
+      "baseline": {
+        "accepted": true,
+        "matches_expected": false,
+        "status": "complete",
+        "reason": "fixture independent acceptance"
+      },
+      "candidate": {
+        "accepted": false,
+        "matches_expected": true,
+        "status": "blocked",
+        "reason": "project memory reconciliation required: memory old-claim is stale; reconciliation required"
+      }
+    },
+    {
+      "case": "transitive-figure",
+      "memory_refs": [
+        "old-figure"
+      ],
+      "expected_accept": false,
+      "baseline": {
+        "accepted": true,
+        "matches_expected": false,
+        "status": "complete",
+        "reason": "fixture independent acceptance"
+      },
+      "candidate": {
+        "accepted": false,
+        "matches_expected": true,
+        "status": "blocked",
+        "reason": "project memory reconciliation required: memory old-figure is stale; reconciliation required"
+      }
+    },
+    {
+      "case": "unknown-reference",
+      "memory_refs": [
+        "missing"
+      ],
+      "expected_accept": false,
+      "baseline": {
+        "accepted": true,
+        "matches_expected": false,
+        "status": "complete",
+        "reason": "fixture independent acceptance"
+      },
+      "candidate": {
+        "accepted": false,
+        "matches_expected": true,
+        "status": "blocked",
+        "reason": "project memory reconciliation required: unknown memory ID: missing"
+      }
+    },
+    {
+      "case": "candidate-guess",
+      "memory_refs": [
+        "unconfirmed"
+      ],
+      "expected_accept": false,
+      "baseline": {
+        "accepted": true,
+        "matches_expected": false,
+        "status": "complete",
+        "reason": "fixture independent acceptance"
+      },
+      "candidate": {
+        "accepted": false,
+        "matches_expected": true,
+        "status": "blocked",
+        "reason": "project memory reconciliation required: memory unconfirmed is candidate; reconciliation required"
+      }
+    }
+  ],
+  "baseline_correct": 3,
+  "candidate_correct": 8,
+  "count": 8,
+  "correction": {
+    "revision": {
+      "id": "intent-tail",
+      "kind": "intention",
+      "content": "Measure p95 latency",
+      "source": "synthetic user turn 2: I meant p95 latency",
+      "scope": [
+        "TAIL"
+      ],
+      "evidence": "user_confirmed",
+      "status": "active",
+      "created_at": "2026-10-06T06:40:57.888Z",
+      "deps": []
+    },
+    "superseded": "intent-throughput",
+    "affected": [
+      "old-claim",
+      "old-figure"
+    ]
+  },
+  "raw_bytes_preserved": true,
+  "limitations": [
+    "Explicit dependency registration required",
+    "Host/user/source authenticity supplied by caller",
+    "This comparison does not evaluate semantic interpretation quality"
+  ]
+}

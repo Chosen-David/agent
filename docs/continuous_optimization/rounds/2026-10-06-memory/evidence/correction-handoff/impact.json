@@ -1,0 +1,146 @@
+{
+  "task_refs": [
+    "LAT",
+    "DOC"
+  ],
+  "purpose": "纠正AI对原始p95目标的误解并保护独立运行任务",
+  "summary": "旧意图superseded、旧报告stale，样本与DOC仍active；LAT未完成",
+  "data": {
+    "type": "derived_from_local_synthetic_fixture",
+    "source": "data/samples.csv",
+    "sha256": "19593675d05225ef4579bd34080edf9e1c0f42e57872b58256575042183aecbc",
+    "unit": "ms",
+    "case": "a",
+    "n": 5,
+    "sorted_values": [
+      5.0,
+      7.0,
+      8.0,
+      9.0,
+      71.0
+    ],
+    "mean": 20.0,
+    "p95_nearest_rank": 71.0,
+    "p95_linear": 58.6,
+    "formulas": {
+      "nearest_rank": "x[ceil(.95*n)] using 1-based rank = x5 = 71",
+      "linear": "h=1+(n-1)*.95=4.8; 9+.8*(71-9)=58.6"
+    },
+    "method_status": "Project has not specified p95 convention; neither is an accepted performance result.",
+    "new_measurements": 0,
+    "limits": [
+      "Only five synthetic samples, not real user experiments.",
+      "No measurement script, workload, sampling window, warm-up, repeats or acceptance threshold supplied."
+    ]
+  },
+  "meaning": "仅合成材料复算和交接审计，不是科学验收",
+  "useful": true,
+  "memory_refs": [
+    "LAT-intent-v2",
+    "samples-v1",
+    "inventory-v1"
+  ],
+  "historical_refs": [
+    "LAT-intent-v1",
+    "LAT-report-v1"
+  ],
+  "impacts": [
+    {
+      "task_id": "LAT",
+      "path": "data/samples.csv",
+      "memory_ref": "samples-v1",
+      "status": "reusable_synthetic_raw",
+      "useful": true,
+      "action": "保留已有样本；可复算，无需为本次整理重测",
+      "next_owner": "实验负责人"
+    },
+    {
+      "task_id": "LAT",
+      "path": "reports/old.md",
+      "memory_ref": "LAT-report-v1",
+      "status": "stale",
+      "useful": false,
+      "action": "保留历史，均值20 ms正确但p95完成结论无效；新建报告",
+      "next_owner": "报告负责人/复核者"
+    },
+    {
+      "task_id": "LAT",
+      "path": "CODEMAP.md",
+      "memory_ref": "LAT-report-v1",
+      "status": "stale_acceptance_label",
+      "useful": false,
+      "action": "accepted previously不能用于当前验收；主AI合并更正",
+      "next_owner": "主AI"
+    },
+    {
+      "task_id": "LAT",
+      "path": "TASK.md",
+      "memory_ref": "LAT-intent-v2",
+      "status": "goal_correct_task_open",
+      "useful": true,
+      "action": "保留原p95目标与未完成状态；增加纠错索引和有效memory_refs",
+      "next_owner": "主AI"
+    },
+    {
+      "task_id": "DOC",
+      "path": "inventory.md",
+      "memory_ref": "inventory-v1",
+      "status": "unaffected",
+      "useful": true,
+      "action": "保留CPU-only合成环境说明，无需因纠错重做",
+      "next_owner": "DOC负责人"
+    },
+    {
+      "task_id": "other-work",
+      "path": "results/live.log",
+      "memory_ref": null,
+      "status": "protected_running_or_unknown",
+      "useful": "unknown",
+      "action": "状态文件标running，未读写日志、移动、停止或重启",
+      "next_owner": "原运行任务负责人"
+    }
+  ],
+  "next_tasks": [
+    {
+      "id": "LAT-RECONCILE",
+      "owner": "主AI",
+      "action": "串行合并TASK索引/CODEMAP状态与新memory_refs；先核对监督源版本",
+      "status": "pending"
+    },
+    {
+      "id": "LAT-METHOD",
+      "owner": "实验负责人",
+      "action": "明确p95算法、采样定义、负载条件与验收限制",
+      "status": "pending"
+    },
+    {
+      "id": "LAT-EVIDENCE",
+      "owner": "实验负责人",
+      "action": "核验是否另有足够真实原始样本；若缺失则规划补测，本轮不启动",
+      "status": "pending"
+    },
+    {
+      "id": "LAT-REPORT",
+      "owner": "报告负责人/独立复核者",
+      "action": "按新意图和数据哈希生成新报告并验收，不恢复旧报告",
+      "status": "pending"
+    }
+  ],
+  "reference_audit": {
+    "inspected": [
+      "TASK.md",
+      "CODEMAP.md",
+      "active_jobs.json",
+      "inventory.md",
+      "reports/old.md",
+      "data/samples.csv"
+    ],
+    "additional_stale_consumer": "CODEMAP.md acceptance label",
+    "other_charts_reports_found": false
+  },
+  "limitations": [
+    "ps failed with fatal library error; live process status unverified, running declaration protected.",
+    "Project is not a Git repository.",
+    "No project experiment scripts found; historical script coverage is not applicable."
+  ]
+}
