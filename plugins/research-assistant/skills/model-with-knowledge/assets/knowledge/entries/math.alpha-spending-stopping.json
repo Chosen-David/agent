@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-concentration/checks.json",
+      "docs/knowledge_learning/2026-10-06-concentration/verify.py"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.hoeffding-bounded-mean",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "prerequisite",
+      "id": "math.hoeffding-bounded-mean"
+    }
+  ],
+  "id": "math.alpha-spending-stopping",
+  "title": "逐次错误预算下的随机停止保证",
+  "summary": "对同一稳定均值的每次查看分配可求和错误概率，以联合界保证任意数据依赖停止时的覆盖；保守且不保证早停。",
+  "aliases": [
+    "alpha spending",
+    "anytime stopping",
+    "反复 查看 随机 停止 错误预算"
+  ],
+  "domains": [
+    "probability",
+    "statistics",
+    "agent-evaluation"
+  ],
+  "structures": [
+    "sequential-estimation",
+    "stochastic-stopping",
+    "反复 查看 停止"
+  ],
+  "assumptions": [
+    "无限序列 X_i 相互独立、具有同一均值 μ 且落在已知确定区间 [a,b]",
+    "δ∈(0,1)，δ_t=δ/[t(t+1)] 在数据之前规定",
+    "评测对象、分布与取值范围固定；本条不覆盖复用数据训练后自适应选择的新模型"
+  ],
+  "sources": [
+    {
+      "url": "https://ai.stanford.edu/~gwthomas/notes/concentration.html",
+      "locator": "Fixed-time Hoeffding; alpha-spending sequence and telescoping proof are this entry own derivation",
+      "accessed": "2026-10-06"
+    },
+    {
+      "url": "https://arxiv.org/html/2603.19551v2",
+      "locator": "Section 1 equations (4),(5): time-uniform target only; not source of our boundary",
+      "accessed": "2026-10-06"
+    }
+  ]
+}
