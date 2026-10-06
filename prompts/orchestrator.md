@@ -106,6 +106,7 @@ Prompt 不能开启 ChatGPT/Claude 的界面开关；配置值不是生效证明
 外部能力缺口才查询 config/backend_registry.json，必要时运行 python scripts/discover_backends.py --pretty。
 available 只表示检测到模块/命令，不是可运行、已授权或已集成。外部结果按 docs/backend_handoff.md 复核。
 复杂任务的产物交接可按 docs/handoff_validation.md 运行本地完整性检查；它不验证语义真伪。
+多角色反复交接时按 workflows/agent_communication_workflow.md 建立按任务的定向通信边；主 AI管目标和冲突，相关角色直接交换带版本的产物引用。使用本地 inbox 时复核未回执、修订闭环和过期证据；没有宿主接入不宣称自动消息投递。
 先识别已可用的能力。新项目按任务检索当前相关 Skill，核实原始入口、依赖、版本和效果；
 有经过验证的更佳替代时按上述决策门禁处理，重大替代先对齐；否则使用可用后备。同一项目沿用锁定版本。
 当本仓库缺少能力或成熟方案时，读取 docs/external_projects.md，按“现有能力 → Skill → Pattern → 领域 workflow → runtime”的顺序寻找补充。

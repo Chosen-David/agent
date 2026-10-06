@@ -1,5 +1,7 @@
 # 可检查的本地产物交接
 
+多角色反复交接可使用 [定向通信收件箱](../workflows/agent_communication_workflow.md)。其 `consume_handoff` 复用本校验器和独立消费者请求；消息回执不代替语义验收或任务完成。
+
 适用于复杂任务、评测或跨角色交付；简单回答不强制生成记录。不替代现有 research/travel 领域对象，也不是 JourneyPilot API schema。
 
 `python scripts/validate_handoff.py handoff.json --root outputs --require-complete --request consumer-request.json`

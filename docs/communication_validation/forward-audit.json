@@ -1,0 +1,88 @@
+{
+  "run_id": "communication-forward-v2",
+  "synthetic": true,
+  "status": "passed",
+  "all_receipts_present": true,
+  "open_findings": [],
+  "revision_rounds": 1,
+  "writer_interrupt_exit_code": 73,
+  "writer_restart_duplicate_action_skipped": true,
+  "writer_actions": 2,
+  "stale_artifact_reused": false,
+  "events": 4,
+  "deliveries": 7,
+  "checks": [
+    "directed routing",
+    "duplicate publish",
+    "missing task rejected",
+    "actual worker exit/restart",
+    "raw data read",
+    "needs_revision plus request event",
+    "original-condition reviewer closure",
+    "old envelope and old manifest rejected",
+    "immutable receipt",
+    "all inboxes empty"
+  ],
+  "limitations": [
+    "No multiple models called; this is local interface/host-adapter evidence.",
+    "No real experiment, live Engine integration, malicious concurrency, network or token A/B measured."
+  ],
+  "final_status": [
+    {
+      "seq": 1,
+      "recipient": "research-review",
+      "receipt": {
+        "reason": "F-variance-001: supplement sample variance; revision event E-revision-F1 is published.",
+        "status": "needs_revision"
+      }
+    },
+    {
+      "seq": 1,
+      "recipient": "research-write",
+      "receipt": {
+        "reason": "Read raw data and means; durable action key prevents duplicate draft on restart. Scientific acceptance remains reviewer-owned.",
+        "status": "consumed"
+      }
+    },
+    {
+      "seq": 2,
+      "recipient": "research-implement-optimize",
+      "receipt": {
+        "reason": "Read and hash-checked F-variance-001; repair returned as E-repair-F1; finding remains reviewer-owned.",
+        "status": "consumed"
+      }
+    },
+    {
+      "seq": 3,
+      "recipient": "research-review",
+      "receipt": {
+        "reason": "Original F-variance-001 criteria recomputed and satisfied; reviewer/recheck-F1.json closes finding.",
+        "status": "consumed"
+      }
+    },
+    {
+      "seq": 3,
+      "recipient": "research-write",
+      "receipt": {
+        "reason": "Read raw data and means; durable action key prevents duplicate draft on restart. Scientific acceptance remains reviewer-owned.",
+        "status": "consumed"
+      }
+    },
+    {
+      "seq": 4,
+      "recipient": "research-review",
+      "receipt": {
+        "reason": "Old v1 manifest fails current v2 input version and run checks; no scientific or draft action performed.",
+        "status": "rejected"
+      }
+    },
+    {
+      "seq": 4,
+      "recipient": "research-write",
+      "receipt": {
+        "reason": "Old v1 manifest fails current v2 input version and run checks; no scientific or draft action performed.",
+        "status": "rejected"
+      }
+    }
+  ]
+}
