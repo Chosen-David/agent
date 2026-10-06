@@ -34,7 +34,7 @@ class KnowledgeTests(unittest.TestCase):
         p.write_text(json.dumps(d))
 
     def test_seed_and_chinese_task_structure_search(self):
-        self.assertEqual(len(self.store.records), 5)
+        self.assertTrue({'math.cauchy-schwarz','math.low-rank-svd','math.topk-margin','math.symmetry-quotient','physics.dimensionless'} <= set(self.store.records))
         rows = self.store.search('压缩 查询键误差 分数扰动 排名', limit=3)['results']
         self.assertIn('math.cauchy-schwarz', [r['id'] for r in rows])
         self.assertTrue(all(r['matches'] and r['assumptions'] for r in rows))
@@ -49,6 +49,23 @@ class KnowledgeTests(unittest.TestCase):
         d = self.store.get('math.low-rank-svd')
         d['assumptions'].clear()
         self.assertTrue(self.store.get('math.low-rank-svd')['assumptions'])
+
+    def test_context_preserves_prerequisites_and_budget(self):
+        hits=self.store.search('矩阵近似 查询 范数 分数误差 间隔',limit=3)
+        pack=self.store.context(hits)
+        self.assertIn('math.low-rank-svd', {d['id'] for d in pack['entries']})
+        self.assertTrue(self.store.check_refs(pack['knowledge_refs'])['valid'])
+        self.assertLessEqual(pack['budget']['used_chars'], pack['budget']['max_chars'])
+        blocked=self.store.context(hits,max_chars=10)
+        self.assertEqual(blocked['status'],'partial')
+        self.assertEqual(blocked['entries'],[])
+        self.assertTrue(blocked['skipped'])
+        stale=dict(hits,snapshot='wrong')
+        with self.assertRaises(KnowledgeError): self.store.context(stale)
+        for budget in (1,2,3):
+            small=self.store.context(hits,max_entries=budget)
+            if small['knowledge_refs']: self.assertTrue(self.store.check_refs(small['knowledge_refs'])['valid'])
+        self.assertEqual(self.store.context(self.store.search('zzqxnonexistent'))['status'],'no_hits')
 
     def test_search_result_isolation(self):
         row = self.store.search('量纲')['results'][0]

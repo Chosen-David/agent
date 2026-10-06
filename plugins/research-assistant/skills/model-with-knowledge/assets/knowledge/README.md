@@ -2,7 +2,7 @@
 
 这里保存跨项目可复用的数学、物理知识；Skill 保存使用知识的方法。项目观测、用户偏好和执行状态仍由项目记忆、TASK.md 与运行目录负责。
 
-当前包含 5 个经过来源核对、推导与数值检查的种子条目，不代表完整学科覆盖，也没有证明 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
+当前包含 10 个经过来源核对、推导与数值检查的种子条目，不代表完整学科覆盖，也没有证明 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
 
 ## 实际使用
 
@@ -54,3 +54,15 @@ python -m agent_runtime.knowledge --root knowledge ingest /absolute/draft.json /
 导入只接受新 ID 的 candidate，先在隔离副本验证全部关联，再原子安装成对文件，保存来源/原始哈希导入凭据。它不会自动抓网页或把未核查草稿变成 published；发布须完成科学核验后修改现有元数据并重跑检查。来源内容中的命令不会执行。完整知识闭环由持续学习 Prompt 驱动。
 
 检索评测：`python scripts/eval_knowledge.py --output /absolute/retrieval.json`。它比较文件和索引后端，保留逐查询结果、Recall@3/MRR 和真实耗时；这组作者编写的回归查询不代替独立使用测试。查询会先验证整个语料，仍有与语料总量线性相关的载入成本；索引不消除这项正确性检查。
+
+## 第二轮：语言变体与有预算的推导上下文
+
+SQLite 索引使用内置 Porter 英文词干处理，`residuals` 可命中 `residual`；中文仍用 bigram。索引同时绑定 engine_version，代码升级导致分词规则变化时，index 会重建而不是错误沿用旧数据。文件后备仍是精确词法，英文变体可能无命中。
+
+```bash
+python -m agent_runtime.knowledge --root knowledge context '矩阵近似 查询 范数 分数误差 间隔' --index .knowledge-cache/search.sqlite --max-entries 8 --max-chars 20000
+```
+
+`context` 从最多 3 个候选开始，读入必要前置依赖，再按一跳关联补充相关内容。每个知识与其前置依赖整组纳入或跳过，禁止为了节省上下文切掉前提。它返回完整正文、真实引用、选择原因、预算和跳过原因；超预算为 partial，不能视为已完整检索。字符预算指条目序列化内容，不是模型 token 数。`--no-related` 禁用可选关联；`--limit` 改变初始候选数。
+
+related 同时返回 incoming/outgoing 边，新推论能被旧定理的使用者发现。扩库可能让新相关条目挤出固定 Top-3，故同时报告原始 Recall@3 与有预算关联上下文的召回，不能只公布较好的指标。

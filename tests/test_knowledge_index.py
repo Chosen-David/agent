@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from agent_runtime.knowledge import KnowledgeStore, KnowledgeError
 from agent_runtime.knowledge_index import build_index, indexed_search, navigate, sections
 from agent_runtime.knowledge_ingest import ingest
@@ -18,11 +19,12 @@ class IndexTests(unittest.TestCase):
         self.root=Path(self.tmp.name)/'knowledge'
         shutil.copytree(ROOT/'knowledge',self.root)
         self.store=KnowledgeStore(self.root)
+        self.count=len(self.store.records)
         self.db=Path(self.tmp.name)/'cache/search.sqlite'
 
     def test_incremental_noop_update_remove_and_rebuild(self):
-        self.assertEqual(build_index(self.store,self.db)['updated'],5)
-        self.assertEqual(build_index(self.store,self.db)['unchanged'],5)
+        self.assertEqual(build_index(self.store,self.db)['updated'],self.count)
+        self.assertEqual(build_index(self.store,self.db)['unchanged'],self.count)
         p=self.root/'entries/math.low-rank-svd.md';p.write_text(p.read_text()+'\nAdditional boundary.\n')
         fresh=KnowledgeStore(self.root)
         with self.assertRaisesRegex(KnowledgeError,'stale'):
@@ -32,7 +34,7 @@ class IndexTests(unittest.TestCase):
         fresh=KnowledgeStore(self.root)
         self.assertEqual(build_index(fresh,self.db)['removed'],1)
         self.assertEqual(indexed_search(fresh,self.db,'量纲')['results'],[])
-        self.assertEqual(build_index(fresh,self.db,rebuild=True)['updated'],4)
+        self.assertEqual(build_index(fresh,self.db,rebuild=True)['updated'],self.count-1)
 
     def test_index_search_pins_sections_filter_and_query_syntax(self):
         build_index(self.store,self.db)
@@ -60,6 +62,35 @@ class IndexTests(unittest.TestCase):
         other=Path(self.tmp.name)/'other';shutil.copytree(self.root,other)
         with self.assertRaisesRegex(KnowledgeError,'different corpus'):
             build_index(KnowledgeStore(other),self.db)
+
+    def test_failed_reindex_preserves_previous_index(self):
+        build_index(self.store,self.db)
+        p=self.root/'entries/math.low-rank-svd.md'
+        p.write_text(p.read_text()+'\nChanged content.\n')
+        fresh=KnowledgeStore(self.root)
+        with patch('agent_runtime.knowledge_index.sections', side_effect=RuntimeError('interrupted writer')):
+            with self.assertRaisesRegex(RuntimeError, 'interrupted'):
+                build_index(fresh,self.db)
+        self.assertTrue(indexed_search(self.store,self.db,'low rank')['results'])
+        self.assertEqual(build_index(fresh,self.db)['updated'],1)
+
+    def test_stemming_and_engine_refresh(self):
+        build_index(self.store,self.db)
+        self.assertEqual(indexed_search(self.store,self.db,'residuals')['results'][0]['id'], 'math.linear-system-stability')
+        with sqlite3.connect(self.db) as con:
+            con.execute("UPDATE meta SET value='old-engine' WHERE key='engine_version'")
+        with self.assertRaisesRegex(KnowledgeError, 'stale index engine'):
+            indexed_search(self.store,self.db,'residuals')
+        result=build_index(self.store,self.db)
+        self.assertTrue(result['engine_changed'])
+        self.assertEqual(result['updated'], self.count)
+        self.assertFalse(build_index(self.store,self.db)['engine_changed'])
+
+    def test_incoming_relations_discover_new_corollary(self):
+        results=self.store.related('math.topk-margin')['results']
+        self.assertTrue(any(x['id']=='math.score-difference-bound' and x['direction']=='incoming' for x in results))
+        self.assertTrue(any(x['id']=='math.cauchy-schwarz' and x['direction']=='outgoing' for x in results))
+        self.assertTrue(self.store.related('math.cauchy-schwarz',limit=1)['truncated'])
 
     def test_heading_tree_fences_and_section_read(self):
         record={'title':'Test','content':'Preamble\n# A\nbody\n## B\nchild\n```md\n# ignored\n```\n# C\nend'}
@@ -91,9 +122,9 @@ class IndexTests(unittest.TestCase):
         result=ingest(self.root,meta,body)
         self.assertTrue((self.root/result['path']/'provenance.txt').is_file())
         store=KnowledgeStore(self.root)
-        self.assertEqual(len(store.records),6)
+        self.assertEqual(len(store.records),self.count+1)
         with self.assertRaises(KnowledgeError): store.get('math.import-example')
-        self.assertEqual(build_index(store,self.db)['indexed'],5)
+        self.assertEqual(build_index(store,self.db)['indexed'],self.count)
         with self.assertRaisesRegex(KnowledgeError,'already exists'): ingest(self.root,meta,body)
 
     def test_bad_import_does_not_change_corpus(self):

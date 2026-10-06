@@ -239,12 +239,73 @@ class KnowledgeStore:
         _require(type(limit) is int and 1 <= limit <= 20, 'limit must be 1..20')
         d = self.get(kid)
         edges = [{'type': 'prerequisite', **x} for x in d['requires']] + d['relations']
-        results = []
+        results, seen = [], set()
+        def add(source, edge, direction):
+            target_id = edge['id'] if direction == 'outgoing' else source
+            signature = (edge['type'], target_id, direction)
+            if self.records[target_id]['status'] == 'published' and signature not in seen:
+                seen.add(signature)
+                results.append({'type': edge['type'], 'direction': direction,
+                                **self.ref(target_id), 'title': self.records[target_id]['title']})
         for edge in edges:
-            target = self.records[edge['id']]
-            if target['status'] == 'published':
-                results.append({'type': edge['type'], **self.ref(edge['id']), 'title': target['title']})
+            add(kid, edge, 'outgoing')
+        # New corollaries can be discovered without changing every old theorem.
+        for source in sorted(self.records):
+            node = self.records[source]
+            if node['status'] != 'published':
+                continue
+            for edge in [{'type': 'prerequisite', **x} for x in node['requires']] + node['relations']:
+                if edge['id'] == kid:
+                    add(source, edge, 'incoming')
         return {'snapshot': self.snapshot, 'results': results[:limit], 'truncated': len(results) > limit}
+
+    def context(self, search_result, *, max_entries=8, max_chars=20000, include_related=True):
+        """Assemble complete prerequisite bundles within an explicit character budget.
+
+        A theorem never enters the pack without all of its declared prerequisites.
+        Bounded one-hop navigation can recover useful neighbors displaced by top-k.
+        This is context selection, not a proof that any candidate applies.
+        """
+        _require(type(max_entries) is int and 1 <= max_entries <= 20, 'max_entries must be 1..20')
+        _require(type(max_chars) is int and 1 <= max_chars <= 200000, 'max_chars must be 1..200000')
+        _require(isinstance(search_result, dict) and search_result.get('snapshot') == self.snapshot,
+                 'context search snapshot mismatch')
+        seeds = [row['id'] for row in search_result['results']]
+        requested = [(kid, 'retrieved') for kid in seeds]
+        seen = set(seeds)
+        if include_related:
+            for kid in seeds:
+                for edge in self.related(kid)['results']:
+                    if edge['id'] not in seen:
+                        requested.append((edge['id'], 'related'))
+                        seen.add(edge['id'])
+        selected, skipped, chars = {}, [], 0
+        for kid, reason in requested:
+            if kid in selected:
+                continue
+            entry = self.get(kid)
+            keys = [ref['id'] for ref in entry['knowledge_refs'] if ref['id'] not in selected]
+            bundle = []
+            for key in keys:
+                d = self.get(key)
+                d.pop('knowledge_refs')
+                d['selection_reason'] = reason if key == kid else 'prerequisite'
+                bundle.append(d)
+            cost = sum(len(json.dumps(d, ensure_ascii=False, sort_keys=True)) for d in bundle)
+            if len(selected)+len(bundle) > max_entries or chars+cost > max_chars:
+                skipped.append({'id':kid, 'reason':'complete prerequisite bundle exceeds context budget',
+                                'selection_reason':reason})
+                continue
+            selected.update((d['id'],d) for d in bundle)
+            chars += cost
+        refs = [self.ref(kid) for kid in sorted(selected)]
+        if refs:
+            self.check_refs(refs)
+        return {'schema_version':1, 'snapshot':self.snapshot, 'backend':search_result['backend'],
+                'applicability':'unchecked', 'status':'partial' if skipped else ('ready' if selected else 'no_hits'),
+                'budget':{'max_entries':max_entries,'max_chars':max_chars,'used_chars':chars,
+                          'scope':'serialized entry payload characters, not model tokens or outer envelope'},
+                'retrieved_ids':seeds, 'entries':list(selected.values()), 'knowledge_refs':refs, 'skipped':skipped}
 
     def check_refs(self, refs):
         _require(isinstance(refs, list) and bool(refs), 'nonempty knowledge_refs list required')
@@ -300,6 +361,13 @@ def main(argv=None):
     ingest.add_argument('metadata')
     ingest.add_argument('body')
     search = sub.add_parser('search')
+    context = sub.add_parser('context')
+    context.add_argument('query')
+    context.add_argument('--index')
+    context.add_argument('--limit', type=int, default=3)
+    context.add_argument('--max-entries', type=int, default=8)
+    context.add_argument('--max-chars', type=int, default=20000)
+    context.add_argument('--no-related', action='store_true')
     search.add_argument('query')
     search.add_argument('--index', help='SQLite index built with index command')
     search.add_argument('--domain')
@@ -319,7 +387,18 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         store = KnowledgeStore(args.root)
-        if args.command in ('index', 'tree', 'section') or (args.command == 'search' and args.index):
+        if args.command == 'context':
+            if args.index:
+                if __package__:
+                    from .knowledge_index import indexed_search
+                else:
+                    from knowledge_index import indexed_search
+                hits = indexed_search(store, args.index, args.query, limit=args.limit)
+            else:
+                hits = store.search(args.query, limit=args.limit)
+            out = store.context(hits, max_entries=args.max_entries, max_chars=args.max_chars,
+                                include_related=not args.no_related)
+        elif args.command in ('index', 'tree', 'section') or (args.command == 'search' and args.index):
             if __package__:
                 from .knowledge_index import build_index, indexed_search, navigate
             else:

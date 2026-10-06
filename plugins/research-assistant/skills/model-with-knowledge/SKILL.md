@@ -32,3 +32,7 @@ python scripts/knowledge.py --root assets/knowledge related math.topk-margin
 在 Skill 目录，`python scripts/knowledge.py --root assets/knowledge index --db /absolute/project/.knowledge-cache/search.sqlite` 创建或增量更新 SQLite 索引；同一语料的 search 加 `--index` 使用 BM25/章节/结构词融合，过期索引报错后先更新。缓存放项目内，不写安装目录。也可保持文件检索，小语料不保证索引更快。
 
 `tree <id>` 查看章节树，`section <id> <node>` 读取原文；完整前提仍读 show。`ingest <draft.json> <draft.md>` 将有来源的新 candidate 原子导入指定的可写语料，留存来源凭据；绝不自动发布或覆盖既有 ID。具体参数与失败处理见知识说明。独立包同时包含 knowledge.py、knowledge_index.py、knowledge_ingest.py。
+
+英文词形变化（如 residual/residuals）、反复查询或跨条目推导优先使用索引。索引采用 SQLite Porter 词干处理；文件后备仅精确词法，不把一次无命中当成库内不存在知识。`related <id>` 同时返回出边和入边，按 direction 区分：新推论可反向指向旧定理而不改写旧版本。读取相关项时仍核对其自身假设。工具升级会检查 engine_version，必要时自动全量重建索引，不能仅依据语料未变就复用旧分词索引。
+
+多条知识共同推导时可用 `context '<结构查询>' --index <索引路径> --max-entries 8 --max-chars 20000` 获取有预算的全文与完整前提。默认最多 3 个检索候选并补一跳关联；查看 retrieved_ids、selection_reason、skipped 和 status，不把 related 当直接命中、不把 partial 当完整证据。过大前提组会整体跳过，需缩小问题/分阶段读取。此命令减少手工拼接，不替代逐条适用性判断。

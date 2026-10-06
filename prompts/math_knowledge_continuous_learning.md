@@ -42,14 +42,16 @@
 
 修改已发布语义时递增版本、检查所有 requires 依赖；记录哪些已知推导受影响。对旧 knowledge_refs 重新审查，不机械替换哈希。更新 coverage 与 learning_state（实际完成轮次、下一题、未解决问题、证据路径），保持历史可追溯。
 
-生成插件快照并运行：
+先把 `knowledge_round_dir` 设置为本轮实际的 `docs/knowledge_learning/<UTC日期-唯一轮次>` 目录并创建它，然后生成插件快照并运行：
 
 ```bash
 python -m agent_runtime.knowledge --root knowledge validate
 python scripts/sync_plugin_references.py
 python scripts/sync_plugin_references.py --check
 python -m agent_runtime.knowledge --root knowledge index --db .knowledge-cache/search.sqlite
-python scripts/eval_knowledge.py --output /absolute/current-round/retrieval.json
+python scripts/eval_knowledge.py --accept-context --output "$knowledge_round_dir/retrieval.json"
+python scripts/eval_knowledge.py --cases evals/knowledge/round2-queries.json --accept-context --output "$knowledge_round_dir/expanded-retrieval.json"
+python scripts/eval_knowledge.py --cases evals/knowledge/morphology-queries.json --require-backends sqlite --output "$knowledge_round_dir/morphology.json"
 python -m unittest discover -s tests -v
 python -m unittest discover -s apps/paper-reader/tests -v
 ```

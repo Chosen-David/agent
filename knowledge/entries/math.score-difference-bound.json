@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "id": "math.score-difference-bound",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "利用整体二范数误差收紧排序间隔条件",
+  "summary": "整体误差约束可把逐项保守的 2ε 条件收紧为 √2η，避免遗漏相关误差结构。",
+  "aliases": [
+    "pairwise score difference",
+    "spectral ranking margin",
+    "correlated errors",
+    "排序 间隔 更紧界",
+    "整体误差"
+  ],
+  "domains": [
+    "linear-algebra"
+  ],
+  "structures": [
+    "error-bound",
+    "ranking-stability",
+    "joint-error"
+  ],
+  "assumptions": [
+    "分数向量误差满足整体二范数界 ‖s−s_hat‖₂≤η，k 在1到n−1间",
+    "矩阵形式为固定实查询 s=Kᵀq，已知 ‖q‖₂≤Q、‖K−K_hat‖₂≤δ",
+    "若只知道逐分数误差≤ε而无整体界，不可用 √2ε 替代2ε"
+  ],
+  "sources": [
+    {
+      "url": "https://people.math.wisc.edu/~gemeyer/math340/Notes3.html",
+      "locator": "Theorem 5.3 supports the underlying inequality; sharper ranking lemma is independently derived here",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "同名 Markdown 的明确推导与反例；非形式化证明",
+      "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.topk-margin"
+    },
+    {
+      "type": "application",
+      "id": "math.low-rank-svd"
+    }
+  ]
+}

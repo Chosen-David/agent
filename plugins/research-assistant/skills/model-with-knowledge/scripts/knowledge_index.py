@@ -18,6 +18,7 @@ else:
     from knowledge import KnowledgeError, _require, _terms, _text
 
 INDEX_VERSION = '1'
+ENGINE_VERSION = 'fts5-porter-context-v2'
 
 
 def sections(record):
@@ -91,8 +92,8 @@ def _initialize(con):
     con.executescript('''
         CREATE TABLE meta(key TEXT PRIMARY KEY, value TEXT NOT NULL);
         CREATE TABLE entries(id TEXT PRIMARY KEY, hash TEXT NOT NULL);
-        CREATE VIRTUAL TABLE docs USING fts5(id UNINDEXED, title, context, body);
-        CREATE VIRTUAL TABLE chunks USING fts5(id UNINDEXED, node UNINDEXED, heading, context, body);
+        CREATE VIRTUAL TABLE docs USING fts5(id UNINDEXED, title, context, body, tokenize='porter unicode61');
+        CREATE VIRTUAL TABLE chunks USING fts5(id UNINDEXED, node UNINDEXED, heading, context, body, tokenize='porter unicode61');
     ''')
     con.execute('INSERT INTO meta VALUES (?,?)',('index_version',INDEX_VERSION))
 
@@ -102,8 +103,20 @@ def build_index(store, path, *, rebuild=False):
     con=_connect(path)
     try:
         _initialize(con)
+        con.commit()
+        con.execute('BEGIN IMMEDIATE')
         oldroot=con.execute("SELECT value FROM meta WHERE key='root'").fetchone()
         _require(oldroot is None or oldroot[0] == str(store.root), 'index belongs to a different corpus')
+        pipeline=con.execute("SELECT value FROM meta WHERE key='engine_version'").fetchone()
+        engine_changed=pipeline is None or pipeline[0] != ENGINE_VERSION
+        if engine_changed:
+            # Tokenizer/schema changes require reindexing unchanged source files.
+            # SQLite transactional DDL keeps readers on the previous complete index.
+            con.execute('DROP TABLE docs')
+            con.execute('DROP TABLE chunks')
+            con.execute("CREATE VIRTUAL TABLE docs USING fts5(id UNINDEXED, title, context, body, tokenize='porter unicode61')")
+            con.execute("CREATE VIRTUAL TABLE chunks USING fts5(id UNINDEXED, node UNINDEXED, heading, context, body, tokenize='porter unicode61')")
+            con.execute('DELETE FROM entries')
         old=dict(con.execute('SELECT id, hash FROM entries'))
         current={kid:d['sha256'] for kid,d in store.records.items() if d['status']=='published'}
         changed=[kid for kid,h in current.items() if rebuild or old.get(kid)!=h]
@@ -120,9 +133,10 @@ def build_index(store, path, *, rebuild=False):
                 con.execute('INSERT INTO docs VALUES (?,?,?,?)',(kid,_tokenize(d['title']),_tokenize(context),_tokenize(d['content'])))
                 for node in sections(d):
                     con.execute('INSERT INTO chunks VALUES (?,?,?,?,?)',(kid,node['node'],_tokenize(node['title']),_tokenize(d['title']+' '+d['summary']),_tokenize(node['text'])))
-            for key,value in [('root',str(store.root)),('snapshot',store.snapshot)]:
+            for key,value in [('root',str(store.root)),('snapshot',store.snapshot),('engine_version',ENGINE_VERSION)]:
                 con.execute('INSERT OR REPLACE INTO meta VALUES (?,?)',(key,value))
         return {'backend':'sqlite-fts5-rrf-v1','snapshot':store.snapshot,'indexed':len(current),
+                'engine_version':ENGINE_VERSION,'engine_changed':engine_changed,
                 'updated':len(changed),'removed':len(removed),'unchanged':len(current)-len(changed)}
     finally:
         con.close()
@@ -135,6 +149,7 @@ def indexed_search(store, path, query, *, domain=None, structure=None, limit=5):
     try:
         meta=dict(con.execute('SELECT key,value FROM meta'))
         _require(meta.get('index_version')==INDEX_VERSION and meta.get('root')==str(store.root), 'index schema/corpus mismatch')
+        _require(meta.get('engine_version')==ENGINE_VERSION, 'stale index engine; run index to update')
         _require(meta.get('snapshot')==store.snapshot, 'stale knowledge index; run index to update')
         terms=_terms(query)
         if not terms:
