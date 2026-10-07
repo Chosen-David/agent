@@ -1,0 +1,36 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "Frozen 2dd302d integration: verified pull then skill synchronization/check before model launch, stage receipts, conflict preservation and canonical output scope. Raw full-suite execution accounting only; no general correctness or model/performance claim.",
+  "criteria": {
+    "implementation": {
+      "procedure": "Check frozen sources and AST call order independently",
+      "acceptance": "prepare_host precedes Popen; git verification precedes skill sync; --check and phase receipts retained",
+      "allow_not_applicable": false
+    },
+    "reference_boundary": {
+      "procedure": "Run real Git and installer boundary fixtures in separate host process",
+      "acceptance": "All runner/installer checks pass, including unpublished/local-edit/check-failure/canonical/human-guide cases",
+      "allow_not_applicable": false
+    },
+    "data_integrity": {
+      "procedure": "Parse raw verbose logs and hash-bind artifacts",
+      "acceptance": "Unique case IDs equal totals, skip denominator explicit; all command receipts successful",
+      "allow_not_applicable": false
+    },
+    "numerical_sanity": {
+      "procedure": "Check finite counts and elapsed values",
+      "acceptance": "Counts integral, elapsed finite positive, summaries match raw IDs",
+      "allow_not_applicable": false
+    },
+    "measurement_validity": {
+      "procedure": "Classify metrics and claims",
+      "acceptance": "No performance/scientific/model claim; timing validity explicitly N/A",
+      "allow_not_applicable": true
+    },
+    "reproducibility": {
+      "procedure": "Rerun focused fixtures on actual frozen source",
+      "acceptance": "Separate runner/installer runs succeed; current source matches snapshots",
+      "allow_not_applicable": false
+    }
+  }
+}

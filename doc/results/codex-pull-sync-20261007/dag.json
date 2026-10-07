@@ -1,0 +1,90 @@
+{
+  "schema_version": "task-dag/v1",
+  "run_id": "codex-pull-sync-20261007",
+  "user_goal": "Update skills after verified pull",
+  "authorization_reference": "User request and updated AGENTS 2026-10-07",
+  "supervision": {
+    "min_seconds": 30,
+    "max_seconds": 300,
+    "rationale": "Bounded regression and one independent host check"
+  },
+  "tasks": [
+    {
+      "task_id": "produce-regression",
+      "owner": "unittest-regression-runner",
+      "action": "produce_regression",
+      "depends_on": [],
+      "task_type": "experiment",
+      "produces_data": true,
+      "experiment_result": {
+        "result_id": "codex-pull-sync-20261007",
+        "producer_task_id": "produce-regression",
+        "producer_actor": "unittest-regression-runner",
+        "manifest_path": "doc/results/codex-pull-sync-20261007/manifest.json",
+        "validation_plan": {
+          "path": "doc/results/codex-pull-sync-20261007/validation-plan.json",
+          "sha256": "b031589b2f65f259a644b4557534721e9b4978ace826d261798bb453a7391ec9"
+        },
+        "scope": "Frozen 2dd302d integration: verified pull then skill synchronization/check before model launch, stage receipts, conflict preservation and canonical output scope. Raw full-suite execution accounting only; no general correctness or model/performance claim."
+      },
+      "max_attempts": 1,
+      "estimated_seconds": 120,
+      "risk": "low",
+      "done_when": {
+        "scoped_evidence": true
+      }
+    },
+    {
+      "task_id": "verify-integration",
+      "owner": "host-static-and-replay-checker",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "produce-regression"
+      ],
+      "result_validation": {
+        "result_id": "codex-pull-sync-20261007",
+        "producer_task_id": "produce-regression",
+        "producer_actor": "unittest-regression-runner",
+        "manifest_path": "doc/results/codex-pull-sync-20261007/manifest.json",
+        "validation_plan": {
+          "path": "doc/results/codex-pull-sync-20261007/validation-plan.json",
+          "sha256": "b031589b2f65f259a644b4557534721e9b4978ace826d261798bb453a7391ec9"
+        },
+        "scope": "Frozen 2dd302d integration: verified pull then skill synchronization/check before model launch, stage receipts, conflict preservation and canonical output scope. Raw full-suite execution accounting only; no general correctness or model/performance claim."
+      },
+      "max_attempts": 1,
+      "estimated_seconds": 120,
+      "risk": "low",
+      "done_when": {
+        "scoped_evidence": true
+      }
+    },
+    {
+      "task_id": "publish-integration",
+      "owner": "main-ai",
+      "action": "publish_verified_integration",
+      "depends_on": [
+        "verify-integration"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "codex-pull-sync-20261007",
+          "producer_task_id": "produce-regression",
+          "producer_actor": "unittest-regression-runner",
+          "manifest_path": "doc/results/codex-pull-sync-20261007/manifest.json",
+          "validation_plan": {
+            "path": "doc/results/codex-pull-sync-20261007/validation-plan.json",
+            "sha256": "b031589b2f65f259a644b4557534721e9b4978ace826d261798bb453a7391ec9"
+          },
+          "scope": "Frozen 2dd302d integration: verified pull then skill synchronization/check before model launch, stage receipts, conflict preservation and canonical output scope. Raw full-suite execution accounting only; no general correctness or model/performance claim."
+        }
+      ],
+      "max_attempts": 1,
+      "estimated_seconds": 120,
+      "risk": "low",
+      "done_when": {
+        "scoped_evidence": true
+      }
+    }
+  ]
+}

@@ -19,7 +19,7 @@ python scripts/setup_codex.py --check
 
 ## 每轮迭代
 
-1. 读取当前项目人类指南、`doc/task/TASK.md`、关联详情/建议决定、运行状态及受影响输出。干净工作区先 `git pull --ff-only origin main`，或等效 fetch + fast-forward；有改动时保留检查点并整合，不用 hard reset 清理。记录本轮基线与目标。
+1. 读取当前项目人类指南、`doc/task/TASK.md`、关联详情/建议决定、运行状态及受影响输出。干净工作区先 `git pull --ff-only origin main`，或等效 fetch + fast-forward；有改动时保留检查点并整合，不用 hard reset 清理。记录本轮基线与目标。 每次成功 pull 后核对 HEAD 等于 fetched main，在模型轮次之间运行 python scripts/setup_codex.py 和 python scripts/setup_codex.py --check，再开始下一任务；本机技能冲突时保留修改并报告。
 2. 针对实际缺陷保留可复现基线、实现、验证和负结果。按改动运行必要检查；涉及主调度或共享契约时执行仓库规定的完整测试，不用文件安装成功代替模型行为验收。
 3. 发布前再次 fetch，整合并发提交与冲突，重验受影响范围。按现有授权普通 push main；缺少原生 Git 写凭据时可用已连接 GitHub API 创建 tree/commit，并按 expected_sha 非强制更新。独立读回远端 SHA 与内容树。
 4. 运行 `python scripts/setup_codex.py`，再 `--check`，同步已经验证的提交。只在两次任务之间同步；新启动的模型使用新版本。全局指引只放入口，专业正文按需读取。
@@ -32,7 +32,9 @@ python scripts/setup_codex.py --check
 
 更新前在私有 state/backups 保存被替换文件和原全局指引，原子写入单个文件，最后核对完整快照并提交安装清单。若 I/O 中断，保留 pending.json、旧清单和备份，下一次会阻塞。先核对 before/after、实际文件、备份及运行状态，再恢复完整旧快照或完成已验证新快照；确认一致后才清理自有 pending、临时文件与锁。不能按锁龄自动删除，也不能强行覆盖本机修改。
 
-这是工作流、技能与工具的工程迭代，不是修改模型权重。本轮不重复创建已有云端每小时优化任务，现有 WSL 知识维护继续运行。Windows 宿主桥可显式配置 `--host-git-sync --host-skill-sync`：只在模型完成、全部工作文件与发布树一致后运行受保护的安装同步；必须同时开启 Git 验证。冲突会记录 host-skills.json 并保留已发布成果，不扩大模型 sandbox 写权限。本机维护入口启用此选项，后续验证过的知识更新也能进入用户技能快照。
+这是工作流、技能与工具的工程迭代，不是修改模型权重。本轮不重复创建已有云端每小时优化任务，现有 WSL 知识维护继续运行。Windows 宿主桥可显式配置 `--host-git-sync --host-skill-sync`：启动模型前先 fetch/fast-forward、核对干净 HEAD 等于 fetched main，再同步受保护的技能；模型完成后，仅在全部工作文件与发布树一致时再次同步。必须同时开启 Git 验证。本机维护入口已启用这些选项，每小时频率不变。
+
+启动前同步结果写入 `host-skills-before.json`；冲突会阻止本轮模型启动并保留本机技能。发布后同步结果仍写入 `host-skills.json`，失败保留已发布成果。两阶段回执分开，避免覆盖拉取后的同步证据。宿主只在两轮之间更新，不扩大模型 sandbox 写权限。这不是任意终端 `git pull` 的全局 Git hook；交互会话遵循受管 AGENTS 指令执行同步，现有维护 runner 自动执行上述顺序。已运行会话不会热替换其已加载上下文，下一轮或新会话发现更新。
 
 仓库文档迁移、插件引用同步与本机技能安装是三种不同操作。`setup_codex.py` 的既有文件快照机制会携带新增包内契约和受管入口，不创建/迁移用户项目文档，不触碰其人类指南。只有已提交且独立核验后按原同步步骤执行并读回，才可报告本机已更新；新会话是否实际发现和遵守规则仍须另验。
 
