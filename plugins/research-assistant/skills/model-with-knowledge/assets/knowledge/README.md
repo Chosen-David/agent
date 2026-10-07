@@ -2,7 +2,7 @@
 
 这里保存跨项目可复用的数学、物理、AI Infra、AI 算法、数据结构算法与跨物种神经科学知识；Skill 保存使用知识的方法。项目观测、用户偏好和执行状态仍由项目记忆、TASK.md 与运行目录负责。
 
-当前包含 80 个已发布条目，另有2个待核验candidate：39 个数学/物理基础条目（包括18个本轮高等代数主题）、22 张工程复用卡、2条AI算法推导知识，以及 6 张 2026 年 RL / 概率论研究卡（ICLR、ICML、COLT、ALT），以及11张神经科学/NeuroAI卡（10篇正式论文、1篇明确绑定的2024预印本）。近五年检索窗口为2021-10-07至2026-10-07，本轮所选来源为2023–2026；最新核查论文发表于2026-09-29。机构/作者博客单列来源，生物发现、意识理论与AI设计假设分开记录。新增卡核查原论文的相关实验、定理前提与反例，未执行本机论文复现，不代表完整学科覆盖或 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
+当前包含 80 个已发布条目，另有3个待核验candidate：39 个数学/物理基础条目（包括18个本轮高等代数主题）、22 张工程复用卡、2条AI算法推导知识，以及 6 张 2026 年 RL / 概率论研究卡（ICLR、ICML、COLT、ALT），以及11张神经科学/NeuroAI卡（10篇正式论文、1篇明确绑定的2024预印本）。近五年检索窗口为2021-10-07至2026-10-07，本轮所选来源为2023–2026；最新核查论文发表于2026-09-29。机构/作者博客单列来源，生物发现、意识理论与AI设计假设分开记录。新增卡核查原论文的相关实验、定理前提与反例，未执行本机论文复现，不代表完整学科覆盖或 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
 
 ## 实际使用
 
@@ -114,3 +114,5 @@ python -m agent_runtime.knowledge --root knowledge decision '点更新 区间求
 ## AI算法：推测采样与成本边界
 
 新增两条限定前提的推导知识，见 `ai.speculative-sampling-residual-exactness` 与 `ai.speculative-decoding-cost-bound`。查询确认是AI算法后可显式使用 `search --domain ai-algorithms`；完整读取强依赖再判断适用性。默认全库仍有预算/排序缺口，不以领域筛选后的召回冒充默认满分；详见[AI算法报告](../docs/knowledge_learning/2026-10-07-ai-algorithms/report.md)与[最新基线发布核验](../docs/knowledge_learning/2026-10-07-ai-algorithms/latest-base-release.md)。
+
+2026-10-07 工程维护172253核查跳蛛REM样行为与条件概率方向、作者分析源码及2026终版线索；新增1candidate/0published科学卡，SI与原始分母待核。见 `docs/knowledge_learning/2026-10-07-engineering-172253/report.md`。
