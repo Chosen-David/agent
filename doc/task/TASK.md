@@ -5,7 +5,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-08
 
 - [x] [MATH-33] 核验有限菜单同时校准与选择后风险/成本均值，保留泄漏和依赖反例，筛选最新LTT/ReCIRC研究。 ([detail](task_details/MATH-33.md))
-- [ ] [MATH-34] 独立验证、知识/插件与成本维护、相关回归；刷新main普通发布并远端核验。 ([detail](task_details/MATH-34.md))
+- [x] [MATH-34] 独立验证、知识/插件与成本维护、相关回归；刷新main普通发布并远端核验。 ([detail](task_details/MATH-34.md))
 
 - [x] [MATH-31] 补齐离散逐层预算分配、DP精确性/对偶缺口与跨域迁移，核查近期MCKP版本并独立验收。 ([detail](task_details/MATH-31.md))
 - [x] [MATH-32] 同步知识/插件、相关回归与成本，刷新main普通发布并回读。 ([detail](task_details/MATH-32.md))

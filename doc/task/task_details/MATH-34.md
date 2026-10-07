@@ -14,3 +14,5 @@ Date: 2026-10-08
 74知识相关回归通过，插件同步/引用检查通过。独立结果usable-with-scope；两完整show包5601 cl100k_base token，非模型账单或节省。main发布待远端读回；无生产模型/GPU/未见测试或SGLang写入。
 
 当前宿主已观察独立协作回执并校验最终validation SHA 412d0be99c1a55a48b9c2dc897e65ed56c365afd8acb42b5d14fcaf7c6daf2a3，注入只读checked callback执行inspect_result；host-acceptance.json为usable-with-scope，无错误。
+
+main实现提交 `7b3371d5af8254976af279476ba780726e1e1c82` 已普通发布并fetch读回；远端tree `0b6eb36db89dd9332422de214db85158e4867fc2` 与验收本地树一致。无PR/强推。收尾仅补发布证据。
