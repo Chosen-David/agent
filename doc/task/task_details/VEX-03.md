@@ -46,3 +46,9 @@ VEX实现、图文证据及相关工作流与已验收版本一致；本轮仅�
 ### a52e95e 最终 v6 差异收束（2026-10-07）
 
 仅保存28项最新上游增量与3项已完成历史任务；当前130任务、127稳定Plan不变、81published+3candidate。10项索引/文档与插件检查通过；实现与历史验收范围不变。紧凑证据引用原tree/回执，不复制整份库存；无新设计/科学/SEM工作。五个二进制对象可复用，最终commit/ref发布与远端读回仍待发布方完成。
+
+### 发布与独立读回完成（2026-10-07）
+
+2026-10-07 10:52 UTC，合并功能提交 ed6b7a2c25df3e8a29c1d0a02cd5bc7d2210e479 已非强制更新到 main；父提交 a52e95eb916ecf04f18f6f5716fa290dc1da6a9a，远端 tree f7b81e6de16a5b2d172d0baf5eafaf0a0eabadca 与独立验收候选完全一致。发布后另行读取分支/提交，独立 Git 拉取再核对整棵 tree、7项关键文件字节及空 guide 目录，均一致。证据：[发布回执](../../../docs/document_architecture_validation/publication.json) 与 [独立读回](../../../docs/document_architecture_validation/publication-readback.json)。
+
+该提交没有 Actions 运行、check runs 或 status contexts，main 无必需 CI 检查；不把“没有配置检查”写成 CI 已通过。此记录仅关闭本任务发布条件；既有730项程序测试（729通过、1项真实tmux可选检查跳过）及Reader3项按原验收范围保留，不重复宣称已在新宿主部署。AIK已在上游独立发布；其他历史未完成任务保持原状态。早期pending/失败/阻塞段落和稳定Plan均保留为历史。
