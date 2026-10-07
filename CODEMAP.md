@@ -65,3 +65,5 @@ AIK-01/02：`knowledge/entries/ai-algorithms/ai.speculative-*`及`docs/knowledge
 | MATH-21/22 | `knowledge/entries/math.dependent-mean-variance.*`, `docs/knowledge_learning/2026-10-07-dependence/` | model-with-knowledge / 主AI → 依赖校准、目标方差与拒用前提审查 | 固定n推导与2篇2026候选；模型收益未知 |
 
 | EK-172253-01?03 | `knowledge/entries/neuroscience/neuro.spider-rem-like-state.*`, `docs/knowledge_learning/2026-10-07-engineering-172253/` | ?AI/????? ? ?????????????? | 4???1candidate/0published???????/???/???????14????????13???Reader3?SI/???/2026???AI???? |
+
+| MATH-23/24 | `knowledge/entries/math.gaussian-quadratic-energy.*`, `docs/knowledge_learning/2026-10-07-quadratic/` | model-with-knowledge / 主AI → 二阶矩目标、谱尾/依赖条件检查 | 经典ECP最终版、2近期候选；实际模型收益未知 |

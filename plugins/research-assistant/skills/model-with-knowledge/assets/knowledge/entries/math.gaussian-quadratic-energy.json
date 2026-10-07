@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "id": "math.gaussian-quadratic-energy",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "高斯二次能量的谱尾界与相关样本二阶矩",
+  "summary": "联合高斯、固定PSD能量的误差同时依赖谱平方和及最大特征值；在已知可分离依赖模型下转换为保守协方差谱界，不以均值ESS或边缘正态代替前提。",
+  "aliases": [
+    "Gaussian quadratic form weighted chi-square",
+    "correlated covariance spectral tail",
+    "相关 高斯 二次 能量 平方 最大 特征值"
+  ],
+  "domains": [
+    "probability",
+    "matrix-analysis",
+    "statistics"
+  ],
+  "structures": [
+    "quadratic-energy",
+    "temporal-covariance",
+    "spectral-tail",
+    "相关 高斯 二阶矩 平方 误差"
+  ],
+  "assumptions": [
+    "x联合零均值高斯、真实确定C=Cov(x)≥0；A为固定实对称PSD，随机但独立A仅允许条件化后另核查",
+    "t>0；B=C^(1/2)AC^(1/2)，范数为欧氏算子范数；B=0单独处理；非PSD/非零均值另证",
+    "矩阵迁移限定X=T^(1/2)GΣ^(1/2)，G的元素独立标准正态，T≥0且diag(T)=1，Σ≥0；n,d及抽样协议固定",
+    "谱界用真实确定tr(T²)、||T||和有效BΣ≥||Σ||；经验估计无误差认证不能代入",
+    "均值未知/样本中心化、同数据选投影、自适应停止、非可分离外积相关和真实token模型不由本条认证"
+  ],
+  "sources": [
+    {
+      "url": "https://www.cs.columbia.edu/~djhsu/papers/quadratic-ecp.pdf",
+      "locator": "Hsu–Kakade–Zhang, Electronic Communications in Probability17 (2012), paper52, DOI10.1214/ECP.v17-2079; Proposition1.1 PDF1 and AppendixA.2/LemmaA.4 PDF6; lower tail and temporal/net conversion independently derived here",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-quadratic/verify.py",
+      "docs/knowledge_learning/2026-10-07-quadratic/checks.json"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.hermitian-spectral-schur",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.dependent-mean-variance"
+    },
+    {
+      "type": "related",
+      "id": "math.matrix-bernstein-covariance"
+    },
+    {
+      "type": "related",
+      "id": "math.centered-covariance-merge"
+    },
+    {
+      "type": "related",
+      "id": "math.eigenspace-gap-perturbation"
+    }
+  ]
+}
