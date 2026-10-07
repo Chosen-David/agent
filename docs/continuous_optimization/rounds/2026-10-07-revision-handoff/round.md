@@ -1,6 +1,6 @@
 # Revision handoff recovery — release acceptance
 
-Status: all required candidate acceptance completed; commit/push/readback pending. This remains one continued batch, not nine completed rounds.
+Status: completed and remotely verified; implementation commit `016c88b1a26d33e76e6fc2064b380476008ef1e6`, tree `62c381cebaac7344bafff6c5c00e5f6fae08c27c`. This remains one continued batch, not nine completed rounds.
 
 ## Problem and adopted change
 
@@ -64,3 +64,5 @@ Fresh host prepare_context consumed a backup of the genuine seq3 model revision,
 See [final affected report](evidence/w9-release/integration-6248c54/grades/role-report.json) and [841 portable archive](evidence/w9-release/integration-8411705/portable-index.json). Material review caught and clarified a fixed-index scheduling task before dispatch; no rubric lowering. Originalpapers are not repackaged.
 
 Final4c47 integration preserves the concurrent installer preflight fix and its author’s deployment metadata. Only setup_codex.py and its tests changed among bound sources;13/13 installer tests passed after integration. The preceding530pass/8skip full suite and reader3 remain scoped to edc2, with unchanged remaining code; no summed suite total or additional model execution is claimed. Published tree is rebound to4c47, not the superseded edc2 upload tree.
+
+Publication: [implementation commit](https://github.com/Chosen-David/agent/commit/016c88b1a26d33e76e6fc2064b380476008ef1e6) and [readback record](publication.json). This closure only updates task/state/report metadata after verified implementation publication; production and frozen evidence bytes remain unchanged.
