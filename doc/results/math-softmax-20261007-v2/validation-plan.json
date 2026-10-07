@@ -1,0 +1,36 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "Finite float64 development checks of softmax TV/barycenter/pruning decomposition and premise counterexamples; no model or performance evaluation.",
+  "criteria": {
+    "implementation": {
+      "procedure": "Read card derivation and frozen script; check stable softmax, shapes, masks and decomposition.",
+      "acceptance": "No mathematical premise or implementation mismatch.",
+      "allow_not_applicable": false
+    },
+    "reference_boundary": {
+      "procedure": "Check two-token closed form independently and subset normalization identity; inspect empty/nonfinite cases and overlap counterexample.",
+      "acceptance": "Closed forms agree within 1e-10; invalid logits rejected; overlap claim limited to fixture.",
+      "allow_not_applicable": false
+    },
+    "data_integrity": {
+      "procedure": "Hash all artifacts; inspect unique record IDs/counts and finite outputs; preserve raw failures if any.",
+      "acceptance": "No duplicate/omitted cases; summary count agrees with all raw records.",
+      "allow_not_applicable": false
+    },
+    "numerical_sanity": {
+      "procedure": "Inspect values, units, tolerance, underflow and finite arithmetic; check large-logit and degenerate boundaries.",
+      "acceptance": "All applicable checks pass; numerical fixtures not called proof.",
+      "allow_not_applicable": false
+    },
+    "measurement_validity": {
+      "procedure": "Inspect elapsed-clock scope and claim; no speedup/model/token measurement.",
+      "acceptance": "Report seconds only as CPU verification duration; performance conclusions absent or N/A.",
+      "allow_not_applicable": true
+    },
+    "reproducibility": {
+      "procedure": "Independently execute frozen script into separate directory with same seed and compare all records.",
+      "acceptance": "Deterministic numerical records match; timings may differ.",
+      "allow_not_applicable": false
+    }
+  }
+}

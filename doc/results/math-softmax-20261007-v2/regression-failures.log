@@ -1,0 +1,38 @@
+======================================================================
+ERROR: test_plugin_package (unittest.loader._FailedTest.test_plugin_package)
+----------------------------------------------------------------------
+ImportError: Failed to import test module: test_plugin_package
+Traceback (most recent call last):
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/loader.py", line 137, in loadTestsFromName
+    module = __import__(module_name)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'tests.test_plugin_package'
+
+
+----------------------------------------------------------------------
+Ran 64 tests in 5.563s
+
+FAILED (errors=1)
+======================================================================
+FAIL: test_bundle_exact_and_cli_without_repository (tests.test_knowledge.KnowledgeTests.test_bundle_exact_and_cli_without_repository)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/1e3b490c36dd/agent/tests/test_knowledge.py", line 228, in test_bundle_exact_and_cli_without_repository
+    for p in canonical: self.assertEqual((ROOT/'knowledge'/p).read_bytes(),(bundled/p).read_bytes())
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: b"# \[41630 chars]CLI `search --domain/--structure` \xe7\x94\xb1[957 chars]82\n" != b"# \[41630 chars]CLI `tree` \xe6\x8c\x89\xe4\xb8\xa4\xe7\xbb\xb[898 chars]82\n"
+
+======================================================================
+FAIL: test_generated_plugin_references_are_current (tests.test_plugin_reference_sync.PluginReferenceSyncTests.test_generated_plugin_references_are_current)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/1e3b490c36dd/agent/tests/test_plugin_reference_sync.py", line 17, in test_generated_plugin_references_are_current
+    self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+AssertionError: 1 != 0 : stale generated references:
+ - plugins/research-assistant/skills/model-with-knowledge/assets/knowledge/README.md
+
+
+----------------------------------------------------------------------
+Ran 66 tests in 6.473s
+
+FAILED (failures=2)

@@ -1,0 +1,14 @@
+# Supplementary retrieval and context-cost review
+
+Independent actor: `/root/independent_math_verifier`. These artifacts are **outside** the frozen numerical manifest and its accepted scope; no modification to the original review/manifests.
+
+Read queries.json, retrieval.json, legacy-baseline.json, legacy-retrieval.json, legacy-comparison.json, context-cost.json, bounded-context.json, knowledge-refs.json and premise-cases.json.
+
+- Four authored public queries are recorded identically in both retrieval backends; each retrieves `math.softmax-barycenter-error` at rank 1. This is lexical/structure retrieval evidence, not a model solving or refusing a problem. The negative-premise query finding the relevant card is useful, but it does not demonstrate an actual refusal.
+- Actual supplied legacy files each contain **8 query cases per backend**, hence 16 backend observations. Independently compared case/query/expected/raw top-3 IDs/recall/MRR/no-hit/context recall: all unchanged. Existing physical-model miss persists. Graph-expanded context IDs change exactly for files `{dot-bound, english-alias, cross-entry}` and sqlite `{dot-bound}`, matching the changed-case list. New incoming related edges explain these context changes; no whole-corpus rerun was performed here.
+- At review time `legacy-comparison.json` says “same 21 public queries”; this is inconsistent with these supplied files. Reported discrepancy to producer for correction. These files alone cannot support a 21-query regression claim.
+- Independently serialized bounded-context.json with `json.dumps(..., ensure_ascii=False)`: 6185 characters and **3716 cl100k_base tokens**, matching context-cost.json. The single entry payload is 5615 characters, matching its different inner budget count. Only one published card is loaded; `applicability=unchecked` is explicit. Token count is a serialization/tokenizer proxy, not model billing or measured savings. The report correctly records model_calls=0 and model_tokens=null.
+- Independently ran KnowledgeStore.check_refs against current knowledge: ID/version/hash match, published prerequisites satisfied, snapshot matches. This verifies identity, not applicability or successful agent reasoning.
+- premise-cases.json is an authored structural checklist. Its finite same-mask case, normalized forces in N, cancellation example and rejection of signed weights/hard-mask direct finite-logit substitution are mathematically consistent. They are expected decisions, not observed model outputs, hidden tests or end-to-end accuracy measurements.
+
+Verdict: inspected retrieval identities and proxy cost claims are supported, with the stated 8-case regression-count correction required. No token savings, semantic-retrieval improvement, model rejection reliability or end-to-end performance conclusion is established.

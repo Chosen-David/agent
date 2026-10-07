@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "id": "math.softmax-barycenter-error",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "有限 softmax 与归一化加权输出误差",
+  "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+  "aliases": [
+    "softmax barycenter",
+    "attention output value",
+    "加权 输出 误差",
+    "token 重合度 质量",
+    "force mixing"
+  ],
+  "domains": [
+    "linear-algebra",
+    "probability-and-optimization"
+  ],
+  "structures": [
+    "error-bound",
+    "normalized-weighted-output",
+    "pruning",
+    "value-geometry"
+  ],
+  "assumptions": [
+    "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+    "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+    "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+  ],
+  "sources": [
+    {
+      "url": "https://darkwing.uoregon.edu/~dlevin/MARKOV/mcmt2e.pdf",
+      "locator": "Second edition, §4.1 Proposition 4.2 and Remark 4.3, pp.48–49: TV identity only; finite softmax/output proof independently shown",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.06686v1",
+      "locator": "OVAL v1 submitted 2026-10-05; Appendix A.2 Lemma A.2, Propositions A.3–A.5; preprint, no local model reproduction",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.06801v1",
+      "locator": "MC-Sparse v1 submitted 2026-10-05; §4.2 Eq.(1), §4.3, Algorithm 1, §5; preprint, no local model reproduction",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+      "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.score-difference-bound"
+    },
+    {
+      "type": "related",
+      "id": "math.cauchy-schwarz"
+    }
+  ]
+}
