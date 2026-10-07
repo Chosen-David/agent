@@ -159,4 +159,4 @@ Science鸟类终版仅核对书目信息，实验仍绑定2024-04-30预印本；
 
 复用原有WSL tmux每3600秒维护任务，不新增重复调度。优先队列按神经科学→RL→概率论轮转，保留原有数学游标、AI Infra/AI算法/数据结构算法队列及历史。单次自动维护仍最多45分钟、核查3–6来源、增补0–3卡；这10卡为本轮人工核查，不冒充自动轮次结果。既有任务下次读取更新后的Prompt和learning_state；tmux只保持进程，不能覆盖关机/休眠，也不能保证本聊天持续运行。
 
-主任务只读督导v1因来源定位修订后哈希变化撤销旧验收，保留失败记录；v2重验最终证据，扣除v1已用尝试，不增加预算、不将failed伪装done。最终发布前fetch，普通非强制CAS更新main，远端内容树独立核验后同步安装技能；发布证据将在收尾提交补充。
+主任务只读督导v1因来源定位修订后哈希变化撤销旧验收，保留失败记录；v2重验最终证据，扣除v1已用尝试，不增加预算、不将failed伪装done。最终发布前fetch，普通非强制CAS更新main，远端内容树独立核验后同步安装技能；功能发布 `effbab2480a770c70aaba075860c42464fe5a70d` 与完整树已独立读回，证据见[publication.json](publication.json)。安装后实际CLI复检10查询与40决策通过；见[installed-cli.json](checks/installed-cli.json)。督导v2对83项要求all_reportable=true、remaining=[]且done/monitor stopped/live=false；v1已cancelled/live=false。既有每3600秒维护live，下次2026-10-07 11:22:56 +08:00；见[runtime-readback.json](checks/runtime-readback.json)。收尾审计只修订TASK及文档，不改已测试代码或知识卡。
