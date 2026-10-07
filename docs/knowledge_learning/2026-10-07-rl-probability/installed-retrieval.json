@@ -1,0 +1,612 @@
+{
+  "passed": true,
+  "actual_installed_cli": true,
+  "queries": [
+    {
+      "query": "训练输出降精度 概率比 熵坍缩",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "d71b79337e331084cc194f6f70d0c9ce690ae447134884c644b8785d37566dd7",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "algo.rl-entropy-numerical-control",
+            "version": 1,
+            "sha256": "105a9ad56eb9c6cab2934173d3353e244c24b3696ff9b793782d11960b0a2651",
+            "title": "RL 熵坍缩：先核查 log-prob 精度、离策略更新与探索需求",
+            "summary": "ICLR 2026 的 Qwen3/AppWorld 与 AIME 实验发现，输出降精度可改变 clipping 与熵轨迹；保熵方法的收益依赖探索需求，不能只看最终熵。",
+            "status": "published",
+            "assumptions": [
+              "model: Qwen3-8B/32B; LoRA rank 16 alpha 32",
+              "data: AppWorld train 90; NuminaMath AMC/AIME filtered 563",
+              "stack: custom FSDP2, vLLM, Cut Cross-Entropy; typically 3 x 8 H100",
+              "metric: AppWorld TGC; AIME24/25 pass@1 with 4096-token budget"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-checked",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-rl-probability/report.md#algo.rl-entropy-numerical-control"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "坍缩",
+                  "熵坍",
+                  "精度"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "坍缩",
+                  "熵坍",
+                  "训练"
+                ]
+              },
+              {
+                "field": "structures",
+                "terms": [
+                  "坍缩",
+                  "熵坍",
+                  "训练"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "出降",
+                  "精度",
+                  "输出",
+                  "降精"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "出降",
+                  "坍缩",
+                  "概率",
+                  "熵坍",
+                  "率比",
+                  "精度",
+                  "训练",
+                  "输出",
+                  "降精"
+                ]
+              }
+            ],
+            "score": 63
+          }
+        ]
+      }
+    },
+    {
+      "query": "随机奖励 熵下降准确率不升",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "d71b79337e331084cc194f6f70d0c9ce690ae447134884c644b8785d37566dd7",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "algo.rl-spurious-reward-regimes",
+            "version": 1,
+            "sha256": "84b89bf957366dba328c3364c0be729843c630d02bbf04cfa7474b923ed1d744",
+            "title": "随机奖励与 clipping：熵下降不是推理能力提升的充分证据",
+            "summary": "ICLR 2026 在随机 Bernoulli 奖励的数学训练中区分 clipping 稳定性、初始策略偏斜和任务难度；关闭 clipping 可提高熵，也可能导致梯度爆炸。",
+            "status": "published",
+            "assumptions": [
+              "model: Qwen2.5-Math-7B; additional QwQ-32B and R1-Distill-Llama-8B cases",
+              "data: DeepScaleR or harder AIME Past training; MATH500 validation",
+              "reward: iid Bernoulli(1/2), independent of correctness",
+              "training: verl; batch 128; group 16; temperature 1.0; lr 5e-7; clip 0.2; KL 0"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-checked",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-rl-probability/report.md#algo.rl-spurious-reward-regimes"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "下降",
+                  "奖励",
+                  "机奖",
+                  "熵下",
+                  "随机"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "下降",
+                  "不升",
+                  "准确",
+                  "奖励",
+                  "机奖",
+                  "熵下",
+                  "率不",
+                  "确率",
+                  "降准",
+                  "随机"
+                ]
+              },
+              {
+                "field": "structures",
+                "terms": [
+                  "下降",
+                  "不升",
+                  "准确",
+                  "奖励",
+                  "机奖",
+                  "熵下",
+                  "率不",
+                  "确率",
+                  "降准",
+                  "随机"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "奖励",
+                  "随机"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "下降",
+                  "不升",
+                  "准确",
+                  "奖励",
+                  "机奖",
+                  "熵下",
+                  "率不",
+                  "确率",
+                  "降准",
+                  "随机"
+                ]
+              }
+            ],
+            "score": 131
+          }
+        ]
+      }
+    },
+    {
+      "query": "多次采样成功率 pass@1 pass@32 权衡",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "d71b79337e331084cc194f6f70d0c9ce690ae447134884c644b8785d37566dd7",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "algo.rs-grpo-exploration-tradeoff",
+            "version": 1,
+            "sha256": "4bcbc5e18921b7de77871712bc26fa114b931c9291f5525a4f17d91926672d90",
+            "title": "RS-GRPO：多次采样成功率、单次成功率与风险偏好需联合决策",
+            "summary": "ICLR 2026 用指数效用改变 advantage、增加难题探索；数学实验的平均 pass@32 改善伴随部分 pass@1 或单数据集退化，β 也非越大越好。",
+            "status": "published",
+            "assumptions": [
+              "model: five evaluated LLMs: Qwen2.5-Math-1.5B/7B, Qwen2.5-7B, Qwen3-4B-Base, Llama3.1-8B-Instruct",
+              "data: deepmath103k, dapo17k, math12k; six math evaluation benchmarks",
+              "stack: VeRL, vLLM 0.8.5, Math-Verify; N=16 responses/prompt; KL=0",
+              "evaluation: temperature 1.0 top-p 0.7; 1024 samples except MATH500 32; Table 2 beta=2"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-checked",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-rl-probability/report.md#algo.rs-grpo-exploration-tradeoff"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "功率",
+                  "多次",
+                  "成功",
+                  "样成",
+                  "次采",
+                  "采样"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "1",
+                  "32",
+                  "pass",
+                  "功率",
+                  "多次",
+                  "成功",
+                  "权衡",
+                  "样成",
+                  "次采",
+                  "采样"
+                ]
+              },
+              {
+                "field": "structures",
+                "terms": [
+                  "1",
+                  "32",
+                  "pass",
+                  "功率",
+                  "多次",
+                  "成功",
+                  "权衡",
+                  "样成",
+                  "次采",
+                  "采样"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "1",
+                  "32",
+                  "pass"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "1",
+                  "32",
+                  "pass",
+                  "功率",
+                  "多次",
+                  "成功",
+                  "权衡",
+                  "样成",
+                  "次采",
+                  "采样"
+                ]
+              }
+            ],
+            "score": 139
+          }
+        ]
+      }
+    },
+    {
+      "query": "非单调风险校准 反馈协变量偏移",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "d71b79337e331084cc194f6f70d0c9ce690ae447134884c644b8785d37566dd7",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "prob.conformal-policy-control",
+            "version": 1,
+            "sha256": "c80d9008b17bdac2f9c77995c4c490c476f7d72aba816e513ce395b41cdfb304",
+            "title": "Conformal Policy Control：非单调风险校准与近似权重的保证边界",
+            "summary": "ICML 2026 将校准作用于策略偏离程度；风险保证是带稳定性余项的边际期望界，精确多轮权重与实用近似须区分。",
+            "status": "published",
+            "assumptions": [
+              "loss: bounded loss in [0,B]; known acceptable-risk reference policy",
+              "policy: mutually absolutely continuous policies; computable likelihoods; stable context distribution",
+              "calibration: gCRC exchangeability plus Lipschitz/replace-one stability; CPC exact weighted calibration plus relative replace-one stability",
+              "guarantee: marginal expected risk, not per-context or high-probability safety"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-checked",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.conformal-policy-control"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "单调",
+                  "校准",
+                  "调风",
+                  "险校",
+                  "非单",
+                  "风险"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "偏移",
+                  "协变",
+                  "单调",
+                  "反馈",
+                  "变量",
+                  "校准",
+                  "调风",
+                  "量偏",
+                  "险校",
+                  "非单",
+                  "风险",
+                  "馈协"
+                ]
+              },
+              {
+                "field": "structures",
+                "terms": [
+                  "偏移",
+                  "协变",
+                  "单调",
+                  "反馈",
+                  "变量",
+                  "校准",
+                  "调风",
+                  "量偏",
+                  "险校",
+                  "非单",
+                  "风险",
+                  "馈协"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "校准",
+                  "风险"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "偏移",
+                  "协变",
+                  "单调",
+                  "反馈",
+                  "变量",
+                  "校准",
+                  "调风",
+                  "量偏",
+                  "险校",
+                  "非单",
+                  "风险",
+                  "馈协"
+                ]
+              }
+            ],
+            "score": 156
+          }
+        ]
+      }
+    },
+    {
+      "query": "高维无正则反例 自适应协变量平滑密度比",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "d71b79337e331084cc194f6f70d0c9ce690ae447134884c644b8785d37566dd7",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "prob.self-normalized-dimension-barrier",
+            "version": 1,
+            "sha256": "396aa263a1f4db2ae80ab07152c3f1e5cbaa10a49cf4817480cc5a86a88c4fda",
+            "title": "高维自归一化：无正则、双重统一界的维度障碍与平滑条件",
+            "summary": "COLT 2026 区分一维对数界与d≥2全对抗线性下界；受固定基准测度密度比约束的平滑协变量可恢复次线性界，不能无条件删除正则。",
+            "status": "published",
+            "assumptions": [
+              "setting: online squared-loss linear regression; unrestricted comparator norm and covariate scale",
+              "noise: dyadic Rademacher martingale for lower bound; conditional sigma-sub-Gaussian for Theorem 11",
+              "smoothness: conditional covariate law relative to partial covariate history dominated by fixed mu with density ratio <= Ccov",
+              "response: Theorem 9 responses in [-1,1]; dimension-one theorem uses |y|<=m"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-checked",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.self-normalized-dimension-barrier"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "平滑",
+                  "无正",
+                  "正则",
+                  "高维"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "则反",
+                  "协变",
+                  "反例",
+                  "变量",
+                  "密度",
+                  "平滑",
+                  "应协",
+                  "度比",
+                  "无正",
+                  "正则",
+                  "滑密",
+                  "维无",
+                  "自适",
+                  "适应",
+                  "量平",
+                  "高维"
+                ]
+              },
+              {
+                "field": "structures",
+                "terms": [
+                  "则反",
+                  "协变",
+                  "反例",
+                  "变量",
+                  "密度",
+                  "平滑",
+                  "应协",
+                  "度比",
+                  "无正",
+                  "正则",
+                  "滑密",
+                  "维无",
+                  "自适",
+                  "适应",
+                  "量平",
+                  "高维"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "协变",
+                  "变量",
+                  "密度",
+                  "平滑",
+                  "度比",
+                  "正则"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "则反",
+                  "协变",
+                  "反例",
+                  "变量",
+                  "密度",
+                  "平滑",
+                  "应协",
+                  "度比",
+                  "无正",
+                  "正则",
+                  "滑密",
+                  "维无",
+                  "自适",
+                  "适应",
+                  "量平",
+                  "高维"
+                ]
+              }
+            ],
+            "score": 198
+          }
+        ]
+      }
+    },
+    {
+      "query": "向量自归一化方差 轻尾非次高斯",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "d71b79337e331084cc194f6f70d0c9ce690ae447134884c644b8785d37566dd7",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "prob.vector-variance-aware-concentration",
+            "version": 1,
+            "sha256": "a39d6f473786b20228fd60342b0f364b39b7e396b45cb8a537e9e776054ff974",
+            "title": "向量自归一化：轻尾、方差自适应与序贯置信界的收益和代价",
+            "summary": "ALT 2026 在可分Hilbert空间构造超鞅，给出 Bernstein/Bennett 和混合序贯界；低方差合成bandit受益，高方差下并不总胜次高斯界。",
+            "status": "published",
+            "assumptions": [
+              "process: predictable X_t; conditional mean-zero epsilon_t; fixed rho>0; separable Hilbert space",
+              "tails: conditional Bernstein moment condition, or bounded noise and predictable variance bounds",
+              "horizon: Theorems 9/10 deterministic horizon n and variance envelope Cn; Theorems 11/12 fully sequential mixtures",
+              "empirical_variance: Theorem 12 requires bounded noise with constant conditional variance and a valid variance confidence sequence"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-checked",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.vector-variance-aware-concentration"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "一化",
+                  "向量",
+                  "归一",
+                  "方差",
+                  "自归",
+                  "轻尾",
+                  "量自"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "一化",
+                  "化方",
+                  "向量",
+                  "尾非",
+                  "归一",
+                  "方差",
+                  "次高",
+                  "自归",
+                  "轻尾",
+                  "量自",
+                  "非次",
+                  "高斯"
+                ]
+              },
+              {
+                "field": "structures",
+                "terms": [
+                  "一化",
+                  "化方",
+                  "向量",
+                  "尾非",
+                  "归一",
+                  "方差",
+                  "次高",
+                  "自归",
+                  "轻尾",
+                  "量自",
+                  "非次",
+                  "高斯"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "方差",
+                  "次高",
+                  "高斯"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "一化",
+                  "化方",
+                  "向量",
+                  "尾非",
+                  "归一",
+                  "方差",
+                  "次高",
+                  "自归",
+                  "轻尾",
+                  "量自",
+                  "非次",
+                  "高斯"
+                ]
+              }
+            ],
+            "score": 164
+          }
+        ]
+      }
+    }
+  ]
+}

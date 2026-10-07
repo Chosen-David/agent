@@ -32,3 +32,5 @@
 下一轮优先：RL长时域credit assignment、离线评估/探索；概率论异方差经验置信序列、重尾稳健序贯推断、条件校准/随机矩阵，以及正式概率期刊。先查已有卡防重复，允许有证据的零增量，不为凑数发布。
 
 最终整合验收：46条语料，新卡与工程 Recall@3=1；旧基础 context recall=1。合并后旧round2默认3候选 raw Recall@3=0.75/context recall=0.875，morphology SQLite raw=0.5/context=0.75；原失败记录保留。使用既有 `context --limit 5`，仍限制8条/20000字符后，两组预期项 context recall恢复为1，raw指标不变。新增评测参数只公开该设置，不改变运行时默认，也不宣称语义改善。全仓548项：537通过、11跳过；Reader3/3，插件与格式通过。首轮的周历旧断言失败已保留，并按用户新要求改为明确的3600秒断言。
+
+发布与部署收尾：功能提交 `82aa5ad615a195bc56b801b294ab1637e255df8d`，完整Git树 `b762de0937c38c1eb5af0cb7f9386dd87c3cef39` 经API读回与native Git fetch独立核对。本机15技能/273文件已同步，实际安装CLI的六主题均Top1，见 installed-retrieval.json。督导v2对80项要求可报告并停止、live=false；v1因合入并发TASK版本变更而撤销，未伪称完成。只有本轮督导停止，现有每小时知识维护继续存活。最终TASK勾选与本记录是结束后的文档修订。
