@@ -66,3 +66,43 @@ API 为 `Mailbox(db, plan, artifact_root).publish/inbox/consume_handoff/acknowle
 先测无关投递、重复执行、重启、旧数据、缺失任务、失败回执；再测真实代码→图→论文→审稿→读者链。公平对照现有主 AI转述、全广播和定向引用三种方式，固定输入、模型、工具、预算和验收；统计实际 token/耗时、正确关闭的发现、错误复用、返工和最终质量。离线消息数下降不能代替模型性能收益。记录无收益和缺测，学习式剪枝、主动中断及自动语义压缩需独立实验后再启用。
 
 知识依赖交接遵循 [知识接入契约](knowledge_access_workflow.md)。handoff 顶层声明 knowledge_refs，可信消费者 request 固定 knowledge_root 与必需引用；consume_handoff 在返回前验证，缺库、引用过期或遗漏保持待办，不自动 ACK。
+
+
+## 统一依据、结论依赖与上下文预算
+
+可信消费者 request 在已有 knowledge_root/knowledge_refs 之外可带 `knowledge_required: true`、`memory_required: true`、`memory_refs` 和 `required_claim_ids`。已知必需引用必须独立固定；派发时尚不知具体知识 ID 时可用 required 标记要求生产者至少声明引用。纯格式任务保留无依据兼容路径，并在任务记录 not_needed 原因。生产者不能通过同名输出字段放宽消费者约束。
+
+`consume_handoff` 现在调用 `check_handoff_basis`：复用知识门禁和项目 MemoryLedger，验证所有声明、必需子集和结论依赖；有效引用不代表前提真的成立。非 Mailbox 宿主先运行普通 handoff 完整性/范围验证，再调用同一依据函数。调用成功会将 manifest 和可信 request 的绑定保存在同一个 SQLite DB；同一投递绑定不可改，变更须新事件/新 run，旧 ACK 和原数据不改。
+
+handoff 可带 `evidence_claims`，每个结论准确字段如下（真实 artifact ID 须在 handoff artifacts 中）：
+
+```json
+{
+  "id":"certificate", "status":"supported",
+  "knowledge_ids":["math.topk-margin"], "memory_ids":["measured-margin-v1"],
+  "artifact_ids":["verification"], "depends_on":[],
+  "assumptions":[{"name":"gap exceeds twice the score-error bound", "status":"satisfied", "evidence_ids":["verification"]}]
+}
+```
+
+status 为 supported/rejected/candidate；前提 status 为 satisfied/unsatisfied/unknown。supported 不能依赖 candidate/rejected，不能以未知前提标作支持；satisfied 必须有已声明证据路径，内容真伪仍由独立消费者核验。depends_on 只引用同一 manifest 中的结论，要求无环。跨 handoff 依赖复用项目记忆不可变 claim/artifact IDs 及 deps，不按相同自然语言自动合并。
+
+`Mailbox.impact()` / CLI `impact` 重核已登记依据，返回 event_id/seq/真实 recipient/受影响 claim_ids；知识或记忆更正沿声明依赖传播，无关结论不列入。usage_stage=validated_handoff 只表示接收方读取并校验了交接，不冒充实际科学应用。主 AI据此按已批准 correction 边发修订事件、重排受影响任务并由原消费者复验；程序不自动发消息或科学关单。无 claim 的旧交接只能返回整包 stale，未声明依赖无法推断。原回执、原数据和无关任务保留；复验必须新产物/事件，不机械换 hash。
+
+固定语料路径对应完整合法快照（含库关系元数据）；只把必要条目装入模型上下文。常规增加或编辑无关条目不使已固定引用失效；真实依赖更正会阻断复用。旧安装 Skill 自带快照仍需主 AI明确更新，不能冒充当前主库；不以全库 snapshot 变化重算全部任务。
+
+### 成本接口与接入顺序
+
+可信 host 按 **inbox → prepare_context → 实际审查/幂等动作 → ACK** 执行，任务验收仍独立。`prepare_context` 先调用 consume 校验，返回 JSON 字符串 payload（引用、结论、必要知识及项目记忆的完整前置依赖；大产物仅保留路径/hash），超预算报错，不截断证明或悄悄放宽预算。CLI：
+
+```bash
+python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . context writer 1 --request REQUEST.json --max-chars 20000
+python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . impact
+python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . usage
+```
+
+API 可提供 `known_knowledge_refs`、`known_memory_ids`（CLI --known 指向可信宿主维护的 JSON）。这些只指该消费者**当前模型上下文中仍实际保有**的内容，不是曾经检索过或磁盘缓存过；换模型/上下文压缩丢失内容则清空。省略重复正文仍保留全部引用/前提/产物信息，并重新检查引用/记忆状态。生产者不得自报消费者缓存。首轮加载成本也计入比较。
+
+默认 max_chars=20000 是工程参数；消费者可固定 context_max_chars。可信宿主可提供实际模型 tokenizer 的 token_counter(str)->int 以及 max_tokens，消费者 context_max_tokens 为不能放宽的硬限。没有实际 tokenizer 则 tokens=null；存在 token 硬限但无法计数时停止该模型派发，不能用字符/4 估计冒充实际 token。计数范围为精确 payload；工具包壳、模型输出/推理 token 和其他输入由宿主预算账本另计，并在每次调用前检查整轮余额、重试和反馈上限。
+
+计划可增加 max_delivery_bytes：按收件人数累计 envelope UTF-8 字节，重复 event_id 不重复计费，超额拒绝整个投递，不部分广播。usage 提供 events/deliveries/envelope_bytes/delivery_bytes；这不是模型收费账单。不为了省 token 删除关键反例、前提或原始证据；先缩小问题/检索范围、复用当前上下文、批量独立读取和减少无关收件者，再考虑经独立实验的摘要。

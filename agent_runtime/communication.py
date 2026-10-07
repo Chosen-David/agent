@@ -46,6 +46,10 @@ def check_plan(plan):
         value = plan.get(key, default)
         if type(value) is not int or value < 1:
             raise ValueError(f'{key} must be a positive integer')
+    if 'max_delivery_bytes' in plan:
+        value = plan['max_delivery_bytes']
+        if type(value) is not int or value < 1:
+            raise ValueError('max_delivery_bytes must be a positive integer')
 
 
 class Mailbox:
@@ -67,6 +71,10 @@ class Mailbox:
                     UNIQUE(run_id,event_id));
                 CREATE TABLE IF NOT EXISTS communication_deliveries (
                     seq INTEGER NOT NULL, recipient TEXT NOT NULL, receipt TEXT,
+                    PRIMARY KEY(seq,recipient));
+                CREATE TABLE IF NOT EXISTS communication_basis (
+                    seq INTEGER NOT NULL, recipient TEXT NOT NULL,
+                    record TEXT NOT NULL, request TEXT NOT NULL,
                     PRIMARY KEY(seq,recipient));
             ''')
             db.execute('BEGIN IMMEDIATE')
@@ -123,6 +131,12 @@ class Mailbox:
             count = db.execute('SELECT COUNT(*) FROM communication_events WHERE run_id=?', (self.run_id,)).fetchone()[0]
             if count >= self.plan.get('max_events', 1000):
                 raise ValueError('run event budget exhausted; reconcile before extending the plan')
+            if 'max_delivery_bytes' in self.plan:
+                spent = db.execute('''SELECT COALESCE(SUM(length(CAST(e.body AS BLOB))),0)
+                    FROM communication_events e JOIN communication_deliveries d ON e.seq=d.seq
+                    WHERE e.run_id=?''', (self.run_id,)).fetchone()[0]
+                if spent + len(body.encode('utf-8')) * len(recipients) > self.plan['max_delivery_bytes']:
+                    raise ValueError('run delivery byte budget exhausted; no partial fan-out')
             seq = db.execute('INSERT INTO communication_events(run_id,event_id,body) VALUES (?,?,?)',
                              (self.run_id, event['event_id'], body)).lastrowid
             db.executemany('INSERT INTO communication_deliveries(seq,recipient) VALUES (?,?)',
@@ -202,9 +216,64 @@ class Mailbox:
             errors.append('handoff producer/run mismatch')
         if errors:
             raise ValueError('; '.join(errors))
-        from .knowledge import check_handoff_knowledge
-        check_handoff_knowledge(self.root, record, request)
+        from .handoff_basis import check_handoff_basis
+        check_handoff_basis(self.root, record, request)
+        # Identity/dependency records only, never private memory contents or CoT.
+        # An ACK remains independent. Keep the original consumer binding immutable.
+        with self.connect() as db:
+            db.execute('BEGIN IMMEDIATE')
+            stored = db.execute('SELECT record,request FROM communication_basis WHERE seq=? AND recipient=?',
+                                (seq, recipient)).fetchone()
+            value = (canonical(record), canonical(request))
+            if stored is not None and tuple(stored) != value:
+                raise ValueError('consumed basis/request changed: use a new event or run')
+            db.execute('INSERT OR IGNORE INTO communication_basis VALUES (?,?,?,?)',
+                       (seq, recipient, *value))
         return record
+
+    def impact(self):
+        """Return stale consumed evidence and actual affected recipients; no auto-ACK."""
+        from .handoff_basis import basis_impact
+        with self.connect() as db:
+            rows = db.execute('''SELECT b.*,e.event_id,e.body FROM communication_basis b
+                JOIN communication_events e ON b.seq=e.seq WHERE e.run_id=? ORDER BY b.seq,b.recipient''',
+                              (self.run_id,)).fetchall()
+        result = []
+        for row in rows:
+            record = json.loads(row['record'])
+            impact = basis_impact(self.root, record, json.loads(row['request']))
+            event = json.loads(row['body'])
+            errors = validate({'schema_version': 1, 'run_id': self.run_id, 'role': event['sender'],
+                               'input_version': event['input_version'], 'status': 'partial',
+                               'limitations': ['basis audit'], 'artifacts': event['refs'],
+                               'tasks': [], 'checks': []}, self.root)
+            if errors:
+                impact['stale'] = True
+                impact['claim_ids'] = sorted(c['id'] for c in record.get('evidence_claims', []))
+                impact['reasons'].extend(errors)
+                impact['scope'] = 'shared envelope/manifest provenance changed; whole handoff affected'
+            if impact['stale']:
+                result.append({'seq': row['seq'], 'event_id': row['event_id'],
+                               'recipient': row['recipient'], 'usage_stage': 'validated_handoff', **impact})
+        return result
+
+    def prepare_context(self, recipient, seq, request, **budget_and_cache):
+        """Validate delivery, then build a budgeted evidence payload for the host."""
+        from .handoff_basis import basis_context
+        record = self.consume_handoff(recipient, seq, request)
+        return basis_context(self.root, record, request, **budget_and_cache)
+
+    def usage(self):
+        """Exact envelope bytes including fan-out; deliberately no token estimate."""
+        with self.connect() as db:
+            events = db.execute('''SELECT COUNT(*),COALESCE(SUM(length(CAST(body AS BLOB))),0)
+                FROM communication_events WHERE run_id=?''', (self.run_id,)).fetchone()
+            deliveries = db.execute('''SELECT COUNT(*),COALESCE(SUM(length(CAST(e.body AS BLOB))),0)
+                FROM communication_events e JOIN communication_deliveries d ON e.seq=d.seq
+                WHERE e.run_id=?''', (self.run_id,)).fetchone()
+        return {'events': events[0], 'envelope_bytes': events[1], 'deliveries': deliveries[0],
+                'delivery_bytes': deliveries[1], 'tokens': None,
+                'scope': 'stored envelopes only; excludes artifacts, model input/output and reasoning'}
 
 
 def main():
@@ -214,10 +283,15 @@ def main():
     parser.add_argument('--root', type=Path, required=True)
     sub = parser.add_subparsers(dest='command', required=True)
     sub.add_parser('status')
+    sub.add_parser('impact')
+    sub.add_parser('usage')
     p = sub.add_parser('publish'); p.add_argument('event', type=Path)
     p = sub.add_parser('inbox'); p.add_argument('recipient'); p.add_argument('--limit', type=int, default=20)
     p = sub.add_parser('ack'); p.add_argument('recipient'); p.add_argument('seq', type=int); p.add_argument('receipt', type=Path)
     p = sub.add_parser('consume'); p.add_argument('recipient'); p.add_argument('seq', type=int); p.add_argument('--request', type=Path, required=True)
+    p = sub.add_parser('context'); p.add_argument('recipient'); p.add_argument('seq', type=int)
+    p.add_argument('--request', type=Path, required=True); p.add_argument('--max-chars', type=int, default=20000)
+    p.add_argument('--known', type=Path, help='trusted current-context refs; not producer input')
     args = parser.parse_args()
     try:
         box = Mailbox(args.db, _load_json(args.plan), args.root)
@@ -229,6 +303,16 @@ def main():
             box.acknowledge(args.recipient, args.seq, _load_json(args.receipt)); result = {'acknowledged': True}
         elif args.command == 'consume':
             result = box.consume_handoff(args.recipient, args.seq, _load_json(args.request))
+        elif args.command == 'context':
+            known = _load_json(args.known) if args.known else {}
+            result = box.prepare_context(args.recipient, args.seq, _load_json(args.request),
+                                         max_chars=args.max_chars,
+                                         known_knowledge_refs=known.get('knowledge_refs', []),
+                                         known_memory_ids=known.get('memory_refs', []))
+        elif args.command == 'impact':
+            result = box.impact()
+        elif args.command == 'usage':
+            result = box.usage()
         else:
             result = box.status()
     except (ValueError, OSError, sqlite3.Error) as exc:

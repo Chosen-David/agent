@@ -237,3 +237,5 @@ SSH/客户端断链不是停止指令；tmux 在服务器与进程存活时继�
 ## 工程知识的按需复用
 
 AI Infra/AI算法实验与数据结构/算法实现任务先按 [工程知识复用](../workflows/engineering_knowledge_reuse_workflow.md) 检索；核对原始实验条件/负例与固定commit/API/许可证，记录knowledge_refs。文献支持决策与最小迁移检查，不替代用户必做实验、新性能主张或实现正确性验收。
+
+知识/通信交接使用消费者控制的统一依据门禁与结论依赖；需要理论/项目事实时明确 required 标记及已知引用。可信 host 按 inbox→prepare_context→独立审查/幂等动作→ACK 执行；impact 更正只重验声明的受影响结论。发送前执行整轮 token 余额和单次上下文硬限；按需加载、只复用当前上下文实际保有的依据，缓存仍核验版本。实际 tokenizer 不可用时不假报 token，不能绕过 token 硬限。接口与兼容规则见通信/知识接入工作流。

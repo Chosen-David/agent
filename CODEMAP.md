@@ -32,3 +32,8 @@ T23 增量：`knowledge/entries/math.linear-system-stability.*` 等5条、`agent
 
 
 T24–T28 增量：`knowledge/entries/{ai-infra,ai-algorithms,data-structures}/`（22 张复用卡），`knowledge/engineering_sources.json`（原论文与固定源码来源），`agent_runtime/knowledge_reuse.py`（条件化决策 CLI），`workflows/engineering_knowledge_reuse_workflow.md` 与三类 Skill 引用（主 AI/建模/实现路由），`prompts/engineering_knowledge_continuous_learning.md`（有界轮转学习），`scripts/knowledge_maintenance.py` / `run_knowledge_windows.py`（WSL tmux 日历与原生 Windows 登录桥），`tests/{test_knowledge_reuse,test_knowledge_maintenance,test_knowledge_windows_runner}.py`、`evals/knowledge/engineering-queries.json`、`docs/knowledge_learning/2026-10-06-engineering/`（检查与来源）。生产者为主 AI/定时维护，消费者为主 AI、代码 Agent 与独立 Skill；私有运行状态在 `.agent-runs/engineering-kb/`，不提交登录信息、PDF 或下载的源码。
+
+| 任务 | 实现/证据 | 生产者 → 消费者 | 用途/限制 |
+|---|---|---|---|
+| BASIS-01/02 | `agent_runtime/handoff_basis.py`, `agent_runtime/communication.py`, `tests/test_handoff_basis.py` | 主 AI/生产角色 → 可信消费 host | 统一知识/记忆门禁、结论 DAG、已校验交接的更正影响和预算上下文；科学适用仍独立验收 |
+| BASIS-03 | `docs/communication_basis_validation/verify_upgrade.py`, `verification.json`, `report.md` | 程序/合成公开 fixture → 主 AI验收 | 冷/热上下文精确字符/字节与失效拒用；没有 tokenizer 或模型 A/B 收益 |

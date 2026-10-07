@@ -41,3 +41,10 @@ python -m agent_runtime.knowledge --root knowledge check-refs /absolute/task/kno
 已使用的完整 `knowledge_refs`（ID/version/sha256，含强依赖）进入任务及 handoff 顶层；记录文件以普通 artifact 引用传递，避免每条消息复制全文。消费者可信 request 独立带 `knowledge_root` 和必需 `knowledge_refs`。`Mailbox.consume_handoff` 检查生产者和消费者引用、缺库、过期、遗漏及依赖闭包，失败不回执、不继续依赖动作；生产者不能指定替代语料。旧的无知识引用交接保持兼容，因此主 AI 必须检查声明完整性，不能声称机器自动发现所有漏报。普通 `validate_handoff.py` 只检查产物完整性；非 Mailbox 宿主须另调 `check_handoff_knowledge`，运行时任务已有 `check_task_knowledge` 门禁。
 
 工具校验后仍要独立复核适用性及实际输出，ACK 不代表科学验收。库或输入更新时对受影响结论重新检索/验收，不机械替换旧 hash；原始观测保留。项目发现先保存为项目证据，跨项目可复用内容提为 candidate，经来源和推导核验才发布知识库；角色不得把自评或临时聊天直接变成 published。
+
+
+## 消费入口的依据与预算升级
+
+执行 [通信工作流](agent_communication_workflow.md) 的统一依据门禁：消费者独立要求 knowledge_required/memory_required、必需引用和 required_claim_ids；manifest 用 evidence_claims 保存前提→实际证据与知识/记忆/产物依赖。未知/不满足前提只能候选或拒用，不能标 supported；结构通过仍不证明科学适用。复用当前固定语料和 MemoryLedger，不另建图数据库或每定理 Skill。
+
+需要向模型发送依据时，完整 checkout 的 host 使用 Mailbox.prepare_context，按字符或实际 tokenizer 硬预算返回完整必要依赖；只复用该消费者当前上下文实际保有的已核验内容。换上下文或证据更正必须重新加载/验收。CLI 和精确成本口径见通信工作流；仅插件安装缺 runtime 时按相同字段手工执行并明确机器接口未安装。impact 标记已校验交接的受影响结论和接收角色，不能把“检索过/读过”当“应用成功”。

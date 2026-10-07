@@ -228,3 +228,14 @@ KB-ACCESS-03发布读回：main bbcbfc6f3672e23895e4645e1fe64a8fb6149f1c，tree 
 本轮证据：`docs/knowledge_learning/2026-10-06-engineering/`；私有状态：`.agent-runs/engineering-kb/`。论文报告的数据不是本机测量，论文结论可以支持决策但不自动证明新环境性能。显式复现、用户必做实验和新主张验收不得由文献替代。
 
 T24–T28 验收：保留既有及并发数学知识，39 条中新增 22 条工程卡，13 篇原论文与 6 个固定源码仓库。实验/实现决策、条件负例、版本引用与显式复现边界已接通；合并后 494 项回归（483 通过/11 可选依赖跳过）、Reader 3/3，真实 tmux 检查通过。原始检索排名限制及 Windows/Linux 链接同步失败保留在报告。WSL tmux 定时维护 live，周一/三/五 08:00 Asia/Shanghai，下一次 2026-10-09；原生模型、shell、原论文读取与经过自动审查的 GitHub 写工具已实测。主体 main 9e4f2aef9764418e5a4afb3f865f9f1e26230e8d，tree 1e3c7e508ec7e1e9b8dfa82575594547439eb3c8 经 API/Git 双通道与完整本地文件树核验，宿主仅对齐 Git 元数据且保留所有工作文件。证据 `docs/knowledge_learning/2026-10-06-engineering/` 与 `docs/knowledge_maintenance.md`；不声称 GPU/Agent 性能提升。收尾文档另做普通发布与远端读回；最后接受监督采用新版本计划，持续维护会话保留。
+
+
+## 2026-10-07 知识与通信依据升级及上下文成本
+
+- [x] [BASIS-01] 复用最新知识消费门禁，加入消费者控制的必需声明、项目记忆检查及明确结论/前提依赖。旧无依据任务兼容，生产者不能决定知识根或绕过必需依据。
+- [x] [BASIS-02] 持久登记已消费依据，定位受更正影响的结论和真实消费者；提供完整依赖、按需缓存复用及字符/实际 tokenizer 预算接口，不把字符当 token。
+- [ ] [BASIS-03] 跨层失效和成本验收、全仓回归、插件引用同步；刷新 main 后直接发布并核对远端。无同模型 A/B 时不声称质量或 token 收益。
+
+授权：用户认可09:15分析建议，并要求注意 token 消耗；单一写入者主 AI。新证据放 `docs/communication_basis_validation/`，运行状态放私有 `.agent-runs/basis-upgrade/`。当前宿主 tmux 不可用，未启动后台监督或模型调用；保留原持续任务及无关状态。
+
+BASIS-01/02 验收：统一知识/项目记忆依据门禁、显式结论依赖、已校验消费者影响定位及完整上下文预算已接入 Mailbox 与主入口。19项专项/CLI测试通过；并发工程知识合并后全仓513项（505通过/8跳过）、reader3/3。重复正文4497→1007字符，原引用/前提保留；实际token/同模型质量A/B未测，旧ACK与原数据保留。证据 `docs/communication_basis_validation/report.md`。BASIS-03待实际main发布和远端读回；不声称宿主部署。
