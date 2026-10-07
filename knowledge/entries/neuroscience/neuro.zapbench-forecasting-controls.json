@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "id": "neuro.zapbench-forecasting-controls",
+  "version": 1,
+  "status": "published",
+  "kind": "case",
+  "title": "ZAPBench：全脑预测先校准基线、上下文长度与分布外刺激",
+  "summary": "ICLR2025的单幼鱼全脑预测比较显示：长上下文多有利于远期预测，却非所有设置更好；简单刺激基线有竞争力，跨神经元混合与空间信息的收益需按设置核对。",
+  "aliases": [
+    "全脑预测基线",
+    "长上下文非总是更好",
+    "ZAPBench neuron forecasting",
+    "TAXIS held-out stimulus",
+    "跨神经元信息利用"
+  ],
+  "domains": [
+    "neuroscience",
+    "neuroai",
+    "cross-species-brains"
+  ],
+  "structures": [
+    "全脑预测基线",
+    "长上下文非总是更好",
+    "ZAPBench neuron forecasting",
+    "TAXIS held-out stimulus",
+    "跨神经元信息利用"
+  ],
+  "assumptions": [
+    "species: one larval zebrafish; 6 days post fertilization",
+    "data: 71721 putative neurons; about 2 hours; 9 visual conditions; calcium traces/video",
+    "evaluation: C=4 or 256, horizon H=32; MAE; 3 seeds; held-out TAXIS",
+    "models: Linear, TiDE, TSMixer, Time-Mix and volumetric U-Net; mean/stimulus baselines"
+  ],
+  "sources": [
+    {
+      "url": "https://proceedings.iclr.cc/paper_files/paper/2025/file/668563ef18fbfef0b66af491ea334d5f-Paper-Conference.pdf",
+      "locator": "§2–4; Figs.3–5; Appendix B/C and Figs.S3/S4/S7; official ICLR2025 PDF pp.4–9",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://research.google/blog/improving-brain-models-with-zapbench/",
+      "locator": "Institution/author blog: context and resource pointers only; empirical claims checked against primary paper",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-neuroscience/report.md#neuro.zapbench-forecasting-controls"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "neuro.zebrafish-modular-memory"
+    },
+    {
+      "type": "related",
+      "id": "neuro.anesthesia-temporal-isolation"
+    }
+  ],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "ICLR2025的单幼鱼全脑预测比较显示：长上下文多有利于远期预测，却非所有设置更好；简单刺激基线有竞争力，跨神经元混合与空间信息的收益需按设置核对。",
+    "conditions": {
+      "species": "one larval zebrafish; 6 days post fertilization",
+      "data": "71721 putative neurons; about 2 hours; 9 visual conditions; calcium traces/video",
+      "evaluation": "C=4 or 256, horizon H=32; MAE; 3 seeds; held-out TAXIS",
+      "models": "Linear, TiDE, TSMixer, Time-Mix and volumetric U-Net; mean/stimulus baselines"
+    },
+    "observations": [
+      "§4：长上下文通常改善较远预测，但U-Net单步预测有反例；长上下文的若干非线性模型表现接近。",
+      "短上下文32步时只有53/120运行优于刺激基线；TAXIS中的TiDE受未见刺激协变量影响，不能只报告训练条件平均。",
+      "跨神经元混合未显示稳定优势；短上下文U-Net较好，但不能从误差降低推断已恢复因果生理机制。"
+    ],
+    "limitations": [
+      "单个体、时间切片和钙信号限制跨鱼/真实电活动迁移；MAE不覆盖生成分布或因果解释。",
+      "本版全脑连接组仍在重建中；无需据此假定截至当前最新版已完成，使用前另查数据版本。"
+    ],
+    "minimal_checks": [
+      "预测模型先复用公开均值/刺激基线及冻结切分，分别报告条件、步长、种子与OOD。",
+      "研究上下文或图结构时保持预算，保留单步退化和简单模型强基线；代码下载/训练未在本轮执行。"
+    ],
+    "paper": {
+      "venue": "ICLR",
+      "year": 2025,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}

@@ -1,8 +1,8 @@
 # 可检索基础知识
 
-这里保存跨项目可复用的数学、物理、AI Infra、AI 算法与数据结构算法知识；Skill 保存使用知识的方法。项目观测、用户偏好和执行状态仍由项目记忆、TASK.md 与运行目录负责。
+这里保存跨项目可复用的数学、物理、AI Infra、AI 算法、数据结构算法与跨物种神经科学知识；Skill 保存使用知识的方法。项目观测、用户偏好和执行状态仍由项目记忆、TASK.md 与运行目录负责。
 
-当前包含 46 个条目：18 个数学/物理基础条目、22 张工程复用卡，以及 6 张 2026 年 RL / 概率论研究卡（ICLR、ICML、COLT、ALT）。新增卡核查原论文的相关实验、定理前提与反例，未执行本机论文复现，不代表完整学科覆盖或 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
+当前包含 56 个条目：18 个数学/物理基础条目、22 张工程复用卡，以及 6 张 2026 年 RL / 概率论研究卡（ICLR、ICML、COLT、ALT），以及10张神经科学/NeuroAI卡（9篇正式论文、1篇明确绑定的2024预印本）。近五年检索窗口为2021-10-07至2026-10-07，本轮所选来源为2023–2026；最新核查论文发表于2026-09-29。机构/作者博客单列来源，生物发现、意识理论与AI设计假设分开记录。新增卡核查原论文的相关实验、定理前提与反例，未执行本机论文复现，不代表完整学科覆盖或 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
 
 ## 实际使用
 
@@ -94,3 +94,7 @@ python -m agent_runtime.knowledge --root knowledge decision '点更新 区间求
 ```
 
 `decision` 返回适用条件差异和版本引用，采用现有词法检索；结果始终 `automatic_skip_authorized=false`。它支持决策，不是自动科学审查器。来源与选材见 `engineering_sources.json`；核验、负结果和未测项见 [本轮报告](../docs/knowledge_learning/2026-10-06-engineering/report.md)。定时任务使用独立 engineering 游标，保留原数学学习游标。
+
+## 神经科学与仿生 AI
+
+跨物种连接图、模块记忆、神经调制、睡眠和意识研究见 [本轮报告](../docs/knowledge_learning/2026-10-07-neuroscience/report.md) 与 `neuroscience_sources.json`。例如 `search '模块化眼位记忆'`、`search '意识理论没有单一赢家'`。神经元数、结构相似、无行为反应和信息整合指标均不自动证明智能或主观体验；AI 启发尚需目标任务验证。每小时维护继续轮转神经科学、RL与概率论，保留其余队列。

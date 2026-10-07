@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "id": "neuro.flywire-structural-limits",
+  "version": 1,
+  "status": "published",
+  "kind": "case",
+  "title": "果蝇 FlyWire：全脑结构图的版本、阈值与缺失边界",
+  "summary": "成体雌性果蝇 FlyWire 提供可导航的神经元与化学突触图；论文分析绑定版本783，连接阈值与突触附着完整度会改变图统计，结构图不提供完整动力学。",
+  "aliases": [
+    "果蝇全脑结构图",
+    "FlyWire version 783",
+    "阈值改变连接统计",
+    "chemical versus electrical synapses"
+  ],
+  "domains": [
+    "neuroscience",
+    "neuroai",
+    "cross-species-brains"
+  ],
+  "structures": [
+    "果蝇全脑结构图",
+    "FlyWire version 783",
+    "阈值改变连接统计",
+    "chemical versus electrical synapses"
+  ],
+  "assumptions": [
+    "species: adult female Drosophila melanogaster; single specimen",
+    "data_version: FlyWire materialization 783 as analysed in paper",
+    "measurement: EM reconstruction; chemical synapses",
+    "graph_rule: default analysed connection threshold at least 5 synapses"
+  ],
+  "sources": [
+    {
+      "url": "https://doi.org/10.1038/s41586-024-07558-y",
+      "locator": "Reconstruction of a whole fly brain; Synapses and connections; Discussion; Extended Data Fig.2; data release v783",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11446842/fullTextXML",
+      "locator": "Open full-text XML; corresponding Results/Methods sections as above",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://alleninstitute.org/news/how-far-are-we-from-a-human-brain-simulation-and-what-does-that-mean-for-science",
+      "locator": "Institution/author blog: context and resource pointers only; empirical claims checked against primary paper",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-neuroscience/report.md#neuro.flywire-structural-limits"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "neuro.worm-extrasynaptic-propagation"
+    }
+  ],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "成体雌性果蝇 FlyWire 提供可导航的神经元与化学突触图；论文分析绑定版本783，连接阈值与突触附着完整度会改变图统计，结构图不提供完整动力学。",
+    "conditions": {
+      "species": "adult female Drosophila melanogaster; single specimen",
+      "data_version": "FlyWire materialization 783 as analysed in paper",
+      "measurement": "EM reconstruction; chemical synapses",
+      "graph_rule": "default analysed connection threshold at least 5 synapses"
+    },
+    "observations": [
+      "重建约139,000神经元；正文区分自动检测的约1.3亿突触与成功连接到校对神经元的子集，不能混为同一计数。",
+      "论文报告突触前附着约93.7%、突触后约44.7%；≥5突触阈值下有2,700,513条连接，弱边与不同脑区分析需单独定阈值。"
+    ],
+    "limitations": [
+      "仅化学突触；电突触、受体、调制与活动状态未被完整捕获，脑不包含全部腹神经索。",
+      "单雌性个体与重建误差限制跨性别/跨个体外推；突触数不自动等于有效权重或符号。"
+    ],
+    "minimal_checks": [
+      "检索/下载图前固定 materialization、神经元ID、脑区和边阈值，分清 synapse 与 connection。",
+      "若借用稀疏图或局部反馈结构，先与相同边数/度分布的对照比较；结构相似不构成性能证据。"
+    ],
+    "paper": {
+      "venue": "Nature",
+      "year": 2024,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}

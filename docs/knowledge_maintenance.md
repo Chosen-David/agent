@@ -2,7 +2,7 @@
 
 用户已授权的本机部署在 2026-10-07 验收：WSL 3.0.1、Ubuntu-26.04 (WSL2)、普通用户 wi、tmux 3.6。定时会话为 socket `agent-knowledge` / session `agent-knowledge-maintenance`；实时心跳与 pane 读回成功。2026-10-07 按用户要求改为每隔 3600 秒一次；下次时间以 status 的 next_due_shanghai 为准。保留同一会话、配置、登录与历史轮次，未新增重复任务。迁移及研究卡证据见 [本轮报告](knowledge_learning/2026-10-07-rl-probability/report.md)。
 
-每轮执行 [学习 Prompt](../prompts/engineering_knowledge_continuous_learning.md)，当前优先轮转 RL 与概率论，保留 AI Infra、AI 算法、数据结构的后续队列，核查 3–6 个来源，最多发布 3 张卡、45 分钟。论文原始实验/消融与固定代码优先，保留反例与条件，不运行大型 GPU 实验。代码/检索/相关测试通过后，按已有授权发布 main；CLI 没有 Git 写认证时可用已连接 GitHub 写工具和 expected_sha 非强制更新。认证过期、保护规则或并发冲突未解决时保留成果并报告阻塞。
+每轮执行 [学习 Prompt](../prompts/engineering_knowledge_continuous_learning.md)，当前优先轮转神经科学、RL 与概率论，保留 AI Infra、AI 算法、数据结构的后续队列，核查 3–6 个来源，最多发布 3 张卡、45 分钟。神经科学按运行日回溯近五年，原论文的物种/阶段/测量/对照与博客层级分开，AI 启发只作待验证假设；首轮见 [研究与验证报告](knowledge_learning/2026-10-07-neuroscience/report.md)。本次手工批次10张卡不修改定时轮次的3张上限。论文原始实验/消融与固定代码优先，保留反例与条件，不运行大型 GPU 实验。代码/检索/相关测试通过后，按已有授权发布 main；CLI 没有 Git 写认证时可用已连接 GitHub 写工具和 expected_sha 非强制更新。认证过期、保护规则或并发冲突未解决时保留成果并报告阻塞。
 
 真实执行链是 WSL tmux → `knowledge_maintenance.py` → Windows Python → `run_knowledge_windows.py` → 原生 Codex CLI。复用已有 Windows 登录，凭据不复制进 Linux。旧 CLI 0.114.0 的模型请求被拒绝；实际改用桌面应用自带的 0.160.1，登录探测返回 READY。第二次只读验收成功读取 GitHub 仓库元数据（push=true），并执行 decision CLI，返回 `insufficient_context` / `automatic_skip_authorized=false`。这些证明执行器及连接器可调用，不等于后续每轮来源质量/写入必定成功。
 

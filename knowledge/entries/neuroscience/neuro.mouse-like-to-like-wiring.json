@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "id": "neuro.mouse-like-to-like-wiring",
+  "version": 1,
+  "status": "published",
+  "kind": "case",
+  "title": "小鼠视觉皮层：相似响应连接规则、几何对照与 RNN 消融",
+  "summary": "MICrONS 的小鼠视觉皮层数据支持兴奋性神经元的相似响应连接偏好；需区分轴突几何与单突触选择。论文RNN消融提供功能线索，但不能证明同规则对LLM普遍有效。",
+  "aliases": [
+    "相似响应连接规则",
+    "like-to-like wiring",
+    "几何邻近不是功能连接",
+    "MICrONS RNN ablation"
+  ],
+  "domains": [
+    "neuroscience",
+    "neuroai",
+    "cross-species-brains"
+  ],
+  "structures": [
+    "相似响应连接规则",
+    "like-to-like wiring",
+    "几何邻近不是功能连接",
+    "MICrONS RNN ablation"
+  ],
+  "assumptions": [
+    "species: single mouse visual cortex; excitatory neurons across layers 2-5 and areas",
+    "measurement: matched calcium responses and EM; model-derived functional tuning",
+    "controls: same-region and axon-dendrite proximity controls",
+    "ai_model: vanilla RNN with 1000 hidden units on image classification"
+  ],
+  "sources": [
+    {
+      "url": "https://doi.org/10.1038/s41586-025-08840-3",
+      "locator": "Multi-scale anatomical controls; Like-to-like connectivity in RNNs; Figs.1–6, especially Fig.6d; Discussion",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11981947/fullTextXML",
+      "locator": "Open full-text XML; corresponding Results/Methods sections as above",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://alleninstitute.org/news/scientists-complete-largest-wiring-diagram-and-functional-map-of-the-brain-to-date",
+      "locator": "Institution/author blog: context and resource pointers only; empirical claims checked against primary paper",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-neuroscience/report.md#neuro.mouse-like-to-like-wiring"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "neuro.flywire-structural-limits"
+    }
+  ],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "MICrONS 的小鼠视觉皮层数据支持兴奋性神经元的相似响应连接偏好；需区分轴突几何与单突触选择。论文RNN消融提供功能线索，但不能证明同规则对LLM普遍有效。",
+    "conditions": {
+      "species": "single mouse visual cortex; excitatory neurons across layers 2-5 and areas",
+      "measurement": "matched calcium responses and EM; model-derived functional tuning",
+      "controls": "same-region and axon-dendrite proximity controls",
+      "ai_model": "vanilla RNN with 1000 hidden units on image classification"
+    },
+    "observations": [
+      "Fig.1–5控制空间位置和轴突-树突邻近后，连接与功能相似性仍有关联；空间感受野与特征偏好在不同尺度有不同关系。",
+      "Fig.6：训练后的RNN产生相似响应连接倾向；消融这些连接比移除相同强度的随机连接更损害任务表现。"
+    ],
+    "limitations": [
+      "生物数据来自单只鼠的有限体积且有边界截断、检测/校对误差；预测模型内部表征不必等于生理参数。",
+      "RNN因果消融只支持该模型与任务；生物观察不证明发育因果，也不证明稀疏MoE或Transformer可直接获益。"
+    ],
+    "minimal_checks": [
+      "图/稀疏模型先同时控制距离、度、权重强度与训练预算，避免几何混杂。",
+      "在目标AI中测试规则和匹配强度的随机消融；不得把动物统计相关代替目标吞吐/准确率检查。"
+    ],
+    "paper": {
+      "venue": "Nature",
+      "year": 2025,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}

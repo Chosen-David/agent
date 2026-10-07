@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "id": "neuro.worm-extrasynaptic-propagation",
+  "version": 1,
+  "status": "published",
+  "kind": "case",
+  "title": "线虫：静态突触图不足以预测信号传播，需考虑突触外通信",
+  "summary": "线虫单细胞光遗传扰动与全脑钙成像显示，解剖约束模型与实测传播存在差异；UNC-31 突变对照支持致密核心囊泡依赖的突触外信号参与快速动力学。",
+  "aliases": [
+    "连接图无法预测活动",
+    "拓扑之外的通信",
+    "neuropeptide extrasynaptic signalling",
+    "C elegans functional perturbation"
+  ],
+  "domains": [
+    "neuroscience",
+    "neuroai",
+    "cross-species-brains"
+  ],
+  "structures": [
+    "连接图无法预测活动",
+    "拓扑之外的通信",
+    "neuropeptide extrasynaptic signalling",
+    "C elegans functional perturbation"
+  ],
+  "assumptions": [
+    "species: C. elegans head neurons",
+    "method: single-neuron optogenetic activation and whole-brain calcium imaging",
+    "comparison: wild type versus unc-31 mutant; anatomy-constrained model",
+    "scope: evoked pairwise signal propagation; not freely behaving cognition"
+  ],
+  "sources": [
+    {
+      "url": "https://doi.org/10.1038/s41586-023-06683-4",
+      "locator": "Results: Functional measurements differ from anatomy; Extrasynaptic signalling; Figs.3–6; Discussion; Methods",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10632145/fullTextXML",
+      "locator": "Open full-text XML; corresponding Results/Methods sections as above",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-neuroscience/report.md#neuro.worm-extrasynaptic-propagation"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "neuro.zebrafish-modular-memory"
+    }
+  ],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "线虫单细胞光遗传扰动与全脑钙成像显示，解剖约束模型与实测传播存在差异；UNC-31 突变对照支持致密核心囊泡依赖的突触外信号参与快速动力学。",
+    "conditions": {
+      "species": "C. elegans head neurons",
+      "method": "single-neuron optogenetic activation and whole-brain calcium imaging",
+      "comparison": "wild type versus unc-31 mutant; anatomy-constrained model",
+      "scope": "evoked pairwise signal propagation; not freely behaving cognition"
+    },
+    "observations": [
+      "测量23,433对头部神经元；Fig.3 的解剖模型即使拟合有线边的符号和权重，仍不能完整解释传播。",
+      "Fig.4–5 的 unc-31 对照与候选神经肽/受体表达支持突触外通信；部分响应发生于亚秒尺度，不能把这类调制一概视为慢过程。"
+    ],
+    "limitations": [
+      "钙信号、单细胞刺激及实验状态不等于膜电位或自然行为；未显著响应不等于永远不存在功能连接。",
+      "UNC-31 影响致密核心囊泡释放，不能据此把每条响应都归因于某一个肽；结果不说明解剖信息无用。"
+    ],
+    "minimal_checks": [
+      "若设计 Agent 通信，分别列出直接调用、共享状态和广播信号，核对间接路径与时延。",
+      "比较固定拓扑与增加状态调制的最小对照，保持通信预算和任务相同；仍需目标 AI 实测。"
+    ],
+    "paper": {
+      "venue": "Nature",
+      "year": 2023,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}
