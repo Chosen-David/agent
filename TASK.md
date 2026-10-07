@@ -364,6 +364,16 @@ MATH-14发布读回：实现提交 `e6157805e2743e109e614f9f8dba44c91b26cb3b`、
 
 MATH-15/16纳入本完整课程轮次，不因单条Krylov完成而结束。主AI单一写入者；不改SGLang，不扩大为无限期数学百科，也不以条目数冒充能力。
 
-本轮高等代数证据：docs/knowledge_learning/2026-10-07-algebra/report.md 与 curriculum.md。18主题来源/推导核查、76项有限检查及现有files/SQLite结构检索完成；自然问句与宽泛旧查询的遗漏完整保留。ALG-04 的知识/结构层验收完成，独立未见测试与模型A/B仍未完成；不能将其标为效果提升。ALG-05 保持待远端验证。indexer文档是随后独立任务，产物不写入SGLang。
+本轮高等代数证据：docs/knowledge_learning/2026-10-07-algebra/report.md 与 curriculum.md。18主题来源/推导核查、76项有限检查及现有files/SQLite结构检索完成；自然问句与宽泛旧查询的遗漏完整保留。ALG-04 的知识/结构层验收完成，独立未见测试与模型A/B仍未完成；不能将其标为效果提升。ALG-05 已完成远端验证，详见下方发布闭环。indexer文档是随后独立任务，产物不写入SGLang。
 
 ALG/MATH发布闭环：实现commit 11ace692d3b0e6249b203e1e8813eb9c342346ec、tree e0ec3f98ffd2ea8c5d40784ee0034038b70e1054 已非强制推送main，API/pull与独立ls-remote均读回remote_verified。548程序（540通过/8跳过）、reader3、76有限检查、结构检索/成本证据保留；自然问句遗漏及未见模型验收未完成。下一任务为用户指定 indexer 子空间设计文档，不修改SGLang或启动新定时任务。
+
+## 2026-10-07 indexer 子空间设计交付（接续高等代数）
+
+- [x] [INDEX-01] 以用户最新稿与现有知识入口为依据，区分主attention、MLA吸收表示与原生DSA score，完成NoPE-only、RoPE-only与混合设计和近期原始研究版本核对。
+- [x] [INDEX-02] 完成可复核误差/排序/输出推导、前提拒用反例、布局与量化有限检查；公开57项float64开发检查通过，未作为一般证明、未见模型测试或GPU收益。
+- [x] [INDEX-03] 交付用户指定《子空间设计改进建议_by_gpt.md》，包含数据结构/消费者、区域inclusive预算、增量维护、成本模型、最小实验链与停止规则；不改SGLang或生产行为。
+
+交付文件v1.0 SHA256：6c5190590c202af78b326cb9bf717d8e8b60a2a0185efa4eb9b2ab2aebd52e20；可复跑脚本包含于文档，SHA256：73d5dd345667baf9757a946fef71b384f9cc0bdf829874353f43ffd4fe1b1a6b。该独立文档已交付，论文材料不镜像进公共知识仓库。
+
+结果边界：三模式toy认证模拟与全量top-k一致，但64键中仍需查询48/63/50个真实分数；脚本预先计算全量truth用于核验，这些不是实际FLOPs/带宽节约。优先低成本结构化表示与残差诊断，复杂投影/严格生产认证待证据。下一owner为主AI，按文档E0实际adapter核对→E1固定trace损失分解→冻结至多两候选→E2/E3模型质量→E4匹配端到端成本接续；上述模型/GPU验收尚未执行，不属于本次设计交付已完成部分。
