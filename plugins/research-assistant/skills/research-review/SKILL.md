@@ -33,3 +33,5 @@ description: "按实际顶会或期刊标准审阅论文贡献、正确性、方
 完整新稿/全稿重写在动笔前执行 [10 篇范文学习](references/paper_exemplar_learning.md)：全文和图表真实覆盖，归纳并实施本稿蓝图；科学审稿独立检查蓝图落地，不能以链接数量代替学习。
 
 论文数据图制作/重设计先读 [数据图范文学习](references/data_visualization_learning.md)：实际读相关原图，形成 data-visual-design-brief，再交 research-data-visualization 实施；科学保真与视觉设计分别验收。当前十篇任务复用既有语料，普通独立 plot 按任务适配。
+
+任务开始及接收交接时执行 [知识接入契约](references/knowledge_access_workflow.md)：定位实际语料/工具，按需检索并核对前提；传递真实 knowledge_refs，缺库或过期不可冒充已调用。

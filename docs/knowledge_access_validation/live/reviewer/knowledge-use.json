@@ -1,0 +1,123 @@
+{
+  "schema_version": 1,
+  "task_id": "KB-LIVE-1",
+  "input_version": "synthetic-dot-products-v1",
+  "role": "research-review",
+  "decision": "EXECUTE",
+  "status": "used",
+  "knowledge_root": "knowledge",
+  "knowledge_tool": "python -m agent_runtime.knowledge",
+  "corpus_snapshot": "813a60cbb251103f20a12cb3f1055cf378136791b87bada0cf1a40cf60635cb8",
+  "backend": "files-lexical-v1",
+  "queries": [
+    {
+      "query": "dot product vector error norm topk gap",
+      "output": "search.json"
+    }
+  ],
+  "commands_file": "commands.json",
+  "knowledge_refs": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c"
+    },
+    {
+      "id": "math.score-difference-bound",
+      "version": 1,
+      "sha256": "32f15976d97e494614c2ccef88a7d832f107bdce0747c8373969964435856209"
+    },
+    {
+      "id": "math.topk-margin",
+      "version": 1,
+      "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792"
+    }
+  ],
+  "read_entries": [
+    {
+      "id": "math.cauchy-schwarz",
+      "artifact": "read-math.cauchy-schwarz.json",
+      "requires": []
+    },
+    {
+      "id": "math.score-difference-bound",
+      "artifact": "read-math.score-difference-bound.json",
+      "requires": [
+        {
+          "id": "math.cauchy-schwarz",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "id": "math.topk-margin",
+      "artifact": "read-math.topk-margin.json",
+      "requires": [
+        {
+          "id": "math.cauchy-schwarz",
+          "version": 1
+        }
+      ]
+    }
+  ],
+  "assumptions": [
+    {
+      "assumption": "Common-dimensional real vectors and a fixed query",
+      "status": "explicit_interpretation",
+      "evidence": "Real q^T k_i in trusted task; producer explicitly holds q fixed."
+    },
+    {
+      "assumption": "Euclidean norm (or a valid dual norm pairing)",
+      "status": "conditional",
+      "evidence": "Task says norm but does not specify which; Euclidean interpretation is conventional and must be labeled."
+    },
+    {
+      "assumption": "Finite score list and 1<=k<n",
+      "status": "implicit_in_boundary_gap",
+      "evidence": "Positive top-k boundary gap presupposes a nontrivial boundary; task does not literally state n or k."
+    },
+    {
+      "assumption": "Uniform per-vector bound in first case",
+      "status": "satisfied",
+      "evidence": "task.json each_vector_error_norm_bound=0.02"
+    },
+    {
+      "assumption": "Mean means arithmetic mean of individual error norms",
+      "status": "explicit_interpretation",
+      "evidence": "Producer clearly states this interpretation."
+    },
+    {
+      "assumption": "Global score l2 error <=0.06",
+      "status": "not_established",
+      "evidence": "Per-vector uniform norm bounds do not imply that global bound; REV-C08."
+    }
+  ],
+  "adoption_decisions": [
+    {
+      "id": "math.cauchy-schwarz",
+      "decision": "adopt_conditionally",
+      "reason": "Valid for Euclidean interpretation; independent squared-norm derivation checked."
+    },
+    {
+      "id": "math.topk-margin",
+      "decision": "adopt",
+      "reason": "Cross-boundary proof directly yields gap>=0.03 under uniform bounds."
+    },
+    {
+      "id": "math.score-difference-bound",
+      "decision": "reject_numeric_application",
+      "reason": "No global l2 error bound supplied; warning is relevant."
+    }
+  ],
+  "verification_artifacts": [
+    "independent_verify.py",
+    "independent-output.json",
+    "review.md"
+  ],
+  "limitations": [
+    "No network or external source verification.",
+    "No full manuscript or venue review.",
+    "No formal theorem prover or model/performance claim.",
+    "Hashes establish content identity, not applicability."
+  ]
+}

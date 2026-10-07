@@ -1,0 +1,201 @@
+{
+  "schema_version": 1,
+  "task_id": "knowledge-access-live/producer",
+  "task_refs": [
+    "KB-ACCESS-01",
+    "KB-ACCESS-03"
+  ],
+  "input_version": "synthetic-dot-product-task-v1",
+  "decision": "EXECUTE",
+  "status": "used",
+  "knowledge_root": "knowledge",
+  "knowledge_tool": "python -m agent_runtime.knowledge",
+  "corpus_snapshot": "dd4b298b81ff2ed3fe04de930456a86d58b33946590e3276c8c4c95686e237c8",
+  "backend": "files-lexical-v1",
+  "queries": [
+    {
+      "query": "点积 向量 误差 排名 间隔",
+      "results": "search.json"
+    },
+    {
+      "query": "top k uniform score perturbation margin",
+      "results": "search-topk.json"
+    }
+  ],
+  "commands_file": "commands.json",
+  "read_entries": [
+    {
+      "id": "math.cauchy-schwarz",
+      "artifact": "read-cauchy-schwarz.json",
+      "requires": [],
+      "sources": [
+        {
+          "url": "https://people.math.wisc.edu/~gemeyer/math340/Notes3.html",
+          "locator": "Theorem 5.3；原页面部分不等号编码缺失，下面给出独立推导",
+          "accessed": "2026-10-06"
+        },
+        {
+          "url": "https://github.com/leanprover-community/mathlib4/blob/eb681fbdc4a4f09fe5385666cc194b335df59611/Mathlib/Analysis/InnerProductSpace/Basic.lean",
+          "locator": "文件文档的 inner_mul_inner_self_le 及 Cauchy–Schwarz 变体；仅检查源文件，未运行 Lean",
+          "accessed": "2026-10-06"
+        }
+      ]
+    },
+    {
+      "id": "math.score-difference-bound",
+      "artifact": "read-score-difference-bound.json",
+      "requires": [
+        {
+          "id": "math.cauchy-schwarz",
+          "version": 1
+        }
+      ],
+      "sources": [
+        {
+          "url": "https://people.math.wisc.edu/~gemeyer/math340/Notes3.html",
+          "locator": "Theorem 5.3 supports the underlying inequality; sharper ranking lemma is independently derived here",
+          "accessed": "2026-10-06"
+        }
+      ]
+    },
+    {
+      "id": "math.topk-margin",
+      "artifact": "read-topk-margin.json",
+      "requires": [
+        {
+          "id": "math.cauchy-schwarz",
+          "version": 1
+        }
+      ],
+      "sources": [
+        {
+          "url": "https://people.math.wisc.edu/~gemeyer/math340/Notes3.html",
+          "locator": "Theorem 5.3 仅支持内积误差上界；Top-k 命题为本条显式推导",
+          "accessed": "2026-10-06"
+        }
+      ]
+    }
+  ],
+  "knowledge_refs": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c"
+    },
+    {
+      "id": "math.score-difference-bound",
+      "version": 1,
+      "sha256": "32f15976d97e494614c2ccef88a7d832f107bdce0747c8373969964435856209"
+    },
+    {
+      "id": "math.topk-margin",
+      "version": 1,
+      "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792"
+    }
+  ],
+  "assumptions": [
+    {
+      "assumption": "Same fixed real q and common vector dimension, Euclidean inner product and norm",
+      "task_evidence": "Task gives real dot products and 2-norm, only keys replaced",
+      "status": "satisfied",
+      "scope": "Both variants; no query replacement assumed"
+    },
+    {
+      "assumption": "Finite n>=2 and 1<=k<n",
+      "task_evidence": "Explicit task constraints",
+      "status": "satisfied"
+    },
+    {
+      "assumption": "Every vector error <=0.02",
+      "task_evidence": "Explicit in first variant only",
+      "status": "satisfied",
+      "scope": "First variant"
+    },
+    {
+      "assumption": "Every score error <=epsilon=0.06",
+      "task_evidence": "Derived from fixed-query Cauchy-Schwarz and 3*0.02",
+      "status": "satisfied",
+      "scope": "First variant"
+    },
+    {
+      "assumption": "Strict boundary gap >2*epsilon",
+      "task_evidence": "0.15>0.12",
+      "status": "satisfied",
+      "scope": "First variant"
+    },
+    {
+      "assumption": "Mean means arithmetic mean of individual Euclidean error norms <=0.02",
+      "task_evidence": "Natural reading of mean over vectors, made explicit",
+      "status": "assumed",
+      "scope": "Mean-only variant; not norm of mean error vector"
+    },
+    {
+      "assumption": "Mean-only bound can be substituted as a uniform bound",
+      "task_evidence": "n=3 exact counterexample has maximum error 0.06 and mean 0.02",
+      "status": "not_satisfied"
+    },
+    {
+      "assumption": "Global score-vector 2-norm error <=0.06",
+      "task_evidence": "No such joint bound is provided",
+      "status": "unknown",
+      "scope": "Do not apply sqrt(2)*0.06 threshold"
+    }
+  ],
+  "adoption_decisions": [
+    {
+      "id": "math.cauchy-schwarz",
+      "decision": "adopt",
+      "reason": "Exact fixed-query Euclidean score perturbation mapping; also controls pairwise loss under a total error budget"
+    },
+    {
+      "id": "math.topk-margin",
+      "decision": "adopt",
+      "reason": "Uniform score bound 0.06 and strict margin 0.15>0.12 satisfy all conditions; strong dependency cauchy-schwarz read and pinned"
+    },
+    {
+      "id": "math.score-difference-bound",
+      "decision": "adopt_caution_reject_numeric_substitution",
+      "reason": "Read because leading retrieval candidate and relation points to topk-margin. Its warning explains why coordinate error epsilon is not a global 2-norm bound eta. Do not apply sqrt(2)*0.06."
+    },
+    {
+      "id": "math.hoeffding-bounded-mean",
+      "decision": "reject_from_summary",
+      "reason": "Task is a deterministic norm-error problem, with no independent random observations or probabilistic mean estimation; not read or used"
+    },
+    {
+      "id": "math.contraction-residual-certificate",
+      "decision": "reject_from_summary",
+      "reason": "No iteration, invariant domain, or contraction appears in task; not read or used"
+    }
+  ],
+  "derivations": [
+    {
+      "claim": "Uniform bound certifies unchanged top-k",
+      "bound": "0.15-2*3*0.02=0.03>0",
+      "artifact": "answer.md"
+    },
+    {
+      "claim": "Mean-only does not certify generally",
+      "evidence": "Exact n=3,k=1 one-dimensional reversal",
+      "artifact": "verification-output.json"
+    },
+    {
+      "claim": "Mean-only n=2 exception certifies unchanged",
+      "bound": "0.15-3*(2*0.02)=0.03>0",
+      "artifact": "answer.md"
+    }
+  ],
+  "verification_artifacts": [
+    "verify.py",
+    "verification-output.json",
+    "check-refs.json"
+  ],
+  "limitations": [
+    "No claim of formal proof assistant verification",
+    "Finite exact checks supplement general algebraic proof",
+    "No performance measurements",
+    "No repository test or prior evaluation output used",
+    "Upstream source metadata read locally; no external source fetching"
+  ],
+  "next_owner": "root reviewer via consumer-owned knowledge root and required refs; root retains TASK/handoff publication ownership"
+}

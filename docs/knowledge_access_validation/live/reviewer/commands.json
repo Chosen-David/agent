@@ -1,0 +1,111 @@
+{
+  "cwd": "/workspace/scratch/4f9639d1bad2/agent",
+  "commands": [
+    {
+      "command": [
+        "python",
+        "-m",
+        "agent_runtime.communication",
+        "--db",
+        ".agent-runs/knowledge-access-live/mail.sqlite",
+        "--plan",
+        "docs/knowledge_access_validation/live/plan.json",
+        "--root",
+        ".",
+        "consume",
+        "research-review",
+        "1",
+        "--request",
+        "docs/knowledge_access_validation/live/request.json"
+      ],
+      "returncode": 0,
+      "stdout": "consumed-handoff.json"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "agent_runtime.knowledge",
+        "--root",
+        "knowledge",
+        "search",
+        "dot product vector error norm topk gap",
+        "--limit",
+        "3"
+      ],
+      "returncode": 0,
+      "stdout": "search.json"
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "agent_runtime.knowledge",
+        "--root",
+        "knowledge",
+        "show",
+        "math.cauchy-schwarz"
+      ],
+      "returncode": 0,
+      "stdout": "docs/knowledge_access_validation/live/reviewer/read-math.cauchy-schwarz.json",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "agent_runtime.knowledge",
+        "--root",
+        "knowledge",
+        "show",
+        "math.score-difference-bound"
+      ],
+      "returncode": 0,
+      "stdout": "docs/knowledge_access_validation/live/reviewer/read-math.score-difference-bound.json",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "agent_runtime.knowledge",
+        "--root",
+        "knowledge",
+        "show",
+        "math.topk-margin"
+      ],
+      "returncode": 0,
+      "stdout": "docs/knowledge_access_validation/live/reviewer/read-math.topk-margin.json",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "docs/knowledge_access_validation/live/reviewer/independent_verify.py"
+      ],
+      "returncode": 0,
+      "stdout": "independent-output.json"
+    },
+    {
+      "command": "python docs/knowledge_access_validation/live/reviewer/write_review.py",
+      "returncode": 0,
+      "purpose": "Write reviewer-owned report and usage record"
+    },
+    {
+      "command": "python -m agent_runtime.knowledge --root knowledge check-refs docs/knowledge_access_validation/live/reviewer/knowledge-use.json",
+      "returncode": 0,
+      "stdout": "check-refs.json"
+    },
+    {
+      "command": "python -m agent_runtime.communication --db .agent-runs/knowledge-access-live/mail.sqlite --plan docs/knowledge_access_validation/live/plan.json --root . ack research-review 1 docs/knowledge_access_validation/live/reviewer/receipt-request.json",
+      "returncode": 0,
+      "stdout": "ack-output.json"
+    },
+    {
+      "command": "python -m agent_runtime.communication --db .agent-runs/knowledge-access-live/mail.sqlite --plan docs/knowledge_access_validation/live/plan.json --root . status",
+      "returncode": 0,
+      "stdout": "receipt-readback.json"
+    }
+  ],
+  "scope": "Actual command/output evidence; see receipt commands for subsequent ACK/readback."
+}

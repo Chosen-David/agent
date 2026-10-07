@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "task_id": "KB-LIVE-1",
+  "input_version": "synthetic-dot-products-v1",
+  "role": "research-review",
+  "decision": "EXECUTE",
+  "status": "used",
+  "knowledge_root": "knowledge",
+  "knowledge_tool": "python -m agent_runtime.knowledge",
+  "corpus_snapshot": "813a60cbb251103f20a12cb3f1055cf378136791b87bada0cf1a40cf60635cb8",
+  "backend": "files-lexical-v1",
+  "queries": [
+    {
+      "query": "dot product vector error norm topk gap",
+      "output": "search.json"
+    }
+  ],
+  "commands_file": "commands-v2.json",
+  "knowledge_refs": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c"
+    },
+    {
+      "id": "math.score-difference-bound",
+      "version": 1,
+      "sha256": "32f15976d97e494614c2ccef88a7d832f107bdce0747c8373969964435856209"
+    },
+    {
+      "id": "math.topk-margin",
+      "version": 1,
+      "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792"
+    }
+  ],
+  "read_entries": [
+    {
+      "id": "math.cauchy-schwarz",
+      "artifact": "read-math.cauchy-schwarz-v2.json",
+      "requires": []
+    },
+    {
+      "id": "math.score-difference-bound",
+      "artifact": "read-math.score-difference-bound-v2.json",
+      "requires": [
+        {
+          "id": "math.cauchy-schwarz",
+          "version": 1
+        }
+      ]
+    },
+    {
+      "id": "math.topk-margin",
+      "artifact": "read-math.topk-margin-v2.json",
+      "requires": [
+        {
+          "id": "math.cauchy-schwarz",
+          "version": 1
+        }
+      ]
+    }
+  ],
+  "assumptions": [
+    {
+      "assumption": "Euclidean norm, n>=2 and 1<=k<n",
+      "status": "satisfied_by_added_dispatch_evidence",
+      "evidence": "dispatch-source.json, transcribed and attested by dispatch owner; task.json is abbreviated."
+    },
+    {
+      "assumption": "Common-dimensional real vectors and fixed query",
+      "status": "adopted_interpretation",
+      "evidence": "dispatch-source.json explicitly records fixed query; dot product well-defined in common dimension."
+    },
+    {
+      "assumption": "Uniform per-vector norm bound in first case",
+      "status": "satisfied",
+      "evidence": "task.json and dispatch-source.json both specify 0.02."
+    },
+    {
+      "assumption": "Mean is arithmetic mean of individual error norms",
+      "status": "adopted_interpretation",
+      "evidence": "dispatch-source.json and producer answer agree."
+    },
+    {
+      "assumption": "Global score-vector l2 error <=0.06",
+      "status": "not_established",
+      "evidence": "No such bound supplied; still reject its numeric use."
+    }
+  ],
+  "adoption_decisions": [
+    {
+      "id": "math.cauchy-schwarz",
+      "decision": "adopt",
+      "reason": "Euclidean constraints now supplied by dispatch owner; independent proof and rational checks retained."
+    },
+    {
+      "id": "math.topk-margin",
+      "decision": "adopt",
+      "reason": "Cross-boundary proof directly yields gap>=0.03 under uniform bounds."
+    },
+    {
+      "id": "math.score-difference-bound",
+      "decision": "reject_numeric_application",
+      "reason": "No global l2 error bound supplied; warning is relevant."
+    }
+  ],
+  "verification_artifacts": [
+    "review-v2.md",
+    "independent_verify.py",
+    "independent-output-v2.json",
+    "producer-replay-v2.json",
+    "original-preservation-v2.json"
+  ],
+  "limitations": [
+    "No network or external source verification.",
+    "No full manuscript or venue review.",
+    "No formal theorem prover or model/performance claim.",
+    "Hashes establish content identity, not applicability."
+  ],
+  "review_version": 2
+}

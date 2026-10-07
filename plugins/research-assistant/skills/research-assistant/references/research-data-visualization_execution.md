@@ -11,3 +11,5 @@
 3. 真正打开最终导出的图检查；元数据检查不能替代视觉阅读。没有数据就交示意/图规划并标注，不制造实验误差条。保留可编辑源和导出尺寸；默认不自动调用付费生图服务。
 
 复杂交接附实际输入版本、产物路径、已执行检查、限制与下一负责人。外部后端发现不等于可运行或已授权；没有后端时用当前工具完成有界任务。
+
+知识需求与交接按 [知识接入契约](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-data-visualization/references/knowledge_access_workflow.md) 执行；保留实际查询/前提核对证据及完整 knowledge_refs，无需求时注明原因。

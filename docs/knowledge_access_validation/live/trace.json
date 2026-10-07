@@ -1,0 +1,64 @@
+{
+  "run_id": "knowledge-access-live",
+  "events": [
+    {
+      "seq": 1,
+      "event": {
+        "action": "Consume, inspect actual evidence and independently verify applicability",
+        "event_id": "knowledge-result-v1",
+        "input_version": "synthetic-dot-products-v1",
+        "kind": "artifact",
+        "refs": [
+          {
+            "id": "handoff",
+            "path": "docs/knowledge_access_validation/live/handoff.json",
+            "sha256": "1555741bac0838633b5ed7e02c1b957322125c1aabc3afc1e3081a0d37bc171c"
+          }
+        ],
+        "run_id": "knowledge-access-live",
+        "sender": "model-with-knowledge",
+        "summary": "Knowledge-backed synthetic answer ready for independent review",
+        "task_id": "KB-LIVE-1"
+      }
+    },
+    {
+      "seq": 2,
+      "event": {
+        "action": "Independently recheck finding against original dispatch and preserved artifacts",
+        "event_id": "knowledge-result-v2",
+        "input_version": "synthetic-dot-products-v1",
+        "kind": "artifact",
+        "refs": [
+          {
+            "id": "handoff",
+            "path": "docs/knowledge_access_validation/live/handoff-v2.json",
+            "sha256": "f64e12702700f16f761ad257a991327e5c808d99e8e1360484a37ce5e83a37a9"
+          }
+        ],
+        "run_id": "knowledge-access-live",
+        "sender": "model-with-knowledge",
+        "summary": "Host binding clarification for REV-F001",
+        "task_id": "KB-LIVE-1"
+      }
+    }
+  ],
+  "receipts": [
+    {
+      "seq": 1,
+      "recipient": "research-review",
+      "receipt": {
+        "reason": "REV-F001: conditional mathematics independently verified (9 exact checks), but producer usage input_version differs from trusted request and claims norm/n-k assumptions explicitly supplied when they are interpretations. Preserve originals, supply mapping/assumption clarification and new immutable handoff for recheck. Review: docs/knowledge_access_validation/live/reviewer/review.md",
+        "status": "needs_revision"
+      }
+    },
+    {
+      "seq": 2,
+      "recipient": "research-review",
+      "receipt": {
+        "reason": "Scoped recheck passes; REV-F001 resolved by explicit dispatch-owner task/version mapping and full assumption evidence. Independent proof retained, 9 reviewer checks rerun, archival replay and pinned refs pass. Original seq1 needs_revision preserved. See docs/knowledge_access_validation/live/reviewer/review-v2.md.",
+        "status": "consumed"
+      }
+    }
+  ],
+  "all_refs_rechecked": true
+}

@@ -62,3 +62,5 @@ API 为 `Mailbox(db, plan, artifact_root).publish/inbox/consume_handoff/acknowle
 ## 验收与持续优化
 
 先测无关投递、重复执行、重启、旧数据、缺失任务、失败回执；再测真实代码→图→论文→审稿→读者链。公平对照现有主 AI转述、全广播和定向引用三种方式，固定输入、模型、工具、预算和验收；统计实际 token/耗时、正确关闭的发现、错误复用、返工和最终质量。离线消息数下降不能代替模型性能收益。记录无收益和缺测，学习式剪枝、主动中断及自动语义压缩需独立实验后再启用。
+
+知识依赖交接遵循 [知识接入契约](knowledge_access_workflow.md)。handoff 顶层声明 knowledge_refs，可信消费者 request 固定 knowledge_root 与必需引用；consume_handoff 在返回前验证，缺库、引用过期或遗漏保持待办，不自动 ACK。

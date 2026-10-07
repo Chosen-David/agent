@@ -11,3 +11,5 @@
 3. 若问题含错误前提，指出具体哪一步不成立，再用相同例子纠正。返回原文锚点；若原文不可得就只讲一般机制，不假定作者采用特定实现。简单解释不必强制联网、画图、做测验或生成多个文件；外部事实按现有核验要求处理。
 
 复杂交接附实际输入版本、产物路径、已执行检查、限制与下一负责人。外部后端发现不等于可运行或已授权；没有后端时用当前工具完成有界任务。
+
+知识需求与交接按 [知识接入契约](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/explain-research-concepts/references/knowledge_access_workflow.md) 执行；保留实际查询/前提核对证据及完整 knowledge_refs，无需求时注明原因。

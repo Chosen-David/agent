@@ -34,3 +34,7 @@ Keep the single active `TASK.md` at the current project root. Read it on startup
 Use `workflows/project_memory_workflow.md` for cross-session evidence and corrected user intent. Keep stable instructions here and current requirements/results in root TASK.md. Bind memory references to source and immutable dependency IDs; corrections invalidate affected interpretations/reports, not raw historical measurements. Independent verification still owns acceptance. Keep `.agent-memory/` private; never claim a local correction deleted inaccessible cloud memory.
 
 Reuse parameterized scripts and existing evaluation catalogs. Keep immutable run evidence with a stable report index as described in `workflows/code_organization_workflow.md`. Complete the entire authorized TASK baseline before bounded `agent/<task-id>/<run-id>` exploration; apply the existing real-supervisor, permission and budget gates.
+
+## Knowledge access at dispatch and handoff
+
+Follow `workflows/knowledge_access_workflow.md` for the main AI and each task-relevant role. Resolve a real corpus/tool, retrieve only relevant entries, check assumptions, and preserve actual usage evidence plus pinned knowledge_refs. Consumer-owned corpus and required refs govern handoff checks; missing or stale knowledge blocks only dependent conclusions. Retrieval and hash validation do not certify scientific applicability.

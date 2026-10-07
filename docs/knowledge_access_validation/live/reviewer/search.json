@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "snapshot": "813a60cbb251103f20a12cb3f1055cf378136791b87bada0cf1a40cf60635cb8",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c",
+      "title": "Cauchy–Schwarz 与内积分数误差",
+      "summary": "由向量误差界推出查询与键的内积分数误差界。",
+      "status": "published",
+      "assumptions": [
+        "实向量 q、k、k_hat 维数相同，使用欧氏内积和二范数",
+        "已知键向量误差界；查询变化时必须另外计入误差"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 中的命题、推导与边界；非形式化证明",
+          "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "dot",
+            "error",
+            "product"
+          ]
+        }
+      ],
+      "score": 15
+    },
+    {
+      "id": "math.eigenspace-gap-perturbation",
+      "version": 1,
+      "sha256": "9737b6e1fb288bf682e23f1910f32aadc43421bd42821550a82e419303a7e292",
+      "title": "谱隙、子空间扰动与投影打分证书",
+      "summary": "实对称矩阵的隔离特征值簇可用边界谱隙控制子空间误差；主方向稳定取决于误差与谱隙的比值。投影比较消除符号和簇内旋转歧义，可传播到有范数约束的打分。",
+      "status": "published",
+      "assumptions": [
+        "A与Ahat=A+E是同维实对称矩阵，使用一致坐标及欧氏算子/Frobenius范数",
+        "特征值降序，目标为同一索引区间r..s；d=s-r+1，外侧边界谱隙g=min(lambda_(r-1)-lambda_r,lambda_s-lambda_(s+1))>0，端点取无穷",
+        "U与Uhat列正交；比较投影或主角度，不能直接比较未对齐的基",
+        "本文自推较紧rank-one界另需目标最大特征值、g=lambda_1-lambda_2>0、认证epsilon>=||E||op且epsilon<g；epsilon<g/2额外认证扰动后最大特征值简单",
+        "打分迁移需q,k位于同一欧氏坐标系、目标确为q^T P k；只控制换基误差，不控制舍弃补空间或完整注意力输出"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-subspace/verify.py",
+          "docs/knowledge_learning/2026-10-07-subspace/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "gap"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "topk"
+          ]
+        }
+      ],
+      "score": 6
+    },
+    {
+      "id": "math.dual-certificates",
+      "version": 1,
+      "sha256": "d165577ff3bfb7ebc14ff33ccc66d3641cf4f9afdae532636099bfefc07ab708",
+      "title": "拉格朗日对偶界与最优性证书",
+      "summary": "用可行解给上界、合法对偶值给下界，评估搜索结果距全局最优的差距。",
+      "status": "published",
+      "assumptions": [
+        "原问题为最小化，约束写成 fi(x)≤0 与 hi(x)=0，定义域明确",
+        "不等式乘子 λ≥0，g(λ,ν) 是整个定义域上拉格朗日函数的下确界或其认证下界",
+        "强对偶与 KKT 充分性需额外凸性/约束资格，弱对偶本身无需凸性"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 的明确推导与反例；非形式化证明",
+          "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "gap"
+          ]
+        }
+      ],
+      "score": 5
+    }
+  ]
+}

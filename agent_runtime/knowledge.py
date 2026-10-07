@@ -343,6 +343,38 @@ def check_task_knowledge(root, task):
     return KnowledgeStore(target).check_refs(refs)
 
 
+def check_handoff_knowledge(root, record, request):
+    """Validate producer refs against a consumer-owned corpus and required refs.
+
+    The producer cannot choose a fallback corpus or omit consumer dependencies.
+    Empty legacy handoffs remain compatible; this does not infer hidden usage.
+    """
+    _require(isinstance(record, dict) and isinstance(request, dict),
+             'knowledge handoff and consumer request must be objects')
+    supplied = record.get('knowledge_refs', [])
+    required = request.get('knowledge_refs', [])
+    _require(isinstance(supplied, list) and isinstance(required, list),
+             'knowledge_refs must be lists')
+    if not supplied and not required:
+        return []
+    relative = request.get('knowledge_root')
+    _require(_text(relative) and not Path(relative).is_absolute(),
+             'consumer knowledge_root must be explicit and project-relative')
+    project = Path(root).resolve()
+    target = project / relative
+    _require(target.resolve().is_relative_to(project), 'knowledge_root outside project')
+    corpus = KnowledgeStore(target)
+    # Validate separately so neither party can silently supply missing prerequisites
+    # on behalf of the other; every declared bundle must be complete.
+    if required:
+        corpus.check_refs(required)
+    _require(bool(supplied), 'handoff omits required knowledge_refs')
+    result = corpus.check_refs(supplied)
+    _require(all(ref in supplied for ref in required),
+             'handoff omits consumer-required knowledge_refs')
+    return result
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', required=True, help='explicit knowledge directory')

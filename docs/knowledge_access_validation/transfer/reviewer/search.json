@@ -1,0 +1,97 @@
+{
+  "schema_version": 1,
+  "snapshot": "813a60cbb251103f20a12cb3f1055cf378136791b87bada0cf1a40cf60635cb8",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.linear-system-stability",
+      "version": 1,
+      "sha256": "caacac2221436b3cd671b9a307f8598e8481af537400839a430f5558bd04b4a4",
+      "title": "条件数、残差与有限扰动误差界",
+      "summary": "小残差不保证小解误差；用条件数与显式扰动条件评估线性求解可靠性。",
+      "status": "published",
+      "assumptions": [
+        "A 为可逆实方阵，b 非零，使用相容诱导矩阵范数",
+        "有限扰动公式要求 κ(A)‖E‖/‖A‖<1；不能把一阶近似当任意扰动保证"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 的明确推导与反例；非形式化证明",
+          "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "error",
+            "residual"
+          ]
+        }
+      ],
+      "score": 10
+    },
+    {
+      "id": "math.alpha-spending-stopping",
+      "version": 1,
+      "sha256": "54d4325ccdf1a12e50841ffc124dfa11fcf1dfbd0a254242fc916d8b5f573d06",
+      "title": "逐次错误预算下的随机停止保证",
+      "summary": "对同一稳定均值的每次查看分配可求和错误概率，以联合界保证任意数据依赖停止时的覆盖；保守且不保证早停。",
+      "status": "published",
+      "assumptions": [
+        "无限序列 X_i 相互独立、具有同一均值 μ 且落在已知确定区间 [a,b]",
+        "δ∈(0,1)，δ_t=δ/[t(t+1)] 在数据之前规定",
+        "评测对象、分布与取值范围固定；本条不覆盖复用数据训练后自适应选择的新模型"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-concentration/checks.json",
+          "docs/knowledge_learning/2026-10-06-concentration/verify.py"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "stopping"
+          ]
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c",
+      "title": "Cauchy–Schwarz 与内积分数误差",
+      "summary": "由向量误差界推出查询与键的内积分数误差界。",
+      "status": "published",
+      "assumptions": [
+        "实向量 q、k、k_hat 维数相同，使用欧氏内积和二范数",
+        "已知键向量误差界；查询变化时必须另外计入误差"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 中的命题、推导与边界；非形式化证明",
+          "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "error"
+          ]
+        }
+      ],
+      "score": 5
+    }
+  ]
+}

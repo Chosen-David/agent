@@ -7,3 +7,5 @@
 精修保留语义快照；以稳定ID比对节点、边和组归属，记录允许的标签更改。源码编译/XML通过不证明语义或视觉通过。输出可编辑主源、成图、caption及来源映射；实际查看最终尺寸，未查看记未完成。无需运行模型才能画证据齐备的方法示意，也不能把示意说成实现或实验验证。
 
 复杂交接记录输入版本、已执行检查与缺口。已可本地绘制时不强制发现外部技能或付费生图。借鉴科学可视化的来源审计和BMad的可观察断言，不使用问题数量配额。
+
+知识需求与交接按 [知识接入契约](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-diagrams/references/knowledge_access_workflow.md) 执行；保留实际查询/前提核对证据及完整 knowledge_refs，无需求时注明原因。

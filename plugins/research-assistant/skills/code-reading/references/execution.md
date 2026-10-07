@@ -14,3 +14,5 @@ python scripts/source_evidence.py --repo /path/to/repo --commit FULL_SHA --path 
 验收分开记录：脚本/路由静态契约测试；合成机制阅读任务；真实仓库只读分析；真实运行实验。前三者不证明真实系统性能、LLM 普遍读码质量或后端集成。没有运行日志时标静态推断，不报告通过 GPU/e2e。叙述冲突必须保留双方来源和适用条件；不得将未公开论文写进公共仓库。
 
 复杂报告可用 [覆盖核查卡](coverage.md) 和 [最小契约示例](coverage.example.json)，运行 `python scripts/check_coverage.py report.json`。检查器只读报告，检查当前commit、证据/覆盖行引用、未决范围和执行记录，不读取或执行目标，也不证明证据内容及日志真实。`contract_valid` 不等于结论正确或覆盖完整；用 `source_evidence.py` 另核源码，独立审阅检查语义。已确认的跨模型/多入口结论不得覆盖 unresolved 行。
+
+知识需求与交接按 [知识接入契约](knowledge_access_workflow.md) 执行；保留实际查询/前提核对证据及完整 knowledge_refs，无需求时注明原因。

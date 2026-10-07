@@ -27,3 +27,5 @@ T23 增量：`knowledge/entries/math.linear-system-stability.*` 等5条、`agent
 |---|---|---|---|
 | MATH-11 | `knowledge/entries/math.eigenspace-gap-perturbation.*`, `docs/knowledge_learning/2026-10-07-subspace/verify.py` | 主 AI/知识维护者 → 建模 Skill/科学验收 | 谱隙、投影打分、物理模态、采样边界及近期原文审查；有限验证非模型收益 |
 | MATH-12 | `docs/knowledge_learning/2026-10-07-subspace/report.md`, `tests.json`, `retrieval.json`, `publication.json` | 主 AI/现有eval与sync脚本 → 用户/下轮维护者/独立插件消费者 | 程序与结构检索验收、版本固定及main发布读回 |
+| KB-ACCESS-01/02 | `workflows/knowledge_access_workflow.md`, `agent_runtime/knowledge.py::check_handoff_knowledge`, `agent_runtime/communication.py` | 主 AI/知识生产角色 → 可信消费者 | 按需工具入口、适用性记录、知识引用随通信交接校验 |
+| KB-ACCESS-03 | `docs/knowledge_access_validation/`, `tests/test_knowledge_handoff.py` | 独立模型角色/程序测试 → 主 AI验收 | 真实知识使用与交接证据、拒收边界和调度读回 |

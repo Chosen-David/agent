@@ -10,3 +10,5 @@ description: "只读理解代码库、追踪真实调用链与数据流，核查
 用本技能的 [源码证据脚本](scripts/source_evidence.py) 可固定 Git 片段；必须另行判断语义、可达条件与运行证据。尊重用户只读范围，输出放目标仓库外；修改建议交用户或已获授权的实现任务。
 
 跨入口、tensor或模型机制问题按需读 [覆盖核查卡](references/coverage.md)，避免遗漏消费者和跨模型泛化；简单定位不加载。
+
+任务开始及接收交接时执行 [知识接入契约](references/knowledge_access_workflow.md)：定位实际语料/工具，按需检索并核对前提；传递真实 knowledge_refs，缺库或过期不可冒充已调用。

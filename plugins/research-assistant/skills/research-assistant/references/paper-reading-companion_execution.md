@@ -11,3 +11,5 @@
 3. 维护当前页、已讨论问题、解释卡片和未解决项；用户切到概念讲解后能返回原锚点。更换 PDF 后拒绝无定位复用旧 notes。HTML 生成不是模型服务启动，离线页面明确复制上下文回聊天；不把已展示页当全部已读。
 
 复杂交接附实际输入版本、产物路径、已执行检查、限制与下一负责人。外部后端发现不等于可运行或已授权；没有后端时用当前工具完成有界任务。
+
+知识需求与交接按 [知识接入契约](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/paper-reading-companion/references/knowledge_access_workflow.md) 执行；保留实际查询/前提核对证据及完整 knowledge_refs，无需求时注明原因。

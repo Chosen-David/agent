@@ -36,3 +36,5 @@ python scripts/knowledge.py --root assets/knowledge related math.topk-margin
 英文词形变化（如 residual/residuals）、反复查询或跨条目推导优先使用索引。索引采用 SQLite Porter 词干处理；文件后备仅精确词法，不把一次无命中当成库内不存在知识。`related <id>` 同时返回出边和入边，按 direction 区分：新推论可反向指向旧定理而不改写旧版本。读取相关项时仍核对其自身假设。工具升级会检查 engine_version，必要时自动全量重建索引，不能仅依据语料未变就复用旧分词索引。
 
 多条知识共同推导时可用 `context '<结构查询>' --index <索引路径> --max-entries 8 --max-chars 20000` 获取有预算的全文与完整前提。默认最多 3 个检索候选并补一跳关联；查看 retrieved_ids、selection_reason、skipped 和 status，不把 related 当直接命中、不把 partial 当完整证据。过大前提组会整体跳过，需缩小问题/分阶段读取。此命令减少手工拼接，不替代逐条适用性判断。
+
+任务开始及接收交接时执行 [知识接入契约](references/knowledge_access_workflow.md)：定位实际语料/工具，按需检索并核对前提；传递真实 knowledge_refs，缺库或过期不可冒充已调用。

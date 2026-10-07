@@ -29,3 +29,5 @@ description: "兼容论文作图入口：按证据与表达目的路由到论文
 论文架构图任务衔接 [范文图示学习与协作](references/paper_exemplar_learning.md) 第 7 节：读取实际原图分析和 visual-design-brief，与 reader 真实协作选方案；原创实现，科学准确与视觉设计分别验收。
 
 论文数据图制作/重设计先读 [数据图范文学习](references/data_visualization_learning.md)：实际读相关原图，形成 data-visual-design-brief，再交 research-data-visualization 实施；科学保真与视觉设计分别验收。当前十篇任务复用既有语料，普通独立 plot 按任务适配。
+
+任务开始及接收交接时执行 [知识接入契约](references/knowledge_access_workflow.md)：定位实际语料/工具，按需检索并核对前提；传递真实 knowledge_refs，缺库或过期不可冒充已调用。

@@ -1,0 +1,113 @@
+{
+  "commands": [
+    {
+      "command": [
+        "python",
+        "-m",
+        "agent_runtime.communication",
+        "--db",
+        ".agent-runs/knowledge-access-live/mail.sqlite",
+        "--plan",
+        "docs/knowledge_access_validation/live/plan.json",
+        "--root",
+        ".",
+        "consume",
+        "research-review",
+        "2",
+        "--request",
+        "docs/knowledge_access_validation/live/request.json"
+      ],
+      "returncode": 0,
+      "stdout": "consumed-handoff-v2.json"
+    },
+    {
+      "command": [
+        "python",
+        "docs/knowledge_access_validation/live/producer/verify.py"
+      ],
+      "returncode": 0,
+      "stdout": "producer-replay-v2.json",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "agent_runtime.knowledge",
+        "--root",
+        "knowledge",
+        "check-refs",
+        "docs/knowledge_access_validation/live/producer/knowledge-use.json"
+      ],
+      "returncode": 0,
+      "stdout": "producer-refs-v2.json",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "docs/knowledge_access_validation/live/reviewer/independent_verify.py"
+      ],
+      "returncode": 0,
+      "stdout": "independent-output-v2.json",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "agent_runtime.knowledge",
+        "--root",
+        "knowledge",
+        "show",
+        "math.cauchy-schwarz"
+      ],
+      "returncode": 0,
+      "stdout": "read-math.cauchy-schwarz-v2.json",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "agent_runtime.knowledge",
+        "--root",
+        "knowledge",
+        "show",
+        "math.score-difference-bound"
+      ],
+      "returncode": 0,
+      "stdout": "read-math.score-difference-bound-v2.json",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-m",
+        "agent_runtime.knowledge",
+        "--root",
+        "knowledge",
+        "show",
+        "math.topk-margin"
+      ],
+      "returncode": 0,
+      "stdout": "read-math.topk-margin-v2.json",
+      "stderr": ""
+    },
+    {
+      "command": "python -m agent_runtime.knowledge --root knowledge check-refs docs/knowledge_access_validation/live/reviewer/knowledge-use-v2.json",
+      "returncode": 0,
+      "stdout": "check-refs-v2.json"
+    },
+    {
+      "command": "python -m agent_runtime.communication --db .agent-runs/knowledge-access-live/mail.sqlite --plan docs/knowledge_access_validation/live/plan.json --root . ack research-review 2 docs/knowledge_access_validation/live/reviewer/receipt-request-v2.json",
+      "returncode": 0,
+      "stdout": "ack-output-v2.json"
+    },
+    {
+      "command": "python -m agent_runtime.communication --db .agent-runs/knowledge-access-live/mail.sqlite --plan docs/knowledge_access_validation/live/plan.json --root . status",
+      "returncode": 0,
+      "stdout": "receipt-readback-v2.json"
+    }
+  ]
+}

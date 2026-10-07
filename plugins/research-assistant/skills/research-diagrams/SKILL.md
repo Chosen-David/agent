@@ -27,3 +27,5 @@ description: "根据方法、论文、代码或已确认关系绘制精美准确
 单独调用不增加权限；携带主 AI 当前决策、约束和已授权范围，重大接口/分析/结构改变回到对齐，不以切换角色绕过门禁。需要其他角色时交回主 AI；没有独立 Agent 能力就顺序执行。
 
 论文架构图任务衔接 [范文图示学习与协作](references/paper_exemplar_learning.md) 第 7 节：读取实际原图分析和 visual-design-brief，与 reader 真实协作选方案；原创实现，科学准确与视觉设计分别验收。
+
+任务开始及接收交接时执行 [知识接入契约](references/knowledge_access_workflow.md)：定位实际语料/工具，按需检索并核对前提；传递真实 knowledge_refs，缺库或过期不可冒充已调用。

@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "id": "math.contraction-residual-certificate",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "收缩迭代的残差误差证书与不精确求解边界",
+  "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+  "aliases": [
+    "fixed point residual certificate",
+    "迭代 步长 很小 解误差 停止",
+    "噪声 求解 残差 为零 误差下限",
+    "隐式积分 稳定 求解器 发散",
+    "谱半径 每步 误差 增长 nonnormal"
+  ],
+  "domains": [
+    "numerical-analysis",
+    "optimization",
+    "physics"
+  ],
+  "structures": [
+    "fixed-point",
+    "residual-error-bound",
+    "inexact-oracle",
+    "nonnormal-iteration"
+  ],
+  "assumptions": [
+    "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+    "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+    "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+  ],
+  "sources": [
+    {
+      "url": "https://www.voutsadakis.com/TEACH/LECTURES/FUNCTIONAL/Chapter5.pdf",
+      "locator": "Introduction to Functional Analysis, May 2023, pp7–11; iteration-error corollary p10 (PDF index9)",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://www.cs.cornell.edu/courses/cs4220/2026sp/lec/2026-03-27.html",
+      "locator": "David Bindel, CS4220, 2026-03-27, fixed-point convergence and linearization; derivative criterion needs convex/segment domain",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+      "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.linear-system-stability"
+    },
+    {
+      "type": "related",
+      "id": "physics.dimensionless"
+    }
+  ],
+  "content": "# 收缩迭代的残差误差证书\n\n稳定ID：`math.contraction-residual-certificate`，版本1。经典定理与本文推导分开标注；知识可发布，生产停止策略未验证。\n\n## 对象、条件与经典结论\n\n非空完备度量空间 (X,d)，自映射 G:X→X，存在统一 q∈[0,1) 使 d(Gx,Gy)≤q d(x,y)。则存在唯一不动点 x*，精确迭代 x_(k+1)=Gx_k 收敛。误差 ≤ q^k d(x_1,x_0)/(1−q)，k≥0；对 k≥1，误差 ≤ q d(x_k,x_(k−1))/(1−q)。q=0 时G恒定，一步精确；零次上界直接使用残差公式，避免0^0记法。\n\n来源：Voutsadakis，Introduction to Functional Analysis，May2023，pp7–11，p10误差推论。Bindel CS4220，2026-03-27，固定点与线性化讲义。只读这些相关章节，不声称全教材审查。\n\n## 可复核证明与本条目推导\n\n经典证明：相邻距离≤q^k d(x_1,x_0)，有限尾和≤q^k d(x_1,x_0)/(1−q)，所以Cauchy；完备性给极限，自映射与Lipschitz连续给Gx*=x*。两个不动点距离≤q乘自身，故唯一。取尾和极限得先验界和后验界。\n\n本条目推导：任意x∈X的残差 r=d(x,Gx)，由 d(x,x*)≤r+q d(x,x*) 得当前误差≤r/(1−q)。精确新点y=Gx，误差≤qr/(1−q)。\n\n范数空间中的不精确oracle满足 ||G̃x−Gx||≤η，η≥0是已认证上界。计算残差 r̂=||x−G̃x||。当前误差≤(r̂+η)/(1−q)。返回y=G̃x时：先由 ||x−x*||≤r̂+||y−x*||，再由 ||y−x*||≤q||x−x*||+η，合并得到新点误差≤(q r̂+η)/(1−q)。它不同于当前点界。浮点计算r̂自身的不确定性应增加到r̂的上界，不能忽略。\n\n重复不精确更新在不变域中：e_k≤q^k e_0+η(1−q^k)/(1−q)，通过递推归纳；误差平台上界η/(1−q)不等于误差必达该值，也不证明随机oracle具有确定性η。\n\n## 正例、边界与误用\n\n1. Gx=.99x+.01，x*=1，x0=0。第一步.01小于.02但返回点误差.99；证书也为.99。达到.02误差需390步。小步长在q接近1时尤其误导。\n2. Gx=.9x+1，真解10；G̃x=Gx−.1，在x=9计算残差0，真实误差1，η=.1的证书为1。不能宣称.01精度。\n3. q=1时恒等映射有多个不动点，不可除以1−q。开域(0,∞)上的Gx=x/2不是完备域，没有域内不动点；[0,1]上的x/2+1不自映射，收缩不够。\n4. A=[[.5,10],[0,.5]]，谱半径.5，但无穷范数算子界10.5；e0=(0,1)→(10,.5)，误差增大。不能将谱半径代入当前范数的逐步界。自推导：加权范数max(|x1|/40,|x2|)诱导行界max(.5+10/40,.5)=.75，故可用q=.75；换回普通无穷范数必须乘40，上界可能很松。\n5. 几个观测比率不提供全局q。凸域上处处导数算子范数≤q可用线段积分证明Lipschitz；非凸域不能省略连线条件。先验证域不变再使用导数界。\n\n## 问题结构、迁移与拒用\n\n识别对象→指定域/范数→证明自映射与统一q→认证oracle误差→计算当前或返回点证书→按目标容差停止。少量检索本ID及需要的稳定性/量纲条目，不加载全库。缺任何条件则补证或拒用，不从轨迹估计硬证书。\n\n隐式Euler，物理方程 y′=−κy，κ单位1/s，步长h单位s。固定点 z=y_n−hκz，q=hκ无量纲；q=.5时上述证书适用，真解y_n/(1+q)。q=2时隐式Euler真解放大因子1/3仍稳定，但这一Picard求解器迭代发散。保留时间离散与求解器的精确方程关系；稳定积分方法不保证任意求解器收敛。耗散系统不要求此离散保持能量守恒。\n\nAgent数值工具在声明上述前提时可以提供解误差证书。文本反思、任务质量分数、token变化未定义同一确定映射与收缩范数，只有类比；不能据此修改主AI停止行为。本条目没有同模型预算A/B收益证据。\n\n## 前置、关系与验证等级\n\n前置：完备性、Cauchy序列、范数、几何级数。证明自足，无强制知识依赖。相关 math.linear-system-stability 区分渐近稳定与瞬态；physics.dimensionless 核对hκ。\n\nverify.py使用Fraction精确检查有限有理数案例、边界和迁移；不是一般定理的形式化证明。一般证明仅推导审查，无Lean；无真实模型检索/拒用验收。公开检索回归不是未见题，未执行题只保留为待测。\n",
+  "path": "entries/math.contraction-residual-certificate.json",
+  "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+  "knowledge_refs": [
+    {
+      "id": "math.contraction-residual-certificate",
+      "version": 1,
+      "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b"
+    }
+  ]
+}

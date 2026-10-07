@@ -29,3 +29,5 @@ description: "端到端代码实现与性能优化，适用于算法或系统实
 需要其他角色时把任务交回主 AI；可以用已安装的对应技能，缺失时按可用工具继续明确范围，不把上游仓库访问作为已有本地流程的前置条件。
 
 跨轮次任务、意图纠正或证据复用时读取 [项目记忆与纠错](references/project_memory_workflow.md)，交接当前意图与 memory_refs；旧结论失效后先核对依赖，再复用或重算。
+
+任务开始及接收交接时执行 [知识接入契约](references/knowledge_access_workflow.md)：定位实际语料/工具，按需检索并核对前提；传递真实 knowledge_refs，缺库或过期不可冒充已调用。

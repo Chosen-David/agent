@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "role": "research-review",
+  "task_id": "KB-LIVE-2",
+  "input_version": "synthetic-cooling-v1",
+  "task_refs": [
+    "KB-CROSS-01"
+  ],
+  "status": "used",
+  "decision": "EXECUTE",
+  "knowledge_root": "knowledge",
+  "knowledge_tool": "python -m agent_runtime.knowledge",
+  "corpus_snapshot": "813a60cbb251103f20a12cb3f1055cf378136791b87bada0cf1a40cf60635cb8",
+  "backend": "files-lexical-v1",
+  "queries": [
+    {
+      "query": "iteration temperature equilibrium step residual error stopping",
+      "output": "search.json",
+      "assessment": "No contraction entry in top 3; retained rather than silently claiming successful retrieval."
+    },
+    {
+      "query": "\u6536\u7f29 \u8fed\u4ee3 \u6b8b\u5dee \u4e0d\u52a8\u70b9 \u6e29\u5ea6",
+      "output": "search-refined.json",
+      "assessment": "Contraction certificate first; follow required ref and dimensionless relation for full reading."
+    }
+  ],
+  "commands_file": "commands.json",
+  "read_entries": [
+    {
+      "id": "math.contraction-residual-certificate",
+      "version": 1,
+      "requires": []
+    },
+    {
+      "id": "physics.dimensionless",
+      "version": 1,
+      "requires": []
+    }
+  ],
+  "knowledge_refs": [
+    {
+      "id": "math.contraction-residual-certificate",
+      "version": 1,
+      "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b"
+    },
+    {
+      "id": "physics.dimensionless",
+      "version": 1,
+      "sha256": "06d0c7f8b08727194bb340cae3dc9e31e2606e38a1b59a668b36430311f97dd3"
+    }
+  ],
+  "mapping": [
+    {
+      "source": "scalar temperature T",
+      "target": "state x in complete interval [20,36]",
+      "units": "Celsius coordinate; metric is temperature difference",
+      "status": "valid",
+      "evidence": "Affine increasing G maps endpoints to 20 and 32."
+    },
+    {
+      "source": "physical recurrence",
+      "target": "fixed contraction G with q=3/4",
+      "units": "q dimensionless, step index has no supplied seconds",
+      "status": "valid",
+      "evidence": "G(x)-G(y)=(3/4)(x-y) for every pair."
+    },
+    {
+      "source": "stopping difference",
+      "target": "old-state residual used to certify returned new state",
+      "units": "degrees Celsius difference",
+      "status": "valid",
+      "evidence": "Returned error = 3r exactly here; generic factor q/(1-q)."
+    },
+    {
+      "source": "temperature excess / 16 C",
+      "target": "dimensionless normalized state",
+      "status": "valid_limited_use",
+      "evidence": "Kelvin offset and Fahrenheit scaling checked; full Buckingham-Pi theorem not invoked."
+    },
+    {
+      "source": "three agent-disagreement reductions",
+      "target": "claimed global contraction",
+      "status": "rejected",
+      "evidence": "No specified full-state metric or uniform pairwise bound; explicit continuous fixed-map counterexample reproduces observations then rebounds."
+    }
+  ],
+  "assumptions": [
+    {
+      "name": "nonempty complete invariant domain",
+      "status": "satisfied",
+      "evidence": "Closed interval and exact endpoint mapping plus affine monotonicity."
+    },
+    {
+      "name": "uniform contraction",
+      "status": "satisfied",
+      "scope": "cooling only",
+      "evidence": "Exact algebraic difference identity, not finite trajectory ratios."
+    },
+    {
+      "name": "exact recurrence/no certified oracle error needed",
+      "status": "satisfied",
+      "evidence": "Trusted synthetic task specifies exact recurrence; rational computation."
+    },
+    {
+      "name": "returned T_(t+1)",
+      "status": "satisfied",
+      "evidence": "Trusted task and producer both use new point."
+    },
+    {
+      "name": "agent disagreement is a state residual and equilibrium is correctness",
+      "status": "unsupported",
+      "evidence": "Not defined in trusted task; transfer refused."
+    }
+  ],
+  "adoption_decisions": [
+    {
+      "id": "math.contraction-residual-certificate",
+      "decision": "adopt for cooling, refuse for unproved discussion mapping"
+    },
+    {
+      "id": "physics.dimensionless",
+      "decision": "adopt unit-consistency and omitted-variable caution only; no monomial/nullspace theorem used"
+    },
+    {
+      "id": "math.linear-system-stability",
+      "decision": "reject from search summary; no matrix perturbation problem required"
+    },
+    {
+      "id": "math.alpha-spending-stopping",
+      "decision": "reject from summary; no probabilistic model permits a universal deterministic extrapolation"
+    },
+    {
+      "id": "math.descent-lyapunov-certificate",
+      "decision": "reject from summary as unnecessary for this exact affine certificate"
+    }
+  ],
+  "verification_artifacts": [
+    "independent_check.py",
+    "independent-output.json",
+    "review.md"
+  ],
+  "limitations": [
+    "Local knowledge source metadata only, no network verification.",
+    "Synthetic cooling model and synthetic logical counterexample, not real physics or real agent observation.",
+    "Finite checks supplement algebra, no formal prover.",
+    "No quality/performance or deployment claim."
+  ]
+}

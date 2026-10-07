@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "snapshot": "813a60cbb251103f20a12cb3f1055cf378136791b87bada0cf1a40cf60635cb8",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.contraction-residual-certificate",
+      "version": 1,
+      "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+      "title": "收缩迭代的残差误差证书与不精确求解边界",
+      "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+      "status": "published",
+      "assumptions": [
+        "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+        "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+        "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+          "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "收缩",
+            "残差",
+            "迭代"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "残差",
+            "迭代"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "收缩",
+            "残差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "不动",
+            "动点",
+            "收缩",
+            "残差",
+            "迭代"
+          ]
+        }
+      ],
+      "score": 36
+    },
+    {
+      "id": "math.linear-system-stability",
+      "version": 1,
+      "sha256": "caacac2221436b3cd671b9a307f8598e8481af537400839a430f5558bd04b4a4",
+      "title": "条件数、残差与有限扰动误差界",
+      "summary": "小残差不保证小解误差；用条件数与显式扰动条件评估线性求解可靠性。",
+      "status": "published",
+      "assumptions": [
+        "A 为可逆实方阵，b 非零，使用相容诱导矩阵范数",
+        "有限扰动公式要求 κ(A)‖E‖/‖A‖<1；不能把一阶近似当任意扰动保证"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 的明确推导与反例；非形式化证明",
+          "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "残差"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "残差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "残差"
+          ]
+        }
+      ],
+      "score": 9
+    },
+    {
+      "id": "math.descent-lyapunov-certificate",
+      "version": 1,
+      "sha256": "bc544371ae176fca157dcb900c31780de1f47cbab1d128210e14dc578855691c",
+      "title": "下降证书、驻点与不变集的收敛边界",
+      "summary": "可量化下降加下界控制耗散总量；光滑梯度步可保证梯度趋零，却不自动给全序列或全局最优。连续物理能量须检查最大不变零耗散集，动量方法须扩展状态。",
+      "status": "published",
+      "assumptions": [
+        "离散下降：V(x_(k+1))≤V(x_k)−W(x_k)，W≥0，轨迹上V有有限下界",
+        "GD具体界：f:R^n→R可微、欧氏梯度全局L-Lipschitz（L>0），f有有限下界；精确梯度、固定0<alpha<2/L",
+        "离散聚点结论另外需要紧致正不变域、连续更新和连续W；不保证全序列收敛",
+        "连续LaSalle：开放域中局部Lipschitz自治向量场，紧致正不变集合，V为C1且沿轨迹导数非正；结论为到最大不变零导数集的距离趋零",
+        "不能将连续能量导数直接当数值离散每步下降，不能将模型质量分数当已证明V"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-descent/verify.py",
+          "docs/knowledge_learning/2026-10-07-descent/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "收缩",
+            "残差",
+            "迭代"
+          ]
+        }
+      ],
+      "score": 3
+    }
+  ]
+}

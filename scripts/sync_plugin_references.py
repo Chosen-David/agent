@@ -8,6 +8,7 @@ The figure family's complete standalone snapshots retain exact source bytes.
 from __future__ import annotations
 
 import argparse
+import json
 import posixpath
 import re
 from pathlib import Path
@@ -148,8 +149,13 @@ for source_path in sorted((ROOT / 'knowledge').rglob('*')):
         MAPPINGS[source] = [KNOWLEDGE_SKILL + '/assets/' + source]
         RAW_COPY_SOURCES.add(source)
 
+# One access contract, bundled locally for every registered role.
+MAPPINGS['workflows/knowledge_access_workflow.md'] = [
+    str(Path(role['skill']).parent / 'references/knowledge_access_workflow.md')
+    for role in json.loads((ROOT / 'config/role_registry.json').read_text())['roles']
+]
+
 # The coordinator bundles role supplements for standalone/offline dispatch.
-import json
 for role in json.loads((ROOT / "config/role_registry.json").read_text())["roles"]:
     if role["id"] not in {"research-assistant", "travel-planner"}:
         MAPPINGS[role["execution"]] = [

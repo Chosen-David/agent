@@ -27,3 +27,5 @@ description: "将真实研究数据、可追溯汇总表、仿真输出或明确
 单独调用不增加权限；携带主 AI 当前决策、约束和已授权范围，重大接口/分析/结构改变回到对齐，不以切换角色绕过门禁。需要其他角色时交回主 AI；没有独立 Agent 能力就顺序执行。
 
 论文数据图制作/重设计先读 [数据图范文学习](references/data_visualization_learning.md)：实际读相关原图，形成 data-visual-design-brief，再交 research-data-visualization 实施；科学保真与视觉设计分别验收。当前十篇任务复用既有语料，普通独立 plot 按任务适配。
+
+任务开始及接收交接时执行 [知识接入契约](references/knowledge_access_workflow.md)：定位实际语料/工具，按需检索并核对前提；传递真实 knowledge_refs，缺库或过期不可冒充已调用。

@@ -1,0 +1,30 @@
+{
+  "findings": [
+    {
+      "finding_id": "REV-F001",
+      "severity": "minor",
+      "confidence": "high",
+      "category": "provenance_and_assumption_reporting",
+      "assertion_type": "confirmed_reporting_gap",
+      "status": "open",
+      "location": [
+        "producer/knowledge-use.json input_version and assumptions",
+        "producer/answer.md assumptions table"
+      ],
+      "evidence": [
+        "Trusted request/handoff input_version is synthetic-dot-products-v1; producer knowledge-use input_version is synthetic-dot-product-task-v1.",
+        "Trusted task does not explicitly specify Euclidean/2-norm, n>=2 or k range; producer labels these as given explicit constraints."
+      ],
+      "impact": "Mathematics is correct conditionally, but current record overstates alignment and explicit applicability to the trusted input.",
+      "repair_conditions": [
+        "Preserve original evidence and supply an explicit version/task mapping to KB-LIVE-1 and synthetic-dot-products-v1, or a newly versioned corrected record.",
+        "State fixed-query/common-dimensional Euclidean norms as the interpretation used; distinguish implicitly necessary finite nontrivial top-k boundary from literally supplied constraints.",
+        "Publish a new immutable handoff including the resolution; independent reviewer rechecks it."
+      ],
+      "not_findings": [
+        "Whole-corpus snapshot differs between producer and reviewer, but all three retrieved dependency refs agree; no stale required entry established.",
+        "Producer runtime reproduction paths are not reviewed as present or absent; supplied copied script was read and reviewer script independently executed."
+      ]
+    }
+  ]
+}

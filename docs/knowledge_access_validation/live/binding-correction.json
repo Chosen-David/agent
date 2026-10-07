@@ -1,0 +1,30 @@
+{
+  "finding_id": "REV-F001",
+  "owner": "main AI / dispatch and packaging",
+  "raw_producer_input_version": "synthetic-dot-product-task-v1",
+  "consumer_input_version": "synthetic-dot-products-v1",
+  "raw_producer_task_id": "knowledge-access-live/producer",
+  "consumer_task_id": "KB-LIVE-1",
+  "mapping_status": "host-confirmed same input; no scientific input change",
+  "reason": "Producer chose its label because the initial host dispatch omitted canonical task/version metadata. Original request and producer output remain immutable. dispatch-source.json preserves the actual detailed problem; task.json is an abbreviated summary, not the full assumption evidence.",
+  "assumptions": {
+    "explicit_original_dispatch": [
+      "Euclidean 2-norm",
+      "n>=2",
+      "1<=k<n",
+      "real dot products",
+      "per-vector bound 0.02",
+      "query norm bound 3",
+      "gap 0.15"
+    ],
+    "adopted_interpretations": [
+      "same fixed query",
+      "arithmetic mean of individual vector-error norms"
+    ]
+  },
+  "archival_reproduction": [
+    "python docs/knowledge_access_validation/live/producer/verify.py",
+    "python -m agent_runtime.knowledge --root knowledge check-refs docs/knowledge_access_validation/live/producer/knowledge-use.json"
+  ],
+  "future_dispatch_rule": "Provide canonical task_id/input_version and full constraints before dispatch; use archive-resolvable reproduction paths."
+}

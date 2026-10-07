@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "id": "math.topk-margin",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "有界分数误差下的 Top-k 稳定性",
+  "summary": "用边界分数间隔判断近似排序能否保留 Top-k 集合。",
+  "aliases": [
+    "排序会不会变",
+    "ranking stability",
+    "top-k",
+    "候选筛选",
+    "近似分数",
+    "间隔"
+  ],
+  "domains": [
+    "linear-algebra",
+    "optimization"
+  ],
+  "structures": [
+    "ranking",
+    "error-bound"
+  ],
+  "assumptions": [
+    "有限 n 个实分数，1≤k<n，原分数降序排列",
+    "每个分数均满足绝对误差≤ε，而不是仅平均误差",
+    "边界间隔 Δ=s_(k)−s_(k+1) 严格大于 2ε"
+  ],
+  "sources": [
+    {
+      "url": "https://people.math.wisc.edu/~gemeyer/math340/Notes3.html",
+      "locator": "Theorem 5.3 仅支持内积误差上界；Top-k 命题为本条显式推导",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "同名 Markdown 中的命题、推导与边界；非形式化证明",
+      "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.low-rank-svd"
+    }
+  ],
+  "content": "# Top-k 的充分条件\n\n## 命题与推导\n若每项 |s_i−s_hat_i|≤ε 且 Δ=s_(k)−s_(k+1)>2ε，则 Top-k 集合不变。\n对任何原集合内 i 与集合外 j，\ns_hat_i−s_hat_j ≥ s_i−s_j−2ε ≥ Δ−2ε > 0。\n这保证集合，不保证集合内部顺序。本命题是本库给出的推导，不能冒称来源原文定理。\n\n## 实例\n原分数 (0.9,0.7,0.2)，k=2，ε=0.1，Δ=0.5>0.2，集合稳定。\n\n## 反例\n(0.501,0.500)，k=1，ε=0.001；扰动为 (−0.001,+0.001) 后变成\n(0.500,0.501)，排序翻转。Δ=2ε 时也可能出现并列，不能省去严格不等号。\n条件不满足只能说“此条件无法保证”，不能断言必然翻转。\n\n## 与矩阵近似的连接\nK 的每列为一个键，s=Kᵀq，固定 q；若 ‖K−K_hat‖₂≤δ，则\n每项分数误差≤‖q‖₂δ，可令 ε=‖q‖₂δ 再检查间隔。\n观测的平均误差、采样最大误差都不自动成为全体分数的保证。\n",
+  "path": "entries/math.topk-margin.json",
+  "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792",
+  "knowledge_refs": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c"
+    },
+    {
+      "id": "math.topk-margin",
+      "version": 1,
+      "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792"
+    }
+  ]
+}

@@ -202,6 +202,8 @@ class Mailbox:
             errors.append('handoff producer/run mismatch')
         if errors:
             raise ValueError('; '.join(errors))
+        from .knowledge import check_handoff_knowledge
+        check_handoff_knowledge(self.root, record, request)
         return record
 
 

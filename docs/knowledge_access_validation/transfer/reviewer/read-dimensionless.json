@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "physics.dimensionless",
+  "version": 1,
+  "status": "published",
+  "kind": "method",
+  "title": "量纲矩阵与无量纲化",
+  "summary": "以量纲矩阵零空间构造无量纲组，检查物理建模的变量完整性。",
+  "aliases": [
+    "Buckingham Pi",
+    "量纲分析",
+    "无量纲数",
+    "dimension analysis",
+    "缩放规律"
+  ],
+  "domains": [
+    "physics",
+    "linear-algebra"
+  ],
+  "structures": [
+    "dimensional-analysis",
+    "nullspace"
+  ],
+  "assumptions": [
+    "物理关系在单位变换下保持一致，变量及相关参数已明确",
+    "量纲矩阵列对应变量，秩 r；单项式构造在变量为正的区域讨论"
+  ],
+  "sources": [
+    {
+      "url": "https://ocw.mit.edu/courses/2-25-advanced-fluid-mechanics-fall-2013/c0a4521f55e9191d557c167e99e97469_MIT2_25F13_The_Buckingham.pdf",
+      "locator": "Buckingham Pi theorem, pp.1–2；单摆示例为自拟",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "同名 Markdown 中的命题、推导与边界；非形式化证明",
+      "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "content": "# 量纲矩阵建模\n\n## 方法\n对 n 个变量，将各基本量纲的指数列成矩阵 D。单项式 Π=∏x_j^a_j 无量纲，\n等价于 Da=0。由秩-零度关系，零空间维数为 n−rank(D)。\n这解释无量纲组的构造；物理关系能否仅用所列变量描述仍需单独验证。\n\n## 实例\n只考虑单摆周期 T、长度 l、重力加速度 g，量纲分别为时间、长度、长度/时间²。\n可构造 Π=T√(g/l)，因此模型只给出 T=C√(l/g)，无法由量纲分析求 C。\n若振幅影响不能忽略，则无量纲角度也是变量，C 应成为角度的函数。\n\n## 反例与验证\nT=l/g 的量纲是时间²，不是周期。T=C√(l/g) 虽然量纲正确，仍可能遗漏阻尼等变量。\n单位一致是必要检查，不是物理正确性的充分证据。变换单位后复算，随后用实验验证模型。\n",
+  "path": "entries/physics.dimensionless.json",
+  "sha256": "06d0c7f8b08727194bb340cae3dc9e31e2606e38a1b59a668b36430311f97dd3",
+  "knowledge_refs": [
+    {
+      "id": "physics.dimensionless",
+      "version": 1,
+      "sha256": "06d0c7f8b08727194bb340cae3dc9e31e2606e38a1b59a668b36430311f97dd3"
+    }
+  ]
+}

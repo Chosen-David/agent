@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "run_id": "knowledge-access-live",
+  "role": "model-with-knowledge",
+  "input_version": "synthetic-dot-products-v1",
+  "status": "completed",
+  "limitations": [
+    "Synthetic task; scientific review pending; producer files copied byte-for-byte by host"
+  ],
+  "knowledge_refs": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c"
+    },
+    {
+      "id": "math.score-difference-bound",
+      "version": 1,
+      "sha256": "32f15976d97e494614c2ccef88a7d832f107bdce0747c8373969964435856209"
+    },
+    {
+      "id": "math.topk-margin",
+      "version": 1,
+      "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "answer",
+      "path": "docs/knowledge_access_validation/live/producer/answer.md",
+      "sha256": "f27fbc1b497e30d32a19f6c150019f8857b0760ca6b76091abf1608c1889b508"
+    },
+    {
+      "id": "check-refs",
+      "path": "docs/knowledge_access_validation/live/producer/check-refs.json",
+      "sha256": "0646685f1805b338897c69ba37d35be9dcbf965193f282ea20832140286d59c2"
+    },
+    {
+      "id": "commands",
+      "path": "docs/knowledge_access_validation/live/producer/commands.json",
+      "sha256": "03eddb37382d8236782fb46b01ee542d56c8247f9b4b766e765d37bf186dac13"
+    },
+    {
+      "id": "knowledge-use",
+      "path": "docs/knowledge_access_validation/live/producer/knowledge-use.json",
+      "sha256": "581f9b9963026a237c8fab115888822037767235f0d4b293251a8e7e88b8abf7"
+    },
+    {
+      "id": "read-cauchy-schwarz",
+      "path": "docs/knowledge_access_validation/live/producer/read-cauchy-schwarz.json",
+      "sha256": "0e84a1fdc22226c1b8eb762572f621ad6b3b5833eb7a3badbd8942bdb4ee17ef"
+    },
+    {
+      "id": "read-score-difference-bound",
+      "path": "docs/knowledge_access_validation/live/producer/read-score-difference-bound.json",
+      "sha256": "48c1feff0b77199f6d4fa5f81dde8dcd7be2924c4160ec996f59c313ca19a809"
+    },
+    {
+      "id": "read-topk-margin",
+      "path": "docs/knowledge_access_validation/live/producer/read-topk-margin.json",
+      "sha256": "3dcb96228eaed6e461c270363559cc0c4c6883e83fcf8e6a3d7fe1e0f39d9e75"
+    },
+    {
+      "id": "search-topk",
+      "path": "docs/knowledge_access_validation/live/producer/search-topk.json",
+      "sha256": "6cde5243f7428c99e11c1039b0ee1d73094be1e97231de43d0816568d18bcd62"
+    },
+    {
+      "id": "search",
+      "path": "docs/knowledge_access_validation/live/producer/search.json",
+      "sha256": "bb7837d30fd1ffcfbe8871f7e0a4b5a77ba9402ad31bba339c75d6a2759199e3"
+    },
+    {
+      "id": "verification-output",
+      "path": "docs/knowledge_access_validation/live/producer/verification-output.json",
+      "sha256": "7935c5633173264c8b2e956bee591b0fd035a3917b97baf4a49ac2bc7259b964"
+    },
+    {
+      "id": "verify",
+      "path": "docs/knowledge_access_validation/live/producer/verify.py",
+      "sha256": "ac972420a3f37d5f3a759ff9edb122280ad5e2ed6452d795904bcd1677df1c3c"
+    }
+  ],
+  "checks": [
+    {
+      "criterion": "Actual retrieval and executed rational checks present",
+      "status": "pass",
+      "artifact_ids": [
+        "knowledge-use",
+        "verification-output"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "KB-LIVE-1",
+      "status": "done",
+      "evidence": [
+        "answer",
+        "verification-output"
+      ],
+      "depends_on": []
+    }
+  ]
+}

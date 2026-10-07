@@ -1,0 +1,47 @@
+{
+  "tasks": [
+    {
+      "task_id": "REV-T001",
+      "finding_ids": [
+        "REV-F001"
+      ],
+      "stage": "verify",
+      "depends_on": [],
+      "owner": "research-review",
+      "status": "done",
+      "outcome": "confirmed_reporting_gap",
+      "evidence": [
+        "review.md",
+        "consumed-handoff.json"
+      ]
+    },
+    {
+      "task_id": "REV-T002",
+      "finding_ids": [
+        "REV-F001"
+      ],
+      "stage": "resolve",
+      "depends_on": [
+        "REV-T001"
+      ],
+      "owner": "root",
+      "status": "todo",
+      "action": "Preserve original evidence, provide input-version/task mapping and clarify adopted assumptions; publish new immutable handoff.",
+      "done_when": "Mapping and assumptions clarification are included as actual artifacts."
+    },
+    {
+      "task_id": "REV-T003",
+      "finding_ids": [
+        "REV-F001"
+      ],
+      "stage": "recheck",
+      "depends_on": [
+        "REV-T002"
+      ],
+      "owner": "research-review",
+      "status": "pending",
+      "action": "Consume new handoff through trusted consumer request, verify closure without rewriting seq1 receipt.",
+      "done_when": "REV-F001 conditions satisfied and actual receipt recorded."
+    }
+  ]
+}

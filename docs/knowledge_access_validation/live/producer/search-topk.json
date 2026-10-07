@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "snapshot": "dd4b298b81ff2ed3fe04de930456a86d58b33946590e3276c8c4c95686e237c8",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.score-difference-bound",
+      "version": 1,
+      "sha256": "32f15976d97e494614c2ccef88a7d832f107bdce0747c8373969964435856209",
+      "title": "利用整体二范数误差收紧排序间隔条件",
+      "summary": "整体误差约束可把逐项保守的 2ε 条件收紧为 √2η，避免遗漏相关误差结构。",
+      "status": "published",
+      "assumptions": [
+        "分数向量误差满足整体二范数界 ‖s−s_hat‖₂≤η，k 在1到n−1间",
+        "矩阵形式为固定实查询 s=Kᵀq，已知 ‖q‖₂≤Q、‖K−K_hat‖₂≤δ",
+        "若只知道逐分数误差≤ε而无整体界，不可用 √2ε 替代2ε"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 的明确推导与反例；非形式化证明",
+          "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "margin",
+            "score"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "k"
+          ]
+        }
+      ],
+      "score": 11
+    },
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c",
+      "title": "Cauchy–Schwarz 与内积分数误差",
+      "summary": "由向量误差界推出查询与键的内积分数误差界。",
+      "status": "published",
+      "assumptions": [
+        "实向量 q、k、k_hat 维数相同，使用欧氏内积和二范数",
+        "已知键向量误差界；查询变化时必须另外计入误差"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 中的命题、推导与边界；非形式化证明",
+          "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "k"
+          ]
+        }
+      ],
+      "score": 1
+    },
+    {
+      "id": "math.contraction-residual-certificate",
+      "version": 1,
+      "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+      "title": "收缩迭代的残差误差证书与不精确求解边界",
+      "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+      "status": "published",
+      "assumptions": [
+        "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+        "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+        "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+          "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "k"
+          ]
+        }
+      ],
+      "score": 1
+    }
+  ]
+}

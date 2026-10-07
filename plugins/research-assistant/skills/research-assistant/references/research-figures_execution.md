@@ -7,3 +7,5 @@
 混合图为每个panel记录输入版本、证据类型、可编辑主源和完成状态。实测/合成/理论/示意分开标注；数据panel必须保留退化和缺测，示意panel不能虚构节点、箭头或性能。缺一个panel的数据只阻塞该panel，不阻塞证据齐备的示意。
 
 完成单panel后实际组合并重新打开整图，在目标尺寸核对字号、单位、图例、颜色身份、边界、箭头和caption。单panel已通过不能替代整图验收；保留各源和拼版源，避免截图矢量图。以产物与来源检查为证据，不把缺失的外部工具称为已调用。
+
+知识需求与交接按 [知识接入契约](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-figures/references/knowledge_access_workflow.md) 执行；保留实际查询/前提核对证据及完整 knowledge_refs，无需求时注明原因。

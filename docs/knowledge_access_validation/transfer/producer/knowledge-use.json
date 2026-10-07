@@ -1,0 +1,261 @@
+{
+  "schema_version": 1,
+  "task_id": "KB-LIVE-2",
+  "input_version": "synthetic-cooling-v1",
+  "task_refs": [
+    "KB-CROSS-01"
+  ],
+  "status": "used",
+  "decision": "EXECUTE",
+  "knowledge_root": "knowledge",
+  "actual_corpus_path": "/workspace/scratch/4f9639d1bad2/agent/knowledge",
+  "knowledge_tool": "python -m agent_runtime.knowledge",
+  "corpus_snapshot": "813a60cbb251103f20a12cb3f1055cf378136791b87bada0cf1a40cf60635cb8",
+  "backend": "files-lexical-v1",
+  "queries": [
+    {
+      "query": "迭代 停止 步长 误差 不动点",
+      "results": "search-iteration.json",
+      "candidate_limit": 3
+    }
+  ],
+  "read_entries": [
+    {
+      "id": "math.contraction-residual-certificate",
+      "read_artifact": "read-contraction.json",
+      "requires": [],
+      "sources": [
+        {
+          "url": "https://www.voutsadakis.com/TEACH/LECTURES/FUNCTIONAL/Chapter5.pdf",
+          "locator": "Introduction to Functional Analysis, May 2023, pp7–11; iteration-error corollary p10 (PDF index9)",
+          "accessed": "2026-10-07"
+        },
+        {
+          "url": "https://www.cs.cornell.edu/courses/cs4220/2026sp/lec/2026-03-27.html",
+          "locator": "David Bindel, CS4220, 2026-03-27, fixed-point convergence and linearization; derivative criterion needs convex/segment domain",
+          "accessed": "2026-10-07"
+        }
+      ]
+    },
+    {
+      "id": "physics.dimensionless",
+      "read_artifact": "read-dimensionless.json",
+      "requires": [],
+      "sources": [
+        {
+          "url": "https://ocw.mit.edu/courses/2-25-advanced-fluid-mechanics-fall-2013/c0a4521f55e9191d557c167e99e97469_MIT2_25F13_The_Buckingham.pdf",
+          "locator": "Buckingham Pi theorem, pp.1–2；单摆示例为自拟",
+          "accessed": "2026-10-06"
+        }
+      ]
+    }
+  ],
+  "knowledge_refs": [
+    {
+      "id": "math.contraction-residual-certificate",
+      "version": 1,
+      "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b"
+    },
+    {
+      "id": "physics.dimensionless",
+      "version": 1,
+      "sha256": "06d0c7f8b08727194bb340cae3dc9e31e2606e38a1b59a668b36430311f97dd3"
+    }
+  ],
+  "commands_file": "commands.json",
+  "candidate_perspectives": [
+    {
+      "discipline": "numerical analysis",
+      "model": "contractive fixed-point iteration",
+      "decision": "adopt strict mathematical mapping",
+      "reason": "Exact affine update provides complete invariant domain and provable global factor; posterior certificate addresses returned point"
+    },
+    {
+      "discipline": "physics / dimensional analysis",
+      "model": "temperature difference scaling and unit consistency",
+      "decision": "adopt consistency check only",
+      "reason": "Differences are temperature quantities, 0.75 and 3 are dimensionless; dimensional consistency alone gives neither convergence nor physical validity"
+    },
+    {
+      "discipline": "statistics",
+      "model": "infer stopping guarantee from sampled recent trends",
+      "decision": "reject deterministic guarantee",
+      "reason": "No stochastic population model, independence or uniform law is provided; a finite prefix admits contradictory futures"
+    }
+  ],
+  "mapping": [
+    {
+      "source_object": "T_t",
+      "target_object": "x_t in X=[20,36]",
+      "units": "degrees Celsius coordinate",
+      "structure": "scalar state",
+      "classification": "exact for supplied model",
+      "evidence": "Given initial T_0=36; G(X)=[20,32] subset X",
+      "lost_factors": "Spatial gradients and unmodeled thermal inputs",
+      "minimal_check": "Algebraic interval mapping plus exact trajectory checks"
+    },
+    {
+      "source_object": "one fixed time step",
+      "target_object": "one application of fixed G",
+      "units": "step count, no seconds specified",
+      "structure": "discrete deterministic update",
+      "classification": "exact",
+      "evidence": "Given recurrence coefficient fixed at 0.75",
+      "lost_factors": "No continuous time constant or elapsed physical time inferred",
+      "minimal_check": "Compare recurrence and closed form"
+    },
+    {
+      "source_object": "temperature difference",
+      "target_object": "metric abs(x-y)",
+      "units": "degrees Celsius difference, equal kelvin difference",
+      "structure": "complete metric on a closed interval",
+      "classification": "exact",
+      "evidence": "Euclidean real interval; Celsius-to-Kelvin shift cancels",
+      "lost_factors": "Absolute Celsius ratios are not thermodynamic dimensionless ratios",
+      "minimal_check": "Exact offset-invariance verification"
+    },
+    {
+      "source_object": "G(T)=20+0.75(T-20)",
+      "target_object": "q-contraction, q=0.75",
+      "units": "q dimensionless",
+      "structure": "abs(Gx-Gy)=q abs(x-y) globally",
+      "classification": "exact",
+      "evidence": "Algebraic cancellation valid for all x,y",
+      "lost_factors": "No uncertainty, drift or oracle noise included",
+      "minimal_check": "Symbolic affine identity and closed form"
+    },
+    {
+      "source_object": "equilibrium temperature",
+      "target_object": "unique fixed point x*=20",
+      "units": "degrees Celsius coordinate",
+      "structure": "G(20)=20 and q<1",
+      "classification": "exact",
+      "evidence": "Solve affine fixed-point equation",
+      "lost_factors": "Not a physical measurement",
+      "minimal_check": "Direct substitution"
+    },
+    {
+      "source_object": "stop after r_t=abs(T_(t+1)-T_t)<=0.01",
+      "target_object": "return-point certificate q*r_t/(1-q)",
+      "units": "degrees Celsius difference",
+      "structure": "exact new point y=Gx",
+      "classification": "exact",
+      "evidence": "Triangle inequality with proved contraction; equality for this affine cooling path",
+      "lost_factors": "Residual must include certified numeric error if inexact",
+      "minimal_check": "Return error equals 3*r_t at all checked updates"
+    },
+    {
+      "source_object": "three discussion disagreement reductions",
+      "target_object": "candidate contraction analogy",
+      "units": "unspecified in user task; normalized dimensionless in synthetic countermodel",
+      "structure": "only finite scalar observations known",
+      "classification": "heuristic only, guarantee rejected",
+      "evidence": "No uniform pairwise Lipschitz proof or residual-to-quality relation",
+      "lost_factors": "Adaptive maps, hidden state, coupling, shared errors, new information",
+      "minimal_check": "Same observed prefix followed by rebound under continuous fixed self-map"
+    }
+  ],
+  "assumptions": [
+    {
+      "assumption": "nonempty complete invariant domain",
+      "task_evidence": "X=[20,36], G(X)=[20,32]",
+      "status": "satisfied",
+      "scope": "cooling"
+    },
+    {
+      "assumption": "uniform contraction factor 0<=q<1",
+      "task_evidence": "abs(Gx-Gy)=0.75 abs(x-y) for all x,y in X",
+      "status": "satisfied",
+      "scope": "cooling"
+    },
+    {
+      "assumption": "exact fixed update and exact step evaluation",
+      "task_evidence": "Synthetic equation as given; Fraction arithmetic in check",
+      "status": "satisfied",
+      "scope": "synthetic cooling only"
+    },
+    {
+      "assumption": "returned state is T_(t+1)",
+      "task_evidence": "Explicit request",
+      "status": "satisfied"
+    },
+    {
+      "assumption": "unit-consistent temperature differences",
+      "task_evidence": "Threshold/residual/error are temperature differences; Celsius/Kelvin check",
+      "status": "satisfied"
+    },
+    {
+      "assumption": "monomial dimensional-analysis theorem prerequisites",
+      "task_evidence": "No dimensional nullspace or monomial model invoked",
+      "status": "not_needed",
+      "scope": "Full Buckingham-Pi theorem not applied"
+    },
+    {
+      "assumption": "agent disagreement is a state residual in a fixed complete metric system",
+      "task_evidence": "User supplies only observed disagreement reduction",
+      "status": "unknown",
+      "scope": "discussion"
+    },
+    {
+      "assumption": "discussion has a certified global contraction factor 0.75",
+      "task_evidence": "Only about three observed ratios; exact-ratio synthetic counterexample rebounds",
+      "status": "unknown / unsupported",
+      "scope": "discussion"
+    },
+    {
+      "assumption": "discussion equilibrium corresponds to truth or successful task completion",
+      "task_evidence": "No such relation supplied",
+      "status": "unknown",
+      "scope": "discussion"
+    }
+  ],
+  "entry_decisions": [
+    {
+      "id": "math.contraction-residual-certificate",
+      "decision": "adopt",
+      "reason": "Full exact-map premises proved for cooling; current/new-point distinction used; observed-ratio caution independently demonstrated"
+    },
+    {
+      "id": "physics.dimensionless",
+      "decision": "adopt limited consistency principle",
+      "reason": "Unit changes and omitted-variable caution used; no Buckingham-Pi theorem or physical-law inference asserted"
+    },
+    {
+      "id": "math.hoeffding-bounded-mean",
+      "decision": "reject from summary",
+      "reason": "No independent bounded random samples or mean estimation problem; not read or used"
+    },
+    {
+      "id": "math.alpha-spending-stopping",
+      "decision": "reject from summary",
+      "reason": "No stable iid bounded population with preallocated error probabilities; not read or used"
+    }
+  ],
+  "claims": [
+    {
+      "claim": "returned value within 0.03 C of model equilibrium",
+      "evidence": "answer.md general proof plus verification-output.json exact checks"
+    },
+    {
+      "claim": "first return is T_22 approximately 20.02854090745 C",
+      "evidence": "verification-output.json"
+    },
+    {
+      "claim": "three observed reductions do not provide universal stopping guarantee",
+      "evidence": "answer.md missing-premise analysis and executed continuous-map countermodel"
+    }
+  ],
+  "verification_artifacts": [
+    "verify.py",
+    "verification-output.json",
+    "check-refs.json"
+  ],
+  "limitations": [
+    "Synthetic exact model only",
+    "No actual physical or production experiment",
+    "No formal proof assistant or performance benchmark",
+    "Local source metadata read; no external source/network fetch",
+    "Finite checks supplement general algebra, not replace it"
+  ],
+  "next_owner": "root independent reviewer and TASK/handoff publication owner"
+}

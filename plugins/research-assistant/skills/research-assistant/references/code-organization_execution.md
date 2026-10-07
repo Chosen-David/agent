@@ -27,3 +27,5 @@
 ## 失败降级
 
 目录过大时优先核对本轮交接清单与活跃任务，其余列 backlog；无法归属标 unknown；无 git 或无法回滚时只登记和提案。一个路径阻塞不妨碍整理其他已授权文件。文件管理角色不获得额外文件访问或删除权限。
+
+知识需求与交接按 [知识接入契约](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/code-organization/references/knowledge_access_workflow.md) 执行；保留实际查询/前提核对证据及完整 knowledge_refs，无需求时注明原因。
