@@ -105,6 +105,24 @@ def installed_files(destination, roles):
     return result
 
 
+def check_file_layout(destination, files):
+    """Refuse file/directory transitions and special targets before any writes.
+
+    Ownership hashes describe regular files, so an empty local directory or a
+    named pipe does not appear in installed_files. Never try to back up or
+    replace those paths as files, or write through an existing file ancestor.
+    """
+    for relative in sorted(files):
+        path = owned_path(destination, relative)
+        for parent in path.parents:
+            if parent == destination.parent:
+                break
+            if parent.exists() and not parent.is_dir():
+                raise ValueError('Installation layout conflict: parent is not a directory; preserved: ' + str(parent))
+        if path.exists() and not path.is_file():
+            raise ValueError('Installation layout conflict: target is not a regular file; preserved: ' + str(path))
+
+
 def merge_instructions(current, block):
     if current.count(BEGIN) != current.count(END) or current.count(BEGIN) > 1:
         raise ValueError('Malformed managed global instruction block')
@@ -139,6 +157,7 @@ def synchronize(repo, destination, state, codex_home, *, adopt=False, check=Fals
         existing = [name for name in roles if (destination/name).exists()]
         if existing and (not adopt or actual != wanted or len(existing) != len(roles)):
             raise ValueError('Unowned skill collision; explicit --adopt requires an exact committed snapshot')
+    check_file_layout(destination, files)
     instruction_path = codex_home/'AGENTS.md'
     if (codex_home/'AGENTS.override.md').is_file():
         raise ValueError('Global AGENTS.override.md shadows integration; preserve and resolve explicitly')
@@ -166,6 +185,7 @@ def synchronize(repo, destination, state, codex_home, *, adopt=False, check=Fals
         # Recheck ownership under lock. All preflight checks above were read-only.
         if installed_files(destination, roles) != actual or (instruction_path.read_bytes() if instruction_path.exists() else b'') != current:
             raise ValueError('Installation changed during preflight; no files replaced')
+        check_file_layout(destination, files)
         changed = {p: data for p, data in files.items() if actual.get(p) != wanted[p]}
         removed = sorted(set(prior['files']) - set(files)) if prior else []
         backup = state/'backups'/str(time.time_ns())

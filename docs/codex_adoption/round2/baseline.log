@@ -1,0 +1,71 @@
+test_directory_at_new_file_blocks_before_any_update (tests.test_codex_setup.CodexSetupTests.test_directory_at_new_file_blocks_before_any_update) ... ERROR
+test_owned_file_to_directory_transition_blocks_cleanly (tests.test_codex_setup.CodexSetupTests.test_owned_file_to_directory_transition_blocks_cleanly) ... ERROR
+test_owned_directory_to_file_transition_blocks_cleanly (tests.test_codex_setup.CodexSetupTests.test_owned_directory_to_file_transition_blocks_cleanly) ... ERROR
+
+======================================================================
+ERROR: test_directory_at_new_file_blocks_before_any_update (tests.test_codex_setup.CodexSetupTests.test_directory_at_new_file_blocks_before_any_update)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPOSITORY>\tests\test_codex_setup.py", line 129, in test_directory_at_new_file_blocks_before_any_update
+    self.assert_layout_conflict_preserves_installation(before)
+  File "<REPOSITORY>\tests\test_codex_setup.py", line 108, in assert_layout_conflict_preserves_installation
+    self.sync()
+  File "<REPOSITORY>\tests\test_codex_setup.py", line 45, in sync
+    return synchronize(self.repo, self.dest, self.state, self.home, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPOSITORY>\scripts\setup_codex.py", line 177, in synchronize
+    saved.write_bytes(path.read_bytes())
+                      ^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\pathlib.py", line 1020, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\pathlib.py", line 1014, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\WI\\AppData\\Local\\Temp\\tmpr78s9jsl\\skills\\two\\new.txt'
+
+======================================================================
+ERROR: test_owned_file_to_directory_transition_blocks_cleanly (tests.test_codex_setup.CodexSetupTests.test_owned_file_to_directory_transition_blocks_cleanly)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPOSITORY>\tests\test_codex_setup.py", line 140, in test_owned_file_to_directory_transition_blocks_cleanly
+    self.assert_layout_conflict_preserves_installation(before)
+  File "<REPOSITORY>\tests\test_codex_setup.py", line 108, in assert_layout_conflict_preserves_installation
+    self.sync()
+  File "<REPOSITORY>\tests\test_codex_setup.py", line 45, in sync
+    return synchronize(self.repo, self.dest, self.state, self.home, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPOSITORY>\scripts\setup_codex.py", line 184, in synchronize
+    atomic(owned_path(destination, relative), data)
+  File "<REPOSITORY>\scripts\setup_codex.py", line 29, in atomic
+    path.parent.mkdir(parents=True, exist_ok=True)
+  File "C:\Python312\Lib\pathlib.py", line 1312, in mkdir
+    os.mkdir(self, mode)
+FileExistsError: [WinError 183] 当文件已存在时，无法创建该文件。: 'C:\\Users\\WI\\AppData\\Local\\Temp\\tmpekw6f57p\\skills\\one\\old.txt'
+
+======================================================================
+ERROR: test_owned_directory_to_file_transition_blocks_cleanly (tests.test_codex_setup.CodexSetupTests.test_owned_directory_to_file_transition_blocks_cleanly)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "<REPOSITORY>\tests\test_codex_setup.py", line 153, in test_owned_directory_to_file_transition_blocks_cleanly
+    self.assert_layout_conflict_preserves_installation(before)
+  File "<REPOSITORY>\tests\test_codex_setup.py", line 108, in assert_layout_conflict_preserves_installation
+    self.sync()
+  File "<REPOSITORY>\tests\test_codex_setup.py", line 45, in sync
+    return synchronize(self.repo, self.dest, self.state, self.home, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<REPOSITORY>\scripts\setup_codex.py", line 177, in synchronize
+    saved.write_bytes(path.read_bytes())
+                      ^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\pathlib.py", line 1020, in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python312\Lib\pathlib.py", line 1014, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+PermissionError: [Errno 13] Permission denied: 'C:\\Users\\WI\\AppData\\Local\\Temp\\tmp5156zqnc\\skills\\two\\reference'
+
+----------------------------------------------------------------------
+Ran 3 tests in 1.954s
+
+FAILED (errors=3)

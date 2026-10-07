@@ -84,10 +84,12 @@ class CodexSetupTests(unittest.TestCase):
         (self.repo/'skills/one/old.txt').unlink()
         self.write('skills/one/SKILL.md', old.decode()+'Updated\n')
         self.write('skills/two/new.txt', 'new API')
+        self.write('skills/two/references/nested.md', 'new directory')
         self.commit()
         self.sync()
         self.assertFalse((self.dest/'one/old.txt').exists())
         self.assertEqual((self.dest/'two/new.txt').read_text(), 'new API')
+        self.assertEqual((self.dest/'two/references/nested.md').read_text(), 'new directory')
         self.assertTrue(any(p.read_bytes() == old for p in (self.state/'backups').rglob('SKILL.md')))
         self.sync(check=True)
 
@@ -102,6 +104,68 @@ class CodexSetupTests(unittest.TestCase):
         self.assertFalse((self.dest/'two/new.txt').exists())
         self.assertEqual((self.dest/'one/old.txt').read_text(), 'private edit')
         self.assertEqual((self.home/'AGENTS.md').read_bytes(), before)
+
+    def assert_layout_conflict_preserves_installation(self, before):
+        with self.assertRaisesRegex(ValueError, 'layout conflict'):
+            self.sync()
+        self.assertEqual((self.state/'installation.json').read_bytes(), before['manifest'])
+        self.assertEqual((self.home/'AGENTS.md').read_bytes(), before['instructions'])
+        self.assertEqual((self.dest/'one/SKILL.md').read_bytes(), before['skill'])
+        self.assertFalse((self.state/'pending.json').exists())
+        self.assertFalse((self.state/'sync.lock').exists())
+        self.assertFalse((self.state/'backups').exists())
+
+    def installed_snapshot(self):
+        return {'manifest': (self.state/'installation.json').read_bytes(),
+                'instructions': (self.home/'AGENTS.md').read_bytes(),
+                'skill': (self.dest/'one/SKILL.md').read_bytes()}
+
+    def test_directory_at_new_file_blocks_before_any_update(self):
+        self.sync()
+        before = self.installed_snapshot()
+        local = self.dest/'two/new.txt'
+        local.mkdir()
+        self.write('skills/one/SKILL.md', before['skill'].decode()+'Updated\n')
+        self.write('skills/two/new.txt', 'new content')
+        self.commit()
+        self.assert_layout_conflict_preserves_installation(before)
+        self.assertTrue(local.is_dir())
+        self.assertEqual(list(local.iterdir()), [])
+
+    def test_owned_file_to_directory_transition_blocks_cleanly(self):
+        self.sync()
+        before = self.installed_snapshot()
+        (self.repo/'skills/one/old.txt').unlink()
+        self.write('skills/one/old.txt/nested.md', 'new layout')
+        self.write('skills/one/SKILL.md', before['skill'].decode()+'Updated\n')
+        self.commit()
+        self.assert_layout_conflict_preserves_installation(before)
+        self.assertEqual((self.dest/'one/old.txt').read_text(), 'original')
+
+    def test_owned_directory_to_file_transition_blocks_cleanly(self):
+        self.write('skills/two/reference/note.md', 'old reference')
+        self.commit()
+        self.sync()
+        before = self.installed_snapshot()
+        (self.repo/'skills/two/reference/note.md').unlink()
+        (self.repo/'skills/two/reference').rmdir()
+        self.write('skills/two/reference', 'new layout')
+        self.write('skills/one/SKILL.md', before['skill'].decode()+'Updated\n')
+        self.commit()
+        self.assert_layout_conflict_preserves_installation(before)
+        self.assertEqual((self.dest/'two/reference/note.md').read_text(), 'old reference')
+
+    @unittest.skipUnless(hasattr(os, 'mkfifo'), 'Named pipes require POSIX')
+    def test_named_pipe_at_new_file_is_preserved(self):
+        self.sync()
+        before = self.installed_snapshot()
+        local = self.dest/'two/new.txt'
+        os.mkfifo(local)
+        self.write('skills/two/new.txt', 'must not replace private pipe')
+        self.commit()
+        self.assert_layout_conflict_preserves_installation(before)
+        import stat
+        self.assertTrue(stat.S_ISFIFO(local.stat().st_mode))
 
     def test_managed_instruction_edit_is_preserved(self):
         self.sync()
