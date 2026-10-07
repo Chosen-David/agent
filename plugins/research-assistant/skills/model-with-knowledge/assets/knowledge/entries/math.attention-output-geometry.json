@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "id": "math.attention-output-geometry",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "固定value的Gram输出几何与局部敏感度",
+  "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+  "aliases": [
+    "输出 几何 权重 误差",
+    "Gram metric",
+    "局部 敏感度 Jacobian",
+    "浓度 配料 传感器",
+    "共同偏移 不变"
+  ],
+  "domains": [
+    "linear-algebra",
+    "probability-and-optimization"
+  ],
+  "structures": [
+    "value-geometry",
+    "quadratic-form",
+    "local-sensitivity",
+    "normalized-weighted-output",
+    "decision-margin"
+  ],
+  "assumptions": [
+    "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+    "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+    "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+  ],
+  "sources": [
+    {
+      "url": "https://www.math.uwaterloo.ca/~hwolkowi/matrixcookbook.pdf",
+      "locator": "2012-11-15 edition §2.4.2 Eq81 and §2.4.4 Eqs96–98; printed pp11–12. Matrix quadratic calculus only; attention identities independently derived.",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://arxiv.org/html/2602.08426v2",
+      "locator": "Prism v2 revised 2026-05-25; §3.2–3.4, §4.1/4.4, Appendix §6; targeted reading, not source of Gram theorem",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+      "CPU finite development checks; no Lean/model/GPU/e2e verification"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.softmax-barycenter-error",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.score-difference-bound"
+    },
+    {
+      "type": "related",
+      "id": "math.bilinear-quadratic-inertia"
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "Fixed finite value Gram/Jacobian/Taylor and linear margin; CPU float64 public development fixtures and premise checks only.",
+  "criteria": {
+    "implementation": {
+      "procedure": "Review card and actual script, matrix shapes, normalization and fixed V/W.",
+      "acceptance": "No formula/implementation premise mismatch.",
+      "allow_not_applicable": false
+    },
+    "reference_boundary": {
+      "procedure": "Independent rational/Decimal and finite-difference reference, n=1 and nullspace, hardmask refusal.",
+      "acceptance": "Exact identities 1e-10 scaled tolerance; derivative finite differences 1e-6 scaled; Taylor bound plus 1e-10 slack.",
+      "allow_not_applicable": false
+    },
+    "data_integrity": {
+      "procedure": "Read frozen input/config/raw and reproduce all case IDs and counts.",
+      "acceptance": "No missing/duplicate cases or fabricated heldout results.",
+      "allow_not_applicable": false
+    },
+    "numerical_sanity": {
+      "procedure": "Inspect finite outputs, PSD quadratic forms, units, sharp examples and geometric zeros.",
+      "acceptance": "No nonfinite; no negative squared error beyond 1e-10.",
+      "allow_not_applicable": false
+    },
+    "measurement_validity": {
+      "procedure": "No production speed or model quality claim; duration is diagnostic only.",
+      "acceptance": "N/A for GPU/LLM performance; token encoding scope explicitly limited.",
+      "allow_not_applicable": true
+    },
+    "reproducibility": {
+      "procedure": "Run frozen command to separate destination and compare deterministic cases.",
+      "acceptance": "Cases agree within declared tolerances; limitations reported.",
+      "allow_not_applicable": false
+    }
+  }
+}

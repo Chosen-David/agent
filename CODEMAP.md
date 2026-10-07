@@ -88,3 +88,5 @@ AIK-01/02：`knowledge/entries/ai-algorithms/ai.speculative-*`及`docs/knowledge
 
 SELF-SYNC-01–03：scripts/run_knowledge_windows.py 的 prepare_host / sync_host_skills 在 verified pull 后、模型启动前同步并复查；模板维护持久入口，tests/test_knowledge_windows_runner.py 核对顺序、失败与阶段证据；docs/codex_adoption/pull-sync/ 为本轮记录。生产者为主 AI，消费者为 Codex 与原每小时维护桥；私有检查点 .agent-runs/codex-pull-sync/。
 | MATH-25/26 | `knowledge/entries/math.softmax-barycenter-error.*`, `doc/results/math-softmax-20261007-v2/` | 主AI producer → 独立数学验收 → 建模Skill/维护者 | 分布/剪枝/value输出误差与有限开发验证；不含生产模型收益 |
+
+| MATH-27/28 | `knowledge/entries/math.attention-output-geometry.*`, `doc/results/math-geometry-20261007/` | 主AI producer → 独立数学/代码数据验收 → model-with-knowledge | 固定value几何/局部余项/线性margin；无生产模型或GPU收益 |

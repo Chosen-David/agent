@@ -1,0 +1,174 @@
+{
+  "schema_version": "independent-math-checks/v1",
+  "actor": "/root/independent_geometry_verifier",
+  "scope": "Fixed finite value Gram/Jacobian/Taylor and linear margin; CPU float64 public development fixtures and premise checks only.",
+  "checks": [
+    {
+      "id": "fraction-vector-gram",
+      "pass": true,
+      "evidence": {
+        "squared_error": "89/16",
+        "pairwise_quadratic": "89/16",
+        "delta_sum": "0"
+      }
+    },
+    {
+      "id": "fraction-translation",
+      "pass": true,
+      "evidence": {
+        "shift": [
+          "1000000000000",
+          "-1000000000000"
+        ],
+        "exact_equality": true
+      }
+    },
+    {
+      "id": "fraction-nonconstant-nullspace",
+      "pass": true,
+      "evidence": {
+        "delta": [
+          "1/10",
+          "-1/5",
+          "1/10"
+        ],
+        "output_error": "0",
+        "probability_squared_error": "3/50"
+      }
+    },
+    {
+      "id": "fraction-local-covariance-gram-gauge",
+      "pass": true,
+      "evidence": {
+        "linear_output": [
+          "4",
+          "-3"
+        ],
+        "squared_norm": "25"
+      }
+    },
+    {
+      "id": "degenerate-n1-and-constant",
+      "pass": true,
+      "evidence": {
+        "n1_jacobian": 0,
+        "constant_output_error": 0
+      }
+    },
+    {
+      "id": "decimal-derivative-and-remainder-grid",
+      "pass": true,
+      "evidence": {
+        "precision": 60,
+        "cases": 162,
+        "finite_difference_step": "1E-12",
+        "max_derivative_error": "4.25200957537144424838733501617372760284731918745657042820529E-23",
+        "max_remainder_over_bound": "0.263355129465599589501291993117422325123488636682451275337041",
+        "grid": "2 vector value sets x 3 logits sets x 27 finite perturbations; includes common shifts and saturated logits"
+      }
+    },
+    {
+      "id": "fraction-fixed-margin-grid",
+      "pass": true,
+      "evidence": {
+        "cases": 625,
+        "certified": 97,
+        "abstained": 528,
+        "retained_all_certified": true,
+        "strict_boundary_example": "One-dimensional logits z,-z at z=1: error E=1 equals margin/norm threshold, perturbed z=0 ties; strict inequality required."
+      }
+    },
+    {
+      "id": "fraction-prism-pooling-null-and-nonstationary",
+      "pass": true,
+      "evidence": {
+        "block_size": 4,
+        "stationary_complex_mean": [
+          "0",
+          "0"
+        ],
+        "finite_temperature_scaled_mean": [
+          "0",
+          "0"
+        ],
+        "content_conjugate_phase_mean": [
+          "1",
+          "0"
+        ],
+        "interpretation": "Stationary sum of roots of unity is zero; conjugate position-varying content gives each product 1. Finite nonzero scalar temperature cannot recover zero pooled vector; not a Prism model benchmark."
+      }
+    },
+    {
+      "id": "analytic-taylor-proof",
+      "pass": true,
+      "evidence": {
+        "identity": "p_i''=p_i[(e_i-mu)^2-Var_p(e)]; z''=sum_i p_i(Z_i-z)(e_i-mu)^2",
+        "norm_bound": "convex z implies ||Z_i-z||<=D; Var_p(e)<=osc(e)^2/4; integrate 1-t over [0,1] to obtain D osc(e)^2/8",
+        "premises": "finite real logits/perturbation, fixed finite values/projection/support, normalized nonnegative softmax"
+      }
+    },
+    {
+      "id": "producer-data-and-replay",
+      "pass": true,
+      "evidence": {
+        "total": 570,
+        "random_checks": 560,
+        "additional_numeric": 8,
+        "explicit_premise_rows": 2,
+        "duplicate_ids": 0,
+        "identical_deterministic_cases": true,
+        "duration_excluded_from_comparison": true,
+        "descriptive_inputs_fixture_equivalent": true
+      }
+    },
+    {
+      "id": "hash-integrity",
+      "pass": true,
+      "evidence": {
+        "checked_files": 8,
+        "all_manifest_artifacts_and_plan_match": true,
+        "artifact_hashes": {
+          "doc/results/math-geometry-20261007/validation-plan.json": "bfbfd2834784df6a39d51e942845309f14cc7ca5d9cbd879b2ae5c72b64e05f1",
+          "doc/results/math-geometry-20261007/verify.py": "96fab3fb49c083628f411309e389d9d67c5b9ce5ff828a02cbeffbf8973c58a5",
+          "knowledge/entries/math.attention-output-geometry.md": "d1469bf93c133e0df2eaf1f28ca70ba1d0f704f3799e24effa47f4ff0b31a5bd",
+          "knowledge/entries/math.attention-output-geometry.json": "9c5d8f4f043ba77c51102f1325e716d36ea79a2ec4d1b6fe37d39b9abc7dba30",
+          "doc/results/math-geometry-20261007/inputs.json": "d6fbcfc3aab4d544f8706ee005f6f648485f45630f471307db98e6a82fbc294a",
+          "doc/results/math-geometry-20261007/config.json": "7f5867e2c7631a56c6a5a77832cc2fdab9578a3bdcb3df055c9bda7ae1febf4f",
+          "doc/results/math-geometry-20261007/raw.json": "a5dd82de799e7b6d5e27a111e08db79dee666f95f56b4c960c09a83d8f7c8765",
+          "doc/results/math-geometry-20261007/environment.json": "0d5833da8801063d3baecbd979ed34b92f64454cf1dc5fef5bd1d21537051d71"
+        },
+        "manifest_sha256": "24868f1d9e7c140fe822b0ed9c131cd82d0c69d680f73f0f4a3611786b23f3de"
+      }
+    },
+    {
+      "id": "environment-readback",
+      "pass": true,
+      "evidence": {
+        "python": "3.12.14",
+        "numpy": "2.3.5",
+        "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+        "producer_environment": {
+          "python": "3.12.14",
+          "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+          "numpy": "2.3.5",
+          "hardware": "CPU execution, no GPU measurement",
+          "supervision": "tmux unavailable, no persistent monitor deployed"
+        }
+      }
+    }
+  ],
+  "all_pass": true,
+  "implementation": "Independent inline Fraction/Decimal code executed 2026-10-07; equations and grids recorded per row. Independent reference did not invoke NumPy for math; NumPy imported only for environment readback.",
+  "limitations": [
+    "Finite public development checks only, not an LLM/model evaluation, GPU measurement, unseen test, or machine-checked formal proof.",
+    "Duration is diagnostic and not compared as performance.",
+    "Prism pooled-vector null fixture is an analytic mechanism counterexample, not empirical validation of Prism implementation or accuracy."
+  ],
+  "producer_numerical_summary": {
+    "max_gram_error": 1.7763568394002505e-15,
+    "max_derivative_error": 6.160487151961358e-09,
+    "max_bound_violation": 0.0,
+    "certified_margin_rows": 60,
+    "nonfinite_values": 0
+  }
+}
