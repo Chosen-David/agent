@@ -47,3 +47,5 @@ T24–T28 增量：`knowledge/entries/{ai-infra,ai-algorithms,data-structures}/`
 | RLP-01–03 | `scripts/knowledge_maintenance.py`, `tests/test_knowledge_maintenance.py`, `knowledge/entries/{ai-algorithms,probability}/`, `evals/knowledge/rl-probability-queries.json`, `docs/knowledge_learning/2026-10-07-rl-probability/` | 原论文/主 AI → 检索与实验前决策/已部署 WSL tmux | 每3600秒固定周期、旧状态迁移、6张2026研究卡；保留失败检索和适用边界，无本机RL复现 |
 
 NEURO-01–03：`knowledge/entries/neuroscience/` 与 `knowledge/neuroscience_sources.json` 保存版本化研究摘要与来源层级；`evals/knowledge/neuroscience-queries.json` 是人工回归集；`docs/knowledge_learning/2026-10-07-neuroscience/` 保存研究、边界与检索验证。主AI维护→建模/研究技能按条件消费；`.agent-runs/neuroscience/` 是私有缓存、tmux验收与发布凭据。既有每小时学习任务读取更新后的priority与Prompt，不新增调度器。
+
+| MATH-15/16，ALG-01–05 | knowledge/entries/math.*（18新主题），docs/knowledge_learning/2026-10-07-algebra/ | 主AI知识维护 → 建模Skill、科研任务与下轮维护者 | 标准代数双索引、来源版本、76项有限检查、自然检索负结果、token成本与main发布证据；非模型收益 |
