@@ -1,0 +1,703 @@
+{
+  "schema_version": 1,
+  "task_id": "EK-112454-02",
+  "input_version": "18e0904c9e2b9343cf7163bd2cb38cb14c362ec6",
+  "knowledge_root": "knowledge",
+  "snapshot": "a4acb79281b4ec6b2a3f08a8fd2b594e4ce621ae4a50bc81c9e7dc4fc760b1ce",
+  "knowledge_refs": [
+    {
+      "id": "neuro.bumblebee-social-diffusion",
+      "version": 1,
+      "sha256": "edd525eb72e80a9ceb4841f92017806307463c9d46cd174f6e97880eb6cfb1a0"
+    }
+  ],
+  "query": "观察同伴后学会开箱，怎样区分自己摸索和模仿？",
+  "initial_lookup": {
+    "query": "社会 学习 新行为 复杂 传递 昆虫",
+    "domain": "neuroscience",
+    "results": [
+      "neuro.octopus-sleep-state-boundary",
+      "neuro.anesthesia-temporal-isolation",
+      "neuro.avian-pallium-convergence"
+    ],
+    "disposition": "rejected as different species/tasks; no existing bumblebee result card"
+  },
+  "applicability": "source review limited to 2023 behavioural task; decision string matching not biological transfer verification",
+  "decisions": [
+    {
+      "case": "missing",
+      "query": "观察同伴后学会开箱，怎样区分自己摸索和模仿？",
+      "context": {},
+      "explicit_reproduction": false,
+      "result": {
+        "id": "neuro.bumblebee-social-diffusion",
+        "version": 1,
+        "sha256": "edd525eb72e80a9ceb4841f92017806307463c9d46cd174f6e97880eb6cfb1a0",
+        "title": "熊蜂社会学习：示范影响熟练度与行为偏好，不能代替创新和累积文化证据",
+        "summary": "2023年熊蜂单步双选开箱实验中，有示范组的学习者更熟练并偏好示范变体，但无示范组也出现自发学习；局部强化、群落聚类及人为维持示范偏好限制机制与跨代文化推断。",
+        "status": "published",
+        "assumptions": [
+          "species: Bombus terrestris audax; laboratory worker foragers; exact individual age and sex not separately tabulated",
+          "task: single-step two-option puzzle; red clockwise or blue anticlockwise lid rotation",
+          "design: six seeded and four unseeded colonies; 6 or 12 days; 3 h closed-box exposure per day",
+          "measurement: video-coded box openings; >=50% required tab travel plus reward; learner threshold two openings",
+          "scope: behavioural diffusion and preference; no neural recording, consciousness measure or biological-generation chain"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "not-applicable",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-engineering-112454/report.md#neurobumblebee-social-diffusion",
+            "docs/knowledge_learning/2026-10-07-engineering-112454/sources.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "aliases",
+            "terms": [
+              "会开",
+              "伴后",
+              "同伴",
+              "后学",
+              "学会",
+              "察同",
+              "开箱",
+              "观察"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "模仿"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "开箱"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "同伴",
+              "学会",
+              "开箱",
+              "模仿",
+              "观察"
+            ]
+          }
+        ],
+        "score": 52,
+        "reuse": {
+          "type": "paper-result",
+          "claim": "熊蜂单步双选开箱的示范组学习者更熟练并保持示范偏好；无示范组也能创新。此行为证据不能单独确定模仿机制、跨代累积文化或AI收益。",
+          "conditions": {
+            "species": "Bombus terrestris audax laboratory worker foragers",
+            "task": "single-step two-option puzzle with red-clockwise or blue-anticlockwise solution",
+            "exposure": "6 or 12 days; 3 h daily closed-box exposure after 30 min lidless pretraining",
+            "measurement": "video-coded rewarded openings; >=50% tab travel; learner threshold two openings",
+            "unit": "individual learners nested in colonies; six seeded and four unseeded colonies"
+          },
+          "observations": [
+            "Fig.2A：示范组22学习者、控制组14学习者；按学习后天数归一化的个体开箱中位数为27.9与1.15次/日，原文Mann–Whitney p=0.001；为来源报告而非本机复算。",
+            "Table 2：六个示范蜂群中示范变体的开箱比例均值98.6%；22名学习者中12名至少试过另一变体。无示范组有自发学习，故社会学习不是该单步任务成功的必要条件。",
+            "S2 Table：最低AIC的bee-ID随机效应模型报告day×treatment p=0.003233；colony-ID与nested模型分别0.005488和0.004709。nested模型treatment主效应p=0.061374，不能把所有模型的主效应都称显著。"
+          ],
+          "limitations": [
+            "没有神经记录或独立操纵局部强化/刺激强化/动作模仿；实验者阻止单示范蜂执行非训练变体，观察蜂不受此限制。",
+            "开放扩散中控制蜂也可能相互观察；学习者数量不等于独立蜂群重复数。最大学习窗口12天，未测试跨生物世代传承。",
+            "S1 Table的R2/R3观察总数与主表不同，未对原始Figshare数据复算或裁决；本卡不采用这些冲突总数作效果量。",
+            "2024两步任务是不同任务、独立文章而非此单步结果的同条件复验；无法从无开箱观察推断所有个体终生不可能创新。"
+          ],
+          "minimal_checks": [
+            "用于AI设计时只作假设：等总交互/示范生成预算，比较有效示范、无示范、打乱动作序列、仅终态/奖励位置暴露，分别测成功率、样本数和未见任务迁移。",
+            "保持任务步骤、颜色/动作难度、奖励预训练与学习阈值一致，按群落或独立运行聚类评估；不要用开箱次数充当独立样本数。",
+            "显式复现仍运行原实验；新环境验收、示范成本、模仿机制与AI收益不由本卡替代。"
+          ],
+          "paper": {
+            "venue": "PLOS Biology",
+            "year": 2023,
+            "review_status": "peer-reviewed",
+            "local_reproduction": "not-run"
+          }
+        },
+        "sources": [
+          {
+            "url": "https://doi.org/10.1371/journal.pbio.3002019",
+            "locator": "Published 2023-03-07, accepted 2023-02-02; Results Experiments 1–2; Fig.2A/B; Tables 1–2; Materials and methods; Discussion",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9990933/fullTextXML",
+            "locator": "Version-of-record full-text XML, read Results, Discussion, Materials and methods and figure/table captions",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://journals.plos.org/plosbiology/article/file?type=supplementary&id=10.1371/journal.pbio.3002019.s007",
+            "locator": "S2 Table (Appendix Table 2): random-effect model alternatives A–C, AIC and day-by-treatment interaction",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://journals.plos.org/plosbiology/article/file?type=supplementary&id=10.1371/journal.pbio.3002019.s006",
+            "locator": "S1 Table: daily demonstrator/observer incidence; unresolved R2/R3 totals versus main tables",
+            "accessed": "2026-10-07"
+          }
+        ],
+        "missing_conditions": [
+          "species",
+          "task",
+          "exposure",
+          "measurement",
+          "unit"
+        ],
+        "mismatched_conditions": [],
+        "disposition": "insufficient_context",
+        "automatic_skip_authorized": false,
+        "applicability": "requires-human-review",
+        "knowledge_refs": [
+          {
+            "id": "neuro.bumblebee-social-diffusion",
+            "version": 1,
+            "sha256": "edd525eb72e80a9ceb4841f92017806307463c9d46cd174f6e97880eb6cfb1a0"
+          }
+        ]
+      }
+    },
+    {
+      "case": "matched",
+      "query": "观察同伴后学会开箱，怎样区分自己摸索和模仿？",
+      "context": {
+        "species": "Bombus terrestris audax laboratory worker foragers",
+        "task": "single-step two-option puzzle with red-clockwise or blue-anticlockwise solution",
+        "exposure": "6 or 12 days; 3 h daily closed-box exposure after 30 min lidless pretraining",
+        "measurement": "video-coded rewarded openings; >=50% tab travel; learner threshold two openings",
+        "unit": "individual learners nested in colonies; six seeded and four unseeded colonies"
+      },
+      "explicit_reproduction": false,
+      "result": {
+        "id": "neuro.bumblebee-social-diffusion",
+        "version": 1,
+        "sha256": "edd525eb72e80a9ceb4841f92017806307463c9d46cd174f6e97880eb6cfb1a0",
+        "title": "熊蜂社会学习：示范影响熟练度与行为偏好，不能代替创新和累积文化证据",
+        "summary": "2023年熊蜂单步双选开箱实验中，有示范组的学习者更熟练并偏好示范变体，但无示范组也出现自发学习；局部强化、群落聚类及人为维持示范偏好限制机制与跨代文化推断。",
+        "status": "published",
+        "assumptions": [
+          "species: Bombus terrestris audax; laboratory worker foragers; exact individual age and sex not separately tabulated",
+          "task: single-step two-option puzzle; red clockwise or blue anticlockwise lid rotation",
+          "design: six seeded and four unseeded colonies; 6 or 12 days; 3 h closed-box exposure per day",
+          "measurement: video-coded box openings; >=50% required tab travel plus reward; learner threshold two openings",
+          "scope: behavioural diffusion and preference; no neural recording, consciousness measure or biological-generation chain"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "not-applicable",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-engineering-112454/report.md#neurobumblebee-social-diffusion",
+            "docs/knowledge_learning/2026-10-07-engineering-112454/sources.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "aliases",
+            "terms": [
+              "会开",
+              "伴后",
+              "同伴",
+              "后学",
+              "学会",
+              "察同",
+              "开箱",
+              "观察"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "模仿"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "开箱"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "同伴",
+              "学会",
+              "开箱",
+              "模仿",
+              "观察"
+            ]
+          }
+        ],
+        "score": 52,
+        "reuse": {
+          "type": "paper-result",
+          "claim": "熊蜂单步双选开箱的示范组学习者更熟练并保持示范偏好；无示范组也能创新。此行为证据不能单独确定模仿机制、跨代累积文化或AI收益。",
+          "conditions": {
+            "species": "Bombus terrestris audax laboratory worker foragers",
+            "task": "single-step two-option puzzle with red-clockwise or blue-anticlockwise solution",
+            "exposure": "6 or 12 days; 3 h daily closed-box exposure after 30 min lidless pretraining",
+            "measurement": "video-coded rewarded openings; >=50% tab travel; learner threshold two openings",
+            "unit": "individual learners nested in colonies; six seeded and four unseeded colonies"
+          },
+          "observations": [
+            "Fig.2A：示范组22学习者、控制组14学习者；按学习后天数归一化的个体开箱中位数为27.9与1.15次/日，原文Mann–Whitney p=0.001；为来源报告而非本机复算。",
+            "Table 2：六个示范蜂群中示范变体的开箱比例均值98.6%；22名学习者中12名至少试过另一变体。无示范组有自发学习，故社会学习不是该单步任务成功的必要条件。",
+            "S2 Table：最低AIC的bee-ID随机效应模型报告day×treatment p=0.003233；colony-ID与nested模型分别0.005488和0.004709。nested模型treatment主效应p=0.061374，不能把所有模型的主效应都称显著。"
+          ],
+          "limitations": [
+            "没有神经记录或独立操纵局部强化/刺激强化/动作模仿；实验者阻止单示范蜂执行非训练变体，观察蜂不受此限制。",
+            "开放扩散中控制蜂也可能相互观察；学习者数量不等于独立蜂群重复数。最大学习窗口12天，未测试跨生物世代传承。",
+            "S1 Table的R2/R3观察总数与主表不同，未对原始Figshare数据复算或裁决；本卡不采用这些冲突总数作效果量。",
+            "2024两步任务是不同任务、独立文章而非此单步结果的同条件复验；无法从无开箱观察推断所有个体终生不可能创新。"
+          ],
+          "minimal_checks": [
+            "用于AI设计时只作假设：等总交互/示范生成预算，比较有效示范、无示范、打乱动作序列、仅终态/奖励位置暴露，分别测成功率、样本数和未见任务迁移。",
+            "保持任务步骤、颜色/动作难度、奖励预训练与学习阈值一致，按群落或独立运行聚类评估；不要用开箱次数充当独立样本数。",
+            "显式复现仍运行原实验；新环境验收、示范成本、模仿机制与AI收益不由本卡替代。"
+          ],
+          "paper": {
+            "venue": "PLOS Biology",
+            "year": 2023,
+            "review_status": "peer-reviewed",
+            "local_reproduction": "not-run"
+          }
+        },
+        "sources": [
+          {
+            "url": "https://doi.org/10.1371/journal.pbio.3002019",
+            "locator": "Published 2023-03-07, accepted 2023-02-02; Results Experiments 1–2; Fig.2A/B; Tables 1–2; Materials and methods; Discussion",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9990933/fullTextXML",
+            "locator": "Version-of-record full-text XML, read Results, Discussion, Materials and methods and figure/table captions",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://journals.plos.org/plosbiology/article/file?type=supplementary&id=10.1371/journal.pbio.3002019.s007",
+            "locator": "S2 Table (Appendix Table 2): random-effect model alternatives A–C, AIC and day-by-treatment interaction",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://journals.plos.org/plosbiology/article/file?type=supplementary&id=10.1371/journal.pbio.3002019.s006",
+            "locator": "S1 Table: daily demonstrator/observer incidence; unresolved R2/R3 totals versus main tables",
+            "accessed": "2026-10-07"
+          }
+        ],
+        "missing_conditions": [],
+        "mismatched_conditions": [],
+        "disposition": "reuse_for_planning",
+        "automatic_skip_authorized": false,
+        "applicability": "requires-human-review",
+        "knowledge_refs": [
+          {
+            "id": "neuro.bumblebee-social-diffusion",
+            "version": 1,
+            "sha256": "edd525eb72e80a9ceb4841f92017806307463c9d46cd174f6e97880eb6cfb1a0"
+          }
+        ]
+      }
+    },
+    {
+      "case": "mismatched",
+      "query": "观察同伴后学会开箱，怎样区分自己摸索和模仿？",
+      "context": {
+        "species": "Bombus terrestris audax laboratory worker foragers",
+        "task": "two-step sequential puzzle",
+        "exposure": "6 or 12 days; 3 h daily closed-box exposure after 30 min lidless pretraining",
+        "measurement": "video-coded rewarded openings; >=50% tab travel; learner threshold two openings",
+        "unit": "individual learners nested in colonies; six seeded and four unseeded colonies"
+      },
+      "explicit_reproduction": false,
+      "result": {
+        "id": "neuro.bumblebee-social-diffusion",
+        "version": 1,
+        "sha256": "edd525eb72e80a9ceb4841f92017806307463c9d46cd174f6e97880eb6cfb1a0",
+        "title": "熊蜂社会学习：示范影响熟练度与行为偏好，不能代替创新和累积文化证据",
+        "summary": "2023年熊蜂单步双选开箱实验中，有示范组的学习者更熟练并偏好示范变体，但无示范组也出现自发学习；局部强化、群落聚类及人为维持示范偏好限制机制与跨代文化推断。",
+        "status": "published",
+        "assumptions": [
+          "species: Bombus terrestris audax; laboratory worker foragers; exact individual age and sex not separately tabulated",
+          "task: single-step two-option puzzle; red clockwise or blue anticlockwise lid rotation",
+          "design: six seeded and four unseeded colonies; 6 or 12 days; 3 h closed-box exposure per day",
+          "measurement: video-coded box openings; >=50% required tab travel plus reward; learner threshold two openings",
+          "scope: behavioural diffusion and preference; no neural recording, consciousness measure or biological-generation chain"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "not-applicable",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-engineering-112454/report.md#neurobumblebee-social-diffusion",
+            "docs/knowledge_learning/2026-10-07-engineering-112454/sources.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "aliases",
+            "terms": [
+              "会开",
+              "伴后",
+              "同伴",
+              "后学",
+              "学会",
+              "察同",
+              "开箱",
+              "观察"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "模仿"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "开箱"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "同伴",
+              "学会",
+              "开箱",
+              "模仿",
+              "观察"
+            ]
+          }
+        ],
+        "score": 52,
+        "reuse": {
+          "type": "paper-result",
+          "claim": "熊蜂单步双选开箱的示范组学习者更熟练并保持示范偏好；无示范组也能创新。此行为证据不能单独确定模仿机制、跨代累积文化或AI收益。",
+          "conditions": {
+            "species": "Bombus terrestris audax laboratory worker foragers",
+            "task": "single-step two-option puzzle with red-clockwise or blue-anticlockwise solution",
+            "exposure": "6 or 12 days; 3 h daily closed-box exposure after 30 min lidless pretraining",
+            "measurement": "video-coded rewarded openings; >=50% tab travel; learner threshold two openings",
+            "unit": "individual learners nested in colonies; six seeded and four unseeded colonies"
+          },
+          "observations": [
+            "Fig.2A：示范组22学习者、控制组14学习者；按学习后天数归一化的个体开箱中位数为27.9与1.15次/日，原文Mann–Whitney p=0.001；为来源报告而非本机复算。",
+            "Table 2：六个示范蜂群中示范变体的开箱比例均值98.6%；22名学习者中12名至少试过另一变体。无示范组有自发学习，故社会学习不是该单步任务成功的必要条件。",
+            "S2 Table：最低AIC的bee-ID随机效应模型报告day×treatment p=0.003233；colony-ID与nested模型分别0.005488和0.004709。nested模型treatment主效应p=0.061374，不能把所有模型的主效应都称显著。"
+          ],
+          "limitations": [
+            "没有神经记录或独立操纵局部强化/刺激强化/动作模仿；实验者阻止单示范蜂执行非训练变体，观察蜂不受此限制。",
+            "开放扩散中控制蜂也可能相互观察；学习者数量不等于独立蜂群重复数。最大学习窗口12天，未测试跨生物世代传承。",
+            "S1 Table的R2/R3观察总数与主表不同，未对原始Figshare数据复算或裁决；本卡不采用这些冲突总数作效果量。",
+            "2024两步任务是不同任务、独立文章而非此单步结果的同条件复验；无法从无开箱观察推断所有个体终生不可能创新。"
+          ],
+          "minimal_checks": [
+            "用于AI设计时只作假设：等总交互/示范生成预算，比较有效示范、无示范、打乱动作序列、仅终态/奖励位置暴露，分别测成功率、样本数和未见任务迁移。",
+            "保持任务步骤、颜色/动作难度、奖励预训练与学习阈值一致，按群落或独立运行聚类评估；不要用开箱次数充当独立样本数。",
+            "显式复现仍运行原实验；新环境验收、示范成本、模仿机制与AI收益不由本卡替代。"
+          ],
+          "paper": {
+            "venue": "PLOS Biology",
+            "year": 2023,
+            "review_status": "peer-reviewed",
+            "local_reproduction": "not-run"
+          }
+        },
+        "sources": [
+          {
+            "url": "https://doi.org/10.1371/journal.pbio.3002019",
+            "locator": "Published 2023-03-07, accepted 2023-02-02; Results Experiments 1–2; Fig.2A/B; Tables 1–2; Materials and methods; Discussion",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9990933/fullTextXML",
+            "locator": "Version-of-record full-text XML, read Results, Discussion, Materials and methods and figure/table captions",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://journals.plos.org/plosbiology/article/file?type=supplementary&id=10.1371/journal.pbio.3002019.s007",
+            "locator": "S2 Table (Appendix Table 2): random-effect model alternatives A–C, AIC and day-by-treatment interaction",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://journals.plos.org/plosbiology/article/file?type=supplementary&id=10.1371/journal.pbio.3002019.s006",
+            "locator": "S1 Table: daily demonstrator/observer incidence; unresolved R2/R3 totals versus main tables",
+            "accessed": "2026-10-07"
+          }
+        ],
+        "missing_conditions": [],
+        "mismatched_conditions": [
+          {
+            "field": "task",
+            "reported": "single-step two-option puzzle with red-clockwise or blue-anticlockwise solution",
+            "task": "two-step sequential puzzle"
+          }
+        ],
+        "disposition": "minimal_transfer_check",
+        "automatic_skip_authorized": false,
+        "applicability": "requires-human-review",
+        "knowledge_refs": [
+          {
+            "id": "neuro.bumblebee-social-diffusion",
+            "version": 1,
+            "sha256": "edd525eb72e80a9ceb4841f92017806307463c9d46cd174f6e97880eb6cfb1a0"
+          }
+        ]
+      }
+    },
+    {
+      "case": "explicit-reproduction",
+      "query": "观察同伴后学会开箱，怎样区分自己摸索和模仿？",
+      "context": {
+        "species": "Bombus terrestris audax laboratory worker foragers",
+        "task": "single-step two-option puzzle with red-clockwise or blue-anticlockwise solution",
+        "exposure": "6 or 12 days; 3 h daily closed-box exposure after 30 min lidless pretraining",
+        "measurement": "video-coded rewarded openings; >=50% tab travel; learner threshold two openings",
+        "unit": "individual learners nested in colonies; six seeded and four unseeded colonies"
+      },
+      "explicit_reproduction": true,
+      "result": {
+        "id": "neuro.bumblebee-social-diffusion",
+        "version": 1,
+        "sha256": "edd525eb72e80a9ceb4841f92017806307463c9d46cd174f6e97880eb6cfb1a0",
+        "title": "熊蜂社会学习：示范影响熟练度与行为偏好，不能代替创新和累积文化证据",
+        "summary": "2023年熊蜂单步双选开箱实验中，有示范组的学习者更熟练并偏好示范变体，但无示范组也出现自发学习；局部强化、群落聚类及人为维持示范偏好限制机制与跨代文化推断。",
+        "status": "published",
+        "assumptions": [
+          "species: Bombus terrestris audax; laboratory worker foragers; exact individual age and sex not separately tabulated",
+          "task: single-step two-option puzzle; red clockwise or blue anticlockwise lid rotation",
+          "design: six seeded and four unseeded colonies; 6 or 12 days; 3 h closed-box exposure per day",
+          "measurement: video-coded box openings; >=50% required tab travel plus reward; learner threshold two openings",
+          "scope: behavioural diffusion and preference; no neural recording, consciousness measure or biological-generation chain"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "not-applicable",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-engineering-112454/report.md#neurobumblebee-social-diffusion",
+            "docs/knowledge_learning/2026-10-07-engineering-112454/sources.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "aliases",
+            "terms": [
+              "会开",
+              "伴后",
+              "同伴",
+              "后学",
+              "学会",
+              "察同",
+              "开箱",
+              "观察"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "模仿"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "开箱"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "同伴",
+              "学会",
+              "开箱",
+              "模仿",
+              "观察"
+            ]
+          }
+        ],
+        "score": 52,
+        "reuse": {
+          "type": "paper-result",
+          "claim": "熊蜂单步双选开箱的示范组学习者更熟练并保持示范偏好；无示范组也能创新。此行为证据不能单独确定模仿机制、跨代累积文化或AI收益。",
+          "conditions": {
+            "species": "Bombus terrestris audax laboratory worker foragers",
+            "task": "single-step two-option puzzle with red-clockwise or blue-anticlockwise solution",
+            "exposure": "6 or 12 days; 3 h daily closed-box exposure after 30 min lidless pretraining",
+            "measurement": "video-coded rewarded openings; >=50% tab travel; learner threshold two openings",
+            "unit": "individual learners nested in colonies; six seeded and four unseeded colonies"
+          },
+          "observations": [
+            "Fig.2A：示范组22学习者、控制组14学习者；按学习后天数归一化的个体开箱中位数为27.9与1.15次/日，原文Mann–Whitney p=0.001；为来源报告而非本机复算。",
+            "Table 2：六个示范蜂群中示范变体的开箱比例均值98.6%；22名学习者中12名至少试过另一变体。无示范组有自发学习，故社会学习不是该单步任务成功的必要条件。",
+            "S2 Table：最低AIC的bee-ID随机效应模型报告day×treatment p=0.003233；colony-ID与nested模型分别0.005488和0.004709。nested模型treatment主效应p=0.061374，不能把所有模型的主效应都称显著。"
+          ],
+          "limitations": [
+            "没有神经记录或独立操纵局部强化/刺激强化/动作模仿；实验者阻止单示范蜂执行非训练变体，观察蜂不受此限制。",
+            "开放扩散中控制蜂也可能相互观察；学习者数量不等于独立蜂群重复数。最大学习窗口12天，未测试跨生物世代传承。",
+            "S1 Table的R2/R3观察总数与主表不同，未对原始Figshare数据复算或裁决；本卡不采用这些冲突总数作效果量。",
+            "2024两步任务是不同任务、独立文章而非此单步结果的同条件复验；无法从无开箱观察推断所有个体终生不可能创新。"
+          ],
+          "minimal_checks": [
+            "用于AI设计时只作假设：等总交互/示范生成预算，比较有效示范、无示范、打乱动作序列、仅终态/奖励位置暴露，分别测成功率、样本数和未见任务迁移。",
+            "保持任务步骤、颜色/动作难度、奖励预训练与学习阈值一致，按群落或独立运行聚类评估；不要用开箱次数充当独立样本数。",
+            "显式复现仍运行原实验；新环境验收、示范成本、模仿机制与AI收益不由本卡替代。"
+          ],
+          "paper": {
+            "venue": "PLOS Biology",
+            "year": 2023,
+            "review_status": "peer-reviewed",
+            "local_reproduction": "not-run"
+          }
+        },
+        "sources": [
+          {
+            "url": "https://doi.org/10.1371/journal.pbio.3002019",
+            "locator": "Published 2023-03-07, accepted 2023-02-02; Results Experiments 1–2; Fig.2A/B; Tables 1–2; Materials and methods; Discussion",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9990933/fullTextXML",
+            "locator": "Version-of-record full-text XML, read Results, Discussion, Materials and methods and figure/table captions",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://journals.plos.org/plosbiology/article/file?type=supplementary&id=10.1371/journal.pbio.3002019.s007",
+            "locator": "S2 Table (Appendix Table 2): random-effect model alternatives A–C, AIC and day-by-treatment interaction",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://journals.plos.org/plosbiology/article/file?type=supplementary&id=10.1371/journal.pbio.3002019.s006",
+            "locator": "S1 Table: daily demonstrator/observer incidence; unresolved R2/R3 totals versus main tables",
+            "accessed": "2026-10-07"
+          }
+        ],
+        "missing_conditions": [],
+        "mismatched_conditions": [],
+        "disposition": "run_requested_experiment",
+        "automatic_skip_authorized": false,
+        "applicability": "requires-human-review",
+        "knowledge_refs": [
+          {
+            "id": "neuro.bumblebee-social-diffusion",
+            "version": 1,
+            "sha256": "edd525eb72e80a9ceb4841f92017806307463c9d46cd174f6e97880eb6cfb1a0"
+          }
+        ]
+      }
+    }
+  ],
+  "nonregression": [
+    {
+      "catalog": "queries",
+      "backend": "files",
+      "unchanged_per_query_expected_metrics": true,
+      "recall_at_3": 0.8095238095238095,
+      "context_recall": 0.8571428571428571
+    },
+    {
+      "catalog": "queries",
+      "backend": "sqlite",
+      "unchanged_per_query_expected_metrics": true,
+      "recall_at_3": 0.8095238095238095,
+      "context_recall": 0.8571428571428571
+    },
+    {
+      "catalog": "round2-queries",
+      "backend": "files",
+      "unchanged_per_query_expected_metrics": true,
+      "recall_at_3": 0.75,
+      "context_recall": 0.75
+    },
+    {
+      "catalog": "round2-queries",
+      "backend": "sqlite",
+      "unchanged_per_query_expected_metrics": true,
+      "recall_at_3": 0.75,
+      "context_recall": 0.875
+    },
+    {
+      "catalog": "morphology-queries",
+      "backend": "files",
+      "unchanged_per_query_expected_metrics": true,
+      "recall_at_3": 0.0,
+      "context_recall": 0.0
+    },
+    {
+      "catalog": "morphology-queries",
+      "backend": "sqlite",
+      "unchanged_per_query_expected_metrics": true,
+      "recall_at_3": 0.5,
+      "context_recall": 0.75
+    },
+    {
+      "catalog": "engineering-queries",
+      "backend": "files",
+      "unchanged_per_query_expected_metrics": true,
+      "recall_at_3": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "catalog": "engineering-queries",
+      "backend": "sqlite",
+      "unchanged_per_query_expected_metrics": true,
+      "recall_at_3": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "catalog": "rl-probability-queries",
+      "backend": "files",
+      "unchanged_per_query_expected_metrics": true,
+      "recall_at_3": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "catalog": "rl-probability-queries",
+      "backend": "sqlite",
+      "unchanged_per_query_expected_metrics": true,
+      "recall_at_3": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "catalog": "neuroscience-queries",
+      "backend": "files",
+      "unchanged_per_query_expected_metrics": true,
+      "recall_at_3": 1.0,
+      "context_recall": 1.0
+    },
+    {
+      "catalog": "neuroscience-queries",
+      "backend": "sqlite",
+      "unchanged_per_query_expected_metrics": true,
+      "recall_at_3": 1.0,
+      "context_recall": 1.0
+    }
+  ],
+  "invariants": {
+    "math_cursor_and_history_preserved": true,
+    "RL_probability_backlog_preserved": true,
+    "engineering_followup_preserved": true,
+    "cache_hashes_match": true,
+    "engineering_and_neuroscience_completed_cursors_not_advanced": true
+  },
+  "arithmetic": {
+    "kind": "synthetic",
+    "formula": "9/(12-10+1)",
+    "value": 3,
+    "unit": "openings/day; illustrative only"
+  },
+  "local_reproduction": "not-run",
+  "limitations": [
+    "single-model authored content review",
+    "No independent live-model holdout or statistical refit",
+    "Ancillary candidate lists changed in five backend/query cases; see checks/nonregression-candidate-differences.json",
+    "Known old retrieval misses remain; bounded round2 at limit8 fails"
+  ],
+  "outcome": "validation-blocked; local preparation only",
+  "memory_required": false,
+  "memory_reason": "Current explicit user instruction and pinned TASK/source files provide authoritative scope; no private memory claims consumed."
+}

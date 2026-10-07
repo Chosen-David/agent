@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "status": "blocked",
+  "task_refs": [
+    "EK-112454-01",
+    "EK-112454-02",
+    "EK-112454-03"
+  ],
+  "corpus_entries": 75,
+  "local_prepared_cards": 1,
+  "remote_published_cards": 0,
+  "python": "3.12.0 (tags/v3.12.0:0fb18b0, Oct  2 2023, 13:03:39) [MSC v.1935 64 bit (AMD64)]",
+  "checks": {
+    "knowledge_validate": "pass",
+    "plugin_snapshot_check": "pass",
+    "index_rebuilt": "pass",
+    "check_refs": "pass",
+    "source_cache_hashes": "pass",
+    "state_invariants": "pass",
+    "new_retrieval_files_and_sqlite": "pass",
+    "conservative_decisions": {
+      "passed": 4,
+      "automatic_skip_authorized": false
+    },
+    "old_expected_hit_metric_nonregression": "pass; ancillary candidate changes recorded",
+    "old_raw_retrieval": "known failures retained; see baseline/final and bounded logs",
+    "full_unittest": {
+      "status": "failed",
+      "ran": 511,
+      "failures": 7,
+      "errors": 60,
+      "skipped": 10,
+      "log": "checks/unittest.log"
+    },
+    "baseline_full_unittest": {
+      "status": "failed",
+      "ran": 511,
+      "failures": 8,
+      "errors": 60,
+      "skipped": 10,
+      "log": "checks/baseline-unittest.log",
+      "new_failing_ids": []
+    },
+    "reader_initial": "failed: missing fitz; checks/reader.log",
+    "reader_with_declared_dependency": {
+      "status": "pass",
+      "ran": 3,
+      "log": "checks/reader-with-declared-dependency.log",
+      "dependency": "PyMuPDF1.28.2, project-private pip --target; process-only PYTHONPATH"
+    },
+    "related_reuse_unittest": {
+      "status": "pass",
+      "ran": 7,
+      "log": "checks/reuse-unittest.log"
+    },
+    "tmux_live_readback": "unverified: Wsl/Service/E_ACCESSDENIED; private scheduler heartbeat round matched"
+  },
+  "blocker": "Required full suite does not pass on available Windows backend; existing Linux/WSL inaccessible. Do not publish or mark done.",
+  "independent_checks_scope": "Separate CLI/procedural verification and baseline comparison; source semantics reviewed by one model; no independent live-model blind evaluation",
+  "local_reproduction": "not-run",
+  "gpu_performance": "not-measured",
+  "next_owner": "trusted host/main maintenance: existing Linux full suite and reader, then refresh/merge and CAS publication"
+}
