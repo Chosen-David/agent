@@ -8,8 +8,22 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import time
 import urllib.request
+
+
+def sync_host_skills(repo, run, environment):
+    """Synchronize user skills after verified publication, outside the model sandbox."""
+    result = subprocess.run([sys.executable, str(Path(repo)/'scripts/setup_codex.py')],
+                            cwd=repo, env=environment, capture_output=True,
+                            text=True, encoding='utf-8', timeout=120)
+    receipt = {'exit_code': result.returncode, 'stdout': result.stdout, 'stderr': result.stderr,
+               'scope': 'Explicit host skill synchronization after complete published-tree verification'}
+    (Path(run)/'host-skills.json').write_text(json.dumps(receipt), encoding='utf-8')
+    if result.returncode:
+        raise RuntimeError('Published changes retained; local skill synchronization blocked: '+result.stdout[-1500:])
+    return receipt
 
 
 def git_sync(repo, run, environment, *, before):
@@ -56,11 +70,14 @@ def main():
     p.add_argument('--codex',required=True,help='explicit trusted native codex.exe')
     p.add_argument('--model',help='Optional account-supported model for this runner only')
     p.add_argument('--host-git-sync',action='store_true',help='Trusted host sync before/after connector publication')
+    p.add_argument('--host-skill-sync',action='store_true',help='Sync installed skills after verified host Git reconciliation')
     p.add_argument('--repo',required=True)
     p.add_argument('--prompt',required=True)
     p.add_argument('--run-dir',required=True)
     p.add_argument('--timeout',type=int,default=2700)
     a=p.parse_args()
+    if a.host_skill_sync and not a.host_git_sync:
+        p.error('--host-skill-sync requires --host-git-sync')
     if os.name!='nt': raise RuntimeError('Windows runner must execute on Windows')
     if not 30 <= a.timeout <= 2700: raise ValueError('timeout must be 30..2700 seconds')
     exe=Path(a.codex).resolve(); repo=Path(a.repo).resolve(); run=Path(a.run_dir).resolve()
@@ -104,6 +121,8 @@ def main():
     if child.returncode==0 and a.host_git_sync:
         result=git_sync(repo,run,environment,before=False)
         (run/'host-after.json').write_text(json.dumps(result),encoding='utf-8')
+        if a.host_skill_sync:
+            sync_host_skills(repo,run,environment)
     return child.returncode
 
 

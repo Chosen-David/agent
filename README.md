@@ -1,5 +1,7 @@
 # Agent Workflows
 
+本机 Codex 接入：`python scripts/setup_codex.py` 安装 15 个用户级技能与按需调度入口；`--check` 核验版本，更新保护本机修改。[Codex 接入与每轮 pull→验证→push→同步流程](docs/codex_adoption/README.md)。
+
 一个按**场景与能力**组织的通用 Agent 仓库。主 AI 根据用户目标选择工作流，保持通用身份；科研助手是其中一个专业组合，论文伴读与知识讲解也可以独立使用。
 
 适用于具备相应工具能力的 ChatGPT/Codex、Claude 及其他主 AI。当前提供科研/论文角色与独立旅行规划能力，并附完整工作流、可复制 Prompt 和插件包。未来可增加编程、学习、产品等领域的独立分类，不必改写主 AI 的身份。

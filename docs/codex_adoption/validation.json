@@ -1,0 +1,93 @@
+{
+  "schema_version": 1,
+  "scope": "Actual local installation, fresh native Codex smoke and program checks; no model-weight training or behavior-quality A/B.",
+  "installation": {
+    "initial_remote_revision": "41914d5373572d0f4219c8a16cb006005ebd9fc2",
+    "official_skill_installer": true,
+    "skills": 15,
+    "files": 259,
+    "directory": "~/.agents/skills",
+    "global_guidance": "CODEX_HOME/AGENTS.md",
+    "model_auth_configuration_modified": false
+  },
+  "regression": {
+    "source_revision": "e32ffdcdd0582be1319522c9a6e857663df9fedd",
+    "tests": 523,
+    "passed": 512,
+    "skipped": 11,
+    "reader_passed": 3,
+    "real_tmux_test": "passed",
+    "checks": {
+      "unittest": {
+        "exit_code": 0,
+        "seconds": 61.64999580383301
+      },
+      "reader": {
+        "exit_code": 0,
+        "seconds": 1.712897539138794
+      },
+      "validate": {
+        "exit_code": 0,
+        "seconds": 0.04720878601074219
+      },
+      "plugin": {
+        "exit_code": 0,
+        "seconds": 0.052690982818603516
+      },
+      "retrieval-base": {
+        "exit_code": 0,
+        "seconds": 0.19209575653076172
+      },
+      "retrieval-round2": {
+        "exit_code": 0,
+        "seconds": 0.19914746284484863
+      },
+      "retrieval-morphology": {
+        "exit_code": 0,
+        "seconds": 0.14901185035705566
+      },
+      "retrieval-engineering": {
+        "exit_code": 0,
+        "seconds": 0.2592644691467285
+      }
+    }
+  },
+  "native_model": {
+    "cli": "0.160.1",
+    "model": "gpt-6.1-sol inherited configuration",
+    "catalog_discovered": true,
+    "global_instructions_loaded": true,
+    "installed_tools_validated": true,
+    "knowledge_entries": 39,
+    "automatic_skip_authorized": false,
+    "reported_usage": {
+      "input_tokens": 143324,
+      "cached_input_tokens": 107520,
+      "cache_write_input_tokens": 0,
+      "output_tokens": 1285,
+      "reasoning_output_tokens": 301
+    },
+    "usage_scope": "CLI-reported cumulative turn counters including cached input; not a before/after cost measurement."
+  },
+  "preserved_failures": [
+    {
+      "case": "CRLF archive conversion",
+      "result": "Exact adoption blocked without overwriting installed files",
+      "fix": "Set core.autocrlf=false and core.eol=lf for archive command only; independent blob-vs-archive regression added."
+    },
+    {
+      "case": "Initial native decision probe",
+      "result": "Missing required --context; validate passed, decision not accepted",
+      "fix": "Host supplied empty known-condition object and reran actual installed CLI. Original false result retained in probe-initial.json."
+    }
+  ],
+  "host_skill_sync": {
+    "status": "pending deployment after verified publication",
+    "requires": "host-git-sync and exact complete published-tree equality"
+  },
+  "limitations": [
+    "Fresh-process discovery is self-reported; installed-tool calls independently visible in actual execution logs. No guarantee of future model compliance.",
+    "No model weights, auth, global model or permission settings changed.",
+    "Existing hourly cloud task was not reconfigured or reverified in this session; no duplicate schedule created."
+  ]
+}

@@ -1,5 +1,7 @@
 # 本轮增量代码与产物地图
 
+ADOPT-01–04：`scripts/setup_codex.py` 从已提交快照安装/同步 Codex 用户技能；`templates/codex_global_instructions.md` 为简短受管入口；`tests/test_codex_setup.py` 验证冲突、更新、备份和中断保护；`docs/codex_adoption/` 为接入/迭代及验收记录。主 AI 单一生产者；本机 Codex 和用户是消费者，私有部署记录在 `.agent-runs/codex-adoption/` 与 `CODEX_HOME/chosen-agent/`。
+
 现有入口：`setup.py` 安装主 AI/Skills；`config/role_registry.json` 注册角色；`prompts/orchestrator.md` 路由；`agent_runtime/` 执行与验收；`scripts/sync_plugin_references.py` 生成独立插件资源。本文件是知识库升级的增量地图，不宣称已盘点全部历史产物。
 
 | TASK | 实际锚点 | 生产者 → 消费者 | 用途 |

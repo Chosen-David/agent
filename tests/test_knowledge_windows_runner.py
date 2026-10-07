@@ -4,7 +4,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
-from scripts.run_knowledge_windows import git_sync
+from scripts.run_knowledge_windows import git_sync, sync_host_skills
 
 
 class HostGitTests(unittest.TestCase):
@@ -66,6 +66,18 @@ class HostGitTests(unittest.TestCase):
         with self.assertRaisesRegex(RuntimeError,'outside'):
             git_sync(self.repo,self.run,self.env,before=False)
         self.assertEqual(path.read_text(),'user work')
+        self.assertEqual(self.git(self.repo,'rev-parse','HEAD'),self.head)
+
+    def test_host_skill_failure_is_reported_without_discarding_published_work(self):
+        import json
+        directory=self.repo/'scripts'; directory.mkdir()
+        (directory/'setup_codex.py').write_text("import sys\nprint('local edit preserved')\nsys.exit(1)\n",encoding='utf-8')
+        before=(self.repo/'knowledge/card.txt').read_bytes()
+        with self.assertRaisesRegex(RuntimeError,'local skill synchronization blocked'):
+            sync_host_skills(self.repo,self.run,self.env)
+        receipt=json.loads((self.run/'host-skills.json').read_text())
+        self.assertEqual(receipt['exit_code'],1)
+        self.assertEqual((self.repo/'knowledge/card.txt').read_bytes(),before)
         self.assertEqual(self.git(self.repo,'rev-parse','HEAD'),self.head)
 
 
