@@ -26,3 +26,6 @@
 新结果位于 `doc/results/codex-pull-sync-20261007/`。实际执行 `verify_experiment_result` 节点，经显式宿主校验程序复核 AST 调用顺序、冻结源码、逐例 ID/总数、哈希和另外执行的 12 项宿主桥及 13 项安装器边界检查，返回 `usable-with-scope`；该程序是确定性校验器，未宣称独立 AI 或人类审阅。合同、DAG、源快照、原始输出、验证记录和不可变登记齐全，适用范围限定本轮接入路径及日志计数，不能证明全仓无 bug、模型遵从或性能。第一次解析器未接受原始日志的结果保留在私有区，修正解析后对相同原始数据重新验收，未放松标准。
 
 真实先查结果：`scripts/result_store.py search 'Codex pull skill synchronization' --limit 3 --max-scan 200` 命中三项 corpus 集成结果，代码/目标与本轮不同，决定拒用其测量并运行本轮回归；不以词汇命中证明可复用。本机已同步并检查并发 main 的 15 技能/403 文件；发布后再同步本轮入口。发布与最终本机同步的实际读回在收尾后补记。私有运行状态放 `.agent-runs/codex-pull-sync/`，不提交。
+
+
+本轮收尾：接入改动非强制发布 b6f88237879a47afba62d8457b13f1de69cfc794，独立 Git SHA/完整树 7e0d26e951d2f25408f4aba0f655bdb44e34c37c 核验；本机 15 技能/403 文件同步及 --check 通过，新受管指引已出现在当前会话。既有 agent-knowledge-maintenance tmux readback live，3600 秒周期不变，下一轮 2026-10-07 19:22:56 +08:00。原已取消研究精确树保存在 .agent-runs/codex-pull-sync/preserved-research/，私有 stash/检查点仍保留，未发布。研究失败状态未改写。SELF-SYNC-01–03 本轮范围完成，收尾文档另行发布读回，不修改稳定 Plan。

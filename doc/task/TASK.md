@@ -6,7 +6,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [SELF-SYNC-01] 核对 Codex 角色技能与真实同步入口 ([detail](task_details/SELF-SYNC-01.md))
 - [x] [SELF-SYNC-02] pull 后同步并检查技能，冲突阻止模型启动 ([detail](task_details/SELF-SYNC-02.md))
-- [ ] [SELF-SYNC-03] main 发布读回、本机同步与原小时任务恢复 ([detail](task_details/SELF-SYNC-03.md))
+- [x] [SELF-SYNC-03] main 发布读回、本机同步与原小时任务恢复 ([detail](task_details/SELF-SYNC-03.md))
 
 - [x] [MATH-23] 核对经典固定PSD能量上尾，独立推导下尾/有限网矩阵转换；筛选近期二次型局部律与反集中研究，验证已知依赖模型及拒用反例。 ([detail](task_details/MATH-23.md))
 - [x] [MATH-24] 保存实际引用/成本、双后端检索与回归，同步学科/结构索引和插件镜像；刷新main直接发布与远端读回后闭环。 ([detail](task_details/MATH-24.md))
