@@ -6,9 +6,11 @@
 
 - [x] [EK-122522-01] 核查3–6来源、原文结果/方法与固定源码许可，登记候选和拒用边界。
 - [x] [EK-122522-02] 维护来源/候选/对应历史，保留数学及RL/概率/工程队列；插件、索引、条件负例、旧检索非退化和相关单测/Reader验收。
-- [ ] [EK-122522-03] 报告真实检查；发布前读回并整合main，以expected_sha/force=false发布且独立核验完整树。
+- [x] [EK-122522-03] 报告真实检查；发布前读回并整合main，以expected_sha/force=false发布且独立核验完整树。
 
 产物：`docs/knowledge_learning/2026-10-07-engineering-122522/`、`knowledge/entries/neuroscience/neuro.salamander-cell-type-homology.*`；私有原文/源码/计划 `.agent-runs/engineering-122522/`。候选不进入默认检索；本轮不修改其他任务。
+
+本轮结果：5来源、1candidate/0新published；7目录双后端逐题非退化，13相关单测与Reader3通过，旧漏检保留。维护提交 `fd9012ca9f953693ad59d30e63d03ac7644c599e`、完整树 `9da002a7059fe19fdcb2f2e64eae74620670c376` 已API/独立ls-remote/2763工作文件树核验。下一轮RL，数学及其他队列保留；收尾提交另行读回，宿主Git对齐与技能同步不冒称已完成。
 
 ## 2026-10-07 工程持续学习 115246（本轮）
 

@@ -4,7 +4,7 @@
 
 ## 任务、版本与实际运行
 
-对应根TASK的EK-122522-01–03，主AI唯一作者，无委派。宿主先同步，启动`git status --porcelain=v1`无输出；本地HEAD、连接GitHub main和独立只读REST均为`907890831929a5d200d3fb64c6299449391a1ee8`。输入哈希见[inputs.json](inputs.json)，覆盖AGENTS、TASK及九项所要求的知识入口/目录文件；最近115246报告与验证记录已读，历史失败不改写为本轮成功。
+对应根TASK的EK-122522-01–03，主AI唯一作者，无委派。宿主先同步，启动`git status --porcelain=v1`无输出；本地HEAD、连接GitHub main和独立只读REST均为`907890831929a5d200d3fb64c6299449391a1ee8`。输入哈希见[inputs.json](inputs.json)，覆盖AGENTS、TASK及知识入口/目录共九项要求输入；最近115246报告与验证记录已读，历史失败不改写为本轮成功。
 
 决策EXECUTE；按用户“先补新增神经科学缺口”选择两栖类细胞类型。已有priority.next_domain=reinforcement-learning保留，下一轮RL，再概率论，再神经科学；数学顶层游标/history/open_questions、RL/概率待研主题、工程AI Infra→AI算法→数据结构队列均保留。
 
@@ -53,3 +53,10 @@ Fig4的65整合群支持比较分子特征，但共聚类既可能来自共享�
 coverage不因candidate消除缺口；learning_state只追加本轮工程/神经科学历史及priority证据，数学和其他队列保持。下一owner为既有小时维护主AI，先筛2026正式接收RL探索/信用分配/离线评估原论文；之后概率论。神经科学待补Science补充供体/性别/合池与S11/S12/S17/S18/S19、终版差异、CR2026及July预印本全文，AI迁移未测。
 
 发布前再次读回main并整合并发；GitHub create_tree/create_commit、expected_sha/force=false发布，通过完整工作文件树与immutable远端树比较、API main和独立git ls-remote核验后才完成03。发布回执另记，避免在提交内自指自身SHA。宿主在模型结束且全部工作文件与远端树相同后才对齐Git元数据和轮间同步技能；本模型不宣称完成这些宿主动作。
+
+
+## 发布收尾读回
+
+维护提交 `fd9012ca9f953693ad59d30e63d03ac7644c599e` 已按expected_sha=`907890831929a5d200d3fb64c6299449391a1ee8`、force=false更新main。完整2763文件树 `9da002a7059fe19fdcb2f2e64eae74620670c376` 与工作文件独立计算的Git树、immutable远端递归blob map完全一致；连接GitHub、只读REST ref与独立原生git ls-remote均读回同一提交。发布前两次读回没有并发变化。
+
+根TASK本轮01–03全部验收，其他任务未改勾选；科学发布数量仍0。真实回执见[publication.json](publication.json)。该收尾正文/状态/回执和快照按最新main再读回、相关检查后单独CAS发布，最终收尾SHA留在对话与私有宿主回执，避免在提交内自指其自身哈希。宿主退出后fetch、Git索引/分支对齐和轮间技能同步仍需实际执行，本模型全程未写.git。
