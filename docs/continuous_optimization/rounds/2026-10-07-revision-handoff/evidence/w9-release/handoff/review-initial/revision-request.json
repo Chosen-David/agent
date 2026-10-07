@@ -1,0 +1,51 @@
+{
+  "run_id": "revision-w9-final-candidate-handoff",
+  "input_version": "synthetic-manuscript-v1",
+  "task_id": "REV-03",
+  "original_manuscript_sha256": "712dd94ef8f5ad0c1a6f5f36bb3735901fc6bce564a96381cf6e4cfdc68ce88e",
+  "original_csv_sha256": "57201d75a6e7ea0b7581c2d94f4bf46c2b9a66e37b5df94c8e6b4c5ef3924248",
+  "finding_ids": [
+    "REV-F001",
+    "REV-F002",
+    "REV-F003"
+  ],
+  "owner": "research-write",
+  "recheck_owner": "research-review",
+  "scope": "Complete bounded corrected working manuscript using existing synthetic material only; no new experiment or outside claim.",
+  "requests": [
+    {
+      "finding_id": "REV-F001",
+      "status": "confirmed",
+      "action": "Replace universal 2x end-to-end/no-regression claim; state small 1.25x, medium 1.20x, large 0.90909x with 10% latency regression, and kernel-only 2x. Keep included kernel timing separate; never add scopes.",
+      "acceptance": [
+        "Abstract, Results and Appendix agree with scope and all three end-to-end ratios."
+      ]
+    },
+    {
+      "finding_id": "REV-F002",
+      "status": "confirmed",
+      "action": "Choose existing-data resolution: scope every performance conclusion to one-run descriptive CPU observations. Explicitly preserve no independent repeats, variance/quality unmeasured, and no GPU measurement. No CI/significance/quality-preservation/repeatability assertion.",
+      "acceptance": [
+        "Scope explicitly remains descriptive, or new independently collected evidence and precommitted analysis justify the revised claim without fabricated CI."
+      ]
+    },
+    {
+      "finding_id": "REV-F003",
+      "status": "rejected",
+      "action": "Keep original rejection: Appendix A already discloses regression. Retain that disclosure; do not claim the revision repaired a hidden/omitted result.",
+      "acceptance": [
+        "Existing appendix and CSV directly refute missing-disclosure suspicion."
+      ]
+    }
+  ],
+  "deliverables": [
+    "Complete corrected working manuscript",
+    "Per-finding evidence/change mapping with old/new hashes, exact locations and preserved CSV identity"
+  ],
+  "protocol": "Successfully publish revision artifact refs before consuming review request. Reviewer later independently reads old/new/data and evaluates original acceptance; no receipt closes findings.",
+  "limits": [
+    "No new experiments/network/resources",
+    "No modification of frozen original artifacts",
+    "At most two revisions; report unresolved instead of invented closure"
+  ]
+}

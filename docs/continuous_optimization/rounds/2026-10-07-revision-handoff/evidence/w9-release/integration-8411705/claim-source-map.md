@@ -1,0 +1,12 @@
+# Exact claim-source fixture map
+
+All paths/member hashes are in `claim-source-map.json`. Existing local writing tree is `/workspace/scratch/c12f3d9f92bd/w4-paper-controller/run/cases/`; every mapped local scientific member was compared byte-for-byte with the published reconstructed writing archive.
+
+- Attention: `full-paper-attention/attempts/0001/outputs/paper/paper.tex` §2 normalization invariant/merge/induction and §4.3 counterexample; companion claim ledger A-C01/A-C04; `work/study/reproduce.py` lines55–74 and94–96; `work/study/runs/run01/attention/counterexample.json/.npz`; attention evidence/source metadata and citation-audit record.
+- U-Net: analogous `full-paper-unet/.../paper/paper.tex` §2.1 and Appendix; companion WRITE-C001/C002; `work/study/reproduce.py` geometry105–123; geometry.csv and layer_traces.json; U-Net evidence/citation-audit records.
+- Primary cached FlashAttention: `/workspace/scratch/c12f3d9f92bd/writing-exemplars/b/flash.pdf`, official **35-page NeurIPS supplemental**, physical4/5/22 (normalization,Algorithm1,induction), with text/pagePNG caches. This differs from historical writer's **34-page arXivv2** web source. The exactv2 PDF was not located in the bounded search. Freeze the35-page version honestly and recheck the relevant passage; do not relabel versions.
+- Primary cached U-Net: `/workspace/scratch/c12f3d9f92bd/architecture-sources/unet/paper.pdf`, arXivv1,8pages; physical2Fig1,3Fig2,4§2. Version/hash in sources.json; text exists.
+
+DOUBT correction: the blind maker and comparison writer did not independently open the original, but the independent evaluator **did**. Published modern archive `reviews/doubt2026-1.md` and `.json` identify `/root/modern_architecture_controller/modern_independent_grader` and record personal original-pixel inspection of physical3–5,Fig2/caption,Algorithm1,Sec3.1–3.4 andEq1/4–6. Local originalPDF is `recent-architecture-sources/doubt.pdf`; evaluator rasters are `modern-architecture-controller/reviewer-work/doubt2026/original-page-{3,4,5}.png`. All are hash-bound in JSON. This is historical evaluator evidence, not a new pixel read by this auditor, nor a full-paper read. Thus the maker's deliberate exclusion must not be reported as missing evaluator original-source verification.
+
+Copy only scientific source/derivation materials into new worker fixtures. Keep evaluator grades/rubrics controller-side. No outputs, source reports, frozen runs or archives were changed. New material/execution/publication approval remains separate.

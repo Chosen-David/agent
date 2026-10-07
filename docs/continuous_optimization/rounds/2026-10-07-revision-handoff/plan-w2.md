@@ -1,0 +1,1 @@
+W2 scope: preserve and integrate latest main; original-paper and pinned upstream review-source reading; independent bounded design review. No implementation or publication. W1 acceptance unchanged. Budget: one independent reviewer, 180 seconds, no retries/install/payment. Focused additional checks only if a new doubt warrants them.

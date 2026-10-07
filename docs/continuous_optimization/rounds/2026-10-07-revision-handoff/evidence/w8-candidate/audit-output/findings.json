@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "review_id": "REV-W8-CANDIDATE-AUDIT-001",
+  "run_id": "revision-w8-candidate-audit",
+  "input_version": "candidate-d95ce4e4",
+  "snapshot": {
+    "base_commit": "c66b5ced2bbb15ef6d42a4c8530256b4152c94ed",
+    "production_files": {
+      "workflows/agent_communication_workflow.md": "d288fa564ad12b78af63c385ee340e0e436ce3a711492df860922b38b0c2791a",
+      "plugins/research-assistant/skills/research-assistant/references/agent_communication_workflow.md": "8b4e36a0141776abfe77eebf6bda476145d5c3b8c2a9307ea5cdb546bf0fe0a2"
+    },
+    "runtime_sha256": "e4604a9b0ce8852175b4a4f90f10ed98e685f36a7085aa86558b77f076c32300",
+    "kind": "workflow contract candidate; runtime and Skill unchanged",
+    "candidate_id": "d95ce4e4a9a79922d692f181eb7203176d7a1a3b460658b54ac1e1b6528c2dca"
+  },
+  "verdict": "bounded_transport_claims_supported_with_minor_documentation_issue",
+  "findings": [
+    {
+      "finding_id": "REV-F001",
+      "snapshot_id": "d95ce4e4a9a79922d692f181eb7203176d7a1a3b460658b54ac1e1b6528c2dca",
+      "category": "reporting",
+      "severity": "minor",
+      "confidence": "high",
+      "assertion_type": "confirmed_error",
+      "status": "confirmed",
+      "title": "Workflow names Engine.current(), but the frozen API provides Context.current()",
+      "location": [
+        {
+          "path": "workflows/agent_communication_workflow.md",
+          "line": 70
+        },
+        {
+          "path": "plugins/research-assistant/skills/research-assistant/references/agent_communication_workflow.md",
+          "line": 72
+        }
+      ],
+      "evidence": [
+        {
+          "path": "agent_runtime/core.py",
+          "sha256": "47dd90f76e42679e4c06c69706c0d2a032cb8df14d7e1b0c2bedb26f96e78827",
+          "lines": [
+            186,
+            224
+          ],
+          "observation": "Context.current at 195-199 checks cancellation, token, task status and lease; the complete Engine class has no current method."
+        },
+        {
+          "path": "consumer/consumer.py",
+          "sha256": "a0fffaa338bc7559f5cbe5a0778604f3a4f574d49b91a8d0ee4b2b153c1fb8eb",
+          "lines": [
+            41,
+            47
+          ],
+          "observation": "Executed guard correctly calls context.current(), independently checks host authorization, then logs current/authorized."
+        },
+        {
+          "path": "workflows/agent_communication_workflow.md",
+          "sha256": "d288fa564ad12b78af63c385ee340e0e436ce3a711492df860922b38b0c2791a",
+          "line": 70,
+          "observation": "Existing guard is named Engine.current() in the documented interface."
+        }
+      ],
+      "why_it_matters": "A host implementing the named API literally would encounter a missing Engine method. This is a documentation defect; the actual consumer uses the correct Context method and its observed protocol outcomes remain valid.",
+      "verification": "Read the entire frozen core.py class definitions and the actual consumer guard; no new experiment required.",
+      "resolution_options": [
+        "Name Context.current() and the separate host/Engine authorization check in both workflow copies.",
+        "Supply an actual version-bound Engine.current alias if that is deliberately intended, and revisit the frozen runtime identity."
+      ],
+      "recheckconditions": [
+        "New workflow hashes identify both edited copies; both name the actual Context.current API and preserve the separate authorization requirement.",
+        "Compare against the unchanged runtime and consumer guard; retain publish-before-ACK, exact saved receipt, single-owner assumption and no-scientific-closure boundaries."
+      ],
+      "acceptance": [
+        "Static recheck confirms the named guard exists and both workflow copies agree."
+      ],
+      "related_findings": [],
+      "closure": "Not resolved in this audit; no source edits performed."
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "REV-T001",
+      "finding_ids": [
+        "REV-F001"
+      ],
+      "stage": "verify",
+      "depends_on": [],
+      "owner": "research-review",
+      "status": "done",
+      "action": "Verify documentation/API mismatch against frozen code",
+      "outputs": [
+        "refchecks.json",
+        "api-symbol-check.json"
+      ],
+      "done_when": "Workflow names Engine.current; full Engine class lacks current and Context has current; actual guard uses Context."
+    },
+    {
+      "task_id": "REV-T002",
+      "finding_ids": [
+        "REV-F001"
+      ],
+      "stage": "resolve",
+      "depends_on": [
+        "REV-T001"
+      ],
+      "owner": "main-ai",
+      "status": "todo",
+      "action": "Correct the API name in source workflow and generated copy under authorized source editing scope",
+      "done_when": "New immutable hashes and correction record available",
+      "on_missing_input": "blocked until source editing is authorized to the responsible owner"
+    },
+    {
+      "task_id": "REV-T003",
+      "finding_ids": [
+        "REV-F001"
+      ],
+      "stage": "recheck",
+      "depends_on": [
+        "REV-T002"
+      ],
+      "owner": "research-review",
+      "status": "todo",
+      "action": "Recheck both new workflow copies against actual runtime and original boundaries",
+      "done_when": [
+        "New workflow hashes identify both edited copies; both name the actual Context.current API and preserve the separate authorization requirement.",
+        "Compare against the unchanged runtime and consumer guard; retain publish-before-ACK, exact saved receipt, single-owner assumption and no-scientific-closure boundaries."
+      ],
+      "on_missing_input": "blocked; preserve confirmed finding"
+    }
+  ],
+  "scientific_acceptance": false,
+  "remaining": [
+    "REV-F001 correction and independent recheck",
+    "Budget original pending; conflict requires main AI reconciliation",
+    "Responsibility author request pending; author revision and original reviewer revalidation unexecuted",
+    "No production adapter migration, whole research chain, model/session quality or external side-effect acceptance"
+  ]
+}

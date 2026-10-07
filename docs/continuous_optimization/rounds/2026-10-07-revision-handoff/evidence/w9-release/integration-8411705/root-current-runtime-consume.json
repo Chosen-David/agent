@@ -1,0 +1,97 @@
+{
+  "scope": "Root read-only current-runtime validation of existing actual-model revision; NOT new model handoff or new receipt",
+  "runtime_sha256": "5a474bd97ad6ceec81a83dd8ff8a214e6c8ec040eef37d5659b28440f4807e83",
+  "manifest_sha256": "151bc7139030ac658f971093bd7ca0c5f966f9aac1dc0ffad21797cd8d26e937",
+  "result": {
+    "schema_version": 1,
+    "run_id": "revision-w9-final-candidate-handoff",
+    "role": "research-write",
+    "input_version": "synthetic-manuscript-v1",
+    "status": "completed",
+    "limitations": [
+      "Completed only the assigned bounded manuscript revision; independent reviewer acceptance remains pending.",
+      "No new evidence or experiment; single-run synthetic CPU records."
+    ],
+    "artifacts": [
+      {
+        "id": "manuscript",
+        "path": "writer/manuscript-revised.md",
+        "sha256": "41b853ec61746724fd487d714b34e11778c5ad83a25d20ab31a20d784391cb60"
+      },
+      {
+        "id": "mapping",
+        "path": "writer/evidence-mapping.json",
+        "sha256": "601634b8ac61d2e518bfdef1e10b3d69a98c2c1359f4b9adb8be566fcb30d9f7"
+      },
+      {
+        "id": "calculations",
+        "path": "writer/calculation-checks.json",
+        "sha256": "8d9af5582df689bc200e4340a082157398554dd1b3b9e54b75fb7fb3157152ad"
+      },
+      {
+        "id": "provenance",
+        "path": "writer/provenance.json",
+        "sha256": "1ac4041aa72433a278c944cecf4b0c53cf5cecf126730736ab13155b412ebf2d"
+      }
+    ],
+    "checks": [
+      {
+        "criterion": "Original hashes preserved and descriptive arithmetic recalculated",
+        "status": "pass",
+        "artifact_ids": [
+          "calculations",
+          "provenance"
+        ]
+      },
+      {
+        "criterion": "Per-finding change mapping supplied with old/new hashes",
+        "status": "pass",
+        "artifact_ids": [
+          "mapping",
+          "manuscript"
+        ]
+      }
+    ],
+    "tasks": [
+      {
+        "task_id": "REV-03",
+        "depends_on": [],
+        "status": "done",
+        "evidence": [
+          "manuscript",
+          "mapping",
+          "calculations",
+          "provenance"
+        ]
+      }
+    ]
+  },
+  "before_equals_after": true,
+  "status": [
+    {
+      "seq": 1,
+      "recipient": "research-review",
+      "receipt": {
+        "reason": "REV-F001 abstract contradicts paired end-to-end observations; REV-F002 requires descriptive one-run CPU scope. REV-F003 is rejected because Appendix A already discloses regression. Revision request w9-review-v1-revision-request-001 must be successfully delivered before this receipt; no scientific finding is closed.",
+        "status": "needs_revision"
+      }
+    },
+    {
+      "seq": 2,
+      "recipient": "research-write",
+      "receipt": {
+        "reason": "Read seq2 and verified immutable review/input refs; supplied complete bounded corrected manuscript and per-finding mapping, successfully delivered as w9-write-revision-001 before acknowledging this request. Original research-review owns independent recheck; this receipt closes no scientific finding.",
+        "status": "consumed"
+      }
+    },
+    {
+      "seq": 3,
+      "recipient": "research-review",
+      "receipt": {
+        "reason": "Original research-review independently read old/new manuscript and unchanged CSV, recalculated all ratios, and recorded hash-bound original-condition recheck in review-final/recheck-findings.json before ACK: REV-F001 and REV-F002 resolved by corrected descriptive claims; REV-F003 remains rejected. This receipt records handling only and is not the basis of scientific closure.",
+        "status": "consumed"
+      }
+    }
+  ],
+  "knowledge": "Existing synthetic-arithmetic handoff has no knowledge_refs; consumer has none; explicitlegacycompatibility. Role semantic/currentknowledge review follows separately."
+}

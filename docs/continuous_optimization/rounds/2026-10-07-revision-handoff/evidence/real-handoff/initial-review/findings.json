@@ -1,0 +1,295 @@
+{
+  "schema_version": "1.0",
+  "agent": "independent_research-review",
+  "task_id": "REV-03",
+  "review_date": "2026-10-06",
+  "snapshot": {
+    "id": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+    "manuscript": "inputs/manuscript.md",
+    "input_version": "synthetic-repair-v1",
+    "files": {
+      "manuscript.md": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "project.json": "b80f1cac27b288f19ada4f4c312df0fd2e8e935b69b4ec4e3bbf7890c67ff7fc",
+      "measurements.csv": "44e55682d4a1999a0211ec8d2a7a909eeb05f8f65a70e5a4f9fa8c4ef7defeac"
+    }
+  },
+  "rubric": "provisional scientific correctness/evidence/reporting; no venue supplied",
+  "findings": [
+    {
+      "finding_id": "REV-F001",
+      "snapshot_id": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "manuscript_sha256": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "category": "correctness",
+      "severity": "major",
+      "confidence": "high",
+      "assertion_type": "confirmed_error",
+      "status": "open",
+      "location": {
+        "file": "inputs/manuscript.md",
+        "line": 6,
+        "physical_page": null,
+        "printed_page": null,
+        "anchor": "Abstract: 30% across workload sizes"
+      },
+      "evidence": [
+        "All three small pairs decrease by 30 ms: mean baseline=100 ms, candidate=70 ms; (100−70)/100=30% time reduction; baseline/candidate=1.428571 speedup.",
+        "All three large pairs increase by 40 ms: mean baseline=200 ms, candidate=240 ms; (240−200)/200=20% time increase; baseline/candidate=0.833333 speedup.",
+        "All six supplied rows total 900→930 ms, or 3.333333% more time. This equal-row descriptive aggregate is not a population/deployment estimate.",
+        "Results line 12 already correctly says small improves and large regresses. calculations.json contains each actual row."
+      ],
+      "why_it_matters": "The headline generalization reverses the observed large-workload direction. “Accelerates by 30%” also leaves time-reduction versus speedup terminology unclear.",
+      "owner": "research-write",
+      "verification": "Recompute workload means from every CSV row, using time reduction=(baseline−candidate)/baseline; compare all headline claims with both workloads.",
+      "resolution_options": [
+        "Restrict quantitative claims to the two supplied synthetic workloads, explicitly define the percent metric, and report the large-workload regression alongside the small-workload benefit."
+      ],
+      "acceptance": [
+        "A new manuscript snapshot reports or unambiguously supports 100→70 ms / 30% lower time for small and 200→240 ms / 20% higher time for large; it contains no 30% improvement across sizes or unsupported pooled deployment claim."
+      ],
+      "recheck": {
+        "owner": "original_research-review",
+        "condition": [
+          "A new manuscript snapshot reports or unambiguously supports 100→70 ms / 30% lower time for small and 200→240 ms / 20% higher time for large; it contains no 30% improvement across sizes or unsupported pooled deployment claim."
+        ]
+      },
+      "related_findings": []
+    },
+    {
+      "finding_id": "REV-F002",
+      "snapshot_id": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "manuscript_sha256": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "category": "evidence",
+      "severity": "major",
+      "confidence": "high",
+      "assertion_type": "reporting_gap",
+      "status": "open",
+      "location": {
+        "file": "inputs/manuscript.md",
+        "line": 6,
+        "physical_page": null,
+        "printed_page": null,
+        "anchor": "Abstract: demonstrates reliable gains"
+      },
+      "evidence": [
+        "Manuscript line 3 identifies timings as invented synthetic fixtures.",
+        "CSV contains three trial labels per workload but no session, independent sampling, measurement provenance or uncertainty design.",
+        "Results line 12 explicitly reports no accuracy or statistical-significance measurements; Method line 9 says cache invalidation and hit rate were not measured.",
+        "Large workload regresses in each supplied pair. Consistent signs in invented rows do not establish repeatability or generalized benefit."
+      ],
+      "why_it_matters": "Reliable gains suggests evidential strength beyond a synthetic arithmetic illustration; timings also do not establish cached-result correctness. This does not assert that a real method is unreliable or inaccurate.",
+      "owner": "research-write",
+      "verification": "Inspect the entire supplied manuscript and CSV for any non-synthetic independent evidence supporting reliability; none is provided in this snapshot. Do not infer CI or p-values from invented repetitions.",
+      "resolution_options": [
+        "Limit the claim to descriptive synthetic timing differences and explicitly leave reliability and accuracy unestablished; no new experiment is required or authorized."
+      ],
+      "acceptance": [
+        "New snapshot omits or qualifies “reliable gains” and any statistical, accuracy or real-benchmark inference beyond the supplied fixture; synthetic status and absent accuracy/statistical evidence remain visible."
+      ],
+      "recheck": {
+        "owner": "original_research-review",
+        "condition": [
+          "New snapshot omits or qualifies “reliable gains” and any statistical, accuracy or real-benchmark inference beyond the supplied fixture; synthetic status and absent accuracy/statistical evidence remain visible."
+        ]
+      },
+      "related_findings": []
+    },
+    {
+      "finding_id": "REV-F003",
+      "snapshot_id": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "manuscript_sha256": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "category": "reporting",
+      "severity": "minor",
+      "confidence": "high",
+      "assertion_type": "reporting_gap",
+      "status": "open",
+      "location": {
+        "file": "inputs/manuscript.md",
+        "line": 12,
+        "physical_page": null,
+        "printed_page": null,
+        "anchor": "Results: Table 1 lists timing trials"
+      },
+      "evidence": [
+        "Full manuscript lines 1–18 contain no Table 1. The actual timings appear only in the separately supplied measurements.csv."
+      ],
+      "why_it_matters": "A manuscript reader cannot see the advertised table or verify the qualitative Results direction within the text alone.",
+      "owner": "research-write",
+      "verification": "Search the full submitted manuscript for Table 1 and compare any displayed rows with all six supplied CSV pairs.",
+      "resolution_options": [
+        "Include the existing data as the referenced table, or replace the absent table reference with a precise reference to the supplied CSV."
+      ],
+      "acceptance": [
+        "The revised manuscript has no dangling Table 1 reference; any included timing table exactly matches the supplied six rows and units."
+      ],
+      "recheck": {
+        "owner": "original_research-review",
+        "condition": [
+          "The revised manuscript has no dangling Table 1 reference; any included timing table exactly matches the supplied six rows and units."
+        ]
+      },
+      "related_findings": []
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "REV-T001",
+      "finding_ids": [
+        "REV-F001"
+      ],
+      "stage": "verify",
+      "depends_on": [],
+      "owner": "main_ai",
+      "status": "todo",
+      "action": "Recompute workload means from every CSV row, using time reduction=(baseline−candidate)/baseline; compare all headline claims with both workloads.",
+      "done_when": [
+        "Evidence-backed verified/rejected/unresolved decision recorded."
+      ],
+      "on_missing_input": "blocked; identify missing input and next owner, continue independent permitted tasks."
+    },
+    {
+      "task_id": "REV-T002",
+      "finding_ids": [
+        "REV-F001"
+      ],
+      "stage": "resolve",
+      "depends_on": [
+        "REV-T001"
+      ],
+      "owner": "research-write",
+      "status": "todo",
+      "action": "If independently verified, apply only the minimum in-scope manuscript correction, preserve correct material and record the new hash. No new data, experiments or literature.",
+      "done_when": [
+        "Actual revised manuscript and change record are available, or a supported decision not to change is recorded."
+      ],
+      "on_missing_input": "blocked; identify missing input and next owner, continue independent permitted tasks."
+    },
+    {
+      "task_id": "REV-T003",
+      "finding_ids": [
+        "REV-F001"
+      ],
+      "stage": "recheck",
+      "depends_on": [
+        "REV-T002"
+      ],
+      "owner": "original_research-review",
+      "status": "todo",
+      "action": "Read actual revised manuscript, independently recompute CSV arithmetic, test this finding’s acceptance and preserve unchanged valid content; do not close from author assertions.",
+      "done_when": [
+        "A new manuscript snapshot reports or unambiguously supports 100→70 ms / 30% lower time for small and 200→240 ms / 20% higher time for large; it contains no 30% improvement across sizes or unsupported pooled deployment claim."
+      ],
+      "on_missing_input": "blocked; identify missing input and next owner, continue independent permitted tasks."
+    },
+    {
+      "task_id": "REV-T004",
+      "finding_ids": [
+        "REV-F002"
+      ],
+      "stage": "verify",
+      "depends_on": [],
+      "owner": "main_ai",
+      "status": "todo",
+      "action": "Inspect the entire supplied manuscript and CSV for any non-synthetic independent evidence supporting reliability; none is provided in this snapshot. Do not infer CI or p-values from invented repetitions.",
+      "done_when": [
+        "Evidence-backed verified/rejected/unresolved decision recorded."
+      ],
+      "on_missing_input": "blocked; identify missing input and next owner, continue independent permitted tasks."
+    },
+    {
+      "task_id": "REV-T005",
+      "finding_ids": [
+        "REV-F002"
+      ],
+      "stage": "resolve",
+      "depends_on": [
+        "REV-T004"
+      ],
+      "owner": "research-write",
+      "status": "todo",
+      "action": "If independently verified, apply only the minimum in-scope manuscript correction, preserve correct material and record the new hash. No new data, experiments or literature.",
+      "done_when": [
+        "Actual revised manuscript and change record are available, or a supported decision not to change is recorded."
+      ],
+      "on_missing_input": "blocked; identify missing input and next owner, continue independent permitted tasks."
+    },
+    {
+      "task_id": "REV-T006",
+      "finding_ids": [
+        "REV-F002"
+      ],
+      "stage": "recheck",
+      "depends_on": [
+        "REV-T005"
+      ],
+      "owner": "original_research-review",
+      "status": "todo",
+      "action": "Read actual revised manuscript, independently recompute CSV arithmetic, test this finding’s acceptance and preserve unchanged valid content; do not close from author assertions.",
+      "done_when": [
+        "New snapshot omits or qualifies “reliable gains” and any statistical, accuracy or real-benchmark inference beyond the supplied fixture; synthetic status and absent accuracy/statistical evidence remain visible."
+      ],
+      "on_missing_input": "blocked; identify missing input and next owner, continue independent permitted tasks."
+    },
+    {
+      "task_id": "REV-T007",
+      "finding_ids": [
+        "REV-F003"
+      ],
+      "stage": "verify",
+      "depends_on": [],
+      "owner": "main_ai",
+      "status": "todo",
+      "action": "Search the full submitted manuscript for Table 1 and compare any displayed rows with all six supplied CSV pairs.",
+      "done_when": [
+        "Evidence-backed verified/rejected/unresolved decision recorded."
+      ],
+      "on_missing_input": "blocked; identify missing input and next owner, continue independent permitted tasks."
+    },
+    {
+      "task_id": "REV-T008",
+      "finding_ids": [
+        "REV-F003"
+      ],
+      "stage": "resolve",
+      "depends_on": [
+        "REV-T007"
+      ],
+      "owner": "research-write",
+      "status": "todo",
+      "action": "If independently verified, apply only the minimum in-scope manuscript correction, preserve correct material and record the new hash. No new data, experiments or literature.",
+      "done_when": [
+        "Actual revised manuscript and change record are available, or a supported decision not to change is recorded."
+      ],
+      "on_missing_input": "blocked; identify missing input and next owner, continue independent permitted tasks."
+    },
+    {
+      "task_id": "REV-T009",
+      "finding_ids": [
+        "REV-F003"
+      ],
+      "stage": "recheck",
+      "depends_on": [
+        "REV-T008"
+      ],
+      "owner": "original_research-review",
+      "status": "todo",
+      "action": "Read actual revised manuscript, independently recompute CSV arithmetic, test this finding’s acceptance and preserve unchanged valid content; do not close from author assertions.",
+      "done_when": [
+        "The revised manuscript has no dangling Table 1 reference; any included timing table exactly matches the supplied six rows and units."
+      ],
+      "on_missing_input": "blocked; identify missing input and next owner, continue independent permitted tasks."
+    }
+  ],
+  "retained_correct_material": [
+    "Synthetic fixture declaration, line 3.",
+    "Method description and disclosed unmeasured invalidation/hit rate, line 9 (descriptive; implementation not audited).",
+    "Small improvement / large regression and absent accuracy/statistical measurements, line 12.",
+    "Two synthetic workloads and no production evaluation, line 15.",
+    "Conceptual overhead-amortization/waiting-time background, line 18; retained as conceptual, not validated causal attribution."
+  ],
+  "limitations": [
+    "No network, literature/new-venue verification or new experiment; no novelty verdict.",
+    "No implementation/hardware logs; cache correctness, independence, real reliability and causal attribution are unverified.",
+    "No manuscript PDF was supplied; no PDF visual audit.",
+    "All findings remain open; reviewer did not modify source or approve release."
+  ]
+}

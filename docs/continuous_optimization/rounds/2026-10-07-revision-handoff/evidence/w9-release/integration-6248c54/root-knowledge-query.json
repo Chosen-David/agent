@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "snapshot": "d09e72e79a39c334285a59d91dbdd5a6be2530eb8e2246ba8f09f2067b1e82b9",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "infra.flashattention-io",
+      "version": 1,
+      "sha256": "5699ccfeb1b8bc75fb1ad5f859efda45297ed41553b2332895df07b5334b70d9",
+      "title": "FlashAttention：用 IO 分析选择精确注意力实现",
+      "summary": "NeurIPS 2022 的实验支持分块与重计算减少注意力中间矩阵的 HBM 流量；不是把精确注意力算术复杂度改成线性。",
+      "status": "published",
+      "assumptions": [
+        "operator: dense exact attention",
+        "hardware: NVIDIA GPU",
+        "metric: attention IO and end-to-end training"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#infra.flashattention-io"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "flashattention"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "flashattention"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "flashattention"
+          ]
+        }
+      ],
+      "score": 11
+    },
+    {
+      "id": "impl.flashattention-library",
+      "version": 1,
+      "sha256": "8e7488a7d266860ab3e5987723de3a71ec87fdd1bb36a2ee09c2edca9bc56fa9",
+      "title": "复用 FlashAttention 公共接口",
+      "summary": "已有 supported attention 语义时先评估作者库公共接口；按 README/固定接口核对设备、dtype、mask 和版本，减少自写 kernel。",
+      "status": "published",
+      "assumptions": [
+        "operation: supported dense attention variant",
+        "device: supported NVIDIA GPU",
+        "semantic: exact attention within floating-point tolerance"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#impl.flashattention-library"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "flashattention"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "flashattention"
+          ]
+        }
+      ],
+      "score": 6
+    }
+  ]
+}

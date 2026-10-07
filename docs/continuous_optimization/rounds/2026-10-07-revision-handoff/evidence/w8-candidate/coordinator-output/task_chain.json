@@ -1,0 +1,587 @@
+{
+  "schema": "bounded-coordination-plan/v1",
+  "run_id": "research-assistant-candidate-0001-v2",
+  "plan_version": 1,
+  "source_task_list": "project.json + task.txt (no project root TASK.md supplied to this role)",
+  "runtime": {
+    "execution_mode": "manual staged coordinator analysis",
+    "engine_loaded": false,
+    "scheduler_started": false,
+    "db": null,
+    "monitor_id": null,
+    "host_execution_record": "maintained separately by parent; not fabricated here"
+  },
+  "input_version": "measurements.csv@v2",
+  "input_version_authority": "project.json:change",
+  "keep": [
+    {
+      "id": "collect",
+      "version": "v1",
+      "scope": "historical declaration only",
+      "revalidated": false
+    },
+    {
+      "id": "background",
+      "version": "v1",
+      "scope": "historical declaration and concept input; missing output",
+      "revalidated": false
+    }
+  ],
+  "invalidate": [
+    {
+      "id": "figure@v1",
+      "reason": "depends on changed measurements@v1; stale for v2 use"
+    },
+    {
+      "id": "write/v1-input-binding",
+      "reason": "unstarted old dispatch must be replaced with v2 analysis/figure dependency"
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "RES-INPUT-v2",
+      "stage": "RES",
+      "depends_on": [],
+      "owner": "current_coordinator",
+      "inputs": [
+        "project.json",
+        "measurements.csv@v2"
+      ],
+      "input_version": "measurements.csv@v2",
+      "action": "Freeze file hashes; parse columns, positive ms, unique workload, scopes",
+      "outputs": [
+        "loaded_references.json",
+        "calculation_log.json"
+      ],
+      "done_when": "Four source records parse; hashes identify actual bytes; synthetic classification retained",
+      "acceptance": "Four source records parse; hashes identify actual bytes; synthetic classification retained",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "block affected node; report exact missing input",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "done",
+      "status_reason": null,
+      "task_refs": [
+        "project.json:change",
+        "project.json:state.collect"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "local performed work; not independent host acceptance"
+    },
+    {
+      "task_id": "RES-IMPACT-v2",
+      "stage": "RES",
+      "depends_on": [
+        "RES-INPUT-v2"
+      ],
+      "owner": "current_coordinator",
+      "inputs": [
+        "project.json",
+        "concept.txt@v1",
+        "measurements.csv@v2"
+      ],
+      "input_version": "measurements.csv@v2",
+      "action": "Trace declared input dependency changes without asserting absent output validation",
+      "outputs": [
+        "report.md"
+      ],
+      "done_when": "Keep historical collect/background declarations; invalidate current-use figure/write v1; explicitly record absent v1 bytes",
+      "acceptance": "Keep historical collect/background declarations; invalidate current-use figure/write v1; explicitly record absent v1 bytes",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "block affected node; report exact missing input",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "done",
+      "status_reason": null,
+      "task_refs": [
+        "project.json:state.collect",
+        "project.json:state.figure",
+        "project.json:state.write",
+        "project.json:state.background"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "local performed work; not independent host acceptance"
+    },
+    {
+      "task_id": "RES-CALC-v2",
+      "stage": "RES",
+      "depends_on": [
+        "RES-INPUT-v2"
+      ],
+      "owner": "current_coordinator",
+      "inputs": [
+        "measurements.csv@v2"
+      ],
+      "input_version": "measurements.csv@v2",
+      "action": "Calculate per-row speedup and latency reduction; scope-separate diagnostic aggregate",
+      "outputs": [
+        "calculate.py",
+        "results.csv",
+        "results.json",
+        "calculation_log.json"
+      ],
+      "done_when": "All four rows included; kernel excluded from end-to-end aggregate; equal-once assumption disclosed",
+      "acceptance": "All four rows included; kernel excluded from end-to-end aggregate; equal-once assumption disclosed",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "block affected node; report exact missing input",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "done",
+      "status_reason": null,
+      "task_refs": [
+        "project.json:goal",
+        "task.txt:dependency-analysis"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "local performed work; not independent host acceptance"
+    },
+    {
+      "task_id": "RES-CHECK-v2",
+      "stage": "RES",
+      "depends_on": [
+        "RES-CALC-v2"
+      ],
+      "owner": "current_coordinator",
+      "inputs": [
+        "measurements.csv@v2",
+        "results.json"
+      ],
+      "input_version": "measurements.csv@v2",
+      "action": "Recompute via Fraction using separately written verifier; validate DAG and refs",
+      "outputs": [
+        "verify_calculation.py",
+        "verification.json"
+      ],
+      "done_when": "Numerical comparisons pass within 1e-12; dependency IDs exist and DAG acyclic",
+      "acceptance": "Numerical comparisons pass within 1e-12; dependency IDs exist and DAG acyclic",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "block affected node; report exact missing input",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "done",
+      "status_reason": null,
+      "task_refs": [
+        "project.json:goal",
+        "task.txt:dependency-analysis"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "local performed work; not independent host acceptance"
+    },
+    {
+      "task_id": "RES-DECIDE-v2",
+      "stage": "RES",
+      "depends_on": [
+        "RES-CHECK-v2",
+        "RES-IMPACT-v2"
+      ],
+      "owner": "current_coordinator",
+      "inputs": [
+        "results.json"
+      ],
+      "input_version": "measurements.csv@v2",
+      "action": "Form bounded continuation recommendation; identify large regression, retain baseline; state unknown real-world decision",
+      "outputs": [
+        "report.md"
+      ],
+      "done_when": "No all-workload claim, no synthetic-to-real inference, no new optimization experiments",
+      "acceptance": "No all-workload claim, no synthetic-to-real inference, no new optimization experiments",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "block affected node; report exact missing input",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "done",
+      "status_reason": null,
+      "task_refs": [
+        "project.json:goal",
+        "task.txt:dependency-analysis"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "local performed work; not independent host acceptance"
+    },
+    {
+      "task_id": "WRITE-DRAFT-v2",
+      "stage": "WRITE",
+      "depends_on": [
+        "RES-DECIDE-v2"
+      ],
+      "owner": "current_coordinator",
+      "inputs": [
+        "results.json"
+      ],
+      "input_version": "measurements.csv@v2",
+      "action": "Write bounded results draft independently of pending figure; mark final write still pending",
+      "outputs": [
+        "report.md"
+      ],
+      "done_when": "Contains all scopes, large regression and synthetic/no-replicate limits; no ungenerated figure cited",
+      "acceptance": "Contains all scopes, large regression and synthetic/no-replicate limits; no ungenerated figure cited",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "block affected node; report exact missing input",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "done",
+      "status_reason": null,
+      "task_refs": [
+        "project.json:state.write"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "local performed work; not independent host acceptance"
+    },
+    {
+      "task_id": "FIG-T-v2",
+      "stage": "FIG",
+      "depends_on": [
+        "RES-CHECK-v2",
+        "RES-IMPACT-v2"
+      ],
+      "owner": "host-assigned-single-owner-required",
+      "inputs": [
+        "measurements.csv@v2",
+        "results.csv"
+      ],
+      "input_version": "measurements.csv@v2",
+      "action": "Load figure_shared and data_visualization_learning; make task-adapted brief; produce separate end_to_end and kernel_only panels; render/view outputs",
+      "outputs": [
+        "figure@v2 source script",
+        "figure@v2 PNG/PDF",
+        "caption@v2",
+        "figure QA record"
+      ],
+      "done_when": "Recompute four values; units ms; zero baseline; no invented uncertainty; visual inspection at final size; publish actual hashes",
+      "acceptance": "Recompute four values; units ms; zero baseline; no invented uncertainty; visual inspection at final size; publish actual hashes",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "block affected node; report exact missing input",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "todo",
+      "status_reason": null,
+      "task_refs": [
+        "project.json:state.figure"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "planned only"
+    },
+    {
+      "task_id": "WRITE-FINAL-v2",
+      "stage": "WRITE",
+      "depends_on": [
+        "WRITE-DRAFT-v2",
+        "FIG-T-v2"
+      ],
+      "owner": "host-assigned-single-owner-required",
+      "inputs": [
+        "results.json",
+        "figure@v2",
+        "caption@v2"
+      ],
+      "input_version": "measurements.csv@v2",
+      "action": "Finalize paragraph against actual v2 figure and caption",
+      "outputs": [
+        "paragraph@v2",
+        "write consistency record"
+      ],
+      "done_when": "All quoted numbers trace to current v2; scopes separate; regression and data limitations visible",
+      "acceptance": "All quoted numbers trace to current v2; scopes separate; regression and data limitations visible",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "block affected node; report exact missing input",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "todo",
+      "status_reason": null,
+      "task_refs": [
+        "project.json:state.write"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "planned only"
+    },
+    {
+      "task_id": "REV-CHECK-v2",
+      "stage": "REV",
+      "depends_on": [
+        "WRITE-FINAL-v2"
+      ],
+      "owner": "host-assigned-single-owner-required",
+      "inputs": [
+        "paragraph@v2",
+        "figure@v2",
+        "results.json"
+      ],
+      "input_version": "measurements.csv@v2",
+      "action": "Host assign reviewer if available; freeze artifacts and check numerical/scope/claim consistency",
+      "outputs": [
+        "review record@v2"
+      ],
+      "done_when": "Actual review evidence identifies inspected bytes; cannot label author self-check independent review",
+      "acceptance": "Actual review evidence identifies inspected bytes; cannot label author self-check independent review",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "block affected node; report exact missing input",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "todo",
+      "status_reason": null,
+      "task_refs": [
+        "project.json:goal",
+        "task.txt:dependency-analysis"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "planned only"
+    },
+    {
+      "task_id": "BG-REUSE",
+      "stage": "BG",
+      "depends_on": [
+        "RES-IMPACT-v2"
+      ],
+      "owner": "host-assigned-single-owner-required",
+      "inputs": [
+        "concept.txt@v1",
+        "background@v1 missing"
+      ],
+      "input_version": "concept.txt@v1",
+      "action": "Locate historical background output; verify source/version/scope and absence of performance dependencies",
+      "outputs": [
+        "background applicability record"
+      ],
+      "done_when": "Actual historical output inspected and hash-bound; otherwise remains blocked",
+      "acceptance": "Actual historical output inspected and hash-bound; otherwise remains blocked",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "background@v1 output bytes not provided; concept input alone does not validate it",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "blocked",
+      "status_reason": "background@v1 output bytes not provided; concept input alone does not validate it",
+      "task_refs": [
+        "project.json:state.background"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "planned only"
+    },
+    {
+      "task_id": "REV-VERIFY-FINDING",
+      "stage": "REV",
+      "depends_on": [
+        "REV-CHECK-v2"
+      ],
+      "owner": "host-assigned-single-owner-required",
+      "inputs": [
+        "actual finding envelope absent",
+        "current artifact snapshot"
+      ],
+      "input_version": "measurements.csv@v2",
+      "action": "Verify revised finding and preserve original ID/history; distinguish error/gap/preference; version changed evidence",
+      "outputs": [
+        "verified finding and affected dependency map"
+      ],
+      "done_when": "Actual evidence supports or refutes each finding; limited stale descendants; no auto rewrite",
+      "acceptance": "Actual evidence supports or refutes each finding; limited stale descendants; no auto rewrite",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "No actual review finding/message received; conditional recovery plan only",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "blocked",
+      "status_reason": "No actual review finding/message received; conditional recovery plan only",
+      "task_refs": [
+        "project.json:goal",
+        "task.txt:dependency-analysis"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "planned only"
+    },
+    {
+      "task_id": "COM-RECOVER",
+      "stage": "COM",
+      "depends_on": [
+        "REV-VERIFY-FINDING"
+      ],
+      "owner": "host-assigned-single-owner-required",
+      "inputs": [
+        "immutable revision intent absent",
+        "real original seq absent",
+        "trusted inbox/Engine ownership absent"
+      ],
+      "input_version": "measurements.csv@v2",
+      "action": "Ownership/auth check; status exact receipt check; publish same envelope successfully before needs_revision ACK; replay exact intent after interruption",
+      "outputs": [
+        "delivery status and receipt evidence"
+      ],
+      "done_when": "Real publish/seq/ack readback; refs valid; conflicts/budget errors stay pending; no exactly-once claim",
+      "acceptance": "Real publish/seq/ack readback; refs valid; conflicts/budget errors stay pending; no exactly-once claim",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "No original delivery, real seq or approved host mailbox adapter in this role task",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "blocked",
+      "status_reason": "No original delivery, real seq or approved host mailbox adapter in this role task",
+      "task_refs": [
+        "project.json:goal",
+        "task.txt:dependency-analysis"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "planned only"
+    },
+    {
+      "task_id": "REV-REPAIR",
+      "stage": "REV",
+      "depends_on": [
+        "COM-RECOVER"
+      ],
+      "owner": "host-assigned-single-owner-required",
+      "inputs": [
+        "verified finding",
+        "current figure/paragraph hashes"
+      ],
+      "input_version": "measurements.csv@v2",
+      "action": "Repair only confirmed affected FIG/WRITE claims; deliver revision before acknowledging request",
+      "outputs": [
+        "new immutable artifacts and handoff refs"
+      ],
+      "done_when": "Current hashes reflect repair; original finding preserved; at most two revision rounds",
+      "acceptance": "Current hashes reflect repair; original finding preserved; at most two revision rounds",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "Depends on actual verified and delivered repair request",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "blocked",
+      "status_reason": "Depends on actual verified and delivered repair request",
+      "task_refs": [
+        "project.json:goal",
+        "task.txt:dependency-analysis"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "planned only"
+    },
+    {
+      "task_id": "REV-RECHECK",
+      "stage": "REV",
+      "depends_on": [
+        "REV-REPAIR"
+      ],
+      "owner": "host-assigned-single-owner-required",
+      "inputs": [
+        "original finding criteria",
+        "old/new artifact hashes"
+      ],
+      "input_version": "measurements.csv@v2",
+      "action": "Original reviewer reevaluates new output; append scientific closure separate from consumption",
+      "outputs": [
+        "closure record or unresolved finding"
+      ],
+      "done_when": "Closure binds original finding ID, both artifact hashes and actual recheck evidence; receipt alone insufficient",
+      "acceptance": "Closure binds original finding ID, both artifact hashes and actual recheck evidence; receipt alone insufficient",
+      "on_failure": "preserve evidence; diagnose once; stop this branch on second failure; continue independent nodes",
+      "on_missing_input": "Actual reviewer/repair artifacts absent",
+      "resource_budget": {
+        "cpu_only": true,
+        "new_experiments": 0,
+        "network": false,
+        "installations": false,
+        "external_services": 0,
+        "max_attempts": 2
+      },
+      "status": "blocked",
+      "status_reason": "Actual reviewer/repair artifacts absent",
+      "task_refs": [
+        "project.json:goal",
+        "task.txt:dependency-analysis"
+      ],
+      "report_path": "report.md",
+      "verification_scope": "planned only"
+    }
+  ],
+  "conditional_communication": {
+    "executed": false,
+    "review_finding_present": false,
+    "actual_original_seq": null,
+    "recovery_order": [
+      "validate Engine lease/cancel/auth/single consumer/run/refs",
+      "persist immutable intent with original seq, finding ID, hashes, complete envelope and exact receipt/reason",
+      "status checks original delivery and exact existing receipt",
+      "publish saved envelope with identical event_id and bytes; verify success or exact dedup seq",
+      "only then acknowledge original needs_revision",
+      "replay same intent after interruption; preserve receipt; migrate changed refs/goal to new run",
+      "repair then deliver before acknowledging request; original reviewer checks new hashes before separate closure"
+    ],
+    "revision_limit": 2,
+    "semantic_closure_separate_from_receipt": true,
+    "limits": "No atomic publish+ACK or exactly-once side-effect guarantee; no adapter execution claim"
+  },
+  "goal_status": "coordination analysis performed; figure/final writing and independent review not complete"
+}

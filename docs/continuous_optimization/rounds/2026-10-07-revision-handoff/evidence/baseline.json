@@ -1,0 +1,135 @@
+{
+  "schema_version": 1,
+  "evidence_type": "program_execution_synthetic_records",
+  "baseline_commit": "04becb4ad8bc3e114d66c13dfe95af9cc2b53573",
+  "runtime_sha256": "e4604a9b0ce8852175b4a4f90f10ed98e685f36a7085aa86558b77f076c32300",
+  "cases": [
+    {
+      "order": "ack_first",
+      "budget_failure": false,
+      "process_exit": 73,
+      "error": null,
+      "reviewer_pending": 0,
+      "implementer_pending": 0,
+      "original_reviewer_receipt": {
+        "reason": "F1 needs a variance repair",
+        "status": "needs_revision"
+      },
+      "stranded_repair_request": true,
+      "status_record_lost": false,
+      "duplicate_retry": null,
+      "assertion": "observed expected baseline/control behavior",
+      "status_snapshot": [
+        {
+          "seq": 1,
+          "recipient": "reviewer",
+          "receipt": {
+            "reason": "F1 needs a variance repair",
+            "status": "needs_revision"
+          }
+        },
+        {
+          "seq": 1,
+          "recipient": "writer",
+          "receipt": null
+        }
+      ]
+    },
+    {
+      "order": "publish_first",
+      "budget_failure": false,
+      "process_exit": 73,
+      "error": null,
+      "reviewer_pending": 1,
+      "implementer_pending": 1,
+      "original_reviewer_receipt": null,
+      "stranded_repair_request": false,
+      "status_record_lost": false,
+      "duplicate_retry": {
+        "seq": 2,
+        "recipients": [
+          "code"
+        ],
+        "duplicate": true
+      },
+      "assertion": "observed expected baseline/control behavior",
+      "status_snapshot": [
+        {
+          "seq": 1,
+          "recipient": "reviewer",
+          "receipt": null
+        },
+        {
+          "seq": 1,
+          "recipient": "writer",
+          "receipt": null
+        },
+        {
+          "seq": 2,
+          "recipient": "code",
+          "receipt": null
+        }
+      ]
+    },
+    {
+      "order": "ack_first",
+      "budget_failure": true,
+      "process_exit": null,
+      "error": "run event budget exhausted; reconcile before extending the plan",
+      "reviewer_pending": 0,
+      "implementer_pending": 0,
+      "original_reviewer_receipt": {
+        "reason": "F1 needs a variance repair",
+        "status": "needs_revision"
+      },
+      "stranded_repair_request": true,
+      "status_record_lost": false,
+      "duplicate_retry": null,
+      "assertion": "observed expected baseline/control behavior",
+      "status_snapshot": [
+        {
+          "seq": 1,
+          "recipient": "reviewer",
+          "receipt": {
+            "reason": "F1 needs a variance repair",
+            "status": "needs_revision"
+          }
+        },
+        {
+          "seq": 1,
+          "recipient": "writer",
+          "receipt": null
+        }
+      ]
+    },
+    {
+      "order": "publish_first",
+      "budget_failure": true,
+      "process_exit": null,
+      "error": "run event budget exhausted; reconcile before extending the plan",
+      "reviewer_pending": 1,
+      "implementer_pending": 0,
+      "original_reviewer_receipt": null,
+      "stranded_repair_request": false,
+      "status_record_lost": false,
+      "duplicate_retry": null,
+      "assertion": "observed expected baseline/control behavior",
+      "status_snapshot": [
+        {
+          "seq": 1,
+          "recipient": "reviewer",
+          "receipt": null
+        },
+        {
+          "seq": 1,
+          "recipient": "writer",
+          "receipt": null
+        }
+      ]
+    }
+  ],
+  "cases_asserted": 4,
+  "stranded_ack_first_cases": 2,
+  "model_tasks_executed": 0,
+  "conclusion": "Ordering hazard, not lost SQLite state; publish-first controls recover"
+}

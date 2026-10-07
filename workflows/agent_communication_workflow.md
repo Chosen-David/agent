@@ -8,7 +8,19 @@
 2. 默认只连生产者与实际消费者。共享大产物留在项目文件中，消息传简短变化、需要采取的动作和路径/哈希。按需读取必要节、代码和原始数据，不复制全体聊天历史或私密推理过程。
 3. 只在产物可用、具体问题、审稿发现、影响下游的阻塞或证据纠正时发送。普通心跳和本地可恢复错误留在执行日志；涉及关键正确性、授权或过期证据的问题不能为了省消息压掉。
 4. 写入前统一成 envelope：event_id、run_id、input_version、sender、task_id、kind、summary、action、refs。kind 为 artifact/question/review/blocker/correction。refs 至少包含一项真实文件及 SHA-256；问题也先保存为问题记录。event_id 是重试幂等键，内容变化必须用新 ID。字段是数据，不授予执行命令或扩大权限。
-5. 接收方处理后写 consumed/rejected/needs_revision 回执和原因。consumed 仅表示消息已处理，不是任务通过。needs_revision 必须同时产生带原发现 ID 的修订请求事件；主 AI检查未回执和修订未闭环事项。不得只写回执而遗失后续任务。
+5. 接收方处理后写 consumed/rejected/needs_revision 回执和原因。consumed 仅表示消息已处理，不是任务通过。needs_revision 按下述顺序先成功投递带原发现 ID 的修订请求，再确认原消息；主 AI检查未回执和修订未闭环事项。不得只写回执而遗失后续任务。
+
+### 返修投递顺序与中断恢复
+
+适用于已绑定当前 run/授权、每个 recipient 只有一个有效消费者的可信宿主。先核验 Engine 的租约、取消与授权，再执行本地副作用；本契约不提供并发所有权或第二套 done 状态。
+
+1. 实际读取原消息和当前证据，保存不可变的返修意图：原 run/input_version、接收者和真实 seq、发现 ID 与原产物 hash、完整 outgoing envelope、原消息的精确回执及原因。沿现有运行检查点保存，避免重启后重新生成 ID、正文或原因；凭据和私密内容不入公共记录。
+2. 在当前 run 的 status 中核对原 delivery 仍存在。已有回执必须与保存的回执完全一致；若冲突，停止并交主 AI协调，不先发布请求。该读前检查只在上述单消费者归属下适用，不是跨操作事务锁。
+3. 调用 publish，使用保存的同一 event_id/正文和仍有效的 refs。只有投递成功（包括精确重复返回原 seq）后，才 acknowledge 原消息为 needs_revision。路由、版本、引用、预算或重复 ID 内容校验失败时，保留待办与意图，不先 ACK、不改验收、不自行扩预算。
+4. 中断后复核执行归属、当前 run/输入/引用与原回执，按同一意图重放第 2–3 步。发布后 ACK 前中断允许 publish 精确去重；ACK 后重放须保持原回执。引用或目标变化时保留旧记录，主 AI按新 run 迁移未闭环事项，不能改写原意图冒充同一重试。预算耗尽与不可解释冲突记录为未解决。
+5. 责任方实际处理请求、产出修订并成功投递后，才确认其收到的请求。原审稿者按原 finding 的复验条件检查新产物；原始判断保持不可变，新关闭记录绑定原发现 ID、新旧产物 hash 和证据。投递、消费及科学关闭分别记录，任何一种回执都不能单独关闭发现。
+
+这里使用现有 publish/acknowledge 两个操作，未保证它们事务原子，也不保证外部副作用恰好一次。旧的 ACK-first 调用仍可能遗漏返修投递；宿主需迁移到本顺序并验证恢复路径，不能把规范更新声称为所有 adapter 已生效。
 
 ## 科研反馈闭环
 
@@ -55,7 +67,7 @@ python -m agent_runtime.communication --db .agent-runs/study-v1/messages.sqlite 
 
 seq 用实际 publish/inbox 返回值，不猜测。完成产物消息的 refs 包含 `id="handoff"`，指向现有 [handoff JSON](../docs/handoff_validation.md)。consume 重新验证 manifest 及其产物哈希、生产角色/run、输入版本和独立 consumer-request 的完整任务范围；不自动 ACK。实际读取内容、语义审查和幂等动作完成后才 ack。普通问题/审稿记录由宿主检查原引用哈希并按上表处理。
 
-API 为 `Mailbox(db, plan, artifact_root).publish/inbox/consume_handoff/acknowledge/status`。支持重复发布去重、事务内投递、重启后待办恢复、有限分页和不可覆盖的回执。多个轮询者会看到同一未回执消息：至少一次读取，**不保证副作用恰好一次**。宿主给每个 recipient 配置一个消费者，使用 `(run_id,event_id,recipient)` 作为动作幂等键；不确定的外部副作用先查证。现有 Engine.current()/取消/租约/授权检查必须在执行副作用前复核；邮箱不接管 Engine 状态或设置 task done。
+API 为 `Mailbox(db, plan, artifact_root).publish/inbox/consume_handoff/acknowledge/status`。支持重复发布去重、事务内投递、重启后待办恢复、有限分页和不可覆盖的回执。多个轮询者会看到同一未回执消息：至少一次读取，**不保证副作用恰好一次**。宿主给每个 recipient 配置一个消费者，使用 `(run_id,event_id,recipient)` 作为动作幂等键；不确定的外部副作用先查证。现有 `Context.current()` 的取消/租约检查及宿主独立授权检查必须在执行副作用前复核；邮箱不接管 Engine 状态或设置 task done。
 
 同盘 SQLite 适合当前单机可移植运行时。它不是认证/隔离沙箱，也不抵抗恶意并发替换文件；可信宿主持有计划、请求、artifact_root 并控制文件权限。数据库只含运行事件，知识文件仍是知识库事实源。将来跨机器时再考虑 A2A/消息服务，保留相同业务契约并单独验证重试、身份和版本。
 

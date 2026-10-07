@@ -1,0 +1,191 @@
+{
+  "code_read_id": "CODE-READ-REV-W8-CONSUMER-001",
+  "task_refs": [
+    "REV-02",
+    "REV-03"
+  ],
+  "scope": {
+    "commit": "c66b5ced2bbb15ef6d42a4c8530256b4152c94ed",
+    "candidate": {
+      "base_commit": "c66b5ced2bbb15ef6d42a4c8530256b4152c94ed",
+      "production_files": {
+        "workflows/agent_communication_workflow.md": "d288fa564ad12b78af63c385ee340e0e436ce3a711492df860922b38b0c2791a"
+      },
+      "runtime_sha256": "e4604a9b0ce8852175b4a4f90f10ed98e685f36a7085aa86558b77f076c32300",
+      "kind": "workflow contract candidate; runtime and Skill unchanged",
+      "candidate_id": "7efadc9ff81470205356f4e6c83000fc8d7baab6f32d215947d754f8e6573bea"
+    },
+    "repository_read_only": true,
+    "owned_outputs": "/workspace/scratch/c12f3d9f92bd/revision-w8-consumer-run/cases/revision-protocol-consumer/attempts/0001/outputs",
+    "owned_mutable_db": "/workspace/scratch/c12f3d9f92bd/revision-w8-consumer-private",
+    "reviewer_owner": "owned-local-review-consumer",
+    "one_consumer_per_recipient_per_run": true,
+    "scenario_runs": "Three distinct immutable run/plan scopes, preventing budget mutation and cross-run receipt reuse"
+  },
+  "claims": [
+    {
+      "id": "CR-1",
+      "type": "source_fact",
+      "claim": "Mailbox.publish validates exact envelope/run/input/routes/references before entering a transaction; exact duplicate content returns existing seq before event-budget rejection.",
+      "evidence": [
+        "agent_runtime/communication.py:89-130",
+        "source-publish.json"
+      ]
+    },
+    {
+      "id": "CR-2",
+      "type": "source_fact",
+      "claim": "Mailbox.acknowledge does not publish any request; receipts are immutable; inbox omits acknowledged deliveries, while status retains all receipts.",
+      "evidence": [
+        "agent_runtime/communication.py:132-171",
+        "source-evidence.json"
+      ]
+    },
+    {
+      "id": "CR-3",
+      "type": "executed",
+      "claim": "SIGKILL after committed outgoing publication and before original ACK recovered by one exact replay, with duplicate true and same seq 2; final original needs_revision receipt exact matches saved intent.",
+      "conditions": [
+        "single owned local host reviewer consumer",
+        "unchanged refs/run/input/intent",
+        "valid Engine Context.current token, lease, cancellation and authorization at local side-effect points"
+      ],
+      "evidence": [
+        "interruption/fault-process.json",
+        "interruption/replay-process.json",
+        "interruption/api.jsonl",
+        "interruption/intent.json",
+        "interruption/final-readback.json"
+      ]
+    },
+    {
+      "id": "CR-4",
+      "type": "executed",
+      "claim": "Run event budget rejected outgoing request and retained original pending receipt, no ACK and no budget expansion.",
+      "evidence": [
+        "budget/blocked.json",
+        "budget/api.jsonl",
+        "budget/final-readback.json"
+      ]
+    },
+    {
+      "id": "CR-5",
+      "type": "executed",
+      "claim": "Pre-existing conflicting receipt caused stop before request publication; the existing receipt remains unchanged.",
+      "evidence": [
+        "conflict/blocked.json",
+        "conflict/api.jsonl",
+        "conflict/sqlite-readback.json"
+      ]
+    },
+    {
+      "id": "CR-6",
+      "type": "unknown",
+      "claim": "No scientific closure, model-session restart, cross-host concurrent ownership, live external side effects, production adapter migration or quality/performance claim follows from this run.",
+      "evidence": [
+        "results.json",
+        "consumer.py"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "caller": "owned LocalHandler.run",
+      "callee": "actual Engine Context.current / host authorization",
+      "condition": "each child effect point and parent dispatch",
+      "resolved": true,
+      "evidence": "all scenario api.jsonl host_guard; agent_runtime/core.py:195-199, 218-224, 373-376"
+    },
+    {
+      "caller": "consume",
+      "callee": "Mailbox.status/inbox",
+      "condition": "before request publication; exact receipt conflict preflight",
+      "resolved": true,
+      "evidence": "consumer.py and scenario api.jsonl"
+    },
+    {
+      "caller": "consume",
+      "callee": "Mailbox.publish",
+      "condition": "current owner, immutable intent/reference readback and nonconflicting delivery",
+      "resolved": true,
+      "evidence": "interruption/api.jsonl or budget/api.jsonl"
+    },
+    {
+      "caller": "consume",
+      "callee": "Mailbox.acknowledge",
+      "condition": "only publish success, including precise duplicate; renewed guard",
+      "resolved": true,
+      "evidence": "interruption/api.jsonl"
+    },
+    {
+      "caller": "Mailbox.publish",
+      "callee": "scripts.validate_handoff.validate",
+      "condition": "every publish, including seed and exact replay",
+      "resolved": true,
+      "evidence": "source-evidence.json"
+    },
+    {
+      "caller": "responsibility author",
+      "callee": "revision/reviewer revalidation",
+      "condition": "not executed in this task",
+      "resolved": false,
+      "evidence": "interruption/final-readback.json shows outgoing still pending"
+    }
+  ],
+  "config": {
+    "max_events": {
+      "interruption": 10,
+      "budget": 1,
+      "conflict": 10
+    },
+    "max_message_bytes": 8192,
+    "mailbox_defaults": {
+      "max_events": 1000,
+      "max_message_bytes": 8192
+    },
+    "engine_lease_seconds": 120,
+    "engine_max_attempts_per_scenario": 1,
+    "actual_child_restart_count": 1,
+    "local_corrections": 0,
+    "reference_evidence": "Frozen synthetic-evidence.json per scenario; immutable hashes in intent and events"
+  },
+  "checks": {
+    "executed": [
+      "actual current Mailbox against synthetic local artifacts",
+      "Store/Engine bounded local adapter dispatch plus Context.current guards",
+      "real child SIGKILL -9",
+      "one child replay",
+      "budget rejection",
+      "receipt conflict stop",
+      "all assertions in driver after actual state/readback"
+    ],
+    "read_only_static": [
+      "frozen Skill and references",
+      "candidate workflow",
+      "actual Mailbox/core/validator",
+      "source commit/blob and hash comparisons"
+    ],
+    "not_executed": [
+      "consume_handoff completion-manifest branch (these are ordinary review records)",
+      "responsibility author revision and ACK",
+      "original reviewer scientific revalidation",
+      "production host adapter migration",
+      "model or GPU work",
+      "external side effects"
+    ],
+    "unexpected_failures": [],
+    "retained_injected_failures": [
+      "interruption/fault-process.json",
+      "budget/blocked.json",
+      "conflict/blocked.json"
+    ]
+  },
+  "limits": [
+    "Publish and ACK are separate transactions; preflight is not a concurrency lock.",
+    "Host owns plan/root and one consumer; no malicious file-replacement protection or cross-host ownership tested.",
+    "Driver Engine done applies only to evidence capture for each bounded local scenario; it is not finding acceptance.",
+    "Synthetic seed finding intentionally remains open. No scientific experiment was computed.",
+    "Every path/ref and run identity is local to this single fixed consumer role; no broad adapter compliance inference."
+  ],
+  "next_action": "Main AI independently inspect these readbacks. Budget run remains unresolved with original pending; conflicting receipt requires main AI reconciliation before new intent/run. The interrupted run has pending author request; author must produce a real revision and original reviewer must verify old/new hashes against the frozen condition before closing any finding."
+}

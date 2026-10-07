@@ -1,0 +1,50 @@
+{
+  "calculations": [
+    {
+      "workload": "small",
+      "baseline_ms": "100",
+      "candidate_ms": "80",
+      "scope": "end_to_end",
+      "speedup_exact": "5/4",
+      "speedup": 1.25,
+      "latency_change_pct_exact": "-20",
+      "latency_change_pct": -20.0
+    },
+    {
+      "workload": "medium",
+      "baseline_ms": "120",
+      "candidate_ms": "100",
+      "scope": "end_to_end",
+      "speedup_exact": "6/5",
+      "speedup": 1.2,
+      "latency_change_pct_exact": "-50/3",
+      "latency_change_pct": -16.666666666666668
+    },
+    {
+      "workload": "large",
+      "baseline_ms": "200",
+      "candidate_ms": "220",
+      "scope": "end_to_end",
+      "speedup_exact": "10/11",
+      "speedup": 0.9090909090909091,
+      "latency_change_pct_exact": "10",
+      "latency_change_pct": 10.0
+    },
+    {
+      "workload": "kernel",
+      "baseline_ms": "20",
+      "candidate_ms": "10",
+      "scope": "kernel_only",
+      "speedup_exact": "2",
+      "speedup": 2.0,
+      "latency_change_pct_exact": "-50",
+      "latency_change_pct": -50.0
+    }
+  ],
+  "formulae": {
+    "speedup": "baseline_ms/candidate_ms",
+    "latency_change_pct": "100*(candidate_ms-baseline_ms)/baseline_ms"
+  },
+  "checks": "Four rows, scopes, ratios and latency changes recalculated using exact rational arithmetic. No addition of kernel-only and end-to-end timings.",
+  "new_experiments": false
+}

@@ -1,0 +1,52 @@
+{
+  "attempt": 1,
+  "case_id": "code-reading",
+  "checks": [
+    {
+      "artifact_refs": [
+        "code_reading_report.md"
+      ],
+      "criterion": "Identifies misleading module narrative using function/line evidence; treats comments as claims",
+      "evidence": [
+        "Read all 30 lines of supplied selector: report ties misleading header/comments to actual call/data edges."
+      ],
+      "verdict": "pass"
+    },
+    {
+      "artifact_refs": [
+        "code_reading_report.md"
+      ],
+      "criterion": "Default picks dimensions [0,2]; optional fixed basis is not query-trained; final score uses full original vectors",
+      "evidence": [
+        "Default dimensions [0,2], caller-provided basis, original-vector full_score stated and supported by source."
+      ],
+      "verdict": "pass"
+    },
+    {
+      "artifact_refs": [
+        "code_reading_report.md"
+      ],
+      "criterion": "Near is a candidate range, forced suffix is separate; skip_far keeps scoring near and final full_score",
+      "evidence": [
+        "Near range and forced suffix are separate, skip_far still evaluates near and final original score."
+      ],
+      "verdict": "pass"
+    },
+    {
+      "artifact_refs": [
+        "execution_record.json"
+      ],
+      "criterion": "Caller and data edges with conditions; no target execution or performance claim; preserves read-only input",
+      "evidence": [
+        "Static read only; boundary/overlap conditions stated, no target execution or measured speedup."
+      ],
+      "verdict": "pass"
+    }
+  ],
+  "grader": "/root",
+  "output_hashes": {
+    "artifact_manifest.json": "bde94b1bcc5f3d96149ca7f958ae252754140f61a8e7ccad1cccdb809916c8ee",
+    "code_reading_report.md": "84b716dbf2405bac8e99084337ebd8de10e5511bd05c611864cc8171279b8f5b",
+    "execution_record.json": "31e42ee631d283ee8def546ecf84aaa2d3c63feb2c988530990200c6261abfae"
+  }
+}

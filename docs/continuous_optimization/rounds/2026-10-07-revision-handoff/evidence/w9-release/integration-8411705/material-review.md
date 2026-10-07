@@ -1,0 +1,26 @@
+# Independent pre-execution material and impact review — 84117051
+
+Decision: approve the frozen **protected supplemental continuation materials**, not release. Reviewer: `/root/w9_release_audit`. No continuation start records existed at review. The pipeline review in sibling controller binds the exact manifest, 15 tasks, all fixture hashes and 75 exact new criteria. The trusted controller dispatch clarification is separately hash-bound. Old role outputs are explicit historical inputs, never newly generated outputs.
+
+The initial prose plan alone was insufficient: it lacked the mandatory protected material gate, pointed partly to nonexistent `snapshot/knowledge`, and left input versions missing. Main prepared a distinct gated run and fixed the real bundled corpus/CLI and supplemental versions before execution. Literal `knowledge_refs:null` is invalid; omission or `[]` is the compatible empty form.
+
+## Evidence and impact
+
+- Independently verified all 175 prior collected outputs, all copied original inputs, exact original task objects and the 280 current frozen source paths. Original run replays as 15/15 with no integrity errors; its 47 criteria remain bound to historical output bytes. This review does not independently regrade all historical visual operations.
+- Rechecked all 55 selected historical scientific dependencies: **44 unchanged, 11 changed**. Changes are AGENTS plus Skill/execution entry instructions for write, review, PDF reader, diagrams and data visualization. The added knowledge obligations matter; the former 55/55 unchanged statement must not describe this integration. Existing writing/figure scientific source bodies and historical output bytes are retained. New role-local knowledge files are additional dependencies, absent from the old selection.
+- Upstream changes include all role access links, shared/standalone knowledge workflow, orchestrator instructions, richer model mapping requirements, reference synchronizer and `check_handoff_knowledge` called by `Mailbox.consume_handoff`. All 179 changed paths and selected dependency hashes/diffs are enumerated in the JSON. Root knowledge content is unchanged in this upstream interval; new access behavior still requires actual use evidence.
+- No new ten-paper reads, complete-manuscript reruns, full visual rereads, live business verification, unseen tasks, measured quality improvement or backend deployment are claimed.
+
+## Why a bounded continuation is sufficient for this impact scope
+
+Each real original role receives its exact task, input and prior output bytes, current frozen role/execution/knowledge contracts and a trusted input-version/corpus binding. Each actually decides demand, obtains relevant evidence, checks assumptions and rechecks affected prior conclusions, then writes additive usage/transcript/hash/report/handoff evidence. Original 47 checks are preserved; the new 75 checks cannot pass by copying prior pass labels. Findings require an additive correction or blocked status, not hidden modification of old outputs. This tests the newly introduced obligations without fabricating a fresh scientific generation run.
+
+Per-role demand and factual boundaries are detailed in JSON `roles`. Model-with-knowledge must retrieve real entries and prerequisites and execute current mapping/false-premise checks. Review/reader independently check relevant theory when used; the reader still inspects affected final PDF pages. Theory-demand no-hit is recorded as `no_hits`, not a fake retrieval or unsupported universal claim. Travel/path-management and exact source/data transcription may justify no external corpus demand while actually consulting project evidence. No role may use `not_needed` merely because the old grade passed.
+
+Historical full-paper/modern-figure evidence remains reusable as immutable artifact correctness/coverage evidence under its original source binding. It is **not** evidence that those old generations complied with the new knowledge contract. Existing trace omissions, initial failed modern-figure attempt, partial reading exclusions and old adapter/material-gate diagnostic failure remain visible. This narrow applicability decision does not assert all current-source tasks were rerun.
+
+## Current-runtime handoff remains required
+
+Repeat the actual review → revision owner → original reviewer chain under current runtime, preserving exact original closure conditions and rejected suspicion. Preserve the publish-before-ACK interruption/replay behavior, pending state on budget/conflict/stale references, event/revision bounds and negative observations. Empty refs are justified only for the supplied direct-arithmetic fixture; any actually used knowledge must propagate complete pinned refs and independent consumer-owned root/required refs. Current knowledge handoff/task tests must cover valid and invalid dependency states; program fixtures are not actual-role executions. No current-runtime chain is accepted by this pre-execution review.
+
+Publication remains blocked until all actual supplemental roles and the affected handoff are independently accepted, required regression/archive gates pass, and publication/readback complete. This is a material approval only.

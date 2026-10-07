@@ -1,0 +1,44 @@
+{
+  "attempt": 1,
+  "case_id": "explain-research-concepts",
+  "checks": [
+    {
+      "artifact_refs": [
+        "explanation.md"
+      ],
+      "criterion": "softmax 0.5/0.5 to 0.25/0.75; outputs 5/7.5",
+      "evidence": [
+        "Recomputed exp(ln3)=3: weights .5/.5 to .25/.75, outputs5 to7.5."
+      ],
+      "verdict": "pass"
+    },
+    {
+      "artifact_refs": [
+        "explanation.md"
+      ],
+      "criterion": "Jacobian (diag(p)-pp^T) and fixed-V scope correct",
+      "evidence": [
+        "Correct diag(p)-pp^T and V transpose multiplication with fixed V; separates direct and indirect derivatives."
+      ],
+      "verdict": "pass"
+    },
+    {
+      "artifact_refs": [
+        "explanation.md"
+      ],
+      "criterion": "no claim of RoPE-specific universal evidence",
+      "evidence": [
+        "Explicit toy limits, no universal RoPE assertion; actual calculation log supports only arithmetic."
+      ],
+      "verdict": "pass"
+    }
+  ],
+  "grader": "/root",
+  "output_hashes": {
+    "artifact_manifest.json": "2310c3c205b704424a8a04ee4983bb64f5b4a3df2471ef937ac59f358795e960",
+    "calculation_checks.json": "595f621d72932cd60051a568b8ae15b529a5bf1419dc5617c4c8e38b97d22e62",
+    "check_example.py": "3e03798fcb04fd6a47a142ee6afb6e92be4456b19dd988140c525f649f70e521",
+    "execution_record.json": "feb505d51dfe6dd994e1174ffb017bea1f5a0dbefdf2c441e660baf42e242ef6",
+    "explanation.md": "3e7c7e4d7545233fbd036d6cca909dee1081da30e5ed97a70e69b5c83a1c95a2"
+  }
+}

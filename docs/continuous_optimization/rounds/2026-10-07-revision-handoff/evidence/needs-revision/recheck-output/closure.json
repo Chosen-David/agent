@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0",
+  "original_role": true,
+  "source_seq": 3,
+  "original_manuscript_sha256": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+  "new_manuscript_sha256": "9d2f0229d56d10a7dc821581589f7dbedf4e72b1c76433be545b7840dc83ddbf",
+  "csv_sha256": "44e55682d4a1999a0211ec8d2a7a909eeb05f8f65a70e5a4f9fa8c4ef7defeac",
+  "findings": [
+    {
+      "finding_id": "REV-F001",
+      "original_manuscript_sha256": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "new_manuscript_sha256": "9d2f0229d56d10a7dc821581589f7dbedf4e72b1c76433be545b7840dc83ddbf",
+      "original_status": "open",
+      "status": "closed",
+      "workflow_status": "resolved",
+      "owner": "original_research_review",
+      "original_recheck_conditions": [
+        "New manuscript identifies small mean latency reduction 30% and large mean latency increase 20% (or equivalent correctly defined timing values).",
+        "No abstract or other section asserts across-size gains or universal acceleration; descriptive observations remain explicitly synthetic."
+      ],
+      "evidence": [
+        "Abstract line 6 states small 30% lower mean latency (100 vs 70 ms), large 20% higher (200 vs 240), baseline mean denominator and fixture-only scope.",
+        "Results line 25 states the same computed means and signed relative latency changes; no universal improvement assertion remains."
+      ],
+      "reason": "Both original acceptance conditions satisfied by independently read revised manuscript and unchanged fixture computation, not by response or ACK.",
+      "acceptance_results": [
+        {
+          "condition": "New manuscript identifies small mean latency reduction 30% and large mean latency increase 20% (or equivalent correctly defined timing values).",
+          "passed": true,
+          "evidence": "Abstract line 6 states small 30% lower mean latency (100 vs 70 ms), large 20% higher (200 vs 240), baseline mean denominator and fixture-only scope."
+        },
+        {
+          "condition": "No abstract or other section asserts across-size gains or universal acceleration; descriptive observations remain explicitly synthetic.",
+          "passed": true,
+          "evidence": "Results line 25 states the same computed means and signed relative latency changes; no universal improvement assertion remains."
+        }
+      ]
+    },
+    {
+      "finding_id": "REV-F002",
+      "original_manuscript_sha256": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "new_manuscript_sha256": "9d2f0229d56d10a7dc821581589f7dbedf4e72b1c76433be545b7840dc83ddbf",
+      "original_status": "open",
+      "status": "closed",
+      "workflow_status": "resolved",
+      "owner": "original_research_review",
+      "original_recheck_conditions": [
+        "New manuscript does not claim established reliability, significance, accuracy equivalence, or deployment generalization from these fixtures.",
+        "Synthetic provenance and absence of relevant accuracy/statistical evidence remain visible; no fabricated CI, p-values, or experiments are added."
+      ],
+      "evidence": [
+        "Abstract line 6 explicitly leaves reliability, accuracy equivalence, significance and deployment generalization unevaluated.",
+        "Synthetic warning line 3 and no accuracy/statistical measurements line 12 remain; line 25 disclaims reliability/deployment inference. Full manuscript has no new inferential statistics or experimental evidence."
+      ],
+      "reason": "Both original acceptance conditions satisfied by independently read revised manuscript and unchanged fixture computation, not by response or ACK.",
+      "acceptance_results": [
+        {
+          "condition": "New manuscript does not claim established reliability, significance, accuracy equivalence, or deployment generalization from these fixtures.",
+          "passed": true,
+          "evidence": "Abstract line 6 explicitly leaves reliability, accuracy equivalence, significance and deployment generalization unevaluated."
+        },
+        {
+          "condition": "Synthetic provenance and absence of relevant accuracy/statistical evidence remain visible; no fabricated CI, p-values, or experiments are added.",
+          "passed": true,
+          "evidence": "Synthetic warning line 3 and no accuracy/statistical measurements line 12 remain; line 25 disclaims reliability/deployment inference. Full manuscript has no new inferential statistics or experimental evidence."
+        }
+      ]
+    },
+    {
+      "finding_id": "REV-F003",
+      "original_manuscript_sha256": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "new_manuscript_sha256": "9d2f0229d56d10a7dc821581589f7dbedf4e72b1c76433be545b7840dc83ddbf",
+      "original_status": "open",
+      "status": "closed",
+      "workflow_status": "resolved",
+      "owner": "original_research_review",
+      "original_recheck_conditions": [
+        "Table 1 exists and matches the CSV, or the nonexistent table reference is removed and timing evidence is accurately identified.",
+        "No fabricated rows or inference are inserted."
+      ],
+      "evidence": [
+        "Results line 14 labels Table 1 as invented measurements.csv fixtures in milliseconds.",
+        "Table body lines 18\u201323 contains all six original rows exactly; independent CSV/table equality check passed."
+      ],
+      "reason": "Both original acceptance conditions satisfied by independently read revised manuscript and unchanged fixture computation, not by response or ACK.",
+      "acceptance_results": [
+        {
+          "condition": "Table 1 exists and matches the CSV, or the nonexistent table reference is removed and timing evidence is accurately identified.",
+          "passed": true,
+          "evidence": "Results line 14 labels Table 1 as invented measurements.csv fixtures in milliseconds."
+        },
+        {
+          "condition": "No fabricated rows or inference are inserted.",
+          "passed": true,
+          "evidence": "Table body lines 18\u201323 contains all six original rows exactly; independent CSV/table equality check passed."
+        }
+      ]
+    }
+  ],
+  "regression": {
+    "Method": true,
+    "Limitations": true,
+    "Background": true,
+    "synthetic_warning_preserved": true,
+    "csv_sha_unchanged": true,
+    "six_table_rows_match_csv_exactly": true
+  },
+  "scientific_closure_basis": "Actual manuscript and independent calculations; transport consumption is separate",
+  "scope": "Single bounded recheck; no new experiments, citations, manuscript edits, network, or original finding mutation"
+}

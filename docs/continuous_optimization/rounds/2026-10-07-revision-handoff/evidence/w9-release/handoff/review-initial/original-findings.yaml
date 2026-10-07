@@ -1,0 +1,86 @@
+{
+  "schema_version": "1.0",
+  "snapshot_id": "712dd94ef8f5ad0c1a6f5f36bb3735901fc6bce564a96381cf6e4cfdc68ce88e",
+  "findings": [
+    {
+      "finding_id": "REV-F001",
+      "snapshot_id": "712dd94ef8f5ad0c1a6f5f36bb3735901fc6bce564a96381cf6e4cfdc68ce88e",
+      "category": "correctness",
+      "severity": "major",
+      "confidence": "high",
+      "assertion_type": "confirmed_error",
+      "status": "confirmed",
+      "location": {
+        "physical_page": null,
+        "printed_page": null,
+        "anchor": "manuscript.md Abstract line 4; measurements.csv lines 2–5"
+      },
+      "evidence": [
+        "Abstract: 2x end-to-end speedup on every workload without any regression.",
+        "Recomputed baseline/candidate: small 1.25x, medium 1.20x, large 0.90909x; large latency increases 10%. Only kernel-only is 2x."
+      ],
+      "why_it_matters": "Core summary contradicts all three end-to-end observations.",
+      "verification": "Recompute each paired row and preserve scope; cross-check Appendix A.",
+      "resolution_options": [
+        "Replace universal 2x/no-regression claim with scoped observed values, including large regression."
+      ],
+      "acceptance": [
+        "Abstract, Results and Appendix agree with scope and all three end-to-end ratios."
+      ],
+      "related_findings": []
+    },
+    {
+      "finding_id": "REV-F002",
+      "snapshot_id": "712dd94ef8f5ad0c1a6f5f36bb3735901fc6bce564a96381cf6e4cfdc68ce88e",
+      "category": "evidence",
+      "severity": "major",
+      "confidence": "high",
+      "assertion_type": "reporting_gap",
+      "status": "confirmed",
+      "location": {
+        "physical_page": null,
+        "printed_page": null,
+        "anchor": "Results line 8; Appendix A line 10"
+      },
+      "evidence": [
+        "One run per value; no independent repeats. Variance and quality unmeasured, explicitly stated."
+      ],
+      "why_it_matters": "Observed differences do not establish repeatable improvements or quality preservation. This is insufficient evidence, not evidence the observations are noise.",
+      "verification": "Determine intended generalization and correctness requirement; recover paired raw timing logs if they exist.",
+      "resolution_options": [
+        "Limit to one-run descriptive CPU observations.",
+        "If retaining repeatability claims, predefine independent sessions, interleaved/randomized matched pairs, timing scope, warmup and fixed stopping/precision plan using independent pilot variance; retain failures and all workloads. Test correctness/quality at a prespecified tolerance only if such a claim is retained."
+      ],
+      "acceptance": [
+        "Scope explicitly remains descriptive, or new independently collected evidence and precommitted analysis justify the revised claim without fabricated CI."
+      ],
+      "related_findings": []
+    },
+    {
+      "finding_id": "REV-F003",
+      "snapshot_id": "712dd94ef8f5ad0c1a6f5f36bb3735901fc6bce564a96381cf6e4cfdc68ce88e",
+      "category": "reporting",
+      "severity": "minor",
+      "confidence": "high",
+      "assertion_type": "suspected_error",
+      "status": "rejected",
+      "location": {
+        "physical_page": null,
+        "printed_page": null,
+        "anchor": "Appendix A line 10"
+      },
+      "evidence": [
+        "Appendix explicitly says large workload regresses from 200 ms to 220 ms."
+      ],
+      "why_it_matters": "Prevents false claim that authors hid or omitted regression. Abstract inconsistency remains REV-F001.",
+      "verification": "Read Appendix A against CSV large row.",
+      "resolution_options": [
+        "No repair for alleged missing disclosure; retain Appendix A."
+      ],
+      "acceptance": [
+        "Existing appendix and CSV directly refute missing-disclosure suspicion."
+      ],
+      "related_findings": []
+    }
+  ]
+}

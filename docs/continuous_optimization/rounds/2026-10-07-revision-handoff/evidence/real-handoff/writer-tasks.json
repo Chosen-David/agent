@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "revision-write-repair",
+      "role": "research-write",
+      "skill": "plugins/research-assistant/skills/research-write/SKILL.md",
+      "prompt": "实际读取持久邮箱research-write待办，核对原发现引用SHA。按request及findings返修完整合成工作稿；所有CSV不变，正确背景/方法/限制不变；交manuscript-revised.md、response.json和实际操作log，不自己关闭发现。无PDF要求，无新实验/文献/网络。完成产物后按指定通信计划发布artifact事件给原审稿角色，然后才ACK原review为consumed；保存两步返回值。事件ID固定revision-repair-artifact-v1，task_id REV-03，input_version synthetic-repair-v1，refs包含新稿与response实际SHA，同ID重试不得改内容。宿主将另行原审稿复验，ACK不算验收。",
+      "fixtures": [
+        "manuscript.md",
+        "measurements.csv",
+        "project.json",
+        "findings.json",
+        "request.json"
+      ]
+    }
+  ]
+}

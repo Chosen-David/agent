@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0",
+  "task_id": "REV-03",
+  "input_version": "synthetic-repair-v1",
+  "source_event_id": "w7-revision-request-v1",
+  "source_seq": 2,
+  "source_snapshot_id": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+  "status": "draft_complete_pending_original_reviewer_recheck",
+  "manuscript": {
+    "path": "writer/manuscript-revised.md",
+    "sha256": "9d2f0229d56d10a7dc821581589f7dbedf4e72b1c76433be545b7840dc83ddbf"
+  },
+  "findings": [
+    {
+      "finding_id": "REV-F001",
+      "status": "repair_proposed_pending_recheck",
+      "location": "Abstract; Results",
+      "change": "Replaced universal acceleration with workload-specific synthetic mean latency reduction of 30% for small and increase of 20% for large, with baseline-mean denominator defined.",
+      "evidence": "Existing six CSV rows; re-executed supplied calculation logic matches original results."
+    },
+    {
+      "finding_id": "REV-F002",
+      "status": "repair_proposed_pending_recheck",
+      "location": "Abstract; Results",
+      "change": "Removed reliable-gains assertion; explicitly states reliability, accuracy equivalence, significance and deployment generalization remain unevaluated. Retained original provenance and absence of accuracy/statistical measurements.",
+      "evidence": "Invented fixtures contain no independent experimental design; no inferential statistics or new experiments added."
+    },
+    {
+      "finding_id": "REV-F003",
+      "status": "repair_proposed_pending_recheck",
+      "location": "Results, Table 1",
+      "change": "Added labeled Table 1 with all six existing timing rows, unchanged.",
+      "evidence": "Table rows checked exactly against measurements.csv."
+    }
+  ],
+  "preserved": [
+    "Title and synthetic provenance",
+    "Method",
+    "Limitations",
+    "Background",
+    "measurements.csv and all other input files"
+  ],
+  "checks": {
+    "input_sha256": {
+      "findings.json": "9c2ee2d788a88b219e8b3468fec8af5bbc8fc698890ef4cab212797672a872e4",
+      "manuscript.md": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "project.json": "b80f1cac27b288f19ada4f4c312df0fd2e8e935b69b4ec4e3bbf7890c67ff7fc",
+      "request.json": "c5f5366ab89896e19f67f2044f047c6cd44296c808b14f91e876564ae79933d4",
+      "measurements.csv": "44e55682d4a1999a0211ec8d2a7a909eeb05f8f65a70e5a4f9fa8c4ef7defeac"
+    },
+    "verified_review_refs": [
+      {
+        "id": "w7-original-findings",
+        "path": "/workspace/scratch/c12f3d9f92bd/agent/docs/continuous_optimization/rounds/2026-10-07-revision-handoff/evidence/needs-revision/initial-review/findings.json",
+        "expected_sha256": "9c2ee2d788a88b219e8b3468fec8af5bbc8fc698890ef4cab212797672a872e4",
+        "actual_sha256": "9c2ee2d788a88b219e8b3468fec8af5bbc8fc698890ef4cab212797672a872e4",
+        "read": true
+      }
+    ],
+    "source_snapshot_id": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+    "calculations_match_original": true,
+    "csv_unchanged": true,
+    "preserved_sections": [
+      "Method",
+      "Limitations",
+      "Background"
+    ],
+    "table_rows_match_csv": 6,
+    "pdf": "not requested; not built",
+    "new_experiments": false
+  },
+  "limitations": [
+    "Synthetic working draft only; not a real benchmark.",
+    "Original reviewer must recheck REV-F001/F002/F003; writer has not closed findings.",
+    "Mailbox consumed acknowledgement records handling only, not scientific acceptance."
+  ],
+  "next_owner": "original_research_review"
+}

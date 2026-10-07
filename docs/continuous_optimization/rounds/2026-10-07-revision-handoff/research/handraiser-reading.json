@@ -1,0 +1,141 @@
+{
+  "paper_id": "arxiv:2604.06452v2",
+  "title": "Learning to Interrupt in Language-based Multi-agent Communication",
+  "authors": [
+    "Danqing Wang",
+    "Da Yin",
+    "Ruta Desai",
+    "Lei Li",
+    "Asli Celikyilmaz",
+    "Ansong Ni"
+  ],
+  "original_urls": [
+    "https://arxiv.org/html/2604.06452v2",
+    "https://arxiv.org/pdf/2604.06452v2",
+    "https://arxiv.org/abs/2604.06452v2"
+  ],
+  "version": "v2",
+  "submitted_date": "2026-04-07",
+  "revised_date": "2026-08-14",
+  "publication_status": {
+    "arxiv_comments": "Accepted in CoLM 2026",
+    "pdf_author_header": "Published as a conference paper at COLM 2026",
+    "independent_official_proceedings_verified": false
+  },
+  "read_status": "complete_core_original_full_text",
+  "counts_as_new_original_full_read": true,
+  "read_positions": [
+    {
+      "source": "HTML",
+      "positions": "L54–221: abstract/main §§1–6, mathematical cost/performance criterion, method/training/inference, experiments and limitations"
+    },
+    {
+      "source": "HTML",
+      "positions": "L276–442: Appendices A–G available prose, Tables 5–8"
+    },
+    {
+      "source": "PDF",
+      "positions": "pp2–4,8–9,18: visually inspected Figures 1–7 via original PDF in-memory rendering"
+    },
+    {
+      "source": "PDF",
+      "positions": "pp16–17,20–21: full extracted original text for HTML-omitted interruption/probing and task prompts; p22 debater prompt via original PDF web lines1207–1220"
+    },
+    {
+      "source": "PDF",
+      "positions": "pp1–10,15–23 covered by full HTML body, PDF text supplement, figure rendering; no numbered standalone algorithm block exists"
+    }
+  ],
+  "unchecked_portions": [
+    "Bibliography references not individually verified",
+    "Authors' code/data not retrieved or reproduced",
+    "Independent official COLM proceedings entry",
+    "No whole-PDF layout-quality audit requested/performed"
+  ],
+  "source_ref_ids": [
+    "turn163view0",
+    "turn163view1",
+    "turn169view0",
+    "turn169view1",
+    "turn169view2",
+    "turn170view0",
+    "turn170view1",
+    "turn171view0",
+    "turn172view2",
+    "turn172view3",
+    "turn172view4"
+  ],
+  "experimental_settings": {
+    "evaluation_cases": {
+      "pictionary": 100,
+      "meeting_scheduling": 50,
+      "mmlu_pro_debate": 100
+    },
+    "seeds": 3,
+    "max_rounds": 10,
+    "default_chunk_size": 16,
+    "main_listener_models": [
+      "Llama-3.1-8B-Instruct",
+      "Llama-3.1-70B-Instruct"
+    ],
+    "speaker_models": [
+      "Llama-3.1-70B-Instruct",
+      "Llama-3.1-405B-Instruct",
+      "Gemini-2.0-flash"
+    ],
+    "heldout_speaker": "GPT-4o",
+    "training": "Task-specific SFT, 500 steps, learning rate 1e-7; random rollout labeling; Appendix C AWS p4de.24xlarge"
+  },
+  "key_evidence": [
+    {
+      "position": "§2.2 HTML L105–108",
+      "fact": "Interruption criterion lower expected whole-conversation cost and nonnegative expected performance change."
+    },
+    {
+      "position": "Table1 HTML L140–149",
+      "fact": "8B scheduling: Generic SR0.273±0.077 / tokens1361±86; HandRaiser SR0.307±0.049 / tokens1042±83."
+    },
+    {
+      "position": "§4.5/Table4 HTML L203–212",
+      "fact": "All-three-interruptible setting SR0.45 unchanged; tokens1339→1209, message count13.39→20.29."
+    },
+    {
+      "position": "AppendixD.3 HTML L343–349",
+      "fact": "Early cuts lose corrections or interval endpoints; asking continuation erases savings."
+    }
+  ],
+  "interpretation_limits": [
+    "Reduced generated-token cost is latency proxy, not measured wall-clock speedup; inference includes one decision token/chunk but ignores network/prefill assumptions.",
+    "§3.2 sentence says positive cost delta despite §2.2/C.4 requiring lower cost; use explicit criterion.",
+    "§3.3 printed implication lc<sqrt(L) contradicts algebra and next sentence lc>sqrt(L).",
+    "Table1 and full Table7 disagree on several cost averages; do not recompute or treat 32.2% abstract aggregate as uniformly verified.",
+    "Table3 TP-trained scheduling cost1508 exceeds Generic1361; transfer text overstates uniform improvement.",
+    "No tool-using durable mailbox/crash-recovery experiment or repository performance evidence."
+  ],
+  "repo_files_read": [
+    "agent/workflows/agent_communication_workflow.md",
+    "agent/docs/agent_eval_pipeline.md"
+  ],
+  "candidates": [
+    {
+      "id": "handraiser-boundary-safe-optional-explanation-gate",
+      "status": "pending",
+      "reason": "Paper supports caution about incomplete corrections; existing workflow already requires correction/reference/repair semantics. Native streaming and calibrated gate not established.",
+      "mapping": "Optional explanation only; retain reviewer→owner correction and repair/recheck edges, entire event refs and conditions. Pipeline freezes identical inputs/model/tools/budget and independent grading.",
+      "smallest_discriminating_experiment": "One matched correction-after-prefix fixture: full delivery versus suppress optional explanation only after complete semantic boundary. Compare correct closure, total generated+gate tokens, actual latency, continuation/repair rounds; counterexample if late correction is lost.",
+      "cost": "Low fixture preparation; streaming/gate/model billing unknown; paper rollout branch3, rollout10 and task-specific SFT are not authorized implementation."
+    },
+    {
+      "id": "handraiser-mailbox-crash-recovery",
+      "status": "reject",
+      "reason": "Generation interruption says nothing about saved-intent publish-first versus ACK-first atomicity, idempotency or crash replay; cannot justify current durability fix."
+    }
+  ],
+  "adoption": "none",
+  "repo_gain_claim": "none",
+  "multi_agent_agreement_is_performance_evidence": false,
+  "root_key_original_verification": {
+    "completed_at": "2026-10-06T22:03:28.079159+00:00",
+    "positions": "AppendixC,D.2–D.5; late corrections, cost denominator and transfer limits"
+  }
+}

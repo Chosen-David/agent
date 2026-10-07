@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "run_id": "revision-w9-final-candidate-handoff",
+  "role": "research-write",
+  "input_version": "synthetic-manuscript-v1",
+  "status": "completed",
+  "limitations": [
+    "Completed only the assigned bounded manuscript revision; independent reviewer acceptance remains pending.",
+    "No new evidence or experiment; single-run synthetic CPU records."
+  ],
+  "artifacts": [
+    {
+      "id": "manuscript",
+      "path": "writer/manuscript-revised.md",
+      "sha256": "41b853ec61746724fd487d714b34e11778c5ad83a25d20ab31a20d784391cb60"
+    },
+    {
+      "id": "mapping",
+      "path": "writer/evidence-mapping.json",
+      "sha256": "601634b8ac61d2e518bfdef1e10b3d69a98c2c1359f4b9adb8be566fcb30d9f7"
+    },
+    {
+      "id": "calculations",
+      "path": "writer/calculation-checks.json",
+      "sha256": "8d9af5582df689bc200e4340a082157398554dd1b3b9e54b75fb7fb3157152ad"
+    },
+    {
+      "id": "provenance",
+      "path": "writer/provenance.json",
+      "sha256": "1ac4041aa72433a278c944cecf4b0c53cf5cecf126730736ab13155b412ebf2d"
+    }
+  ],
+  "checks": [
+    {
+      "criterion": "Original hashes preserved and descriptive arithmetic recalculated",
+      "status": "pass",
+      "artifact_ids": [
+        "calculations",
+        "provenance"
+      ]
+    },
+    {
+      "criterion": "Per-finding change mapping supplied with old/new hashes",
+      "status": "pass",
+      "artifact_ids": [
+        "mapping",
+        "manuscript"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "REV-03",
+      "depends_on": [],
+      "status": "done",
+      "evidence": [
+        "manuscript",
+        "mapping",
+        "calculations",
+        "provenance"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "cases": [
+    {
+      "id": "recovery-recheck",
+      "role": "research-review",
+      "skill": "plugins/research-assistant/skills/research-review/SKILL.md",
+      "prompt": "你是原始独立审稿角色。实际读取research-review邮箱的修订artifact，核对refs哈希并独立读完整新稿、原稿、CSV及原发现。按原finding recheck条件逐项复算判定，交recheck.md与closure.json；每项含原finding_id、新旧稿hash、证据、closed/open及理由。不能凭作者response或ACK关单；正确背景、方法、限制和原CSV保留。实际处理后才ACK artifact为consumed（不等于科学验收）；保存API返回值和日志。不改稿、不增加实验/文献/网络，不查看pipeline rubric。",
+      "fixtures": [
+        "manuscript.md",
+        "measurements.csv",
+        "project.json",
+        "findings.json",
+        "manuscript-revised.md",
+        "response.json"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "db": "/workspace/scratch/c12f3d9f92bd/revision-w9-handoff-private/messages.sqlite",
+  "plan": {
+    "schema_version": 1,
+    "run_id": "revision-w9-final-candidate-handoff",
+    "input_version": "synthetic-manuscript-v1",
+    "max_message_bytes": 8192,
+    "max_events": 6,
+    "routes": [
+      {
+        "sender": "input-fixture",
+        "recipient": "research-review",
+        "task_id": "REV-03",
+        "kind": "artifact"
+      },
+      {
+        "sender": "research-review",
+        "recipient": "research-write",
+        "task_id": "REV-03",
+        "kind": "review"
+      },
+      {
+        "sender": "research-write",
+        "recipient": "research-review",
+        "task_id": "REV-03",
+        "kind": "artifact"
+      }
+    ]
+  },
+  "artifact_root": "/workspace/scratch/c12f3d9f92bd/agent/docs/continuous_optimization/rounds/2026-10-07-revision-handoff/evidence/w9-release/handoff",
+  "candidate": {
+    "base_commit": "c66b5ced2bbb15ef6d42a4c8530256b4152c94ed",
+    "production_files": {
+      "workflows/agent_communication_workflow.md": "0f055412a3fc66051edb0fa84aa3a6ab6ef4d580cfb1a1987ead3c8fb582d45c",
+      "plugins/research-assistant/skills/research-assistant/references/agent_communication_workflow.md": "10ec862a7048d8c39d26e8d4600bcff8217a171a2ebe549438bbad0d6c0c288e"
+    },
+    "runtime_sha256": "e4604a9b0ce8852175b4a4f90f10ed98e685f36a7085aa86558b77f076c32300",
+    "kind": "workflow contract candidate; runtime and Skill unchanged",
+    "candidate_id": "50dd681a6a1c2cd8064c6b5bdbd60e5ff10271d7e8c5041a2c690ae19781f8ee"
+  },
+  "owner": "/root",
+  "authority": "User manual request and fixed REV03 task; one recipient consumer",
+  "model_scheduler": "host collaboration tools; not deployed Engine scheduler"
+}

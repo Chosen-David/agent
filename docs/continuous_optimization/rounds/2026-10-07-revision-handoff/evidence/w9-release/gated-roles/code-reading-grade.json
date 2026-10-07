@@ -1,0 +1,53 @@
+{
+  "attempt": 1,
+  "case_id": "code-reading",
+  "checks": [
+    {
+      "artifact_refs": [
+        "code_reading_report.md"
+      ],
+      "criterion": "Identifies misleading module narrative using function/line evidence; treats comments as claims",
+      "evidence": [
+        "Read all 30 lines of supplied selector: report ties misleading header/comments to actual call/data edges."
+      ],
+      "verdict": "pass"
+    },
+    {
+      "artifact_refs": [
+        "code_reading_report.md"
+      ],
+      "criterion": "Default picks dimensions [0,2]; optional fixed basis is not query-trained; final score uses full original vectors",
+      "evidence": [
+        "Default dimensions [0,2], caller-provided basis, original-vector full_score stated and supported by source."
+      ],
+      "verdict": "pass"
+    },
+    {
+      "artifact_refs": [
+        "code_reading_report.md"
+      ],
+      "criterion": "Near is a candidate range, forced suffix is separate; skip_far keeps scoring near and final full_score",
+      "evidence": [
+        "Near range and forced suffix are separate, skip_far still evaluates near and final original score."
+      ],
+      "verdict": "pass"
+    },
+    {
+      "artifact_refs": [
+        "execution_record.json"
+      ],
+      "criterion": "Caller and data edges with conditions; no target execution or performance claim; preserves read-only input",
+      "evidence": [
+        "Static read only; boundary/overlap conditions stated, no target execution or measured speedup."
+      ],
+      "verdict": "pass"
+    }
+  ],
+  "grader": "/root",
+  "output_hashes": {
+    "artifact_manifest.json": "0daa6f04fb6314d2f6554157688454de3f7e9994454f0110062b53c23c5eb723",
+    "code_reading_report.md": "274b7ed7c2066d9d493bf313cacc4ccffd0ddd7ca8a89078e5e6860e35ae9261",
+    "execution_record.json": "8582506c2e48213ceec4783b34e8acd956ca3064956d3297ef2d3a8b15301b25",
+    "handoff.json": "b0834746bffff89444042820f9b55d38c2154d4012f4acb937174923389b350f"
+  }
+}

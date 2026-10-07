@@ -1,0 +1,155 @@
+READ VERIFIED /workspace/scratch/c12f3d9f92bd/agent/docs/continuous_optimization/rounds/2026-10-07-revision-handoff/evidence/needs-revision/writer/manuscript-revised.md 9d2f0229d56d10a7dc821581589f7dbedf4e72b1c76433be545b7840dc83ddbf
+# Cache-guided batching for request processing
+
+Synthetic working manuscript; these CPU timings are invented fixtures, not a real benchmark.
+
+## Abstract
+For the invented CPU timing fixtures, the candidate has 30% lower mean latency for the small synthetic workload (100 ms baseline versus 70 ms candidate), but 20% higher mean latency for the large synthetic workload (200 ms versus 240 ms). These percentages use the baseline mean as denominator and describe only these fixtures; reliability, accuracy equivalence, statistical significance, and deployment generalization remain unevaluated.
+
+## Method
+The candidate batches repeated requests and reuses cached parse results. Both versions use the same request stream; cache invalidation and hit rate were not measured.
+
+## Results
+Table 1 lists three timing trials per workload in milliseconds. Small requests improve and large requests regress. There are no accuracy or statistical-significance measurements.
+
+**Table 1. Invented CPU timing fixtures from measurements.csv (milliseconds).**
+
+| Workload | Trial | Baseline (ms) | Candidate (ms) |
+| --- | --- | --- | --- |
+| small | 1 | 100 | 70 |
+| small | 2 | 102 | 72 |
+| small | 3 | 98 | 68 |
+| large | 1 | 200 | 240 |
+| large | 2 | 204 | 244 |
+| large | 3 | 196 | 236 |
+
+Across the three trials per workload, mean latency falls from 100 to 70 ms for small requests and rises from 200 to 240 ms for large requests. Relative mean latency change is 100 × (candidate mean − baseline mean) / baseline mean: −30% for small and +20% for large. These descriptive fixture values do not establish reliability or deployment performance.
+
+
+## Limitations
+Only two synthetic workload sizes are provided; no production deployment is evaluated.
+
+## Background
+Batching can amortize fixed overhead but may add waiting time. This conceptual background is unchanged by corrections to timing claims.
+
+READ VERIFIED /workspace/scratch/c12f3d9f92bd/agent/docs/continuous_optimization/rounds/2026-10-07-revision-handoff/evidence/needs-revision/writer/response.json 1bfa68193e3ae353f36b5626162fbeb64ae43cb2fe863616281ec6c32f75919d
+{
+  "schema_version": "1.0",
+  "task_id": "REV-03",
+  "input_version": "synthetic-repair-v1",
+  "source_event_id": "w7-revision-request-v1",
+  "source_seq": 2,
+  "source_snapshot_id": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+  "status": "draft_complete_pending_original_reviewer_recheck",
+  "manuscript": {
+    "path": "writer/manuscript-revised.md",
+    "sha256": "9d2f0229d56d10a7dc821581589f7dbedf4e72b1c76433be545b7840dc83ddbf"
+  },
+  "findings": [
+    {
+      "finding_id": "REV-F001",
+      "status": "repair_proposed_pending_recheck",
+      "location": "Abstract; Results",
+      "change": "Replaced universal acceleration with workload-specific synthetic mean latency reduction of 30% for small and increase of 20% for large, with baseline-mean denominator defined.",
+      "evidence": "Existing six CSV rows; re-executed supplied calculation logic matches original results."
+    },
+    {
+      "finding_id": "REV-F002",
+      "status": "repair_proposed_pending_recheck",
+      "location": "Abstract; Results",
+      "change": "Removed reliable-gains assertion; explicitly states reliability, accuracy equivalence, significance and deployment generalization remain unevaluated. Retained original provenance and absence of accuracy/statistical measurements.",
+      "evidence": "Invented fixtures contain no independent experimental design; no inferential statistics or new experiments added."
+    },
+    {
+      "finding_id": "REV-F003",
+      "status": "repair_proposed_pending_recheck",
+      "location": "Results, Table 1",
+      "change": "Added labeled Table 1 with all six existing timing rows, unchanged.",
+      "evidence": "Table rows checked exactly against measurements.csv."
+    }
+  ],
+  "preserved": [
+    "Title and synthetic provenance",
+    "Method",
+    "Limitations",
+    "Background",
+    "measurements.csv and all other input files"
+  ],
+  "checks": {
+    "input_sha256": {
+      "findings.json": "9c2ee2d788a88b219e8b3468fec8af5bbc8fc698890ef4cab212797672a872e4",
+      "manuscript.md": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "project.json": "b80f1cac27b288f19ada4f4c312df0fd2e8e935b69b4ec4e3bbf7890c67ff7fc",
+      "request.json": "c5f5366ab89896e19f67f2044f047c6cd44296c808b14f91e876564ae79933d4",
+      "measurements.csv": "44e55682d4a1999a0211ec8d2a7a909eeb05f8f65a70e5a4f9fa8c4ef7defeac"
+    },
+    "verified_review_refs": [
+      {
+        "id": "w7-original-findings",
+        "path": "/workspace/scratch/c12f3d9f92bd/agent/docs/continuous_optimization/rounds/2026-10-07-revision-handoff/evidence/needs-revision/initial-review/findings.json",
+        "expected_sha256": "9c2ee2d788a88b219e8b3468fec8af5bbc8fc698890ef4cab212797672a872e4",
+        "actual_sha256": "9c2ee2d788a88b219e8b3468fec8af5bbc8fc698890ef4cab212797672a872e4",
+        "read": true
+      }
+    ],
+    "source_snapshot_id": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+    "calculations_match_original": true,
+    "csv_unchanged": true,
+    "preserved_sections": [
+      "Method",
+      "Limitations",
+      "Background"
+    ],
+    "table_rows_match_csv": 6,
+    "pdf": "not requested; not built",
+    "new_experiments": false
+  },
+  "limitations": [
+    "Synthetic working draft only; not a real benchmark.",
+    "Original reviewer must recheck REV-F001/F002/F003; writer has not closed findings.",
+    "Mailbox consumed acknowledgement records handling only, not scientific acceptance."
+  ],
+  "next_owner": "original_research_review"
+}
+
+{
+  "calculations": {
+    "small": {
+      "n": 3,
+      "baseline_mean_ms": 100.0,
+      "candidate_mean_ms": 70.0,
+      "candidate_minus_baseline_ms": -30.0,
+      "relative_mean_latency_change_percent": -30.0,
+      "paired_difference_ms": [
+        -30.0,
+        -30.0,
+        -30.0
+      ]
+    },
+    "large": {
+      "n": 3,
+      "baseline_mean_ms": 200.0,
+      "candidate_mean_ms": 240.0,
+      "candidate_minus_baseline_ms": 40.0,
+      "relative_mean_latency_change_percent": 20.0,
+      "paired_difference_ms": [
+        40.0,
+        40.0,
+        40.0
+      ]
+    }
+  },
+  "regression": {
+    "Method": true,
+    "Limitations": true,
+    "Background": true,
+    "synthetic_warning_preserved": true,
+    "csv_sha_unchanged": true,
+    "six_table_rows_match_csv_exactly": true
+  },
+  "closed": [
+    "REV-F001",
+    "REV-F002",
+    "REV-F003"
+  ]
+}

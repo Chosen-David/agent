@@ -1,0 +1,65 @@
+{
+  "scenario": "conflict",
+  "actual_command": [
+    "python",
+    "-B",
+    "/tmp/w9-targeted-controls-a5b0eudc/outputs/consumer.py",
+    "--child",
+    "/tmp/w9-targeted-controls-a5b0eudc/outputs/conflict",
+    "--token",
+    "[REDACTED]",
+    "--idempotency-key",
+    "[REDACTED]"
+  ],
+  "process_returncode": 4,
+  "stdout": "",
+  "stderr": "",
+  "blocked": {
+    "status": "unresolved_conflict",
+    "existing": {
+      "reason": "Synthetic pre-existing conflicting receipt: main AI reconciliation required",
+      "status": "rejected"
+    },
+    "expected": {
+      "status": "needs_revision",
+      "reason": "SYNTHETIC-FINDING-001 is synthetic and remains open; request delivered before this receipt"
+    }
+  },
+  "events_after": 1,
+  "original_receipt_after": {
+    "reason": "Synthetic pre-existing conflicting receipt: main AI reconciliation required",
+    "status": "rejected"
+  },
+  "original_pending_after": 0,
+  "new_acknowledge_operations": 0,
+  "successful_outgoing_publish_operations": 0,
+  "operations": [
+    "seed_publish",
+    "fixture_conflicting_receipt",
+    "host_guard",
+    "reference_readback",
+    "reference_readback",
+    "inbox/status/preflight",
+    "stop_receipt_conflict"
+  ],
+  "assertions_passed": true,
+  "observation": {
+    "scenario": "conflict",
+    "run_id": "revision-w8-consumer-conflict-1791335496611129780",
+    "generated_incoming_seq": 1,
+    "observation": "executed",
+    "outcome": "unresolved conflict; existing receipt preserved, no request publication",
+    "events": 1,
+    "task_refs": [
+      "REV-02",
+      "REV-03"
+    ],
+    "scientific_finding": "open/not evaluated"
+  },
+  "raw_record_hashes": {
+    "process.json": "c4374c812ad8fd653db4d916d7bc2f7c8c0e2904ae3a04d28b4fb270391ff57c",
+    "final-readback.json": "3a0f03bef814a9dbe5a0d710c79595c1246d791d8a7cbdab45ae656234b3d120",
+    "sqlite-readback.json": "47f0f9502b113a56d3d991b09adb4b73bd88f0d7e006317f81109cb20366ef50",
+    "api.jsonl": "ae05174c0c350c3a80854b216e9475e3603824ff1a8485538a9c1bc89c718c70"
+  }
+}

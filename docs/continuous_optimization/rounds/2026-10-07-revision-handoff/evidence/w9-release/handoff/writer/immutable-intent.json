@@ -1,0 +1,84 @@
+{
+  "db": "/workspace/scratch/c12f3d9f92bd/revision-w9-handoff-private/messages.sqlite",
+  "plan": {
+    "schema_version": 1,
+    "run_id": "revision-w9-final-candidate-handoff",
+    "input_version": "synthetic-manuscript-v1",
+    "max_message_bytes": 8192,
+    "max_events": 6,
+    "routes": [
+      {
+        "sender": "input-fixture",
+        "recipient": "research-review",
+        "task_id": "REV-03",
+        "kind": "artifact"
+      },
+      {
+        "sender": "research-review",
+        "recipient": "research-write",
+        "task_id": "REV-03",
+        "kind": "review"
+      },
+      {
+        "sender": "research-write",
+        "recipient": "research-review",
+        "task_id": "REV-03",
+        "kind": "artifact"
+      }
+    ]
+  },
+  "artifact_root": "/workspace/scratch/c12f3d9f92bd/agent/docs/continuous_optimization/rounds/2026-10-07-revision-handoff/evidence/w9-release/handoff",
+  "recipient": "research-write",
+  "incoming_seq": 2,
+  "original_event_id": "w9-review-v1-revision-request-001",
+  "finding_ids": [
+    "REV-F001",
+    "REV-F002",
+    "REV-F003"
+  ],
+  "original_manuscript_sha256": "712dd94ef8f5ad0c1a6f5f36bb3735901fc6bce564a96381cf6e4cfdc68ce88e",
+  "original_csv_sha256": "57201d75a6e7ea0b7581c2d94f4bf46c2b9a66e37b5df94c8e6b4c5ef3924248",
+  "revised_manuscript_sha256": "41b853ec61746724fd487d714b34e11778c5ad83a25d20ab31a20d784391cb60",
+  "event": {
+    "event_id": "w9-write-revision-001",
+    "run_id": "revision-w9-final-candidate-handoff",
+    "input_version": "synthetic-manuscript-v1",
+    "sender": "research-write",
+    "task_id": "REV-03",
+    "kind": "artifact",
+    "summary": "Bounded corrected synthetic working manuscript; REV-F001 and REV-F002 revision responses supplied; REV-F003 rejection and original regression disclosure preserved.",
+    "action": "research-review: independently read old/new manuscript and unchanged CSV, recheck each original finding against its acceptance criteria, then record handling. Writer makes no scientific closure claim.",
+    "refs": [
+      {
+        "id": "handoff",
+        "path": "writer/handoff.json",
+        "sha256": "151bc7139030ac658f971093bd7ca0c5f966f9aac1dc0ffad21797cd8d26e937"
+      },
+      {
+        "id": "manuscript",
+        "path": "writer/manuscript-revised.md",
+        "sha256": "41b853ec61746724fd487d714b34e11778c5ad83a25d20ab31a20d784391cb60"
+      },
+      {
+        "id": "mapping",
+        "path": "writer/evidence-mapping.json",
+        "sha256": "601634b8ac61d2e518bfdef1e10b3d69a98c2c1359f4b9adb8be566fcb30d9f7"
+      },
+      {
+        "id": "calculations",
+        "path": "writer/calculation-checks.json",
+        "sha256": "8d9af5582df689bc200e4340a082157398554dd1b3b9e54b75fb7fb3157152ad"
+      },
+      {
+        "id": "provenance",
+        "path": "writer/provenance.json",
+        "sha256": "1ac4041aa72433a278c944cecf4b0c53cf5cecf126730736ab13155b412ebf2d"
+      }
+    ]
+  },
+  "receipt": {
+    "status": "consumed",
+    "reason": "Read seq2 and verified immutable review/input refs; supplied complete bounded corrected manuscript and per-finding mapping, successfully delivered as w9-write-revision-001 before acknowledging this request. Original research-review owns independent recheck; this receipt closes no scientific finding."
+  },
+  "authority": "Parent-authorized single research-write consumer; publish revision before ACK seq2; no scientific closure."
+}

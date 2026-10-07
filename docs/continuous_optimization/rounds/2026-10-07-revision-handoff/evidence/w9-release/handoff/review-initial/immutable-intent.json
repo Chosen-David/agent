@@ -1,0 +1,73 @@
+{
+  "db": "/workspace/scratch/c12f3d9f92bd/revision-w9-handoff-private/messages.sqlite",
+  "plan": {
+    "schema_version": 1,
+    "run_id": "revision-w9-final-candidate-handoff",
+    "input_version": "synthetic-manuscript-v1",
+    "max_message_bytes": 8192,
+    "max_events": 6,
+    "routes": [
+      {
+        "sender": "input-fixture",
+        "recipient": "research-review",
+        "task_id": "REV-03",
+        "kind": "artifact"
+      },
+      {
+        "sender": "research-review",
+        "recipient": "research-write",
+        "task_id": "REV-03",
+        "kind": "review"
+      },
+      {
+        "sender": "research-write",
+        "recipient": "research-review",
+        "task_id": "REV-03",
+        "kind": "artifact"
+      }
+    ]
+  },
+  "artifact_root": "/workspace/scratch/c12f3d9f92bd/agent/docs/continuous_optimization/rounds/2026-10-07-revision-handoff/evidence/w9-release/handoff",
+  "recipient": "research-review",
+  "incoming_seq": 1,
+  "event": {
+    "event_id": "w9-review-v1-revision-request-001",
+    "run_id": "revision-w9-final-candidate-handoff",
+    "input_version": "synthetic-manuscript-v1",
+    "sender": "research-review",
+    "task_id": "REV-03",
+    "kind": "review",
+    "summary": "REV-F001 and REV-F002 confirmed; REV-F003 rejected by Appendix evidence. Exact original independent judgment retained.",
+    "action": "research-write: produce complete bounded corrected manuscript and per-finding mapping using provided synthetic data; publish new hashes before consuming this request; original reviewer will recheck.",
+    "refs": [
+      {
+        "id": "revision_request",
+        "path": "review-initial/revision-request.json",
+        "sha256": "17e980525ba725f3887a13bd842c633bd95cce87adc751fc63f4a92f5f487f38"
+      },
+      {
+        "id": "original_findings",
+        "path": "review-initial/original-findings.yaml",
+        "sha256": "16aa6489e3db8d1c0d1442a3691abf9183a35513442dbd78ee123201574e8032"
+      },
+      {
+        "id": "evidence",
+        "path": "review-initial/evidence.json",
+        "sha256": "1c875ca193ef712280b9e3d662a468af453c63595629644f04c3b8ae2ef117c7"
+      }
+    ]
+  },
+  "receipt": {
+    "status": "needs_revision",
+    "reason": "REV-F001 abstract contradicts paired end-to-end observations; REV-F002 requires descriptive one-run CPU scope. REV-F003 is rejected because Appendix A already discloses regression. Revision request w9-review-v1-revision-request-001 must be successfully delivered before this receipt; no scientific finding is closed."
+  },
+  "original_event_id": "w9-fixture-v1",
+  "finding_ids": [
+    "REV-F001",
+    "REV-F002",
+    "REV-F003"
+  ],
+  "original_manuscript_sha256": "712dd94ef8f5ad0c1a6f5f36bb3735901fc6bce564a96381cf6e4cfdc68ce88e",
+  "original_csv_sha256": "57201d75a6e7ea0b7581c2d94f4bf46c2b9a66e37b5df94c8e6b4c5ef3924248",
+  "authority": "Root explicitly authorized this single-owner bounded local diagnostic; no Engine/model restart or concurrent adapter implied."
+}

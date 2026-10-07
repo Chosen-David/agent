@@ -1,0 +1,125 @@
+{
+  "schema_version": "1.0",
+  "agent": "research-write",
+  "task_id": "REV-03",
+  "run_id": "revision-w5-real-model",
+  "input_version": "synthetic-repair-v1",
+  "decision": "EXECUTE",
+  "scope": "Synthetic diagnostic manuscript repair; not a final runtime candidate or submission",
+  "input_review_event_id": "revision-initial-findings-v1",
+  "original_manuscript_sha256": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+  "revised_manuscript": {
+    "path": "manuscript-revised.md",
+    "sha256": "e8f1dce0dd3af790a5e9462032a079c9c7f33470b9df6fea3d2a7ae144ced677"
+  },
+  "raw_csv": {
+    "path": "inputs/measurements.csv",
+    "sha256_before": "44e55682d4a1999a0211ec8d2a7a909eeb05f8f65a70e5a4f9fa8c4ef7defeac",
+    "sha256_after": "44e55682d4a1999a0211ec8d2a7a909eeb05f8f65a70e5a4f9fa8c4ef7defeac",
+    "unchanged": true
+  },
+  "changes": [
+    {
+      "finding_id": "REV-F001",
+      "status": "repaired_pending_original_reviewer_recheck",
+      "location": "Abstract",
+      "change": "Replaced cross-size 30% acceleration with small 100→70 ms (30% lower time), large 200→240 ms (20% higher time), and explicit baseline-relative time reduction definition.",
+      "evidence": {
+        "source": "inputs/measurements.csv",
+        "sha256": "44e55682d4a1999a0211ec8d2a7a909eeb05f8f65a70e5a4f9fa8c4ef7defeac",
+        "means": {
+          "small": {
+            "n": 3,
+            "baseline_mean_ms": 100.0,
+            "candidate_mean_ms": 70.0,
+            "time_reduction_percent": 30.0,
+            "baseline_over_candidate_speedup": 1.4285714285714286
+          },
+          "large": {
+            "n": 3,
+            "baseline_mean_ms": 200.0,
+            "candidate_mean_ms": 240.0,
+            "time_reduction_percent": -20.0,
+            "baseline_over_candidate_speedup": 0.8333333333333334
+          }
+        }
+      }
+    },
+    {
+      "finding_id": "REV-F002",
+      "status": "repaired_pending_original_reviewer_recheck",
+      "location": "Abstract; retained synthetic declaration and Results evidence limitation",
+      "change": "Removed reliable-gains claim and stated that synthetic descriptive timing differences establish neither reliability, accuracy, statistical significance nor real-benchmark performance.",
+      "evidence": "Supplied invented-fixture declaration and absence of independent sampling/provenance/accuracy/statistical evidence in manuscript and CSV."
+    },
+    {
+      "finding_id": "REV-F003",
+      "status": "repaired_pending_original_reviewer_recheck",
+      "location": "Results / Table 1",
+      "change": "Added the referenced Table 1 with all six supplied CSV pairs and millisecond units.",
+      "evidence": {
+        "source": "inputs/measurements.csv",
+        "sha256": "44e55682d4a1999a0211ec8d2a7a909eeb05f8f65a70e5a4f9fa8c4ef7defeac",
+        "rows": [
+          {
+            "workload": "small",
+            "trial": "1",
+            "baseline_ms": "100",
+            "candidate_ms": "70"
+          },
+          {
+            "workload": "small",
+            "trial": "2",
+            "baseline_ms": "102",
+            "candidate_ms": "72"
+          },
+          {
+            "workload": "small",
+            "trial": "3",
+            "baseline_ms": "98",
+            "candidate_ms": "68"
+          },
+          {
+            "workload": "large",
+            "trial": "1",
+            "baseline_ms": "200",
+            "candidate_ms": "240"
+          },
+          {
+            "workload": "large",
+            "trial": "2",
+            "baseline_ms": "204",
+            "candidate_ms": "244"
+          },
+          {
+            "workload": "large",
+            "trial": "3",
+            "baseline_ms": "196",
+            "candidate_ms": "236"
+          }
+        ]
+      }
+    }
+  ],
+  "preserved_material": [
+    "Title and synthetic-fixture declaration",
+    "Method section verbatim",
+    "Results qualitative workload directions and absent accuracy/statistical-significance measurements verbatim",
+    "Limitations section verbatim",
+    "Background section verbatim"
+  ],
+  "checks_executed": [
+    "Read actual pending research-write inbox using Mailbox API",
+    "Validated mailbox original-findings SHA and equality with supplied findings",
+    "Recomputed means from every CSV row with baseline-relative time reduction",
+    "Checked all six table rows against source CSV",
+    "Checked correct sections and raw CSV unchanged"
+  ],
+  "limitations": [
+    "No new experiments, literature, network, external services, or PDF build/audit requested or performed",
+    "Cache correctness, reliability, independent sampling, causal attribution and real deployment performance remain unestablished"
+  ],
+  "finding_closure": "No findings closed by writer; all remain pending original research-review recheck",
+  "next_owner": "original_research-review",
+  "next_action": "Read revised snapshot, independently check arithmetic, preserved material, and each REV-F001/002/003 acceptance condition."
+}

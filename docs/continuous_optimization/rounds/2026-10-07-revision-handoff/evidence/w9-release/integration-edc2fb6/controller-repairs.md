@@ -1,0 +1,1 @@
+Root compatibility harness initially guessed an841 input-version prefix and stopped before record verification; the second attempt used the wrong nesting key and stopped. Corrected by reading the existing pre-dispatch controller cases/input_version binding, never copying the producer version. Final19checks passed; no frozen task/output or acceptance rubric changed.

@@ -1,0 +1,96 @@
+{
+  "run_id": "revision-w9-final-candidate-handoff",
+  "input_version": "synthetic-manuscript-v1",
+  "reviewer": "research-review (same original reviewer)",
+  "versions": {
+    "old_manuscript": {
+      "path": "inputs/manuscript.md",
+      "sha256": "712dd94ef8f5ad0c1a6f5f36bb3735901fc6bce564a96381cf6e4cfdc68ce88e"
+    },
+    "new_manuscript": {
+      "path": "writer/manuscript-revised.md",
+      "sha256": "41b853ec61746724fd487d714b34e11778c5ad83a25d20ab31a20d784391cb60"
+    },
+    "csv": {
+      "path": "inputs/measurements.csv",
+      "sha256": "57201d75a6e7ea0b7581c2d94f4bf46c2b9a66e37b5df94c8e6b4c5ef3924248"
+    },
+    "original_findings": {
+      "path": "review-initial/original-findings.yaml",
+      "sha256": "16aa6489e3db8d1c0d1442a3691abf9183a35513442dbd78ee123201574e8032"
+    }
+  },
+  "checks": [
+    {
+      "finding_id": "REV-F001",
+      "original_status": "confirmed",
+      "result": "resolved",
+      "original_acceptance": [
+        "Abstract, Results and Appendix agree with scope and all three end-to-end ratios."
+      ],
+      "locations": [
+        "writer/manuscript-revised.md line 7 Abstract",
+        "lines 21–26 Results",
+        "line 34 Appendix A"
+      ],
+      "evidence": [
+        "Abstract now lists end-to-end 1.25x, 1.20x, approximately 0.90909x, and explicitly the 10% large-workload latency regression.",
+        "Results table preserves 100/80,120/100,200/220 and separate kernel20/10; independent recalculation agrees.",
+        "Abstract, Results and Appendix explicitly restrict 2x to kernel-only and forbid adding included kernel latency to end-to-end timing."
+      ],
+      "acceptance_met": true,
+      "decision": "Core abstract inconsistency corrected across all requested sections; no new empirical claim introduced."
+    },
+    {
+      "finding_id": "REV-F002",
+      "original_status": "confirmed",
+      "result": "resolved",
+      "original_acceptance": [
+        "Scope explicitly remains descriptive, or new independently collected evidence and precommitted analysis justify the revised claim without fabricated CI."
+      ],
+      "locations": [
+        "line 3 scope statement",
+        "line 7 Abstract",
+        "lines 11–13 Method",
+        "line 26 Results",
+        "line 30 Evidence limits",
+        "line 34 Appendix A"
+      ],
+      "evidence": [
+        "Every positive/negative performance observation is framed as supplied single-run CPU records.",
+        "No independent repeats, variance/quality unmeasured and no GPU measurement remain explicit.",
+        "Line 30 rejects CI, significance, repeatability and quality-preservation inference; no invented data, raw logs or experiments provided.",
+        "Original condition allowed descriptive scope as sufficient resolution; new experiments were not necessary and none were requested in this bounded revision."
+      ],
+      "acceptance_met": true,
+      "decision": "Existing-data/descriptive-scope branch of original acceptance is satisfied; actual repeatability and quality remain unknown, not established."
+    },
+    {
+      "finding_id": "REV-F003",
+      "original_status": "rejected",
+      "result": "rejected",
+      "original_acceptance": [
+        "Existing appendix and CSV directly refute missing-disclosure suspicion."
+      ],
+      "locations": [
+        "inputs/manuscript.md line 10",
+        "writer/manuscript-revised.md line 34"
+      ],
+      "evidence": [
+        "Old Appendix already discloses 200 ms to 220 ms regression.",
+        "New Appendix retains that disclosure and explicitly states correction is to inconsistent abstract, not a hidden/omitted result."
+      ],
+      "acceptance_met": true,
+      "decision": "Original rejection preserved; no claim that this nonexistent omission was repaired."
+    }
+  ],
+  "counts": {
+    "resolved": 2,
+    "rejected": 1,
+    "open": 0,
+    "unresolved": 0,
+    "blocked": 0
+  },
+  "scientific_scope": "Only original bounded manuscript consistency/scope findings; no new empirical validation or publication endorsement.",
+  "basis": "Actual independent old/new/data reading plus recalculation, completed before ACK."
+}

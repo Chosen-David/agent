@@ -1,0 +1,67 @@
+{
+  "run_id": "revision-w9-final-candidate-handoff",
+  "input_version": "synthetic-manuscript-v1",
+  "role": "research-write",
+  "incoming_seq": 2,
+  "incoming_event_id": "w9-review-v1-revision-request-001",
+  "decision": "EXECUTE within parent-authorized fixed local synthetic handoff; no fetch/pull or production edits to alter the frozen candidate",
+  "loaded_role_and_protocol_files": [
+    {
+      "path": "/workspace/scratch/c12f3d9f92bd/agent/AGENTS.md",
+      "sha256": "8af790a77bbec48a40d150a13b69d13f124de41a63832fa01923c01d7a4821a3"
+    },
+    {
+      "path": "/workspace/scratch/c12f3d9f92bd/agent/prompts/decision_review.md",
+      "sha256": "a736c709f63f3f70d3d3baa5ac07ac3e0960da766abfe469b79302099c5e77f5"
+    },
+    {
+      "path": "/workspace/scratch/c12f3d9f92bd/agent/workflows/agent_communication_workflow.md",
+      "sha256": "0f055412a3fc66051edb0fa84aa3a6ab6ef4d580cfb1a1987ead3c8fb582d45c"
+    },
+    {
+      "path": "/workspace/scratch/c12f3d9f92bd/agent/plugins/research-assistant/skills/research-write/SKILL.md",
+      "sha256": "bd9f55a5292eacaf6bcdc502ec2ebe354ca28b3d6ff85a7ce7b000aca80915c5"
+    },
+    {
+      "path": "/workspace/scratch/c12f3d9f92bd/agent/plugins/research-assistant/skills/research-write/references/execution.md",
+      "sha256": "0bd7595c86ac0fc735c322709b0884cf740bbc1c1581052d53bf71d26cc2db0b"
+    },
+    {
+      "path": "/workspace/scratch/c12f3d9f92bd/agent/plugins/research-assistant/skills/research-write/references/workflow.md",
+      "sha256": "a38ebe69ad6f38591cd58bdaad641b9d5e17d3a54ccd4359adc7a0e1298b882a"
+    },
+    {
+      "path": "/workspace/scratch/c12f3d9f92bd/agent/agent_runtime/communication.py",
+      "sha256": "e4604a9b0ce8852175b4a4f90f10ed98e685f36a7085aa86558b77f076c32300"
+    },
+    {
+      "path": "/workspace/scratch/c12f3d9f92bd/agent/docs/handoff_validation.md",
+      "sha256": "2c948ca4c5615cdfb13bd8d468ec8a64757ade309427e0808b71044beb44b12d"
+    }
+  ],
+  "input_verification": [
+    {
+      "path": "inputs/manuscript.md",
+      "sha256": "712dd94ef8f5ad0c1a6f5f36bb3735901fc6bce564a96381cf6e4cfdc68ce88e",
+      "expected_sha256": "712dd94ef8f5ad0c1a6f5f36bb3735901fc6bce564a96381cf6e4cfdc68ce88e",
+      "match": true,
+      "actually_read_content": "# Synthetic manuscript: Selective execution\nThis is a synthetic fixture, not a published paper. No external citations are supplied.\n## Abstract\nOur method achieves 2x end-to-end speedup on every workload without any regression.\n## Method\nWe replace a selected kernel. All measurements use the same CPU process and input configuration. No GPU measurement has been made.\n## Results\nSee measurements.csv. The kernel-only pair is timed independently and is included in the end-to-end paths; do not add them. Each value represents one run, with no independent repeats.\n## Appendix A\nThe large workload regresses from 200 ms to 220 ms. This regression is documented, not hidden. We have not measured quality or variance.\n"
+    },
+    {
+      "path": "inputs/measurements.csv",
+      "sha256": "57201d75a6e7ea0b7581c2d94f4bf46c2b9a66e37b5df94c8e6b4c5ef3924248",
+      "expected_sha256": "57201d75a6e7ea0b7581c2d94f4bf46c2b9a66e37b5df94c8e6b4c5ef3924248",
+      "match": true,
+      "actually_read_content": "workload,baseline_ms,candidate_ms,scope\nsmall,100,80,end_to_end\nmedium,120,100,end_to_end\nlarge,200,220,end_to_end\nkernel,20,10,kernel_only\n"
+    }
+  ],
+  "authority": "Parent explicitly assigned sole research-write consumer of seq2 for bounded local REV-03 handoff. No independent Engine lease was supplied; this is host collaboration, not a deployed Engine adapter.",
+  "limits": [
+    "Synthetic working manuscript only",
+    "No new experiments/network/resources/Word/PDF/citations",
+    "No inferred hardware details, statistics or quality findings",
+    "Original reviewer decides closure; ACK records handling only"
+  ],
+  "python_version": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "findings_closed": false
+}

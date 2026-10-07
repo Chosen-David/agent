@@ -1,0 +1,70 @@
+{
+  "input_version": "measurements.csv@v2",
+  "input_sha256": "57201d75a6e7ea0b7581c2d94f4bf46c2b9a66e37b5df94c8e6b4c5ef3924248",
+  "data_kind": "synthetic",
+  "formulas": {
+    "speedup": "baseline_ms / candidate_ms",
+    "latency_reduction_pct": "100 * (baseline_ms - candidate_ms) / baseline_ms"
+  },
+  "per_workload": [
+    {
+      "workload": "small",
+      "baseline_ms": 100.0,
+      "candidate_ms": 80.0,
+      "scope": "end_to_end",
+      "candidate_minus_baseline_ms": -20.0,
+      "latency_reduction_pct": 20.0,
+      "speedup_baseline_over_candidate": 1.25,
+      "evidence_kind": "synthetic",
+      "input_version": "measurements.csv@v2"
+    },
+    {
+      "workload": "medium",
+      "baseline_ms": 120.0,
+      "candidate_ms": 100.0,
+      "scope": "end_to_end",
+      "candidate_minus_baseline_ms": -20.0,
+      "latency_reduction_pct": 16.666666666666668,
+      "speedup_baseline_over_candidate": 1.2,
+      "evidence_kind": "synthetic",
+      "input_version": "measurements.csv@v2"
+    },
+    {
+      "workload": "large",
+      "baseline_ms": 200.0,
+      "candidate_ms": 220.0,
+      "scope": "end_to_end",
+      "candidate_minus_baseline_ms": 20.0,
+      "latency_reduction_pct": -10.0,
+      "speedup_baseline_over_candidate": 0.9090909090909091,
+      "evidence_kind": "synthetic",
+      "input_version": "measurements.csv@v2"
+    },
+    {
+      "workload": "kernel",
+      "baseline_ms": 20.0,
+      "candidate_ms": 10.0,
+      "scope": "kernel_only",
+      "candidate_minus_baseline_ms": -10.0,
+      "latency_reduction_pct": 50.0,
+      "speedup_baseline_over_candidate": 2.0,
+      "evidence_kind": "synthetic",
+      "input_version": "measurements.csv@v2"
+    }
+  ],
+  "end_to_end_equal_once_diagnostic": {
+    "assumption": "One invocation of each of small, medium, large; no real workload weights inferred",
+    "baseline_total_ms": 420.0,
+    "candidate_total_ms": 400.0,
+    "speedup": 1.05,
+    "latency_reduction_pct": 4.761904761904762
+  },
+  "excluded_from_end_to_end_aggregate": [
+    "kernel"
+  ],
+  "limitations": [
+    "No repetitions, variability, correctness checks, runtime configuration, or workload mixture provided",
+    "Synthetic fixture arithmetic cannot establish real-model or real-system performance",
+    "v1 CSV and figure@v1/background@v1 output bytes absent; no numerical v1-to-v2 delta or historical output revalidation possible"
+  ]
+}

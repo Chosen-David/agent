@@ -1,0 +1,17 @@
+# Run from repository root. This relocates only output/private globals; no production changes.
+python -B - <<'PY'
+from pathlib import Path
+import tempfile
+repo=Path.cwd()
+src=repo/'docs/continuous_optimization/rounds/2026-10-07-revision-handoff/evidence/w8-candidate/consumer/consumer.py'
+root=Path(tempfile.mkdtemp(prefix='w9-targeted-replay-'));root.chmod(0o700)
+out=root/'outputs';out.mkdir();private=root/'private';private.mkdir()
+code=src.read_text().replace("OUT = CASE / 'attempts/0001/outputs'",f'OUT = Path({str(out)!r})').replace("PRIVATE = BASE / 'revision-w8-consumer-private'",f'PRIVATE = Path({str(private)!r})')
+script=out/'consumer.py';script.write_text(code)
+ns={'__name__':'w9_relocated_consumer','__file__':str(script)}
+exec(compile(code,str(script),'exec'),ns)
+for name in ['budget','conflict']:
+    print(ns['setup'](name))
+print('Private raw state retained:',root)
+PY
+python -B -m unittest -v tests.test_communication.CommunicationTests.test_reference_changed_after_delivery

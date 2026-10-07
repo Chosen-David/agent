@@ -1,0 +1,58 @@
+{
+  "run_id": "revision-w9-final-candidate-handoff",
+  "input_version": "synthetic-manuscript-v1",
+  "incoming_seq": 1,
+  "refs": [
+    {
+      "path": "inputs/manuscript.md",
+      "sha256": "712dd94ef8f5ad0c1a6f5f36bb3735901fc6bce564a96381cf6e4cfdc68ce88e",
+      "matches_original": "/workspace/scratch/c12f3d9f92bd/revision-candidate-v3-roles-run/cases/research-review/inputs/manuscript.md",
+      "actually_read_content": "# Synthetic manuscript: Selective execution\nThis is a synthetic fixture, not a published paper. No external citations are supplied.\n## Abstract\nOur method achieves 2x end-to-end speedup on every workload without any regression.\n## Method\nWe replace a selected kernel. All measurements use the same CPU process and input configuration. No GPU measurement has been made.\n## Results\nSee measurements.csv. The kernel-only pair is timed independently and is included in the end-to-end paths; do not add them. Each value represents one run, with no independent repeats.\n## Appendix A\nThe large workload regresses from 200 ms to 220 ms. This regression is documented, not hidden. We have not measured quality or variance.\n"
+    },
+    {
+      "path": "inputs/measurements.csv",
+      "sha256": "57201d75a6e7ea0b7581c2d94f4bf46c2b9a66e37b5df94c8e6b4c5ef3924248",
+      "matches_original": "/workspace/scratch/c12f3d9f92bd/revision-candidate-v3-roles-run/cases/research-review/inputs/measurements.csv",
+      "actually_read_content": "workload,baseline_ms,candidate_ms,scope\nsmall,100,80,end_to_end\nmedium,120,100,end_to_end\nlarge,200,220,end_to_end\nkernel,20,10,kernel_only\n"
+    }
+  ],
+  "original_findings": {
+    "path": "/workspace/scratch/c12f3d9f92bd/revision-candidate-v3-roles-run/cases/research-review/attempts/0001/outputs/findings.yaml",
+    "sha256": "16aa6489e3db8d1c0d1442a3691abf9183a35513442dbd78ee123201574e8032"
+  },
+  "calculations": [
+    {
+      "workload": "small",
+      "scope": "end_to_end",
+      "baseline_ms": 100.0,
+      "candidate_ms": 80.0,
+      "speedup": 1.25,
+      "latency_change_pct": -19.999999999999996
+    },
+    {
+      "workload": "medium",
+      "scope": "end_to_end",
+      "baseline_ms": 120.0,
+      "candidate_ms": 100.0,
+      "speedup": 1.2,
+      "latency_change_pct": -16.666666666666664
+    },
+    {
+      "workload": "large",
+      "scope": "end_to_end",
+      "baseline_ms": 200.0,
+      "candidate_ms": 220.0,
+      "speedup": 0.9090909090909091,
+      "latency_change_pct": 10.000000000000009
+    },
+    {
+      "workload": "kernel",
+      "scope": "kernel_only",
+      "baseline_ms": 20.0,
+      "candidate_ms": 10.0,
+      "speedup": 2.0,
+      "latency_change_pct": -50.0
+    }
+  ],
+  "unchanged_judgment": true
+}

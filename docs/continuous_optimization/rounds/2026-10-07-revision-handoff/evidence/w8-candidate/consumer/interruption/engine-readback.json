@@ -1,0 +1,50 @@
+{
+  "plan": {
+    "authorization_reference": "e7a31bd098ab48390609d4964e8fdc91f7c87509836d89e3e299e1a921a73644",
+    "run_id": "revision-w8-consumer-interruption-1791331429380695815",
+    "schema_version": "task-dag/v1",
+    "supervision": {
+      "max_seconds": 30,
+      "min_seconds": 1,
+      "rationale": "one synchronous owned local scenario; no service installed"
+    },
+    "tasks": [
+      {
+        "action": "owned_local_consumer",
+        "depends_on": [],
+        "done_when": {
+          "scope": "only local scenario logs recorded, no scientific acceptance"
+        },
+        "estimated_seconds": 30,
+        "max_attempts": 1,
+        "owner": "owned-local-review-consumer",
+        "risk": "low",
+        "task_id": "REV-02"
+      }
+    ],
+    "user_goal": "Bounded local interruption scenario observation only"
+  },
+  "state": {
+    "claim_cursor": 0,
+    "idle_ticks": 0,
+    "next_check_seconds": 1,
+    "status": "done",
+    "tasks": {
+      "REV-02": {
+        "attempts": 1,
+        "diagnosis_required": false,
+        "dispatches": 1,
+        "evidence": [
+          "/workspace/scratch/c12f3d9f92bd/revision-w8-consumer-run/cases/revision-protocol-consumer/attempts/0001/outputs/interruption/intent.json"
+        ],
+        "lease_until": 1791331549.384613,
+        "next_at": 1791331430.4920888,
+        "reason": "local scenario evidence captured; transport only",
+        "reason_kind": "adapter_result",
+        "status": "done",
+        "token": null
+      }
+    }
+  },
+  "monitor": null
+}

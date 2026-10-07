@@ -1,0 +1,53 @@
+{
+  "attempt": 1,
+  "case_id": "research-read-pdf",
+  "checks": [
+    {
+      "artifact_refs": [
+        "page_coverage.jsonl"
+      ],
+      "criterion": "all 3 pages actually opened and read",
+      "evidence": [
+        "Worker opened all3 physical pages; root independently viewed all3 retained PNGs, appendix included."
+      ],
+      "verdict": "pass"
+    },
+    {
+      "artifact_refs": [
+        "render_manifest.json"
+      ],
+      "criterion": "hash-bound physical coverage including appendix",
+      "evidence": [
+        "Physical coverage binds inputPDF hash and actual page raster hashes, no text-only visual pass."
+      ],
+      "verdict": "pass"
+    },
+    {
+      "artifact_refs": [
+        "reader_report.md"
+      ],
+      "criterion": "overgeneralization on physical page 2 located, no invented layout defect",
+      "evidence": [
+        "Page2 universalRoPE claim located against page3 disclaimer; no invented overlap/garbling defect."
+      ],
+      "verdict": "pass"
+    }
+  ],
+  "grader": "/root",
+  "output_hashes": {
+    "build_reader.py": "70b4d158e761bb3764d7807d704a7ee03bf93533d47eb99ba55704fe1af96557",
+    "completion.json": "c6deebf5631210f9405a6cf188ecad9fcfe5cd85d863e98a13c84def44d65b13",
+    "figure_coverage.yaml": "d1274abf9f5712b1594b09a325724d8fc5508d8320b063babc98fd34ae55edb1",
+    "findings.yaml": "96afb93ca940f5f5ca3f462e6845c64e0fcff641f27d872b98b42ba190d8649c",
+    "handoff.json": "5b532250c2a90158ae8c98e6c769761eb6c8062245810b197a94320475e5c344",
+    "page_coverage.jsonl": "c17795be6df0d6b5e0581387e1094c94c6f54d2c68e920917e3158aad736f5b1",
+    "pages/page-1.png": "2034d57171c07e5e1abe258fe23aafe5f8247d5d833d079ff814d2838a45d664",
+    "pages/page-2.png": "ff693377d5cff7dba00d6e2aa1e210b794da81abe03d3dbf031be06ee3047b04",
+    "pages/page-3.png": "c84ba99883d913ff1c276f549db6bec80666e6a1665ace3cc358ca0b7659e8ea",
+    "provenance.json": "68c60e6b06c0bbbaf4df73229eaf0bde3ea9842d3352d3670d07ae48bfa60002",
+    "reader_report.md": "2abfb1b076945515867ff8bb678338cfecf841e631ea5bea4c562ca643de7e44",
+    "render_manifest.json": "48b195952e42fc619ab7c1d6cd1da8a59e08c45a637b2da212b6644cbf34728e",
+    "task_chain.md": "507c6e0936f89e2ce5fd40a3b4c027b6317a1fe3025f55cb0e9d358d18c35c05",
+    "task_chain.yaml": "640634a6868122eaacf0d6b2666113ce6de5fd9f7a327d4417df6ac6ff25c854"
+  }
+}

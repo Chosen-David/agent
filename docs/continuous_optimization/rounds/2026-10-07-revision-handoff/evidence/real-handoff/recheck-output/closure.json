@@ -1,0 +1,191 @@
+{
+  "schema_version": "1.0",
+  "task_id": "REV-03",
+  "run_id": "revision-w5-real-model",
+  "input_version": "synthetic-repair-v1",
+  "reviewer": "original_research-review",
+  "scope": "Synthetic diagnostic finding recheck only; no release gate",
+  "old_manuscript_sha256": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+  "new_manuscript_sha256": "e8f1dce0dd3af790a5e9462032a079c9c7f33470b9df6fea3d2a7ae144ced677",
+  "mailbox_seq": 2,
+  "reference_hashes_validated": [
+    {
+      "id": "revised-manuscript",
+      "path": "/workspace/scratch/c12f3d9f92bd/agent/docs/continuous_optimization/rounds/2026-10-07-revision-handoff/evidence/real-handoff/writer-artifacts/manuscript-revised.md",
+      "expected_sha256": "e8f1dce0dd3af790a5e9462032a079c9c7f33470b9df6fea3d2a7ae144ced677",
+      "actual_sha256": "e8f1dce0dd3af790a5e9462032a079c9c7f33470b9df6fea3d2a7ae144ced677",
+      "valid": true
+    },
+    {
+      "id": "writer-response",
+      "path": "/workspace/scratch/c12f3d9f92bd/agent/docs/continuous_optimization/rounds/2026-10-07-revision-handoff/evidence/real-handoff/writer-artifacts/response.json",
+      "expected_sha256": "ab699d8c8bb223935691504892544132f85623b45de2f8c18dd1161d47be2073",
+      "actual_sha256": "ab699d8c8bb223935691504892544132f85623b45de2f8c18dd1161d47be2073",
+      "valid": true
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "REV-F001",
+      "original_manuscript_sha256": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "revised_manuscript_sha256": "e8f1dce0dd3af790a5e9462032a079c9c7f33470b9df6fea3d2a7ae144ced677",
+      "original_status": "open",
+      "status": "closed",
+      "protocol_state": "resolved",
+      "owner": "original_research-review",
+      "location": {
+        "file": "writer-artifacts/manuscript-revised.md",
+        "section": "Abstract",
+        "lines": "6"
+      },
+      "acceptance": [
+        "A new manuscript snapshot reports or unambiguously supports 100→70 ms / 30% lower time for small and 200→240 ms / 20% higher time for large; it contains no 30% improvement across sizes or unsupported pooled deployment claim."
+      ],
+      "acceptance_met": true,
+      "evidence": [
+        "Revised Abstract line 6 explicitly reports small baseline 100 ms / candidate 70 ms / 30% lower time, and large baseline 200 ms / candidate 240 ms / 20% higher time.",
+        "Independent six-row CSV recalculation gives the same means and defines reduction=(baseline mean−candidate mean)/baseline mean×100%, giving large −20%. Entire revised manuscript contains no cross-size 30% gain or deployment aggregate claim."
+      ],
+      "reason": "Original acceptance condition satisfied by actual independently inspected revised manuscript and unchanged source CSV; not by author response or transport receipt."
+    },
+    {
+      "finding_id": "REV-F002",
+      "original_manuscript_sha256": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "revised_manuscript_sha256": "e8f1dce0dd3af790a5e9462032a079c9c7f33470b9df6fea3d2a7ae144ced677",
+      "original_status": "open",
+      "status": "closed",
+      "protocol_state": "resolved",
+      "owner": "original_research-review",
+      "location": {
+        "file": "writer-artifacts/manuscript-revised.md",
+        "section": "Abstract",
+        "lines": "6"
+      },
+      "acceptance": [
+        "New snapshot omits or qualifies “reliable gains” and any statistical, accuracy or real-benchmark inference beyond the supplied fixture; synthetic status and absent accuracy/statistical evidence remain visible."
+      ],
+      "acceptance_met": true,
+      "evidence": [
+        "Revised Abstract line 6 explicitly states descriptive synthetic timings establish neither reliability, accuracy, statistical significance nor real-benchmark performance.",
+        "Synthetic fixture declaration line 3 and absence-of-accuracy/significance statement in Results line 12 remain verbatim. Full revised manuscript contains no positive reliable-gains claim or added experiment/uncertainty evidence."
+      ],
+      "reason": "Original acceptance condition satisfied by actual independently inspected revised manuscript and unchanged source CSV; not by author response or transport receipt."
+    },
+    {
+      "finding_id": "REV-F003",
+      "original_manuscript_sha256": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+      "revised_manuscript_sha256": "e8f1dce0dd3af790a5e9462032a079c9c7f33470b9df6fea3d2a7ae144ced677",
+      "original_status": "open",
+      "status": "closed",
+      "protocol_state": "resolved",
+      "owner": "original_research-review",
+      "location": {
+        "file": "writer-artifacts/manuscript-revised.md",
+        "section": "Results / Table 1",
+        "lines": "14–23"
+      },
+      "acceptance": [
+        "The revised manuscript has no dangling Table 1 reference; any included timing table exactly matches the supplied six rows and units."
+      ],
+      "acceptance_met": true,
+      "evidence": [
+        "Actual revised manuscript lines 14–23 supplies Table 1 with millisecond headings and every six-row CSV value exactly.",
+        "Independently parsed table tuples equal CSV tuples in order: small (1,100,70),(2,102,72),(3,98,68); large (1,200,240),(2,204,244),(3,196,236)."
+      ],
+      "reason": "Original acceptance condition satisfied by actual independently inspected revised manuscript and unchanged source CSV; not by author response or transport receipt."
+    }
+  ],
+  "closed_ids": [
+    "REV-F001",
+    "REV-F002",
+    "REV-F003"
+  ],
+  "open_ids": [],
+  "regression_checks": {
+    "original_sha256": "fe3f73113bb46c919354d844297c4ca8cf767657f02ca7d6bcb378067e1a088b",
+    "revised_sha256": "e8f1dce0dd3af790a5e9462032a079c9c7f33470b9df6fea3d2a7ae144ced677",
+    "csv_sha256": "44e55682d4a1999a0211ec8d2a7a909eeb05f8f65a70e5a4f9fa8c4ef7defeac",
+    "initial_findings_sha256": "54a09344b261dde41d5c98bb8b0665212aba4bc559a8c3c60bf41d201547c1c6",
+    "initial_findings_unchanged": true,
+    "csv_unchanged": true,
+    "mailbox_input_copies_equal": true,
+    "calculated_groups": {
+      "small": {
+        "n_rows": 3,
+        "baseline_mean_ms": 100.0,
+        "candidate_mean_ms": 70.0,
+        "time_reduction_percent": 30.0,
+        "speedup": 1.4285714285714286,
+        "paired_differences_ms": [
+          -30.0,
+          -30.0,
+          -30.0
+        ]
+      },
+      "large": {
+        "n_rows": 3,
+        "baseline_mean_ms": 200.0,
+        "candidate_mean_ms": 240.0,
+        "time_reduction_percent": -20.0,
+        "speedup": 0.8333333333333334,
+        "paired_differences_ms": [
+          40.0,
+          40.0,
+          40.0
+        ]
+      }
+    },
+    "table_all_six_rows_exact": true,
+    "preserved_sections": {
+      "Method": true,
+      "Limitations": true,
+      "Background": true
+    },
+    "synthetic_declaration_and_results_paragraph_preserved": true,
+    "paired_rows": [
+      {
+        "workload": "small",
+        "trial": "1",
+        "baseline_ms": "100",
+        "candidate_ms": "70"
+      },
+      {
+        "workload": "small",
+        "trial": "2",
+        "baseline_ms": "102",
+        "candidate_ms": "72"
+      },
+      {
+        "workload": "small",
+        "trial": "3",
+        "baseline_ms": "98",
+        "candidate_ms": "68"
+      },
+      {
+        "workload": "large",
+        "trial": "1",
+        "baseline_ms": "200",
+        "candidate_ms": "240"
+      },
+      {
+        "workload": "large",
+        "trial": "2",
+        "baseline_ms": "204",
+        "candidate_ms": "244"
+      },
+      {
+        "workload": "large",
+        "trial": "3",
+        "baseline_ms": "196",
+        "candidate_ms": "236"
+      }
+    ]
+  },
+  "original_findings_preserved": true,
+  "limitations": [
+    "No new experiments, literature, network, data or PDF.",
+    "Real performance, reliability, accuracy, cache correctness, causal attribution, measurement independence and production behavior remain unestablished.",
+    "Closure is limited to the three original synthetic-manuscript findings; not submission/runtime candidate approval.",
+    "Mailbox consumed ACK is a separate handling receipt and does not determine scientific validity."
+  ]
+}

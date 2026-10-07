@@ -1,0 +1,54 @@
+{
+  "artifact_root": "/workspace/scratch/c12f3d9f92bd/agent/docs/continuous_optimization/rounds/2026-10-07-revision-handoff/evidence/needs-revision",
+  "db": "/workspace/scratch/c12f3d9f92bd/revision-w7-private/messages.sqlite",
+  "event": {
+    "action": "Read findings and original evidence, repair complete draft; return artifact for original reviewer recheck",
+    "event_id": "w7-revision-request-v1",
+    "input_version": "synthetic-repair-v1",
+    "kind": "review",
+    "refs": [
+      {
+        "id": "w7-original-findings",
+        "path": "initial-review/findings.json",
+        "sha256": "9c2ee2d788a88b219e8b3468fec8af5bbc8fc698890ef4cab212797672a872e4"
+      }
+    ],
+    "run_id": "revision-w7-needs-revision",
+    "sender": "research-review",
+    "summary": "Actual independent review requires scoped scientific repair; original IDs REV-F001/F002/F003",
+    "task_id": "REV-03"
+  },
+  "incoming_seq": 1,
+  "plan": {
+    "input_version": "synthetic-repair-v1",
+    "max_events": 6,
+    "max_message_bytes": 8192,
+    "routes": [
+      {
+        "kind": "artifact",
+        "recipient": "research-review",
+        "sender": "research-assistant",
+        "task_id": "REV-03"
+      },
+      {
+        "kind": "review",
+        "recipient": "research-write",
+        "sender": "research-review",
+        "task_id": "REV-03"
+      },
+      {
+        "kind": "artifact",
+        "recipient": "research-review",
+        "sender": "research-write",
+        "task_id": "REV-03"
+      }
+    ],
+    "run_id": "revision-w7-needs-revision",
+    "schema_version": 1
+  },
+  "receipt": {
+    "reason": "REV-F001/REV-F002/REV-F003; persisted request w7-revision-request-v1; closure pending",
+    "status": "needs_revision"
+  },
+  "recipient": "research-review"
+}
