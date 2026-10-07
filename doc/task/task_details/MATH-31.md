@@ -13,3 +13,5 @@ Date: 2026-10-08
 已同步最新main，guide为空且保持只读。经典双对偶证书已读，旧数值记录不复用。独立计划意见仅批准有限数学范围，不冒充受管ReviewSession。
 
 2026-10-08：独立验收usable-with-scope，manifest e68c73fdde027fb7b70e936310beae45da7600cc0690eac55ff1d1f469d51dda；364预算/64舍入/2052断言、880独立附加案例。74知识回归、插件同步和引用校验通过；完整按需两show编码4943 tokens（非账单）。无模型/GPU/未见测试/e2e或生产更改。MATH-32发布待远端读回。
+
+main实现提交 `d54f552faece22dcdcd83f6f4b6c4bce46d572b5` 已普通发布并fetch回读，远端tree `e2962019c164bb29a3f6d004334e23470afaaa68` 与验收本地树一致。无强推/PR；收尾只补此发布证据。
