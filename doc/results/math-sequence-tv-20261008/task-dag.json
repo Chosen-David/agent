@@ -1,0 +1,64 @@
+{
+  "tasks": [
+    {
+      "task_id": "MATH-37",
+      "owner": "/root",
+      "action": "produce",
+      "produces_data": true,
+      "task_type": "experiment",
+      "depends_on": [],
+      "experiment_result": {
+        "result_id": "math-sequence-tv-20261008",
+        "producer_task_id": "MATH-37",
+        "producer_actor": "/root",
+        "validation_plan": {
+          "path": "doc/results/math-sequence-tv-20261008/validation-plan.json",
+          "sha256": "80c12cde3642334e6feddae6304cd20cf29e09d02a434730d339481b6c716a58"
+        },
+        "scope": "finite conditional-kernel TV/coupling and public exact binary-tree CPU fixtures; no model/performance/formal guarantee",
+        "manifest_path": "doc/results/math-sequence-tv-20261008/manifest.json"
+      }
+    },
+    {
+      "task_id": "MATH-SEQUENCE-TV-VERIFY",
+      "owner": "/root/sequence_tv_verifier",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "MATH-37"
+      ],
+      "result_validation": {
+        "result_id": "math-sequence-tv-20261008",
+        "producer_task_id": "MATH-37",
+        "producer_actor": "/root",
+        "validation_plan": {
+          "path": "doc/results/math-sequence-tv-20261008/validation-plan.json",
+          "sha256": "80c12cde3642334e6feddae6304cd20cf29e09d02a434730d339481b6c716a58"
+        },
+        "scope": "finite conditional-kernel TV/coupling and public exact binary-tree CPU fixtures; no model/performance/formal guarantee",
+        "manifest_path": "doc/results/math-sequence-tv-20261008/manifest.json"
+      }
+    },
+    {
+      "task_id": "MATH-38",
+      "owner": "/root",
+      "action": "publish",
+      "depends_on": [
+        "MATH-SEQUENCE-TV-VERIFY"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-sequence-tv-20261008",
+          "producer_task_id": "MATH-37",
+          "producer_actor": "/root",
+          "validation_plan": {
+            "path": "doc/results/math-sequence-tv-20261008/validation-plan.json",
+            "sha256": "80c12cde3642334e6feddae6304cd20cf29e09d02a434730d339481b6c716a58"
+          },
+          "scope": "finite conditional-kernel TV/coupling and public exact binary-tree CPU fixtures; no model/performance/formal guarantee",
+          "manifest_path": "doc/results/math-sequence-tv-20261008/manifest.json"
+        }
+      ]
+    }
+  ],
+  "boundary": "direct bounded host maintenance and actual independent collaboration; not managed engine/tmux deployment"
+}

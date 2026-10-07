@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "id": "math.sequence-tv-coupling",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "有限序列分布的全变差与逐步耦合界",
+  "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+  "aliases": [
+    "整段 生成 分布 误差",
+    "故障 告警 协议 概率",
+    "同seed greedy 概率 不一致",
+    "autoregressive total variation coupling"
+  ],
+  "domains": [
+    "probability-and-optimization",
+    "information-theory"
+  ],
+  "structures": [
+    "conditional-kernel",
+    "sequence-distribution",
+    "maximal-coupling",
+    "bounded-reward",
+    "support-mismatch"
+  ],
+  "assumptions": [
+    "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+    "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+    "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+  ],
+  "sources": [
+    {
+      "url": "https://www.maths.dur.ac.uk/users/ellen.g.powell/SPnotes.html",
+      "locator": "Powell Stochastic Processes2021/22 §3.2 maximal coupling and TV; finite sequence hybrid derivation is project work",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://arxiv.org/html/2607.19510v1",
+      "locator": "v1 2026-07-21 §2.2/2.3 Lemma1/3.1 AppendixB.5; preprint; no model reproduction",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.12316v1",
+      "locator": "v1 2026-05-12 Assumption1 and jointKL chain/class regimes; candidate not adopted; venue unverified",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+      "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.perturbation-propagation"
+    },
+    {
+      "type": "related",
+      "id": "math.finite-menu-selection"
+    },
+    {
+      "type": "related",
+      "id": "math.hoeffding-bounded-mean"
+    },
+    {
+      "type": "related",
+      "id": "ai.speculative-sampling-residual-exactness"
+    }
+  ]
+}

@@ -1,0 +1,938 @@
+{
+  "knowledge_root": "knowledge",
+  "knowledge_refs": [
+    {
+      "id": "math.sequence-tv-coupling",
+      "version": 1,
+      "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924"
+    }
+  ],
+  "retrieval": [
+    {
+      "input": {
+        "prompt": "每次生成分布偏差很小，能保证整段输出分布吗？",
+        "query": "整段 生成 分布 误差"
+      },
+      "domain": "probability-and-optimization",
+      "backend": "files",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "1ee332b3173fb2652610679ea29905f0ec22ad195fe098da7ac90fba27596e0b",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.sequence-tv-coupling",
+            "version": 1,
+            "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+            "title": "有限序列分布的全变差与逐步耦合界",
+            "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+            "status": "published",
+            "assumptions": [
+              "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+              "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+              "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+                "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "分布"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "分布",
+                  "整段",
+                  "生成",
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "分布"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "分布",
+                  "整段",
+                  "生成",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 32
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "误差"
+                ]
+              }
+            ],
+            "score": 14
+          },
+          {
+            "id": "math.attention-output-geometry",
+            "version": 1,
+            "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+            "title": "固定value的Gram输出几何与局部敏感度",
+            "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+            "status": "published",
+            "assumptions": [
+              "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+              "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+              "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+                "CPU finite development checks; no Lean/model/GPU/e2e verification"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "生成",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 10
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "每次生成分布偏差很小，能保证整段输出分布吗？",
+        "query": "整段 生成 分布 误差"
+      },
+      "domain": "probability-and-optimization",
+      "backend": "sqlite",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "1ee332b3173fb2652610679ea29905f0ec22ad195fe098da7ac90fba27596e0b",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.sequence-tv-coupling",
+            "version": 1,
+            "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+            "title": "有限序列分布的全变差与逐步耦合界",
+            "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+            "status": "published",
+            "assumptions": [
+              "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+              "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+              "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+                "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "迁移及相关关系",
+                "start_line": 51,
+                "end_line": 60,
+                "excerpt": "## 迁移及相关关系\n\nIndexer原问题：同一prompt下dense与稀疏完整执行的下一token核对应P_t/Q_t，包含变化的KV/历史、logit处理和随机执行。模型层隐藏误差/attention mass/选token重合度不等于δ；前一轮`math.perturbation-propagation`只处理固定输入连续状态。这里真正保留的是条件概率链和序列事件/期望指标，未自动打通隐藏误差到TV。\n\n最小可证伪验证：冻结prompt、采样规则、长度和method，沿dense采样轨迹在两个完整执行器上replay同一前缀，核对评分路径与生成路径、强制token之前的概率、支持集与归一化。测参考前缀δ或真实轨迹比值；样本需独立且估计误差另认证。另做greedy、自由生成任务质量和wall-clock实验，不把这些不同目标压成一个指标。原论文的系统测量不可当成本机验证；本轮未运行模型。\n\n跨域严格映射：有历史依赖的可靠性告警/通信协议，事件“整段发生故障”的概率差≤TV。有限条件核可精确验证，但模型是否刻画真实物理故障另需数据和机制依据。\n\n前置概念：有限概率质量、条件核与边际、三角不等式；本条推导无强依赖卡。相关：`math.perturbation-propagation`（连续状态）；`math.finite-menu-selection`（调参校准）；`ai.speculative-sampling-residual-exactness`（分布校正不等于seed一致）。概率耦合不是跨层资源目标的物理耦合。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "有限序列分布的全变差与逐步耦合界",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 有限序列分布的全变差与逐步耦合界\n\n稳定ID：`math.sequence-tv-coupling@1`。触发：单步生成分布接近，能保证整段生成什么？与相同seed、greedy输出一致有什么区别？\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.attention-output-geometry",
+            "version": 1,
+            "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+            "title": "固定value的Gram输出几何与局部敏感度",
+            "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+            "status": "published",
+            "assumptions": [
+              "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+              "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+              "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+                "CPU finite development checks; no Lean/model/GPU/e2e verification"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04787506400409626,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界、误用反例",
+                "start_line": 44,
+                "end_line": 51,
+                "excerpt": "## 正例、边界、误用反例\n\nα=(1/3,1/3,1/3)、v=(0,1,100)、W=1。同为‖δ‖₂=√2·0.01，δ_A=(−.01,.01,0)使输出改变.01，δ_B=(−.01,0,.01)使输出改变1。相同概率误差不能确定输出质量。\n\n所有value相同，或W把差异全部投影到零，C/G敏感度为零，概率MSE仍可非零。n=1时J=0。固定大共同value偏移不影响差；浮点大偏移仍可能导致消减误差，实数平移恒等式不免除数值审查。\n\n对大扰动不能把G的局部二次损失当精确有限误差。模型后续非线性、不同query、不同生成轨迹改变α/V/W，旧G不能自动复用。负权重不满足凸组合余项证明；非归一化权重不满足共同value平移不变性。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "迁移与可证伪设计",
+                "start_line": 52,
+                "end_line": 59,
+                "excerpt": "## 迁移与可证伪设计\n\nIndexer固定trace：完整与稀疏注意力权重对应α/β（剪枝项补零），value对应V，当前头输出投影对应W。NoPE、RoPE和混合模型均在位置变换完成后适用；不授权跨频率精确融合。固定索引字节预算、最终KV预算和trace，比较输出误差与eᵀGe、重合度/质量的关联，再用未参与选择的文档测试。G是离线诊断/训练目标候选；完整C有n²成本，不能默认部署。计算精确误差直接用Zᵀδ，O(nh)，无需形成C。\n\n固定线性分类器ℓ_j=a_jᵀz+b_j，dense赢家c、真实margin γ_j=ℓ_c−ℓ_j>0。若已认证输出误差E，且每个j≠c满足‖a_c−a_j‖₂E<γ_j，则赢家保持；由柯西不等式逐对证明。只保证这个固定分类器/输入，不保证LLM生成序列或LongBench精度。\n\n跨域：非负归一化配料质量分数α/β、组分浓度V、固定线性传感器W，同样的Gram几何精确给浓度差平方，单位为浓度²；非线性化学反应、体积收缩、未归一化质量直接拒用。Agent文本消息不是固定线性混合，不将此式作为通信省token保证。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.discrete-budget-allocation",
+            "version": 1,
+            "sha256": "71cd29618df4439297c7b0d42f96e89230afeb5724aef660bfde2528d871e2dc",
+            "title": "有限菜单离散预算分配与代理最优性证书",
+            "summary": "可加整数成本/损失下用DP求有限菜单精确解；λ加权和可漏掉未支配最优，弱对偶只认证代理而非端到端精度。",
+            "status": "published",
+            "assumptions": [
+              "每组非空有限菜单，恰选一项；成本为非负整数，预算B为非负整数；允许空组序列边界",
+              "目标损失和资源成本均可加且固定；损失为有限实数；实测浮点最优性和硬延迟另需误差认证",
+              "对偶λ≥0且有限菜单min为真实值或认证下界；只认证已定义代理目标"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "同名Markdown一般归纳/弱对偶推导；非形式化",
+                "doc/results/math-allocation-20261008/：公开CPU整数/Fraction验证及独立审查；不含模型/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 5
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 6
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.04640914640914641,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界与误用反例",
+                "start_line": 31,
+                "end_line": 40,
+                "excerpt": "## 正例、边界与误用反例\n\n两组菜单均为(成本,损失)：第一组[(0,4),(2,0)]，第二组[(0,1),(2,0)]，B=2。精确解先升级第一组，E=1；λ=1时g=min(4,2)+min(1,2)−2=1，与可行解一致。传感器两通道编码时可把整数比特/存储块作为成本，把预先冻结的通道失真作为损失；只有总失真确实为二者之和，才保留此保证。\n\n**离散Pareto不等于加权和可达。** 一组[(0,5),(2,4),(3,0)]，B=2，整数最优是中间项，损失4，它不被其他单项支配。但若中间项最小化e+λc，与第一项比较要求λ≤1/2，与第三项比较要求λ≥4，矛盾。任何λ≥0均不会选择它。g(λ)=min(5−2λ,4,λ)，最佳下界5/3在λ=5/3取得，最优整数损失4，对偶缺口7/3。因此加权和、二分λ、只保留凸包选项，都可能遗漏整数最优；不能用“所有权重都试过”宣布全局最优。单组内有c_a≤c_b且e_a≤e_b，可删b而保留最优值；不同组不能相互删项。被凸包排除但未被支配的项应留在精确DP。\n\n**跨层耦合拒用。** 两组各有cheap=(1,1)、rich=(2,0)，B=3。可加代理选择一cheap一rich，代理损失1。若实际联合损失E_true(cheap,cheap)=0，E_true(cheap,rich)=E_true(rich,cheap)=10、E_true(rich,rich)=2，则真正可行最优是cheap/cheap。局部精确DP不证明联合精度最优。校准trace来自固定dense状态时，还可能受稀疏执行后的分布漂移影响。\n\n**连续成本离散化。** 对精确非负实成本t_lj、单位h>0，定义c_lj=ceil(t_lj/h)，B=floor(T/h)。若Σc≤B，则Σt≤hΣc≤hB≤T。只保留原问题的可行子集，可能丢失可行最优甚至全部可行解；无精度或原最优损失保证。例如两组唯一成本3/5、T=6/5、h=1，原问题可行，但舍入后2>1不可行。不能向下舍入成本来确保硬预算。浮点表示的decimal边界需要明确误差方向；样本延迟上"
+              },
+              {
+                "node": "s2",
+                "title": "问题触发与数学对象",
+                "start_line": 5,
+                "end_line": 12,
+                "excerpt": "## 问题触发与数学对象\n\n多个模块各选一种配置，在总资源上限内尽量降低误差。先辨认是不是可加目标、可加成本、固定有限菜单；不要把实测端到端精度直接当逐层可加损失。\n\n有L个组，组l的非空有限选项集J_l；选项j有成本c_lj∈Z_{≥0}和有限实损失e_lj。预算B∈Z_{≥0}。每组恰选一项，最小化E(j)=Σ_l e_l,j_l，约束C(j)=Σ_l c_l,j_l≤B。损失可负，有限菜单保证可行时最优值存在。空组序列L=0允许作为边界，损失/成本为0。若Σ_l min_j c_lj>B则不可行，不返回虚假的零损失解。\n\n这里不需要统计独立性，而需要目标和成本真正可分离。外部模型若有交叉项，此数学问题仅是代理。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "历史依赖告警协议的完整故障事件概率差怎么控制？",
+        "query": "故障 告警 协议 概率"
+      },
+      "domain": "probability-and-optimization",
+      "backend": "files",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "1ee332b3173fb2652610679ea29905f0ec22ad195fe098da7ac90fba27596e0b",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.sequence-tv-coupling",
+            "version": 1,
+            "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+            "title": "有限序列分布的全变差与逐步耦合界",
+            "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+            "status": "published",
+            "assumptions": [
+              "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+              "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+              "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+                "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "协议",
+                  "告警",
+                  "故障",
+                  "概率"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "协议",
+                  "告警",
+                  "故障",
+                  "概率"
+                ]
+              }
+            ],
+            "score": 24
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "summary",
+                "terms": [
+                  "概率"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "概率"
+                ]
+              }
+            ],
+            "score": 4
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "content",
+                "terms": [
+                  "协议",
+                  "概率"
+                ]
+              }
+            ],
+            "score": 2
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "历史依赖告警协议的完整故障事件概率差怎么控制？",
+        "query": "故障 告警 协议 概率"
+      },
+      "domain": "probability-and-optimization",
+      "backend": "sqlite",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "1ee332b3173fb2652610679ea29905f0ec22ad195fe098da7ac90fba27596e0b",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.sequence-tv-coupling",
+            "version": 1,
+            "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+            "title": "有限序列分布的全变差与逐步耦合界",
+            "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+            "status": "published",
+            "assumptions": [
+              "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+              "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+              "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+                "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "迁移及相关关系",
+                "start_line": 51,
+                "end_line": 60,
+                "excerpt": "## 迁移及相关关系\n\nIndexer原问题：同一prompt下dense与稀疏完整执行的下一token核对应P_t/Q_t，包含变化的KV/历史、logit处理和随机执行。模型层隐藏误差/attention mass/选token重合度不等于δ；前一轮`math.perturbation-propagation`只处理固定输入连续状态。这里真正保留的是条件概率链和序列事件/期望指标，未自动打通隐藏误差到TV。\n\n最小可证伪验证：冻结prompt、采样规则、长度和method，沿dense采样轨迹在两个完整执行器上replay同一前缀，核对评分路径与生成路径、强制token之前的概率、支持集与归一化。测参考前缀δ或真实轨迹比值；样本需独立且估计误差另认证。另做greedy、自由生成任务质量和wall-clock实验，不把这些不同目标压成一个指标。原论文的系统测量不可当成本机验证；本轮未运行模型。\n\n跨域严格映射：有历史依赖的可靠性告警/通信协议，事件“整段发生故障”的概率差≤TV。有限条件核可精确验证，但模型是否刻画真实物理故障另需数据和机制依据。\n\n前置概念：有限概率质量、条件核与边际、三角不等式；本条推导无强依赖卡。相关：`math.perturbation-propagation`（连续状态）；`math.finite-menu-selection`（调参校准）；`ai.speculative-sampling-residual-exactness`（分布校正不等于seed一致）。概率耦合不是跨层资源目标的物理耦合。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "对象与准确结论",
+                "start_line": 5,
+                "end_line": 24,
+                "excerpt": "## 对象与准确结论\n\n有限词表Σ、固定整数长度n≥0；P_t(·|h)、Q_t(·|h)是每个长度t−1前缀h上的概率核，诱导联合P(x)=Π_t P_t(x_t|x_{<t})、Q同理。零概率前缀的条件核可任意扩展，但用于一致界时也必须明确覆盖相关共享前缀。所有比较固定prompt、tokenizer、词表、温度、截断及停止规则；EOS若提前结束，统一吸收并padding到n。不把超长或无限时域搬入有限结论。\n\n单步δ_t(h)=TV(P_t,Q_t)=1/2Σ_a|P_t(a|h)−Q_t(a|h)|。一般有限分布满足\nTV(P,Q)=max_A|P(A)−Q(A)|=1−Σ_x min(P(x),Q(x))，属于[0,1]。\n\n**统一共享前缀界。** 若对各步所有相关共享前缀有δ_t(h)≤ε_t∈[0,1]，则\n\\[\n TV(P,Q)\\le 1-\\prod_{t=1}^n(1-\\varepsilon_t)\n \\le \\min\\{1,\\sum_t\\varepsilon_t\\}.\n\\]\n不要求时间步独立。**参考前缀均值界。** 不要求统一ε时仍有\n\\[\nTV(P,Q)\\le\\min\\{1,\\sum_t E_{H\\sim P_{<t}}\\delta_t(H)\\}.\n\\]\nP_{<t}是真实参考前缀分布，不是任意少量teacher数据的经验均值。两种上界互不替代，均可能很松。\n\n对有限序列上固定奖励f∈[a,b]，|E_P f−E_Q f|≤(b−a)TV(P,Q)。这是总体期望差界，不保证每条输出的奖励差，也不证明某个方案质量提升。若指标非有界或评价对象改变须另论。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              }
+            ],
+            "score": 0.03225806451612903,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "问题触发与范围",
+                "start_line": 5,
+                "end_line": 7,
+                "excerpt": "## 问题触发与范围\n压缩key能量最大的方向，是否也能压缩query/key点积分数？相同索引维数下比较K-PCA与双侧任务度量。经典截断SVD见强依赖math.low-rank-svd；以下概率目标的化归是本条目自行推导，不宣称新的原创定理。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "正例、边界和误用反例",
+                "start_line": 23,
+                "end_line": 31,
+                "excerpt": "## 正例、边界和误用反例\nH=I2,Sq=diag(.01,100),Sk=diag(100,1)，r=1。K-PCA选第一坐标，分数误差为100；本目标选第二坐标，误差为1。key的高能量不等于query可见的高能量。\n\n非零均值：q≡2,k≡3,H=1,M=0，误差36；用中心化协方差会错误给0，非中心二阶矩4×9正确。\n\n相关性反例：q=k∈{−√2,0,√2}，概率{1/4,1/2,1/4}。两者二阶矩均1，但H=1,M=0时E(qk)²=2而非1。这里必须拒用独立因子化，不用样本数增加弥补缺前提。\n\nSq/Sk奇异或含负特征值时，本算法拒绝或转另一个经过核验的支持空间模型；正则化Sq+λI定义的是另一个目标，不能声称精确优化原风险。实际计算优先Cholesky/线性solve，不显式形成逆；记录最小特征值、条件数、dtype和重建残差。PSD数值噪声与真正非正定须区别处理。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              }
+            ],
+            "score": 0.031746031746031744,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "对象、前提和结论",
+                "start_line": 5,
+                "end_line": 17,
+                "excerpt": "## 对象、前提和结论\n\n固定非空有限集合 J，同一支持集上的有限实数 logits s,t；α=softmax(s)，β=softmax(t)。温度和 1/√d 已计入 logits。固定 value v_j∈R^p，固定线性映射 W:R^p→R^h，输出用任意范数。设 y=Σα_jv_j，ŷ=Σβ_jv_j，D=max_ij‖W(v_i−v_j)‖，e=t−s，w=max e−min e。\n\n经典 TV 恒等式（来源1，§4.1 Proposition 4.2，印刷页48）是 TV(α,β)=½Σ|α_j−β_j|。本卡以下是独立给出的有限推导，不声称研究新颖性，不是形式化证明：\n\n\\[\n\\|W(y-\\hat y)\\|\\le D\\,\\mathrm{TV}(\\alpha,\\beta)\n\\le D\\tanh\\!\\left(\\frac{\\operatorname{osc}(t-s)}4\\right).\n\\]\n\n此界对两个 token 可以取等号。误差的共同平移不起作用；若 ‖e‖∞≤ε，则输出≤D tanh(ε/2)。若已知整体 ‖e‖₂≤η，则 w≤√2η（最大最小坐标差与柯西不等式），得到 D tanh(η/(2√2))。不能把逐坐标 ε 当整体 η。D=0 时，无论排序/概率如何变，输出都相同。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "可复核证明",
+                "start_line": 18,
+                "end_line": 32,
+                "excerpt": "## 可复核证明\n\n令 δ=α−β，其正、负部分总质量均为 T=TV。T=0 时结论显然；否则 WΣδv=T(a−b)，a,b 分别是正、负部分归一化后的 Wv 的凸组合。展开这两个组合的乘积权重，以三角不等式得到 ‖a−b‖≤D。\n\n令 X_j=exp(e_j)，m=min X>0，M=max X，μ=Σα_jX_j。β_j=α_jX_j/μ，所以 TV=E_α|X−μ|/(2μ)。m=M 时 TV=0。否则凸函数 |x−μ| 不超过区间端点的弦，取期望后\n\n\\[\n\\mathrm{TV}\\le\\frac{(M-\\mu)(\\mu-m)}{(M-m)\\mu}\n=\\frac{M+m-\\mu-mM/\\mu}{M-m}\n\\le\\frac{\\sqrt M-\\sqrt m}{\\sqrt M+\\sqrt m}\n=\\tanh(w/4).\n\\]\n\n最后一步用 μ+mM/μ≥2√(mM)。这是实数数学证明；计算时不应直接 exp 大误差，使用稳定 softmax 和 osc/tanh，避免溢出。尖锐例：w≥0，α=(1/(1+exp(w/2)),exp(w/2)/(1+exp(w/2)))，e=(w,0)，β 恰交换概率。v=(0,D)、W=I 时两界同时取等号。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "两个概率分布相同，可以说相同seed的两个实现输出必然一样吗？",
+        "query": "同seed greedy 概率 不一致"
+      },
+      "domain": "probability-and-optimization",
+      "backend": "files",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "1ee332b3173fb2652610679ea29905f0ec22ad195fe098da7ac90fba27596e0b",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.sequence-tv-coupling",
+            "version": 1,
+            "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+            "title": "有限序列分布的全变差与逐步耦合界",
+            "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+            "status": "published",
+            "assumptions": [
+              "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+              "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+              "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+                "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "greedy",
+                  "seed",
+                  "一致",
+                  "不一",
+                  "同",
+                  "概率"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "greedy",
+                  "seed",
+                  "一致"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "greedy",
+                  "seed",
+                  "一致",
+                  "概率"
+                ]
+              }
+            ],
+            "score": 43
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "summary",
+                "terms": [
+                  "概率"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "概率"
+                ]
+              }
+            ],
+            "score": 4
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "content",
+                "terms": [
+                  "一致",
+                  "不一",
+                  "概率"
+                ]
+              }
+            ],
+            "score": 3
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "两个概率分布相同，可以说相同seed的两个实现输出必然一样吗？",
+        "query": "同seed greedy 概率 不一致"
+      },
+      "domain": "probability-and-optimization",
+      "backend": "sqlite",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "1ee332b3173fb2652610679ea29905f0ec22ad195fe098da7ac90fba27596e0b",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.sequence-tv-coupling",
+            "version": 1,
+            "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+            "title": "有限序列分布的全变差与逐步耦合界",
+            "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+            "status": "published",
+            "assumptions": [
+              "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+              "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+              "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+                "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "例子、边界与误用",
+                "start_line": 39,
+                "end_line": 50,
+                "excerpt": "## 例子、边界与误用\n\nP全程确定输出0，Q在每个仍为全0的前缀以概率ε输出1，其余定义任意；n=2、ε=1/10时，整段TV=1−(9/10)²=19/100，取得乘积界。n=0两者是同一空序列，TV0；ε0/1、相同分布、互斥支持均正常处理。\n\n少量前缀不够：P、Q第一步都均匀0/1，第二步在前缀0都确定0，在前缀1则P确定0、Q确定1。只测前缀0会报δ=0，真实序列TV=1/2；完整P前缀均值为1/2。真正参考均值界仍有效，失败的是未测样本覆盖的主张。\n\n相同分布不保证任意耦合输出相同：P=Q=Ber(1/2)，同一U∼Uniform[0,1]可令X=1{U<1/2}、Y=1−X；边际相同且TV0，失配却1。“存在高匹配耦合”不等于实际引擎相同seed执行的耦合达到它。\n\nGreedy：p=(1/2+η,1/2−η)、q=(1/2−η,1/2+η)，η>0。TV=2η可任意小，但两个确定性argmax不同，解码输出分布TV1。若要greedy一致，另需每步稳定argmax/margin及一致的tie规则；不能把概率分布TV界直接代入离散解码。\n\nP=(1,0)、Q=(1−ε,ε)时TV=ε但KL(Q||P)=∞；TV不需要共同支持，KL有方向和支持条件。指标不同不构成哪种指标总是更好的结论。奖励常数跨度0给期望差0，即使TV大；输出分布接近是充分控制，不是任务质量的必要条件。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "迁移及相关关系",
+                "start_line": 51,
+                "end_line": 60,
+                "excerpt": "## 迁移及相关关系\n\nIndexer原问题：同一prompt下dense与稀疏完整执行的下一token核对应P_t/Q_t，包含变化的KV/历史、logit处理和随机执行。模型层隐藏误差/attention mass/选token重合度不等于δ；前一轮`math.perturbation-propagation`只处理固定输入连续状态。这里真正保留的是条件概率链和序列事件/期望指标，未自动打通隐藏误差到TV。\n\n最小可证伪验证：冻结prompt、采样规则、长度和method，沿dense采样轨迹在两个完整执行器上replay同一前缀，核对评分路径与生成路径、强制token之前的概率、支持集与归一化。测参考前缀δ或真实轨迹比值；样本需独立且估计误差另认证。另做greedy、自由生成任务质量和wall-clock实验，不把这些不同目标压成一个指标。原论文的系统测量不可当成本机验证；本轮未运行模型。\n\n跨域严格映射：有历史依赖的可靠性告警/通信协议，事件“整段发生故障”的概率差≤TV。有限条件核可精确验证，但模型是否刻画真实物理故障另需数据和机制依据。\n\n前置概念：有限概率质量、条件核与边际、三角不等式；本条推导无强依赖卡。相关：`math.perturbation-propagation`（连续状态）；`math.finite-menu-selection`（调参校准）；`ai.speculative-sampling-residual-exactness`（分布校正不等于seed一致）。概率耦合不是跨层资源目标的物理耦合。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              }
+            ],
+            "score": 0.03225806451612903,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "可解决结构与不适用条件",
+                "start_line": 32,
+                "end_line": 40,
+                "excerpt": "## 可解决结构与不适用条件\n适用于已指定独立乘积分布下、有限维双线性分数的均方低秩近似，包括独立载荷/应变传感器的响应压缩。q为载荷系数，k为传感器模态，H为固定耦合；若单位不一致，先按物理量纲定义权重，不用无量纲误差冒充物理指标。\n\n真实attention同文档的q,k通常相关，因果位置采样也不是无条件独立。可用校准q×校准k全部笛卡尔积定义一个**经验乘积分布代理**，该有限目标严格成立；它不等于真实paired风险。需在独立文档留出集检查成对分数、排序、实际V/W输出及e2e。\n\npost-RoPE实际q/k也可定义此代理，但固定矩与独立性仍须核对；模型的不同位置/长度可能改变目标。一般A,B不相同、M不对称，不是UUᵀ。压缩维没有自动继承某个原始FC频率；不保证ARp=RbarpA。不能跨频率融合后声称单频RoPE无损。pre-RoPE低秩也不保证post-RoPE低秩。\n\n分数MSE不保证top-k保持，缺少逐点误差和排序margin时拒绝用math.topk-margin；也不保证softmax或value输出最优，后者按math.attention-output-geometry单独检验。缓存z_k是额外索引存储，最终保留全KV时不自动减总缓存。校准/投影计算成本需测量。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "问题触发与范围",
+                "start_line": 5,
+                "end_line": 7,
+                "excerpt": "## 问题触发与范围\n压缩key能量最大的方向，是否也能压缩query/key点积分数？相同索引维数下比较K-PCA与双侧任务度量。经典截断SVD见强依赖math.low-rank-svd；以下概率目标的化归是本条目自行推导，不宣称新的原创定理。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              }
+            ],
+            "score": 0.031746031746031744,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "对象、前提和结论",
+                "start_line": 5,
+                "end_line": 17,
+                "excerpt": "## 对象、前提和结论\n\n固定非空有限集合 J，同一支持集上的有限实数 logits s,t；α=softmax(s)，β=softmax(t)。温度和 1/√d 已计入 logits。固定 value v_j∈R^p，固定线性映射 W:R^p→R^h，输出用任意范数。设 y=Σα_jv_j，ŷ=Σβ_jv_j，D=max_ij‖W(v_i−v_j)‖，e=t−s，w=max e−min e。\n\n经典 TV 恒等式（来源1，§4.1 Proposition 4.2，印刷页48）是 TV(α,β)=½Σ|α_j−β_j|。本卡以下是独立给出的有限推导，不声称研究新颖性，不是形式化证明：\n\n\\[\n\\|W(y-\\hat y)\\|\\le D\\,\\mathrm{TV}(\\alpha,\\beta)\n\\le D\\tanh\\!\\left(\\frac{\\operatorname{osc}(t-s)}4\\right).\n\\]\n\n此界对两个 token 可以取等号。误差的共同平移不起作用；若 ‖e‖∞≤ε，则输出≤D tanh(ε/2)。若已知整体 ‖e‖₂≤η，则 w≤√2η（最大最小坐标差与柯西不等式），得到 D tanh(η/(2√2))。不能把逐坐标 ε 当整体 η。D=0 时，无论排序/概率如何变，输出都相同。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "可复核证明",
+                "start_line": 18,
+                "end_line": 32,
+                "excerpt": "## 可复核证明\n\n令 δ=α−β，其正、负部分总质量均为 T=TV。T=0 时结论显然；否则 WΣδv=T(a−b)，a,b 分别是正、负部分归一化后的 Wv 的凸组合。展开这两个组合的乘积权重，以三角不等式得到 ‖a−b‖≤D。\n\n令 X_j=exp(e_j)，m=min X>0，M=max X，μ=Σα_jX_j。β_j=α_jX_j/μ，所以 TV=E_α|X−μ|/(2μ)。m=M 时 TV=0。否则凸函数 |x−μ| 不超过区间端点的弦，取期望后\n\n\\[\n\\mathrm{TV}\\le\\frac{(M-\\mu)(\\mu-m)}{(M-m)\\mu}\n=\\frac{M+m-\\mu-mM/\\mu}{M-m}\n\\le\\frac{\\sqrt M-\\sqrt m}{\\sqrt M+\\sqrt m}\n=\\tanh(w/4).\n\\]\n\n最后一步用 μ+mM/μ≥2√(mM)。这是实数数学证明；计算时不应直接 exp 大误差，使用稳定 softmax 和 osc/tanh，避免溢出。尖锐例：w≥0，α=(1/(1+exp(w/2)),exp(w/2)/(1+exp(w/2)))，e=(w,0)，β 恰交换概率。v=(0,D)、W=I 时两界同时取等号。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "loaded_ids": [
+    "math.sequence-tv-coupling"
+  ],
+  "mapping": "human-extracted object/premise queries; public developer checks, not model semantic/refusal evaluation"
+}

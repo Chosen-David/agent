@@ -175,3 +175,8 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [MATH-35] 补齐有条件的跨层扰动传播界、拒用反例与近期研究筛选。 ([detail](task_details/MATH-35.md))
 - [x] [MATH-36] 独立代码/数据验收、检索成本、回归与普通main发布核对。 ([detail](task_details/MATH-36.md))
+
+## 2026-10-08 序列分布误差
+
+- [x] [MATH-37] 补齐有限序列全变差/耦合界与解码反例，筛选近期原文。 ([detail](task_details/MATH-37.md))
+- [ ] [MATH-38] 独立验收、检索成本、回归及main发布读回。 ([detail](task_details/MATH-38.md))
