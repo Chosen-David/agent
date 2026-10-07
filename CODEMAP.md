@@ -51,3 +51,5 @@ NEURO-01–03：`knowledge/entries/neuroscience/` 与 `knowledge/neuroscience_so
 | MATH-15/16，ALG-01–05 | knowledge/entries/math.*（18新主题），docs/knowledge_learning/2026-10-07-algebra/ | 主AI知识维护 → 建模Skill、科研任务与下轮维护者 | 标准代数双索引、来源版本、76项有限检查、自然检索负结果、token成本与main发布证据；非模型收益 |
 
 | EK-112454-01–03 | `knowledge/entries/neuroscience/neuro.bumblebee-social-diffusion.*`, `evals/knowledge/bee-learning-queries.json`, `docs/knowledge_learning/2026-10-07-engineering-112454/` | 主AI/真实小时维护调用 → 知识检索、研究决策与下轮维护 | 3来源、1待发布复用卡，附表模型/计数限制；两步附录候选；全仓Windows回归阻塞，未推送；本机复现与AI收益未测 |
+
+| EK-115246-01–03 | `knowledge/entries/neuroscience/neuro.cephalopod-arm-segmentation.*`, `docs/knowledge_learning/2026-10-07-engineering-115246/verify.py`, `report.md`, `sources.json` | 主AI/既有真实小时桥 → 按需检索、研究决策与下轮维护 | 4来源、1candidate/0新增published；接口许可与重复单位诊断；旧检索非退化、相关13单测与Reader3通过；补图、数据和AI迁移未验收 |

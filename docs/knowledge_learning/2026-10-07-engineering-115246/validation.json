@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "status": "maintenance-checks-passed; scientific promotion intentionally blocked",
+  "sources_checked": 4,
+  "published_scientific_entries": 0,
+  "candidate_entries": 1,
+  "required_checks": [
+    {
+      "name": "validate",
+      "argv": [
+        "C:\\Python312\\python.exe",
+        "-m",
+        "agent_runtime.knowledge",
+        "--root",
+        "knowledge",
+        "validate"
+      ],
+      "exit_code": 0,
+      "seconds": 0.12957000732421875,
+      "log": "docs/knowledge_learning/2026-10-07-engineering-115246/checks/validate.log"
+    },
+    {
+      "name": "plugin",
+      "argv": [
+        "C:\\Python312\\python.exe",
+        "scripts/sync_plugin_references.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "seconds": 0.2578749656677246,
+      "log": "docs/knowledge_learning/2026-10-07-engineering-115246/checks/plugin.log"
+    },
+    {
+      "name": "index",
+      "argv": [
+        "C:\\Python312\\python.exe",
+        "-m",
+        "agent_runtime.knowledge",
+        "--root",
+        "knowledge",
+        "index",
+        "--db",
+        ".knowledge-cache/engineering-115246.sqlite"
+      ],
+      "exit_code": 0,
+      "seconds": 0.2733495235443115,
+      "log": "docs/knowledge_learning/2026-10-07-engineering-115246/checks/index.log"
+    },
+    {
+      "name": "reuse-unit",
+      "argv": [
+        "C:\\Python312\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_knowledge_reuse.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 0.48183131217956543,
+      "log": "docs/knowledge_learning/2026-10-07-engineering-115246/checks/reuse-unit.log"
+    },
+    {
+      "name": "math-unit",
+      "argv": [
+        "C:\\Python312\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_knowledge_math.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 0.08118247985839844,
+      "log": "docs/knowledge_learning/2026-10-07-engineering-115246/checks/math-unit.log"
+    },
+    {
+      "name": "plugin-unit",
+      "argv": [
+        "C:\\Python312\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_plugin_reference_sync.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 0.2569272518157959,
+      "log": "docs/knowledge_learning/2026-10-07-engineering-115246/checks/plugin-unit.log"
+    },
+    {
+      "name": "reader",
+      "argv": [
+        "C:\\Python312\\python.exe",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "apps/paper-reader/tests",
+        "-v"
+      ],
+      "exit_code": 0,
+      "seconds": 2.065213918685913,
+      "log": "docs/knowledge_learning/2026-10-07-engineering-115246/checks/reader.log"
+    }
+  ],
+  "retrieval_gate": "exact query-level nonregression against clean starting corpus, all 7 catalogs and both backends",
+  "known_raw_retrieval_failures": [
+    "queries",
+    "round2-queries",
+    "morphology-queries"
+  ],
+  "known_failures_preserved": true,
+  "cursor_queue_history_preservation": true,
+  "knowledge_use_check": "passed CLI check-refs on knowledge-use.json",
+  "full_repository_unittest": "not-run; no runtime/shared prompt change; scope-related 13 tests + required reader 3 passed",
+  "source_and_arithmetic_verification": "docs/knowledge_learning/2026-10-07-engineering-115246/verification.json",
+  "single_model_limit": "No blind independent scientific review, animal experiment, MATLAB/ImageJ execution or model A/B"
+}
