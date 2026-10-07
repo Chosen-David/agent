@@ -450,3 +450,11 @@ MATH-18发布闭环：实现提交 e10795ea51870d2cef4b2763c9dfd13ad57fa02c、tr
 证据：docs/knowledge_learning/2026-10-07-centering/report.md。主AI写入；无同主题活跃状态，前轮已完成；tmux/实际模型适配器不可用，未宣称监督启动，继续独立授权工作。31公开有限检查通过；未见题/模型A/B、真实网络/物理/GPU验收未完成。下一数学游标为依赖校准的moment/functional-dependence条件，保留RL/神经科学优先游标；不改SGLang或生产行为。
 
 MATH-20发布闭环：实现commit 0624f935023ee892264e804b141350b5852aad59、tree b73448555796c2f737e5c6f0e7dd6246c8d65b8e 以f9898df新鲜lease、force=false写入main，API/独立ls-remote/Git完整tree读回一致。81总条目=79published+2candidate；31有限检查通过，4新/21旧题双后端无新增退化，程序548项540通过/8跳过、Reader3/3。完整单条上下文3,095 tokens；584字节统计量仅为有限二进制载荷布局，未测Agent token/模型或实际网络收益。发布回执见本轮publication.json。下轮核查依赖/moment条件，保留既有优先游标；本次仅状态文档收尾。
+
+
+## 依赖样本与目标专属有效样本量
+
+- [x] [MATH-21] 核验固定n的真实协方差均值方差、负相关/平方目标区别与尾界条件；筛选2026原始研究，保存传感器迁移及独立性误用反例。
+- [ ] [MATH-22] 同步索引、按需引用与成本证据，完成检索及程序回归；刷新main直接提交并独立读回后更新续接状态。
+
+证据：docs/knowledge_learning/2026-10-07-dependence/report.md。39项公开有限开发检查通过；一般推导为人工核查，非Lean或未见模型验收。均值ESS不得移用于外积/子空间；最新空间依赖论文条件仅作候选，不改生产或SGLang。现有优先游标保留。

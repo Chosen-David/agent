@@ -61,3 +61,5 @@ AIK-01/02：`knowledge/entries/ai-algorithms/ai.speculative-*`及`docs/knowledge
 | MATH-17/18 | `knowledge/entries/math.matrix-bernstein-covariance.*`, `docs/knowledge_learning/2026-10-07-matrix-concentration/` | model-with-knowledge / 主AI → 按需知识与校准前提审查 | 经典矩阵界、2近期候选、有限检查/拒用；模型与真实trace收益未测 |
 
 | MATH-19/20 | `knowledge/entries/math.centered-covariance-merge.*`, `docs/knowledge_learning/2026-10-07-centering/` | model-with-knowledge / 主AI → 中心化、分块合并、数值/统计前提审查 | 经典原页与2近期候选；有限开发检查，模型/网络收益未知 |
+
+| MATH-21/22 | `knowledge/entries/math.dependent-mean-variance.*`, `docs/knowledge_learning/2026-10-07-dependence/` | model-with-knowledge / 主AI → 依赖校准、目标方差与拒用前提审查 | 固定n推导与2篇2026候选；模型收益未知 |

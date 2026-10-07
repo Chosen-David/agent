@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "id": "math.dependent-mean-variance",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "依赖样本均值方差与目标专属有效样本量",
+  "summary": "从完整协方差计算固定n的均值方差；有效样本量只匹配该目标的方差，不证明独立性、高斯尾或二阶矩/子空间可靠性。",
+  "aliases": [
+    "effective sample size",
+    "autocorrelation",
+    "AR(1)",
+    "dependent sample mean",
+    "有效样本量 自相关 时间序列 目标 方差 高斯"
+  ],
+  "domains": [
+    "probability",
+    "statistics",
+    "time-series"
+  ],
+  "structures": [
+    "dependent-calibration",
+    "variance-clock",
+    "observable-specific-ess",
+    "依赖 样本 均值 自相关 方差 目标"
+  ],
+  "assumptions": [
+    "n≥1事先固定；实标量过程有共同均值µ与有限二阶矩，协方差指真实模型量",
+    "平稳简式还要求γ_h=Cov(X_t,X_(t+h))不依赖t；γ0>0，负相关允许",
+    "AR(1)特例要求因果平稳初始化、|phi|<1及独立同分布零均值有限方差创新；不是从lag1估计直接得整个模型",
+    "高斯尾和平方相关公式额外要求联合高斯；平方例还要求µ=0，不能仅凭高斯边缘",
+    "样本ACF/phi/方差估计无本条误差认证；均值漂移、自适应抽样和停止时间需要另证"
+  ],
+  "sources": [
+    {
+      "url": "https://otexts.robjhyndman.com/fpp3/AR.html",
+      "locator": "Hyndman–Athanasopoulos, Forecasting: Principles and Practice, 3rd ed (2021), online §9.3; AR model and |phi|<1; exact variance/observable-specific consequences derived here",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://mc-stan.org/docs/2_20/reference-manual/effective-sample-size-section.html",
+      "locator": "Stan Reference Manual fixed version2.20 §16.4.1/16.4.2; asymptotic ESS, antithetic chains and estimation; not a finite-sample tail guarantee",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-dependence/verify.py",
+      "docs/knowledge_learning/2026-10-07-dependence/checks.json"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.hoeffding-bounded-mean"
+    },
+    {
+      "type": "related",
+      "id": "math.centered-covariance-merge"
+    },
+    {
+      "type": "related",
+      "id": "math.matrix-bernstein-covariance"
+    }
+  ]
+}
