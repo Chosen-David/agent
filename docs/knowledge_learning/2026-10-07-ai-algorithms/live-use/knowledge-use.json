@@ -1,0 +1,198 @@
+{
+  "task_id": "exercise_algorithm_knowledge",
+  "input_version": "question-v1",
+  "task_refs": [
+    "AIK-02"
+  ],
+  "input_text": "我的小模型提议八个token，平均接受率90%，一次draft成本相当于目标模型单步的0.2倍，验证整批要4倍目标单步时间，其他开销忽略，所以至少能快四倍吧？而且temperature和top-p只对draft用了，大模型验证直接argmax，这样是否仍无损？给出可核对的小例子与适用条件，并说明测量什么才能下性能结论。",
+  "decision": "EXECUTE: read-only knowledge use, independent primary-source check, exact CPU finite examples, save only in assigned output directory",
+  "repository": "<repo>",
+  "initial_repository_head": "a35a102306e3aba0af1a5180390b226febe14705",
+  "tool": "PYTHONDONTWRITEBYTECODE=1 python -m agent_runtime.knowledge --root knowledge",
+  "corpus": "knowledge",
+  "initial_snapshot": "618f9175ae32a023e9cb467c0eec45e87fe2c9f87e96cb680de8ef5642bbb722",
+  "used_snapshot": "820007a073af71c4479f04cc28f3c3708b3cca5d0c97dac80612bd6701e5ad8f",
+  "pinned_used_corpus_subset": "evidence/source-snapshot",
+  "preserved_initial_corpus_subset": "evidence/initial-candidate-snapshot",
+  "knowledge_refs": [
+    {
+      "id": "ai.speculative-decoding-cost-bound",
+      "version": 1,
+      "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f"
+    },
+    {
+      "id": "ai.speculative-sampling-residual-exactness",
+      "version": 1,
+      "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331"
+    },
+    {
+      "id": "infra.speculative-acceptance",
+      "version": 1,
+      "sha256": "d713b2280b1b43dc109b635df3a522f92a5f3fc657dc719137402f8877c05b6a"
+    }
+  ],
+  "usage_events": [
+    {
+      "command": "search '批量 提议 接受 概率 分布 校正 验证 成本 draft token temperature top-p' --limit 5",
+      "result": "evidence/search.json",
+      "outcome": "published old card found; unrelated hits excluded"
+    },
+    {
+      "command": "context '批量 提议 接受 概率 分布 校正 验证 成本 draft token temperature top-p' --max-entries 8 --max-chars 26000",
+      "result": "evidence/context.json",
+      "outcome": "ready; selection included irrelevant lexical candidates, not adopted"
+    },
+    {
+      "command": "search 'speculative sampling residual rejection speedup gamma temperature' --limit 5",
+      "result": "evidence/search-alias.json",
+      "outcome": "old card; residual lexical false positives not adopted"
+    },
+    {
+      "command": "show infra.speculative-acceptance",
+      "result": "evidence/show-infra-speculative-acceptance.json",
+      "outcome": "successful published entry; no strong dependencies"
+    },
+    {
+      "command": "search '批量 提议 接受 概率 分布 校正 验证 成本 draft token temperature top-p' --limit 5 --include-unpublished",
+      "result": "evidence/search-with-candidates.json",
+      "outcome": "two relevant candidate entries found; explicit unpublished retrieval"
+    },
+    {
+      "command": "show ai.speculative-sampling-residual-exactness; show ai.speculative-decoding-cost-bound",
+      "result": [
+        "evidence/show-ai.speculative-sampling-residual-exactness.json",
+        "evidence/show-ai.speculative-decoding-cost-bound.json"
+      ],
+      "outcome": "both refused entry is not published; old failure preserved"
+    },
+    {
+      "command": "read already-located knowledge/entries/ai-algorithms/ai.speculative-*.json and .md",
+      "outcome": "concurrent status change to published observed at 2026-10-07T01:38:17Z; no corpus edits by this worker"
+    },
+    {
+      "command": "show ai.speculative-sampling-residual-exactness; show ai.speculative-decoding-cost-bound",
+      "result": [
+        "show-published-ai.speculative-decoding-cost-bound.json",
+        "show-published-ai.speculative-sampling-residual-exactness.json"
+      ],
+      "outcome": "later successful after observed publication; old failure not overwritten"
+    },
+    {
+      "command": "context '批量 提议 接受 概率 分布 校正 验证 成本 draft token temperature top-p' --limit 3 --max-entries 3 --max-chars 26000 --no-related",
+      "result": "evidence/context-published.json",
+      "outcome": {
+        "status": "ready",
+        "retrieved_ids": [
+          "ai.speculative-decoding-cost-bound",
+          "ai.speculative-sampling-residual-exactness",
+          "infra.speculative-acceptance"
+        ],
+        "skipped": []
+      }
+    }
+  ],
+  "applicability": [
+    {
+      "assumption": "gamma=8 fixed chain",
+      "task_evidence": "explicit question",
+      "status": "matched"
+    },
+    {
+      "assumption": "0.2T is one draft token rather than whole block",
+      "task_evidence": "ambiguous once draft wording",
+      "status": "unknown",
+      "handling": "both interpretations derived"
+    },
+    {
+      "assumption": "every reached-depth conditional acceptance is 0.9",
+      "task_evidence": "only average acceptance supplied",
+      "status": "unknown",
+      "handling": "geometric result conditional; marginal and committed-ratio cases separated"
+    },
+    {
+      "assumption": "verification cost v=1 ideal paper assumption",
+      "task_evidence": "question gives v=4",
+      "status": "mismatched",
+      "handling": "reject unmodified ideal speed formula; use v=4"
+    },
+    {
+      "assumption": "one correction or bonus per round and no EOS truncation",
+      "task_evidence": "not explicitly supplied",
+      "status": "unknown",
+      "handling": "state favorable conventional assumption and output cap; benchmark emitted tokens"
+    },
+    {
+      "assumption": "fixed target strategy p with actual post-transform q",
+      "task_evidence": "draft temp/top-p and target argmax",
+      "status": "unknown",
+      "handling": "random baseline not preserved by greedy; greedy baseline conditionally preserved"
+    },
+    {
+      "assumption": "correct normalized residual and matching prefix/cache/token space",
+      "task_evidence": "no implementation supplied",
+      "status": "unknown",
+      "handling": "give required checks; no end-to-end correctness claim"
+    },
+    {
+      "assumption": "old experimental card TPUv4/T5-XXL/batch1/WMT or CNN-DM",
+      "task_evidence": "none",
+      "status": "unknown",
+      "handling": "do not transfer paper speedups; use only qualitative cost caution"
+    },
+    {
+      "assumption": "stable long-sequence costs and matching baseline",
+      "task_evidence": "ideal costs supplied, target workload unspecified",
+      "status": "unknown",
+      "handling": "conditional rate estimate, require target measurements"
+    }
+  ],
+  "selected_knowledge": {
+    "ai.speculative-sampling-residual-exactness": "post-transform actual proposal, residual proof, greedy boundary",
+    "ai.speculative-decoding-cost-bound": "tail-sum and cost accounting",
+    "infra.speculative-acceptance": "independent warning against acceptance-only speed inference; no empirical numbers transferred"
+  },
+  "rejected_candidates": [
+    "math.data-processing-task-sufficiency",
+    "algo.dora-magnitude-direction",
+    "ds.hnsw-recall-budget",
+    "math.alpha-spending-stopping",
+    "math.symmetry-quotient",
+    "math.low-rank-svd",
+    "algo.gqa-uptraining",
+    "ds.maxflow-matching",
+    "math.contraction-residual-certificate",
+    "math.linear-system-stability",
+    "math.eigenspace-gap-perturbation"
+  ],
+  "primary_sources": [
+    {
+      "url": "https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf",
+      "accessed": "2026-10-07",
+      "actual_tool": "web.open/find",
+      "sections_read": "Sections 2.2–2.3, Algorithm 1; Sections 3.1–3.5; Appendix A.1, A.3",
+      "evidence": "tool responses turn0view0, turn1view1; verify adjusted p/q, cap gamma+1, iid simplifying assumption, ideal verification cost, and explicit runtime discrepancies; response does not transfer measured paper gains"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2302.01318v1",
+      "accessed": "2026-10-07",
+      "actual_tool": "web.open/find",
+      "sections_read": "Modified Rejection Sampling, PDF pages 4–5; Theorem 1 pages 10–11; numerics discussion page 6",
+      "evidence": "tool responses turn2view0 and turn3view0/1/2; source p=draft and q=target opposite to response symbols; transformations precede rejection test"
+    }
+  ],
+  "validation": {
+    "script": "verify_examples.py",
+    "results": "evidence/example-checks.json",
+    "kind": "58 exact rational finite checks, not model inference, performance measurement, or formal proof"
+  },
+  "scope_compliance": {
+    "writes": "only assigned output directory",
+    "no_gpu": true,
+    "no_model_inference": true,
+    "no_installs": true,
+    "no_repository_edits": true,
+    "no_publish": true,
+    "restricted_evidence_paths": "did not open docs/knowledge_learning or sibling validation content; card strings referencing those paths were not followed"
+  },
+  "remaining": "parent independently reviews answer and evidence; target performance and implementation correctness require future authorized runtime tests"
+}

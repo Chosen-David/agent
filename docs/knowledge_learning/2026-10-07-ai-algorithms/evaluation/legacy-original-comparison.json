@@ -1,0 +1,1934 @@
+{
+  "schema_version": 1,
+  "scope": "Same original queries, expected values and ranking; per-query comparison against root 16-entry baseline; status-only candidate copy. CLI exit code is not the acceptance metric.",
+  "all_original_inputs_unchanged": true,
+  "no_new_regressions": true,
+  "regressions": [],
+  "suites": [
+    {
+      "suite": "original",
+      "baseline_snapshot": "dd4b298b81ff2ed3fe04de930456a86d58b33946590e3276c8c4c95686e237c8",
+      "expanded_snapshot": "633958d87090c1aca15406a93ff3e766be2596bdfdaf867a8037cfca1e1e85a3",
+      "baseline_sha256": "9b2258877a5f5f18c682e4342b180048c8770fe1c115ce1950566025089c599d",
+      "original_query_file_sha256": "d2f1c6f0dacdd4f81cedb583035eccfa37aaf5a05d47435848f96c42a4dde807",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "<repo>/scripts/eval_knowledge.py",
+        "--root",
+        "<evidence>/validation/candidate_v3_fixedbase/knowledge",
+        "--cases",
+        "<repo>/evals/knowledge/queries.json",
+        "--output",
+        "<evidence>/validation/legacy_v3_fixedbase/original-expanded.json"
+      ],
+      "cli_exit_code": 1,
+      "backends": {
+        "files": {
+          "old_summary": {
+            "mean_recall_at_3": 0.9523809523809523,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 1.0
+          },
+          "new_summary": {
+            "mean_recall_at_3": 0.9523809523809523,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 1.0
+          },
+          "metric_changes": [],
+          "all_queries": [
+            {
+              "case": "dot-bound",
+              "query": "查询键误差 内积分数 范数",
+              "expected": [
+                "math.cauchy-schwarz"
+              ],
+              "old_actual": [
+                "math.cauchy-schwarz",
+                "math.contraction-residual-certificate",
+                "math.score-difference-bound"
+              ],
+              "new_actual": [
+                "math.cauchy-schwarz",
+                "math.contraction-residual-certificate",
+                "math.score-difference-bound"
+              ],
+              "old_context": [
+                "math.cauchy-schwarz",
+                "math.contraction-residual-certificate",
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.linear-system-stability",
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate",
+                "math.low-rank-svd"
+              ],
+              "new_context": [
+                "math.cauchy-schwarz",
+                "math.contraction-residual-certificate",
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.linear-system-stability",
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate",
+                "math.low-rank-svd"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "membership",
+              "query": "分数扰动 间隔 集合 稳定",
+              "expected": [
+                "math.topk-margin"
+              ],
+              "old_actual": [
+                "math.topk-margin",
+                "math.cauchy-schwarz",
+                "math.score-difference-bound"
+              ],
+              "new_actual": [
+                "math.topk-margin",
+                "math.cauchy-schwarz",
+                "math.score-difference-bound"
+              ],
+              "old_context": [
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.score-difference-bound",
+                "math.low-rank-svd"
+              ],
+              "new_context": [
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.score-difference-bound",
+                "math.low-rank-svd"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "matrix-compression",
+              "query": "矩阵压缩 低秩近似 残差",
+              "expected": [
+                "math.low-rank-svd"
+              ],
+              "old_actual": [
+                "math.low-rank-svd",
+                "math.contraction-residual-certificate",
+                "math.data-processing-task-sufficiency"
+              ],
+              "new_actual": [
+                "math.low-rank-svd",
+                "math.contraction-residual-certificate",
+                "math.data-processing-task-sufficiency"
+              ],
+              "old_context": [
+                "math.low-rank-svd",
+                "math.contraction-residual-certificate",
+                "math.data-processing-task-sufficiency",
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.score-difference-bound",
+                "math.linear-system-stability",
+                "physics.dimensionless"
+              ],
+              "new_context": [
+                "math.low-rank-svd",
+                "math.contraction-residual-certificate",
+                "math.data-processing-task-sufficiency",
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.score-difference-bound",
+                "math.linear-system-stability",
+                "physics.dimensionless"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "worker-merge",
+              "query": "交换 设备编号 可行性 代价",
+              "expected": [
+                "math.symmetry-quotient"
+              ],
+              "old_actual": [
+                "math.symmetry-quotient",
+                "math.dual-certificates",
+                "math.reynolds-projection"
+              ],
+              "new_actual": [
+                "math.symmetry-quotient",
+                "math.dual-certificates",
+                "math.reynolds-projection"
+              ],
+              "old_context": [
+                "math.symmetry-quotient",
+                "math.dual-certificates",
+                "math.reynolds-projection",
+                "math.data-processing-task-sufficiency"
+              ],
+              "new_context": [
+                "math.symmetry-quotient",
+                "math.dual-certificates",
+                "math.reynolds-projection",
+                "math.data-processing-task-sufficiency"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "physical-model",
+              "query": "单位 周期 长度 重力 变量",
+              "expected": [
+                "physics.dimensionless"
+              ],
+              "old_actual": [
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate",
+                "math.hoeffding-bounded-mean"
+              ],
+              "new_actual": [
+                "physics.dimensionless",
+                "ai.speculative-decoding-cost-bound",
+                "math.descent-lyapunov-certificate"
+              ],
+              "old_context": [
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate",
+                "math.hoeffding-bounded-mean",
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.noether-invariants",
+                "math.alpha-spending-stopping"
+              ],
+              "new_context": [
+                "physics.dimensionless",
+                "ai.speculative-decoding-cost-bound",
+                "ai.speculative-sampling-residual-exactness",
+                "math.descent-lyapunov-certificate",
+                "math.linear-system-stability"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "english-alias",
+              "query": "dot product error inner product bound",
+              "expected": [
+                "math.cauchy-schwarz"
+              ],
+              "old_actual": [
+                "math.cauchy-schwarz",
+                "math.dual-certificates",
+                "math.linear-system-stability"
+              ],
+              "new_actual": [
+                "math.cauchy-schwarz",
+                "math.dual-certificates",
+                "math.linear-system-stability"
+              ],
+              "old_context": [
+                "math.cauchy-schwarz",
+                "math.dual-certificates",
+                "math.linear-system-stability",
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate"
+              ],
+              "new_context": [
+                "math.cauchy-schwarz",
+                "math.dual-certificates",
+                "math.linear-system-stability",
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "cross-entry",
+              "query": "矩阵近似 查询 范数 分数误差 间隔",
+              "expected": [
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.low-rank-svd"
+              ],
+              "old_actual": [
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.score-difference-bound"
+              ],
+              "new_actual": [
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.score-difference-bound"
+              ],
+              "old_context": [
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.score-difference-bound",
+                "math.low-rank-svd"
+              ],
+              "new_context": [
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.score-difference-bound",
+                "math.low-rank-svd"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 0.6666666666666666,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 0.6666666666666666,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "no-hit",
+              "query": "zzqxnonexistent",
+              "expected": [],
+              "old_actual": [],
+              "new_actual": [],
+              "old_context": [],
+              "new_context": [],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": null,
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true
+              },
+              "new_metrics": {
+                "recall_at_3": null,
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true
+              }
+            }
+          ]
+        },
+        "sqlite": {
+          "old_summary": {
+            "mean_recall_at_3": 0.9523809523809523,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 1.0
+          },
+          "new_summary": {
+            "mean_recall_at_3": 0.9523809523809523,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 1.0
+          },
+          "metric_changes": [],
+          "all_queries": [
+            {
+              "case": "dot-bound",
+              "query": "查询键误差 内积分数 范数",
+              "expected": [
+                "math.cauchy-schwarz"
+              ],
+              "old_actual": [
+                "math.cauchy-schwarz",
+                "math.contraction-residual-certificate",
+                "math.score-difference-bound"
+              ],
+              "new_actual": [
+                "math.cauchy-schwarz",
+                "math.contraction-residual-certificate",
+                "math.score-difference-bound"
+              ],
+              "old_context": [
+                "math.cauchy-schwarz",
+                "math.contraction-residual-certificate",
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.linear-system-stability",
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate",
+                "math.low-rank-svd"
+              ],
+              "new_context": [
+                "math.cauchy-schwarz",
+                "math.contraction-residual-certificate",
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.linear-system-stability",
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate",
+                "math.low-rank-svd"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "membership",
+              "query": "分数扰动 间隔 集合 稳定",
+              "expected": [
+                "math.topk-margin"
+              ],
+              "old_actual": [
+                "math.topk-margin",
+                "math.cauchy-schwarz",
+                "math.linear-system-stability"
+              ],
+              "new_actual": [
+                "math.topk-margin",
+                "math.cauchy-schwarz",
+                "math.linear-system-stability"
+              ],
+              "old_context": [
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.linear-system-stability",
+                "math.low-rank-svd",
+                "math.score-difference-bound",
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate"
+              ],
+              "new_context": [
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.linear-system-stability",
+                "math.low-rank-svd",
+                "math.score-difference-bound",
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "matrix-compression",
+              "query": "矩阵压缩 低秩近似 残差",
+              "expected": [
+                "math.low-rank-svd"
+              ],
+              "old_actual": [
+                "math.low-rank-svd",
+                "math.linear-system-stability",
+                "math.data-processing-task-sufficiency"
+              ],
+              "new_actual": [
+                "math.low-rank-svd",
+                "math.linear-system-stability",
+                "math.topk-margin"
+              ],
+              "old_context": [
+                "math.low-rank-svd",
+                "math.linear-system-stability",
+                "math.data-processing-task-sufficiency",
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.score-difference-bound",
+                "math.contraction-residual-certificate",
+                "math.symmetry-quotient"
+              ],
+              "new_context": [
+                "math.low-rank-svd",
+                "math.linear-system-stability",
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.data-processing-task-sufficiency",
+                "math.score-difference-bound",
+                "math.contraction-residual-certificate"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "worker-merge",
+              "query": "交换 设备编号 可行性 代价",
+              "expected": [
+                "math.symmetry-quotient"
+              ],
+              "old_actual": [
+                "math.symmetry-quotient",
+                "math.dual-certificates",
+                "math.reynolds-projection"
+              ],
+              "new_actual": [
+                "math.symmetry-quotient",
+                "math.dual-certificates",
+                "math.reynolds-projection"
+              ],
+              "old_context": [
+                "math.symmetry-quotient",
+                "math.dual-certificates",
+                "math.reynolds-projection",
+                "math.data-processing-task-sufficiency"
+              ],
+              "new_context": [
+                "math.symmetry-quotient",
+                "math.dual-certificates",
+                "math.reynolds-projection",
+                "math.data-processing-task-sufficiency"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "physical-model",
+              "query": "单位 周期 长度 重力 变量",
+              "expected": [
+                "physics.dimensionless"
+              ],
+              "old_actual": [
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate",
+                "math.hoeffding-bounded-mean"
+              ],
+              "new_actual": [
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate",
+                "ai.speculative-decoding-cost-bound"
+              ],
+              "old_context": [
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate",
+                "math.hoeffding-bounded-mean",
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.noether-invariants",
+                "math.alpha-spending-stopping"
+              ],
+              "new_context": [
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate",
+                "ai.speculative-decoding-cost-bound",
+                "ai.speculative-sampling-residual-exactness",
+                "math.linear-system-stability"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "english-alias",
+              "query": "dot product error inner product bound",
+              "expected": [
+                "math.cauchy-schwarz"
+              ],
+              "old_actual": [
+                "math.cauchy-schwarz",
+                "physics.noether-invariants",
+                "math.linear-system-stability"
+              ],
+              "new_actual": [
+                "math.cauchy-schwarz",
+                "physics.noether-invariants",
+                "math.linear-system-stability"
+              ],
+              "old_context": [
+                "math.cauchy-schwarz",
+                "physics.noether-invariants",
+                "math.linear-system-stability",
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.descent-lyapunov-certificate",
+                "math.contraction-residual-certificate"
+              ],
+              "new_context": [
+                "math.cauchy-schwarz",
+                "physics.noether-invariants",
+                "math.linear-system-stability",
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.descent-lyapunov-certificate",
+                "math.contraction-residual-certificate"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "cross-entry",
+              "query": "矩阵近似 查询 范数 分数误差 间隔",
+              "expected": [
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.low-rank-svd"
+              ],
+              "old_actual": [
+                "math.topk-margin",
+                "math.cauchy-schwarz",
+                "math.score-difference-bound"
+              ],
+              "new_actual": [
+                "math.topk-margin",
+                "math.cauchy-schwarz",
+                "math.score-difference-bound"
+              ],
+              "old_context": [
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.score-difference-bound",
+                "math.low-rank-svd"
+              ],
+              "new_context": [
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.score-difference-bound",
+                "math.low-rank-svd"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 0.6666666666666666,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 0.6666666666666666,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "no-hit",
+              "query": "zzqxnonexistent",
+              "expected": [],
+              "old_actual": [],
+              "new_actual": [],
+              "old_context": [],
+              "new_context": [],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": null,
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true
+              },
+              "new_metrics": {
+                "recall_at_3": null,
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "suite": "round2",
+      "baseline_snapshot": "dd4b298b81ff2ed3fe04de930456a86d58b33946590e3276c8c4c95686e237c8",
+      "expanded_snapshot": "633958d87090c1aca15406a93ff3e766be2596bdfdaf867a8037cfca1e1e85a3",
+      "baseline_sha256": "30d8314246a88ba5431a15acb51e08cca510b08f793484802caa678b94456956",
+      "original_query_file_sha256": "cd6c287f42c6e1baa1713c6f9c151fcfd28f9c50968328f93b02fcf03e50731b",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "<repo>/scripts/eval_knowledge.py",
+        "--root",
+        "<evidence>/validation/candidate_v3_fixedbase/knowledge",
+        "--cases",
+        "<repo>/evals/knowledge/round2-queries.json",
+        "--output",
+        "<evidence>/validation/legacy_v3_fixedbase/round2-expanded.json"
+      ],
+      "cli_exit_code": 0,
+      "backends": {
+        "files": {
+          "old_summary": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.8125
+          },
+          "new_summary": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.8125
+          },
+          "metric_changes": [],
+          "all_queries": [
+            {
+              "case": "sensitivity",
+              "query": "tiny residual inaccurate solution linear equation",
+              "expected": [
+                "math.linear-system-stability"
+              ],
+              "old_actual": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability"
+              ],
+              "new_actual": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability"
+              ],
+              "old_context": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate"
+              ],
+              "new_context": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "averaging",
+              "query": "averaging representations projecting invariant subspaces",
+              "expected": [
+                "math.reynolds-projection"
+              ],
+              "old_actual": [
+                "math.reynolds-projection",
+                "math.descent-lyapunov-certificate"
+              ],
+              "new_actual": [
+                "math.reynolds-projection",
+                "math.descent-lyapunov-certificate"
+              ],
+              "old_context": [
+                "math.reynolds-projection",
+                "math.symmetry-quotient",
+                "math.descent-lyapunov-certificate",
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.noether-invariants"
+              ],
+              "new_context": [
+                "math.reynolds-projection",
+                "math.symmetry-quotient",
+                "math.descent-lyapunov-certificate",
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.noether-invariants"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "certificate",
+              "query": "certified global optimum upper lower bounds stopping search",
+              "expected": [
+                "math.dual-certificates"
+              ],
+              "old_actual": [
+                "math.alpha-spending-stopping",
+                "math.dual-certificates"
+              ],
+              "new_actual": [
+                "math.alpha-spending-stopping",
+                "math.dual-certificates"
+              ],
+              "old_context": [
+                "math.alpha-spending-stopping",
+                "math.hoeffding-bounded-mean",
+                "math.dual-certificates",
+                "math.betting-test-martingale"
+              ],
+              "new_context": [
+                "math.alpha-spending-stopping",
+                "math.hoeffding-bounded-mean",
+                "math.dual-certificates",
+                "math.betting-test-martingale"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "simulation",
+              "query": "energies drift integration conserved quantities",
+              "expected": [
+                "physics.noether-invariants"
+              ],
+              "old_actual": [
+                "physics.noether-invariants"
+              ],
+              "new_actual": [
+                "physics.noether-invariants"
+              ],
+              "old_context": [
+                "physics.noether-invariants",
+                "math.descent-lyapunov-certificate"
+              ],
+              "new_context": [
+                "physics.noether-invariants",
+                "math.descent-lyapunov-certificate"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "joint-error",
+              "query": "整体 二范数 分数差 边界 间隔",
+              "expected": [
+                "math.score-difference-bound"
+              ],
+              "old_actual": [
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.cauchy-schwarz"
+              ],
+              "new_actual": [
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.cauchy-schwarz"
+              ],
+              "old_context": [
+                "math.cauchy-schwarz",
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.low-rank-svd"
+              ],
+              "new_context": [
+                "math.cauchy-schwarz",
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.low-rank-svd"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "relabel",
+              "query": "重命名 等价 候选 去重",
+              "expected": [
+                "math.symmetry-quotient"
+              ],
+              "old_actual": [
+                "math.symmetry-quotient",
+                "math.topk-margin",
+                "math.alpha-spending-stopping"
+              ],
+              "new_actual": [
+                "math.symmetry-quotient",
+                "ai.speculative-sampling-residual-exactness",
+                "math.topk-margin"
+              ],
+              "old_context": [
+                "math.symmetry-quotient",
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.alpha-spending-stopping",
+                "math.hoeffding-bounded-mean",
+                "math.data-processing-task-sufficiency",
+                "math.reynolds-projection",
+                "math.low-rank-svd"
+              ],
+              "new_context": [
+                "math.symmetry-quotient",
+                "ai.speculative-sampling-residual-exactness",
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.data-processing-task-sufficiency",
+                "math.reynolds-projection",
+                "math.low-rank-svd"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "illcondition-cn",
+              "query": "方程 残差 小 解 偏差 大",
+              "expected": [
+                "math.linear-system-stability"
+              ],
+              "old_actual": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.noether-invariants"
+              ],
+              "new_actual": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "ai.speculative-sampling-residual-exactness"
+              ],
+              "old_context": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.noether-invariants",
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate"
+              ],
+              "new_context": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "ai.speculative-sampling-residual-exactness",
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "symmetry-discrete",
+              "query": "对称 分配 平均 整数 可行",
+              "expected": [
+                "math.reynolds-projection"
+              ],
+              "old_actual": [
+                "math.reynolds-projection",
+                "math.symmetry-quotient",
+                "physics.noether-invariants"
+              ],
+              "new_actual": [
+                "math.reynolds-projection",
+                "math.symmetry-quotient",
+                "physics.noether-invariants"
+              ],
+              "old_context": [
+                "math.reynolds-projection",
+                "math.symmetry-quotient",
+                "physics.noether-invariants",
+                "math.data-processing-task-sufficiency",
+                "math.descent-lyapunov-certificate"
+              ],
+              "new_context": [
+                "math.reynolds-projection",
+                "math.symmetry-quotient",
+                "physics.noether-invariants",
+                "math.data-processing-task-sufficiency",
+                "math.descent-lyapunov-certificate"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "no-matching-topic",
+              "query": "zzqxunknownspacetimeword",
+              "expected": [],
+              "old_actual": [],
+              "new_actual": [],
+              "old_context": [],
+              "new_context": [],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": null,
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true
+              },
+              "new_metrics": {
+                "recall_at_3": null,
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true
+              }
+            }
+          ]
+        },
+        "sqlite": {
+          "old_summary": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.7291666666666666
+          },
+          "new_summary": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.75
+          },
+          "metric_changes": [
+            {
+              "case": "sensitivity",
+              "query": "tiny residual inaccurate solution linear equation",
+              "expected": [
+                "math.linear-system-stability"
+              ],
+              "old_actual": [
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate",
+                "math.linear-system-stability"
+              ],
+              "new_actual": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "math.descent-lyapunov-certificate"
+              ],
+              "old_context": [
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate",
+                "math.linear-system-stability",
+                "physics.dimensionless",
+                "physics.noether-invariants"
+              ],
+              "new_context": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "math.descent-lyapunov-certificate",
+                "physics.dimensionless",
+                "physics.noether-invariants"
+              ],
+              "metric_changes": {
+                "reciprocal_rank": {
+                  "old": 0.3333333333333333,
+                  "new": 0.5
+                }
+              },
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              }
+            }
+          ],
+          "all_queries": [
+            {
+              "case": "sensitivity",
+              "query": "tiny residual inaccurate solution linear equation",
+              "expected": [
+                "math.linear-system-stability"
+              ],
+              "old_actual": [
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate",
+                "math.linear-system-stability"
+              ],
+              "new_actual": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "math.descent-lyapunov-certificate"
+              ],
+              "old_context": [
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate",
+                "math.linear-system-stability",
+                "physics.dimensionless",
+                "physics.noether-invariants"
+              ],
+              "new_context": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "math.descent-lyapunov-certificate",
+                "physics.dimensionless",
+                "physics.noether-invariants"
+              ],
+              "metric_changes": {
+                "reciprocal_rank": {
+                  "old": 0.3333333333333333,
+                  "new": 0.5
+                }
+              },
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "averaging",
+              "query": "averaging representations projecting invariant subspaces",
+              "expected": [
+                "math.reynolds-projection"
+              ],
+              "old_actual": [
+                "math.descent-lyapunov-certificate",
+                "math.reynolds-projection"
+              ],
+              "new_actual": [
+                "math.descent-lyapunov-certificate",
+                "math.reynolds-projection"
+              ],
+              "old_context": [
+                "math.descent-lyapunov-certificate",
+                "math.reynolds-projection",
+                "math.symmetry-quotient",
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.noether-invariants"
+              ],
+              "new_context": [
+                "math.descent-lyapunov-certificate",
+                "math.reynolds-projection",
+                "math.symmetry-quotient",
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.noether-invariants"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "certificate",
+              "query": "certified global optimum upper lower bounds stopping search",
+              "expected": [
+                "math.dual-certificates"
+              ],
+              "old_actual": [
+                "math.alpha-spending-stopping",
+                "math.dual-certificates",
+                "math.hoeffding-bounded-mean"
+              ],
+              "new_actual": [
+                "math.alpha-spending-stopping",
+                "math.dual-certificates",
+                "math.hoeffding-bounded-mean"
+              ],
+              "old_context": [
+                "math.alpha-spending-stopping",
+                "math.hoeffding-bounded-mean",
+                "math.dual-certificates",
+                "math.betting-test-martingale"
+              ],
+              "new_context": [
+                "math.alpha-spending-stopping",
+                "math.hoeffding-bounded-mean",
+                "math.dual-certificates",
+                "math.betting-test-martingale"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "simulation",
+              "query": "energies drift integration conserved quantities",
+              "expected": [
+                "physics.noether-invariants"
+              ],
+              "old_actual": [
+                "physics.noether-invariants",
+                "math.descent-lyapunov-certificate"
+              ],
+              "new_actual": [
+                "physics.noether-invariants",
+                "math.descent-lyapunov-certificate"
+              ],
+              "old_context": [
+                "physics.noether-invariants",
+                "math.descent-lyapunov-certificate",
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability"
+              ],
+              "new_context": [
+                "physics.noether-invariants",
+                "math.descent-lyapunov-certificate",
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "joint-error",
+              "query": "整体 二范数 分数差 边界 间隔",
+              "expected": [
+                "math.score-difference-bound"
+              ],
+              "old_actual": [
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.cauchy-schwarz"
+              ],
+              "new_actual": [
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.cauchy-schwarz"
+              ],
+              "old_context": [
+                "math.cauchy-schwarz",
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.low-rank-svd"
+              ],
+              "new_context": [
+                "math.cauchy-schwarz",
+                "math.score-difference-bound",
+                "math.topk-margin",
+                "math.low-rank-svd"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "relabel",
+              "query": "重命名 等价 候选 去重",
+              "expected": [
+                "math.symmetry-quotient"
+              ],
+              "old_actual": [
+                "math.symmetry-quotient",
+                "physics.dimensionless",
+                "math.topk-margin"
+              ],
+              "new_actual": [
+                "math.symmetry-quotient",
+                "ai.speculative-sampling-residual-exactness",
+                "physics.dimensionless"
+              ],
+              "old_context": [
+                "math.symmetry-quotient",
+                "physics.dimensionless",
+                "math.cauchy-schwarz",
+                "math.topk-margin",
+                "math.data-processing-task-sufficiency",
+                "math.reynolds-projection",
+                "math.contraction-residual-certificate",
+                "math.low-rank-svd"
+              ],
+              "new_context": [
+                "math.symmetry-quotient",
+                "ai.speculative-sampling-residual-exactness",
+                "physics.dimensionless",
+                "math.data-processing-task-sufficiency",
+                "math.reynolds-projection",
+                "ai.speculative-decoding-cost-bound"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "illcondition-cn",
+              "query": "方程 残差 小 解 偏差 大",
+              "expected": [
+                "math.linear-system-stability"
+              ],
+              "old_actual": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.noether-invariants"
+              ],
+              "new_actual": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.noether-invariants"
+              ],
+              "old_context": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.noether-invariants",
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate"
+              ],
+              "new_context": [
+                "math.contraction-residual-certificate",
+                "math.linear-system-stability",
+                "physics.noether-invariants",
+                "physics.dimensionless",
+                "math.descent-lyapunov-certificate"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "symmetry-discrete",
+              "query": "对称 分配 平均 整数 可行",
+              "expected": [
+                "math.reynolds-projection"
+              ],
+              "old_actual": [
+                "math.reynolds-projection",
+                "math.symmetry-quotient",
+                "physics.noether-invariants"
+              ],
+              "new_actual": [
+                "math.reynolds-projection",
+                "math.symmetry-quotient",
+                "physics.noether-invariants"
+              ],
+              "old_context": [
+                "math.reynolds-projection",
+                "math.symmetry-quotient",
+                "physics.noether-invariants",
+                "math.data-processing-task-sufficiency",
+                "math.descent-lyapunov-certificate"
+              ],
+              "new_context": [
+                "math.reynolds-projection",
+                "math.symmetry-quotient",
+                "physics.noether-invariants",
+                "math.data-processing-task-sufficiency",
+                "math.descent-lyapunov-certificate"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "no-matching-topic",
+              "query": "zzqxunknownspacetimeword",
+              "expected": [],
+              "old_actual": [],
+              "new_actual": [],
+              "old_context": [],
+              "new_context": [],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": null,
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true
+              },
+              "new_metrics": {
+                "recall_at_3": null,
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "suite": "morphology",
+      "baseline_snapshot": "dd4b298b81ff2ed3fe04de930456a86d58b33946590e3276c8c4c95686e237c8",
+      "expanded_snapshot": "633958d87090c1aca15406a93ff3e766be2596bdfdaf867a8037cfca1e1e85a3",
+      "baseline_sha256": "03ec79f1890d548b74585aaba255378a7b345ddfeb0876dd45685bbd54c8b1b8",
+      "original_query_file_sha256": "350550bdf3c139c889640e858fda17e9e19480a119e0818b89e150ee7c0b878d",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "<repo>/scripts/eval_knowledge.py",
+        "--root",
+        "<evidence>/validation/candidate_v3_fixedbase/knowledge",
+        "--cases",
+        "<repo>/evals/knowledge/morphology-queries.json",
+        "--output",
+        "<evidence>/validation/legacy_v3_fixedbase/morphology-expanded.json"
+      ],
+      "cli_exit_code": 1,
+      "backends": {
+        "files": {
+          "old_summary": {
+            "mean_recall_at_3": 0.0,
+            "mean_context_recall": 0.0,
+            "mean_reciprocal_rank": 0
+          },
+          "new_summary": {
+            "mean_recall_at_3": 0.0,
+            "mean_context_recall": 0.0,
+            "mean_reciprocal_rank": 0
+          },
+          "metric_changes": [],
+          "all_queries": [
+            {
+              "case": "plural-projection",
+              "query": "projections",
+              "expected": [
+                "math.reynolds-projection"
+              ],
+              "old_actual": [],
+              "new_actual": [],
+              "old_context": [],
+              "new_context": [],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 0.0,
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 0.0,
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "plural-residual",
+              "query": "residuals",
+              "expected": [
+                "math.linear-system-stability"
+              ],
+              "old_actual": [],
+              "new_actual": [],
+              "old_context": [],
+              "new_context": [],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 0.0,
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 0.0,
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "plural-certificate",
+              "query": "certificates",
+              "expected": [
+                "math.dual-certificates"
+              ],
+              "old_actual": [],
+              "new_actual": [],
+              "old_context": [],
+              "new_context": [],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 0.0,
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 0.0,
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "conservation-inflection",
+              "query": "conserving",
+              "expected": [
+                "physics.noether-invariants"
+              ],
+              "old_actual": [],
+              "new_actual": [],
+              "old_context": [],
+              "new_context": [],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 0.0,
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 0.0,
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null
+              }
+            }
+          ]
+        },
+        "sqlite": {
+          "old_summary": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.6666666666666666
+          },
+          "new_summary": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.6666666666666666
+          },
+          "metric_changes": [],
+          "all_queries": [
+            {
+              "case": "plural-projection",
+              "query": "projections",
+              "expected": [
+                "math.reynolds-projection"
+              ],
+              "old_actual": [
+                "math.reynolds-projection"
+              ],
+              "new_actual": [
+                "math.reynolds-projection"
+              ],
+              "old_context": [
+                "math.reynolds-projection",
+                "math.symmetry-quotient"
+              ],
+              "new_context": [
+                "math.reynolds-projection",
+                "math.symmetry-quotient"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "plural-residual",
+              "query": "residuals",
+              "expected": [
+                "math.linear-system-stability"
+              ],
+              "old_actual": [
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate",
+                "math.linear-system-stability"
+              ],
+              "new_actual": [
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate",
+                "math.linear-system-stability"
+              ],
+              "old_context": [
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate",
+                "math.linear-system-stability",
+                "physics.dimensionless",
+                "physics.noether-invariants"
+              ],
+              "new_context": [
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate",
+                "math.linear-system-stability",
+                "physics.dimensionless",
+                "physics.noether-invariants"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "plural-certificate",
+              "query": "certificates",
+              "expected": [
+                "math.dual-certificates"
+              ],
+              "old_actual": [
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate",
+                "math.dual-certificates"
+              ],
+              "new_actual": [
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate",
+                "math.dual-certificates"
+              ],
+              "old_context": [
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate",
+                "math.dual-certificates",
+                "math.linear-system-stability",
+                "physics.dimensionless",
+                "physics.noether-invariants"
+              ],
+              "new_context": [
+                "math.contraction-residual-certificate",
+                "math.descent-lyapunov-certificate",
+                "math.dual-certificates",
+                "math.linear-system-stability",
+                "physics.dimensionless",
+                "physics.noether-invariants"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null
+              }
+            },
+            {
+              "case": "conservation-inflection",
+              "query": "conserving",
+              "expected": [
+                "physics.noether-invariants"
+              ],
+              "old_actual": [
+                "physics.noether-invariants"
+              ],
+              "new_actual": [
+                "physics.noether-invariants"
+              ],
+              "old_context": [
+                "physics.noether-invariants",
+                "math.descent-lyapunov-certificate"
+              ],
+              "new_context": [
+                "physics.noether-invariants",
+                "math.descent-lyapunov-certificate"
+              ],
+              "metric_changes": {},
+              "regressed_metrics": [],
+              "old_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              },
+              "new_metrics": {
+                "recall_at_3": 1.0,
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "script_sha256": "da883c3fdd7398f77d40442e4ce35670c5c3fa2a16e82e72a294b2ad7ffb1d81"
+}

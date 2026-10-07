@@ -19,12 +19,14 @@ class IndexTests(unittest.TestCase):
         self.root=Path(self.tmp.name)/'knowledge'
         shutil.copytree(ROOT/'knowledge',self.root)
         self.store=KnowledgeStore(self.root)
-        self.count=len(self.store.records)
+        self.total_count=len(self.store.records)
+        self.published_ids={kid for kid, record in self.store.records.items() if record['status']=='published'}
+        self.published_count=len(self.published_ids)
         self.db=Path(self.tmp.name)/'cache/search.sqlite'
 
     def test_incremental_noop_update_remove_and_rebuild(self):
-        self.assertEqual(build_index(self.store,self.db)['updated'],self.count)
-        self.assertEqual(build_index(self.store,self.db)['unchanged'],self.count)
+        self.assertEqual(build_index(self.store,self.db)['updated'],self.published_count)
+        self.assertEqual(build_index(self.store,self.db)['unchanged'],self.published_count)
         p=self.root/'entries/math.low-rank-svd.md';p.write_text(p.read_text()+'\nAdditional boundary.\n')
         fresh=KnowledgeStore(self.root)
         with self.assertRaisesRegex(KnowledgeError,'stale'):
@@ -35,7 +37,7 @@ class IndexTests(unittest.TestCase):
         self.assertEqual(build_index(fresh,self.db)['removed'],1)
         results=indexed_search(fresh,self.db,'量纲',limit=min(len(fresh.records),20))['results']
         self.assertNotIn('physics.dimensionless', [r['id'] for r in results])
-        self.assertEqual(build_index(fresh,self.db,rebuild=True)['updated'],self.count-1)
+        self.assertEqual(build_index(fresh,self.db,rebuild=True)['updated'],self.published_count-1)
 
     def test_index_search_pins_sections_filter_and_query_syntax(self):
         build_index(self.store,self.db)
@@ -50,7 +52,11 @@ class IndexTests(unittest.TestCase):
         # SQL-looking input must remain search data and preserve the index.
         indexed_search(self.store,self.db,'" DROP TABLE docs; -- zzqxnonexistent')
         with sqlite3.connect(self.db) as con:
-            self.assertEqual(con.execute('SELECT count(*) FROM docs').fetchone()[0],self.count)
+            self.assertEqual(con.execute('SELECT count(*) FROM docs').fetchone()[0],self.published_count)
+            indexed_ids={row[0] for row in con.execute('SELECT id FROM docs')}
+            self.assertEqual(indexed_ids,self.published_ids)
+            candidate_ids={kid for kid, record in self.store.records.items() if record['status']=='candidate'}
+            self.assertTrue(indexed_ids.isdisjoint(candidate_ids))
         self.assertEqual(indexed_search(self.store,self.db,'zzqxnonexistent')['results'],[])
         self.assertEqual(indexed_search(self.store,self.db,'!!!')['results'],[])
         self.assertTrue(indexed_search(self.store,self.db,'量纲')['results'])
@@ -82,8 +88,8 @@ class IndexTests(unittest.TestCase):
 
     def test_stemming_and_engine_refresh(self):
         build_index(self.store,self.db)
-        plural = indexed_search(self.store,self.db,'residuals',limit=min(self.count,20))['results']
-        singular = indexed_search(self.store,self.db,'residual',limit=min(self.count,20))['results']
+        plural = indexed_search(self.store,self.db,'residuals',limit=min(self.published_count,20))['results']
+        singular = indexed_search(self.store,self.db,'residual',limit=min(self.published_count,20))['results']
         self.assertIn('math.linear-system-stability', [r['id'] for r in plural])
         self.assertEqual({r['id'] for r in plural}, {r['id'] for r in singular})
         with sqlite3.connect(self.db) as con:
@@ -92,7 +98,7 @@ class IndexTests(unittest.TestCase):
             indexed_search(self.store,self.db,'residuals')
         result=build_index(self.store,self.db)
         self.assertTrue(result['engine_changed'])
-        self.assertEqual(result['updated'], self.count)
+        self.assertEqual(result['updated'], self.published_count)
         self.assertFalse(build_index(self.store,self.db)['engine_changed'])
 
     def test_incoming_relations_discover_new_corollary(self):
@@ -131,9 +137,9 @@ class IndexTests(unittest.TestCase):
         result=ingest(self.root,meta,body)
         self.assertTrue((self.root/result['path']/'provenance.txt').is_file())
         store=KnowledgeStore(self.root)
-        self.assertEqual(len(store.records),self.count+1)
+        self.assertEqual(len(store.records),self.total_count+1)
         with self.assertRaises(KnowledgeError): store.get('math.import-example')
-        self.assertEqual(build_index(store,self.db)['indexed'],self.count)
+        self.assertEqual(build_index(store,self.db)['indexed'],self.published_count)
         with self.assertRaisesRegex(KnowledgeError,'already exists'): ingest(self.root,meta,body)
 
     def test_bad_import_does_not_change_corpus(self):

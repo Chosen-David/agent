@@ -1,0 +1,3751 @@
+{
+  "schema_version": 1,
+  "scope": "Development/regression; same queries, gold, engines and context budgets. Baseline failures retained, not counted as candidate regressions.",
+  "no_new_regressions": true,
+  "regressions": [],
+  "suites": [
+    {
+      "suite": "original",
+      "query_sha256": "d2f1c6f0dacdd4f81cedb583035eccfa37aaf5a05d47435848f96c42a4dde807",
+      "runs": {
+        "baseline": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            ".agent-runs/ai-algorithms-20261007/current-base-39",
+            "--cases",
+            "<repo>/evals/knowledge/queries.json",
+            "--output",
+            "<evidence>/validation/legacy_final_current/original-baseline.json"
+          ],
+          "exit_code": 1
+        },
+        "candidate": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            "knowledge",
+            "--cases",
+            "<repo>/evals/knowledge/queries.json",
+            "--output",
+            "<evidence>/validation/legacy_final_current/original-candidate.json"
+          ],
+          "exit_code": 1
+        }
+      },
+      "backends": {
+        "files": {
+          "baseline": {
+            "mean_recall_at_3": 0.9523809523809523,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.9285714285714286
+          },
+          "candidate": {
+            "mean_recall_at_3": 0.9523809523809523,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.9285714285714286
+          },
+          "queries": [
+            {
+              "case": "dot-bound",
+              "baseline": {
+                "case": "dot-bound",
+                "query": "查询键误差 内积分数 范数",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "math.contraction-residual-certificate",
+                  "math.score-difference-bound"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.contraction-residual-certificate",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008975966004072689
+              },
+              "candidate": {
+                "case": "dot-bound",
+                "query": "查询键误差 内积分数 范数",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "math.contraction-residual-certificate",
+                  "math.score-difference-bound"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.contraction-residual-certificate",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.010655707999831066
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "membership",
+              "baseline": {
+                "case": "membership",
+                "query": "分数扰动 间隔 集合 稳定",
+                "expected": [
+                  "math.topk-margin"
+                ],
+                "actual": [
+                  "math.topk-margin",
+                  "math.cauchy-schwarz",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.eigenspace-gap-perturbation",
+                  "math.low-rank-svd",
+                  "math.score-difference-bound",
+                  "math.linear-system-stability"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008652267002617009
+              },
+              "candidate": {
+                "case": "membership",
+                "query": "分数扰动 间隔 集合 稳定",
+                "expected": [
+                  "math.topk-margin"
+                ],
+                "actual": [
+                  "math.topk-margin",
+                  "math.cauchy-schwarz",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.eigenspace-gap-perturbation",
+                  "math.low-rank-svd",
+                  "math.score-difference-bound",
+                  "math.linear-system-stability"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.012960615000338294
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "matrix-compression",
+              "baseline": {
+                "case": "matrix-compression",
+                "query": "矩阵压缩 低秩近似 残差",
+                "expected": [
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.low-rank-svd",
+                  "algo.lora-intrinsic-rank",
+                  "math.contraction-residual-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.low-rank-svd",
+                  "algo.lora-intrinsic-rank",
+                  "math.contraction-residual-certificate",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.data-processing-task-sufficiency",
+                  "math.score-difference-bound",
+                  "math.linear-system-stability"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008513652006513439
+              },
+              "candidate": {
+                "case": "matrix-compression",
+                "query": "矩阵压缩 低秩近似 残差",
+                "expected": [
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.low-rank-svd",
+                  "algo.lora-intrinsic-rank",
+                  "math.contraction-residual-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.low-rank-svd",
+                  "algo.lora-intrinsic-rank",
+                  "math.contraction-residual-certificate",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.data-processing-task-sufficiency",
+                  "math.score-difference-bound",
+                  "math.linear-system-stability"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.010468205000506714
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "worker-merge",
+              "baseline": {
+                "case": "worker-merge",
+                "query": "交换 设备编号 可行性 代价",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "ds.segment-monoid",
+                  "math.symmetry-quotient",
+                  "algo.qlora-memory"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.segment-monoid",
+                  "math.symmetry-quotient",
+                  "algo.qlora-memory",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.008067142989602871
+              },
+              "candidate": {
+                "case": "worker-merge",
+                "query": "交换 设备编号 可行性 代价",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "ds.segment-monoid",
+                  "math.symmetry-quotient",
+                  "algo.qlora-memory"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.segment-monoid",
+                  "math.symmetry-quotient",
+                  "algo.qlora-memory",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.009697411995148286
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "physical-model",
+              "baseline": {
+                "case": "physical-model",
+                "query": "单位 周期 长度 重力 变量",
+                "expected": [
+                  "physics.dimensionless"
+                ],
+                "actual": [
+                  "physics.dimensionless",
+                  "impl.flashinfer-plan-run",
+                  "ds.segment-monoid"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.dimensionless",
+                  "impl.flashinfer-plan-run",
+                  "ds.segment-monoid",
+                  "math.contraction-residual-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008320537002873607
+              },
+              "candidate": {
+                "case": "physical-model",
+                "query": "单位 周期 长度 重力 变量",
+                "expected": [
+                  "physics.dimensionless"
+                ],
+                "actual": [
+                  "physics.dimensionless",
+                  "ai.speculative-decoding-cost-bound",
+                  "impl.flashinfer-plan-run"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.dimensionless",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness",
+                  "impl.flashinfer-plan-run",
+                  "infra.speculative-acceptance"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.010065556009067222
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "english-alias",
+              "baseline": {
+                "case": "english-alias",
+                "query": "dot product error inner product bound",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "ds.faiss-exact-vector",
+                  "math.dual-certificates"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "ds.faiss-exact-vector",
+                  "math.dual-certificates",
+                  "math.score-difference-bound",
+                  "math.topk-margin"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008114883006783202
+              },
+              "candidate": {
+                "case": "english-alias",
+                "query": "dot product error inner product bound",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "ds.faiss-exact-vector",
+                  "math.dual-certificates"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "ds.faiss-exact-vector",
+                  "math.dual-certificates",
+                  "math.score-difference-bound",
+                  "math.topk-margin"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008821537005132996
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "cross-entry",
+              "baseline": {
+                "case": "cross-entry",
+                "query": "矩阵近似 查询 范数 分数误差 间隔",
+                "expected": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound"
+                ],
+                "recall_at_3": 0.6666666666666666,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008617646002676338
+              },
+              "candidate": {
+                "case": "cross-entry",
+                "query": "矩阵近似 查询 范数 分数误差 间隔",
+                "expected": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound"
+                ],
+                "recall_at_3": 0.6666666666666666,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008855267005856149
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "no-hit",
+              "baseline": {
+                "case": "no-hit",
+                "query": "zzqxnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.008172157002263702
+              },
+              "candidate": {
+                "case": "no-hit",
+                "query": "zzqxnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.00894623099884484
+              },
+              "regressed_metrics": []
+            }
+          ]
+        },
+        "sqlite": {
+          "baseline": {
+            "mean_recall_at_3": 0.9523809523809523,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.9285714285714286
+          },
+          "candidate": {
+            "mean_recall_at_3": 0.9523809523809523,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.9285714285714286
+          },
+          "queries": [
+            {
+              "case": "dot-bound",
+              "baseline": {
+                "case": "dot-bound",
+                "query": "查询键误差 内积分数 范数",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate",
+                  "math.topk-margin",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation",
+                  "math.linear-system-stability",
+                  "physics.dimensionless"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0031772960064699873
+              },
+              "candidate": {
+                "case": "dot-bound",
+                "query": "查询键误差 内积分数 范数",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate",
+                  "math.topk-margin",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation",
+                  "math.linear-system-stability",
+                  "physics.dimensionless"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0033342480019200593
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "membership",
+              "baseline": {
+                "case": "membership",
+                "query": "分数扰动 间隔 集合 稳定",
+                "expected": [
+                  "math.topk-margin"
+                ],
+                "actual": [
+                  "math.topk-margin",
+                  "math.cauchy-schwarz",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.eigenspace-gap-perturbation",
+                  "math.low-rank-svd",
+                  "math.score-difference-bound",
+                  "math.linear-system-stability"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0027269800048088655
+              },
+              "candidate": {
+                "case": "membership",
+                "query": "分数扰动 间隔 集合 稳定",
+                "expected": [
+                  "math.topk-margin"
+                ],
+                "actual": [
+                  "math.topk-margin",
+                  "math.cauchy-schwarz",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.eigenspace-gap-perturbation",
+                  "math.low-rank-svd",
+                  "math.score-difference-bound",
+                  "math.linear-system-stability"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002598719991510734
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "matrix-compression",
+              "baseline": {
+                "case": "matrix-compression",
+                "query": "矩阵压缩 低秩近似 残差",
+                "expected": [
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.low-rank-svd",
+                  "algo.lora-intrinsic-rank",
+                  "math.linear-system-stability"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.low-rank-svd",
+                  "algo.lora-intrinsic-rank",
+                  "math.linear-system-stability",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.data-processing-task-sufficiency",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002389821005635895
+              },
+              "candidate": {
+                "case": "matrix-compression",
+                "query": "矩阵压缩 低秩近似 残差",
+                "expected": [
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.low-rank-svd",
+                  "algo.lora-intrinsic-rank",
+                  "math.linear-system-stability"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.low-rank-svd",
+                  "algo.lora-intrinsic-rank",
+                  "math.linear-system-stability",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.data-processing-task-sufficiency",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002127083993400447
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "worker-merge",
+              "baseline": {
+                "case": "worker-merge",
+                "query": "交换 设备编号 可行性 代价",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "math.symmetry-quotient",
+                  "ds.segment-monoid",
+                  "impl.flashattention-library"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.symmetry-quotient",
+                  "ds.segment-monoid",
+                  "impl.flashattention-library",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.004043685999931768
+              },
+              "candidate": {
+                "case": "worker-merge",
+                "query": "交换 设备编号 可行性 代价",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "math.symmetry-quotient",
+                  "ds.segment-monoid",
+                  "impl.flashattention-library"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.symmetry-quotient",
+                  "ds.segment-monoid",
+                  "impl.flashattention-library",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0020835290051763877
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "physical-model",
+              "baseline": {
+                "case": "physical-model",
+                "query": "单位 周期 长度 重力 变量",
+                "expected": [
+                  "physics.dimensionless"
+                ],
+                "actual": [
+                  "physics.dimensionless",
+                  "impl.flashinfer-plan-run",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.dimensionless",
+                  "impl.flashinfer-plan-run",
+                  "math.descent-lyapunov-certificate",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.noether-invariants"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.004665514992666431
+              },
+              "candidate": {
+                "case": "physical-model",
+                "query": "单位 周期 长度 重力 变量",
+                "expected": [
+                  "physics.dimensionless"
+                ],
+                "actual": [
+                  "physics.dimensionless",
+                  "impl.flashinfer-plan-run",
+                  "math.hoeffding-bounded-mean"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.dimensionless",
+                  "impl.flashinfer-plan-run",
+                  "math.hoeffding-bounded-mean",
+                  "math.contraction-residual-certificate",
+                  "math.alpha-spending-stopping",
+                  "math.betting-test-martingale"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002390473004197702
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "english-alias",
+              "baseline": {
+                "case": "english-alias",
+                "query": "dot product error inner product bound",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "ds.faiss-exact-vector",
+                  "math.cauchy-schwarz",
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.faiss-exact-vector",
+                  "math.cauchy-schwarz",
+                  "physics.noether-invariants",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.0018830330081982538
+              },
+              "candidate": {
+                "case": "english-alias",
+                "query": "dot product error inner product bound",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "ds.faiss-exact-vector",
+                  "math.cauchy-schwarz",
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.faiss-exact-vector",
+                  "math.cauchy-schwarz",
+                  "physics.noether-invariants",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.0018405400041956455
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "cross-entry",
+              "baseline": {
+                "case": "cross-entry",
+                "query": "矩阵近似 查询 范数 分数误差 间隔",
+                "expected": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.topk-margin",
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound"
+                ],
+                "recall_at_3": 0.6666666666666666,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.004538047011010349
+              },
+              "candidate": {
+                "case": "cross-entry",
+                "query": "矩阵近似 查询 范数 分数误差 间隔",
+                "expected": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.topk-margin",
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound"
+                ],
+                "recall_at_3": 0.6666666666666666,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0021333519980544224
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "no-hit",
+              "baseline": {
+                "case": "no-hit",
+                "query": "zzqxnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.0011122940049972385
+              },
+              "candidate": {
+                "case": "no-hit",
+                "query": "zzqxnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.0008931899938033894
+              },
+              "regressed_metrics": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "suite": "round2",
+      "query_sha256": "cd6c287f42c6e1baa1713c6f9c151fcfd28f9c50968328f93b02fcf03e50731b",
+      "runs": {
+        "baseline": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            ".agent-runs/ai-algorithms-20261007/current-base-39",
+            "--cases",
+            "<repo>/evals/knowledge/round2-queries.json",
+            "--output",
+            "<evidence>/validation/legacy_final_current/round2-baseline.json"
+          ],
+          "exit_code": 0
+        },
+        "candidate": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            "knowledge",
+            "--cases",
+            "<repo>/evals/knowledge/round2-queries.json",
+            "--output",
+            "<evidence>/validation/legacy_final_current/round2-candidate.json"
+          ],
+          "exit_code": 0
+        }
+      },
+      "backends": {
+        "files": {
+          "baseline": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.7708333333333334
+          },
+          "candidate": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.7708333333333334
+          },
+          "queries": [
+            {
+              "case": "sensitivity",
+              "baseline": {
+                "case": "sensitivity",
+                "query": "tiny residual inaccurate solution linear equation",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null,
+                "seconds": 0.00797406499623321
+              },
+              "candidate": {
+                "case": "sensitivity",
+                "query": "tiny residual inaccurate solution linear equation",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null,
+                "seconds": 0.009484075999353081
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "averaging",
+              "baseline": {
+                "case": "averaging",
+                "query": "averaging representations projecting invariant subspaces",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "math.descent-lyapunov-certificate",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.noether-invariants"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.007907645995146595
+              },
+              "candidate": {
+                "case": "averaging",
+                "query": "averaging representations projecting invariant subspaces",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "math.descent-lyapunov-certificate",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.noether-invariants"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.009405379998497665
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "certificate",
+              "baseline": {
+                "case": "certificate",
+                "query": "certified global optimum upper lower bounds stopping search",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [
+                  "math.alpha-spending-stopping",
+                  "math.dual-certificates",
+                  "ds.faiss-exact-vector"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.alpha-spending-stopping",
+                  "math.hoeffding-bounded-mean",
+                  "math.dual-certificates",
+                  "ds.faiss-exact-vector",
+                  "math.betting-test-martingale"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.008429267996689305
+              },
+              "candidate": {
+                "case": "certificate",
+                "query": "certified global optimum upper lower bounds stopping search",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [
+                  "math.alpha-spending-stopping",
+                  "math.dual-certificates",
+                  "ds.faiss-exact-vector"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.alpha-spending-stopping",
+                  "math.hoeffding-bounded-mean",
+                  "math.dual-certificates",
+                  "ds.faiss-exact-vector",
+                  "math.betting-test-martingale"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.009214188001351431
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "simulation",
+              "baseline": {
+                "case": "simulation",
+                "query": "energies drift integration conserved quantities",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.noether-invariants",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00763216899940744
+              },
+              "candidate": {
+                "case": "simulation",
+                "query": "energies drift integration conserved quantities",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.noether-invariants",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.009005839005112648
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "joint-error",
+              "baseline": {
+                "case": "joint-error",
+                "query": "整体 二范数 分数差 边界 间隔",
+                "expected": [
+                  "math.score-difference-bound"
+                ],
+                "actual": [
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.cauchy-schwarz"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.007983698989846744
+              },
+              "candidate": {
+                "case": "joint-error",
+                "query": "整体 二范数 分数差 边界 间隔",
+                "expected": [
+                  "math.score-difference-bound"
+                ],
+                "actual": [
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.cauchy-schwarz"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00940819400420878
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "relabel",
+              "baseline": {
+                "case": "relabel",
+                "query": "重命名 等价 候选 去重",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "math.symmetry-quotient",
+                  "math.topk-margin",
+                  "algo.car-lora-transfer"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.symmetry-quotient",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "algo.car-lora-transfer",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection",
+                  "math.low-rank-svd",
+                  "math.score-difference-bound"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008897629988496192
+              },
+              "candidate": {
+                "case": "relabel",
+                "query": "重命名 等价 候选 去重",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "math.symmetry-quotient",
+                  "ai.speculative-sampling-residual-exactness",
+                  "math.topk-margin"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.symmetry-quotient",
+                  "ai.speculative-sampling-residual-exactness",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00920211999618914
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "illcondition-cn",
+              "baseline": {
+                "case": "illcondition-cn",
+                "query": "方程 残差 小 解 偏差 大",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "infra.flashattention2-occupancy",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention2-occupancy",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null,
+                "seconds": 0.007861688995035365
+              },
+              "candidate": {
+                "case": "illcondition-cn",
+                "query": "方程 残差 小 解 偏差 大",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "infra.flashattention2-occupancy",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention2-occupancy",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null,
+                "seconds": 0.00898868498916272
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "symmetry-discrete",
+              "baseline": {
+                "case": "symmetry-discrete",
+                "query": "对称 分配 平均 整数 可行",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants",
+                  "math.data-processing-task-sufficiency",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008324252004968002
+              },
+              "candidate": {
+                "case": "symmetry-discrete",
+                "query": "对称 分配 平均 整数 可行",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants",
+                  "math.data-processing-task-sufficiency",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00897051699575968
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "no-matching-topic",
+              "baseline": {
+                "case": "no-matching-topic",
+                "query": "zzqxunknownspacetimeword",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.00757198101200629
+              },
+              "candidate": {
+                "case": "no-matching-topic",
+                "query": "zzqxunknownspacetimeword",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.008951499999966472
+              },
+              "regressed_metrics": []
+            }
+          ]
+        },
+        "sqlite": {
+          "baseline": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.7083333333333334
+          },
+          "candidate": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.7083333333333334
+          },
+          "queries": [
+            {
+              "case": "sensitivity",
+              "baseline": {
+                "case": "sensitivity",
+                "query": "tiny residual inaccurate solution linear equation",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null,
+                "seconds": 0.0027983250038232654
+              },
+              "candidate": {
+                "case": "sensitivity",
+                "query": "tiny residual inaccurate solution linear equation",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null,
+                "seconds": 0.0029105020075803623
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "averaging",
+              "baseline": {
+                "case": "averaging",
+                "query": "averaging representations projecting invariant subspaces",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.descent-lyapunov-certificate",
+                  "math.reynolds-projection",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.descent-lyapunov-certificate",
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "math.eigenspace-gap-perturbation",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.00283095300255809
+              },
+              "candidate": {
+                "case": "averaging",
+                "query": "averaging representations projecting invariant subspaces",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.descent-lyapunov-certificate",
+                  "math.reynolds-projection",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.descent-lyapunov-certificate",
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "math.eigenspace-gap-perturbation",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.002996960000018589
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "certificate",
+              "baseline": {
+                "case": "certificate",
+                "query": "certified global optimum upper lower bounds stopping search",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [
+                  "math.alpha-spending-stopping",
+                  "math.dual-certificates",
+                  "ds.faiss-exact-vector"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.alpha-spending-stopping",
+                  "math.hoeffding-bounded-mean",
+                  "math.dual-certificates",
+                  "ds.faiss-exact-vector",
+                  "math.betting-test-martingale"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.002019824998569675
+              },
+              "candidate": {
+                "case": "certificate",
+                "query": "certified global optimum upper lower bounds stopping search",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [
+                  "math.alpha-spending-stopping",
+                  "math.dual-certificates",
+                  "ds.faiss-exact-vector"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.alpha-spending-stopping",
+                  "math.hoeffding-bounded-mean",
+                  "math.dual-certificates",
+                  "ds.faiss-exact-vector",
+                  "math.betting-test-martingale"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.0020736449951073155
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "simulation",
+              "baseline": {
+                "case": "simulation",
+                "query": "energies drift integration conserved quantities",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [
+                  "physics.noether-invariants",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.noether-invariants",
+                  "math.descent-lyapunov-certificate",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0022732799989171326
+              },
+              "candidate": {
+                "case": "simulation",
+                "query": "energies drift integration conserved quantities",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [
+                  "physics.noether-invariants",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.noether-invariants",
+                  "math.descent-lyapunov-certificate",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0022060710034566
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "joint-error",
+              "baseline": {
+                "case": "joint-error",
+                "query": "整体 二范数 分数差 边界 间隔",
+                "expected": [
+                  "math.score-difference-bound"
+                ],
+                "actual": [
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.cauchy-schwarz"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002182746000471525
+              },
+              "candidate": {
+                "case": "joint-error",
+                "query": "整体 二范数 分数差 边界 间隔",
+                "expected": [
+                  "math.score-difference-bound"
+                ],
+                "actual": [
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.cauchy-schwarz"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0021764970006188378
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "relabel",
+              "baseline": {
+                "case": "relabel",
+                "query": "重命名 等价 候选 去重",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "math.symmetry-quotient",
+                  "algo.gqa-uptraining",
+                  "math.topk-margin"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.symmetry-quotient",
+                  "algo.gqa-uptraining",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0018266289989696816
+              },
+              "candidate": {
+                "case": "relabel",
+                "query": "重命名 等价 候选 去重",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "math.symmetry-quotient",
+                  "ai.speculative-sampling-residual-exactness",
+                  "algo.gqa-uptraining"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.symmetry-quotient",
+                  "ai.speculative-sampling-residual-exactness",
+                  "algo.gqa-uptraining",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0026767559902509674
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "illcondition-cn",
+              "baseline": {
+                "case": "illcondition-cn",
+                "query": "方程 残差 小 解 偏差 大",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "math.contraction-residual-certificate",
+                  "infra.flashattention2-occupancy",
+                  "math.linear-system-stability"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.contraction-residual-certificate",
+                  "infra.flashattention2-occupancy",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null,
+                "seconds": 0.0022787080088164657
+              },
+              "candidate": {
+                "case": "illcondition-cn",
+                "query": "方程 残差 小 解 偏差 大",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "infra.flashattention2-occupancy",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention2-occupancy",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null,
+                "seconds": 0.0024312129971804097
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "symmetry-discrete",
+              "baseline": {
+                "case": "symmetry-discrete",
+                "query": "对称 分配 平均 整数 可行",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants",
+                  "math.data-processing-task-sufficiency",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0019553500023903325
+              },
+              "candidate": {
+                "case": "symmetry-discrete",
+                "query": "对称 分配 平均 整数 可行",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants",
+                  "math.data-processing-task-sufficiency",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0020936840010108426
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "no-matching-topic",
+              "baseline": {
+                "case": "no-matching-topic",
+                "query": "zzqxunknownspacetimeword",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.0008150349895004183
+              },
+              "candidate": {
+                "case": "no-matching-topic",
+                "query": "zzqxunknownspacetimeword",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.0009574550058459863
+              },
+              "regressed_metrics": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "suite": "morphology",
+      "query_sha256": "350550bdf3c139c889640e858fda17e9e19480a119e0818b89e150ee7c0b878d",
+      "runs": {
+        "baseline": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            ".agent-runs/ai-algorithms-20261007/current-base-39",
+            "--cases",
+            "<repo>/evals/knowledge/morphology-queries.json",
+            "--output",
+            "<evidence>/validation/legacy_final_current/morphology-baseline.json"
+          ],
+          "exit_code": 1
+        },
+        "candidate": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            "knowledge",
+            "--cases",
+            "<repo>/evals/knowledge/morphology-queries.json",
+            "--output",
+            "<evidence>/validation/legacy_final_current/morphology-candidate.json"
+          ],
+          "exit_code": 1
+        }
+      },
+      "backends": {
+        "files": {
+          "baseline": {
+            "mean_recall_at_3": 0.0,
+            "mean_context_recall": 0.0,
+            "mean_reciprocal_rank": 0
+          },
+          "candidate": {
+            "mean_recall_at_3": 0.0,
+            "mean_context_recall": 0.0,
+            "mean_reciprocal_rank": 0
+          },
+          "queries": [
+            {
+              "case": "plural-projection",
+              "baseline": {
+                "case": "plural-projection",
+                "query": "projections",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.008290732992463745
+              },
+              "candidate": {
+                "case": "plural-projection",
+                "query": "projections",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.008944970002630726
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "plural-residual",
+              "baseline": {
+                "case": "plural-residual",
+                "query": "residuals",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.00831374699191656
+              },
+              "candidate": {
+                "case": "plural-residual",
+                "query": "residuals",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.008712016002391465
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "plural-certificate",
+              "baseline": {
+                "case": "plural-certificate",
+                "query": "certificates",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.00797156100452412
+              },
+              "candidate": {
+                "case": "plural-certificate",
+                "query": "certificates",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.009244542001397349
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "conservation-inflection",
+              "baseline": {
+                "case": "conservation-inflection",
+                "query": "conserving",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.008023226997465827
+              },
+              "candidate": {
+                "case": "conservation-inflection",
+                "query": "conserving",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.009068793006008491
+              },
+              "regressed_metrics": []
+            }
+          ]
+        },
+        "sqlite": {
+          "baseline": {
+            "mean_recall_at_3": 0.75,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.5833333333333334
+          },
+          "candidate": {
+            "mean_recall_at_3": 0.75,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 0.5833333333333334
+          },
+          "queries": [
+            {
+              "case": "plural-projection",
+              "baseline": {
+                "case": "plural-projection",
+                "query": "projections",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0015180439950199798
+              },
+              "candidate": {
+                "case": "plural-projection",
+                "query": "projections",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.001511053997091949
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "plural-residual",
+              "baseline": {
+                "case": "plural-residual",
+                "query": "residuals",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.descent-lyapunov-certificate",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "physics.noether-invariants"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.0033277079928666353
+              },
+              "candidate": {
+                "case": "plural-residual",
+                "query": "residuals",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.descent-lyapunov-certificate",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "physics.noether-invariants"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.0031176170014077798
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "plural-certificate",
+              "baseline": {
+                "case": "plural-certificate",
+                "query": "certificates",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [
+                  "math.contraction-residual-certificate",
+                  "math.descent-lyapunov-certificate",
+                  "math.dual-certificates"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.contraction-residual-certificate",
+                  "math.descent-lyapunov-certificate",
+                  "math.dual-certificates",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "physics.noether-invariants"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null,
+                "seconds": 0.002852454999811016
+              },
+              "candidate": {
+                "case": "plural-certificate",
+                "query": "certificates",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [
+                  "math.contraction-residual-certificate",
+                  "math.descent-lyapunov-certificate",
+                  "math.dual-certificates"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.contraction-residual-certificate",
+                  "math.descent-lyapunov-certificate",
+                  "math.dual-certificates",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "physics.noether-invariants"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null,
+                "seconds": 0.002798335990519263
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "conservation-inflection",
+              "baseline": {
+                "case": "conservation-inflection",
+                "query": "conserving",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.noether-invariants",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0012751939939334989
+              },
+              "candidate": {
+                "case": "conservation-inflection",
+                "query": "conserving",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.noether-invariants",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0012001340073766187
+              },
+              "regressed_metrics": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "suite": "engineering",
+      "query_sha256": "82aabcab83d288d6b013e6de85cd473a49e486ed3ed167e6696c08f0318d13e3",
+      "runs": {
+        "baseline": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            ".agent-runs/ai-algorithms-20261007/current-base-39",
+            "--cases",
+            "<repo>/evals/knowledge/engineering-queries.json",
+            "--output",
+            "<evidence>/validation/legacy_final_current/engineering-baseline.json"
+          ],
+          "exit_code": 0
+        },
+        "candidate": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            "knowledge",
+            "--cases",
+            "<repo>/evals/knowledge/engineering-queries.json",
+            "--output",
+            "<evidence>/validation/legacy_final_current/engineering-candidate.json"
+          ],
+          "exit_code": 0
+        }
+      },
+      "backends": {
+        "files": {
+          "baseline": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 1.0
+          },
+          "candidate": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 1.0
+          },
+          "queries": [
+            {
+              "case": "draft-cost",
+              "baseline": {
+                "case": "draft-cost",
+                "query": "draft 接受率 验证成本 投机解码",
+                "expected": [
+                  "infra.speculative-acceptance"
+                ],
+                "actual": [
+                  "infra.speculative-acceptance",
+                  "algo.dora-magnitude-direction",
+                  "ds.hnsw-recall-budget"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.speculative-acceptance",
+                  "algo.dora-magnitude-direction",
+                  "ds.hnsw-recall-budget"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.007911531996796839
+              },
+              "candidate": {
+                "case": "draft-cost",
+                "query": "draft 接受率 验证成本 投机解码",
+                "expected": [
+                  "infra.speculative-acceptance"
+                ],
+                "actual": [
+                  "infra.speculative-acceptance",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.speculative-acceptance",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.009399040005519055
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "kv-waste",
+              "baseline": {
+                "case": "kv-waste",
+                "query": "KV cache 碎片 请求调度 内存余量",
+                "expected": [
+                  "infra.pagedattention-kv"
+                ],
+                "actual": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "algo.gqa-uptraining"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "algo.gqa-uptraining"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.007784084009472281
+              },
+              "candidate": {
+                "case": "kv-waste",
+                "query": "KV cache 碎片 请求调度 内存余量",
+                "expected": [
+                  "infra.pagedattention-kv"
+                ],
+                "actual": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "algo.gqa-uptraining"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "algo.gqa-uptraining"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00963420799234882
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "small-batch",
+              "baseline": {
+                "case": "small-batch",
+                "query": "小 batch 长序列 occupancy warp partition",
+                "expected": [
+                  "infra.flashattention2-occupancy"
+                ],
+                "actual": [
+                  "infra.flashattention2-occupancy",
+                  "math.descent-lyapunov-certificate",
+                  "algo.qlora-memory"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention2-occupancy",
+                  "math.descent-lyapunov-certificate",
+                  "algo.qlora-memory",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.noether-invariants"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0076574370032176375
+              },
+              "candidate": {
+                "case": "small-batch",
+                "query": "小 batch 长序列 occupancy warp partition",
+                "expected": [
+                  "infra.flashattention2-occupancy"
+                ],
+                "actual": [
+                  "infra.flashattention2-occupancy",
+                  "ai.speculative-decoding-cost-bound",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention2-occupancy",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.009731771991937421
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "changed-baseline",
+              "baseline": {
+                "case": "changed-baseline",
+                "query": "Blackwell B200 cuDNN 版本 过时基线",
+                "expected": [
+                  "infra.flashattention4-blackwell"
+                ],
+                "actual": [
+                  "infra.flashattention4-blackwell",
+                  "ds.faiss-exact-vector",
+                  "impl.flashattention-library"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention4-blackwell",
+                  "ds.faiss-exact-vector",
+                  "impl.flashattention-library"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008064067995292135
+              },
+              "candidate": {
+                "case": "changed-baseline",
+                "query": "Blackwell B200 cuDNN 版本 过时基线",
+                "expected": [
+                  "infra.flashattention4-blackwell"
+                ],
+                "actual": [
+                  "infra.flashattention4-blackwell",
+                  "ds.faiss-exact-vector",
+                  "impl.flashattention-library"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention4-blackwell",
+                  "ds.faiss-exact-vector",
+                  "impl.flashattention-library"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.009944396006176248
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "shared-heads",
+              "baseline": {
+                "case": "shared-heads",
+                "query": "KV heads 共享 额外训练 mean pooling",
+                "expected": [
+                  "algo.gqa-uptraining"
+                ],
+                "actual": [
+                  "algo.gqa-uptraining",
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.gqa-uptraining",
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.007917470997199416
+              },
+              "candidate": {
+                "case": "shared-heads",
+                "query": "KV heads 共享 额外训练 mean pooling",
+                "expected": [
+                  "algo.gqa-uptraining"
+                ],
+                "actual": [
+                  "algo.gqa-uptraining",
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.gqa-uptraining",
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.010603971997625194
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "quantized-storage",
+              "baseline": {
+                "case": "quantized-storage",
+                "query": "4bit finetuning NF4 double quantization",
+                "expected": [
+                  "algo.qlora-memory"
+                ],
+                "actual": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "math.data-processing-task-sufficiency"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "math.data-processing-task-sufficiency",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0077853359980508685
+              },
+              "candidate": {
+                "case": "quantized-storage",
+                "query": "4bit finetuning NF4 double quantization",
+                "expected": [
+                  "algo.qlora-memory"
+                ],
+                "actual": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "math.data-processing-task-sufficiency"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "math.data-processing-task-sufficiency",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.010117642013938166
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "preferences",
+              "baseline": {
+                "case": "preferences",
+                "query": "偏好学习 chosen rejected KL reference policy",
+                "expected": [
+                  "algo.dpo-offline-preferences"
+                ],
+                "actual": [
+                  "algo.dpo-offline-preferences",
+                  "math.data-processing-task-sufficiency",
+                  "algo.dora-magnitude-direction"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.dpo-offline-preferences",
+                  "math.data-processing-task-sufficiency",
+                  "algo.dora-magnitude-direction",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008041975001106039
+              },
+              "candidate": {
+                "case": "preferences",
+                "query": "偏好学习 chosen rejected KL reference policy",
+                "expected": [
+                  "algo.dpo-offline-preferences"
+                ],
+                "actual": [
+                  "algo.dpo-offline-preferences",
+                  "math.data-processing-task-sufficiency",
+                  "algo.dora-magnitude-direction"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.dpo-offline-preferences",
+                  "math.data-processing-task-sufficiency",
+                  "algo.dora-magnitude-direction",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.01414138899417594
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "portable-adapter",
+              "baseline": {
+                "case": "portable-adapter",
+                "query": "adapter portability 量化迁移 训练预算",
+                "expected": [
+                  "algo.car-lora-transfer"
+                ],
+                "actual": [
+                  "algo.car-lora-transfer",
+                  "algo.nsa-native-training",
+                  "impl.peft-lora-dora"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.car-lora-transfer",
+                  "algo.nsa-native-training",
+                  "impl.peft-lora-dora"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008703803003299981
+              },
+              "candidate": {
+                "case": "portable-adapter",
+                "query": "adapter portability 量化迁移 训练预算",
+                "expected": [
+                  "algo.car-lora-transfer"
+                ],
+                "actual": [
+                  "algo.car-lora-transfer",
+                  "algo.nsa-native-training",
+                  "impl.peft-lora-dora"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.car-lora-transfer",
+                  "algo.nsa-native-training",
+                  "impl.peft-lora-dora"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.011478483997052535
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "prefix-updates",
+              "baseline": {
+                "case": "prefix-updates",
+                "query": "点更新 区间求和 prefix sum",
+                "expected": [
+                  "ds.fenwick-point-range"
+                ],
+                "actual": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "algo.lora-intrinsic-rank"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "algo.lora-intrinsic-rank"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00815938800224103
+              },
+              "candidate": {
+                "case": "prefix-updates",
+                "query": "点更新 区间求和 prefix sum",
+                "expected": [
+                  "ds.fenwick-point-range"
+                ],
+                "actual": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "ai.speculative-decoding-cost-bound"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.010267464007483795
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "range-aggregate",
+              "baseline": {
+                "case": "range-aggregate",
+                "query": "区间聚合 非交换 运算 monoid",
+                "expected": [
+                  "ds.segment-monoid"
+                ],
+                "actual": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.data-processing-task-sufficiency"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.data-processing-task-sufficiency",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.007874168004491366
+              },
+              "candidate": {
+                "case": "range-aggregate",
+                "query": "区间聚合 非交换 运算 monoid",
+                "expected": [
+                  "ds.segment-monoid"
+                ],
+                "actual": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.data-processing-task-sufficiency"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.data-processing-task-sufficiency",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.009308997003245167
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "insertion-connectivity",
+              "baseline": {
+                "case": "insertion-connectivity",
+                "query": "增量连通性 insert-only union find",
+                "expected": [
+                  "ds.dsu-connectivity"
+                ],
+                "actual": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.007713879997027107
+              },
+              "candidate": {
+                "case": "insertion-connectivity",
+                "query": "增量连通性 insert-only union find",
+                "expected": [
+                  "ds.dsu-connectivity"
+                ],
+                "actual": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0092537460004678
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "graph-matching",
+              "baseline": {
+                "case": "graph-matching",
+                "query": "二分图匹配 residual graph 容量网络",
+                "expected": [
+                  "ds.maxflow-matching"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "infra.flashinfer-scheduling",
+                  "math.contraction-residual-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "infra.flashinfer-scheduling",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00781560099858325
+              },
+              "candidate": {
+                "case": "graph-matching",
+                "query": "二分图匹配 residual graph 容量网络",
+                "expected": [
+                  "ds.maxflow-matching"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "infra.flashinfer-scheduling",
+                  "math.contraction-residual-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "infra.flashinfer-scheduling",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.009566228007315658
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "exact-vector",
+              "baseline": {
+                "case": "exact-vector",
+                "query": "向量检索 exact baseline L2 inner product",
+                "expected": [
+                  "ds.faiss-exact-vector"
+                ],
+                "actual": [
+                  "ds.faiss-exact-vector",
+                  "math.cauchy-schwarz",
+                  "math.data-processing-task-sufficiency"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.faiss-exact-vector",
+                  "math.cauchy-schwarz",
+                  "math.data-processing-task-sufficiency",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.008099829996353947
+              },
+              "candidate": {
+                "case": "exact-vector",
+                "query": "向量检索 exact baseline L2 inner product",
+                "expected": [
+                  "ds.faiss-exact-vector"
+                ],
+                "actual": [
+                  "ds.faiss-exact-vector",
+                  "math.cauchy-schwarz",
+                  "math.data-processing-task-sufficiency"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.faiss-exact-vector",
+                  "math.cauchy-schwarz",
+                  "math.data-processing-task-sufficiency",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.009614518989110366
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "recall-memory",
+              "baseline": {
+                "case": "recall-memory",
+                "query": "近似近邻 ANN memory ef recall",
+                "expected": [
+                  "ds.hnsw-recall-budget"
+                ],
+                "actual": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "infra.flashattention-io"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "infra.flashattention-io"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.007881117999204434
+              },
+              "candidate": {
+                "case": "recall-memory",
+                "query": "近似近邻 ANN memory ef recall",
+                "expected": [
+                  "ds.hnsw-recall-budget"
+                ],
+                "actual": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "infra.flashattention-io"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "infra.flashattention-io"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.01007250499969814
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "no-hit",
+              "baseline": {
+                "case": "no-hit",
+                "query": "zzqxengineeringnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.0077949600090505555
+              },
+              "candidate": {
+                "case": "no-hit",
+                "query": "zzqxengineeringnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.00966701700235717
+              },
+              "regressed_metrics": []
+            }
+          ]
+        },
+        "sqlite": {
+          "baseline": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 1.0
+          },
+          "candidate": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 1.0
+          },
+          "queries": [
+            {
+              "case": "draft-cost",
+              "baseline": {
+                "case": "draft-cost",
+                "query": "draft 接受率 验证成本 投机解码",
+                "expected": [
+                  "infra.speculative-acceptance"
+                ],
+                "actual": [
+                  "infra.speculative-acceptance",
+                  "algo.dora-magnitude-direction",
+                  "infra.flashattention-io"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.speculative-acceptance",
+                  "algo.dora-magnitude-direction",
+                  "infra.flashattention-io"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0027176459989277646
+              },
+              "candidate": {
+                "case": "draft-cost",
+                "query": "draft 接受率 验证成本 投机解码",
+                "expected": [
+                  "infra.speculative-acceptance"
+                ],
+                "actual": [
+                  "infra.speculative-acceptance",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.speculative-acceptance",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.004243100993335247
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "kv-waste",
+              "baseline": {
+                "case": "kv-waste",
+                "query": "KV cache 碎片 请求调度 内存余量",
+                "expected": [
+                  "infra.pagedattention-kv"
+                ],
+                "actual": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "ds.hnsw-recall-budget"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "ds.hnsw-recall-budget"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002139090996934101
+              },
+              "candidate": {
+                "case": "kv-waste",
+                "query": "KV cache 碎片 请求调度 内存余量",
+                "expected": [
+                  "infra.pagedattention-kv"
+                ],
+                "actual": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "ds.hnsw-recall-budget"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "ds.hnsw-recall-budget"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0026735309947980568
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "small-batch",
+              "baseline": {
+                "case": "small-batch",
+                "query": "小 batch 长序列 occupancy warp partition",
+                "expected": [
+                  "infra.flashattention2-occupancy"
+                ],
+                "actual": [
+                  "infra.flashattention2-occupancy",
+                  "ds.faiss-exact-vector",
+                  "infra.speculative-acceptance"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention2-occupancy",
+                  "ds.faiss-exact-vector",
+                  "infra.speculative-acceptance"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002580093001597561
+              },
+              "candidate": {
+                "case": "small-batch",
+                "query": "小 batch 长序列 occupancy warp partition",
+                "expected": [
+                  "infra.flashattention2-occupancy"
+                ],
+                "actual": [
+                  "infra.flashattention2-occupancy",
+                  "ai.speculative-decoding-cost-bound",
+                  "ds.faiss-exact-vector"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention2-occupancy",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness",
+                  "ds.faiss-exact-vector"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0031806309998501092
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "changed-baseline",
+              "baseline": {
+                "case": "changed-baseline",
+                "query": "Blackwell B200 cuDNN 版本 过时基线",
+                "expected": [
+                  "infra.flashattention4-blackwell"
+                ],
+                "actual": [
+                  "infra.flashattention4-blackwell",
+                  "ds.faiss-exact-vector",
+                  "infra.flashattention2-occupancy"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention4-blackwell",
+                  "ds.faiss-exact-vector",
+                  "infra.flashattention2-occupancy"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00230754999211058
+              },
+              "candidate": {
+                "case": "changed-baseline",
+                "query": "Blackwell B200 cuDNN 版本 过时基线",
+                "expected": [
+                  "infra.flashattention4-blackwell"
+                ],
+                "actual": [
+                  "infra.flashattention4-blackwell",
+                  "ds.faiss-exact-vector",
+                  "infra.flashattention2-occupancy"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention4-blackwell",
+                  "ds.faiss-exact-vector",
+                  "infra.flashattention2-occupancy"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00239306699950248
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "shared-heads",
+              "baseline": {
+                "case": "shared-heads",
+                "query": "KV heads 共享 额外训练 mean pooling",
+                "expected": [
+                  "algo.gqa-uptraining"
+                ],
+                "actual": [
+                  "algo.gqa-uptraining",
+                  "algo.dora-magnitude-direction",
+                  "infra.pagedattention-kv"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.gqa-uptraining",
+                  "algo.dora-magnitude-direction",
+                  "infra.pagedattention-kv"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0021738219948019832
+              },
+              "candidate": {
+                "case": "shared-heads",
+                "query": "KV heads 共享 额外训练 mean pooling",
+                "expected": [
+                  "algo.gqa-uptraining"
+                ],
+                "actual": [
+                  "algo.gqa-uptraining",
+                  "algo.dora-magnitude-direction",
+                  "infra.pagedattention-kv"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.gqa-uptraining",
+                  "algo.dora-magnitude-direction",
+                  "infra.pagedattention-kv"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0023219319991767406
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "quantized-storage",
+              "baseline": {
+                "case": "quantized-storage",
+                "query": "4bit finetuning NF4 double quantization",
+                "expected": [
+                  "algo.qlora-memory"
+                ],
+                "actual": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0019658960081869736
+              },
+              "candidate": {
+                "case": "quantized-storage",
+                "query": "4bit finetuning NF4 double quantization",
+                "expected": [
+                  "algo.qlora-memory"
+                ],
+                "actual": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0020493190095294267
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "preferences",
+              "baseline": {
+                "case": "preferences",
+                "query": "偏好学习 chosen rejected KL reference policy",
+                "expected": [
+                  "algo.dpo-offline-preferences"
+                ],
+                "actual": [
+                  "algo.dpo-offline-preferences",
+                  "math.data-processing-task-sufficiency",
+                  "impl.flashinfer-plan-run"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.dpo-offline-preferences",
+                  "math.data-processing-task-sufficiency",
+                  "impl.flashinfer-plan-run",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002494145999662578
+              },
+              "candidate": {
+                "case": "preferences",
+                "query": "偏好学习 chosen rejected KL reference policy",
+                "expected": [
+                  "algo.dpo-offline-preferences"
+                ],
+                "actual": [
+                  "algo.dpo-offline-preferences",
+                  "math.data-processing-task-sufficiency",
+                  "impl.flashinfer-plan-run"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.dpo-offline-preferences",
+                  "math.data-processing-task-sufficiency",
+                  "impl.flashinfer-plan-run",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0028028419910697266
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "portable-adapter",
+              "baseline": {
+                "case": "portable-adapter",
+                "query": "adapter portability 量化迁移 训练预算",
+                "expected": [
+                  "algo.car-lora-transfer"
+                ],
+                "actual": [
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora",
+                  "algo.dora-magnitude-direction"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora",
+                  "algo.dora-magnitude-direction"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002551190002122894
+              },
+              "candidate": {
+                "case": "portable-adapter",
+                "query": "adapter portability 量化迁移 训练预算",
+                "expected": [
+                  "algo.car-lora-transfer"
+                ],
+                "actual": [
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora",
+                  "algo.dora-magnitude-direction"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora",
+                  "algo.dora-magnitude-direction"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0028010990063194185
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "prefix-updates",
+              "baseline": {
+                "case": "prefix-updates",
+                "query": "点更新 区间求和 prefix sum",
+                "expected": [
+                  "ds.fenwick-point-range"
+                ],
+                "actual": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "algo.lora-intrinsic-rank"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "algo.lora-intrinsic-rank"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002186370998970233
+              },
+              "candidate": {
+                "case": "prefix-updates",
+                "query": "点更新 区间求和 prefix sum",
+                "expected": [
+                  "ds.fenwick-point-range"
+                ],
+                "actual": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "algo.lora-intrinsic-rank"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "algo.lora-intrinsic-rank"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00231344900385011
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "range-aggregate",
+              "baseline": {
+                "case": "range-aggregate",
+                "query": "区间聚合 非交换 运算 monoid",
+                "expected": [
+                  "ds.segment-monoid"
+                ],
+                "actual": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.symmetry-quotient"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.symmetry-quotient",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0019621300016297027
+              },
+              "candidate": {
+                "case": "range-aggregate",
+                "query": "区间聚合 非交换 运算 monoid",
+                "expected": [
+                  "ds.segment-monoid"
+                ],
+                "actual": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.symmetry-quotient"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.symmetry-quotient",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002103228005580604
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "insertion-connectivity",
+              "baseline": {
+                "case": "insertion-connectivity",
+                "query": "增量连通性 insert-only union find",
+                "expected": [
+                  "ds.dsu-connectivity"
+                ],
+                "actual": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0020541959966067225
+              },
+              "candidate": {
+                "case": "insertion-connectivity",
+                "query": "增量连通性 insert-only union find",
+                "expected": [
+                  "ds.dsu-connectivity"
+                ],
+                "actual": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002359727004659362
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "graph-matching",
+              "baseline": {
+                "case": "graph-matching",
+                "query": "二分图匹配 residual graph 容量网络",
+                "expected": [
+                  "ds.maxflow-matching"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "infra.flashinfer-scheduling"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "infra.flashinfer-scheduling",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0023064580018399283
+              },
+              "candidate": {
+                "case": "graph-matching",
+                "query": "二分图匹配 residual graph 容量网络",
+                "expected": [
+                  "ds.maxflow-matching"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "infra.flashinfer-scheduling"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "infra.flashinfer-scheduling",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00262689299415797
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "exact-vector",
+              "baseline": {
+                "case": "exact-vector",
+                "query": "向量检索 exact baseline L2 inner product",
+                "expected": [
+                  "ds.faiss-exact-vector"
+                ],
+                "actual": [
+                  "ds.faiss-exact-vector",
+                  "math.cauchy-schwarz",
+                  "math.data-processing-task-sufficiency"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.faiss-exact-vector",
+                  "math.cauchy-schwarz",
+                  "math.data-processing-task-sufficiency",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0026509280141908675
+              },
+              "candidate": {
+                "case": "exact-vector",
+                "query": "向量检索 exact baseline L2 inner product",
+                "expected": [
+                  "ds.faiss-exact-vector"
+                ],
+                "actual": [
+                  "ds.faiss-exact-vector",
+                  "math.cauchy-schwarz",
+                  "math.data-processing-task-sufficiency"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.faiss-exact-vector",
+                  "math.cauchy-schwarz",
+                  "math.data-processing-task-sufficiency",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0028725750016747043
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "recall-memory",
+              "baseline": {
+                "case": "recall-memory",
+                "query": "近似近邻 ANN memory ef recall",
+                "expected": [
+                  "ds.hnsw-recall-budget"
+                ],
+                "actual": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "math.low-rank-svd"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "math.low-rank-svd",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.data-processing-task-sufficiency",
+                  "math.score-difference-bound"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0019441229960648343
+              },
+              "candidate": {
+                "case": "recall-memory",
+                "query": "近似近邻 ANN memory ef recall",
+                "expected": [
+                  "ds.hnsw-recall-budget"
+                ],
+                "actual": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "infra.flashattention4-blackwell"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "infra.flashattention4-blackwell"
+                ],
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0023213300009956583
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "no-hit",
+              "baseline": {
+                "case": "no-hit",
+                "query": "zzqxengineeringnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.0008139230048982427
+              },
+              "candidate": {
+                "case": "no-hit",
+                "query": "zzqxengineeringnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.0009242359956260771
+              },
+              "regressed_metrics": []
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "script_sha256": "40dfcc200af69d05b4e890d221e729d9fe28f178dccbc1a85ec0674560d87c13",
+  "eval_script_sha256": "3cb8825900e586bd48deed0ea6906e9f50e9f9c013b95696ae8deec6730ef41a"
+}

@@ -55,3 +55,5 @@ NEURO-01–03：`knowledge/entries/neuroscience/` 与 `knowledge/neuroscience_so
 | EK-115246-01–03 | `knowledge/entries/neuroscience/neuro.cephalopod-arm-segmentation.*`, `docs/knowledge_learning/2026-10-07-engineering-115246/verify.py`, `report.md`, `sources.json` | 主AI/既有真实小时桥 → 按需检索、研究决策与下轮维护 | 4来源、1candidate/0新增published；接口许可与重复单位诊断；旧检索非退化、相关13单测与Reader3通过；补图、数据和AI迁移未验收 |
 
 | EK-122522-01–03 | `knowledge/entries/neuroscience/neuro.salamander-cell-type-homology.*`, `docs/knowledge_learning/2026-10-07-engineering-122522/verify.py`, `report.md`, `sources.json` | 主AI/既有小时桥 → 按需检索、研究决策与下轮维护 | 5来源、1candidate/0新增published；同源/趋同和源码许可边界；7目录双后端非退化、13单测/Reader3通过；补充材料与AI迁移未验收 |
+
+AIK-01/02：`knowledge/entries/ai-algorithms/ai.speculative-*`及`docs/knowledge_learning/2026-10-07-ai-algorithms/`提供条件化采样/成本推导与独立验证；AIK-03通过既有知识技能同步和实际Git发布核验，不新增runtime。

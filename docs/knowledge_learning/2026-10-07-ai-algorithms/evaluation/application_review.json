@@ -1,0 +1,333 @@
+{
+  "schema_version": 1,
+  "reviewed_at_utc": "2026-10-07T01:11:13.550686+00:00",
+  "evaluator_scope": "Independent from candidate author; this validator froze tasks before reading candidates, then manually reviewed retrieved full text and calculated answers with exact scripts. This is not a separately sampled model-use benchmark or automatic applicability enforcement.",
+  "frozen_tasks_sha256": "f9af50f1e1381f33f41348e00f4ea78059a15d05c4b92c71ca8d598bc4496061",
+  "candidate_source_hashes": {
+    "residual": {
+      "json_sha256": "3823b0cff73473b0855d308ef91fbd14e046c266c38f90b9766f4f542e3ffd78",
+      "md_sha256": "5ee563dc2bccfd869fafe1ae7ad6d97608074d362788be48ef486d66012bfb31",
+      "id": "ai.speculative-sampling-residual-exactness",
+      "original_status": "candidate"
+    },
+    "prefix": {
+      "json_sha256": "6125eaef0eb51d597102e54b5d7e98b0485ff54069fc3d84ecc9926f6e988019",
+      "md_sha256": "3f2d30ad51918bb0dee1cf748d6e13a35be43be8f32cbb86dbd71498c311d3ab",
+      "id": "ai.speculative-decoding-cost-bound",
+      "original_status": "candidate"
+    }
+  },
+  "result": "12/12 premise/outcome reviews pass",
+  "rows": [
+    {
+      "case": "A01",
+      "decision": "apply",
+      "review": "pass",
+      "explanation": "All premises supplied. Compute accepted mass (1/4,1/3,1/6), alpha=3/4, r=(1,0,0), output p.",
+      "source_sections": [
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s3",
+          "title": "精确结论（已知算法事实；本条重新推导）",
+          "start_line": 7,
+          "end_line": 14
+        },
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s4",
+          "title": "推导范围与边界",
+          "start_line": 15,
+          "end_line": 22
+        }
+      ],
+      "numerical_evidence": "math_results.json",
+      "retrieved_in_default_context_both_backends": true
+    },
+    {
+      "case": "A02",
+      "decision": "apply_boundary",
+      "review": "pass",
+      "explanation": "q need not cover target support. Never evaluate p/q at q=0 on a sampled point; missing target mass comes from correction.",
+      "source_sections": [
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s3",
+          "title": "精确结论（已知算法事实；本条重新推导）",
+          "start_line": 7,
+          "end_line": 14
+        }
+      ],
+      "numerical_evidence": "math_results.json",
+      "retrieved_in_default_context_both_backends": true
+    },
+    {
+      "case": "A03",
+      "decision": "apply_boundary",
+      "review": "pass",
+      "explanation": "p=q implies alpha=1 and zero residual mass; reject unconditional normalization. Bonus uses target at the accepted prefix.",
+      "source_sections": [
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s3",
+          "title": "精确结论（已知算法事实；本条重新推导）",
+          "start_line": 7,
+          "end_line": 14
+        }
+      ],
+      "numerical_evidence": "math_results.json",
+      "retrieved_in_default_context_both_backends": true
+    },
+    {
+      "case": "A04",
+      "decision": "reject_false_premise",
+      "review": "pass",
+      "explanation": "The distribution used by verification is not the actual top-1 proposal. Wrong output=(1,0); replacing q by actual delta restores target.",
+      "source_sections": [
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s3",
+          "title": "精确结论（已知算法事实；本条重新推导）",
+          "start_line": 7,
+          "end_line": 14
+        },
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s6",
+          "title": "失败与反例（本条构造）",
+          "start_line": 27,
+          "end_line": 33
+        }
+      ],
+      "numerical_evidence": "math_results.json",
+      "retrieved_in_default_context_both_backends": true
+    },
+    {
+      "case": "A05",
+      "decision": "reject_invalid_correction",
+      "review": "pass",
+      "explanation": "Rejection fallback p is not residual; wrong output=(5/8,3/8). Kernel check confirms the discrepancy exactly.",
+      "source_sections": [
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s4",
+          "title": "推导范围与边界",
+          "start_line": 15,
+          "end_line": 22
+        },
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s6",
+          "title": "失败与反例（本条构造）",
+          "start_line": 27,
+          "end_line": 33
+        }
+      ],
+      "numerical_evidence": "math_results.json",
+      "retrieved_in_default_context_both_backends": true
+    },
+    {
+      "case": "A06",
+      "decision": "reject_target_mismatch",
+      "review": "pass",
+      "explanation": "Greedy agreement preserves only a separately specified greedy target; output delta is not stochastic p. Do not silently change the task objective.",
+      "source_sections": [
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s6",
+          "title": "失败与反例（本条构造）",
+          "start_line": 27,
+          "end_line": 33
+        }
+      ],
+      "numerical_evidence": "math_results.json",
+      "retrieved_in_default_context_both_backends": true
+    },
+    {
+      "case": "A07",
+      "decision": "insufficient_information",
+      "review": "pass",
+      "explanation": "Head marginals do not specify proposal joint law or sequential conditionals. Independent heads give mismatch mass 1/2. No generic MTP rejection or certification is inferred.",
+      "source_sections": [
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s7",
+          "title": "树与 MTP 的合法使用边界",
+          "start_line": 34,
+          "end_line": 41
+        },
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s4",
+          "title": "推导范围与边界",
+          "start_line": 15,
+          "end_line": 22
+        }
+      ],
+      "numerical_evidence": "math_results.json",
+      "retrieved_in_default_context_both_backends": true
+    },
+    {
+      "case": "A08",
+      "decision": "reject_selection_bias",
+      "review": "pass",
+      "explanation": "Selecting a preferred sibling changes proposal to (1/4,3/4); equality of individual node marginals is insufficient. The candidate separately permits correctly updated point-proposal elimination.",
+      "source_sections": [
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s7",
+          "title": "树与 MTP 的合法使用边界",
+          "start_line": 34,
+          "end_line": 41
+        },
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s3",
+          "title": "精确结论（已知算法事实；本条重新推导）",
+          "start_line": 7,
+          "end_line": 14
+        }
+      ],
+      "numerical_evidence": "math_results.json",
+      "retrieved_in_default_context_both_backends": true
+    },
+    {
+      "case": "A09",
+      "decision": "reject_iid_shortcut_apply_tail",
+      "review": "pass",
+      "explanation": "Marginal alpha=1/2 does not yield geometric tails. Correct tails=1,1/2,1/2,1/2 and E[L]=5/2; iid shortcut=15/8.",
+      "source_sections": [
+        {
+          "id": "ai.speculative-decoding-cost-bound",
+          "version": 1,
+          "sha256": "5f9ba373613a012b6c5fc32c6df4e43df41ffb8dc3a5536bfd6175c98e359364",
+          "node": "s5",
+          "title": "本条推导：去掉独立性假设的前缀尾和",
+          "start_line": 13,
+          "end_line": 20
+        },
+        {
+          "id": "ai.speculative-decoding-cost-bound",
+          "version": 1,
+          "sha256": "5f9ba373613a012b6c5fc32c6df4e43df41ffb8dc3a5536bfd6175c98e359364",
+          "node": "s8",
+          "title": "可复算正负例（本条构造，不是性能测量）",
+          "start_line": 33,
+          "end_line": 39
+        }
+      ],
+      "numerical_evidence": "math_results.json",
+      "retrieved_in_default_context_both_backends": true
+    },
+    {
+      "case": "A10",
+      "decision": "apply_conditional_tail",
+      "review": "pass",
+      "explanation": "Conditional rates yield tails=1,1/2,3/8,1/4 and E[L]=17/8 without independence. After zero survival all later tail terms are zero.",
+      "source_sections": [
+        {
+          "id": "ai.speculative-decoding-cost-bound",
+          "version": 1,
+          "sha256": "5f9ba373613a012b6c5fc32c6df4e43df41ffb8dc3a5536bfd6175c98e359364",
+          "node": "s5",
+          "title": "本条推导：去掉独立性假设的前缀尾和",
+          "start_line": 13,
+          "end_line": 20
+        }
+      ],
+      "numerical_evidence": "math_results.json",
+      "retrieved_in_default_context_both_backends": true
+    },
+    {
+      "case": "A11",
+      "decision": "apply_only_stated_cost_model",
+      "review": "pass",
+      "explanation": "Under long-run stable model, 16ms per round gives 128/17ms/token and speed 85/64; 26ms gives speed 85/104<1. Unknown costs imply unknown speed.",
+      "source_sections": [
+        {
+          "id": "ai.speculative-decoding-cost-bound",
+          "version": 1,
+          "sha256": "5f9ba373613a012b6c5fc32c6df4e43df41ffb8dc3a5536bfd6175c98e359364",
+          "node": "s6",
+          "title": "已知理想化公式及本条成本推广",
+          "start_line": 21,
+          "end_line": 28
+        },
+        {
+          "id": "ai.speculative-decoding-cost-bound",
+          "version": 1,
+          "sha256": "5f9ba373613a012b6c5fc32c6df4e43df41ffb8dc3a5536bfd6175c98e359364",
+          "node": "s10",
+          "title": "任务映射",
+          "start_line": 47,
+          "end_line": 50
+        }
+      ],
+      "numerical_evidence": "math_results.json",
+      "retrieved_in_default_context_both_backends": true
+    },
+    {
+      "case": "A12",
+      "decision": "reject_unclipped_cost_claim",
+      "review": "pass",
+      "explanation": "One remaining token makes useful output 1, speed 5/8 under paid full-draft cost. EOS half-probability caps expectation at 15/8. Preserve target stopping rule and recompute useful output/cost.",
+      "source_sections": [
+        {
+          "id": "ai.speculative-decoding-cost-bound",
+          "version": 1,
+          "sha256": "5f9ba373613a012b6c5fc32c6df4e43df41ffb8dc3a5536bfd6175c98e359364",
+          "node": "s5",
+          "title": "本条推导：去掉独立性假设的前缀尾和",
+          "start_line": 13,
+          "end_line": 20
+        },
+        {
+          "id": "ai.speculative-decoding-cost-bound",
+          "version": 1,
+          "sha256": "5f9ba373613a012b6c5fc32c6df4e43df41ffb8dc3a5536bfd6175c98e359364",
+          "node": "s10",
+          "title": "任务映射",
+          "start_line": 47,
+          "end_line": 50
+        },
+        {
+          "id": "ai.speculative-sampling-residual-exactness",
+          "version": 1,
+          "sha256": "3e7f016d6ff86a50ada45c3c1cd8a02aeca77af511bb0d0ef21cac8f44879af4",
+          "node": "s4",
+          "title": "推导范围与边界",
+          "start_line": 15,
+          "end_line": 22
+        }
+      ],
+      "numerical_evidence": "math_results.json",
+      "retrieved_in_default_context_both_backends": true
+    }
+  ],
+  "supplemental": "Four candidate-specific families checked after reading candidate; separately labeled, not blind."
+}

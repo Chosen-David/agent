@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+      "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+      "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+      "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+      "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+      "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+      "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+    ]
+  },
+  "id": "ai.speculative-decoding-cost-bound",
+  "title": "推测解码：接受前缀尾和与成本盈亏条件",
+  "summary": "单提议接受率为1−TV；一轮输出长度由连续接受事件的尾和决定。只有附加恒定条件接受率和固定验证成本假设才得到几何加速式；树、MTP、batch变化必须重建事件与成本。",
+  "aliases": [
+    "speculative decoding speedup acceptance rate cost",
+    "推测解码 接受率 草稿开销",
+    "expected accepted prefix tail sum total variation",
+    "correlated acceptance draft verification overhead",
+    "tree MTP throughput latency boundary",
+    "speculative decoding walltime analysis",
+    "推测解码成本模型"
+  ],
+  "domains": [
+    "ai-algorithms",
+    "probability",
+    "performance-modeling"
+  ],
+  "structures": [
+    "接受前缀尾和",
+    "accepted-prefix-tail-sum",
+    "条件相关事件",
+    "conditional-event-dependence",
+    "成本盈亏阈值",
+    "cost-break-even",
+    "吞吐量与延迟口径",
+    "throughput-latency-accounting"
+  ],
+  "assumptions": [
+    "单提议1−TV恒等式沿用残差校正条目的真实p/q与正确前缀；不能直接套整棵树",
+    "固定正整数horizon γ，一轮L=N+1包含补偿或bonus，公式暂不包含EOS/最大长度截断",
+    "一般尾和无需独立性；几何式额外要求每个到达深度的条件接受概率为同一α",
+    "基线T、draft比率c、验证比率v及额外成本o按同一硬件/模型/采样/负载口径定义；γc假设串行每步draft成本相同",
+    "速度比公式对应长序列稳定成本模型；随机轮成本须满足长期均值比率成立条件，不能使用平均逐轮速度比",
+    "α>c的存在性阈值只适用于v=1,o=0的理想模型；真实v/o、树形及并发负载须另测"
+  ],
+  "sources": [
+    {
+      "url": "https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf",
+      "locator": "Sections 3.1–3.5, Theorem 3.5/3.8, Corollary 3.9, Appendix A.3; PDF pages 3–5 and 11–12",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2025/file/c7b5a35ea98b62512a869c19ea7b03cb-Paper-Conference.pdf",
+      "locator": "Sections 3 and 4.3/Table 3, PDF pages 4–6 and 8–9; bounded author experiment, not a theorem or local measurement",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "requires": [
+    {
+      "id": "ai.speculative-sampling-residual-exactness",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "prerequisite",
+      "id": "ai.speculative-sampling-residual-exactness"
+    },
+    {
+      "type": "related",
+      "id": "infra.speculative-acceptance"
+    }
+  ]
+}
