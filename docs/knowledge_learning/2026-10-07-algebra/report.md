@@ -26,4 +26,4 @@
 
 ## 提交状态
 
-发布前同步、commit与远端独立SHA核对由 publication.json 记录；只在 remote_verified 后关闭私有run。尚未获得远端证据前不把提交待办标为完成。
+实现commit 11ace692d3b0e6249b203e1e8813eb9c342346ec 已按非强制expected_sha发布main，验收树与API tree一致；pull及PublicationLedger独立ls-remote确认remote_verified。证据见 publication.json。收尾提交只登记远端证据与TASK闭环，不改知识/来源/验证数据。
