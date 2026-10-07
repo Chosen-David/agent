@@ -6,13 +6,13 @@
 
 - [x] [EK-112454-01] 查重并核查熊蜂社会学习原始结果、方法及补充材料；区分实验、解释博客与待验证AI假设，记录采用/拒绝和来源哈希。
 - [x] [EK-112454-02] 写版本化知识与来源目录，保持数学游标和其他领域历史；轮转下一领域到RL，完成插件快照、索引、条件负例及检索/程序/reader回归。
-- [ ] [EK-112454-03] 报告真实结果和未测项；发布前读回main、整合并发，GitHub expected_sha/force=false发布并独立核验远端完整树。
+- [x] [EK-112454-03] 报告真实结果和未测项；发布前读回main、整合并发，GitHub expected_sha/force=false发布并独立核验远端完整树。
 
 产物计划：`docs/knowledge_learning/2026-10-07-engineering-112454/`，`knowledge/entries/neuroscience/` 与既有来源/状态；私有缓存 `.agent-runs/engineering-112454/`。已存在调度器负责本轮生命周期；不伪造额外监督ID，不触碰其他任务勾选。
 
 本轮结果：3来源、1待发布卡及1论文候选已落盘；知识格式/插件闭包、引用、4类条件检查、旧预期检索指标非退化通过，Reader补齐项目私有声明依赖后3/3、知识复用单测7/7。全仓Windows检查511项出现7失败/60错误/10跳过，WSL status为E_ACCESSDENIED，EK-112454-02未完成，EK-112454-03阻塞且未提交/未更新main。证据与恢复入口见本轮report.md/validation.json；宿主需在已有Linux环境复验全仓，检查通过后按原授权CAS发布。数学/工程completed游标未前移，RL轮转意图保留；本地成果保留等待验收，不将failed记done。
 
-宿主恢复：原失败证据保持不变；现有WSL对冻结树548项（537通过/11跳过）、Reader3/3、插件与知识格式检查通过，EK-112454-02已验收。发布读回后再关闭03；恢复报告 docs/knowledge_learning/2026-10-07-engineering-112454-host-recovery/report.md。随后按用户要求人工触发一次，保持原3600秒周期和单一tmux归属。
+宿主恢复：原失败证据保持不变；现有WSL对冻结树548项（537通过/11跳过）、Reader3/3、插件与知识格式检查通过，EK-112454-02已验收。功能发布 4954deb5332d0ac5ded87c745aca2c7f6ea67f9e 已独立核对完整树并同步15技能/332文件，03已完成；恢复报告 docs/knowledge_learning/2026-10-07-engineering-112454-host-recovery/report.md。随后按用户要求人工触发一次，保持原3600秒周期和单一tmux归属。
 
 ## 2026-10-07 跨物种神经科学与意识知识
 

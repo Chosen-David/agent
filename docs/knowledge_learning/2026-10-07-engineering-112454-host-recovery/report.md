@@ -7,3 +7,5 @@
 并发main只修改TASK，已逐字核对本轮之外的远端尾部完整保留，正常merge整合；未丢弃工作文件。发布前再次fetch，按expected_sha/force=false更新main并独立核对完整内容树后同步安装技能。发布及人工触发的实际读回在收尾记录；目前不将待发布当已发布。
 
 本次人工触发使用原配置与同一tmux会话：先等待原轮终态及round.lock释放，再由同会话执行一次run_round，结束后恢复原guard。固定3600秒周期与原next_due保留，若跨过到期则跳过已过时段；不创建第二份定时任务。私有触发器位于.agent-runs/manual-hourly-20261007，不进入模型知识语料。下一轮按已保留的priority.next_domain进入RL。
+
+宿主验收后已普通非强制发布 4954deb5332d0ac5ded87c745aca2c7f6ea67f9e，完整远端树独立核验，安装技能15个/332文件同步通过，安装后check-refs确认新增卡身份一致。原runner_failed保持不变，本段是独立恢复结果。根TASK的EK-112454-01–03已全部验收。本收尾提交仍需独立发布后才启动人工轮。
