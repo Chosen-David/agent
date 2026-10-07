@@ -1,0 +1,9 @@
+from pathlib import Path
+import json,time
+from agent_runtime.knowledge import KnowledgeStore
+from agent_runtime.handoff_basis import make_token_counter
+D=Path(__file__).resolve().parent;s=KnowledgeStore('knowledge');counter=make_token_counter('cl100k_base');start=time.perf_counter();q='独立 有界 向量 二阶矩 样本 校准 谱误差';hits=s.search(q,domain='matrix-analysis',limit=1);ctx=s.context(hits,max_entries=1,max_chars=20000,include_related=False)
+assert ctx['status']=='ready' and 'math.matrix-bernstein-covariance' in [x['id']for x in ctx['entries']];assert s.check_refs(ctx['knowledge_refs'])['valid']
+serialize=lambda x:json.dumps(x,ensure_ascii=False,sort_keys=True,separators=(',',':'));n=counter(serialize(ctx));alltokens=counter(serialize([s.get(k)for k in sorted(s.records) if s.records[k]['status']=='published']))
+(D/'context-cost.json').write_text(json.dumps(dict(encoding=counter.tokenizer_name,version=counter.tokenizer_version,tokens=n,context_ids=[x['id']for x in ctx['entries']],chars=ctx['budget'],all_corpus_naive_reference_tokens=alltokens,seconds=time.perf_counter()-start,scope='serialized JSON and exact tokenizer; no prompt envelope or model billing; naive full corpus not former production baseline'),ensure_ascii=False,indent=2)+'\n')
+(D/'knowledge-use.json').write_text(json.dumps(dict(knowledge_root='knowledge',query=q,knowledge_refs=ctx['knowledge_refs'],premises={'bounded_vector':'synthetic unit norm fixed before draws','fixed_n':'10000 preset','iid':'controlled independent RNG draws, not asserted for real tokens','subspace_gap':'observed gap checked on the simulated matrices','real_agent_transfer':'unknown, no production behavior change'},scope='actual bounded retrieval and dependency checks; mathematical applicability reviewed separately'),ensure_ascii=False,indent=2)+'\n');print({'tokens':n,'entries':[x['id']for x in ctx['entries']],'full_reference':alltokens})
