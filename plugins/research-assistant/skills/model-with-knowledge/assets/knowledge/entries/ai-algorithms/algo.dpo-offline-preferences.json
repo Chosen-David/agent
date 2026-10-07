@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "id": "algo.dpo-offline-preferences",
+  "version": 1,
+  "status": "published",
+  "kind": "case",
+  "title": "DPO：离线偏好优化的适用前提",
+  "summary": "NeurIPS 2023 在偏好数据任务上支持直接优化 policy 的路线，可避免显式训练 reward model 和训练时在线生成；不保证所有 RLHF 任务更优。",
+  "aliases": [
+    "偏好学习",
+    "DPO offline",
+    "KL reference policy",
+    "reward model"
+  ],
+  "domains": [
+    "ai-algorithms"
+  ],
+  "structures": [
+    "偏好学习",
+    "DPO offline",
+    "KL reference policy"
+  ],
+  "assumptions": [
+    "data: paired chosen/rejected offline preferences",
+    "objective: KL-regularized preference learning",
+    "metric: preference quality versus KL"
+  ],
+  "sources": [
+    {
+      "url": "https://proceedings.neurips.cc/paper_files/paper/2023/file/a85b405ed65c6477a4fe8302b5e06ce7-Paper-Conference.pdf",
+      "locator": "§4; §6.1–6.3; Figures 2–4; Tables 1–2",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.dpo-offline-preferences"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "NeurIPS 2023 在偏好数据任务上支持直接优化 policy 的路线，可避免显式训练 reward model 和训练时在线生成；不保证所有 RLHF 任务更优。",
+    "conditions": {
+      "data": "paired chosen/rejected offline preferences",
+      "objective": "KL-regularized preference learning",
+      "metric": "preference quality versus KL"
+    },
+    "observations": [
+      "§4 从 Bradley–Terry 偏好模型推导目标；§6 在 sentiment、TL;DR 和 HH 比较。",
+      "§6 包含 GPT-4 评测与人工比较；评测器和生成温度会影响 win rate。"
+    ],
+    "limitations": [
+      "离线数据分布、偏好噪声与 reference policy 必须核查。",
+      "论文不能替代新领域安全/质量验收；不能宣称离线方法永远胜在线 RL。"
+    ],
+    "minimal_checks": [
+      "验证 chosen/rejected 标注、token log-prob 掩码和 reference 冻结。",
+      "用少量 held-out 对照、KL 与质量联合看，避免仅训练 loss 决策。"
+    ],
+    "paper": {
+      "venue": "NeurIPS",
+      "year": 2023,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}

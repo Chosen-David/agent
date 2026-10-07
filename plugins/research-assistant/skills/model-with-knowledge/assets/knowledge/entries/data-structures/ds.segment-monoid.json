@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "id": "ds.segment-monoid",
+  "version": 1,
+  "status": "published",
+  "kind": "method",
+  "title": "Segment tree：结合聚合与边界搜索",
+  "summary": "ACL segtree 支持满足结合律/单位元的区间聚合；set/prod 为 O(log n)，不要擅自要求交换律。",
+  "aliases": [
+    "区间聚合",
+    "segment tree monoid",
+    "非交换 运算"
+  ],
+  "domains": [
+    "data-structures"
+  ],
+  "structures": [
+    "区间聚合",
+    "segment tree monoid",
+    "非交换 运算"
+  ],
+  "assumptions": [
+    "algebra: associative op with identity",
+    "range: zero-based half-open",
+    "operation: point set and range aggregate"
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/atcoder/ac-library/blob/864245a00b00dd008d1abfdc239618fdb7d139da/LICENSE",
+      "locator": "LICENSE",
+      "accessed": "2026-10-06"
+    },
+    {
+      "url": "https://github.com/atcoder/ac-library/blob/864245a00b00dd008d1abfdc239618fdb7d139da/atcoder/segtree.hpp",
+      "locator": "atcoder/segtree.hpp",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.segment-monoid"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "implementation",
+    "claim": "ACL segtree 支持满足结合律/单位元的区间聚合；set/prod 为 O(log n)，不要擅自要求交换律。",
+    "conditions": {
+      "algebra": "associative op with identity",
+      "range": "zero-based half-open",
+      "operation": "point set and range aggregate"
+    },
+    "observations": [
+      "prod 用左右两个累积器保持顺序，适用于非交换 monoid。",
+      "max_right/min_left 需符合文档的单调 predicate 且 f(e())=true。"
+    ],
+    "limitations": [
+      "无结合律的运算不可直接使用；区间更新需另选 lazy_segtree。",
+      "整数溢出、浮点结合律误差和 predicate 非单调可破坏结果。"
+    ],
+    "minimal_checks": [
+      "检查独立 algebra 例子、空区间与非交换顺序。",
+      "边界搜索先核对 predicate 单调性。"
+    ],
+    "code": {
+      "repository": "atcoder/ac-library",
+      "commit": "864245a00b00dd008d1abfdc239618fdb7d139da",
+      "paths": [
+        "atcoder/segtree.hpp"
+      ],
+      "symbols": [
+        "atcoder::segtree",
+        "prod",
+        "max_right",
+        "min_left"
+      ],
+      "license": "CC0-1.0",
+      "language": "C++",
+      "entrypoint": "atcoder::segtree<S,op,e> seg(values); seg.set(p,x); seg.prod(l,r)",
+      "local_execution": "not-run"
+    }
+  }
+}

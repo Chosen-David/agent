@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "scope": "Authored engineering retrieval regression; no blind model or performance claim",
+  "cases": [
+    {"id":"draft-cost","query":"draft 接受率 验证成本 投机解码","expected":["infra.speculative-acceptance"]},
+    {"id":"kv-waste","query":"KV cache 碎片 请求调度 内存余量","expected":["infra.pagedattention-kv"]},
+    {"id":"small-batch","query":"小 batch 长序列 occupancy warp partition","expected":["infra.flashattention2-occupancy"]},
+    {"id":"changed-baseline","query":"Blackwell B200 cuDNN 版本 过时基线","expected":["infra.flashattention4-blackwell"]},
+    {"id":"shared-heads","query":"KV heads 共享 额外训练 mean pooling","expected":["algo.gqa-uptraining"]},
+    {"id":"quantized-storage","query":"4bit finetuning NF4 double quantization","expected":["algo.qlora-memory"]},
+    {"id":"preferences","query":"偏好学习 chosen rejected KL reference policy","expected":["algo.dpo-offline-preferences"]},
+    {"id":"portable-adapter","query":"adapter portability 量化迁移 训练预算","expected":["algo.car-lora-transfer"]},
+    {"id":"prefix-updates","query":"点更新 区间求和 prefix sum","expected":["ds.fenwick-point-range"]},
+    {"id":"range-aggregate","query":"区间聚合 非交换 运算 monoid","expected":["ds.segment-monoid"]},
+    {"id":"insertion-connectivity","query":"增量连通性 insert-only union find","expected":["ds.dsu-connectivity"]},
+    {"id":"graph-matching","query":"二分图匹配 residual graph 容量网络","expected":["ds.maxflow-matching"]},
+    {"id":"exact-vector","query":"向量检索 exact baseline L2 inner product","expected":["ds.faiss-exact-vector"]},
+    {"id":"recall-memory","query":"近似近邻 ANN memory ef recall","expected":["ds.hnsw-recall-budget"]},
+    {"id":"no-hit","query":"zzqxengineeringnonexistent","expected":[]}
+  ]
+}

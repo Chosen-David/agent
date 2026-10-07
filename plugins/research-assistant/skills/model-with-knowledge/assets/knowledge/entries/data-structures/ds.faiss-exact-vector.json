@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "id": "ds.faiss-exact-vector",
+  "version": 1,
+  "status": "published",
+  "kind": "method",
+  "title": "Faiss IndexFlat：精确向量搜索强基线",
+  "summary": "需要精确召回或评估 ANN 时，先用 Faiss IndexFlat 建立强基线；精确扫描每 query 约 O(nd)，并考虑 batched BLAS 路径。",
+  "aliases": [
+    "向量检索 exact baseline",
+    "Faiss IndexFlat",
+    "L2 inner product"
+  ],
+  "domains": [
+    "data-structures"
+  ],
+  "structures": [
+    "向量检索 exact baseline",
+    "Faiss IndexFlat",
+    "L2 inner product"
+  ],
+  "assumptions": [
+    "operation: dense vector nearest-neighbor search",
+    "metric: L2 or inner product",
+    "quality: exact"
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/facebookresearch/faiss/blob/83ae8b0908312c1e40734a806a3cc435b64f9496/LICENSE",
+      "locator": "LICENSE",
+      "accessed": "2026-10-06"
+    },
+    {
+      "url": "https://github.com/facebookresearch/faiss/blob/83ae8b0908312c1e40734a806a3cc435b64f9496/faiss/IndexFlat.h",
+      "locator": "faiss/IndexFlat.h",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.faiss-exact-vector"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "implementation",
+    "claim": "需要精确召回或评估 ANN 时，先用 Faiss IndexFlat 建立强基线；精确扫描每 query 约 O(nd)，并考虑 batched BLAS 路径。",
+    "conditions": {
+      "operation": "dense vector nearest-neighbor search",
+      "metric": "L2 or inner product",
+      "quality": "exact"
+    },
+    "observations": [
+      "IndexFlat 存完整向量；L2 与 IP 是不同 metric，L2 返回平方距离。"
+    ],
+    "limitations": [
+      "IP 不是自动 cosine；cosine 需要规范化。",
+      "CPU/GPU API、传输与目标 build 要核对；没有无条件高性能保证。"
+    ],
+    "minimal_checks": [
+      "核对 float32/layout、metric、归一化与 k>n 返回行为。",
+      "小样本直接计算距离，ANN 的 recall 对此基线比较。"
+    ],
+    "code": {
+      "repository": "facebookresearch/faiss",
+      "commit": "83ae8b0908312c1e40734a806a3cc435b64f9496",
+      "paths": [
+        "faiss/IndexFlat.h"
+      ],
+      "symbols": [
+        "faiss::IndexFlatL2",
+        "faiss::IndexFlatIP"
+      ],
+      "license": "MIT",
+      "language": "Python/C++",
+      "entrypoint": "faiss.IndexFlatL2(d); index.add(float32_vectors); index.search(queries,k)",
+      "local_execution": "not-run"
+    }
+  }
+}

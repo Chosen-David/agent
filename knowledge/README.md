@@ -1,8 +1,8 @@
 # 可检索基础知识
 
-这里保存跨项目可复用的数学、物理知识；Skill 保存使用知识的方法。项目观测、用户偏好和执行状态仍由项目记忆、TASK.md 与运行目录负责。
+这里保存跨项目可复用的数学、物理、AI Infra、AI 算法与数据结构算法知识；Skill 保存使用知识的方法。项目观测、用户偏好和执行状态仍由项目记忆、TASK.md 与运行目录负责。
 
-当前包含 17 个经过来源核对、推导与数值检查的种子条目，不代表完整学科覆盖，也没有证明 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
+当前包含 39 个种子条目：17 个数学/物理条目与 22 张工程复用卡；工程卡经过原始来源阅读核查，未执行本机 GPU 复现，不代表完整学科覆盖，也没有证明 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
 
 ## 实际使用
 
@@ -28,7 +28,7 @@ python -m agent_runtime.knowledge --root knowledge related math.topk-margin
 - `learning_state.json`：学习轮次游标；历史证据写仓库 `docs/knowledge_learning/`，不覆写旧轮次。
 
 现有文件后端每次装载并验证整个语料，时间/内存随总文本规模增长；适合小型语料与离线后备。完整持久索引、增量更新、章节导航和导入已实现，见下文。SQLite 仅作可删除重建的派生索引，Git 文件仍为唯一事实源。没有安装 QMD、PageIndex 或 Lean，也没有把本地词法检索称为向量搜索。
-不要把整个知识库放进系统提示。新增条目通常不增加 Skill，也不改变主 AI 的常驻上下文。定时学习的完整可复制提示在仓库 `prompts/math_knowledge_continuous_learning.md`；本次交付没有创建定时任务。
+不要把整个知识库放进系统提示。新增条目通常不增加 Skill，也不改变主 AI 的常驻上下文。定时学习的完整可复制提示在仓库 `prompts/math_knowledge_continuous_learning.md`；工程维护的 tmux 执行器与运行边界见 [维护说明](../docs/knowledge_maintenance.md)。
 
 ## 完整索引、导航与导入（本轮已实现）
 
@@ -78,3 +78,17 @@ related 同时返回 incoming/outgoing 边，新推论能被旧定理的使用�
 ## 子空间与打分的扰动证书
 
 按矩阵变化、主方向、重复特征值、投影或质量模态检索。先核对对称性、外侧谱隙与认证算子误差，再选择整簇或单向量界；换基分数误差不等于完整注意力误差。原文筛选及公开结构验证见 `docs/knowledge_learning/2026-10-07-subspace/`。无模型A/B或生产提速声明。
+
+## 工程结论与实现复用
+
+22 张工程卡来自 13 篇原论文和 6 个成熟仓库，覆盖 FlashAttention / PagedAttention / 投机解码 / FlashInfer、GQA / LoRA / QLoRA / DPO / DoRA / NSA，以及 Fenwick / 线段树 / 并查集 / 最大流 / Faiss / HNSW。2026 年 CAR-LoRA 和 FlashAttention-4 分别保留会议与预印本身份；不代表覆盖全部历年顶会或最新论文。
+
+主 AI 按 [复用流程](../workflows/engineering_knowledge_reuse_workflow.md) 读取问题条件，检索后核对原实验图表、反例、混杂因素与源代码许可/API。`reuse` 提供结构化 observations、conditions、limitations、minimal_checks；代码指针固定完整 commit 和符号。论文数据不能记作本机实测；显式要求复现时仍执行实验。
+
+```bash
+# context.json 是任务已知条件的字符串字典，未知字段省略；{} 也可用。
+python -m agent_runtime.knowledge --root knowledge decision 'draft 成本 接受率' --context context.json
+python -m agent_runtime.knowledge --root knowledge decision '点更新 区间求和' --purpose implementation --context context.json
+```
+
+`decision` 返回适用条件差异和版本引用，采用现有词法检索；结果始终 `automatic_skip_authorized=false`。它支持决策，不是自动科学审查器。来源与选材见 `engineering_sources.json`；核验、负结果和未测项见 [本轮报告](../docs/knowledge_learning/2026-10-06-engineering/report.md)。定时任务使用独立 engineering 游标，保留原数学学习游标。

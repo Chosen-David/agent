@@ -29,3 +29,6 @@ T23 增量：`knowledge/entries/math.linear-system-stability.*` 等5条、`agent
 | MATH-12 | `docs/knowledge_learning/2026-10-07-subspace/report.md`, `tests.json`, `retrieval.json`, `publication.json` | 主 AI/现有eval与sync脚本 → 用户/下轮维护者/独立插件消费者 | 程序与结构检索验收、版本固定及main发布读回 |
 | KB-ACCESS-01/02 | `workflows/knowledge_access_workflow.md`, `agent_runtime/knowledge.py::check_handoff_knowledge`, `agent_runtime/communication.py` | 主 AI/知识生产角色 → 可信消费者 | 按需工具入口、适用性记录、知识引用随通信交接校验 |
 | KB-ACCESS-03 | `docs/knowledge_access_validation/`, `tests/test_knowledge_handoff.py` | 独立模型角色/程序测试 → 主 AI验收 | 真实知识使用与交接证据、拒收边界和调度读回 |
+
+
+T24–T28 增量：`knowledge/entries/{ai-infra,ai-algorithms,data-structures}/`（22 张复用卡），`knowledge/engineering_sources.json`（原论文与固定源码来源），`agent_runtime/knowledge_reuse.py`（条件化决策 CLI），`workflows/engineering_knowledge_reuse_workflow.md` 与三类 Skill 引用（主 AI/建模/实现路由），`prompts/engineering_knowledge_continuous_learning.md`（有界轮转学习），`scripts/knowledge_maintenance.py` / `run_knowledge_windows.py`（WSL tmux 日历与原生 Windows 登录桥），`tests/{test_knowledge_reuse,test_knowledge_maintenance,test_knowledge_windows_runner}.py`、`evals/knowledge/engineering-queries.json`、`docs/knowledge_learning/2026-10-06-engineering/`（检查与来源）。生产者为主 AI/定时维护，消费者为主 AI、代码 Agent 与独立 Skill；私有运行状态在 `.agent-runs/engineering-kb/`，不提交登录信息、PDF 或下载的源码。

@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "id": "infra.pagedattention-kv",
+  "version": 1,
+  "status": "published",
+  "kind": "case",
+  "title": "PagedAttention：KV 分页与服务吞吐",
+  "summary": "SOSP 2023 的 vLLM 实验支持用按需分页和共享 KV 减少服务内存浪费；收益来自内存管理与调度的组合。",
+  "aliases": [
+    "KV cache 碎片",
+    "请求调度",
+    "paged memory",
+    "PagedAttention"
+  ],
+  "domains": [
+    "ai-infra"
+  ],
+  "structures": [
+    "KV cache 碎片",
+    "请求调度",
+    "paged memory"
+  ],
+  "assumptions": [
+    "hardware: A100",
+    "models: OPT and LLaMA-13B",
+    "workload: ShareGPT/Alpaca length traces with Poisson arrivals",
+    "metric: normalized end-to-end latency versus request rate"
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/pdf/2309.06180",
+      "locator": "§6.1–6.6; Figures 12–18",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#infra.pagedattention-kv"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "SOSP 2023 的 vLLM 实验支持用按需分页和共享 KV 减少服务内存浪费；收益来自内存管理与调度的组合。",
+    "conditions": {
+      "hardware": "A100",
+      "models": "OPT and LLaMA-13B",
+      "workload": "ShareGPT/Alpaca length traces with Poisson arrivals",
+      "metric": "normalized end-to-end latency versus request rate"
+    },
+    "observations": [
+      "§6.1 用长度合成请求和 Poisson 到达；Orca 是作者重实现，Oracle 预知输出长度，是不可部署上界。",
+      "§6.2 ShareGPT 中相近延迟下可承受请求率相对 Orca Oracle 提高 1.7–2.7×；Alpaca 的 OPT-175B 余量更大时差距缩小。"
+    ],
+    "limitations": [
+      "不是单个 attention kernel 加速，不能替代 TTFT/ITL/SLO 的本机验证。",
+      "2023 系统基线不是 2026 最新服务栈；跨工作负载倍数不可直接迁移。"
+    ],
+    "minimal_checks": [
+      "核对长度分布、到达率、KV 占用和延迟 SLO。",
+      "先在一个负载点检查分配浪费/队列/吞吐，保留现有强库基线。"
+    ],
+    "paper": {
+      "venue": "SOSP",
+      "year": 2023,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}

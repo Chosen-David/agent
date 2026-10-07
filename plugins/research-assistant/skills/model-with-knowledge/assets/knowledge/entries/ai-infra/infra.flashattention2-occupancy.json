@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "id": "infra.flashattention2-occupancy",
+  "version": 1,
+  "status": "published",
+  "kind": "case",
+  "title": "FlashAttention-2：小 batch 下的并行划分",
+  "summary": "ICLR 2024 的 A100 实验显示改善 block/warp 划分可提升效率；长序列、小 batch/少 heads 时应先检查并行度。",
+  "aliases": [
+    "occupancy",
+    "小 batch 长序列",
+    "warp partition",
+    "FlashAttention-2"
+  ],
+  "domains": [
+    "ai-infra"
+  ],
+  "structures": [
+    "occupancy",
+    "小 batch 长序列",
+    "warp partition"
+  ],
+  "assumptions": [
+    "hardware: A100",
+    "operator: dense exact attention",
+    "metric: kernel forward/backward throughput"
+  ],
+  "sources": [
+    {
+      "url": "https://proceedings.iclr.cc/paper_files/paper/2024/file/98ed250b203d1ac6b24bbcf263e3d4a7-Paper-Conference.pdf",
+      "locator": "§3.2–3.3; §4; Figures 3–5",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#infra.flashattention2-occupancy"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "ICLR 2024 的 A100 实验显示改善 block/warp 划分可提升效率；长序列、小 batch/少 heads 时应先检查并行度。",
+    "conditions": {
+      "hardware": "A100",
+      "operator": "dense exact attention",
+      "metric": "kernel forward/backward throughput"
+    },
+    "observations": [
+      "§3.2 将序列维度也并行；§3.3 减少 warp 间 shared-memory 通信。",
+      "§4 报告 A100 的 50–73% 峰值 FLOPs 利用率；GPT 训练的最高 225 TFLOPs/s 是另一指标。"
+    ],
+    "limitations": [
+      "不能把 kernel 利用率当端到端模型加速。",
+      "不承诺 A100 结果适用于 Hopper/Blackwell；原子累加与确定性要求要单独核查。"
+    ],
+    "minimal_checks": [
+      "核查 batch×heads 是否足够填满目标 GPU。",
+      "比较现有库和新实现的数值、确定性及目标形状延迟。"
+    ],
+    "paper": {
+      "venue": "ICLR",
+      "year": 2024,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}

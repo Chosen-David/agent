@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "id": "ds.fenwick-point-range",
+  "version": 1,
+  "status": "published",
+  "kind": "method",
+  "title": "Fenwick tree：点增量与区间和",
+  "summary": "优先复用 ACL 的 Fenwick 实现处理动态点增量/区间和；每操作 O(log n)、存储 O(n)，不是任意区间操作通用解。",
+  "aliases": [
+    "点更新 区间求和",
+    "Fenwick",
+    "prefix sum"
+  ],
+  "domains": [
+    "data-structures"
+  ],
+  "structures": [
+    "点更新 区间求和",
+    "Fenwick",
+    "prefix sum"
+  ],
+  "assumptions": [
+    "operation: point add and range sum",
+    "range: zero-based half-open",
+    "concurrency: single writer"
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/atcoder/ac-library/blob/864245a00b00dd008d1abfdc239618fdb7d139da/LICENSE",
+      "locator": "LICENSE",
+      "accessed": "2026-10-06"
+    },
+    {
+      "url": "https://github.com/atcoder/ac-library/blob/864245a00b00dd008d1abfdc239618fdb7d139da/atcoder/fenwicktree.hpp",
+      "locator": "atcoder/fenwicktree.hpp",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.fenwick-point-range"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "implementation",
+    "claim": "优先复用 ACL 的 Fenwick 实现处理动态点增量/区间和；每操作 O(log n)、存储 O(n)，不是任意区间操作通用解。",
+    "conditions": {
+      "operation": "point add and range sum",
+      "range": "zero-based half-open",
+      "concurrency": "single writer"
+    },
+    "observations": [
+      "add 沿 p += p&-p 上升，prefix sum 沿 r -= r&-r；sum(l,r) 是前缀差。",
+      "整数实现内部使用 unsigned；支持类型和溢出语义应核对。"
+    ],
+    "limitations": [
+      "不支持直接区间赋值/min；非可减聚合不能用前缀差。",
+      "教学库不提供并发安全/持久化或生产性能承诺。"
+    ],
+    "minimal_checks": [
+      "核对类型范围、l=r、边界和负增量。",
+      "用独立朴素数组对照少量操作，再按目标规模测开销。"
+    ],
+    "code": {
+      "repository": "atcoder/ac-library",
+      "commit": "864245a00b00dd008d1abfdc239618fdb7d139da",
+      "paths": [
+        "atcoder/fenwicktree.hpp"
+      ],
+      "symbols": [
+        "atcoder::fenwick_tree<T>::add",
+        "sum"
+      ],
+      "license": "CC0-1.0",
+      "language": "C++",
+      "entrypoint": "atcoder::fenwick_tree<long long> bit(n); bit.add(p,x); bit.sum(l,r)",
+      "local_execution": "not-run"
+    }
+  }
+}

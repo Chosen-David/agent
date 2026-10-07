@@ -246,6 +246,8 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 
 [知识库入口](knowledge/README.md) · [建模流程](workflows/knowledge_modeling_workflow.md) · [上游取舍与架构图](docs/knowledge_upstreams.md) · [持续学习任务 Prompt](prompts/math_knowledge_continuous_learning.md)。
 
-知识按 Git 管理的 JSON + Markdown 条目维护；`model-with-knowledge` 按问题结构检索、检查前提再推导。已提供 10 条数学/物理种子、只读检索器、版本依赖验收和独立 Skill 快照。已提供可重建的 SQLite FTS5/BM25 索引、结构排名融合、章节导航、增量更新和候选导入；无独立数据库服务。定时触发器尚未创建，语料规模和真实任务效果仍需后续评测。
+知识按 Git 管理的 JSON + Markdown 条目维护；`model-with-knowledge` 按问题结构检索、检查前提再推导。已提供 39 条知识：17 条数学/物理种子与 22 张工程复用卡、只读检索器、版本依赖验收和独立 Skill 快照。已提供可重建的 SQLite FTS5/BM25 索引、结构排名融合、章节导航、增量更新和候选导入；无独立数据库服务。工程持续学习提供真实 WSL/tmux 调度入口，部署与恢复见 [维护说明](docs/knowledge_maintenance.md)；语料规模和真实任务效果仍需后续评测。
 
 第二轮已加入条件数与残差、群平均投影、对偶最优性证书、Noether 守恒检查及整体误差排序界；检索增加英文词干、反向关联和有预算的完整前提上下文。验收见 [第二轮记录](docs/knowledge_learning/2026-10-06-round2/report.md)。
+
+工程升级覆盖 AI Infra、AI 算法与数据结构算法；主 AI 实验前检索原论文 observations/实验条件，代码 Agent 读取固定版本的成熟实现。见 [工程复用流程](workflows/engineering_knowledge_reuse_workflow.md)、[来源与核验报告](docs/knowledge_learning/2026-10-06-engineering/report.md) 和 [定时学习 Prompt](prompts/engineering_knowledge_continuous_learning.md)。

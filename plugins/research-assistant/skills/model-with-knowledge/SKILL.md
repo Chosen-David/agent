@@ -1,9 +1,11 @@
 ---
 name: model-with-knowledge
-description: 将实际问题建模为数学或物理结构，按需检索基础知识并核对前提、推导、反例和证据。用于误差界、低秩近似、排序稳定性、群对称简化、量纲分析及新知识推导；支持维护有来源和版本的知识条目，不用于给无关任务强套定理。
+description: 按问题结构检索数学/物理知识、AI Infra 与 AI 算法论文的实验/消融结论，以及数据结构和算法的固定版本实现。用于建模推导、实验前决策、避免重复探索和代码复用；核对前提、来源、版本与迁移限制，不以文献替代必做验证。
 ---
 
 # 知识建模与推导
+
+AI Infra/AI 算法实验决策或数据结构/算法实现复用时，按需读 [工程知识复用](references/engineering_reuse.md)，不强套数学推导流程。检索实验卡必须核对原始设置、负结果与版本；代码卡读取固定 commit/API/许可证。`decision` 可比较已知条件，仍需人工复核；显式复现、正确性和新环境性能验收不能用文献替代。
 
 先读 [执行与验收](references/execution.md) 和 [建模流程](references/workflow.md)。本 Skill 自带只读检索脚本与种子知识，可离线独立使用；维护格式见 [知识说明](assets/knowledge/README.md)、[格式契约](assets/knowledge/FORMAT.md)，外部来源取舍见 [上游说明](references/upstreams.md)。
 

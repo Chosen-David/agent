@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "id": "ds.hnsw-recall-budget",
+  "version": 1,
+  "status": "published",
+  "kind": "method",
+  "title": "HNSW：ef、召回与内存预算",
+  "summary": "HNSW 的 ef/M/ef_construction 是召回、查询/构建成本和内存的折中；参数不能只按教程默认值宣称最优。",
+  "aliases": [
+    "HNSW ef recall",
+    "近似近邻",
+    "ANN memory"
+  ],
+  "domains": [
+    "data-structures"
+  ],
+  "structures": [
+    "HNSW ef recall",
+    "近似近邻",
+    "ANN memory"
+  ],
+  "assumptions": [
+    "operation: approximate vector nearest-neighbor search",
+    "metric: l2 ip or cosine",
+    "quality: approximate"
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/nmslib/hnswlib/blob/ca426729609b3221563047ceb269cc1213e0d376/LICENSE",
+      "locator": "LICENSE",
+      "accessed": "2026-10-06"
+    },
+    {
+      "url": "https://github.com/nmslib/hnswlib/blob/ca426729609b3221563047ceb269cc1213e0d376/hnswlib/hnswalg.h",
+      "locator": "hnswlib/hnswalg.h",
+      "accessed": "2026-10-06"
+    },
+    {
+      "url": "https://github.com/nmslib/hnswlib/blob/ca426729609b3221563047ceb269cc1213e0d376/README.md",
+      "locator": "README.md",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.hnsw-recall-budget"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "implementation",
+    "claim": "HNSW 的 ef/M/ef_construction 是召回、查询/构建成本和内存的折中；参数不能只按教程默认值宣称最优。",
+    "conditions": {
+      "operation": "approximate vector nearest-neighbor search",
+      "metric": "l2 ip or cosine",
+      "quality": "approximate"
+    },
+    "observations": [
+      "README 分开定义构建 M/ef_construction 与查询 ef；源码为多层图搜索。",
+      "并发 insert/query 组合限制与索引保存后的 ef 恢复行为要按固定版本核对。"
+    ],
+    "limitations": [
+      "无所有数据分布上的 O(log n) 最坏搜索保证；分布变化可影响召回。",
+      "不支持把 ANN 结果作为 exact correctness oracle。"
+    ],
+    "minimal_checks": [
+      "用精确检索测 Recall@k 与 p95 延迟；包含目标分布和内存。",
+      "至少一个较高 ef 对照，确认召回而不是仅速度。"
+    ],
+    "code": {
+      "repository": "nmslib/hnswlib",
+      "commit": "ca426729609b3221563047ceb269cc1213e0d376",
+      "paths": [
+        "hnswlib/hnswalg.h",
+        "README.md"
+      ],
+      "symbols": [
+        "hnswlib::HierarchicalNSW",
+        "init_index",
+        "set_ef",
+        "knn_query"
+      ],
+      "license": "Apache-2.0",
+      "language": "Python/C++",
+      "entrypoint": "hnswlib.Index(space=\"l2\",dim=d); init_index(...); add_items(...); set_ef(ef); knn_query(...,k=k)",
+      "local_execution": "not-run"
+    }
+  }
+}

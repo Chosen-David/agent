@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "id": "algo.dora-magnitude-direction",
+  "version": 1,
+  "status": "published",
+  "kind": "case",
+  "title": "DoRA：幅值/方向观察与额外训练成本",
+  "summary": "ICML 2024 的权重分析与任务实验支持把幅值和方向分开适配；分析里的相关趋势不能证明因果或普遍最优。",
+  "aliases": [
+    "DoRA magnitude direction",
+    "LoRA capacity",
+    "权重方向",
+    "weight decomposition"
+  ],
+  "domains": [
+    "ai-algorithms"
+  ],
+  "structures": [
+    "DoRA magnitude direction",
+    "LoRA capacity",
+    "权重方向"
+  ],
+  "assumptions": [
+    "method: magnitude plus low-rank directional updates",
+    "models: LLaMA LLaVA VL-BART in paper",
+    "metric: downstream task quality"
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/mlresearch/v235/main/assets/liu24bn/liu24bn.pdf",
+      "locator": "§3 Figure 2; §4; §5 task tables",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.dora-magnitude-direction"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "ICML 2024 的权重分析与任务实验支持把幅值和方向分开适配；分析里的相关趋势不能证明因果或普遍最优。",
+    "conditions": {
+      "method": "magnitude plus low-rank directional updates",
+      "models": "LLaMA LLaVA VL-BART in paper",
+      "metric": "downstream task quality"
+    },
+    "observations": [
+      "§3 Figure 2 比较 FT/LoRA 的幅值与方向变化；§5 表格比较下游结果。",
+      "§4 的归一化方向和可学习幅值能够合并推理权重，但训练计算/内存须单独考量。"
+    ],
+    "limitations": [
+      "不能由几层权重趋势推出所有模型 LoRA 失败机制。",
+      "同 rank 不一定同训练成本；应同时比较参数/显存/耗时和质量。"
+    ],
+    "minimal_checks": [
+      "核对列/行方向、范数梯度与 merge 结果。",
+      "做一个固定预算 LoRA/DoRA 对照；不重复论文全部权重趋势实验。"
+    ],
+    "paper": {
+      "venue": "ICML",
+      "year": 2024,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}

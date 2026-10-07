@@ -125,7 +125,17 @@ class KnowledgeStore:
         fields = {'schema_version', 'id', 'version', 'status', 'kind', 'title', 'summary',
                   'aliases', 'domains', 'structures', 'assumptions', 'sources',
                   'verification', 'requires', 'relations'}
-        _require(set(d) == fields, 'metadata fields mismatch: ' + str(sorted(set(d) ^ fields)))
+        _require(fields <= set(d) <= fields | {'reuse'},
+                 'metadata fields mismatch: ' + str(sorted(set(d) ^ fields)))
+        if 'reuse' in d:
+            if __package__:
+                from .knowledge_reuse import validate_reuse
+            else:
+                from knowledge_reuse import validate_reuse
+            try:
+                validate_reuse(d['reuse'])
+            except ValueError as exc:
+                raise KnowledgeError(str(exc)) from exc
         _require(type(d['schema_version']) is int and d['schema_version'] == SCHEMA_VERSION,
                  'unsupported knowledge schema')
         _require(isinstance(d['id'], str) and re.fullmatch(r'[a-z][a-z0-9.-]{2,100}', d['id']), 'invalid ID')
@@ -381,6 +391,12 @@ def main(argv=None):
     sub = parser.add_subparsers(dest='command', required=True)
     sub.add_parser('validate')
     sub.add_parser('snapshot')
+    decision = sub.add_parser('decision', help='retrieve evidence and check declared transfer conditions')
+    decision.add_argument('query')
+    decision.add_argument('--context', required=True, help='JSON object of known task conditions')
+    decision.add_argument('--purpose', choices=('experiment', 'implementation'), default='experiment')
+    decision.add_argument('--explicit-reproduction', action='store_true')
+    decision.add_argument('--limit', type=int, default=5)
     index = sub.add_parser('index')
     index.add_argument('--db', required=True)
     index.add_argument('--rebuild', action='store_true')
@@ -419,7 +435,15 @@ def main(argv=None):
     args = parser.parse_args(argv)
     try:
         store = KnowledgeStore(args.root)
-        if args.command == 'context':
+        if args.command == 'decision':
+            if __package__:
+                from .knowledge_reuse import decision_support
+            else:
+                from knowledge_reuse import decision_support
+            context_data = _json(Path(args.context).read_text(encoding='utf-8'))
+            out = decision_support(store, args.query, context_data, purpose=args.purpose,
+                                   explicit_reproduction=args.explicit_reproduction, limit=args.limit)
+        elif args.command == 'context':
             if args.index:
                 if __package__:
                     from .knowledge_index import indexed_search

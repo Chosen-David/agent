@@ -141,7 +141,7 @@ MAPPINGS['workflows/knowledge_modeling_workflow.md'] = [
     'plugins/research-assistant/skills/research-assistant/references/knowledge_modeling_workflow.md',
 ]
 MAPPINGS['docs/knowledge_upstreams.md'] = [KNOWLEDGE_SKILL + '/references/upstreams.md']
-for module in ('knowledge.py', 'knowledge_index.py', 'knowledge_ingest.py'):
+for module in ('knowledge.py', 'knowledge_index.py', 'knowledge_ingest.py', 'knowledge_reuse.py'):
     MAPPINGS['agent_runtime/' + module] = [KNOWLEDGE_SKILL + '/scripts/' + module]
 for source_path in sorted((ROOT / 'knowledge').rglob('*')):
     if source_path.is_file() and source_path.suffix in {'.md', '.json', '.txt'}:
@@ -151,8 +151,14 @@ for source_path in sorted((ROOT / 'knowledge').rglob('*')):
 
 # One access contract, bundled locally for every registered role.
 MAPPINGS['workflows/knowledge_access_workflow.md'] = [
-    str(Path(role['skill']).parent / 'references/knowledge_access_workflow.md')
+    (Path(role['skill']).parent / 'references/knowledge_access_workflow.md').as_posix()
     for role in json.loads((ROOT / 'config/role_registry.json').read_text())['roles']
+]
+
+MAPPINGS['workflows/engineering_knowledge_reuse_workflow.md'] = [
+    KNOWLEDGE_SKILL + '/references/engineering_reuse.md',
+    'plugins/research-assistant/skills/research-assistant/references/engineering_reuse.md',
+    'plugins/research-assistant/skills/research-implement-optimize/references/engineering_reuse.md',
 ]
 
 # The coordinator bundles role supplements for standalone/offline dispatch.
@@ -205,6 +211,18 @@ def main() -> int:
     stale = []
     for source, destinations in MAPPINGS.items():
         for destination in destinations:
+            # Assets and Python modules are immutable snapshots: preserve bytes
+            # across LF/CRLF hosts, not merely normalized text equality.
+            if source in RAW_COPY_SOURCES or source.endswith(('.json', '.py')):
+                expected_bytes = (ROOT / source).read_bytes()
+                path = ROOT / destination
+                if path.exists() and path.read_bytes() == expected_bytes:
+                    continue
+                stale.append(destination)
+                if not args.check:
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    path.write_bytes(expected_bytes)
+                continue
             expected = render(source, destination)
             path = ROOT / destination
             actual = path.read_text(encoding="utf-8") if path.exists() else None

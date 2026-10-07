@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "scope": "Original-source reading, retrieval and runtime checks; no local GPU reproduction or measured implementation speedup.",
+  "corpus": {
+    "previous": 10,
+    "added": 22,
+    "total": 39,
+    "papers": 13,
+    "repositories": 6,
+    "concurrent_math_added": 7
+  },
+  "auth_probe": {
+    "cli": "0.160.1",
+    "model": "gpt-6.1-sol",
+    "response": "READY",
+    "exit_code": 0
+  },
+  "connector_probe": {
+    "repository": "Chosen-David/agent",
+    "push": true,
+    "decision_exit_code": 0,
+    "automatic_skip_authorized": false,
+    "exit_code": 0
+  },
+  "maintenance": {
+    "socket": "agent-knowledge",
+    "session": "agent-knowledge-maintenance",
+    "live_readback": true,
+    "next_due_shanghai": "2026-10-09T08:00:00+08:00",
+    "schedule": "Monday/Wednesday/Friday 08:00 Asia/Shanghai"
+  },
+  "regression": {
+    "status": "passed",
+    "source_revision": "d6845eb043d37b418723a1ca1f8b508e5bee5e51",
+    "tests": 494,
+    "passed": 483,
+    "skipped": 11,
+    "reader_passed": 3,
+    "real_tmux_test": "passed",
+    "skips": "7 optional plotting/font dependency checks and 4 optional SciPy checks",
+    "checks": {
+      "unittest": {
+        "exit_code": 0,
+        "seconds": 55.75021195411682
+      },
+      "reader": {
+        "exit_code": 0,
+        "seconds": 1.697896957397461
+      },
+      "validate": {
+        "exit_code": 0,
+        "seconds": 0.04884076118469238
+      },
+      "plugin": {
+        "exit_code": 0,
+        "seconds": 0.0533754825592041
+      },
+      "retrieval-base": {
+        "exit_code": 0,
+        "seconds": 0.18014001846313477
+      },
+      "retrieval-round2": {
+        "exit_code": 0,
+        "seconds": 0.19766902923583984
+      },
+      "retrieval-morphology": {
+        "exit_code": 0,
+        "seconds": 0.1442852020263672
+      },
+      "retrieval-engineering": {
+        "exit_code": 0,
+        "seconds": 0.2695193290710449
+      }
+    },
+    "scope": "Frozen tracked source on WSL EXT4. Final process approval configuration separately verified by real native connector write. No GPU reproduction."
+  },
+  "retrieval": {
+    "base": {
+      "files": {
+        "mean_recall_at_3": 0.9523809523809523,
+        "mean_context_recall": 1.0,
+        "mean_reciprocal_rank": 0.9285714285714286,
+        "median_query_seconds": 0.006791757499968298
+      },
+      "sqlite": {
+        "mean_recall_at_3": 0.9523809523809523,
+        "mean_context_recall": 1.0,
+        "mean_reciprocal_rank": 0.9285714285714286,
+        "median_query_seconds": 0.0020336804999487867
+      }
+    },
+    "round2": {
+      "files": {
+        "mean_recall_at_3": 1.0,
+        "mean_context_recall": 1.0,
+        "mean_reciprocal_rank": 0.7708333333333334,
+        "median_query_seconds": 0.007047257999829526
+      },
+      "sqlite": {
+        "mean_recall_at_3": 1.0,
+        "mean_context_recall": 1.0,
+        "mean_reciprocal_rank": 0.7083333333333334,
+        "median_query_seconds": 0.0019847500000196305
+      }
+    },
+    "morphology": {
+      "files": {
+        "mean_recall_at_3": 0.0,
+        "mean_context_recall": 0.0,
+        "mean_reciprocal_rank": 0,
+        "median_query_seconds": 0.007014091999963057
+      },
+      "sqlite": {
+        "mean_recall_at_3": 0.75,
+        "mean_context_recall": 1.0,
+        "mean_reciprocal_rank": 0.5833333333333334,
+        "median_query_seconds": 0.0026397774998940804
+      }
+    },
+    "engineering": {
+      "files": {
+        "mean_recall_at_3": 1.0,
+        "mean_context_recall": 1.0,
+        "mean_reciprocal_rank": 1.0,
+        "median_query_seconds": 0.00706092800010083
+      },
+      "sqlite": {
+        "mean_recall_at_3": 1.0,
+        "mean_context_recall": 1.0,
+        "mean_reciprocal_rank": 1.0,
+        "median_query_seconds": 0.0023979789998520573
+      }
+    }
+  },
+  "retrieval_limitation": "Authored synthetic queries, not blind agent evaluation. Original raw Recall@3=20/21; morphology SQLite raw Recall@3=3/4 while dependency context recall=1. File backend does not stem these inflections. Corpus expansion changes rankings; no claim of perfect general retrieval.",
+  "native_windows_host_git_tests": {
+    "tests": 4,
+    "passed": 4,
+    "scope": "Real isolated Git fixtures; exact remote tree reconciliation and preservation on dirty/mismatch/out-of-scope staged changes."
+  },
+  "connector_write_probe": {
+    "status": "passed",
+    "repository": "Chosen-David/agent",
+    "blob_sha": "80a6f5fd7f9b40163d956f72c87d0775e12cc391",
+    "root_independent_readback": "agent-knowledge-maintenance-probe",
+    "scope": "Unreferenced benign blob only; no branch update during probe. Per-process granular MCP approval with official auto_review. Earlier never-policy refusal retained privately."
+  }
+}

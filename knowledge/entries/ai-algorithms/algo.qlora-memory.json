@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "id": "algo.qlora-memory",
+  "version": 1,
+  "status": "published",
+  "kind": "case",
+  "title": "QLoRA：存储 dtype 与计算 dtype 分离",
+  "summary": "NeurIPS 2023 报告 65B 模型单 48GB GPU 微调可行；依赖量化冻结骨干、LoRA 和具体训练设置，不是任意 65B 训练均可放下。",
+  "aliases": [
+    "4bit finetuning",
+    "NF4 double quantization",
+    "QLoRA memory",
+    "paged optimizer"
+  ],
+  "domains": [
+    "ai-algorithms"
+  ],
+  "structures": [
+    "4bit finetuning",
+    "NF4 double quantization",
+    "QLoRA memory"
+  ],
+  "assumptions": [
+    "method: NF4 frozen backbone plus LoRA",
+    "model: 65B model in paper",
+    "metric: finetuning memory and task quality"
+  ],
+  "sources": [
+    {
+      "url": "https://papers.neurips.cc/paper_files/paper/2023/file/1feb87871436031bdc0f2beaa62a049b-Paper-Conference.pdf",
+      "locator": "§3–4; quantization and adapter ablations; Appendix",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.qlora-memory"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "NeurIPS 2023 报告 65B 模型单 48GB GPU 微调可行；依赖量化冻结骨干、LoRA 和具体训练设置，不是任意 65B 训练均可放下。",
+    "conditions": {
+      "method": "NF4 frozen backbone plus LoRA",
+      "model": "65B model in paper",
+      "metric": "finetuning memory and task quality"
+    },
+    "observations": [
+      "§3 区分 4-bit 存储和 BF16 计算，double quantization 减少量化常数，paged optimizer 应对峰值。",
+      "§4 的消融考察 NF4、double quantization 和 LoRA 配置；对 chatbot 的评级存在评测器局限。"
+    ],
+    "limitations": [
+      "不代表全参优化；activation、optimizer、KV/序列长度仍可 OOM。",
+      "不把 Vicuna 自动评分比例当通用 ChatGPT 能力等价。"
+    ],
+    "minimal_checks": [
+      "核对量化格式、计算 dtype、target modules、梯度检查点与序列长度。",
+      "测一小批显存峰值和 held-out 质量即可先评估可行性。"
+    ],
+    "paper": {
+      "venue": "NeurIPS",
+      "year": 2023,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}

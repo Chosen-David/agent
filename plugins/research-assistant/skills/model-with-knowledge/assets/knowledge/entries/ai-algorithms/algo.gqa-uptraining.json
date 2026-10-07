@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "id": "algo.gqa-uptraining",
+  "version": 1,
+  "status": "published",
+  "kind": "case",
+  "title": "GQA：额外训练与质量/速度折中",
+  "summary": "EMNLP 2023 的 T5 实验支持 mean-pooling 转换和额外训练后 GQA 的质量/速度折中；转换本身不保证等价。",
+  "aliases": [
+    "KV heads 共享",
+    "GQA uptraining",
+    "multi query quality",
+    "grouped-query"
+  ],
+  "domains": [
+    "ai-algorithms"
+  ],
+  "structures": [
+    "KV heads 共享",
+    "GQA uptraining",
+    "multi query quality"
+  ],
+  "assumptions": [
+    "model: T5.1.1 XXL",
+    "uptraining: 5% original pretraining steps",
+    "timing: 8 TPUv4 chips greedy decoding"
+  ],
+  "sources": [
+    {
+      "url": "https://aclanthology.org/2023.emnlp-main.298.pdf",
+      "locator": "§3.1; Table 1; §3.3 Figures 4–5",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.gqa-uptraining"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "EMNLP 2023 的 T5 实验支持 mean-pooling 转换和额外训练后 GQA 的质量/速度折中；转换本身不保证等价。",
+    "conditions": {
+      "model": "T5.1.1 XXL",
+      "uptraining": "5% original pretraining steps",
+      "timing": "8 TPUv4 chips greedy decoding"
+    },
+    "observations": [
+      "§3 Table 1：MHA-XXL 平均 47.2、GQA-8 47.1；时间为 1.51 s 与 0.28 s，每 sample 每 TPUv4 chip。",
+      "§3.3 Figures 4–5：mean pooling 优于 first/random；5% uptraining 有收益，10% 增量变小。"
+    ],
+    "limitations": [
+      "不能把不同任务指标的平均值看成一个标准精度；图/表时间标注须以方法与表为准。",
+      "5% 对应约 600 TPUv3 chip-days，不是无成本；直接替换 decoder-only 新模型需质量验证。"
+    ],
+    "minimal_checks": [
+      "核对 Q heads/KV heads 分组与转换权重。",
+      "少量代表输入检查质量，再决定是否值得 uptraining；不盲重做已报道 pooling 全网格。"
+    ],
+    "paper": {
+      "venue": "EMNLP",
+      "year": 2023,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}

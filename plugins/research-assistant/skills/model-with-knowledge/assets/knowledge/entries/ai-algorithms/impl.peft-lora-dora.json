@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "id": "impl.peft-lora-dora",
+  "version": 1,
+  "status": "published",
+  "kind": "method",
+  "title": "复用 PEFT 的 LoRA / DoRA 实现",
+  "summary": "已有 PyTorch 模型的 adapter 需求优先评估 PEFT 已核查实现；不从零重写 LoRA/DoRA 的 merge 和范数路径。",
+  "aliases": [
+    "PEFT adapter implementation",
+    "LoraConfig use_dora",
+    "LoRA merge"
+  ],
+  "domains": [
+    "ai-algorithms"
+  ],
+  "structures": [
+    "PEFT adapter implementation",
+    "LoraConfig use_dora",
+    "LoRA merge"
+  ],
+  "assumptions": [
+    "operation: LoRA or DoRA adapter training",
+    "framework: PyTorch with PEFT",
+    "backbone: supported model modules"
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/huggingface/peft/blob/e13de7e469d37e3163d93f2356ec013c7a7e1f0a/LICENSE",
+      "locator": "LICENSE",
+      "accessed": "2026-10-06"
+    },
+    {
+      "url": "https://github.com/huggingface/peft/blob/e13de7e469d37e3163d93f2356ec013c7a7e1f0a/src/peft/tuners/lora/layer.py",
+      "locator": "src/peft/tuners/lora/layer.py",
+      "accessed": "2026-10-06"
+    },
+    {
+      "url": "https://github.com/huggingface/peft/blob/e13de7e469d37e3163d93f2356ec013c7a7e1f0a/src/peft/tuners/lora/dora.py",
+      "locator": "src/peft/tuners/lora/dora.py",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#impl.peft-lora-dora"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "implementation",
+    "claim": "已有 PyTorch 模型的 adapter 需求优先评估 PEFT 已核查实现；不从零重写 LoRA/DoRA 的 merge 和范数路径。",
+    "conditions": {
+      "operation": "LoRA or DoRA adapter training",
+      "framework": "PyTorch with PEFT",
+      "backbone": "supported model modules"
+    },
+    "observations": [
+      "layer.py 包含 adapter layer 与 merge 逻辑；dora.py 包含幅值/方向实现。"
+    ],
+    "limitations": [
+      "示例 target_modules 占位必须按模型替换；quantized merge 和 dropout 路径需单独核查。",
+      "未安装/训练目标模型，不能声明质量或速度已验证。"
+    ],
+    "minimal_checks": [
+      "核对冻结参数、target_modules、训练/推理输出与 merge 前后数值。",
+      "保存 adapter 配置、基座版本与加载测试；量化迁移需新质量检查。"
+    ],
+    "code": {
+      "repository": "huggingface/peft",
+      "commit": "e13de7e469d37e3163d93f2356ec013c7a7e1f0a",
+      "paths": [
+        "src/peft/tuners/lora/layer.py",
+        "src/peft/tuners/lora/dora.py"
+      ],
+      "symbols": [
+        "LoraLayer",
+        "DoraLinearLayer"
+      ],
+      "license": "Apache-2.0",
+      "language": "Python/PyTorch",
+      "entrypoint": "LoraConfig(r=8,lora_alpha=16,target_modules=[...],use_dora=True)",
+      "local_execution": "not-run"
+    }
+  }
+}

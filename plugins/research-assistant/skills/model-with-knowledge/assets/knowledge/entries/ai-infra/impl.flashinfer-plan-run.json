@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "id": "impl.flashinfer-plan-run",
+  "version": 1,
+  "status": "published",
+  "kind": "method",
+  "title": "复用 FlashInfer plan/run 接口",
+  "summary": "服务推理需要分页/不规则 KV 时先复用 FlashInfer wrapper；workspace、layout 与 plan 生命周期是接口契约的一部分。",
+  "aliases": [
+    "paged decode implementation",
+    "flashinfer plan run",
+    "BatchDecodeWithPagedKVCacheWrapper"
+  ],
+  "domains": [
+    "ai-infra"
+  ],
+  "structures": [
+    "paged decode implementation",
+    "flashinfer plan run",
+    "BatchDecodeWithPagedKVCacheWrapper"
+  ],
+  "assumptions": [
+    "operation: paged or ragged attention inference",
+    "device: supported NVIDIA GPU",
+    "lifecycle: explicit plan then run"
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/flashinfer-ai/flashinfer/blob/ea8135c0bdf641f54214e9ae777d5b75b5133079/LICENSE",
+      "locator": "LICENSE",
+      "accessed": "2026-10-06"
+    },
+    {
+      "url": "https://github.com/flashinfer-ai/flashinfer/blob/ea8135c0bdf641f54214e9ae777d5b75b5133079/flashinfer/decode.py",
+      "locator": "flashinfer/decode.py",
+      "accessed": "2026-10-06"
+    },
+    {
+      "url": "https://github.com/flashinfer-ai/flashinfer/blob/ea8135c0bdf641f54214e9ae777d5b75b5133079/flashinfer/prefill.py",
+      "locator": "flashinfer/prefill.py",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#impl.flashinfer-plan-run"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "implementation",
+    "claim": "服务推理需要分页/不规则 KV 时先复用 FlashInfer wrapper；workspace、layout 与 plan 生命周期是接口契约的一部分。",
+    "conditions": {
+      "operation": "paged or ragged attention inference",
+      "device": "supported NVIDIA GPU",
+      "lifecycle": "explicit plan then run"
+    },
+    "observations": [
+      "decode.py / prefill.py 包含不同场景 wrappers，plan 准备元数据后 run 执行。"
+    ],
+    "limitations": [
+      "不自动安装依赖，不修改 SGLang。",
+      "plan 元数据过期、workspace 复用和 stream 错误会破坏结果。"
+    ],
+    "minimal_checks": [
+      "核对 indptr/indices/last_page_len、heads、workspace 大小。",
+      "先 correctness reference，再独立计入 plan/run 延迟。"
+    ],
+    "code": {
+      "repository": "flashinfer-ai/flashinfer",
+      "commit": "ea8135c0bdf641f54214e9ae777d5b75b5133079",
+      "paths": [
+        "flashinfer/decode.py",
+        "flashinfer/prefill.py"
+      ],
+      "symbols": [
+        "BatchDecodeWithPagedKVCacheWrapper",
+        "plan",
+        "run"
+      ],
+      "license": "Apache-2.0",
+      "language": "Python/CUDA",
+      "entrypoint": "flashinfer.BatchDecodeWithPagedKVCacheWrapper(workspace_buffer,kv_layout=\"NHD\")",
+      "local_execution": "not-run"
+    }
+  }
+}

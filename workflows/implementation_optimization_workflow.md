@@ -388,4 +388,6 @@ on_failure、resource_budget、status。依赖有效且无环，前置失败不�
 
 ## 按需使用基础知识
 
+AI Infra/AI 算法/数据结构实现先按 [工程知识复用](engineering_knowledge_reuse_workflow.md) 检索实验与固定实现卡，再进入候选比较。核对论文 baseline、条件和负例；读取 commit/API/许可，优先成熟库，保留 correctness 与目标性能验收。论文结果只是 prior，不能填成本机 measured 或跳过用户必做实验。
+
 当任务需要数学/物理结构、误差界、对称简化或量纲分析时转 `model-with-knowledge` 并遵循 [知识建模流程](knowledge_modeling_workflow.md)。从任务结构检索、核对全部假设，再返回推导、反例与知识版本引用；知识相关性不是适用性，推导不是性能实测。无此需求不增加步骤。

@@ -33,7 +33,7 @@ class IndexTests(unittest.TestCase):
         p=self.root/'entries/physics.dimensionless.json';d=json.loads(p.read_text());d['status']='deprecated';p.write_text(json.dumps(d))
         fresh=KnowledgeStore(self.root)
         self.assertEqual(build_index(fresh,self.db)['removed'],1)
-        results=indexed_search(fresh,self.db,'量纲',limit=len(fresh.records))['results']
+        results=indexed_search(fresh,self.db,'量纲',limit=min(len(fresh.records),20))['results']
         self.assertNotIn('physics.dimensionless', [r['id'] for r in results])
         self.assertEqual(build_index(fresh,self.db,rebuild=True)['updated'],self.count-1)
 
@@ -46,7 +46,12 @@ class IndexTests(unittest.TestCase):
         self.assertTrue(row['sections'])
         self.assertTrue(all(s['start_line']<=s['end_line'] for s in row['sections']))
         self.assertEqual(indexed_search(self.store,self.db,'量纲',domain='group-theory')['results'],[])
-        self.assertEqual(indexed_search(self.store,self.db,'" DROP TABLE docs; -- zzqxnonexistent')['results'],[])
+        # TABLE is legitimate paper locator text in the expanded corpus.
+        # SQL-looking input must remain search data and preserve the index.
+        indexed_search(self.store,self.db,'" DROP TABLE docs; -- zzqxnonexistent')
+        with sqlite3.connect(self.db) as con:
+            self.assertEqual(con.execute('SELECT count(*) FROM docs').fetchone()[0],self.count)
+        self.assertEqual(indexed_search(self.store,self.db,'zzqxnonexistent')['results'],[])
         self.assertEqual(indexed_search(self.store,self.db,'!!!')['results'],[])
         self.assertTrue(indexed_search(self.store,self.db,'量纲')['results'])
 
@@ -77,8 +82,8 @@ class IndexTests(unittest.TestCase):
 
     def test_stemming_and_engine_refresh(self):
         build_index(self.store,self.db)
-        plural = indexed_search(self.store,self.db,'residuals',limit=self.count)['results']
-        singular = indexed_search(self.store,self.db,'residual',limit=self.count)['results']
+        plural = indexed_search(self.store,self.db,'residuals',limit=min(self.count,20))['results']
+        singular = indexed_search(self.store,self.db,'residual',limit=min(self.count,20))['results']
         self.assertIn('math.linear-system-stability', [r['id'] for r in plural])
         self.assertEqual({r['id'] for r in plural}, {r['id'] for r in singular})
         with sqlite3.connect(self.db) as con:

@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "id": "ds.maxflow-matching",
+  "version": 1,
+  "status": "published",
+  "kind": "method",
+  "title": "最大流：容量网络与二分图匹配",
+  "summary": "ACL mf_graph 是可复用残量网络入口；一般复杂度按 Dinic 最坏界 O(V²E)，特殊图的更好界需单独证明。",
+  "aliases": [
+    "二分图匹配",
+    "Dinic maxflow",
+    "residual graph"
+  ],
+  "domains": [
+    "data-structures"
+  ],
+  "structures": [
+    "二分图匹配",
+    "Dinic maxflow",
+    "residual graph"
+  ],
+  "assumptions": [
+    "graph: directed capacity network",
+    "capacity: nonnegative integer",
+    "source_sink: distinct"
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/atcoder/ac-library/blob/864245a00b00dd008d1abfdc239618fdb7d139da/LICENSE",
+      "locator": "LICENSE",
+      "accessed": "2026-10-06"
+    },
+    {
+      "url": "https://github.com/atcoder/ac-library/blob/864245a00b00dd008d1abfdc239618fdb7d139da/atcoder/maxflow.hpp",
+      "locator": "atcoder/maxflow.hpp",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.maxflow-matching"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "implementation",
+    "claim": "ACL mf_graph 是可复用残量网络入口；一般复杂度按 Dinic 最坏界 O(V²E)，特殊图的更好界需单独证明。",
+    "conditions": {
+      "graph": "directed capacity network",
+      "capacity": "nonnegative integer",
+      "source_sink": "distinct"
+    },
+    "observations": [
+      "add_edge 保存正反边；flow 用 level graph 和阻塞流更新 residual capacity。",
+      "flow 是增量修改残量状态；再次调用的结果不是自动从零重算。"
+    ],
+    "limitations": [
+      "加权最小成本问题需要 min-cost flow；不能把最大 cardinality 当最大 weight。",
+      "容量溢出、状态复用和不当图建模会改变语义。"
+    ],
+    "minimal_checks": [
+      "小二分图枚举匹配或检查 min-cut 容量作独立 oracle。",
+      "核对重复 flow 调用与 cap 类型上界。"
+    ],
+    "code": {
+      "repository": "atcoder/ac-library",
+      "commit": "864245a00b00dd008d1abfdc239618fdb7d139da",
+      "paths": [
+        "atcoder/maxflow.hpp"
+      ],
+      "symbols": [
+        "atcoder::mf_graph",
+        "add_edge",
+        "flow",
+        "min_cut"
+      ],
+      "license": "CC0-1.0",
+      "language": "C++",
+      "entrypoint": "atcoder::mf_graph<long long> g(n); g.add_edge(u,v,cap); g.flow(s,t)",
+      "local_execution": "not-run"
+    }
+  }
+}

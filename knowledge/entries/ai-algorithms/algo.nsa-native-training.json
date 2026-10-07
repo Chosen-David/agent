@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "id": "algo.nsa-native-training",
+  "version": 1,
+  "status": "published",
+  "kind": "case",
+  "title": "NSA：原生稀疏训练不等于无损替换",
+  "summary": "ACL 2025 的 NSA 在共同训练设置下保持多数任务质量，并有明确退化项；它是训练架构变化，不能直接套到未训练的密集模型。",
+  "aliases": [
+    "native sparse attention",
+    "块稀疏训练",
+    "NSA GQA MoE",
+    "long context selection"
+  ],
+  "domains": [
+    "ai-algorithms"
+  ],
+  "structures": [
+    "native sparse attention",
+    "块稀疏训练",
+    "NSA GQA MoE"
+  ],
+  "assumptions": [
+    "model: 27B total / 3B active MoE with GQA",
+    "training: 270B tokens at 8k then 32k continuation",
+    "method: compression selection sliding-window branches"
+  ],
+  "sources": [
+    {
+      "url": "https://aclanthology.org/2025.acl-long.1126.pdf",
+      "locator": "§3.1 Tables 1–2; §4 efficiency; Appendix C–D",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.nsa-native-training"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "ACL 2025 的 NSA 在共同训练设置下保持多数任务质量，并有明确退化项；它是训练架构变化，不能直接套到未训练的密集模型。",
+    "conditions": {
+      "model": "27B total / 3B active MoE with GQA",
+      "training": "270B tokens at 8k then 32k continuation",
+      "method": "compression selection sliding-window branches"
+    },
+    "observations": [
+      "§3.1 指定压缩块 32、步长 16、选择块 64、16 块、窗口 512。",
+      "Table 1：MBPP 从 full 0.482 到 NSA 0.466，MMLU 0.567 到 0.565；平均收益不掩盖退化。"
+    ],
+    "limitations": [
+      "稀疏 FLOPs 减少不必然转为硬件速度；必须计入选择和布局开销。",
+      "原生训练结果不证明替换任意 checkpoint 无损，64k kernel 图不是全模型吞吐。"
+    ],
+    "minimal_checks": [
+      "核对训练架构授权和质量约束；若仅要求等价 kernel 则不采用。",
+      "只做目标块布局/选择开销的最小 profile，再决定研究规模。"
+    ],
+    "paper": {
+      "venue": "ACL",
+      "year": 2025,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}
