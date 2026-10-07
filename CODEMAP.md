@@ -20,3 +20,10 @@
 `.knowledge-cache/` 是可重建索引；`.agent-runs/knowledge-v1/` 是当前运行临时状态，均不提交。未移动历史目录或活跃作业路径。
 
 T23 增量：`knowledge/entries/math.linear-system-stability.*` 等5条、`agent_runtime/knowledge.py` 的context/双向related、`knowledge_index.py` 的Porter/engine_version/事务重建、`evals/knowledge/*queries.json` 与 `docs/knowledge_learning/2026-10-06-round2/`。生产者主AI与独立使用D/E/F；消费者为建模Skill、维护者与最终验收。
+
+本轮知识学习增量：
+
+| TASK | 实际锚点 | 生产者 → 消费者 | 用途 |
+|---|---|---|---|
+| MATH-11 | `knowledge/entries/math.eigenspace-gap-perturbation.*`, `docs/knowledge_learning/2026-10-07-subspace/verify.py` | 主 AI/知识维护者 → 建模 Skill/科学验收 | 谱隙、投影打分、物理模态、采样边界及近期原文审查；有限验证非模型收益 |
+| MATH-12 | `docs/knowledge_learning/2026-10-07-subspace/report.md`, `tests.json`, `retrieval.json`, `publication.json` | 主 AI/现有eval与sync脚本 → 用户/下轮维护者/独立插件消费者 | 程序与结构检索验收、版本固定及main发布读回 |
