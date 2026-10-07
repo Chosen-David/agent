@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "id": "math.finite-menu-selection",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "有限冻结候选的同时校准与选择后风险",
+  "summary": "用有界均值与联合界校准整个冻结菜单；选择后均值风险≤最优+两份误差+求解误差，期望成本认证不等于单次硬预算。",
+  "aliases": [
+    "finite menu uniform calibration",
+    "method 海选 选择偏差 总体 风险",
+    "传感器 滤波 档位 校准",
+    "候选 泄漏 多重选择",
+    "expected cost upper confidence"
+  ],
+  "domains": [
+    "probability-and-optimization",
+    "optimization"
+  ],
+  "structures": [
+    "finite-family",
+    "uniform-convergence",
+    "selection-bias",
+    "risk-control",
+    "expected-budget"
+  ],
+  "assumptions": [
+    "菜单及每个损失/成本可测函数、已知范围在校准前固定，或由独立学习集产生；M≥1有限",
+    "n≥1预先固定，独立同分布校准对象来自与声明目标相同P；候选之间可相关，重复同文档不算新iid对象",
+    "δ∈(0,1)，损失/成本有已知确定有限范围；比较对象须在所选可行集内；均值非单次保证"
+  ],
+  "sources": [
+    {
+      "url": "https://cs229.stanford.edu/notes_archive/cs229-notes4.pdf",
+      "locator": "Andrew Ng CS229 PartVI LearningTheory§3 PDFpp5–7，有限分类器统一收敛/ERM；版本日期未标",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "同名Markdown的联合/选择/期望成本推导和泄漏反例；非形式化",
+      "doc/results/math-selection-20261008/：公开CPU结构/精确概率与独立检查，不含模型/GPU"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.hoeffding-bounded-mean",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.discrete-budget-allocation"
+    },
+    {
+      "type": "related",
+      "id": "math.alpha-spending-stopping"
+    },
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 这里保存跨项目可复用的数学、物理、AI Infra、AI 算法、数据结构算法与跨物种神经科学知识；Skill 保存使用知识的方法。项目观测、用户偏好和执行状态仍由项目记忆、TASK.md 与运行目录负责。
 
-当前包含 85 个已发布条目，另有3个待核验candidate：44 个数学/物理基础条目（包括18个本轮高等代数主题）、22 张工程复用卡、2条AI算法推导知识，以及 6 张 2026 年 RL / 概率论研究卡（ICLR、ICML、COLT、ALT），以及11张神经科学/NeuroAI卡（10篇正式论文、1篇明确绑定的2024预印本）。近五年检索窗口为2021-10-07至2026-10-07，本轮所选来源为2023–2026；最新核查论文发表于2026-09-29。机构/作者博客单列来源，生物发现、意识理论与AI设计假设分开记录。新增卡核查原论文的相关实验、定理前提与反例，未执行本机论文复现，不代表完整学科覆盖或 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
+当前包含 86 个已发布条目，另有3个待核验candidate：45 个数学/物理基础条目（包括18个本轮高等代数主题）、22 张工程复用卡、2条AI算法推导知识，以及 6 张 2026 年 RL / 概率论研究卡（ICLR、ICML、COLT、ALT），以及11张神经科学/NeuroAI卡（10篇正式论文、1篇明确绑定的2024预印本）。近五年检索窗口为2021-10-07至2026-10-07，本轮所选来源为2023–2026；最新核查论文发表于2026-09-29。机构/作者博客单列来源，生物发现、意识理论与AI设计假设分开记录。新增卡核查原论文的相关实验、定理前提与反例，未执行本机论文复现，不代表完整学科覆盖或 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
 
 ## 实际使用
 
@@ -124,3 +124,5 @@ python -m agent_runtime.knowledge --root knowledge decision '点更新 区间求
 2026-10-07 MATH-29/30：`math.weighted-bilinear-low-rank` 补齐独立乘积分布下的双侧度量/SVD分数近似。学科：linear-algebra、probability-and-optimization；结构：bilinear-score、second-moment-weighting、sensor-response。真实q/k相关性、RoPE低维频率对应、输出/e2e与部署收益须另验。证据 `doc/results/math-weighted-bilinear-20261007/`。
 
 2026-10-08 MATH-31/32：`math.discrete-budget-allocation` 补齐可加有限菜单的DP与弱对偶代理证书，保留λ加权和遗漏的非支配档位。学科：optimization、probability-and-optimization；结构：discrete-budget、multiple-choice、layer-allocation。成本舍入只保证原预算可行，跨层耦合/e2e和实测延迟不得套用。见 `doc/results/math-allocation-20261008/`。
+
+2026-10-08 MATH-33/34：`math.finite-menu-selection` 为校准前冻结的有限菜单建立同时Hoeffding界、近似经验选择后的风险界与期望成本安全集合。学科：probability-and-optimization、optimization；结构：finite-family、uniform-convergence、selection-bias、risk-control、expected-budget。必须核对独立样本单位、范围与菜单泄漏；层局部菜单不能冒充整个联合配置族的端到端保证。LTT v3/ReCIRC v1仅筛查有关前提，不复用实验成绩。见 `doc/results/math-selection-20261008/report.md`。

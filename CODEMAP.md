@@ -96,3 +96,5 @@ SELF-SYNC-01–03：scripts/run_knowledge_windows.py 的 prepare_host / sync_hos
 | MATH-29/30 | `knowledge/entries/math.weighted-bilinear-low-rank.*`, `doc/results/math-weighted-bilinear-20261007/` | 数学producer → 独立验收 → 按需建模Skill | SPD乘积分布的分数目标；不含真实模型/RoPE/e2e最优 |
 
 - `doc/results/math-allocation-20261008/`: MATH-31/32 finite discrete-budget proof, exact CPU fixtures, independent review and retrieval/cost evidence; not production solver.
+
+| MATH-33/34 | `knowledge/entries/math.finite-menu-selection.*`, `doc/results/math-selection-20261008/` | 主AI producer → 独立统计/代码验收 → 按需建模Skill | 冻结菜单选择后风险与期望成本；无真实模型或省token收益 |
