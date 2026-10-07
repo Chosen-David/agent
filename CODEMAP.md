@@ -59,3 +59,5 @@ NEURO-01–03：`knowledge/entries/neuroscience/` 与 `knowledge/neuroscience_so
 AIK-01/02：`knowledge/entries/ai-algorithms/ai.speculative-*`及`docs/knowledge_learning/2026-10-07-ai-algorithms/`提供条件化采样/成本推导与独立验证；AIK-03通过既有知识技能同步和实际Git发布核验，不新增runtime。
 
 | MATH-17/18 | `knowledge/entries/math.matrix-bernstein-covariance.*`, `docs/knowledge_learning/2026-10-07-matrix-concentration/` | model-with-knowledge / 主AI → 按需知识与校准前提审查 | 经典矩阵界、2近期候选、有限检查/拒用；模型与真实trace收益未测 |
+
+| MATH-19/20 | `knowledge/entries/math.centered-covariance-merge.*`, `docs/knowledge_learning/2026-10-07-centering/` | model-with-knowledge / 主AI → 中心化、分块合并、数值/统计前提审查 | 经典原页与2近期候选；有限开发检查，模型/网络收益未知 |

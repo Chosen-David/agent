@@ -441,3 +441,10 @@ AIK-03发布闭环：实现提交 `017debae0e490f350ae1364a822ea0d4b2df82cc`、t
 证据：docs/knowledge_learning/2026-10-07-matrix-concentration/report.md。33有限开发检查与4道无定理名结构题完成；真实embedding独立性、未见模型A/B、GPU/物理实验均未执行，暂不改变生产行为。next owner主AI；下一数学主题为依赖/重尾校准与固定抽样协议，保留RL/神经科学优先游标。
 
 MATH-18发布闭环：实现提交 e10795ea51870d2cef4b2763c9dfd13ad57fa02c、tree 7147baccdb9d5a7973b73b105a1128e864e1252e 已以899f6a1为新鲜lease非强制发布；API、独立ls-remote及Git完整tree读回一致。合并保留AIK并发成果与上游测试夹具；80总条目=78 published+2 candidate。33有限检查，4新/21旧题双后端无新增退化，548项540通过/8跳过、Reader3/3；单条包最终3,484 tokens，仅为序列化计数，无模型效果/费用结论。回执见本轮publication.json；本次收尾仅状态/文档，后续数学与既有优先游标可续接。
+
+## 2026-10-07 中心化协方差与可合并统计量
+
+- [x] [MATH-19] 核对经典分块散布式，独立推导向量推广/中心化误差桥；筛选两篇2026研究，保存总体参考/依赖范数迁移的限制。
+- [ ] [MATH-20] 核验worker及传感器迁移、错误合并/浮点反例、结构检索和成本；同步索引/快照、回归及main发布读回后闭环。
+
+证据：docs/knowledge_learning/2026-10-07-centering/report.md。主AI写入；无同主题活跃状态，前轮已完成；tmux/实际模型适配器不可用，未宣称监督启动，继续独立授权工作。31公开有限检查通过；未见题/模型A/B、真实网络/物理/GPU验收未完成。下一数学游标为依赖校准的moment/functional-dependence条件，保留RL/神经科学优先游标；不改SGLang或生产行为。
