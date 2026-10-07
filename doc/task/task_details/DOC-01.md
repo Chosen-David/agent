@@ -41,3 +41,7 @@ Dates use the nearest dated heading, or the explicitly supplied migration date.
 ### 本轮功能验收（2026-10-07）
 
 相关实现与独立正反例通过；全仓 730 项中 729 通过、1 项真实 tmux/Unix socket 条件测试跳过，Reader 3/3。最后上游仅修改 TASK 记录，代码/依赖无变化，按原版本证据复用并补验文档 55/55、发布门禁 29/29。详见 docs/document_architecture_validation/，此处不将程序测试说成绝对无 bug 或生产部署证明。统一 Git 发布仍由 DOC-04 跟踪。
+
+### 空白指南初始化记录（2026-10-07）
+
+经仓库所有者一次性明确授权，提交 [cf9eb4f](https://github.com/Chosen-David/agent/commit/cf9eb4ff6a75093dfc2644c52ef2bc60360cb5fc) 在 main 新增 `doc/guide/GUIDE.md`。已回读该提交、目录树和文件内容，确认仅新增这一文件、大小为 0 字节，空 blob SHA 为 `e69de29bb2d1d6434b8b29ae775ad8c2e48c5391`，未代写任何指导内容。此为已批准的一次性空文件初始化例外；`doc/guide/` 继续由人类专用维护，不授予 AI 后续创建、编辑、删除、移动、重命名或覆盖权限。本记录补充此前空目录状态，不改变稳定 Plan、既有证据或任务验收状态。
