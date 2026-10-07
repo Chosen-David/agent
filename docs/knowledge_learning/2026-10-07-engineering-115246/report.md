@@ -56,3 +56,12 @@ Springer补充PDF经普通TLS下载出现UNEXPECTED_EOF，web工具也不可访�
 coverage保留未补齐的腕部功能等缺口；learning_state只追加对应领域维护历史，数学游标/旧历史/工程后续队列及RL/概率待研主题按原值检查。priority.next_domain保持reinforcement-learning，之后probability，再回neuroscience。下轮先查2026正式接收的探索/长时信用分配或离线评估原论文；本轮候选待补Supplementary Figs4–7、Reporting Summary、Source Data、SEM调用路径和跨文章数据复用，均不视为已完成科学覆盖。
 
 发布前main读回仍为启动SHA，无并发差异；最终发布再核对一次。使用最新main的parent/base tree，经GitHub create_tree/create_commit和expected_sha、force=false更新，模型不写本地Git元数据。远端提交与完整树验收完成前，EK-115246-03保持未完成；发布回执在收尾另行记录。宿主只在全部工作文件与远端树一致后对齐Git索引/分支并轮间同步已安装技能；本模型不宣称已经完成宿主步骤。
+
+
+## 发布收尾读回
+
+维护实现提交 `7ad02cf49e1e3c4f4fa4874160d3c9e71f1278b8` 已按expected_sha=`2e854cac85a6f69e3a15926173896fae74d8b7f6`、force=false更新main。API ref、immutable commit及独立原生git ls-remote均读回同一提交；完整2712文件树为 `52122d2ff72cb2cc9236f6e8e5930500141a5259`，与工作文件按Git规范独立计算的树一致，无并发main改动。
+
+首次只读hash-object计算把7个原有CSV的历史CRLF再次规范化，导致本地计算与树对象不同；未移动main，未改这些文件。逐文件核对确认它们的实际原始blob等于启动index及远端，按Git add对未变历史blob的保留语义修正验收计算，随后完整树匹配。该过程只调整私有验收工具，不写.git或更改仓库换行规则。
+
+根TASK的本轮01–03已逐项验收，其他任务保持原状；learning_state对应领域追加“reviewed-zero-published”和维护提交，科学published_count仍0，候选不升级，数学游标与原队列保留。本收尾修改按最新main再读回、插件快照/格式/ref检查后单独非强制发布；最终收尾SHA在对话和私有回执读回，避免在提交内自指自身哈希。宿主轮末fetch、索引/分支对齐与安装技能同步仍须在模型退出后独立执行。

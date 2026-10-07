@@ -6,9 +6,11 @@
 
 - [x] [EK-115246-01] 核查3–6来源、相关结果/方法/源码与许可，记录候选和拒用边界。
 - [x] [EK-115246-02] 维护候选/来源/覆盖与对应历史，保留数学和其他队列；完成格式、插件快照、索引、条件负例、旧检索非退化、相关unittest和reader回归。
-- [ ] [EK-115246-03] 写本轮报告；读回并整合并发 main，按 expected_sha/force=false 发布维护成果并独立核对远端完整树。
+- [x] [EK-115246-03] 写本轮报告；读回并整合并发 main，按 expected_sha/force=false 发布维护成果并独立核对远端完整树。
 
 产物：`docs/knowledge_learning/2026-10-07-engineering-115246/`、神经科学candidate与来源目录；私有原文/源码/计划位于 `.agent-runs/engineering-115246/`。零新published科学卡可接受；候选不进入默认检索。其他任务保持原状。
+
+本轮结果：4来源、1candidate/0新published；13相关单测与Reader3通过，7目录双后端逐题非退化，旧漏检保留。维护发布 `7ad02cf49e1e3c4f4fa4874160d3c9e71f1278b8`、完整树 `52122d2ff72cb2cc9236f6e8e5930500141a5259` 已由API与独立ls-remote读回，2712工作文件树一致；证据见本轮report/verification/publication。数学与其他队列保留，下轮RL；宿主轮末Git对齐和技能同步尚不冒称完成。
 
 ## 2026-10-07 工程持续学习 112454（本轮）
 
