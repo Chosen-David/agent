@@ -53,3 +53,5 @@ NEURO-01–03：`knowledge/entries/neuroscience/` 与 `knowledge/neuroscience_so
 | EK-112454-01–03 | `knowledge/entries/neuroscience/neuro.bumblebee-social-diffusion.*`, `evals/knowledge/bee-learning-queries.json`, `docs/knowledge_learning/2026-10-07-engineering-112454/` | 主AI/真实小时维护调用 → 知识检索、研究决策与下轮维护 | 3来源、1待发布复用卡，附表模型/计数限制；两步附录候选；全仓Windows回归阻塞，未推送；本机复现与AI收益未测 |
 
 | EK-115246-01–03 | `knowledge/entries/neuroscience/neuro.cephalopod-arm-segmentation.*`, `docs/knowledge_learning/2026-10-07-engineering-115246/verify.py`, `report.md`, `sources.json` | 主AI/既有真实小时桥 → 按需检索、研究决策与下轮维护 | 4来源、1candidate/0新增published；接口许可与重复单位诊断；旧检索非退化、相关13单测与Reader3通过；补图、数据和AI迁移未验收 |
+
+| EK-122522-01–03 | `knowledge/entries/neuroscience/neuro.salamander-cell-type-homology.*`, `docs/knowledge_learning/2026-10-07-engineering-122522/verify.py`, `report.md`, `sources.json` | 主AI/既有小时桥 → 按需检索、研究决策与下轮维护 | 5来源、1candidate/0新增published；同源/趋同和源码许可边界；7目录双后端非退化、13单测/Reader3通过；补充材料与AI迁移未验收 |

@@ -1,5 +1,15 @@
 # Agent 仓库任务总清单
 
+## 2026-10-07 工程持续学习 122522（本轮）
+
+决策EXECUTE；宿主同步干净基线 `907890831929a5d200d3fb64c6299449391a1ee8` 与API main一致。本轮先补两栖类细胞类型缺口，单AI唯一作者；.git只读、不改SGLang、不新增资源/调度器/Agent，既有小时桥拥有生命周期。
+
+- [x] [EK-122522-01] 核查3–6来源、原文结果/方法与固定源码许可，登记候选和拒用边界。
+- [x] [EK-122522-02] 维护来源/候选/对应历史，保留数学及RL/概率/工程队列；插件、索引、条件负例、旧检索非退化和相关单测/Reader验收。
+- [ ] [EK-122522-03] 报告真实检查；发布前读回并整合main，以expected_sha/force=false发布且独立核验完整树。
+
+产物：`docs/knowledge_learning/2026-10-07-engineering-122522/`、`knowledge/entries/neuroscience/neuro.salamander-cell-type-homology.*`；私有原文/源码/计划 `.agent-runs/engineering-122522/`。候选不进入默认检索；本轮不修改其他任务。
+
 ## 2026-10-07 工程持续学习 115246（本轮）
 
 决策 EXECUTE；宿主干净基线 `2e854cac85a6f69e3a15926173896fae74d8b7f6` 已与 GitHub main 读回相同。按本次“先补神经科学缺口”核查腕部结构，已有 RL 游标与待研队列保留。主 AI 单一作者，不写 `.git`、不改 SGLang、不新增资源/调度/Agent；现有小时桥管理生命周期。

@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "id": "neuro.salamander-cell-type-homology",
+  "version": 1,
+  "status": "candidate",
+  "kind": "case",
+  "title": "蝾螈端脑细胞类型：同源与趋同的多证据候选",
+  "summary": "2022 Science作者稿结合单细胞、空间标记、发育轨迹和示踪比较蝾螈与爬行类/小鼠端脑；补充方法、供体重复及跨算法稳健性未核完，保留candidate，不从共聚类推断同源、同功能或AI收益。",
+  "aliases": [
+    "salamander cell type homology convergence",
+    "两栖类端脑分子发育连接",
+    "相似基因表达是否同源"
+  ],
+  "domains": [
+    "neuroscience",
+    "comparative-neuroanatomy",
+    "neuroai"
+  ],
+  "structures": [
+    "跨物种细胞类型与发育同源",
+    "共聚类可能来自效应基因趋同",
+    "cells are not biological replicates",
+    "pseudotime is not lineage tracing"
+  ],
+  "assumptions": [
+    "species: Pleurodeles waltl adults after metamorphosis and larvae stages36/41/46/50; turtle/lizard/mouse reused datasets",
+    "measurement: scRNAseq, HCR/ISH/iDISCO light-sheet imaging, ex-vivo dextran tracing; not neural activity or behaviour",
+    "sampling: 36116 QC cells and 29294 differentiated neurons are cell counts; donor numbers, sex balance and pooled samples not verified",
+    "version: 2022 Science article, PMC author manuscript read; Supplementary Methods/Text/S1–S19 and final publisher differences pending",
+    "scope: cell identity/development/connectivity candidates only; no local biological reproduction or AI transfer"
+  ],
+  "sources": [
+    {
+      "url": "https://doi.org/10.1126/science.abp9186",
+      "locator": "Results Figs1–6 captions, Discussion, main Methods; author manuscript PMC10024926, supplement/final differences unverified",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://www.ncbi.nlm.nih.gov/research/bionlp/RESTful/pmcoa.cgi/BioC_xml/PMC10024926/unicode",
+      "locator": "Full BioC XML bytes/hash in round sources.json; text mining transport, author manuscript",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/ToschesMA/Salamander-telencephalon/6ffbcbe5e6071bb3d0c333d959e4b0ef8d920921/Comparative%20analysis/Salamander_turtle_lizard_Seurat_integration_HPC.R",
+      "locator": "Pinned three-species integration script, input ortholog space, SCTransform-v2, CCA, Spearman distance/Ward.D2; not executed",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "unverified",
+    "proof": "not-applicable",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-engineering-122522/report.md",
+      "docs/knowledge_learning/2026-10-07-engineering-122522/sources.json"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "候选：蝾螈VP与部分爬行类aDVR具有分子/发育/连接相似性；其他共聚类可能由效应基因趋同造成，补充核验完成前不发布。",
+    "conditions": {
+      "species": "Pleurodeles waltl adults/larvae; reused turtle/lizard/mouse datasets",
+      "measurement": "single-cell expression, spatial markers and ex-vivo tracer anatomy",
+      "claim_scope": "candidate homology, not functional equivalence or consciousness",
+      "sampling": "cell counts nested within donors; donor/sex/pooling unverified"
+    },
+    "observations": [
+      "Results/Fig1：质控后36116细胞、29294分化神经元；47谷氨酸能与67 GABA能cluster，是参数相关的细胞分群，不是动物数。",
+      "Results/Fig3：幼体36/41/46/50阶段、20261端脑细胞，成人标签转移及Slingshot推断DP/VP不同轨迹；不是直接谱系示踪。",
+      "Results/Fig4：三物种整合产生65群；部分VP/centromedial-aDVR共聚类伴转录因子一致，POE/rostral-aDVR共聚类则可能由效应基因驱动。",
+      "Fig6图注：VPa/MP/LPa示踪n=4/2/2；未核补图供体表，不将这些相加为独立总动物数。24–48小时ex-vivo示踪不是行为或功能干预。"
+    ],
+    "limitations": [
+      "Supplementary Methods/Text、S1–S19、原始图像及最终编辑差异未核完；性别/供体/合池/确切软件版本与数据版本需补查。",
+      "正文称Harmony/SAMap/scVI稳健性支持，但补图S11/S12/S17未读；不同算法重分析同数据不算独立生物复验。",
+      "缺失共聚类可能反映采样、正交基因选择或整合参数；不能证明物种绝对缺失该细胞，也不能排除祖先保留/次生丢失替代解释。",
+      "作者代码许可未明确、含路径/参数模板；不采用实现卡，不执行R/作者数据分析。"
+    ],
+    "minimal_checks": [
+      "取得关键补充材料、供体/性别/合池表和数据版本，逐图核对S11/S12/S17整合敏感性及S18/S19示踪，审定后递增版本。",
+      "AI待验证假设：共享核心+可分化模块可改善迁移；等参数/数据/交互预算比较完全共享、完全独立、随机分组与生物启发分组，冻结未见任务误差与遗忘。",
+      "随机分组或完全共享相当则拒绝特定生物分组收益解释；显式复现与用户必做验收继续执行。"
+    ],
+    "paper": {
+      "venue": "Science",
+      "year": 2022,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}
