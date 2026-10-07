@@ -5,7 +5,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-07
 
 - [x] [MATH-27] 核验输出Gram几何、局部敏感度与边界，筛选近期研究并独立检查。 ([detail](task_details/MATH-27.md))
-- [ ] [MATH-28] 同步按需知识、相关回归，刷新main直接发布并核对远端。 ([detail](task_details/MATH-28.md))
+- [x] [MATH-28] 同步按需知识、相关回归，刷新main直接发布并核对远端。 ([detail](task_details/MATH-28.md))
 
 - [x] [SELF-SYNC-01] 核对 Codex 角色技能与真实同步入口 ([detail](task_details/SELF-SYNC-01.md))
 - [x] [SELF-SYNC-02] pull 后同步并检查技能，冲突阻止模型启动 ([detail](task_details/SELF-SYNC-02.md))
