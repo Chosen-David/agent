@@ -7,6 +7,10 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-27] 核验输出Gram几何、局部敏感度与边界，筛选近期研究并独立检查。 ([detail](task_details/MATH-27.md))
 - [x] [MATH-28] 同步按需知识、相关回归，刷新main直接发布并核对远端。 ([detail](task_details/MATH-28.md))
 
+- [x] [DUAL-01] 实现 planner-main/review-main 的真实完整计划审核门禁、宿主身份认证和有界版本返修。 ([detail](task_details/DUAL-01.md))
+- [x] [DUAL-02] 独立验证伪造/过期/降级/作用后撤销边界，运行真实独立主 AI 审核材料与有限 CPU 数据验收链。 ([detail](task_details/DUAL-02.md))
+- [ ] [DUAL-03] 同步双主入口/现有角色/安装与插件引用，完成全量回归并交给主控审核后发布。 ([detail](task_details/DUAL-03.md))
+
 - [x] [SELF-SYNC-01] 核对 Codex 角色技能与真实同步入口 ([detail](task_details/SELF-SYNC-01.md))
 - [x] [SELF-SYNC-02] pull 后同步并检查技能，冲突阻止模型启动 ([detail](task_details/SELF-SYNC-02.md))
 - [x] [SELF-SYNC-03] main 发布读回、本机同步与原小时任务恢复 ([detail](task_details/SELF-SYNC-03.md))

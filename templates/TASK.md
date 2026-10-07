@@ -12,4 +12,4 @@
 ```
 
 日期是任务来源/组织日期，不自动表示完成日期。每项方法、验收、进度、证据和恢复条件写对应 `task_details/<ID>.md`，不在索引堆日志。
-人类指南位于 `doc/guide/guide.md`，AI 只读；提案与取舍记录位于 `doc/advice/`。
+人类指南位于 `doc/guide/GUIDE.md`，AI 只读；提案与取舍记录位于 `doc/advice/`。

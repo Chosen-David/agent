@@ -66,7 +66,7 @@ class PublicationTests(unittest.TestCase):
     def open(self, **kwargs):
         options = dict(authorize=self.authorize, accept=self.accept, remote_reader=local_remote_reader)
         options.update(kwargs)
-        return PublicationLedger(self.root, self.state, **options)
+        return PublicationLedger(self.root, self.state, **options, allow_legacy=True)
 
     def freeze(self, mapping=None):
         return self.ledger.freeze(mapping if mapping is not None else {'app.py': ['T1']},
@@ -343,11 +343,11 @@ class PublicationTests(unittest.TestCase):
 
     def test_state_cannot_pollute_candidate_and_no_network_default(self):
         with self.assertRaisesRegex(PublicationError, 'ignored'):
-            PublicationLedger(self.root, self.root / 'publication.json')
+            PublicationLedger(self.root, self.root / 'publication.json', allow_legacy=True)
         with self.assertRaisesRegex(PublicationError, 'absolute local'):
             local_remote_reader({'remote_url': 'https://example.invalid/repo', 'branch': 'main'})
         with self.assertRaisesRegex(PublicationError, 'ignored'):
-            PublicationLedger(self.root, self.root / '.agent-runs' / '..' / 'TASK.md')
+            PublicationLedger(self.root, self.root / '.agent-runs' / '..' / 'TASK.md', allow_legacy=True)
 
     def test_tracked_state_cannot_be_its_own_candidate(self):
         self.state.parent.mkdir()

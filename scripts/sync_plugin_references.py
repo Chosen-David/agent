@@ -154,6 +154,17 @@ for source_path in sorted((ROOT / 'knowledge').rglob('*')):
         MAPPINGS[source] = [KNOWLEDGE_SKILL + '/assets/' + source]
         RAW_COPY_SOURCES.add(source)
 
+# Independent main-plan review is separate from every specialist's acceptance.
+MAPPINGS['workflows/dual_main_workflow.md'] = [
+    (Path(role['skill']).parent / 'references/dual_main_workflow.md').as_posix()
+    for role in json.loads((ROOT / 'config/role_registry.json').read_text())['roles']
+]
+for main_profile in ('planner_main', 'review_main'):
+    MAPPINGS['prompts/' + main_profile + '.md'] = [
+        'plugins/research-assistant/skills/research-assistant/references/' + main_profile + '.md',
+        'plugins/travel-assistant/skills/travel-planner/references/' + main_profile + '.md',
+    ]
+
 # Prior project data is queried before planning, without relaxing validation.
 MAPPINGS['workflows/result_reuse_workflow.md'] = [
     (Path(role['skill']).parent / 'references/result_reuse_workflow.md').as_posix()

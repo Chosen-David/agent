@@ -75,7 +75,7 @@ runpy.run_module('agent_runtime', run_name='__main__')
 """
             for args in [['init', str(root/'plan.json')],
                          ['tick', 'ordinary-task', '--artifact-root', str(root), '--event-id', 'ordinary-1']]:
-                result = self.command('-c', guard, ROOT, '--db', root/'state.sqlite', *args)
+                result = self.command('-c', guard, ROOT, '--legacy-unprotected', '--db', root/'state.sqlite', *args)
                 self.assertEqual(result.returncode, 0, result.stderr)
             state = json.loads(result.stdout)
             self.assertEqual(state['status'], 'done')

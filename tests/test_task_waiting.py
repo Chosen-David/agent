@@ -54,7 +54,7 @@ class WaitingContracts(unittest.TestCase):
         self.now += step
         self.event += 1
         return Engine(self.store, {'local-test': self.handler}, authorize=lambda *_: True,
-                      clock=lambda: self.now).tick('waiting', f'event-{self.event}')
+                      clock=lambda: self.now, allow_legacy=True).tick('waiting', f'event-{self.event}')
 
     def test_pending_does_not_exhaust_failed_attempt_budget(self):
         self.store.create(plan(task(attempts=1)))
@@ -93,7 +93,7 @@ class WaitingContracts(unittest.TestCase):
         self.store.create(plan(task()))
         self.tick()
         self.tick(step=0)
-        engine = Engine(self.store, {'local-test': self.handler}, authorize=lambda *_: True, clock=lambda: self.now)
+        engine = Engine(self.store, {'local-test': self.handler}, authorize=lambda *_: True, clock=lambda: self.now, allow_legacy=True)
         engine.tick('waiting', 'event-1')
         self.assertEqual(len(self.handler.calls), 1)
         self.assertEqual(self.store.snapshot('waiting')['state']['tasks']['slow']['pending_polls'], 1)

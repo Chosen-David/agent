@@ -49,11 +49,45 @@ def load_backend(config, store):
     handlers = {name: ReportingHandler(h, root, backend.get('result_verifier')) for name, h in backend['handlers'].items()}
     authorize = backend['authorize']
     return (handlers, lambda plan, task, wrapper: authorize(plan, task, wrapper.handler),
-            backend.get('maintain'), backend.get('result_verifier'))
+            backend.get('maintain'), backend.get('result_verifier'), backend.get('plan_review_verifier'))
 
 
-def publish(config, store, *, result_verifier=None, **extra):
-    report = review(store.snapshot(config['run_id']), config['project_root'], result_verifier)
+
+def submit_review(plan_path, project_root, state_dir, adapter, out):
+    """Explicit host adapter submits one review, preserving revise/reject feedback.
+
+    The adapter exposes build(root, store, run_id)['plan_review_session']; its
+    ReviewSession has independently authenticated planner/reviewer callbacks.
+    No callable, model identity or module path is obtained from plan JSON.
+    """
+    from .plan_review import ReviewSession
+    root = Path(project_root).resolve()
+    state_dir = assert_ai_writable(root, state_dir)
+    out = assert_ai_writable(root, out)
+    plan = json.loads(Path(plan_path).read_text())
+    validate_contract(plan, root)
+    if not adapter:
+        raise ValueError('explicit trusted host adapter required for independent main review')
+    spec = importlib.util.spec_from_file_location('agent_review_adapter', str(Path(adapter).resolve()))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    backend = module.build(str(root), Store(state_dir / 'review-host.sqlite'), plan['run_id'])
+    session = backend.get('plan_review_session')
+    if not isinstance(session, ReviewSession) or session.root != root:
+        raise ValueError('host must supply plan_review_session with authentic separate invocations')
+    plan.pop('plan_review_receipt', None)
+    receipt = session.submit(plan)
+    plan['plan_review_receipt'] = receipt
+    atomic_json(out, plan)
+    return {'status': receipt['review']['verdict']['decision'], 'plan': str(out),
+            'request_id': receipt['request']['request_id'], 'cycle': receipt['request']['cycle'],
+            'full_review': receipt['review']['full_review'], 'verdict': receipt['review']['verdict'],
+            'authority': 'plan review only; not tool authorization or data acceptance'}
+
+
+def publish(config, store, *, result_verifier=None, plan_review_verifier=None, **extra):
+    report = review(store.snapshot(config['run_id']), config['project_root'], result_verifier, plan_review_verifier,
+                    allow_legacy=config.get('allow_legacy') is True)
     report.update(updated_at=time.time(), **extra)
     atomic_json(Path(config['state_dir']) / 'progress.json', report)
     return report
@@ -61,7 +95,8 @@ def publish(config, store, *, result_verifier=None, **extra):
 
 class ManagedEngine(Engine):
     def __init__(self, config, *args, result_verifier=None, **kwargs):
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, project_root=config['project_root'],
+                         allow_legacy=kwargs.pop('allow_legacy', config.get('allow_legacy') is True), **kwargs)
         self.config = config
         self.result_verifier = result_verifier
 
@@ -70,7 +105,8 @@ class ManagedEngine(Engine):
         snap = self.store.snapshot(run_id)
         validate_contract(snap['plan'], self.config['project_root'], check_adopted_advice=False)
         state = super().tick(run_id, event_id)
-        publish(self.config, self.store, result_verifier=self.result_verifier, last_event=event_id)
+        publish(self.config, self.store, result_verifier=self.result_verifier,
+                plan_review_verifier=self.plan_review_verifier, last_event=event_id)
         return state
 
 
@@ -86,8 +122,9 @@ def worker(config):
             return 0
         store = Store(state_dir / 'state.sqlite')
         scheduler = LocalScheduler(store)
-        handlers, authorize, maintain, result_verifier = load_backend(config, store)
-        engine = ManagedEngine(config, store, handlers, authorize, result_verifier=result_verifier)
+        handlers, authorize, maintain, result_verifier, plan_review_verifier = load_backend(config, store)
+        engine = ManagedEngine(config, store, handlers, authorize, result_verifier=result_verifier,
+                               plan_review_verifier=plan_review_verifier)
         service_id = 'tmux:' + uuid.uuid4().hex
         stopped = []
         signal.signal(signal.SIGTERM, lambda *_: stopped.append(True))
@@ -100,7 +137,7 @@ def worker(config):
                 atomic_json(state_dir / 'live.json', {
                     'run_id': config['run_id'], 'session': config['session'],
                     'pid': os.getpid(), 'heartbeat_at': time.time(), 'service_id': service_id})
-                report = publish(config, store, result_verifier=result_verifier)
+                report = publish(config, store, result_verifier=result_verifier, plan_review_verifier=plan_review_verifier)
                 if report['runtime_status'] == 'cancelled':
                     return 0
                 if report['runtime_status'] == 'done' and not report['source_error']:
@@ -110,11 +147,11 @@ def worker(config):
                         engine._check_done(plan, state)
                         engine._summary(plan, state)
                         store.save(db, config['run_id'], state)
-                    report = publish(config, store, result_verifier=result_verifier)
+                    report = publish(config, store, result_verifier=result_verifier, plan_review_verifier=plan_review_verifier)
                     if report['all_reportable']:
                         scheduler.stop(monitor_id)
                         monitor = store.snapshot(config['run_id'])['monitor']
-                        final = publish(config, store, result_verifier=result_verifier, monitor=scheduler.read(monitor_id) if monitor else None)
+                        final = publish(config, store, result_verifier=result_verifier, plan_review_verifier=plan_review_verifier, monitor=scheduler.read(monitor_id) if monitor else None)
                         atomic_json(state_dir / 'final-report.json', final)
                         return 0
                 try:
@@ -137,9 +174,9 @@ def worker(config):
                         scheduler.drain_once(engine, config['run_id'])
                     # Failed/source-changed chains keep the owner alive for recovery;
                     # they never produce a success report or repeatedly run failed work.
-                    publish(config, store, result_verifier=result_verifier, maintenance_available=maintain is not None)
+                    publish(config, store, result_verifier=result_verifier, plan_review_verifier=plan_review_verifier, maintenance_available=maintain is not None)
                 except Exception as exc:
-                    publish(config, store, result_verifier=result_verifier, supervisor_error=f'{type(exc).__name__}: {exc}')
+                    publish(config, store, result_verifier=result_verifier, plan_review_verifier=plan_review_verifier, supervisor_error=f'{type(exc).__name__}: {exc}')
                     print(f'supervision error: {type(exc).__name__}: {exc}', flush=True)
                 time.sleep(1)
             return 0
@@ -192,7 +229,7 @@ def status(config):
             'final_report': str(state_dir / 'final-report.json') if (state_dir / 'final-report.json').exists() else None}
 
 
-def start(plan_path, project_root, state_dir, adapter=None):
+def start(plan_path, project_root, state_dir, adapter=None, *, allow_legacy=False):
     if not shutil.which('tmux'):
         raise RuntimeError('tmux unavailable; supervisor was NOT started (no foreground fallback)')
     plan = json.loads(Path(plan_path).read_text())
@@ -207,13 +244,18 @@ def start(plan_path, project_root, state_dir, adapter=None):
         fcntl.flock(lock, fcntl.LOCK_EX)
         config = {'run_id': plan['run_id'], 'project_root': str(root), 'state_dir': str(state_dir),
                   'adapter': str(Path(adapter).resolve()) if adapter else None,
+                  'allow_legacy': allow_legacy is True,
                   'session': 'agent-' + hashlib.sha256(str(state_dir).encode()).hexdigest()[:16]}
         config_path = state_dir / 'launch.json'
         if config_path.exists() and json.loads(config_path.read_text()) != config:
             raise ValueError('state directory bound to different configuration; use a new version')
         store = Store(state_dir / 'state.sqlite')
-        store.create(plan)
-        source_bytes = Path(plan['task_source']['path']).read_bytes()
+        store.create(plan, project_root=root)
+        # Backend code is selected only by this explicit host argument.
+        _, _, _, _, plan_verifier = load_backend(config, store)
+        from .plan_review import check_plan_review
+        check_plan_review(plan, root, plan_verifier, allow_legacy=allow_legacy)
+        source_bytes = (root / plan['task_source']['path']).read_bytes()
         if hashlib.sha256(source_bytes).hexdigest() != plan['task_source']['sha256']:
             raise ValueError('TASK.md changed during startup; reconcile before dispatch')
         atomic_json(state_dir / 'source-snapshot.json', {
@@ -256,11 +298,20 @@ def main():
     p.add_argument('--mode', choices=('auto', 'manual'), default='auto')
     p.add_argument('--authorization-reference', required=True)
     p.add_argument('--out', required=True)
+    p.add_argument('--lineage-id', help='stable logical requirement lineage across revisions')
+    p.add_argument('--legacy-unprotected', action='store_true', help='explicit compatibility only; no main-review protection')
     p = sub.add_parser('start')
     p.add_argument('--plan', required=True)
     p.add_argument('--project-root', required=True)
     p.add_argument('--state-dir', required=True)
     p.add_argument('--adapter', help='explicit trusted Python host adapter with build(root, store, run_id)')
+    p.add_argument('--legacy-unprotected', action='store_true', help='trusted compatibility opt-in; never for protected requirements')
+    p = sub.add_parser('review')
+    p.add_argument('--plan', required=True)
+    p.add_argument('--project-root', required=True)
+    p.add_argument('--state-dir', required=True)
+    p.add_argument('--adapter', required=True, help='explicit trusted host build with plan_review_session')
+    p.add_argument('--out', required=True)
     for command in ('status', 'cancel', '_guard', '_worker'):
         p = sub.add_parser(command)
         p.add_argument('--config', required=True)
@@ -268,11 +319,14 @@ def main():
             p.add_argument('--reference', required=True)
     args = parser.parse_args()
     if args.command == 'prepare':
-        plan = prepare(args.task_file or resolve_task_file(args.project_root), args.run_id, args.mode, args.authorization_reference)
+        plan = prepare(args.task_file or resolve_task_file(args.project_root), args.run_id, args.mode, args.authorization_reference,
+                       review_required=not args.legacy_unprotected, lineage_id=args.lineage_id)
         atomic_json(args.out, plan)
         result = {'status': 'draft', 'plan': str(Path(args.out).resolve()), 'tasks': len(plan['tasks'])}
+    elif args.command == 'review':
+        result = submit_review(args.plan, args.project_root, args.state_dir, args.adapter, args.out)
     elif args.command == 'start':
-        result = start(args.plan, args.project_root, args.state_dir, args.adapter)
+        result = start(args.plan, args.project_root, args.state_dir, args.adapter, allow_legacy=args.legacy_unprotected)
     elif args.command == '_guard':
         guard(args.config)
         return

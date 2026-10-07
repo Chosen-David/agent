@@ -1,3 +1,4 @@
+# Legacy fixture: exercises pre-dual-main invariants; independent review is tested separately.
 """Real files + independent arithmetic checks; no model/GPU/performance claim."""
 import copy
 import hashlib
@@ -293,7 +294,7 @@ class ResultValidationTests(unittest.TestCase):
         store = Store(self.root / 'state.sqlite')
         store.create(plan)
         handler = ResultValidationHandler(self.root, independent_verify)
-        engine = Engine(store, {'verify_experiment_result': handler}, authorize=lambda *_: True)
+        engine = Engine(store, {'verify_experiment_result': handler}, authorize=lambda *_: True, allow_legacy=True)
         state = engine.tick('test', 'event-1')
         self.assertEqual(state['tasks']['verify']['status'], 'done')
         node = Store(self.root / 'state.sqlite').snapshot('test')['state']['tasks']['verify']
@@ -309,7 +310,7 @@ class ResultValidationTests(unittest.TestCase):
 
     def integrated_chain(self, verifier=independent_verify):
         (self.root / 'TASK.md').write_text('- [ ] [REQ] Validate measured fixture before conclusions\n')
-        plan = prepare(self.root / 'TASK.md', 'integrated', 'auto', 'test host instruction')
+        plan = prepare(self.root / 'TASK.md', 'integrated', 'auto', 'test host instruction', review_required=False)
         template = plan['tasks'][0]
         plan['tasks'] = dag(self.contract)['tasks']
         for task in plan['tasks']:
@@ -329,7 +330,7 @@ class ResultValidationTests(unittest.TestCase):
                                                           result_verifier=verifier),
                     'verify_experiment_result': ReportingHandler(ResultValidationHandler(self.root, verifier),
                                                                  self.root, result_verifier=verifier)}
-        engine = Engine(store, handlers, authorize=lambda *_: True)
+        engine = Engine(store, handlers, authorize=lambda *_: True, allow_legacy=True)
         return plan, store, engine, handlers
 
     def test_actual_reporting_runtime_producer_gate_consumer_and_live_review(self):
@@ -340,10 +341,10 @@ class ResultValidationTests(unittest.TestCase):
         self.assertEqual(snapshot['state']['status'], 'done')
         producer = snapshot['state']['tasks']['produce']['evidence'][-1]['task_report']['result_validation'][0]
         self.assertEqual(producer['status'], 'pending')
-        self.assertTrue(review(snapshot, self.root, result_verifier=independent_verify)['all_reportable'])
-        self.assertFalse(review(snapshot, self.root)['all_reportable'])
+        self.assertTrue(review(snapshot, self.root, result_verifier=independent_verify, allow_legacy=True)['all_reportable'])
+        self.assertFalse(review(snapshot, self.root, allow_legacy=True)['all_reportable'])
         (self.root / 'config.json').write_text('{}')
-        self.assertFalse(review(snapshot, self.root, result_verifier=independent_verify)['all_reportable'])
+        self.assertFalse(review(snapshot, self.root, result_verifier=independent_verify, allow_legacy=True)['all_reportable'])
         self.assertFalse(handlers['verify_artifacts'].verify(plan['tasks'][2],
                          snapshot['state']['tasks']['consume']['evidence']))
 

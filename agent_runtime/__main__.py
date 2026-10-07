@@ -12,6 +12,7 @@ from .scheduler import LocalScheduler, arm
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--db', required=True)
+    parser.add_argument('--legacy-unprotected', action='store_true', help='explicit trusted compatibility; no independent main review')
     sub = parser.add_subparsers(dest='command', required=True)
     p = sub.add_parser('init'); p.add_argument('plan')
     for command in ('status', 'arm', 'cancel', 'wake', 'tick'):
@@ -33,7 +34,7 @@ def main():
         # Adding capabilities to a task JSON cannot authorize commands/tools.
         handler = ArtifactHandler(args.artifact_root)
         engine = Engine(store, {'verify_artifacts': handler},
-                        authorize=lambda plan, task, adapter: adapter is handler)
+                        authorize=lambda plan, task, adapter: adapter is handler, allow_legacy=args.legacy_unprotected)
     if args.command == 'init':
         result = {'run_id': store.create(json.loads(Path(args.plan).read_text()))}
     elif args.command == 'status':

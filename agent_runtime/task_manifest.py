@@ -86,7 +86,7 @@ def _review_prior_candidates(task, search):
     if assessment['decision'] == 'reuse' and task['action'] != 'reuse_validated_result':
         raise ValueError('reuse decision requires explicit verified reuse action; do not rerun producer silently')
 
-def prepare(task_file, run_id, mode, authorization_reference):
+def prepare(task_file, run_id, mode, authorization_reference, *, review_required=True, lineage_id=None):
     task_file = Path(task_file)
     root = task_file.resolve() if task_file.is_dir() else project_root_for_task(task_file)
     task_file = resolve_task_file(root)
@@ -95,6 +95,10 @@ def prepare(task_file, run_id, mode, authorization_reference):
     result_store = ResultStore(root)
     return {
         'schema_version': 'task-dag/v1', 'run_id': run_id,
+        **({'plan_review': {'schema_version': 'main-plan-review/v1',
+                            'lineage_id': lineage_id or 'requirements:' + hashlib.sha256(
+                                ('\0'.join(sorted(item['id'] for item in items))).encode()).hexdigest(),
+                            'evidence_refs': []}} if review_required else {}),
         'user_goal': 'Complete all TASK.md requirements with reportable evidence',
         'authorization_reference': authorization_reference,
         'task_source': {'path': str(task_file), 'sha256': digest(task_file), 'mode': mode},
@@ -115,14 +119,14 @@ def prepare(task_file, run_id, mode, authorization_reference):
     }
 
 
-def validate_contract(plan, root, *, check_adopted_advice=True):
+def validate_contract(plan, root, *, check_adopted_advice=True, required_task_refs=None):
     validate(plan)
     validate_result_plan(plan)
     root = Path(root).resolve()
     source = plan['task_source']
     if source['mode'] not in ('auto', 'manual'):
         raise ValueError('task source mode must be auto or manual')
-    path = Path(source['path']).resolve()
+    path = (root / source['path']).resolve()
     if path != resolve_task_file(root):
         raise ValueError('the single task source must be doc/task/TASK.md (legacy project-root TASK.md only before migration)')
     if not path.is_relative_to(root) or digest(path) != source['sha256']:
@@ -145,6 +149,12 @@ def validate_contract(plan, root, *, check_adopted_advice=True):
         if adopted != documents.get('adopted_advice'):
             raise ValueError('adopted advice dependencies missing; bind assessed advice to draft')
     ids, covered = {item['id'] for item in items}, set()
+    if required_task_refs is not None:
+        if (not isinstance(required_task_refs, (list, tuple, set, frozenset)) or not required_task_refs
+                or any(not isinstance(r, str) or r not in ids for r in required_task_refs)
+                or len(set(required_task_refs)) != len(required_task_refs)):
+            raise ValueError('trusted required_task_refs must name exact existing requirements')
+        ids = set(required_task_refs)
     report_paths = set()
     for task in plan['tasks']:
         if (documents is not None and documents['layout'] == 'canonical' and
@@ -172,7 +182,7 @@ def validate_contract(plan, root, *, check_adopted_advice=True):
         report_paths.add(report)
     if covered != ids:
         raise ValueError('plan omits TASK.md requirements: ' + ', '.join(sorted(ids - covered)))
-    return items
+    return [item for item in items if item['id'] in ids]
 
 
 def result_report(root, task, result_verifier=None):
@@ -258,7 +268,22 @@ class ReportingHandler:
         except (OSError, ValueError) as exc:
             return Outcome('blocked', f'prior-result planning review required: {exc}')
         dispatched_task = copy.deepcopy(task)
-        dispatched_task['prior_result_search'] = copy.deepcopy(self._prior_searches[search_key])
+        protected = False
+        if context is not None and hasattr(context, 'store'):
+            try:
+                protected = context.store.snapshot(context.run_id)['plan'].get('plan_review') is not None
+            except KeyError:
+                # Direct legacy wrapper use can log lookups without a managed DAG.
+                # Engine always registers and gates a real plan before execution.
+                protected = False
+        if protected:
+            # Do not replace a reviewed adapter input with unreviewed observations.
+            producer = (task.get('experiment_result') is not None or task.get('produces_data') is True
+                        or task.get('task_type') == 'experiment' or task.get('result_reuse') is not None)
+            if producer and task.get('prior_result_search') != self._prior_searches[search_key]:
+                return Outcome('blocked', 'prior-result evidence changed after main review; versioned replan required')
+        else:
+            dispatched_task['prior_result_search'] = copy.deepcopy(self._prior_searches[search_key])
         if context is not None and hasattr(context, 'current') and not context.current():
             return Outcome('blocked', 'claim no longer current after prior-result lookup')
         outcome = self.handler.run(dispatched_task, context)
@@ -296,16 +321,19 @@ class ReportingHandler:
             return False
 
 
-def review(snapshot, root, result_verifier=None):
+def review(snapshot, root, result_verifier=None, plan_review_verifier=None, *, allow_legacy=False):
     """Derived view only; checkbox marks never turn SQLite nodes into done."""
     plan, state = snapshot['plan'], snapshot['state']
     error = None
+    plan_review_status = {'status': 'blocked'}
     try:
+        from .plan_review import check_plan_review
+        plan_review_status = check_plan_review(plan, root, plan_review_verifier, allow_legacy=allow_legacy)
         items = validate_contract(plan, root, check_adopted_advice=False)
     except (OSError, ValueError, KeyError) as exc:
         error = str(exc)
         try:
-            items = requirements(plan['task_source']['path'])
+            items = requirements(Path(root) / plan['task_source']['path'])
         except (OSError, ValueError, KeyError):
             items = []
     rows = []
@@ -353,4 +381,5 @@ def review(snapshot, root, result_verifier=None):
     remaining = [r['id'] for r in rows if not r['done']]
     return {'run_id': plan['run_id'], 'source': plan['task_source'], 'source_error': error,
             'runtime_status': state['status'], 'requirements': rows, 'remaining': remaining,
+            'plan_review': plan_review_status,
             'all_reportable': bool(rows) and not error and not remaining and state['status'] == 'done'}

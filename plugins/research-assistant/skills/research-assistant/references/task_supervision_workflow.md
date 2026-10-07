@@ -173,3 +173,7 @@ handler 沿用现有 `run(task, Context)/verify(task, evidence)` 契约，report
 主 AI 收到诊断提醒后读取当前 TASK、具体 job ID、最近有意义进度与耗时分解，区分正常计算、外部等待、资源瓶颈和无新信息重复；证据不足标未知，继续独立任务。有明确瓶颈才提出缓存、复用、批处理或授权内并发等小方案；固定输入、正确性/质量门禁、主要耗时口径和剩余预算，保留原方案，用实际对照决定采用或回退。没有公平比较不宣称提速，不能凭自我怀疑更改正确结果或跳过用户指定基线。具体变更、验证及剩余项引用 TASK ID；符合用户发布范围且全部验收通过后才提交、推送并核验远端，不把已生成文件当作已发布。上述流程需要真实 maintain/动作后端；核心只暴露诊断证据和有界调度，不内置模型优化器或 Git 发布器。主 AI 所在 tmux 不会自动让 Web 聊天拥有远端模型执行能力。
 
 官方行为依据：[tmux 手册](https://man.openbsd.org/tmux.1)，2026-10-06 核查；说明 detached 会话能继续运行、连接断开后可重新附着。实际验证范围见[本次验证记录](https://github.com/Chosen-David/agent/blob/main/docs/tmux_supervisor_validation.md)。
+
+## 独立主控计划审核
+
+受管复杂任务执行 `workflows/dual_main_workflow.md`（独立 Skill 使用同目录 `dual_main_workflow.md`）：planner-main 维护方案与唯一 TASK，review-main 由可信宿主独立新上下文审查 intent/guide/assumptions/prior_results/acceptance/risk/resources。新 prepare 默认保护，完整实际 DAG 与指南/采纳建议/证据版本绑定；approve 后仍需工具授权和独立结果验收。无可信回执不派发，revise/reject 版本化返修；Progress 追加不失效。缺宿主接口如实 blocked；旧计划仅宿主明确 legacy-unprotected 兼容，不宣称已全部升级。

@@ -1,3 +1,4 @@
+# Legacy fixture: exercises pre-dual-main invariants; independent review is tested separately.
 """Independent adversarial checks frozen before reading candidate implementation.
 
 Synthetic human-guide fixture bytes are only created inside temporary projects.
@@ -48,7 +49,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
                 for p in self.root.rglob('*') if p.is_file() and not p.is_symlink()}
 
     def plan(self):
-        plan = prepare(self.root / 'doc/task/TASK.md', 'acceptance', 'auto', 'synthetic fixture authorization')
+        plan = prepare(self.root / 'doc/task/TASK.md', 'acceptance', 'auto', 'synthetic fixture authorization', review_required=False)
         snapshot = docs.snapshot_project_docs(self.root)
         plan['guide_reviews'] = [{'path':path, 'sha256':sha, 'origin':'owner_authored',
             'authorization_reference':'synthetic fixture human rule', 'task_refs':[x['task_id'] for x in plan['tasks']],
@@ -294,7 +295,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
         self.migrated(); self.human_guide()
         advice='doc/advice/idea.md'
         docs.atomic_write(self.root, advice, b'# Synthetic suggestion\nUse an explicit measured threshold.\n')
-        plan=prepare(self.root / 'doc/task/TASK.md', 'advice', 'auto', 'synthetic fixture approval')
+        plan=prepare(self.root / 'doc/task/TASK.md', 'advice', 'auto', 'synthetic fixture approval', review_required=False)
         snapshot=docs.snapshot_project_docs(self.root)
         review=[{'path':path, 'sha256':sha, 'origin':'owner_authored',
                  'authorization_reference':'synthetic fixture', 'task_refs':['A-1','A-2'],
@@ -321,7 +322,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
         for disposition in ('reject','defer'):
             with self.subTest(disposition=disposition):
                 docs.atomic_write(self.root,advice,b'# Synthetic proposal\n')
-                plan=prepare(self.root / 'doc/task/TASK.md','advice','auto','synthetic approval')
+                plan=prepare(self.root / 'doc/task/TASK.md','advice','auto','synthetic approval', review_required=False)
                 source=docs.snapshot_project_docs(self.root)
                 docs.bind_advice(plan,[{'path':advice,'sha256':source['advice'][advice],
                     'task_refs':['A-1'],'disposition':disposition,'reason':'Not required by current tasks.'}])
@@ -345,7 +346,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
         store = Store(self.root / 'state.sqlite'); store.create(plan)
         guide.write_text('Synthetic changed guide, must replan.\n')
         engine = ManagedEngine({'run_id':'acceptance', 'project_root':str(self.root), 'state_dir':str(self.root)},
-                               store, {}, authorize=lambda *_: True)
+                               store, {}, authorize=lambda *_: True, allow_legacy=True)
         with self.assertRaises(ValueError): engine.tick('acceptance', 'synthetic-event')
         self.assertTrue(all(x['attempts'] == 0 for x in store.snapshot('acceptance')['state']['tasks'].values()))
 
@@ -474,7 +475,7 @@ class ProjectDocumentPublicationAcceptanceTests(unittest.TestCase):
         (self.root / 'app.py').write_text("print('synthetic candidate')\n")
         self.local_git('add', 'app.py')
         ledger = PublicationLedger(self.root, self.root / '.agent-runs/publication.json',
-                                   authorize=lambda *_: True, accept=lambda *_: True)
+                                   authorize=lambda *_: True, accept=lambda *_: True, allow_legacy=True)
         frozen = ledger.freeze({'app.py':['A-1']}, remote='origin', branch='main',
                                authorization_reference='synthetic local fixture approval')
         self.assertNotIn('doc/guide/policy.md', frozen['candidate']['files'])

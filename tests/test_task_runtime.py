@@ -95,7 +95,7 @@ class ProcessHandler(SyntheticHandler):
 
 def process_tick(db_path, count, entered, release, event_id):
     handler = ProcessHandler(count, entered, release)
-    Engine(Store(db_path), {'synthetic': handler}, authorize=lambda *_: True).tick('test-run', event_id)
+    Engine(Store(db_path), {'synthetic': handler}, authorize=lambda *_: True, allow_legacy=True).tick('test-run', event_id)
 
 
 class RuntimeContracts(unittest.TestCase):
@@ -108,7 +108,7 @@ class RuntimeContracts(unittest.TestCase):
 
     def engine(self, handler=None, authorize=None):
         return Engine(self.store, {'synthetic': handler or SyntheticHandler()},
-                      authorize=authorize or (lambda *_: True), clock=self.clock, lease_seconds=5)
+                      authorize=authorize or (lambda *_: True), clock=self.clock, lease_seconds=5, allow_legacy=True)
 
     def state(self):
         return self.store.snapshot('test-run')['state']
@@ -229,7 +229,7 @@ class RuntimeContracts(unittest.TestCase):
         p = plan(); p['authorization'] = {'synthetic': True}
         self.store.create(p)
         handler = SyntheticHandler()
-        engine = Engine(self.store, {'synthetic': handler}, clock=self.clock)
+        engine = Engine(self.store, {'synthetic': handler}, clock=self.clock, allow_legacy=True)
         self.assertEqual(engine.tick('test-run', 'untrusted-plan')['status'], 'blocked')
         self.assertEqual(handler.calls, [])
 
@@ -354,9 +354,15 @@ class RuntimeContracts(unittest.TestCase):
             self.store = Store(self.db_path)
             persisted = self.state()['tasks']['a']
             self.assertEqual(persisted['status'], 'doing')
-            # Real process death and SQLite reopen; synthetic time advances lease.
-            self.clock.now = persisted['lease_until'] + 1
+            # A real dead process is not permission to replay before its lease.
             handler = SyntheticHandler()
+            self.clock.now = persisted['lease_until'] - 0.01
+            early = self.engine(handler).tick('test-run', 'restart-before-lease')
+            self.assertEqual(handler.calls, [])
+            self.assertEqual(early['tasks']['a']['status'], 'doing')
+            self.assertEqual(early['tasks']['a']['attempts'], 1)
+            # Real process death and SQLite reopen; only now expire the lease.
+            self.clock.now = persisted['lease_until'] + 1
             state = self.engine(handler).tick('test-run', 'restart')
             self.assertEqual(state['status'], 'done')
             self.assertEqual(state['tasks']['a']['attempts'], 2)
@@ -374,7 +380,7 @@ class RuntimeContracts(unittest.TestCase):
         self.store.create(plan(a, task('consumer', ['source'])))
         consumer = SyntheticHandler()
         engine = Engine(self.store, {'verify_artifacts': ArtifactHandler(root), 'synthetic': consumer},
-                        authorize=lambda *_: True, clock=self.clock)
+                        authorize=lambda *_: True, clock=self.clock, allow_legacy=True)
         engine.tick('test-run', 'produce')
         (root / 'source').write_bytes(b'v2')
         state = engine.tick('test-run', 'dispatch')
@@ -453,7 +459,7 @@ class RuntimeContracts(unittest.TestCase):
                 self.store.create(p)
                 handler = SyntheticHandler()
                 engine = Engine(self.store, {'synthetic': handler, 'verify_artifacts': ArtifactHandler(self.tmp.name)},
-                                authorize=lambda *_: True, clock=self.clock)
+                                authorize=lambda *_: True, clock=self.clock, allow_legacy=True)
                 engine.tick(p['run_id'], 'a-completes')
                 state = engine.tick(p['run_id'], 'b-completes')
                 self.assertEqual(state['tasks']['a']['status'], 'done')
@@ -526,7 +532,7 @@ class RuntimeContracts(unittest.TestCase):
         t['done_when'] = {'artifacts': [{'path': 'proof.txt', 'sha256': hashlib.sha256(b'accepted').hexdigest()}]}
         p = plan(t); p['supervision']['max_seconds'] = 1
         self.store.create(p)
-        command = [sys.executable, '-m', 'agent_runtime', '--db', self.db_path]
+        command = [sys.executable, '-m', 'agent_runtime', '--legacy-unprotected', '--db', self.db_path]
         offline = subprocess.run(command + ['arm', 'test-run'], cwd=ROOT, capture_output=True, text=True, timeout=5, check=True)
         self.assertEqual(json.loads(offline.stdout)['status'], 'blocked')
         service = subprocess.Popen(command + ['serve', '--artifact-root', str(root), '--max-seconds', '8'], cwd=ROOT, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)

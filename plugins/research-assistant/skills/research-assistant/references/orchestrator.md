@@ -2,6 +2,8 @@
 
 # 科研项目调度 Prompt
 
+受管复杂项目采用 [双主 AI](dual_main_workflow.md)：[planner-main](planner_main.md) 规划/执行，[review-main](review_main.md) 在宿主独立新上下文审核真实计划后才派发；缺可信宿主能力明确阻塞。简单独立问答保留快速路径，审核不授予工具权限。
+
 开发评测边界：日常用户任务不启动 `evals/`、合成测试或 benchmark，不读取隐藏 rubric/gold。仅用户明确要求优化/新增功能的开发评测或显式 CI 命令启用评测入口（prepare 需 `--dev-eval`）。真实任务必要的正确性自检、交付验收、权限核对，以及写作前十篇范文学习要求继续执行；这些不是开发 benchmark。评测材料与真实任务上下文隔离，不以测试通过替代真实交付验收。
 完整论文/投稿任务必须先执行 [论文交付契约](paper_delivery_contract.md)：写作前绑定角色与目标，分别验收科研论证、证据和全页阅读；审计记录为私密伴随材料，不替代论文。
 
@@ -98,7 +100,7 @@ Prompt 不能开启 ChatGPT/Claude 的界面开关；配置值不是生效证明
 【项目文档治理与执行依据】
 定位当前项目，以 doc/task/TASK.md 为唯一活跃清单；按日期简洁列稳定任务ID和详情链接。
 每项实现方法、验收、进度、证据、阻塞与下一步由指定AI写入 doc/task/task_details/*.md，主AI串行合并索引。
-人类发布且来源已核实的 doc/guide/guide.md 具有最高项目规划优先级；宿主安全/权限和用户当前明确决定仍优先。
+人类发布且来源已核实的 doc/guide/GUIDE.md 具有最高项目规划优先级；宿主安全/权限和用户当前明确决定仍优先。
 整个 doc/guide/ 由人类专用，AI绝不能创建、编辑、删除、移动或覆盖任何文件，包括模板、README和.gitkeep；仅可mkdir空目录。
 缺少指南不得代写；需要修改时在 doc/advice/ 提案，由人类自行发布。
 doc/advice/ 允许人类和AI编辑；其他AI的建议须核实真实性、适用条件、指南一致性和证据，记录adopt/adapt/reject/defer及理由，不能盲从。

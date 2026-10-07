@@ -86,10 +86,15 @@ class PublicationLedger:
     The controller, not this helper, establishes those callbacks' trustworthiness.
     """
 
-    def __init__(self, root, state_path, *, authorize=None, accept=None, remote_reader=None):
+    def __init__(self, root, state_path, *, authorize=None, accept=None, remote_reader=None,
+                 plan=None, plan_review_verifier=None, allow_legacy=False, publication_task_refs=None):
         self.root = Path(root).resolve()
         self.path = Path(os.path.abspath(state_path))
         self.authorize, self.accept, self.remote_reader = authorize, accept, remote_reader
+        self.plan, self.plan_review_verifier = copy.deepcopy(plan), plan_review_verifier
+        self.allow_legacy = allow_legacy is True
+        from .plan_review import _scope
+        self.publication_task_refs = _scope(publication_task_refs)
         if Path(_git(self.root, 'rev-parse', '--show-toplevel').decode().strip()).resolve() != self.root:
             raise PublicationError('root must be the repository top level')
         if self.path.is_relative_to(self.root):
@@ -193,6 +198,8 @@ class PublicationLedger:
         candidate.update(base_commit=base, file_task_refs=copy.deepcopy(file_task_refs),
                          task_path=task_relative, task_sha256=_hash(_regular_bytes(task_file)),
                          project_documents=snapshot_project_docs(self.root))
+        self._plan_review(candidate)
+        candidate['reviewed_plan'] = copy.deepcopy(self.plan)
         return self._save({'schema_version': 'publication/v1', 'scope': scope, 'candidate': candidate,
                            'phase': 'pending', 'tested': False, 'committed': False,
                            'pushed': False, 'remote_verified': False, 'evidence': [],
@@ -229,12 +236,34 @@ class PublicationLedger:
         if covered != required:
             raise PublicationError('acceptance omits changed TASK IDs')
 
+    def _plan_review(self, candidate):
+        from .plan_review import check_plan_review, protected_lineage
+        refs = {r for values in candidate['file_task_refs'].values() for r in values}
+        probe = {'tasks': [{'task_refs': sorted(refs)}]}
+        plan = candidate.get('reviewed_plan', self.plan)
+        try:
+            if self.publication_task_refs is not None and refs != set(self.publication_task_refs):
+                raise ValueError('actual changed-task coverage differs from trusted publication scope')
+            protected = protected_lineage(probe, self.root)
+            if protected is None and plan is None and not self.allow_legacy:
+                raise ValueError('publication needs reviewed plan or explicit trusted legacy opt-in')
+            if protected is not None or plan is not None:
+                if plan is None or not refs <= {r for t in plan['tasks'] for r in t.get('task_refs', [])}:
+                    raise ValueError('publication needs the exact reviewed plan covering changed requirements')
+                check_plan_review(plan, self.root, self.plan_review_verifier, allow_legacy=self.allow_legacy,
+                                  purpose='publication' if self.publication_task_refs is not None else 'execution',
+                                  publication_task_refs=self.publication_task_refs)
+        except (ValueError, OSError, KeyError) as exc:
+            raise PublicationError('main plan review unavailable/stale: ' + str(exc)) from exc
+
     def _acceptance(self, value):
+        self._plan_review(value['candidate'])
         self._evidence(value)
         evidence = value['evidence']
         if self.accept is None or self.accept(copy.deepcopy(value['candidate']), copy.deepcopy(evidence)) is not True:
             raise PublicationError('trusted independent acceptance failed or unavailable')
         self._evidence(value)
+        self._plan_review(value['candidate'])
 
     def _event(self, value, action):
         value['events'].append({'action': action, 'observed_at': time.time()})

@@ -90,3 +90,5 @@ SELF-SYNC-01–03：scripts/run_knowledge_windows.py 的 prepare_host / sync_hos
 | MATH-25/26 | `knowledge/entries/math.softmax-barycenter-error.*`, `doc/results/math-softmax-20261007-v2/` | 主AI producer → 独立数学验收 → 建模Skill/维护者 | 分布/剪枝/value输出误差与有限开发验证；不含生产模型收益 |
 
 | MATH-27/28 | `knowledge/entries/math.attention-output-geometry.*`, `doc/results/math-geometry-20261007/` | 主AI producer → 独立数学/代码数据验收 → model-with-knowledge | 固定value几何/局部余项/线性margin；无生产模型或GPU收益 |
+
+| DUAL-01–03 | `agent_runtime/plan_review.py`, `prompts/planner_main.md`, `prompts/review_main.md`, `workflows/dual_main_workflow.md` | planner-main → 独立 review-main → protected Engine / publication → 原有独立结果 gate | 完整 DAG/身份/回执/有界返修；宿主适配器必须真实提供，CPU 测试不是模型质量收益 |

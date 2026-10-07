@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Bounded local demonstration: actual file effects, SQLite and scheduler readback.
 
-No LLM, cloud scheduler, paid compute, external message, or installed daemon.
+Explicit legacy-unprotected example. No LLM, cloud scheduler, paid compute, external message, or installed daemon.
 The handler is explicitly registered trusted code; task JSON is not executable.
 """
 import hashlib
@@ -51,7 +51,7 @@ def main():
         store = Store(root / 'state.sqlite')
         store.create(plan)
         handler = WriteDemo(root)
-        engine = Engine(store, {'write_demo': handler}, authorize=lambda p, t, h: h is handler)
+        engine = Engine(store, {'write_demo': handler}, authorize=lambda p, t, h: h is handler, allow_legacy=True)
         scheduler = LocalScheduler(store)
         stopped = threading.Event()
         worker = threading.Thread(target=scheduler.serve, args=(engine, stopped.is_set, 10))

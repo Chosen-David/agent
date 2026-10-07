@@ -271,3 +271,7 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 第二轮已加入条件数与残差、群平均投影、对偶最优性证书、Noether 守恒检查及整体误差排序界；检索增加英文词干、反向关联和有预算的完整前提上下文。验收见 [第二轮记录](docs/knowledge_learning/2026-10-06-round2/report.md)。
 
 工程升级覆盖 AI Infra、AI 算法与数据结构算法；主 AI 实验前检索原论文 observations/实验条件，代码 Agent 读取固定版本的成熟实现。见 [工程复用流程](workflows/engineering_knowledge_reuse_workflow.md)、[来源与核验报告](docs/knowledge_learning/2026-10-06-engineering/report.md) 和 [定时学习 Prompt](prompts/engineering_knowledge_continuous_learning.md)。
+
+## 双主 AI 组织
+
+复杂受管项目由 [planner-main](prompts/planner_main.md) 列方案/维护 TASK/执行，由 [review-main](prompts/review_main.md) 在独立新上下文审核完整计划。见 [契约、运行时接入与边界](workflows/dual_main_workflow.md)。15 个专业角色保留；审核不替代人工指南、工具权限、独立结果验收或发布授权。缺宿主真实调用与认证器会阻塞保护计划；安装提示文件不等于两个模型已经运行。

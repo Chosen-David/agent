@@ -1,3 +1,4 @@
+# Legacy fixture: exercises pre-dual-main invariants; independent review is tested separately.
 """Real temporary SQLite/files; no live model calls."""
 import copy
 import hashlib
@@ -23,7 +24,7 @@ class TaskManifestTests(unittest.TestCase):
         self.root = Path(self.tmp.name)
         self.task_file = self.root / 'TASK.md'
         self.task_file.write_text('- [ ] [T1] Produce output\n- [x] [T2] Review output\n')
-        self.plan = prepare(self.task_file, 'test', 'auto', 'test user instruction')
+        self.plan = prepare(self.task_file, 'test', 'auto', 'test user instruction', review_required=False)
         for task in self.plan['tasks']:
             task['action'] = 'verify_artifacts'
             task['done_when'] = {'artifacts': [{'path': task['task_id'] + '.txt',
@@ -33,7 +34,7 @@ class TaskManifestTests(unittest.TestCase):
         self.store = Store(self.root / 'state.sqlite')
         self.store.create(self.plan)
         self.handler = ReportingHandler(ArtifactHandler(self.root), self.root)
-        self.engine = Engine(self.store, {'verify_artifacts': self.handler}, authorize=lambda *_: True)
+        self.engine = Engine(self.store, {'verify_artifacts': self.handler}, authorize=lambda *_: True, allow_legacy=True)
 
     def write_result(self, task):
         atomic_json(self.root / task['report_path'], {'task_id': task['task_id'], 'summary': 'fixture output',
@@ -43,9 +44,9 @@ class TaskManifestTests(unittest.TestCase):
         (self.root / (task_id + '.txt')).write_bytes(b'proof')
 
     def test_auto_and_manual_preserve_ids_and_never_trust_checkmarks(self):
-        self.assertEqual(prepare(self.task_file, 'manual', 'manual', 'user')['task_source']['mode'], 'manual')
+        self.assertEqual(prepare(self.task_file, 'manual', 'manual', 'user', review_required=False)['task_source']['mode'], 'manual')
         self.assertEqual(validate_contract(self.plan, self.root)[1]['id'], 'T2')
-        self.assertEqual(review(self.store.snapshot('test'), self.root)['remaining'], ['T1', 'T2'])
+        self.assertEqual(review(self.store.snapshot('test'), self.root, allow_legacy=True)['remaining'], ['T1', 'T2'])
 
     def test_fenced_examples_ignored_but_duplicate_or_unidentified_tasks_rejected(self):
         self.task_file.write_text('```md\n- [ ] example\n```\n- [ ] [T] real\n')
@@ -65,17 +66,17 @@ class TaskManifestTests(unittest.TestCase):
         nested = self.root / 'agent-output' / 'TASK.md'
         nested.parent.mkdir()
         nested.write_text(self.task_file.read_text())
-        plan = prepare(nested, 'nested', 'auto', 'user')
+        plan = prepare(nested, 'nested', 'auto', 'user', review_required=False)
         with self.assertRaisesRegex(ValueError, 'project-root TASK.md'):
             validate_contract(plan, self.root)
 
     def test_source_changes_prevent_dispatch_and_completion(self):
         self.task_file.write_text(self.task_file.read_text() + '- [ ] [T3] Newly requested work\n')
         config = {'run_id': 'test', 'project_root': str(self.root), 'state_dir': str(self.root)}
-        engine = ManagedEngine(config, self.store, {'verify_artifacts': self.handler}, authorize=lambda *_: True)
+        engine = ManagedEngine(config, self.store, {'verify_artifacts': self.handler}, authorize=lambda *_: True, allow_legacy=True)
         with self.assertRaisesRegex(ValueError, 'changed'): engine.tick('test', 'event')
         self.assertEqual(self.store.snapshot('test')['state']['tasks']['T1']['attempts'], 0)
-        report = review(self.store.snapshot('test'), self.root)
+        report = review(self.store.snapshot('test'), self.root, allow_legacy=True)
         self.assertIn('T3', report['remaining'])
         self.assertFalse(report['all_reportable'])
 
@@ -89,26 +90,26 @@ class TaskManifestTests(unittest.TestCase):
         self.proof('T1')
         state = self.engine.tick('test', 'first')
         self.assertEqual(state['tasks']['T1']['status'], 'done')
-        report = review(self.store.snapshot('test'), self.root)
+        report = review(self.store.snapshot('test'), self.root, allow_legacy=True)
         self.assertEqual(report['remaining'], ['T2'])
         self.assertEqual(report['requirements'][0]['nodes'][0]['result']['data'][0]['kind'], 'synthetic')
         self.proof('T2')
         self.engine.tick('test', 'second')
-        self.assertTrue(review(self.store.snapshot('test'), self.root)['all_reportable'])
+        self.assertTrue(review(self.store.snapshot('test'), self.root, allow_legacy=True)['all_reportable'])
         # Reopening the real DB retains verified work and report provenance.
-        self.assertTrue(review(Store(self.root / 'state.sqlite').snapshot('test'), self.root)['all_reportable'])
+        self.assertTrue(review(Store(self.root / 'state.sqlite').snapshot('test'), self.root, allow_legacy=True)['all_reportable'])
 
     def test_missing_result_is_blocked_not_done(self):
         self.proof('T1')
         (self.root / self.plan['tasks'][0]['report_path']).unlink()
         state = self.engine.tick('test', 'first')
         self.assertEqual(state['tasks']['T1']['status'], 'blocked')
-        self.assertFalse(review(self.store.snapshot('test'), self.root)['all_reportable'])
+        self.assertFalse(review(self.store.snapshot('test'), self.root, allow_legacy=True)['all_reportable'])
 
     def test_progress_exposes_bounded_wait_and_task_identity(self):
         # No artifact yet: this is a real missing-file observation, not completion.
         self.engine.tick('test', 'pending')
-        entry = review(self.store.snapshot('test'), self.root)['requirements'][0]['nodes'][0]
+        entry = review(self.store.snapshot('test'), self.root, allow_legacy=True)['requirements'][0]['nodes'][0]
         self.assertEqual(entry['task_refs'], ['T1'])
         self.assertEqual(entry['execution']['attempts'], 0)
         self.assertEqual(entry['execution']['pending_polls'], 1)
@@ -120,7 +121,7 @@ class TaskManifestTests(unittest.TestCase):
     def diagnosed_wait(self):
         clock = [1000.]
         engine = Engine(self.store, {'verify_artifacts': self.handler},
-                        authorize=lambda *_: True, clock=lambda: clock[0])
+                        authorize=lambda *_: True, clock=lambda: clock[0], allow_legacy=True)
         engine.tick('test', 'wait-start')
         clock[0] += 3600
         engine.tick('test', 'wait-limit')
@@ -132,7 +133,7 @@ class TaskManifestTests(unittest.TestCase):
     def test_cancelled_diagnosis_preserves_stop_instruction(self):
         self.diagnosed_wait()
         self.store.cancel('test', 'explicit-stop')
-        entry = review(self.store.snapshot('test'), self.root)['requirements'][0]['nodes'][0]
+        entry = review(self.store.snapshot('test'), self.root, allow_legacy=True)['requirements'][0]['nodes'][0]
         self.assertEqual(entry['status'], 'cancelled')
         self.assertEqual(entry['next_step'], 'respect cancellation')
         self.assertFalse(entry['execution']['diagnosis_required'])
@@ -142,7 +143,7 @@ class TaskManifestTests(unittest.TestCase):
         self.proof('T1')
         evidence = self.handler.run(self.plan['tasks'][0], None).evidence
         engine.reconcile('test', 'T1', evidence, 'host checked completed artifact')
-        entry = review(self.store.snapshot('test'), self.root)['requirements'][0]['nodes'][0]
+        entry = review(self.store.snapshot('test'), self.root, allow_legacy=True)['requirements'][0]['nodes'][0]
         self.assertEqual(entry['status'], 'done')
         self.assertEqual(entry['next_step'], 'verified result available')
         self.assertFalse(entry['execution']['diagnosis_required'])
@@ -160,7 +161,7 @@ class TaskManifestTests(unittest.TestCase):
     def test_structural_report_does_not_replace_artifact_verification(self):
         (self.root / 'T1.txt').write_bytes(b'wrong bytes')
         self.engine.tick('test', 'first')
-        self.assertFalse(review(self.store.snapshot('test'), self.root)['requirements'][0]['done'])
+        self.assertFalse(review(self.store.snapshot('test'), self.root, allow_legacy=True)['requirements'][0]['done'])
 
     @unittest.skipUnless(hasattr(os, 'mkfifo'), 'POSIX')
     def test_nonregular_report_rejected_without_reading_fifo(self):
@@ -183,7 +184,7 @@ class TaskManifestTests(unittest.TestCase):
     def test_no_tmux_never_falls_back_to_foreground(self):
         with patch('agent_runtime.task_supervisor.shutil.which', return_value=None):
             with self.assertRaisesRegex(RuntimeError, 'NOT started'):
-                start('unused', self.root, self.root / 'run')
+                start('unused', self.root, self.root / 'run', allow_legacy=True)
 
     def test_start_snapshots_root_source_and_requests_detached_session(self):
         path = self.root / 'ready.json'; atomic_json(path, self.plan)
@@ -196,7 +197,7 @@ class TaskManifestTests(unittest.TestCase):
         with patch('agent_runtime.task_supervisor.shutil.which', return_value='/fixture/tmux'), \
              patch('agent_runtime.task_supervisor.tmux', side_effect=fake_tmux), \
              patch('agent_runtime.task_supervisor.status', return_value=receipt):
-            result = start(path, self.root, self.root / 'managed-run')
+            result = start(path, self.root, self.root / 'managed-run', allow_legacy=True)
         self.assertEqual(result['status'], 'started')
         launch = next(args for args in calls if args[0] == 'new-session')
         self.assertIn('-d', launch)
@@ -206,10 +207,10 @@ class TaskManifestTests(unittest.TestCase):
 
     def test_unconfigured_auto_draft_cannot_execute(self):
         path = self.root / 'draft.json'
-        atomic_json(path, prepare(self.task_file, 'draft', 'auto', 'user'))
+        atomic_json(path, prepare(self.task_file, 'draft', 'auto', 'user', review_required=False))
         with patch('agent_runtime.task_supervisor.shutil.which', return_value='/tmux'):
             with self.assertRaisesRegex(ValueError, 'configure'):
-                start(path, self.root, self.root / 'run')
+                start(path, self.root, self.root / 'run', allow_legacy=True)
 
 
 class ProjectDocumentsTests(unittest.TestCase):
@@ -227,7 +228,7 @@ class ProjectDocumentsTests(unittest.TestCase):
         return self.docs.migrate(self.root, '2026-10-07')
 
     def plan(self):
-        return prepare(self.root, 'docs', 'auto', 'fixture explicit user task')
+        return prepare(self.root, 'docs', 'auto', 'fixture explicit user task', review_required=False)
 
     def guide(self, data='Owner-authored fixture scope'):
         path = self.root / 'doc/guide/guide.md'
@@ -395,7 +396,7 @@ class ProjectDocumentsTests(unittest.TestCase):
         path = self.root / 'ready.json'; atomic_json(path, plan)
         with patch('agent_runtime.task_supervisor.shutil.which', return_value='/fixture/tmux'):
             with self.assertRaisesRegex(ValueError, 'human-only'):
-                start(path, self.root, self.root / 'doc/guide')
+                start(path, self.root, self.root / 'doc/guide', allow_legacy=True)
 
 
     def test_inline_boundary_text_does_not_hide_later_planning_changes(self):
@@ -437,13 +438,13 @@ class ProjectDocumentsTests(unittest.TestCase):
         store = Store(self.root / 'state.sqlite'); store.create(plan)
         config = {'run_id': 'docs', 'project_root': str(self.root), 'state_dir': str(self.root / 'run')}
         engine = ManagedEngine(config, store, {'fixture': ReportingHandler(Handler(), self.root)},
-                               authorize=lambda *_: True)
+                               authorize=lambda *_: True, allow_legacy=True)
         advice.write_text('changed adopted suggestion')
         engine.tick('docs', 'changed-advice')
         state = engine.tick('docs', 'next-independent-branch')
         self.assertEqual(state['tasks']['T1']['status'], 'blocked')
         self.assertEqual(state['tasks']['T2']['dispatches'], 1)
-        self.assertIsNone(review(store.snapshot('docs'), self.root)['source_error'])
+        self.assertIsNone(review(store.snapshot('docs'), self.root, allow_legacy=True)['source_error'])
 
 
     def test_rebasing_project_root_does_not_bypass_guide_guard(self):
@@ -481,7 +482,7 @@ class ProjectDocumentsTests(unittest.TestCase):
         (state_dir / 'launch.lock').symlink_to(guide)
         with patch('agent_runtime.task_supervisor.shutil.which', return_value='/fixture/tmux'):
             with self.assertRaises(ValueError):
-                start(plan_path, self.root, state_dir)
+                start(plan_path, self.root, state_dir, allow_legacy=True)
         self.assertEqual(guide.read_text(), 'Owner-authored fixture scope')
 
 
@@ -546,7 +547,7 @@ class ProjectDocumentsTests(unittest.TestCase):
             required_capabilities = set()
             def run(self, *_): return Outcome('pending', 'bounded task')
         store = Store(self.root / 'state.sqlite'); store.create(plan)
-        engine = Engine(store, {'fixture': ReportingHandler(Handler(), self.root)}, authorize=lambda *_: True)
+        engine = Engine(store, {'fixture': ReportingHandler(Handler(), self.root)}, authorize=lambda *_: True, allow_legacy=True)
         engine.tick('docs', 'first-lookup')
         with store.transaction() as db:
             rows = db.execute("SELECT detail FROM journal WHERE kind='prior_result_search'").fetchall()

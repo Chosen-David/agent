@@ -36,11 +36,11 @@ class CrossfeatureRuntime(unittest.TestCase):
                     return evidence == [{'synthetic': True}]
             handler = Handler()
             engine = Engine(store, {'synthetic': handler}, authorize=lambda *_: True,
-                            clock=lambda: now[0], lease_seconds=5)
+                            clock=lambda: now[0], lease_seconds=5, allow_legacy=True)
             self.assertEqual(engine.tick('boundary', 'old')['tasks']['a']['status'], 'doing')
             self.assertFalse(contexts[0].current())
             recovered = Engine(Store(db), {'synthetic': handler}, authorize=lambda *_: True,
-                               clock=lambda: now[0], lease_seconds=5)
+                               clock=lambda: now[0], lease_seconds=5, allow_legacy=True)
             self.assertEqual(recovered.tick('boundary', 'old')['tasks']['a']['attempts'], 1)
             self.assertEqual(recovered.tick('boundary', 'new')['status'], 'done')
             self.assertEqual(len(contexts), 2)

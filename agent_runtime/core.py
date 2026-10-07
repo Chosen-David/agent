@@ -7,6 +7,7 @@ No model, shell command, credentials, cloud service or daemon is auto-installed.
 from __future__ import annotations
 
 from contextlib import contextmanager
+from copy import deepcopy
 from dataclasses import dataclass
 import hashlib
 import json
@@ -145,12 +146,22 @@ class Store:
         db.execute('INSERT INTO journal(chain_id,at,kind,detail) VALUES (?,?,?,?)',
                    (run_id, now, kind, packed(detail)))
 
-    def create(self, plan):
+    def create(self, plan, *, project_root=None):
         validate(plan)
+        from .plan_review import register_protection
+        register_protection(plan, project_root)
         state = {'status': 'active', 'idle_ticks': 0, 'tasks': {
             t['task_id']: {'status': 'todo', 'attempts': 0, 'next_at': 0,
                            'evidence': [], 'reason': None} for t in plan['tasks']}}
         with self.transaction() as db:
+            # Sticky protection also survives a stripped source path in this Store.
+            from .plan_review import PlanReviewError
+            refs = {r for t in plan['tasks'] for r in t.get('task_refs', [])}
+            for row in db.execute('SELECT plan FROM chains'):
+                prior = json.loads(row['plan'])
+                if prior.get('plan_review') and refs & {r for t in prior['tasks'] for r in t.get('task_refs', [])}:
+                    if plan.get('plan_review', {}).get('lineage_id') != prior['plan_review']['lineage_id']:
+                        raise PlanReviewError('protected logical requirements cannot change lineage or downgrade')
             old = db.execute('SELECT plan FROM chains WHERE id=?', (plan['run_id'],)).fetchone()
             if old:
                 if old['plan'] != packed(plan):
@@ -212,12 +223,15 @@ class Handler(Protocol):
 
 
 class Engine:
-    def __init__(self, store, handlers, authorize=None, clock=time.time, lease_seconds=300):
+    def __init__(self, store, handlers, authorize=None, clock=time.time, lease_seconds=300,
+                 *, project_root=None, plan_review_verifier=None, allow_legacy=False):
         if not number(lease_seconds, 1, 86400):
             raise ValueError('invalid lease')
         self.store, self.handlers = store, handlers
         self.authorize = authorize or (lambda plan, task, handler: False)
         self.clock, self.lease_seconds = clock, lease_seconds
+        self.project_root, self.plan_review_verifier = project_root, plan_review_verifier
+        self.allow_legacy = allow_legacy is True
 
     def _authorized(self, plan, task, handler):
         try:
@@ -226,7 +240,23 @@ class Engine:
             # An unavailable policy service must not grant rights or kill monitor.
             return False
 
+    def _review_plan(self, plan):
+        from .plan_review import check_plan_review, PlanReviewError
+        try:
+            return check_plan_review(plan, self.project_root, self.plan_review_verifier, allow_legacy=self.allow_legacy)
+        except (ValueError, OSError, KeyError) as exc:
+            raise PlanReviewError(str(exc)) from exc
+
     def _check_done(self, plan, state):
+        try:
+            self._review_plan(plan)
+        except ValueError as exc:
+            state.update(status='blocked', plan_review_error=str(exc))
+            for node in state['tasks'].values():
+                if node['status'] == 'done':
+                    node.update(status='blocked', reason_kind='plan_review_after_effect', requires_reconciliation=True,
+                                reason='review invalid after effect; explicit reconciliation required: ' + str(exc))
+            return False
         # Fresh dependency/terminal evidence, not just an old success bit.
         for task in plan['tasks']:
             node = state['tasks'][task['task_id']]
@@ -257,6 +287,8 @@ class Engine:
             raise ValueError('reconciliation evidence and host reference required')
         with self.store.transaction() as db:
             plan, state = self.store.load(db, run_id)
+            self._review_plan(plan)
+            state.pop('plan_review_error', None)
             task = next(t for t in plan['tasks'] if t['task_id'] == task_id)
             node, handler = state['tasks'][task_id], self.handlers.get(task['action'])
             if state['status'] == 'cancelled' or node['status'] != 'blocked':
@@ -265,7 +297,8 @@ class Engine:
                     or not all(state['tasks'][d]['status'] == 'done' for d in task.get('depends_on', []))
                     or not handler.verify(task, evidence)):
                 raise ValueError('reconciliation not authorized or not verified')
-            node.update(status='done', token=None, evidence=evidence, reason=reference, diagnosis_required=False)
+            node.update(status='done', token=None, evidence=evidence, reason=reference, reason_kind='reconciled',
+                        diagnosis_required=False, requires_reconciliation=False)
             self._check_done(plan, state)
             self._summary(plan, state)
             self.store.save(db, run_id, state)
@@ -277,13 +310,19 @@ class Engine:
     def _summary(self, plan, state):
         if state['status'] == 'cancelled':
             return
+        if state.get('plan_review_error'):
+            state['status'] = 'blocked'
+            return
         nodes = state['tasks']
         for task in plan['tasks']:
             node = nodes[task['task_id']]
+            if node.get('requires_reconciliation'):
+                node['status'] = 'blocked'
+                continue
             if node['status'] in ('todo', 'blocked'):
                 bad = [d for d in task.get('depends_on', [])
                        if nodes[d]['status'] in ('failed', 'blocked', 'cancelled')]
-                if bad and node.get('reason_kind') != 'permission':
+                if bad and node.get('reason_kind') not in ('permission', 'ambiguous', 'plan_review_after_effect'):
                     node.update(status='blocked', reason='dependencies: ' + ', '.join(bad), reason_kind='dependency')
                 elif not bad and node.get('reason_kind') == 'dependency':
                     node.update(status='todo', reason=None, reason_kind=None)
@@ -306,8 +345,28 @@ class Engine:
         if not isinstance(event_id, str) or not event_id:
             raise ValueError('event ID required')
         now, claim = self.clock(), None
+        # Before terminal fast paths and each actual claim, including restart.
+        try:
+            self._review_plan(self.store.snapshot(run_id)['plan'])
+        except (ValueError, OSError, KeyError) as exc:
+            with self.store.transaction() as db:
+                _, state = self.store.load(db, run_id)
+                if state['status'] != 'cancelled':
+                    state['status'] = 'blocked'
+                    for node in state['tasks'].values():
+                        if not node.get('requires_reconciliation') and (node['status'] == 'todo' or
+                                (node['status'] == 'blocked' and node.get('reason_kind') == 'plan_review')):
+                            node.update(status='blocked', reason_kind='plan_review', reason=str(exc))
+                    state['plan_review_error'] = str(exc)
+                    self.store.save(db, run_id, state)
+                    self.store.log(db, run_id, now, 'plan_review_blocked', str(exc))
+                return state
         with self.store.transaction() as db:
             plan, state = self.store.load(db, run_id)
+            state.pop('plan_review_error', None)
+            for node in state['tasks'].values():
+                if node.get('reason_kind') == 'plan_review' and not node.get('requires_reconciliation'):
+                    node.update(status='todo', reason_kind=None, reason=None)
             if state['status'] in ('done', 'cancelled'):
                 return state
             if db.execute('SELECT 1 FROM events WHERE chain_id=? AND event_id=?', (run_id, event_id)).fetchone():
@@ -375,16 +434,29 @@ class Engine:
             self.store.save(db, run_id, state)
             self.store.log(db, run_id, now, 'tick', {'event_id': event_id, 'claimed': claim[0]['task_id'] if claim else None})
         if claim:
+            from .plan_review import PlanReviewError
             task, handler, context = claim
+            executed, review_blocked, outcome, effect_observation = False, False, None, None
             try:
                 if not context.current() or not self._authorized(plan, task, handler):
                     outcome = Outcome('blocked', 'authorization revoked or claim no longer current')
                 else:
+                    self._review_plan(plan)
+                    executed = True
                     outcome = handler.run(task, context)
+                    self._review_plan(plan)
                     if outcome.status == 'complete' and not (outcome.evidence and handler.verify(task, outcome.evidence)):
                         outcome = Outcome('failed', 'completion evidence rejected by verifier')
                     if outcome.status not in ('complete', 'pending', 'retry', 'blocked', 'failed'):
                         outcome = Outcome('failed', 'invalid adapter outcome')
+            except PlanReviewError as exc:
+                review_blocked = True
+                if executed:
+                    effect_observation = ({'status': outcome.status, 'reason': outcome.reason,
+                                           'evidence': deepcopy(outcome.evidence)} if outcome is not None else
+                                          {'status': 'unknown', 'reason': 'no outcome returned', 'evidence': []})
+                outcome = Outcome('blocked', 'plan review invalid; explicit reconciliation required: ' + str(exc),
+                                  outcome.evidence if outcome is not None else [])
             except Exception as exc:
                 # Unknown side effects: only an explicitly idempotent adapter may retry.
                 outcome = Outcome('retry' if handler.idempotent else 'blocked',
@@ -395,7 +467,7 @@ class Engine:
                 if (node.get('token') == context.token and node['status'] == 'doing'
                         and node['lease_until'] > self.clock() and state['status'] != 'cancelled'):
                     status = {'complete': 'done', 'pending': 'todo', 'retry': 'todo'}.get(outcome.status, outcome.status)
-                    reason_kind = 'adapter_result'
+                    reason_kind = ('plan_review_after_effect' if executed else 'plan_review') if review_blocked else 'adapter_result'
                     if outcome.status == 'pending' and task.get('wait_policy') is not None:
                         # Only a successfully returned observation refunds this claim.
                         # Crashes, unknown side effects and retry outcomes still cost attempts.
@@ -413,6 +485,8 @@ class Engine:
                     if status == 'todo' and node['attempts'] >= task['max_attempts']:
                         status = 'failed'
                         outcome.reason = 'attempt budget exhausted: ' + outcome.reason
+                    if effect_observation is not None:
+                        node.update(requires_reconciliation=True, effect_observation=effect_observation)
                     node.update(status=status, token=None, reason=outcome.reason,
                                 evidence=outcome.evidence or [], reason_kind=reason_kind)
                     if status == 'done':

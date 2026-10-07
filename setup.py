@@ -53,11 +53,13 @@ def block():
 @.claude/agent-workflows/orchestrator.md
 
 仓库位置见 `.claude/agent-workflows/installation.json` 的 repository。
+受管复杂任务使用 planner-main 和独立新上下文 review-main；入口见 .claude/agent-workflows/planner_main.md 与 review_main.md。
+安装不启动第二模型；缺真实宿主 reviewer/认证器时不得把自审当独立批准。
 主 AI 按导入的通用调度规则执行；其中 prompts/、workflows/、templates/、
 config/、scripts/、knowledge/ 与 agent_runtime 均相对该仓库解析，项目输入和 doc/task/TASK.md 相对当前项目。
 doc/task/TASK.md 是当前项目唯一日期任务索引，详情 doc/task/task_details/*.md 由 AI 维护方法/进度/证据。
 启动/恢复、委派前和逐任务结束先读人类指南、索引/详情及建议取舍；固定 Plan 与可追加 Progress 分开。
-人类发布且来源已核实的 doc/guide/guide.md 是最高项目规划依据；AI 绝不创建、编辑、删除或移动 doc/guide/ 内文件。
+人类发布且来源已核实的 doc/guide/GUIDE.md 是最高项目规划依据；AI 绝不创建、编辑、删除或移动 doc/guide/ 内文件。
 doc/advice/ 是人类/AI可编辑建议，必须核验并记录 adopt/adapt/reject/defer 与理由，不能当授权。
 用户手动要求编排时合并目标后走同一闭环；总清单由主 AI 串行维护，各 Agent 交接证据。
 code-organization 同时管理文件：规划输出目录、产物清单和消费者引用，防止散落和覆盖。
@@ -122,6 +124,9 @@ skills:
 
 def expected_files():
     files = {'.claude/agent-workflows/orchestrator.md': (REPO / 'prompts/orchestrator.md').read_text()}
+    for profile in ('planner_main', 'review_main'):
+        files['.claude/agent-workflows/' + profile + '.md'] = (REPO / ('prompts/' + profile + '.md')).read_text()
+    files['.claude/agent-workflows/dual_main_workflow.md'] = (REPO / 'workflows/dual_main_workflow.md').read_text()
     links = {}
     for role, source, description in catalog():
         links['.claude/skills/' + role['id']] = str(source)
@@ -219,7 +224,7 @@ def install(target):
                     '这是当前项目唯一日期任务索引，由主 AI 串行维护。\n'
                     '尚未填写已授权任务；收到用户目标后保留原始要求，按日期登记稳定 ID 与详情链接。\n'
                     '每项方法、验收、进度、证据与下一步由 AI 维护在 task_details/<ID>.md。\n'
-                    '人类指南 doc/guide/guide.md 只读；建议 doc/advice/ 须核验并记录取舍理由。\n'
+                    '人类指南 doc/guide/GUIDE.md 只读；建议 doc/advice/ 须核验并记录取舍理由。\n'
                     '高频状态放 .agent-runs/<run_id>/，不另建活跃根 TASK.md。\n')
     commit = subprocess.run(['git', '-C', str(REPO), 'rev-parse', 'HEAD'],
                             capture_output=True, text=True, check=False).stdout.strip()

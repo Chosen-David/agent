@@ -1,0 +1,277 @@
+{
+  "schema_version": "non-executable-plan-view/v1",
+  "historical_only": true,
+  "executable": false,
+  "original_file_sha256": "03f8113728daa34e3b6d7c23f5a87d7448d146acde6a54fba0247e1dea4415c3",
+  "original_plan_sha256": "20b010ce3b37738d69c558e5e2241f592db3262facb5c8a71e0c8eeda6859bb3",
+  "redacted_plan_view": {
+    "schema_version": "task-dag/v1",
+    "run_id": "native-square-plan-v2",
+    "plan_review": {
+      "schema_version": "main-plan-review/v1",
+      "lineage_id": "native-square-logical-goal",
+      "evidence_refs": [
+        {
+          "path": "square_sum.py",
+          "sha256": "ab38df95188731257d21e3f8315b73c865112fbbac6da16d8805cc904fd63066"
+        },
+        {
+          "path": "host_adapter.py",
+          "sha256": "725279389728603ed085f57c565c4a1d34dcb9a6ed08af7fbf35b018ed94be12"
+        },
+        {
+          "path": "inputs.json",
+          "sha256": "035f6cbf03bd07750867f5bc283ac383fa91f9777b88bbf98d3b5e169508c85b"
+        },
+        {
+          "path": "config.json",
+          "sha256": "b407f80753b6e3714148e2f075ae7449ea845a57b166ea25f62ff2325a545efc"
+        },
+        {
+          "path": "environment.json",
+          "sha256": "c718d09634439e8b551abdbfdcaabb8d7c4c89049ae2117619068fd66f00b1a6"
+        },
+        {
+          "path": "validation-plan.json",
+          "sha256": "4ff42ba12d2ecb5750c91e07bac347ba7a6156265dd60b61737e609e7df68b32"
+        }
+      ]
+    },
+    "user_goal": "Validate dual-main protected dispatch plus separate result acceptance using a finite exact-integer CPU task",
+    "authorization_reference": "public local CPU demonstration authorized for dual-main acceptance",
+    "task_source": {
+      "path": "TASK.md",
+      "sha256": "c4467155cd9ac8a0f66f0dcb549ba407475cc94849e6a07421024fcb067a5188",
+      "mode": "manual"
+    },
+    "project_documents": {
+      "schema_version": "project-documents/v1",
+      "layout": "legacy",
+      "task_index": {
+        "path": "TASK.md",
+        "sha256": "c4467155cd9ac8a0f66f0dcb549ba407475cc94849e6a07421024fcb067a5188"
+      },
+      "task_details": {},
+      "guides": {},
+      "advice": {},
+      "adopted_advice": {}
+    },
+    "guide_reviews": [],
+    "advice_assessments": [],
+    "supervision": {
+      "min_seconds": 1,
+      "max_seconds": 2,
+      "rationale": "Three finite local stages; no service/model deployment"
+    },
+    "tasks": [
+      {
+        "task_id": "produce",
+        "task_refs": [
+          "DEMO-1"
+        ],
+        "owner": "square-sum-producer",
+        "action": "produce_square_sum",
+        "depends_on": [],
+        "risk": "low",
+        "document_refs": {
+          "schema_version": "project-documents/v1",
+          "layout": "legacy",
+          "task_index": {
+            "path": "TASK.md",
+            "sha256": "c4467155cd9ac8a0f66f0dcb549ba407475cc94849e6a07421024fcb067a5188"
+          },
+          "task_details": {},
+          "guides": {},
+          "advice": {},
+          "adopted_advice": {},
+          "guide_reviews": []
+        },
+        "prior_result_search": {
+          "schema_version": "project-result-search/v1",
+          "query": "Execute the frozen square-sum implementation on five integer inputs and preserve raw data",
+          "status": "incomplete",
+          "results": [],
+          "strategy": "lexical",
+          "scanned": 1,
+          "partial": false,
+          "errors": [
+            {
+              "run_id": "square-sum-v1",
+              "error": "[diagnostic omitted from public view]"
+            }
+          ],
+          "authority": "retrieval only; no applicability or acceptance proof"
+        },
+        "estimated_seconds": 1,
+        "max_attempts": 1,
+        "inputs": {
+          "goal": "Execute the frozen square-sum implementation on five integer inputs and preserve raw data"
+        },
+        "wait_policy": {
+          "max_polls": 120,
+          "max_seconds": 3600,
+          "diagnose_after_seconds": 300
+        },
+        "outputs": [],
+        "done_when": {
+          "independent_stage_acceptance": true
+        },
+        "report_path": "reports/produce.json",
+        "experiment_result": {
+          "result_id": "native-square-result-1",
+          "producer_task_id": "produce",
+          "producer_actor": "square-sum-producer",
+          "manifest_path": "doc/results/square-sum-v1/manifest.json",
+          "validation_plan": {
+            "path": "validation-plan.json",
+            "sha256": "4ff42ba12d2ecb5750c91e07bac347ba7a6156265dd60b61737e609e7df68b32"
+          },
+          "scope": "Finite CPU square-sum fixture: 5 integer inputs, 3 repetitions; no general correctness or performance claim"
+        },
+        "result_storage": "central",
+        "prior_result_review": {
+          "decision": "rerun",
+          "record_refs": [],
+          "reason": "The bounded pre-experiment lookup found no registered matching prior result but is incomplete because this new synthetic output namespace was created empty before discovery. No old data are reused. This authorized demonstration requires fresh exact-integer production and independent validation; preserve the lookup gap and do not claim absence across other projects."
+        }
+      },
+      {
+        "task_id": "verify",
+        "task_refs": [
+          "DEMO-2"
+        ],
+        "owner": "independent-arithmetic-verifier",
+        "action": "verify_experiment_result",
+        "depends_on": [
+          "produce"
+        ],
+        "risk": "low",
+        "document_refs": {
+          "schema_version": "project-documents/v1",
+          "layout": "legacy",
+          "task_index": {
+            "path": "TASK.md",
+            "sha256": "c4467155cd9ac8a0f66f0dcb549ba407475cc94849e6a07421024fcb067a5188"
+          },
+          "task_details": {},
+          "guides": {},
+          "advice": {},
+          "adopted_advice": {},
+          "guide_reviews": []
+        },
+        "prior_result_search": {
+          "schema_version": "project-result-search/v1",
+          "query": "Independently validate executed code, boundaries, raw sample IDs and exact values before use",
+          "status": "incomplete",
+          "results": [],
+          "strategy": "lexical",
+          "scanned": 1,
+          "partial": false,
+          "errors": [
+            {
+              "run_id": "square-sum-v1",
+              "error": "[diagnostic omitted from public view]"
+            }
+          ],
+          "authority": "retrieval only; no applicability or acceptance proof"
+        },
+        "estimated_seconds": 1,
+        "max_attempts": 1,
+        "inputs": {
+          "goal": "Independently validate executed code, boundaries, raw sample IDs and exact values before use"
+        },
+        "wait_policy": {
+          "max_polls": 120,
+          "max_seconds": 3600,
+          "diagnose_after_seconds": 300
+        },
+        "outputs": [],
+        "done_when": {
+          "independent_stage_acceptance": true
+        },
+        "report_path": "reports/verify.json",
+        "result_validation": {
+          "result_id": "native-square-result-1",
+          "producer_task_id": "produce",
+          "producer_actor": "square-sum-producer",
+          "manifest_path": "doc/results/square-sum-v1/manifest.json",
+          "validation_plan": {
+            "path": "validation-plan.json",
+            "sha256": "4ff42ba12d2ecb5750c91e07bac347ba7a6156265dd60b61737e609e7df68b32"
+          },
+          "scope": "Finite CPU square-sum fixture: 5 integer inputs, 3 repetitions; no general correctness or performance claim"
+        }
+      },
+      {
+        "task_id": "consume",
+        "task_refs": [
+          "DEMO-3"
+        ],
+        "owner": "scoped-summary-writer",
+        "action": "consume_square_sum",
+        "depends_on": [
+          "verify"
+        ],
+        "risk": "low",
+        "document_refs": {
+          "schema_version": "project-documents/v1",
+          "layout": "legacy",
+          "task_index": {
+            "path": "TASK.md",
+            "sha256": "c4467155cd9ac8a0f66f0dcb549ba407475cc94849e6a07421024fcb067a5188"
+          },
+          "task_details": {},
+          "guides": {},
+          "advice": {},
+          "adopted_advice": {},
+          "guide_reviews": []
+        },
+        "prior_result_search": {
+          "schema_version": "project-result-search/v1",
+          "query": "Publish a local scoped summary only after independent data acceptance",
+          "status": "incomplete",
+          "results": [],
+          "strategy": "lexical",
+          "scanned": 1,
+          "partial": false,
+          "errors": [
+            {
+              "run_id": "square-sum-v1",
+              "error": "[diagnostic omitted from public view]"
+            }
+          ],
+          "authority": "retrieval only; no applicability or acceptance proof"
+        },
+        "estimated_seconds": 1,
+        "max_attempts": 1,
+        "inputs": {
+          "goal": "Publish a local scoped summary only after independent data acceptance"
+        },
+        "wait_policy": {
+          "max_polls": 120,
+          "max_seconds": 3600,
+          "diagnose_after_seconds": 300
+        },
+        "outputs": [],
+        "done_when": {
+          "independent_stage_acceptance": true
+        },
+        "report_path": "reports/consume.json",
+        "required_result_refs": [
+          {
+            "result_id": "native-square-result-1",
+            "producer_task_id": "produce",
+            "producer_actor": "square-sum-producer",
+            "manifest_path": "doc/results/square-sum-v1/manifest.json",
+            "validation_plan": {
+              "path": "validation-plan.json",
+              "sha256": "4ff42ba12d2ecb5750c91e07bac347ba7a6156265dd60b61737e609e7df68b32"
+            },
+            "scope": "Finite CPU square-sum fixture: 5 integer inputs, 3 repetitions; no general correctness or performance claim"
+          }
+        ]
+      }
+    ]
+  },
+  "scope": "Display-only derived view. Its bytes were not the original reviewed executable plan. No original receipt applies; it must never be supplied to Engine/ReviewSession as an approved plan."
+}

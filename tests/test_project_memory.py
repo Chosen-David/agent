@@ -1,3 +1,4 @@
+# Legacy fixture: exercises pre-dual-main invariants; independent review is tested separately.
 """Real SQLite correction propagation and task acceptance; no model calls."""
 from concurrent.futures import ThreadPoolExecutor
 import json
@@ -180,7 +181,7 @@ class MemoryTests(unittest.TestCase):
     def report_fixture(self):
         self.seed()
         (self.root / 'TASK.md').write_text('- [ ] [T1] Answer correct research question\n')
-        plan = prepare(self.root / 'TASK.md', 'run1', 'auto', 'user instruction')
+        plan = prepare(self.root / 'TASK.md', 'run1', 'auto', 'user instruction', review_required=False)
         task = plan['tasks'][0]
         task['memory_refs'] = ['intent-v1', 'report-v1']
         atomic_json(self.root / task['report_path'], {'task_id': 'T1', 'summary': 'fixture report',
@@ -211,10 +212,10 @@ class MemoryTests(unittest.TestCase):
         self.assertTrue(wrapper.verify(task, outcome.evidence))
         snapshot = {'plan': plan, 'state': {'status': 'done', 'tasks': {
             'T1': {'status': 'done', 'reason': 'accepted', 'evidence': outcome.evidence}}}}
-        self.assertTrue(review(snapshot, self.root)['all_reportable'])
+        self.assertTrue(review(snapshot, self.root, allow_legacy=True)['all_reportable'])
         self.correct()
         self.assertFalse(wrapper.verify(task, outcome.evidence))
-        report = review(snapshot, self.root)
+        report = review(snapshot, self.root, allow_legacy=True)
         self.assertFalse(report['all_reportable'])
         self.assertEqual(report['requirements'][0]['nodes'][0]['status'], 'needs_review')
         self.assertEqual(snapshot['state']['tasks']['T1']['status'], 'done')

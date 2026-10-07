@@ -30,7 +30,7 @@ class DocumentWorkflowTests(unittest.TestCase):
             with self.subTest(role=role['id']):
                 for required in ('references/project_document_workflow.md',
                                  'doc/task/TASK.md', 'doc/task/task_details/*.md',
-                                 'doc/guide/guide.md', 'doc/advice/', 'adopt/adapt/reject/defer'):
+                                 'doc/guide/GUIDE.md', 'doc/advice/', 'adopt/adapt/reject/defer'):
                     self.assertIn(required, text)
                 expected.append((Path(role['skill']).parent / 'references/project_document_workflow.md').as_posix())
         self.assertEqual(destinations, expected)
@@ -105,7 +105,7 @@ class DocumentWorkflowTests(unittest.TestCase):
             text = (ROOT / relative).read_text()
             with self.subTest(source=relative):
                 for required in ('【项目文档治理与执行依据】', 'doc/task/TASK.md',
-                                 'doc/task/task_details/*.md', 'doc/guide/guide.md',
+                                 'doc/task/task_details/*.md', 'doc/guide/GUIDE.md',
                                  '最高项目规划优先级', '不能盲从', '## Plan', '## Progress',
                                  '不能授予新权限', 'doc/advice/'):
                     self.assertIn(required, text)
@@ -128,14 +128,25 @@ class DocumentWorkflowTests(unittest.TestCase):
         self.assertIn('task_details/T1.md', task_template)
         for required in ('Task-ID:', 'Date:', '## Plan', '## Progress'):
             self.assertIn(required, detail_template)
+        # Existing owner-approved source guides are not installer scaffolding.
+        # Exercise the actual initializer: it may mkdir but must not copy/create
+        # any guide file, even when this workflow repository has a human guide.
         guide = ROOT / 'doc/guide'
-        self.assertFalse(guide.exists() and any(guide.rglob('*')),
-                         'The repository must not scaffold files into human-only guide/')
+        before = {p.relative_to(guide).as_posix(): p.read_bytes()
+                  for p in guide.rglob('*') if p.is_file()} if guide.exists() else {}
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory)
+            setup.install(target)
+            self.assertTrue((target / 'doc/guide').is_dir())
+            self.assertEqual(list((target / 'doc/guide').rglob('*')), [])
+        after = {p.relative_to(guide).as_posix(): p.read_bytes()
+                 for p in guide.rglob('*') if p.is_file()} if guide.exists() else {}
+        self.assertEqual(after, before, 'Installer must preserve source human guides')
 
     def test_claude_and_codex_entry_instructions_use_current_project(self):
         for text in (setup.block(), (ROOT / 'templates/codex_global_instructions.md').read_text()):
             for required in ('doc/task/TASK.md', 'doc/task/task_details/*.md',
-                             'doc/guide/guide.md', 'doc/advice/', 'adopt/adapt/reject/defer'):
+                             'doc/guide/GUIDE.md', 'doc/advice/', 'adopt/adapt/reject/defer'):
                 self.assertIn(required, text)
         for role, _, description in setup.catalog():
             text = setup.agent_text(role, description)

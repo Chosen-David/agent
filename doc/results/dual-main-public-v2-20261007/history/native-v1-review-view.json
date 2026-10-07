@@ -1,0 +1,54 @@
+{
+  "schema_version": "historical-review-view/v1",
+  "historical_only": true,
+  "executable": false,
+  "original_file_sha256": "46160c4c4b3d522f537b8af176c8a0a0c7eb5b6fc163e4e314b89046c7f2768a",
+  "original_plan_sha256": "4b9f427e0454a8e4d505d51531d4a2ce26263bcdac7f26cbfe2a516b5b430b20",
+  "review": {
+    "full_review": "Reviewed exact plan SHA-256 4b9f427e0454a8e4d505d51531d4a2ce26263bcdac7f26cbfe2a516b5b430b20 and all eight files listed in packet.json, including the executable host adapter, input/config/environment bytes and result-validation protocol. Decision: revise before execution.\n\nThe design is appropriately small for the demonstration: the producer runs the frozen square-sum function; a separate closed-form verifier checks the actual code and result data; the consumer depends on that verification and repeats the finite-scope limitation. All three requirement IDs are covered. There is no proposed guide write, model deployment, network operation or paid compute. This review authorizes none of those actions and does not accept data that have not yet been produced.\n\nOne concrete execution blocker remains. The frozen prior-result searches are incomplete because the empty target result directory has no record.json. The producer has neither an honest no-hit snapshot nor a prior_result_review assessment acknowledging the lookup gap. ReportingHandler._review_prior_candidates will therefore block before running the producer. Do not label the missing record as a successful search or invent a prior validation. Either regenerate discovery before creating the empty output directory, or explicitly assess the observed gap with a bounded rerun reason and empty record_refs. Then produce a new immutable plan/run version and re-review it. Preserve this failed review and its exact plan hash.\n\nAfter that correction, verify the real dispatch gate, independent raw-data gate and scoped consumer outcome. A CPU fixture can demonstrate these transitions; it cannot establish general software correctness, live continuous two-model deployment, token savings or improved task success rates.",
+    "verdict": {
+      "decision": "revise",
+      "summary": "Fix the missing prior-result disposition before protected CPU dispatch.",
+      "checks": {
+        "intent": {
+          "status": "pass",
+          "reason": "The three-stage finite CPU task is a proportionate demonstration of protected dispatch and separate result validation. It does not claim model quality or general performance gains."
+        },
+        "guide": {
+          "status": "pass",
+          "reason": "The synthetic project has no human guide, no adopted advice and no proposed guide writes. TASK requirements map to producer, verifier and consumer."
+        },
+        "assumptions": {
+          "status": "pass",
+          "reason": "The frozen input integers and exact Python-integer arithmetic support a finite equality test; invalid negative/noninteger/bool input rejection is explicitly checked. General correctness and timing remain out of scope."
+        },
+        "prior_results": {
+          "status": "fail",
+          "reason": "The frozen searches report a missing square-sum-v1/record.json, but the producer lacks the required prior_result_review disposition. The existing runtime will block before dispatch rather than infer that no prior data exists."
+        },
+        "acceptance": {
+          "status": "pass",
+          "reason": "The same frozen result contract is bound across producer, independent post-data verification and consumer. The separate verifier checks closed-form values, full sample IDs, aggregate and boundary rejection; plan approval does not validate future data."
+        },
+        "risk": {
+          "status": "pass",
+          "reason": "Inspected adapter performs bounded local CPU file work, with no network, service, GPU, credentials or external publication. Actual host authorization must remain separate."
+        },
+        "resources": {
+          "status": "pass",
+          "reason": "Five inputs and three repetitions fit the available local Python CPU. This plan makes no model-token or paid-cost claim; unknown model accounting must remain unknown in any native bridge."
+        }
+      },
+      "findings": [
+        {
+          "blocking": true,
+          "target": "tasks[task_id=produce].prior_result_search and prior_result_review",
+          "feedback": "The frozen search reports a missing result record, and no planner assessment resolves the actual lookup gap. The current ReportingHandler will refuse producer dispatch.",
+          "requested_change": "Create a new plan version with either a freshly observed honest no-hit search or an explicit rerun assessment covering the missing record and its limited significance. Preserve the original failed review.",
+          "acceptance_check": "Validate the new plan, confirm the current search matches the reviewed snapshot, and verify that _review_prior_candidates accepts the stated disposition before executing any data producer."
+        }
+      ]
+    }
+  },
+  "scope": "Complete actual review feedback and verdict retained. It approved/revised only its original plan identity, not any redacted view, new plan, current candidate or live host. Host captures are private and are not authenticated by this public view."
+}

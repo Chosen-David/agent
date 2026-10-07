@@ -1,3 +1,4 @@
+# Legacy fixture: exercises pre-dual-main invariants; independent review is tested separately.
 """Real worker subprocess/SQLite tests with a simulated tmux environment marker.
 
 The container may prohibit Unix sockets. These do NOT prove tmux/SSH survival.
@@ -38,7 +39,7 @@ class WorkerTests(unittest.TestCase):
         self.root = Path(self.tmp.name)
         self.file = self.root / 'TASK.md'
         self.file.write_text('- [ ] [T1] Produce artifact\n')
-        self.plan = prepare(self.file, 'worker-fixture', 'manual', 'unit-test')
+        self.plan = prepare(self.file, 'worker-fixture', 'manual', 'unit-test', review_required=False)
         self.plan['supervision'].update(min_seconds=1, max_seconds=2)
         task = self.plan['tasks'][0]
         task.update(action='verify_artifacts', max_attempts=20, estimated_seconds=1)
@@ -49,7 +50,7 @@ class WorkerTests(unittest.TestCase):
         self.store = Store(self.state_dir / 'state.sqlite')
         self.store.create(self.plan)
         self.config = {'run_id': self.plan['run_id'], 'state_dir': str(self.state_dir),
-                       'project_root': str(self.root), 'session': 'fixture', 'adapter': None}
+                       'project_root': str(self.root), 'session': 'fixture', 'adapter': None, 'allow_legacy': True}
         self.config_path = self.state_dir / 'launch.json'
         atomic_json(self.config_path, self.config)
         self.children = []
@@ -124,6 +125,10 @@ class WorkerTests(unittest.TestCase):
         child = self.launch('_guard')
         live = self.state_dir / 'live.json'
         first_pid = wait_for(lambda: json.loads(live.read_text())['pid'] if live.exists() else None)
+        # Kill at a settled pending observation, not the random interval between
+        # durable claim and outcome. Live leases must remain fenced after crashes.
+        wait_for(lambda: (node.get('pending_polls', 0) > 0 and node['status'] == 'todo' and node.get('token') is None)
+                 if (node := self.store.snapshot(self.plan['run_id'])['state']['tasks']['T1']) else False)
         os.kill(first_pid, signal.SIGKILL)
         second_pid = wait_for(lambda: (p if (p := json.loads(live.read_text())['pid']) != first_pid else None)
                              if live.exists() else None, 10)
@@ -176,7 +181,7 @@ class RealTmuxTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix='real-tmux-fixture ') as directory:
             root = Path(directory)
             source = root / 'TASK.md'; source.write_text('- [ ] [T1] Test detached completion\n')
-            plan = prepare(source, 'real-tmux-test', 'auto', 'explicit test')
+            plan = prepare(source, 'real-tmux-test', 'auto', 'explicit test', review_required=False)
             plan['supervision'].update(min_seconds=1, max_seconds=2)
             task = plan['tasks'][0]
             task.update(action='verify_artifacts', max_attempts=20, estimated_seconds=1)
@@ -185,7 +190,7 @@ class RealTmuxTests(unittest.TestCase):
                         'data': [{'kind': 'synthetic', 'description': 'deterministic test'}]})
             plan_path = root / 'plan.json'; atomic_json(plan_path, plan)
             state_dir = root / 'run'
-            command = [sys.executable, '-m', 'agent_runtime.task_supervisor', 'start',
+            command = [sys.executable, '-m', 'agent_runtime.task_supervisor', 'start', '--legacy-unprotected',
                        '--plan', str(plan_path), '--project-root', str(root), '--state-dir', str(state_dir)]
             config = None
             try:
@@ -194,7 +199,7 @@ class RealTmuxTests(unittest.TestCase):
                 receipt = json.loads(launcher.stdout)
                 self.assertEqual(receipt['status'], 'started')
                 config = json.loads((state_dir / 'launch.json').read_text())
-                again = start(plan_path, root, state_dir)
+                again = start(plan_path, root, state_dir, allow_legacy=True)
                 self.assertEqual(again['status'], 'already_running')
                 self.assertEqual(receipt['session'], again['session'])
                 self.assertTrue(status(config)['live'])

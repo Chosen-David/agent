@@ -129,7 +129,7 @@ else:
         handler = Handler()
         def unavailable(*_): raise ConnectionError('test policy service offline')
         engine = Engine(self.store, {'test': handler}, authorize=unavailable,
-                        clock=lambda: self.now)
+                        clock=lambda: self.now, allow_legacy=True)
         # Runs one bounded foreground loop. Returning normally proves that the
         # callback exception did not escape drain_once and terminate serve.
         self.scheduler.serve(engine, max_seconds=.05)
