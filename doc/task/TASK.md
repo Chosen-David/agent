@@ -170,3 +170,8 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [T26] 配置定时发现、核查、整合、提炼和发布的真实执行入口，记录实际部署/活性。 ([detail](task_details/T26.md))
 - [x] [T27] 安装本机 WSL/tmux，核验持久任务；需要重启时准确保留恢复步骤与未完成状态。 ([detail](task_details/T27.md))
 - [x] [T28] 验证检索、适用性负例、旧知识兼容和全部必要回归，刷新 main 后发布并读回。 ([detail](task_details/T28.md))
+
+## 2026-10-08 局部扰动传播
+
+- [x] [MATH-35] 补齐有条件的跨层扰动传播界、拒用反例与近期研究筛选。 ([detail](task_details/MATH-35.md))
+- [ ] [MATH-36] 独立代码/数据验收、检索成本、回归与普通main发布核对。 ([detail](task_details/MATH-36.md))

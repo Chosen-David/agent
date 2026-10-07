@@ -1,0 +1,64 @@
+{
+  "tasks": [
+    {
+      "task_id": "MATH-35",
+      "owner": "/root",
+      "action": "produce",
+      "produces_data": true,
+      "task_type": "experiment",
+      "depends_on": [],
+      "experiment_result": {
+        "result_id": "math-propagation-20261008",
+        "producer_task_id": "MATH-35",
+        "producer_actor": "/root",
+        "validation_plan": {
+          "path": "doc/results/math-propagation-20261008/validation-plan.json",
+          "sha256": "67c0c354ee8444dc3e7dedae39eaeb7398cf149d42520225b8744ac3470878ad"
+        },
+        "scope": "finite composed-map conditional error bounds and public rational CPU fixtures; no model/performance/formal guarantee",
+        "manifest_path": "doc/results/math-propagation-20261008/manifest.json"
+      }
+    },
+    {
+      "task_id": "MATH-PROPAGATION-VERIFY",
+      "owner": "/root/propagation_verifier",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "MATH-35"
+      ],
+      "result_validation": {
+        "result_id": "math-propagation-20261008",
+        "producer_task_id": "MATH-35",
+        "producer_actor": "/root",
+        "validation_plan": {
+          "path": "doc/results/math-propagation-20261008/validation-plan.json",
+          "sha256": "67c0c354ee8444dc3e7dedae39eaeb7398cf149d42520225b8744ac3470878ad"
+        },
+        "scope": "finite composed-map conditional error bounds and public rational CPU fixtures; no model/performance/formal guarantee",
+        "manifest_path": "doc/results/math-propagation-20261008/manifest.json"
+      }
+    },
+    {
+      "task_id": "MATH-36",
+      "owner": "/root",
+      "action": "publish",
+      "depends_on": [
+        "MATH-PROPAGATION-VERIFY"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-propagation-20261008",
+          "producer_task_id": "MATH-35",
+          "producer_actor": "/root",
+          "validation_plan": {
+            "path": "doc/results/math-propagation-20261008/validation-plan.json",
+            "sha256": "67c0c354ee8444dc3e7dedae39eaeb7398cf149d42520225b8744ac3470878ad"
+          },
+          "scope": "finite composed-map conditional error bounds and public rational CPU fixtures; no model/performance/formal guarantee",
+          "manifest_path": "doc/results/math-propagation-20261008/manifest.json"
+        }
+      ]
+    }
+  ],
+  "boundary": "direct bounded host maintenance and actual independent collaboration; not managed engine/tmux deployment"
+}

@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "id": "math.perturbation-propagation",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "有限复合映射的扰动传播与逐层误差预算",
+  "summary": "有已核实增益和同输入缺陷时，乘积加权传播局部误差；teacher缺陷与参考增益不能混用，经验吸收不是一致证书。",
+  "aliases": [
+    "层间 扰动 传播 Lipschitz",
+    "串联 传感器 误差 放大",
+    "teacher 输入 缺陷 失配",
+    "单点 导数 有限 误差",
+    "layerwise error amplification"
+  ],
+  "domains": [
+    "numerical-analysis",
+    "optimization-and-control",
+    "linear-algebra"
+  ],
+  "structures": [
+    "composition-error",
+    "layer-allocation",
+    "domain-invariance",
+    "gain-product",
+    "local-global-error"
+  ],
+  "assumptions": [
+    "有限复合映射/固定赋范空间，参考和近似轨迹实际输入均落在有效域",
+    "路线A参考F的输入增益及近似输入上同输入缺陷；路线B近似G的输入增益及参考输入缺陷，不混用",
+    "L与epsilon有限非负且范数/单位一致；全菜单保证需一致域/增益/缺陷覆盖全部可达状态"
+  ],
+  "sources": [
+    {
+      "url": "https://www.cs.cornell.edu/~bindel/class/cs3220-s12/notes/lec25.pdf",
+      "locator": "Bindel Spring2012 CS3220 Lecture25 PDF pp5–6 stability recurrence; heterogeneous two-route bounds are project derivations",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://arxiv.org/html/2503.10251v2",
+      "locator": "v2 2026-06-22 §1.2/7.1 Theorem7.3; floating-point specific; preprint venue unverified",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.15161v1",
+      "locator": "v1 2026-06-13 §3.2–3.5/4; empirical pruning perturbation response; preprint, no reproduction",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "Paired Markdown finite induction; nonformal; final publication requires independent review",
+      "doc/results/math-propagation-20261008/ CPU public fixtures only; no model/GPU"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    },
+    {
+      "type": "related",
+      "id": "math.discrete-budget-allocation"
+    },
+    {
+      "type": "related",
+      "id": "math.finite-menu-selection"
+    }
+  ]
+}

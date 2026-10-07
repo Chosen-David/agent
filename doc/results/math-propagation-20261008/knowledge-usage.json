@@ -1,0 +1,1025 @@
+{
+  "knowledge_root": "knowledge",
+  "knowledge_refs": [
+    {
+      "id": "math.perturbation-propagation",
+      "version": 1,
+      "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381"
+    }
+  ],
+  "retrieval": [
+    {
+      "input": {
+        "prompt": "每个近似模块误差很小，怎样判断最后状态是否可靠？",
+        "query": "层间 扰动 传播 Lipschitz"
+      },
+      "domain": "numerical-analysis",
+      "backend": "files",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "00e29f2bffadd4a18a95aa35bb8b3100ba18a26219da23e12f7731fcc705ad81",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.perturbation-propagation",
+            "version": 1,
+            "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381",
+            "title": "有限复合映射的扰动传播与逐层误差预算",
+            "summary": "有已核实增益和同输入缺陷时，乘积加权传播局部误差；teacher缺陷与参考增益不能混用，经验吸收不是一致证书。",
+            "status": "published",
+            "assumptions": [
+              "有限复合映射/固定赋范空间，参考和近似轨迹实际输入均落在有效域",
+              "路线A参考F的输入增益及近似输入上同输入缺陷；路线B近似G的输入增益及参考输入缺陷，不混用",
+              "L与epsilon有限非负且范数/单位一致；全菜单保证需一致域/增益/缺陷覆盖全部可达状态"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired Markdown finite induction; nonformal; final publication requires independent review",
+                "doc/results/math-propagation-20261008/ CPU public fixtures only; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "传播",
+                  "扰动"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "lipschitz",
+                  "传播",
+                  "层间",
+                  "扰动"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "传播"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "lipschitz",
+                  "传播",
+                  "扰动"
+                ]
+              }
+            ],
+            "score": 36
+          },
+          {
+            "id": "math.eigenspace-gap-perturbation",
+            "version": 1,
+            "sha256": "9737b6e1fb288bf682e23f1910f32aadc43421bd42821550a82e419303a7e292",
+            "title": "谱隙、子空间扰动与投影打分证书",
+            "summary": "实对称矩阵的隔离特征值簇可用边界谱隙控制子空间误差；主方向稳定取决于误差与谱隙的比值。投影比较消除符号和簇内旋转歧义，可传播到有范数约束的打分。",
+            "status": "published",
+            "assumptions": [
+              "A与Ahat=A+E是同维实对称矩阵，使用一致坐标及欧氏算子/Frobenius范数",
+              "特征值降序，目标为同一索引区间r..s；d=s-r+1，外侧边界谱隙g=min(lambda_(r-1)-lambda_r,lambda_s-lambda_(s+1))>0，端点取无穷",
+              "U与Uhat列正交；比较投影或主角度，不能直接比较未对齐的基",
+              "本文自推较紧rank-one界另需目标最大特征值、g=lambda_1-lambda_2>0、认证epsilon>=||E||op且epsilon<g；epsilon<g/2额外认证扰动后最大特征值简单",
+              "打分迁移需q,k位于同一欧氏坐标系、目标确为q^T P k；只控制换基误差，不控制舍弃补空间或完整注意力输出"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-subspace/verify.py",
+                "docs/knowledge_learning/2026-10-07-subspace/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "扰动"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "传播"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传播",
+                  "扰动"
+                ]
+              }
+            ],
+            "score": 10
+          },
+          {
+            "id": "math.linear-system-stability",
+            "version": 1,
+            "sha256": "caacac2221436b3cd671b9a307f8598e8481af537400839a430f5558bd04b4a4",
+            "title": "条件数、残差与有限扰动误差界",
+            "summary": "小残差不保证小解误差；用条件数与显式扰动条件评估线性求解可靠性。",
+            "status": "published",
+            "assumptions": [
+              "A 为可逆实方阵，b 非零，使用相容诱导矩阵范数",
+              "有限扰动公式要求 κ(A)‖E‖/‖A‖<1；不能把一阶近似当任意扰动保证"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "同名 Markdown 的明确推导与反例；非形式化证明",
+                "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "扰动"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "扰动"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "扰动"
+                ]
+              }
+            ],
+            "score": 9
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "每个近似模块误差很小，怎样判断最后状态是否可靠？",
+        "query": "层间 扰动 传播 Lipschitz"
+      },
+      "domain": "numerical-analysis",
+      "backend": "sqlite",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "00e29f2bffadd4a18a95aa35bb8b3100ba18a26219da23e12f7731fcc705ad81",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.perturbation-propagation",
+            "version": 1,
+            "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381",
+            "title": "有限复合映射的扰动传播与逐层误差预算",
+            "summary": "有已核实增益和同输入缺陷时，乘积加权传播局部误差；teacher缺陷与参考增益不能混用，经验吸收不是一致证书。",
+            "status": "published",
+            "assumptions": [
+              "有限复合映射/固定赋范空间，参考和近似轨迹实际输入均落在有效域",
+              "路线A参考F的输入增益及近似输入上同输入缺陷；路线B近似G的输入增益及参考输入缺陷，不混用",
+              "L与epsilon有限非负且范数/单位一致；全菜单保证需一致域/增益/缺陷覆盖全部可达状态"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired Markdown finite induction; nonformal; final publication requires independent review",
+                "doc/results/math-propagation-20261008/ CPU public fixtures only; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s1",
+                "title": "有限复合映射的扰动传播与逐层误差预算",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 有限复合映射的扰动传播与逐层误差预算\n\n稳定ID：`math.perturbation-propagation@1`。问题触发：每一步近似都很小，最终状态是否可靠？怎样给各层不同的误差预算？\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "对象、前提与准确结论",
+                "start_line": 5,
+                "end_line": 24,
+                "excerpt": "## 对象、前提与准确结论\n\n有限n≥0，固定实或复赋范空间X_0,…,X_n（允许维度不同）。参考轨迹x_l=F_l(x_{l-1})、近似轨迹y_l=G_l(y_{l-1})，e_l=||y_l−x_l||_l。每个映射对有关输入有定义，且实际两个输入均在已认证区域D_{l-1}内。常数L_l、ε_l均非负有限，前者按输入/输出所选范数，后者有输出状态的单位。\n\n**路线A（参考增益，近似轨迹缺陷）：**\n\n||F_l(y_{l-1})−F_l(x_{l-1})||_l ≤ L_l e_{l-1}，\n||G_l(y_{l-1})−F_l(y_{l-1})||_l ≤ ε_l。\n\n可由F_l在整个D上的Lipschitz界与G_l−F_l的一致上界保证，也可以只是已核实的轨迹对界。则\n\n\\[\ne_n\\le \\Big(\\prod_{j=1}^{n}L_j\\Big)e_0+\n\\sum_{i=1}^{n}\\Big(\\prod_{j=i+1}^{n}L_j\\Big)\\varepsilon_i.\n\\]\n\n空乘积=1、空和=0，n=0给e_0。零增益可消去此前传播，不能用除L的计算方式。一般没有等号，也没有概率或模型精度保证。\n\n**路线B（近似增益，参考轨迹缺陷）：**若掌握的仅是teacher输入上的ε_l^T=||G_l(x_{l-1})−F_l(x_{l-1})||，则需要G_l对两个输入的增益界M_l，得到相同公式但把L、ε替换为M、ε^T。不能把teacher缺陷与参考F的增益随意拼接；切换输入以后局部缺陷可能变大。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.eigenspace-gap-perturbation",
+            "version": 1,
+            "sha256": "9737b6e1fb288bf682e23f1910f32aadc43421bd42821550a82e419303a7e292",
+            "title": "谱隙、子空间扰动与投影打分证书",
+            "summary": "实对称矩阵的隔离特征值簇可用边界谱隙控制子空间误差；主方向稳定取决于误差与谱隙的比值。投影比较消除符号和簇内旋转歧义，可传播到有范数约束的打分。",
+            "status": "published",
+            "assumptions": [
+              "A与Ahat=A+E是同维实对称矩阵，使用一致坐标及欧氏算子/Frobenius范数",
+              "特征值降序，目标为同一索引区间r..s；d=s-r+1，外侧边界谱隙g=min(lambda_(r-1)-lambda_r,lambda_s-lambda_(s+1))>0，端点取无穷",
+              "U与Uhat列正交；比较投影或主角度，不能直接比较未对齐的基",
+              "本文自推较紧rank-one界另需目标最大特征值、g=lambda_1-lambda_2>0、认证epsilon>=||E||op且epsilon<g；epsilon<g/2额外认证扰动后最大特征值简单",
+              "打分迁移需q,k位于同一欧氏坐标系、目标确为q^T P k；只控制换基误差，不控制舍弃补空间或完整注意力输出"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-subspace/verify.py",
+                "docs/knowledge_learning/2026-10-07-subspace/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04838709677419355,
+            "sections": [
+              {
+                "node": "s1",
+                "title": "谱隙、子空间扰动与投影打分证书",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 谱隙、子空间扰动与投影打分证书\n\n稳定ID `math.eigenspace-gap-perturbation`，v1。来源固定arXiv1405.0680v1；近期采样论文只在本轮研究记录中作为候选。这里的结论限实对称有限维矩阵。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界和误用反例",
+                "start_line": 39,
+                "end_line": 46,
+                "excerpt": "## 正例、边界和误用反例\n\nA=diag(2,1)，E的两非对角元为0.1；epsilon=0.1、g=1。theta=atan(0.2)/2，实际sin(theta)≈0.09854，小于证书1/9。验证脚本检查闭式特征方程、投影幂等性、范数和误差界。\n\nA=diag(1+delta,1)，E=diag(-delta,delta)，delta>0可任意小；主方向翻转90度，特征值变化≤delta。epsilon/g=1，故不能宣称“绝对矩阵误差小就稳定”。A=I、任意小diag(t,-t)与diag(-t,t)选择相反主方向，未扰动单方向不存在唯一目标。\n\nA=diag(3,3,1)的前两列可旋转90度，基差Frobenius范数2，但P完全相同；第一单向量的簇外边界为零，而完整二维簇的边界为2。这不是理论冲突。非对称矩阵不得沿用以上公式；应另核验奇异子空间、Hermitian变换或非正规条件数。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.linear-system-stability",
+            "version": 1,
+            "sha256": "caacac2221436b3cd671b9a307f8598e8481af537400839a430f5558bd04b4a4",
+            "title": "条件数、残差与有限扰动误差界",
+            "summary": "小残差不保证小解误差；用条件数与显式扰动条件评估线性求解可靠性。",
+            "status": "published",
+            "assumptions": [
+              "A 为可逆实方阵，b 非零，使用相容诱导矩阵范数",
+              "有限扰动公式要求 κ(A)‖E‖/‖A‖<1；不能把一阶近似当任意扰动保证"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "同名 Markdown 的明确推导与反例；非形式化证明",
+                "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.047619047619047616,
+            "sections": [
+              {
+                "node": "s3",
+                "title": "推导",
+                "start_line": 9,
+                "end_line": 13,
+                "excerpt": "## 推导\n残差式由 x_hat−x=A⁻¹r 与 ‖b‖≤‖A‖‖x‖ 得到。有限扰动用\n(I+A⁻¹E)Δx=A⁻¹(e−Ex)。当 ‖A⁻¹E‖≤κa<1 时，Neumann 级数使逆的范数至多 1/(1−κa)，再取范数。\n这补全来源省略的有限扰动代数；不是形式化证明。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "串联传感器处理模块的误差怎么传到末端？",
+        "query": "串联 传感器 误差 放大"
+      },
+      "domain": "numerical-analysis",
+      "backend": "files",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "00e29f2bffadd4a18a95aa35bb8b3100ba18a26219da23e12f7731fcc705ad81",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.perturbation-propagation",
+            "version": 1,
+            "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381",
+            "title": "有限复合映射的扰动传播与逐层误差预算",
+            "summary": "有已核实增益和同输入缺陷时，乘积加权传播局部误差；teacher缺陷与参考增益不能混用，经验吸收不是一致证书。",
+            "status": "published",
+            "assumptions": [
+              "有限复合映射/固定赋范空间，参考和近似轨迹实际输入均落在有效域",
+              "路线A参考F的输入增益及近似输入上同输入缺陷；路线B近似G的输入增益及参考输入缺陷，不混用",
+              "L与epsilon有限非负且范数/单位一致；全菜单保证需一致域/增益/缺陷覆盖全部可达状态"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired Markdown finite induction; nonformal; final publication requires independent review",
+                "doc/results/math-propagation-20261008/ CPU public fixtures only; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "串联",
+                  "传感",
+                  "感器",
+                  "放大",
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "串联",
+                  "传感",
+                  "感器",
+                  "放大",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 38
+          },
+          {
+            "id": "math.contraction-residual-certificate",
+            "version": 1,
+            "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+            "title": "收缩迭代的残差误差证书与不精确求解边界",
+            "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+            "status": "published",
+            "assumptions": [
+              "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+              "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+              "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+                "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "放大",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 15
+          },
+          {
+            "id": "math.linear-solve-backward-error",
+            "version": 1,
+            "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+            "title": "线性求解的后向误差、条件性与下游误差证书",
+            "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+            "status": "published",
+            "assumptions": [
+              "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+              "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+              "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+              "下游排序须真实线性评分映射和严格逐对误差间隔"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+                "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "放大",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 15
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "串联传感器处理模块的误差怎么传到末端？",
+        "query": "串联 传感器 误差 放大"
+      },
+      "domain": "numerical-analysis",
+      "backend": "sqlite",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "00e29f2bffadd4a18a95aa35bb8b3100ba18a26219da23e12f7731fcc705ad81",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.perturbation-propagation",
+            "version": 1,
+            "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381",
+            "title": "有限复合映射的扰动传播与逐层误差预算",
+            "summary": "有已核实增益和同输入缺陷时，乘积加权传播局部误差；teacher缺陷与参考增益不能混用，经验吸收不是一致证书。",
+            "status": "published",
+            "assumptions": [
+              "有限复合映射/固定赋范空间，参考和近似轨迹实际输入均落在有效域",
+              "路线A参考F的输入增益及近似输入上同输入缺陷；路线B近似G的输入增益及参考输入缺陷，不混用",
+              "L与epsilon有限非负且范数/单位一致；全菜单保证需一致域/增益/缺陷覆盖全部可达状态"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired Markdown finite induction; nonformal; final publication requires independent review",
+                "doc/results/math-propagation-20261008/ CPU public fixtures only; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.048915917503966164,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "迁移：逐层indexer与控制/数值计算",
+                "start_line": 47,
+                "end_line": 56,
+                "excerpt": "## 迁移：逐层indexer与控制/数值计算\n\n模型层的完整状态映射对应F_l，稀疏/近似层对应G_l；局部完整层输出缺陷对应ε，固定传播增益对应L。第一批完整层可有ε=0，但仍必须计输入差传播。注意力单元的误差尚需把残差、归一化与FFN等路径算入完整层；当前q/k/v固定的单头证书不自动包含改变的KV历史。\n\n若所有候选共享已认证L_l、ε_l(j)且覆盖所有组合，可令w_l=Π_{k>l}L_k，以Σ_l w_l ε_l(j_l)作为可加**上界代理**接到`math.discrete-budget-allocation`。最小化它不是直接最大化e2e精度；增益随配置/轨迹变化时，这个固定权重模型不成立。不要把实测吸收比当作认证w。自回归生成还改变token路径，除非扩展状态并认证读出/决策条件，否则单次固定输入传播界不保证整段输出一致。\n\n跨域严格结构是串联传感器处理/离散控制模块的状态误差传播；信号单位按每个空间标定，增益有输出/输入单位。ODE一步映射的稳定性属于同类结构，但本条不额外证明收敛阶或守恒。\n\n可证伪最小实验：固定prompt/teacher forcing，以真实稀疏层造成的方向和幅度做单层与双层扰动注入，观察最终隐藏状态/logits误差；比较未加权局部误差、冻结传播权重代理和最终误差排序。有限样本发现超界可反驳所用估计常数有效性，不能用没发现超界证明一致有效。预留新文档作后续未见测试；当前公开开发案例不能当未见。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "可复核证明（项目推导，非形式化）",
+                "start_line": 25,
+                "end_line": 34,
+                "excerpt": "## 可复核证明（项目推导，非形式化）\n\n路线A在误差中加减F_l(y_{l-1})，由三角不等式得到e_l≤L_l e_{l-1}+ε_l。令B_0=e_0，B_l=L_l B_{l-1}+ε_l；非负性给e_l≤B_l。归纳展开B_l即上述乘积加权和。路线B改加减G_l(x_{l-1})。这是经典数值方法稳定性/误差累积递推的一般异质映射表述，不声称原创定理。\n\n若共同增益≤ρ<1、ε_l≤ε，则e_n≤ρ^n e_0+ε(1−ρ^n)/(1−ρ)。ρ=1时e_n≤e_0+nε；ρ>1可指数放大。非扩张不等于误差消失。\n\n同一空间残差块F_l=I+H_l，H_l的Lipschitz界a_l只能给L_l≤1+a_l，不能推出收缩；H_l=−aI时实际增益|1−a|可较小，这说明三角界可能松。\n\n在凸区域上，C1映射若**整个连接线段**的诱导Jacobian范数≤L，则积分形式给上述增益界。单点Jacobian、平均secant或有限方向最大测量都不认证整个区域/方向。只测几个输入的ε也不是一致界。若要对整个菜单的所有组合给保证，D、L、ε必须共同覆盖所有可达状态；可用先验管域并归纳检查B保持在管内，不能先假定未验证的域包含近似轨迹。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.centered-covariance-merge",
+            "version": 1,
+            "sha256": "f9ebd428b6fd9f78ac667a6a2419e277c5d8ca1731d3e5357b25a9a62f7a9b28",
+            "title": "中心化协方差、可合并散布统计量与误差桥",
+            "summary": "区分二阶矩与中心协方差；按计数/均值/散布精确合并，避免遗漏组间项；统计保证与浮点稳定性分别审查。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量，同维度/坐标/单位和相同预处理；精确恒等式不要求iid",
+              "A、B为不重复不遗漏的数据分区，计数为非负整数；空分区用单位元，不定义空均值",
+              "C_n=S/n对n≥1；S/(n−1)只对n≥2，称总体协方差无偏还需iid及有限二阶矩",
+              "概率误差桥需已证明的均值和二阶矩误差事件；合并公式不赋予独立性或覆盖保证",
+              "浮点不具有严格结合律；需单独检查输入精度、溢出、抵消及舍入误差"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-centering/verify.py",
+                "docs/knowledge_learning/2026-10-07-centering/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.048651507139079855,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "触发与对象",
+                "start_line": 3,
+                "end_line": 5,
+                "excerpt": "## 触发与对象\n多个worker/传感器分块汇总、PCA校准、均值偏移很大但波动很小。先确定目标是原点二阶矩 M，还是中心协方差 Σ；不可默默互换。以下为实向量，转置不是复共轭扩展的证明。\n\n"
+              },
+              {
+                "node": "s6",
+                "title": "迁移与消费者",
+                "start_line": 34,
+                "end_line": 38,
+                "excerpt": "## 迁移与消费者\n把worker的校准行分区映射为有限向量多重集，只传(n,m,S)及分区/预处理版本即可保留中心协方差目标；这是精确代数映射，不是自然语言消息充分性的类比。必须先检查n、去重、坐标、dtype、目标和舍入。可证伪预测：精确合并等于集中式散布，不同分区树等价；有限精度偏差单列。\n跨领域温度传感器：同一标定和单位℃下，固定零点平移不影响中心协方差，S单位℃²；跨传感器尺度不同或时间耦合会改变目标/统计保证。不能用代数合并证明独立性。\n以二进制/文件引用交接避免把O(d²)数字全写进聊天；这只是候选工程建议，没有实测Agent token、模型质量或GPU吞吐收益。该统计量只充分描述计数/均值/散布，不能恢复token身份、时序、自回归模型或原始检索目标。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.contraction-residual-certificate",
+            "version": 1,
+            "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+            "title": "收缩迭代的残差误差证书与不精确求解边界",
+            "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+            "status": "published",
+            "assumptions": [
+              "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+              "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+              "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+                "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.047619047619047616,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "问题结构、迁移与拒用",
+                "start_line": 29,
+                "end_line": 36,
+                "excerpt": "## 问题结构、迁移与拒用\n\n识别对象→指定域/范数→证明自映射与统一q→认证oracle误差→计算当前或返回点证书→按目标容差停止。少量检索本ID及需要的稳定性/量纲条目，不加载全库。缺任何条件则补证或拒用，不从轨迹估计硬证书。\n\n隐式Euler，物理方程 y′=−κy，κ单位1/s，步长h单位s。固定点 z=y_n−hκz，q=hκ无量纲；q=.5时上述证书适用，真解y_n/(1+q)。q=2时隐式Euler真解放大因子1/3仍稳定，但这一Picard求解器迭代发散。保留时间离散与求解器的精确方程关系；稳定积分方法不保证任意求解器收敛。耗散系统不要求此离散保持能量守恒。\n\nAgent数值工具在声明上述前提时可以提供解误差证书。文本反思、任务质量分数、token变化未定义同一确定映射与收缩范数，只有类比；不能据此修改主AI停止行为。本条目没有同模型预算A/B收益证据。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "收缩迭代的残差误差证书",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 收缩迭代的残差误差证书\n\n稳定ID：`math.contraction-residual-certificate`，版本1。经典定理与本文推导分开标注；知识可发布，生产停止策略未验证。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "在零点导数为零，是否可以判定附近输入偏差不影响输出？",
+        "query": "单点 导数 有限 误差"
+      },
+      "domain": "numerical-analysis",
+      "backend": "files",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "00e29f2bffadd4a18a95aa35bb8b3100ba18a26219da23e12f7731fcc705ad81",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.perturbation-propagation",
+            "version": 1,
+            "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381",
+            "title": "有限复合映射的扰动传播与逐层误差预算",
+            "summary": "有已核实增益和同输入缺陷时，乘积加权传播局部误差；teacher缺陷与参考增益不能混用，经验吸收不是一致证书。",
+            "status": "published",
+            "assumptions": [
+              "有限复合映射/固定赋范空间，参考和近似轨迹实际输入均落在有效域",
+              "路线A参考F的输入增益及近似输入上同输入缺陷；路线B近似G的输入增益及参考输入缺陷，不混用",
+              "L与epsilon有限非负且范数/单位一致；全菜单保证需一致域/增益/缺陷覆盖全部可达状态"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired Markdown finite induction; nonformal; final publication requires independent review",
+                "doc/results/math-propagation-20261008/ CPU public fixtures only; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "有限",
+                  "误差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "单点",
+                  "导数",
+                  "有限",
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "单点",
+                  "导数",
+                  "有限",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 37
+          },
+          {
+            "id": "math.contraction-residual-certificate",
+            "version": 1,
+            "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+            "title": "收缩迭代的残差误差证书与不精确求解边界",
+            "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+            "status": "published",
+            "assumptions": [
+              "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+              "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+              "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+                "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "导数",
+                  "有限",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 16
+          },
+          {
+            "id": "math.linear-solve-backward-error",
+            "version": 1,
+            "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+            "title": "线性求解的后向误差、条件性与下游误差证书",
+            "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+            "status": "published",
+            "assumptions": [
+              "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+              "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+              "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+              "下游排序须真实线性评分映射和严格逐对误差间隔"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+                "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "有限",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 15
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "在零点导数为零，是否可以判定附近输入偏差不影响输出？",
+        "query": "单点 导数 有限 误差"
+      },
+      "domain": "numerical-analysis",
+      "backend": "sqlite",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "00e29f2bffadd4a18a95aa35bb8b3100ba18a26219da23e12f7731fcc705ad81",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.perturbation-propagation",
+            "version": 1,
+            "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381",
+            "title": "有限复合映射的扰动传播与逐层误差预算",
+            "summary": "有已核实增益和同输入缺陷时，乘积加权传播局部误差；teacher缺陷与参考增益不能混用，经验吸收不是一致证书。",
+            "status": "published",
+            "assumptions": [
+              "有限复合映射/固定赋范空间，参考和近似轨迹实际输入均落在有效域",
+              "路线A参考F的输入增益及近似输入上同输入缺陷；路线B近似G的输入增益及参考输入缺陷，不混用",
+              "L与epsilon有限非负且范数/单位一致；全菜单保证需一致域/增益/缺陷覆盖全部可达状态"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired Markdown finite induction; nonformal; final publication requires independent review",
+                "doc/results/math-propagation-20261008/ CPU public fixtures only; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界与误用反例",
+                "start_line": 35,
+                "end_line": 46,
+                "excerpt": "## 正例、边界与误用反例\n\n两个标量层F_1(t)=t，F_2(t)=10t，G_1(t)=t+1/100，G_2(t)=10t；相同初值0，最终误差1/10，而未经传播的局部误差和仅1/100。公式精确取得1/10。相同缺陷放到最后一层最终只有1/100，层位置因此有影响。\n\nF=G:t↦t²，x=0，y=1/10。参考点导数0、同输入缺陷0，但有限输入误差输出为1/100。以单点Jacobian0作为有限增益会错误报零；在线段[0,1/10]上可用L=1/5，给上界1/50。有限界不必紧。\n\nTeacher缺陷失配：F_1=F_2=0，G_1=1/10（常值），G_2(t)=100t。teacher轨迹全0，ε^T_1=1/10、ε^T_2=0；错误使用F_2增益0会报最终误差0，实际10。路线B用M_2=100，或路线A在近似输入y_1上测缺陷10，才有效。\n\n方向抵消：F_1=F_2=I，G_1(t)=t+1/10、G_2(t)=t−1/10，最终误差0，上界1/5。这解释正的可加证书不是最终误差的精确目标。相对误差分母/状态范数增加时，相对误差下降不证明绝对范数收缩；例如绝对误差从1到2而参考范数从1到100。\n\nn=0、L=0、ε=0、一致初值、异质维度均属于公式边界。缺范数/单位、缺域覆盖、非有限增益、离散输出的任意变化均应拒绝直接应用。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "可复核证明（项目推导，非形式化）",
+                "start_line": 25,
+                "end_line": 34,
+                "excerpt": "## 可复核证明（项目推导，非形式化）\n\n路线A在误差中加减F_l(y_{l-1})，由三角不等式得到e_l≤L_l e_{l-1}+ε_l。令B_0=e_0，B_l=L_l B_{l-1}+ε_l；非负性给e_l≤B_l。归纳展开B_l即上述乘积加权和。路线B改加减G_l(x_{l-1})。这是经典数值方法稳定性/误差累积递推的一般异质映射表述，不声称原创定理。\n\n若共同增益≤ρ<1、ε_l≤ε，则e_n≤ρ^n e_0+ε(1−ρ^n)/(1−ρ)。ρ=1时e_n≤e_0+nε；ρ>1可指数放大。非扩张不等于误差消失。\n\n同一空间残差块F_l=I+H_l，H_l的Lipschitz界a_l只能给L_l≤1+a_l，不能推出收缩；H_l=−aI时实际增益|1−a|可较小，这说明三角界可能松。\n\n在凸区域上，C1映射若**整个连接线段**的诱导Jacobian范数≤L，则积分形式给上述增益界。单点Jacobian、平均secant或有限方向最大测量都不认证整个区域/方向。只测几个输入的ε也不是一致界。若要对整个菜单的所有组合给保证，D、L、ε必须共同覆盖所有可达状态；可用先验管域并归纳检查B保持在管内，不能先假定未验证的域包含近似轨迹。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.contraction-residual-certificate",
+            "version": 1,
+            "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+            "title": "收缩迭代的残差误差证书与不精确求解边界",
+            "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+            "status": "published",
+            "assumptions": [
+              "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+              "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+              "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+                "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 4
+              }
+            ],
+            "score": 0.04788306451612903,
+            "sections": [
+              {
+                "node": "s3",
+                "title": "可复核证明与本条目推导",
+                "start_line": 11,
+                "end_line": 20,
+                "excerpt": "## 可复核证明与本条目推导\n\n经典证明：相邻距离≤q^k d(x_1,x_0)，有限尾和≤q^k d(x_1,x_0)/(1−q)，所以Cauchy；完备性给极限，自映射与Lipschitz连续给Gx*=x*。两个不动点距离≤q乘自身，故唯一。取尾和极限得先验界和后验界。\n\n本条目推导：任意x∈X的残差 r=d(x,Gx)，由 d(x,x*)≤r+q d(x,x*) 得当前误差≤r/(1−q)。精确新点y=Gx，误差≤qr/(1−q)。\n\n范数空间中的不精确oracle满足 ||G̃x−Gx||≤η，η≥0是已认证上界。计算残差 r̂=||x−G̃x||。当前误差≤(r̂+η)/(1−q)。返回y=G̃x时：先由 ||x−x*||≤r̂+||y−x*||，再由 ||y−x*||≤q||x−x*||+η，合并得到新点误差≤(q r̂+η)/(1−q)。它不同于当前点界。浮点计算r̂自身的不确定性应增加到r̂的上界，不能忽略。\n\n重复不精确更新在不变域中：e_k≤q^k e_0+η(1−q^k)/(1−q)，通过递推归纳；误差平台上界η/(1−q)不等于误差必达该值，也不证明随机oracle具有确定性η。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界与误用",
+                "start_line": 21,
+                "end_line": 28,
+                "excerpt": "## 正例、边界与误用\n\n1. Gx=.99x+.01，x*=1，x0=0。第一步.01小于.02但返回点误差.99；证书也为.99。达到.02误差需390步。小步长在q接近1时尤其误导。\n2. Gx=.9x+1，真解10；G̃x=Gx−.1，在x=9计算残差0，真实误差1，η=.1的证书为1。不能宣称.01精度。\n3. q=1时恒等映射有多个不动点，不可除以1−q。开域(0,∞)上的Gx=x/2不是完备域，没有域内不动点；[0,1]上的x/2+1不自映射，收缩不够。\n4. A=[[.5,10],[0,.5]]，谱半径.5，但无穷范数算子界10.5；e0=(0,1)→(10,.5)，误差增大。不能将谱半径代入当前范数的逐步界。自推导：加权范数max(|x1|/40,|x2|)诱导行界max(.5+10/40,.5)=.75，故可用q=.75；换回普通无穷范数必须乘40，上界可能很松。\n5. 几个观测比率不提供全局q。凸域上处处导数算子范数≤q可用线段积分证明Lipschitz；非凸域不能省略连线条件。先验证域不变再使用导数界。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.linear-system-stability",
+            "version": 1,
+            "sha256": "caacac2221436b3cd671b9a307f8598e8481af537400839a430f5558bd04b4a4",
+            "title": "条件数、残差与有限扰动误差界",
+            "summary": "小残差不保证小解误差；用条件数与显式扰动条件评估线性求解可靠性。",
+            "status": "published",
+            "assumptions": [
+              "A 为可逆实方阵，b 非零，使用相容诱导矩阵范数",
+              "有限扰动公式要求 κ(A)‖E‖/‖A‖<1；不能把一阶近似当任意扰动保证"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "同名 Markdown 的明确推导与反例；非形式化证明",
+                "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04762704813108039,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "可算例子与反例",
+                "start_line": 14,
+                "end_line": 18,
+                "excerpt": "## 可算例子与反例\nA=diag(1,0.001)，x=(1,1)，b=(1,0.001)。x_hat=(1,2) 的残差范数只有 0.001，但解的相对误差约 0.707；κ₂(A)=1000。\nκ=10、a=0.01、β=0.002 时有限界为 0.133333…；一阶表达为 0.12，后者不能替代前者作严格保证。\nA 奇异、b=0 或 κa≥1 时不能使用本条相对界；不代表每个实际输入都必然失败。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "推导",
+                "start_line": 9,
+                "end_line": 13,
+                "excerpt": "## 推导\n残差式由 x_hat−x=A⁻¹r 与 ‖b‖≤‖A‖‖x‖ 得到。有限扰动用\n(I+A⁻¹E)Δx=A⁻¹(e−Ex)。当 ‖A⁻¹E‖≤κa<1 时，Neumann 级数使逆的范数至多 1/(1−κa)，再取范数。\n这补全来源省略的有限扰动代数；不是形式化证明。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "loaded_ids": [
+    "math.perturbation-propagation"
+  ],
+  "mapping": "human-extracted object/premise queries; public developer checks, not model semantic/refusal evaluation"
+}

@@ -98,3 +98,5 @@ SELF-SYNC-01–03：scripts/run_knowledge_windows.py 的 prepare_host / sync_hos
 - `doc/results/math-allocation-20261008/`: MATH-31/32 finite discrete-budget proof, exact CPU fixtures, independent review and retrieval/cost evidence; not production solver.
 
 | MATH-33/34 | `knowledge/entries/math.finite-menu-selection.*`, `doc/results/math-selection-20261008/` | 主AI producer → 独立统计/代码验收 → 按需建模Skill | 冻结菜单选择后风险与期望成本；无真实模型或省token收益 |
+
+| MATH-35/36 | `knowledge/entries/math.perturbation-propagation.*`, `doc/results/math-propagation-20261008/` | 主AI producer → 独立数学/代码数据验收 → 建模Skill | 有条件复合误差传播；teacher缺陷失配与有限增益拒用，无生产e2e收益 |
