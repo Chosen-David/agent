@@ -1,0 +1,38 @@
+{
+  "seed": 291007,
+  "dtype": "float64",
+  "random_trials": 32,
+  "dimension": 3,
+  "ranks": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "tolerance": 1e-08,
+  "scope": "finite product distributions and weighted bilinear algebra; not model performance",
+  "query_cases": [
+    {
+      "id": "score",
+      "question": "key能量第一方向很大，但query主要在第二方向，同样一个索引坐标怎么选？",
+      "expected": "math.weighted-bilinear-low-rank"
+    },
+    {
+      "id": "sensor",
+      "question": "独立载荷与应变模态的双线性响应如何在一个低维通道内保真？",
+      "expected": "math.weighted-bilinear-low-rank"
+    },
+    {
+      "id": "dependent",
+      "question": "载荷和读数来自同一变量，能否只相乘两个二阶矩得到响应方差？",
+      "expected": "math.weighted-bilinear-low-rank",
+      "decision": "reject-independent-factorization"
+    },
+    {
+      "id": "singular",
+      "question": "一个模态从未激活，二阶矩不可逆，能否直接套用双侧逆变换？",
+      "expected": "math.weighted-bilinear-low-rank",
+      "decision": "reject-SPD-interface"
+    }
+  ]
+}

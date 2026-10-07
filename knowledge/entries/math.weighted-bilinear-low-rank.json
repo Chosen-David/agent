@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "id": "math.weighted-bilinear-low-rank",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "二阶矩加权的双线性低秩分数近似",
+  "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+  "aliases": [
+    "query key score compression",
+    "双侧 加权 分数 压缩",
+    "query-aware low rank",
+    "传感器 响应 双线性"
+  ],
+  "domains": [
+    "linear-algebra",
+    "probability-and-optimization"
+  ],
+  "structures": [
+    "low-rank",
+    "bilinear-score",
+    "second-moment-weighting",
+    "sensor-response"
+  ],
+  "assumptions": [
+    "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+    "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+    "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+  ],
+  "sources": [
+    {
+      "url": "https://www.cs.cornell.edu/courses/cs6210/2025fa/lec/2025-10-15.html",
+      "locator": "David Bindel, Matrix nearness problems, 2025-10-15, Low rank and Eckart–Young–Mirsky；只支撑截断SVD基础，双线性加权结果为本条目推导",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "本条目显示的独立推导；非形式化证明",
+      "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.low-rank-svd",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    },
+    {
+      "type": "related",
+      "id": "math.generalized-hermitian-eigenproblem"
+    },
+    {
+      "type": "related",
+      "id": "math.topk-margin"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 这里保存跨项目可复用的数学、物理、AI Infra、AI 算法、数据结构算法与跨物种神经科学知识；Skill 保存使用知识的方法。项目观测、用户偏好和执行状态仍由项目记忆、TASK.md 与运行目录负责。
 
-当前包含 83 个已发布条目，另有3个待核验candidate：42 个数学/物理基础条目（包括18个本轮高等代数主题）、22 张工程复用卡、2条AI算法推导知识，以及 6 张 2026 年 RL / 概率论研究卡（ICLR、ICML、COLT、ALT），以及11张神经科学/NeuroAI卡（10篇正式论文、1篇明确绑定的2024预印本）。近五年检索窗口为2021-10-07至2026-10-07，本轮所选来源为2023–2026；最新核查论文发表于2026-09-29。机构/作者博客单列来源，生物发现、意识理论与AI设计假设分开记录。新增卡核查原论文的相关实验、定理前提与反例，未执行本机论文复现，不代表完整学科覆盖或 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
+当前包含 84 个已发布条目，另有3个待核验candidate：43 个数学/物理基础条目（包括18个本轮高等代数主题）、22 张工程复用卡、2条AI算法推导知识，以及 6 张 2026 年 RL / 概率论研究卡（ICLR、ICML、COLT、ALT），以及11张神经科学/NeuroAI卡（10篇正式论文、1篇明确绑定的2024预印本）。近五年检索窗口为2021-10-07至2026-10-07，本轮所选来源为2023–2026；最新核查论文发表于2026-09-29。机构/作者博客单列来源，生物发现、意识理论与AI设计假设分开记录。新增卡核查原论文的相关实验、定理前提与反例，未执行本机论文复现，不代表完整学科覆盖或 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
 
 ## 实际使用
 
@@ -120,3 +120,5 @@ python -m agent_runtime.knowledge --root knowledge decision '点更新 区间求
 2026-10-07 MATH-25/26：新增 `math.softmax-barycenter-error`。学科索引：linear-algebra、probability-and-optimization；问题结构索引：error-bound、normalized-weighted-output、pruning、value-geometry（CLI `search --domain/--structure` 由元数据派生过滤，无全库提示注入）。先核对支持集、非负归一化、固定value/线性W，再区别重合度、质量、输出和端到端目标。证据 `doc/results/math-softmax-20261007-v2/`；新结果按当前规范存doc/results，旧docs证据保持原位。
 
 2026-10-07 MATH-27/28：`math.attention-output-geometry` 将固定权重差映射为实际value/输出投影的Gram半范数，补充局部Jacobian余项与固定线性margin。学科入口：linear-algebra、probability-and-optimization；结构入口：value-geometry、quadratic-form、local-sensitivity、decision-margin。精确概率比较与有限logits局部近似分别核对；两个必要条目的完整按需包约6867 cl100k_base token，不是账单或节省实测。见 `doc/results/math-geometry-20261007/report.md`。
+
+2026-10-07 MATH-29/30：`math.weighted-bilinear-low-rank` 补齐独立乘积分布下的双侧度量/SVD分数近似。学科：linear-algebra、probability-and-optimization；结构：bilinear-score、second-moment-weighting、sensor-response。真实q/k相关性、RoPE低维频率对应、输出/e2e与部署收益须另验。证据 `doc/results/math-weighted-bilinear-20261007/`。
