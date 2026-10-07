@@ -174,4 +174,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-08 局部扰动传播
 
 - [x] [MATH-35] 补齐有条件的跨层扰动传播界、拒用反例与近期研究筛选。 ([detail](task_details/MATH-35.md))
-- [ ] [MATH-36] 独立代码/数据验收、检索成本、回归与普通main发布核对。 ([detail](task_details/MATH-36.md))
+- [x] [MATH-36] 独立代码/数据验收、检索成本、回归与普通main发布核对。 ([detail](task_details/MATH-36.md))
