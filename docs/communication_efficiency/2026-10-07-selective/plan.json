@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "registered_before_measurement": true,
+  "baseline_commit": "41914d5373572d0f4219c8a16cb006005ebd9fc2",
+  "scope": "same synthetic handoff, consumer-owned full versus selected evidence; not model A/B",
+  "encodings": ["cl100k_base", "o200k_base"],
+  "tokenizer_version": "0.12.0",
+  "cases": [
+    {"id": "ranking", "query": "每个分数误差至多0.2，入选边界间隔0.5，集合会变化吗？", "claim": "paper", "expected": {"stable": true}},
+    {"id": "thermal", "query": "离散热迭代在已验证域内收缩率0.5，残差0.01 K，终态误差界是多少？", "claim": "thermal", "expected": {"error_bound_K": 0.02}},
+    {"id": "infra", "query": "固定源码的精确注意力方法已定位，这能否证明本机更快？", "claim": "infra", "expected": {"method_located": true, "local_speedup": "unmeasured"}}
+  ],
+  "required_negative": "trend-misuse",
+  "local_latency_repeats": 5,
+  "latency_arm_order": "alternate full/selected on successive repeats; tokenizer warmup excluded equally",
+  "acceptance": ["all retained claim and knowledge entry content identical", "complete declared ancestors and required refs retained", "candidate/rejected claims retained", "deterministic toy consumer matches expected in both arms", "stale unrelated incoming ref rejected", "exact payload AND returned-context JSON tokens lower in at least two cases in each encoding"],
+  "stop": "three public development cases and required regression only; no model execution adapter, no topology learning or latent compression",
+  "heldout_status": "all cases public development/structural fixtures, none is an unseen model test",
+  "excluded_costs": ["caller prompts", "model output/reasoning", "provider message framing", "external tool results", "live billing", "model inference latency"]
+}

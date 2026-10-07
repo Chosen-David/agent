@@ -39,3 +39,6 @@ T24–T28 增量：`knowledge/entries/{ai-infra,ai-algorithms,data-structures}/`
 |---|---|---|---|
 | BASIS-01/02 | `agent_runtime/handoff_basis.py`, `agent_runtime/communication.py`, `tests/test_handoff_basis.py` | 主 AI/生产角色 → 可信消费 host | 统一知识/记忆门禁、结论 DAG、已校验交接的更正影响和预算上下文；科学适用仍独立验收 |
 | BASIS-03 | `docs/communication_basis_validation/verify_upgrade.py`, `verification.json`, `report.md` | 程序/合成公开 fixture → 主 AI验收 | 冷/热上下文精确字符/字节与失效拒用；没有 tokenizer 或模型 A/B 收益 |
+
+| EFF-01/02 | `agent_runtime/handoff_basis.py`, `tests/test_selective_context.py`, `workflows/agent_communication_workflow.md` | 主 AI/消费者可信request → Mailbox/模型host | 消费者结论依据闭包、候选/拒用保留、可选命名编码与硬限；语义适用仍独立检查 |
+| EFF-03 | `docs/communication_efficiency/2026-10-07-selective/` | 公开合成fixture/实际tokenizer → 主 AI验收/下轮维护 | 同输入编码成本、包壳/无收益控制与本地pack延迟；无真实模型质量/账单收益声明 |

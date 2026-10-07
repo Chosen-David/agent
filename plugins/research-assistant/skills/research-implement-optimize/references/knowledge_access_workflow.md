@@ -50,3 +50,5 @@ python -m agent_runtime.knowledge --root knowledge check-refs /absolute/task/kno
 执行 [通信工作流](https://github.com/Chosen-David/agent/blob/main/workflows/agent_communication_workflow.md) 的统一依据门禁：消费者独立要求 knowledge_required/memory_required、必需引用和 required_claim_ids；manifest 用 evidence_claims 保存前提→实际证据与知识/记忆/产物依赖。未知/不满足前提只能候选或拒用，不能标 supported；结构通过仍不证明科学适用。复用当前固定语料和 MemoryLedger，不另建图数据库或每定理 Skill。
 
 需要向模型发送依据时，完整 checkout 的 host 使用 Mailbox.prepare_context，按字符或实际 tokenizer 硬预算返回完整必要依赖；只复用该消费者当前上下文实际保有的已核验内容。换上下文或证据更正必须重新加载/验收。CLI 和精确成本口径见通信工作流；仅插件安装缺 runtime 时按相同字段手工执行并明确机器接口未安装。impact 标记已校验交接的受影响结论和接收角色，不能把“检索过/读过”当“应用成功”。
+
+混合交接可由消费者指定 context_claim_ids，只加载所需结论的完整依据，必需声明及候选/拒用依据仍保留；语义相关性与依赖声明完整性由消费者独立检查。全量复核沿用默认入口；不要仅为少 token 删除前提或反例。编码绑定、硬限和复用约束沿用通信工作流。

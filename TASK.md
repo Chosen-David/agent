@@ -254,3 +254,14 @@ T24–T28 验收：保留既有及并发数学知识，39 条中新增 22 条工
 BASIS-01/02 验收：统一知识/项目记忆依据门禁、显式结论依赖、已校验消费者影响定位及完整上下文预算已接入 Mailbox 与主入口。19项专项/CLI测试通过；并发工程知识合并后全仓513项（505通过/8跳过）、reader3/3。重复正文4497→1007字符，原引用/前提保留；实际token/同模型质量A/B未测，旧ACK与原数据保留。证据 `docs/communication_basis_validation/report.md`。BASIS-03待实际main发布和远端读回；不声称宿主部署。
 
 BASIS-03 发布读回：实现 main `6248c5415fa866cc70cd87842e19ed73d858b544`、tree `b66eef559c32a04714bfe1aa864c66a4aad91b94` 与本地验收树一致；非强制 expected_sha 更新，GitHub API、git pull 及两次独立 ls-remote 核对。PublicationLedger 实际记录 tested→committed→pushed→remote_verified，原检查点保留。当前收尾仅更新 TASK/发布记录，不新增代码或性能声明。
+
+
+## 2026-10-07 高效通信与实际 tokenizer 成本
+
+- [x] [EFF-01] 继续原始研究调研，比较结论依据选择、压缩及拓扑路线；固定条件/风险/未验证项，不把少消息当省 token 或模型效果。
+- [x] [EFF-02] 基于已发布依据契约，由消费者选择完整结论依赖，保留必需依据与候选/拒用/前提；接入可选实际 tokenizer，不放宽旧验收门禁。
+- [ ] [EFF-03] 同输入冷/复用场景测量真实编码 token、上下文结构和确定性消费者结果；必要回归、插件同步、main直接发布及远端读回。真实模型质量/收费 A/B 未执行时准确标明。
+
+用户授权继续优化 Agent 交互以兼顾效率、token 和效果；主 AI为单一写入者。本轮证据 `docs/communication_efficiency/2026-10-07-selective/`；临时 tokenizer 仅安装于私有运行目录，不改全局环境，不修改 SGLang。
+
+EFF-01/02验收：最新预印本LatCom（2026-09-29 v1）、HEAR（2026-10-05 v1）及AgentPrune正式来源已核查，潜变量/学习拓扑/引擎调度仅作候选。消费者完整结论闭包与命名编码硬限已接入原Mailbox，必需声明及候选/拒用保留。tiktoken0.12.0两编码、3个公开合成任务同输入返回JSON冷加载减少49.6%–76.0%；全选无收益且增加65token。确定性小消费者和CLI通过；不是模型质量、总会话或收费A/B。发布前合入并发Codex安装提交c0347c1，保留其部署记录；合并后全仓538项（530通过/8跳过）、专项15项、reader3/3，引用同步通过；EFF-03等待实际main发布读回。

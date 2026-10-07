@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "retrieved_on": "2026-10-07",
+  "research_scope": "bounded communication/context efficiency review, not exhaustive latest-paper coverage",
+  "sources": [
+    {
+      "id": "latcom",
+      "title": "LatCom: Cross-Agent Latent Compression for Efficient Multi-Agent Collaboration",
+      "version": "arXiv:2609.37017v1",
+      "submitted_on": "2026-09-29",
+      "publication_status": "preprint; formal venue not verified",
+      "url": "https://arxiv.org/abs/2609.37017v1",
+      "full_text": "https://arxiv.org/html/2609.37017v1",
+      "read_sections": ["3.1-3.2 compressor and receiver supervision", "4.1-4.2 experiments", "Appendix C.4 settings"],
+      "author_mechanism": "joint multi-sender latent compression trained for frozen receiver task utility",
+      "conditions": "hidden-state interfaces, trainable compressor, Qwen3 4B/8B controlled experiments",
+      "engineering_inference": "select evidence by consumer task and remove cross-source repetition; our exact dependency projection does not implement LatCom",
+      "adoption": "principle informs current work; latent implementation deferred, no transferred performance claim"
+    },
+    {
+      "id": "hear",
+      "title": "Can Agent Harnesses and Inference Engines Hear Each Other? The HEAR Protocol for Agentic LLM Serving",
+      "version": "arXiv:2610.06597v1",
+      "submitted_on": "2026-10-05",
+      "publication_status": "preprint; formal venue not verified",
+      "url": "https://arxiv.org/abs/2610.06597v1",
+      "full_text": "https://arxiv.org/html/2610.06597v1",
+      "read_sections": ["3.1-3.2 protocol responsibilities", "4.1-4.2 controlled evaluation", "Appendix A.2 policy details"],
+      "author_mechanism": "workflow intent/requirements plus live engine capabilities/state/outcomes",
+      "conditions": "engine hooks, queue/KV observations, constrained concurrent serving; cache/waiting tradeoffs depend on load",
+      "engineering_inference": "separate actual context residency from assumed KV hits and record latency/quality/failure costs",
+      "adoption": "engine coordination candidate only; no host engine API here, no SGLang modification"
+    },
+    {
+      "id": "agentprune",
+      "title": "Cut the Crap: An Economical Communication Pipeline for LLM-based Multi-Agent Systems",
+      "version": "arXiv:2410.02506v1",
+      "submitted_on": "2024-10-03",
+      "publication_status": "ICLR 2025 proceedings verified; method read from the specified arXiv version, not assumed identical camera-ready text",
+      "url": "https://arxiv.org/abs/2410.02506v1",
+      "full_text": "https://arxiv.org/html/2410.02506v1",
+      "venue_url": "https://proceedings.iclr.cc/paper_files/paper/2025/hash/bbc461518c59a2a8d64e70e2c38c4a0e-Abstract-Conference.html",
+      "read_sections": ["1 Introduction", "3.1-3.4 topology optimization and one-shot pruning"],
+      "author_mechanism": "task-utility policy gradient and sparse spatial/temporal graph masks, followed by pruning",
+      "conditions": "representative task utility evaluation and training interactions; no general correctness guarantee for arbitrary evidence chains",
+      "adoption": "learned topology deferred pending same-model quality and rework evaluation; no automatic removal of review or objection routes"
+    },
+    {
+      "id": "codebook-agent",
+      "title": "Codebook Agent: Amortized Topology Design for LLM Multi-Agent Systems",
+      "version": "arXiv:2609.02264v1",
+      "submitted_on": "2026-09-02",
+      "publication_status": "preprint; formal venue not verified",
+      "url": "https://arxiv.org/abs/2609.02264v1",
+      "read_sections": ["abstract and version metadata only; HTML unavailable"],
+      "author_claim": "communication edge count may poorly proxy actual token cost in studied setups",
+      "adoption": "screening lead only; neither mechanism nor reported correlation reproduced"
+    },
+    {
+      "id": "tiktoken",
+      "title": "tiktoken official documentation and installed package",
+      "version": "0.12.0 installed in isolated private run directory",
+      "publication_status": "official software documentation",
+      "url": "https://github.com/openai/tiktoken",
+      "read_sections": ["README get_encoding API", "installed encoding adapter execution"],
+      "adoption": "optional exact named-encoding counter; model encoding matching remains host responsibility"
+    }
+  ],
+  "not_claimed": ["exhaustive newest-paper discovery", "latent method implementation", "engine KV reuse", "model quality or live billing improvement", "source code reproduction"]
+}

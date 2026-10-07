@@ -24,6 +24,25 @@ def _policy(request, key):
     return value
 
 
+def make_token_counter(encoding):
+    """Optional pinned encoding, never inferred from an unknown model name."""
+    _require(isinstance(encoding, str) and bool(encoding.strip()), 'encoding name required')
+    try:
+        import tiktoken
+    except ImportError as exc:
+        raise ValueError('tiktoken unavailable; install optional tokenizer or supply trusted counter') from exc
+    try:
+        tokenizer = tiktoken.get_encoding(encoding)
+    except ValueError as exc:
+        raise ValueError('unknown tokenizer encoding: ' + encoding) from exc
+    def counter(text):
+        # Evidence may contain literal special-token spellings; count as data.
+        return len(tokenizer.encode(text, disallowed_special=()))
+    counter.tokenizer_name = encoding
+    counter.tokenizer_version = tiktoken.__version__
+    return counter
+
+
 def claim_graph(record):
     """Check local claim DAG, reference scope, and observable premise records."""
     claims = record.get('evidence_claims', [])
@@ -103,6 +122,17 @@ def check_handoff_basis(root, record, request):
     _ids(expected, 'required_claim_ids')
     _require(set(expected) <= graph.keys(), 'handoff omits required claims')
     _require(all(graph[c]['status'] == 'supported' for c in expected), 'required claim is unsupported')
+    if 'context_claim_ids' in request:
+        selected = request['context_claim_ids']
+        _ids(selected, 'context_claim_ids')
+        _require(bool(selected) and set(selected) <= graph.keys(), 'context needs known nonempty claims')
+    artifacts = request.get('context_artifact_ids', [])
+    _ids(artifacts, 'context_artifact_ids')
+    _require(set(artifacts) <= {a['id'] for a in record.get('artifacts', [])},
+             'context references unknown artifacts')
+    if 'context_tokenizer' in request:
+        name = request['context_tokenizer']
+        _require(isinstance(name, str) and bool(name.strip()), 'consumer context_tokenizer required')
     return {'knowledge': knowledge, 'memory': memory, 'claims': graph,
             'scope': 'declared identity, dependencies and premise records; scientific applicability unchecked'}
 
@@ -176,6 +206,9 @@ def basis_context(root, record, request, *, known_knowledge_refs=(), known_memor
     _require(type(max_chars) is int and 1 <= max_chars <= 200000, 'invalid max_chars')
     _require(max_tokens is None or (type(max_tokens) is int and max_tokens > 0), 'invalid max_tokens')
     _require(max_tokens is None or callable(token_counter), 'token budget needs actual token_counter')
+    if 'context_tokenizer' in request:
+        _require(callable(token_counter) and getattr(token_counter, 'tokenizer_name', None) == request['context_tokenizer'],
+                 'consumer tokenizer binding mismatch or unavailable')
     # Consumer request may impose stricter limits than a host call. Never let
     # per-call cache/budget options relax the independent request's hard cap.
     if 'context_max_chars' in request:
@@ -192,19 +225,48 @@ def basis_context(root, record, request, *, known_knowledge_refs=(), known_memor
     payload = {'input_version': record['input_version'], 'knowledge_refs': record.get('knowledge_refs', []),
                'memory_refs': record.get('memory_refs', []), 'evidence_claims': record.get('evidence_claims', []),
                'artifacts': record['artifacts'], 'knowledge_entries': [], 'memory_entries': []}
+    selection = None
+    corpus = None
+    if 'context_claim_ids' in request:
+        graph = checked['claims']
+        # Preserve known objections and unverified proposals, even when they
+        # were not selected. A small prompt cannot silently erase negative evidence.
+        included = (set(request['context_claim_ids']) | set(request.get('required_claim_ids', []))
+                    | {cid for cid, claim in graph.items() if claim['status'] != 'supported'})
+        pending = list(included)
+        while pending:
+            for parent in graph[pending.pop()]['depends_on']:
+                if parent not in included:
+                    included.add(parent); pending.append(parent)
+        claims = [c for c in payload['evidence_claims'] if c['id'] in included]
+        kids = {k for c in claims for k in c['knowledge_ids']} | {r['id'] for r in request.get('knowledge_refs', [])}
+        if kids:
+            corpus = KnowledgeStore(root / request['knowledge_root'])
+            kids = {r['id'] for k in kids for r in corpus.get(k)['knowledge_refs']}
+        mids = {m for c in claims for m in c['memory_ids']} | set(request.get('memory_refs', []))
+        aids = {a for c in claims for a in c['artifact_ids']} | set(request.get('context_artifact_ids', []))
+        _require(not request.get('knowledge_required', False) or bool(kids), 'selected claims lack required knowledge basis')
+        _require(not request.get('memory_required', False) or bool(mids), 'selected claims lack required memory basis')
+        payload.update(evidence_claims=claims,
+                       knowledge_refs=[r for r in payload['knowledge_refs'] if r['id'] in kids],
+                       memory_refs=[m for m in payload['memory_refs'] if m in mids],
+                       artifacts=[a for a in payload['artifacts'] if a['id'] in aids])
+        selection = {'requested_claim_ids': request['context_claim_ids'], 'included_claim_ids': sorted(included),
+                     'excluded_claim_ids': sorted(graph.keys() - included),
+                     'scope': 'declared ancestors, required refs and all candidate/rejected claims; semantic relevance unchecked'}
     omitted = []
     if payload['knowledge_refs'] or known_knowledge_refs:
         if known_knowledge_refs:
             check_handoff_knowledge(root, {'knowledge_refs': list(known_knowledge_refs)},
                                     dict(request, knowledge_refs=[]))
-        corpus = KnowledgeStore(root / request['knowledge_root'])
+        corpus = corpus or KnowledgeStore(root / request['knowledge_root'])
         for ref in payload['knowledge_refs']:
             if ref in known_knowledge_refs:
                 omitted.append(ref['id'])
             else:
                 entry = corpus.get(ref['id']); entry.pop('knowledge_refs')
                 payload['knowledge_entries'].append(entry)
-    memory_entries = {entry['id']: entry for entry in checked['memory']}
+    memory_entries = {entry['id']: entry for entry in checked['memory'] if entry['id'] in payload['memory_refs']}
     if payload['memory_refs'] or known_memory_ids:
         ledger = MemoryLedger(root)
         if known_memory_ids:
@@ -225,6 +287,9 @@ def basis_context(root, record, request, *, known_knowledge_refs=(), known_memor
         _require(max_tokens is None or tokens <= max_tokens, 'complete basis exceeds token budget')
     return {'payload': serialized, 'usage': {'chars': len(serialized), 'bytes': len(serialized.encode()),
             'tokens': tokens, 'max_chars': max_chars, 'max_tokens': max_tokens,
+            'tokenizer': getattr(token_counter, 'tokenizer_name', None),
+            'tokenizer_version': getattr(token_counter, 'tokenizer_version', None),
             'scope': 'exact serialized payload only; tool envelope and model output excluded'},
+            'selection': selection,
             'reused_knowledge_ids': omitted,
             'reused_memory_ids': sorted(set(memory_entries) & set(known_memory_ids))}

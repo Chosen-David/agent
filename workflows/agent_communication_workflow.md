@@ -95,6 +95,7 @@ status 为 supported/rejected/candidate；前提 status 为 satisfied/unsatisfie
 
 ```bash
 python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . context writer 1 --request REQUEST.json --max-chars 20000
+python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . context writer 1 --request REQUEST.json --encoding o200k_base --max-tokens 6000
 python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . impact
 python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . usage
 ```
@@ -102,5 +103,9 @@ python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . 
 API 可提供 `known_knowledge_refs`、`known_memory_ids`（CLI --known 指向可信宿主维护的 JSON）。这些只指该消费者**当前模型上下文中仍实际保有**的内容，不是曾经检索过或磁盘缓存过；换模型/上下文压缩丢失内容则清空。省略重复正文仍保留全部引用/前提/产物信息，并重新检查引用/记忆状态。生产者不得自报消费者缓存。首轮加载成本也计入比较。
 
 默认 max_chars=20000 是工程参数；消费者可固定 context_max_chars。可信宿主可提供实际模型 tokenizer 的 token_counter(str)->int 以及 max_tokens，消费者 context_max_tokens 为不能放宽的硬限。没有实际 tokenizer 则 tokens=null；存在 token 硬限但无法计数时停止该模型派发，不能用字符/4 估计冒充实际 token。计数范围为精确 payload；工具包壳、模型输出/推理 token 和其他输入由宿主预算账本另计，并在每次调用前检查整轮余额、重试和反馈上限。
+
+消费者可选 `context_claim_ids`：明确本次要检查的结论，完整保留其祖先、required_claim_ids、必需知识/记忆及全部 candidate/rejected 声明和对应依据。`context_artifact_ids` 可补充没有挂在所选结论上的必需产物。所有传入依据仍先核验；正文/前提不改写，选择不证明语义相关性。生产者不能控制选择。全量复核或依赖未声明完整时沿用默认全量入口；全部结论都需要时选择元数据会增加成本。CLI/API、主 AI 和消费者使用同一入口，不新增每结论 Skill。
+
+`--encoding` 使用可选 tiktoken，缺包或未知编码报错；消费者 `context_tokenizer` 可固定编码，host 不得换编码绕过硬限。编码计数只证明该序列在指定编码下的 token 数，只有与实际模型编码匹配才代表其输入计数；不推断未知模型、不代表收费账单。可复核示例使用 tiktoken==0.12.0、cl100k_base/o200k_base，见 [同输入证据与成本测量](../docs/communication_efficiency/2026-10-07-selective/report.md)。本地已加载内容复用不是推理服务 KV-cache 命中证明。
 
 计划可增加 max_delivery_bytes：按收件人数累计 envelope UTF-8 字节，重复 event_id 不重复计费，超额拒绝整个投递，不部分广播。usage 提供 events/deliveries/envelope_bytes/delivery_bytes；这不是模型收费账单。不为了省 token 删除关键反例、前提或原始证据；先缩小问题/检索范围、复用当前上下文、批量独立读取和减少无关收件者，再考虑经独立实验的摘要。

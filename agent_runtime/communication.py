@@ -292,6 +292,8 @@ def main():
     p = sub.add_parser('context'); p.add_argument('recipient'); p.add_argument('seq', type=int)
     p.add_argument('--request', type=Path, required=True); p.add_argument('--max-chars', type=int, default=20000)
     p.add_argument('--known', type=Path, help='trusted current-context refs; not producer input')
+    p.add_argument('--encoding', help='explicit optional tiktoken encoding; no model inference')
+    p.add_argument('--max-tokens', type=int)
     args = parser.parse_args()
     try:
         box = Mailbox(args.db, _load_json(args.plan), args.root)
@@ -304,9 +306,12 @@ def main():
         elif args.command == 'consume':
             result = box.consume_handoff(args.recipient, args.seq, _load_json(args.request))
         elif args.command == 'context':
+            from .handoff_basis import make_token_counter
             known = _load_json(args.known) if args.known else {}
             result = box.prepare_context(args.recipient, args.seq, _load_json(args.request),
                                          max_chars=args.max_chars,
+                                         max_tokens=args.max_tokens,
+                                         token_counter=make_token_counter(args.encoding) if args.encoding else None,
                                          known_knowledge_refs=known.get('knowledge_refs', []),
                                          known_memory_ids=known.get('memory_refs', []))
         elif args.command == 'impact':
