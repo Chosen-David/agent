@@ -16,3 +16,7 @@ Date: 2026-10-07
 ### 本轮证据
 
 数学/来源、416+12有限验收、双后端4题、21旧题对照、66相关回归与限制见 [报告](../../results/math-softmax-20261007-v2/report.md)。发布前状态为validated/pending-publication，MATH-26不提前记完成。
+
+### 发布读回
+
+实现提交 `10aa87fc2a752fbcce8f149fffd6965906512b7c` 已直接进入 main，ref与完整tree读回一致；并发SELF-SYNC修改保留。737项全仓测试中729通过、8跳过。后续receipt提交仅保存这次已核实发布，不声称部署或模型收益。

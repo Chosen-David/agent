@@ -28,7 +28,7 @@ MC-Sparse arXiv:2610.06801v1，2026-10-05提交：读取§3–4、Algorithm1与�
 
 ## 续接与发布
 
-MATH-25完成数学、研究筛选、有限迁移和独立检查；MATH-26待main刷新、直接提交与远端读回后闭环。下一步须固定真实indexer Q/K/V trace及输出W，按文档冻结留出，在相同索引字节/最终KV预算下对照CA/质量/输出敏感方案；再用同模型工具预算做端到端验证。未知依赖/协方差队列保留，无收益证据前不部署方案。
+MATH-25完成数学、研究筛选、有限迁移和独立检查；MATH-26已完成main刷新、直接提交与远端读回；publication.json记录实现提交。下一步须固定真实indexer Q/K/V trace及输出W，按文档冻结留出，在相同索引字节/最终KV预算下对照CA/质量/输出敏感方案；再用同模型工具预算做端到端验证。未知依赖/协方差队列保留，无收益证据前不部署方案。
 
 发布整合：远端同步发现1d516dd并发自同步修改；保留SELF-SYNC任务与CODEMAP，未更改其实现。结果目录与result_id不符的注册被正确拒绝，保留registration-blocked-layout.json；移至math-softmax-20261007-v2后重新固定哈希及独立验收，不复用过期pass。
 
@@ -41,3 +41,5 @@ Ran 737 tests in 54.688s
 OK (skipped=8)
 
 ```
+
+实现已发布且读回：`10aa87fc2a752fbcce8f149fffd6965906512b7c`，完整树`872358594b0933b207af1e1e5021b46369431175`。注册记录本身仍是pending provenance，真实scoped使用须显式提供当前已认证host-adapter；accepted.json是这次实际独立检查，不把记录自带JSON当未来权限。
