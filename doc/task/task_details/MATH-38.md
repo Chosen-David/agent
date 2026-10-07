@@ -12,3 +12,5 @@ Date: 2026-10-08
 同步main7aa8f76，指南空只读，15角色/知识持续状态已读，既有数学运行均completed。先查实际doc/results，旧局部传播不能替代生成分布定理。
 
 独立六项usable-with-scope；manifest aac09681b06583bfd48fd9ab7a2d7dddca9910938f57ebc4ce6f8dfaa5c504fb，validation SHA85f37466977013dcb2bf14b21c973c618bd74bb662248e179ac0210786e3ae86。宿主观察真实独立协作并绑定核对后inspect_result通过。48树/504联合词串/456前缀/1615断言，raw重跑一致，额外边界参考核对；182语料文件/6检索/3903编码token复核。74知识回归和同步通过，无模型/GPU/未见或token节省。普通main发布待读回。
+
+普通main实现提交`0e78330baf3261e20744a36c3c7490c0d937ec55`已fetch读回，树`36d8a1364c9f3c3758084f2cd74b02d2610d180c`与本地完全一致；未force。验收范围保持不变。后续：实际生成路径一致的模型replay及独立留出对照。

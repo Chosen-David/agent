@@ -43,3 +43,5 @@
 独立六项检查位于independent/；真实协作回执加冻结hash由宿主checked callback核对后才执行inspect_result和发布。直接有界宿主维护，不宣称tmux/受管Engine/ReviewSession部署。74项知识回归通过（11.546s）；回归见regression.log，同步见sync.log，发布证据归MATH-38和learning_state。
 
 下一步仍优先真实trace/生成概率接口与未用文档，而不是把新条目数当能力提升。本轮没有可证明值得部署的生产性能改进。
+
+普通main实现提交`0e78330baf3261e20744a36c3c7490c0d937ec55`已fetch读回，树`36d8a1364c9f3c3758084f2cd74b02d2610d180c`与本地完全一致；未force。验收范围保持不变。后续：实际生成路径一致的模型replay及独立留出对照。
