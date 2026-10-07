@@ -1,0 +1,160 @@
+{
+  "at": "2026-10-07T03:39:51.567244+00:00",
+  "target": "integrated candidate",
+  "status": "independently-usable-with-scope",
+  "run_id": "prior-result-store-cpu-20261007",
+  "record_ref": {
+    "path": "doc/results/prior-result-store-cpu-20261007/record.json",
+    "sha256": "463e645a0b081b1fc9e3eebdb2d2b8e8e834abe397a4d7085820c9e76aec065e"
+  },
+  "observations": {
+    "sum_of_squares": 42,
+    "samples": 12,
+    "source_sha256": "c9b0182deb2f002009ec8f7be80eb57c098904537ae97cbcaa6434bd20895c65",
+    "initial_producer_invocations": 1
+  },
+  "source_and_raw_bytes_unchanged": true,
+  "producer_invocations_before": 1,
+  "producer_invocations_after": 1,
+  "producer_calls_during_reuse_validation": 0,
+  "cheap_reference_callback_calls": 6,
+  "exact_request_decision": "reuse",
+  "reuse_handler_status": "complete",
+  "changed_input_request_decision": "verify_delta",
+  "explicit_reproduction_decision": "rerun",
+  "original_record_left_pending": true,
+  "review": {
+    "schema_version": "experiment-validation/v1",
+    "scope": "CPU平方和数值测试：固定4个整数、3次重复的精确观测；不含性能或泛化主张。 Exact sum-of-squares on four frozen integer inputs only.",
+    "manifest_sha256": "7c6656429d35eea7aeecff44c771681a6cd4b1c4a34d9e7aa4983117e033d44a",
+    "artifact_hashes": {
+      "doc/results/prior-result-store-cpu-20261007/validation-plan.json": "90f30bf4716cd6abb4f4436e68ccf63edd3795c83f9728fbbba00c8db5a69fd1",
+      "doc/results/prior-result-store-cpu-20261007/producer.py": "c9b0182deb2f002009ec8f7be80eb57c098904537ae97cbcaa6434bd20895c65",
+      "doc/results/prior-result-store-cpu-20261007/inputs.json": "ffe05de4b7c0791f189614b9d72a5c2b21b7e82a81a05b64ab72b767fc7a3995",
+      "doc/results/prior-result-store-cpu-20261007/config.json": "67d3ec85ce6cb1d600a41b89cb01d9eba38e2d27d97bf5d6e1ff2403889f35cf",
+      "doc/results/prior-result-store-cpu-20261007/raw/samples.json": "d62af605b02b2d8d17abf58651dc45c3295835b41d801d27f9e75fc37727e6b6",
+      "doc/results/prior-result-store-cpu-20261007/raw/producer-invocations.jsonl": "122e17151d0be53f3dfc3f2f4b7419c3dd76f62d56ddefd779d3efd2a8397dc5",
+      "doc/results/prior-result-store-cpu-20261007/execution-receipt.json": "a6482934cfc74a406b264123f5cc9eafeea82a34c06cd7c9e228a462f06ffe6e",
+      "doc/results/prior-result-store-cpu-20261007/derived/summary.json": "79c92350c61c874728de3f96e31716dd0df76196e9dcd7eb12501c79f3ab3ff0",
+      "doc/results/prior-result-store-cpu-20261007/environment.json": "ec73d3dae0a74953faa97331e96436d4b6918a7bf15499941eec8cf7736fa7a1"
+    },
+    "validation_plan_sha256": "90f30bf4716cd6abb4f4436e68ccf63edd3795c83f9728fbbba00c8db5a69fd1",
+    "verifier": {
+      "actor": "independent-document-architecture-reviewer",
+      "source": "audit_integrated_cpu_result.py",
+      "run_id": "actual-cpu-independent-20261007",
+      "method": "Independent source read, frozen-artifact/receipt checks and exact mathematical recomputation; zero producer calls.",
+      "independent": true
+    },
+    "limitations": [
+      "Only this frozen four-input, three-repeat exact-integer scope is accepted; no general bug-free, performance, model or hardware-transfer claim.",
+      "Initial execution receipt came from the producing worker; independently checked source/data/receipt consistency, not OS-level attestation of that historical process.",
+      "Cheap independent reference validation did not rerun the producer; saved work is only the avoided duplicate producer invocation in this controlled local case."
+    ],
+    "checks": {
+      "implementation": {
+        "verdict": "pass",
+        "reason": "Independently read audited source; source SHA matches exact x*x comprehension, repeat traversal, sum/count and raw writes.",
+        "evidence": [
+          {
+            "path": "doc/results/prior-result-store-cpu-20261007/producer.py",
+            "sha256": "c9b0182deb2f002009ec8f7be80eb57c098904537ae97cbcaa6434bd20895c65"
+          },
+          {
+            "path": "doc/results/prior-result-store-cpu-20261007/config.json",
+            "sha256": "67d3ec85ce6cb1d600a41b89cb01d9eba38e2d27d97bf5d6e1ff2403889f35cf"
+          }
+        ]
+      },
+      "reference_boundary": {
+        "verdict": "pass",
+        "reason": "Independent abs(x)**2 reference covers negative, zero and positive frozen integer inputs and matches all 12 rows.",
+        "evidence": [
+          {
+            "path": "doc/results/prior-result-store-cpu-20261007/inputs.json",
+            "sha256": "ffe05de4b7c0791f189614b9d72a5c2b21b7e82a81a05b64ab72b767fc7a3995"
+          },
+          {
+            "path": "doc/results/prior-result-store-cpu-20261007/raw/samples.json",
+            "sha256": "d62af605b02b2d8d17abf58651dc45c3295835b41d801d27f9e75fc37727e6b6"
+          }
+        ]
+      },
+      "data_integrity": {
+        "verdict": "pass",
+        "reason": "Exact ordered input-repeat pairs are complete and unique; raw total/count, derived summary and manifest metric values/units agree.",
+        "evidence": [
+          {
+            "path": "doc/results/prior-result-store-cpu-20261007/raw/samples.json",
+            "sha256": "d62af605b02b2d8d17abf58651dc45c3295835b41d801d27f9e75fc37727e6b6"
+          },
+          {
+            "path": "doc/results/prior-result-store-cpu-20261007/derived/summary.json",
+            "sha256": "79c92350c61c874728de3f96e31716dd0df76196e9dcd7eb12501c79f3ab3ff0"
+          }
+        ]
+      },
+      "numerical_sanity": {
+        "verdict": "pass",
+        "reason": "All inputs and outputs are exact finite integers; 3*(9+1+0+4)=42 and 3*4=12.",
+        "evidence": [
+          {
+            "path": "doc/results/prior-result-store-cpu-20261007/raw/samples.json",
+            "sha256": "d62af605b02b2d8d17abf58651dc45c3295835b41d801d27f9e75fc37727e6b6"
+          },
+          {
+            "path": "doc/results/prior-result-store-cpu-20261007/derived/summary.json",
+            "sha256": "79c92350c61c874728de3f96e31716dd0df76196e9dcd7eb12501c79f3ab3ff0"
+          }
+        ]
+      },
+      "measurement_validity": {
+        "verdict": "not_applicable",
+        "reason": "No runtime/throughput metric or speed claim exists; environment explicitly timed=false. Numerical observations only.",
+        "evidence": [
+          {
+            "path": "doc/results/prior-result-store-cpu-20261007/environment.json",
+            "sha256": "ec73d3dae0a74953faa97331e96436d4b6918a7bf15499941eec8cf7736fa7a1"
+          },
+          {
+            "path": "doc/results/prior-result-store-cpu-20261007/derived/summary.json",
+            "sha256": "79c92350c61c874728de3f96e31716dd0df76196e9dcd7eb12501c79f3ab3ff0"
+          }
+        ]
+      },
+      "reproducibility": {
+        "verdict": "pass",
+        "reason": "Source/input/config/environment/receipt hashes bound; independent formula reproduces every row without invoking producer again. Initial process receipt checked for internal consistency.",
+        "evidence": [
+          {
+            "path": "doc/results/prior-result-store-cpu-20261007/execution-receipt.json",
+            "sha256": "a6482934cfc74a406b264123f5cc9eafeea82a34c06cd7c9e228a462f06ffe6e"
+          },
+          {
+            "path": "doc/results/prior-result-store-cpu-20261007/raw/producer-invocations.jsonl",
+            "sha256": "122e17151d0be53f3dfc3f2f4b7419c3dd76f62d56ddefd779d3efd2a8397dc5"
+          },
+          {
+            "path": "doc/results/prior-result-store-cpu-20261007/producer.py",
+            "sha256": "c9b0182deb2f002009ec8f7be80eb57c098904537ae97cbcaa6434bd20895c65"
+          }
+        ]
+      }
+    }
+  },
+  "run_file_hashes": {
+    "environment.json": "ec73d3dae0a74953faa97331e96436d4b6918a7bf15499941eec8cf7736fa7a1",
+    "record.json": "463e645a0b081b1fc9e3eebdb2d2b8e8e834abe397a4d7085820c9e76aec065e",
+    "inputs.json": "ffe05de4b7c0791f189614b9d72a5c2b21b7e82a81a05b64ab72b767fc7a3995",
+    "config.json": "67d3ec85ce6cb1d600a41b89cb01d9eba38e2d27d97bf5d6e1ff2403889f35cf",
+    "execution-receipt.json": "a6482934cfc74a406b264123f5cc9eafeea82a34c06cd7c9e228a462f06ffe6e",
+    "contract.json": "d4e0ad1474606df9ed26032532747eddfc5a97f938e5878586022d4576679e06",
+    "producer.py": "c9b0182deb2f002009ec8f7be80eb57c098904537ae97cbcaa6434bd20895c65",
+    "validation-plan.json": "90f30bf4716cd6abb4f4436e68ccf63edd3795c83f9728fbbba00c8db5a69fd1",
+    "manifest.json": "7c6656429d35eea7aeecff44c771681a6cd4b1c4a34d9e7aa4983117e033d44a",
+    "raw/producer-invocations.jsonl": "122e17151d0be53f3dfc3f2f4b7419c3dd76f62d56ddefd779d3efd2a8397dc5",
+    "raw/samples.json": "d62af605b02b2d8d17abf58651dc45c3295835b41d801d27f9e75fc37727e6b6",
+    "derived/summary.json": "79c92350c61c874728de3f96e31716dd0df76196e9dcd7eb12501c79f3ab3ff0"
+  },
+  "auditor_source_sha256": "7d52dda84c3a4ed883904b9ffd89fda2c5a81f04241dafdf82188917566be751"
+}

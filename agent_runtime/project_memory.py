@@ -9,11 +9,14 @@ from __future__ import annotations
 import argparse
 from contextlib import contextmanager
 import json
+import os
 from pathlib import Path
 import re
 import sqlite3
 import stat
 import sys
+
+from .project_docs import check_document_refs, guard_write_path
 
 
 KINDS = ('intention', 'assumption', 'observation', 'claim', 'procedure', 'artifact')
@@ -40,7 +43,8 @@ def _ids(values, field):
 
 class MemoryLedger:
     def __init__(self, root, create=False):
-        self.path = Path(root).resolve() / '.agent-memory' / 'memory.sqlite3'
+        self.root = Path(root).resolve()
+        self.path = Path(os.path.abspath(Path(root) / '.agent-memory' / 'memory.sqlite3'))
         self._validate_paths()
         if create:
             self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -55,6 +59,8 @@ class MemoryLedger:
                         child TEXT NOT NULL REFERENCES entries(id),
                         parent TEXT NOT NULL REFERENCES entries(id),
                         PRIMARY KEY(child, parent));
+                    CREATE TABLE IF NOT EXISTS document_dependencies (
+                        entry_id TEXT PRIMARY KEY REFERENCES entries(id), snapshot TEXT NOT NULL);
                     CREATE TABLE IF NOT EXISTS events (
                         sequence INTEGER PRIMARY KEY AUTOINCREMENT,
                         entry_id TEXT NOT NULL REFERENCES entries(id),
@@ -69,6 +75,10 @@ class MemoryLedger:
         Repeat before every connection to catch changes since construction. This
         does not claim protection against a concurrent hostile filesystem writer.
         """
+        try:
+            guard_write_path(self.path)
+        except ValueError as exc:
+            raise MemoryError(str(exc)) from exc
         for path, directory in ((self.path.parent, True), (self.path, False)):
             try:
                 mode = path.lstat().st_mode
@@ -114,12 +124,17 @@ class MemoryLedger:
             raise MemoryError(f'unknown memory ID: {entry_id}')
         value = dict(row)
         value['scope'] = json.loads(value['scope'])
+        value['document_refs'] = None
+        if db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='document_dependencies'").fetchone():
+            binding = db.execute('SELECT snapshot FROM document_dependencies WHERE entry_id=?', (entry_id,)).fetchone()
+            if binding:
+                value['document_refs'] = json.loads(binding[0])
         value['deps'] = [r[0] for r in db.execute(
             'SELECT parent FROM dependencies WHERE child=? ORDER BY parent', (entry_id,))]
         return value
 
     @staticmethod
-    def _check(db, refs):
+    def _check(db, refs, root=None):
         refs = _ids(refs, 'memory refs')
         if not refs:
             raise MemoryError('memory refs must be nonempty')
@@ -130,6 +145,13 @@ class MemoryLedger:
             entry = MemoryLedger._get(db, entry_id)
             if entry['status'] != 'active':
                 raise MemoryError(f'memory {entry_id} is {entry["status"]}; reconciliation required')
+            if entry['document_refs'] is not None:
+                if root is None:
+                    raise MemoryError('document-bound memory requires project context')
+                try:
+                    check_document_refs(root, entry['document_refs'])
+                except (OSError, ValueError) as exc:
+                    raise MemoryError(f'memory {entry_id} has stale project document dependencies: {exc}') from exc
             checked.add(entry_id)
             for parent in entry['deps']:
                 visit(parent)
@@ -138,7 +160,7 @@ class MemoryLedger:
         return [MemoryLedger._get(db, ref) for ref in refs]
 
     @staticmethod
-    def _insert(db, entry_id, kind, content, source, deps, scope, evidence):
+    def _insert(db, entry_id, kind, content, source, deps, scope, evidence, document_refs=None, root=None):
         _ids([entry_id], 'entry ID')
         _text(content, 'content')
         _text(source, 'source')
@@ -154,11 +176,21 @@ class MemoryLedger:
             if parent['status'] not in ('active', 'candidate'):
                 raise MemoryError(f'dependency {dep} is {parent["status"]}')
         if evidence != 'candidate' and deps:
-            MemoryLedger._check(db, deps)
+            MemoryLedger._check(db, deps, root)
+        if document_refs is not None:
+            try:
+                check_document_refs(root, document_refs)
+            except (OSError, ValueError) as exc:
+                raise MemoryError('current project document binding required') from exc
         status = 'candidate' if evidence == 'candidate' else 'active'
         db.execute('INSERT INTO entries(id,kind,content,source,scope,evidence,status) '
                    'VALUES(?,?,?,?,?,?,?)',
                    (entry_id, kind, content, source, json.dumps(scope), evidence, status))
+        if document_refs is not None:
+            db.execute('CREATE TABLE IF NOT EXISTS document_dependencies '
+                       '(entry_id TEXT PRIMARY KEY REFERENCES entries(id), snapshot TEXT NOT NULL)')
+            db.execute('INSERT INTO document_dependencies(entry_id,snapshot) VALUES(?,?)',
+                       (entry_id, json.dumps(document_refs, sort_keys=True)))
         db.executemany('INSERT INTO dependencies(child,parent) VALUES(?,?)',
                        [(entry_id, dep) for dep in deps])
         MemoryLedger._event(db, entry_id, 'created', evidence, source)
@@ -178,11 +210,11 @@ class MemoryLedger:
                 UNION SELECT d.child FROM dependencies d JOIN affected a ON d.parent=a.id)
             SELECT id FROM affected ORDER BY id''', (entry_id,))]
 
-    def add(self, entry_id, kind, content, source, deps=(), scope=(), evidence='candidate'):
+    def add(self, entry_id, kind, content, source, deps=(), scope=(), evidence='candidate', document_refs=None):
         with self._connect(write=True) as db:
-            return self._insert(db, entry_id, kind, content, source, deps, scope, evidence)
+            return self._insert(db, entry_id, kind, content, source, deps, scope, evidence, document_refs, self.root)
 
-    def _revise(self, old_id, new_id, content, source, reason, accept=False, deps=()):
+    def _revise(self, old_id, new_id, content, source, reason, accept=False, deps=(), document_refs=None):
         _text(reason, 'reason')
         _text(source, 'source')
         with self._connect(write=True) as db:
@@ -195,9 +227,12 @@ class MemoryLedger:
             # A revision may not re-use any of the evidence it invalidates.
             if set(deps) & {old_id, *affected}:
                 raise MemoryError('revision depends on its invalidated lineage')
+            if old['document_refs'] is not None and not accept and document_refs is None:
+                raise MemoryError('document-bound correction requires a new current document_refs snapshot')
             new = self._insert(db, new_id, old['kind'], old['content'] if accept else content,
                                source, old['deps'] if accept else deps, old['scope'],
-                               'verified' if accept else 'user_confirmed')
+                               'verified' if accept else 'user_confirmed',
+                               old['document_refs'] if accept else document_refs, self.root)
             db.execute("UPDATE entries SET status='superseded' WHERE id=?", (old_id,))
             self._event(db, old_id, 'accepted' if accept else 'corrected', reason, source, new_id)
             self._event(db, new_id, 'revision_of', reason, source, old_id)
@@ -209,13 +244,13 @@ class MemoryLedger:
                     self._event(db, entry_id, 'stale', reason, source, old_id)
             return {'revision': new, 'superseded': old_id, 'affected': affected}
 
-    def correct(self, old_id, new_id, content, source, reason, deps=()):
+    def correct(self, old_id, new_id, content, source, reason, deps=(), document_refs=None):
         """Record a user correction; source must identify the actual user statement.
 
         Descendants remain stale until independently revalidated as new revisions.
         External data and report files are never rewritten or deleted.
         """
-        return self._revise(old_id, new_id, content, source, reason, deps=deps)
+        return self._revise(old_id, new_id, content, source, reason, deps=deps, document_refs=document_refs)
 
     def accept(self, old_id, new_id, source, reason):
         """Explicit acceptance creates a verified revision, never mutates the candidate."""
@@ -223,7 +258,7 @@ class MemoryLedger:
 
     def check(self, refs):
         with self._connect() as db:
-            return self._check(db, refs)
+            return self._check(db, refs, self.root)
 
     def list(self, status='active', scope=None):
         """Retrieval defaults to current accepted entries, never candidates or stale history."""
@@ -264,6 +299,7 @@ def main(argv=None):
     add.add_argument('--source', required=True)
     add.add_argument('--dep', action='append', default=[])
     add.add_argument('--scope', action='append', default=[])
+    add.add_argument('--document-refs', help='JSON document dependency snapshot, not authorization')
     add.add_argument('--evidence', choices=EVIDENCE, default='candidate')
     for command in ('correct', 'accept'):
         action = sub.add_parser(command)
@@ -273,6 +309,7 @@ def main(argv=None):
         action.add_argument('--reason', required=True)
         if command == 'correct':
             action.add_argument('--content', required=True)
+            action.add_argument('--document-refs', help='current JSON document dependency snapshot')
             action.add_argument('--dep', action='append', default=[])
     listing = sub.add_parser('list')
     listing.add_argument('--status', default='active', choices=('active', 'candidate', 'stale', 'superseded', 'all'))
@@ -284,9 +321,11 @@ def main(argv=None):
     try:
         ledger = MemoryLedger(args.root, create=args.command == 'add')
         if args.command == 'add':
-            result = ledger.add(args.id, args.kind, args.content, args.source, args.dep, args.scope, args.evidence)
+            result = ledger.add(args.id, args.kind, args.content, args.source, args.dep, args.scope, args.evidence,
+                                json.loads(Path(args.document_refs).read_text()) if args.document_refs else None)
         elif args.command == 'correct':
-            result = ledger.correct(args.id, args.new_id, args.content, args.source, args.reason, args.dep)
+            result = ledger.correct(args.id, args.new_id, args.content, args.source, args.reason, args.dep,
+                                    json.loads(Path(args.document_refs).read_text()) if args.document_refs else None)
         elif args.command == 'accept':
             result = ledger.accept(args.id, args.new_id, args.source, args.reason)
         elif args.command == 'list':

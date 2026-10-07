@@ -13,3 +13,7 @@
 复杂交接附实际输入版本、产物路径、已执行检查、限制与下一负责人。外部后端发现不等于可运行或已授权；没有后端时用当前工具完成有界任务。
 
 知识需求与交接按 [知识接入契约](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-explore/references/knowledge_access_workflow.md) 执行；保留实际查询/前提核对证据及完整 knowledge_refs，无需求时注明原因。
+
+测试/实验数据依赖按 [结果验证闭环](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-explore/references/result_validation_workflow.md)：生产后 pending，独立 verify_experiment_result 完成代码和数据核验后才可 usable-with-scope；消费者传 required_result_refs 并依赖验证节点。失败/缺证据/版本变化先阻塞、修复、重测和复验，保留旧原始数据，不保证绝对无 bug。
+
+项目新指令先按 [既有结果检索与复用](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-explore/references/result_reuse_workflow.md) 查 `doc/results/` 的数据与当前验证，比较任务/代码/输入/配置/环境/指标单位后再安排新实验；复用保留独立代码/数据门禁，明确复现与新主张必做验收不能跳过。

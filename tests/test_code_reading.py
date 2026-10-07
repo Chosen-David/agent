@@ -2,10 +2,14 @@
 import importlib.util
 import json
 from pathlib import Path
-import re
 import subprocess
 import tempfile
 import unittest
+
+try:
+    from .markdown_links import package_markdown_targets
+except ImportError:  # unittest discover -s tests imports top-level test modules.
+    from markdown_links import package_markdown_targets
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / 'plugins/research-assistant/skills/code-reading'
@@ -104,9 +108,8 @@ class SourceEvidenceTests(unittest.TestCase):
 class DistributionTests(unittest.TestCase):
     def test_standalone_links_and_routes(self):
         for path in [SKILL / 'SKILL.md', *SKILL.glob('references/*.md')]:
-            for target in re.findall(r'\]\(([^)]+)\)', path.read_text()):
-                if '://' not in target and not target.startswith('#'):
-                    self.assertTrue((path.parent / target).is_file(), (path, target))
+            # Check rendered navigation, not project-relative fenced examples.
+            list(package_markdown_targets(path, SKILL))
         for file in ['README.md', 'prompts/orchestrator.md', 'prompts/research_orchestrator.md',
                      'plugins/research-assistant/skills/research-assistant/SKILL.md']:
             self.assertIn('code-reading', (ROOT / file).read_text())

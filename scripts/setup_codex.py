@@ -21,11 +21,23 @@ BEGIN = b'<!-- chosen-agent:begin -->'
 END = b'<!-- chosen-agent:end -->'
 
 
+
+def writable_installation_root(path):
+    """Refuse explicit destinations or aliases under a human-only guide tree."""
+    path = Path(path).absolute()
+    for candidate in (path, path.resolve()):
+        parts = tuple(part.casefold() for part in candidate.parts)
+        if any(parts[i:i + 2] == ('doc', 'guide') for i in range(len(parts) - 1)):
+            raise ValueError('Human-only doc/guide cannot be an installer destination')
+    return path.resolve()
+
+
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
 
 def atomic(path, data):
+    writable_installation_root(path)  # Recheck resolved destination before every write.
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name('.' + path.name + '.chosen-agent-new')
     with temporary.open('xb') as stream:
@@ -136,8 +148,13 @@ def merge_instructions(current, block):
 
 
 def synchronize(repo, destination, state, codex_home, *, adopt=False, check=False):
-    repo, destination, state, codex_home = map(lambda p: Path(p).resolve(),
-                                               (repo, destination, state, codex_home))
+    repo = Path(repo).resolve()
+    destination, state, codex_home = map(writable_installation_root,
+                                       (destination, state, codex_home))
+    # State children can be redirected independently of the state root. Check
+    # every known write namespace before source reads, locks, backups or writes.
+    for relative in ('installation.json', 'pending.json', 'sync.lock', 'backups'):
+        writable_installation_root(state / relative)
     revision, roles, files, template = committed(repo)
     wanted = {path: digest(data) for path, data in files.items()}
     manifest_path = state / 'installation.json'
@@ -189,14 +206,17 @@ def synchronize(repo, destination, state, codex_home, *, adopt=False, check=Fals
         changed = {p: data for p, data in files.items() if actual.get(p) != wanted[p]}
         removed = sorted(set(prior['files']) - set(files)) if prior else []
         backup = state/'backups'/str(time.time_ns())
+        writable_installation_root(backup)
         for relative in [*changed, *removed]:
             path = owned_path(destination, relative)
             if path.exists():
                 saved = backup/'skills'/relative
+                writable_installation_root(saved)
                 saved.parent.mkdir(parents=True, exist_ok=True)
                 saved.write_bytes(path.read_bytes())
         if current != instructions and instruction_path.exists():
             backup.mkdir(parents=True, exist_ok=True)
+            writable_installation_root(backup/'AGENTS.md')
             (backup/'AGENTS.md').write_bytes(current)
         atomic(state/'pending.json', json.dumps({'before': prior, 'after': new,
             'backup': str(backup), 'writes': sorted(changed), 'removes': removed}, indent=2).encode())

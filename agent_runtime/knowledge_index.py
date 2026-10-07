@@ -14,8 +14,10 @@ import unicodedata
 
 if __package__:
     from .knowledge import KnowledgeError, _require, _terms, _text
+    from .project_docs import guard_write_path
 else:
     from knowledge import KnowledgeError, _require, _terms, _text
+    from project_docs import guard_write_path
 
 INDEX_VERSION = '1'
 ENGINE_VERSION = 'fts5-porter-context-v2'
@@ -75,6 +77,7 @@ def _connect(path, readonly=False):
         _require(path.is_file(), 'knowledge index missing; run index first')
         con = sqlite3.connect(path.as_uri()+'?mode=ro', uri=True, timeout=10)
     else:
+        guard_write_path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
         con = sqlite3.connect(path, timeout=10)
     con.row_factory=sqlite3.Row

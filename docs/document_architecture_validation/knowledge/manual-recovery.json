@@ -1,0 +1,1161 @@
+{
+  "schema_version": 1,
+  "scope": "Three known development failures; informed operator selection plus existing related/show/context within the same20000-character budget. Not automated recovery, changed gold, unseen evaluation or ranking repair.",
+  "candidate_snapshot": "71ddbb92417e50b326d50ccd85607fffa95f6eed7531f7c043d010c0e120b8d0",
+  "script_sha256": "bf3f6234a78c61d6029855d7e675d5ebbb19d037e1d2a296e224cecb7eba3555",
+  "cases_sha256": "f9af50f1e1381f33f41348e00f4ea78059a15d05c4b92c71ca8d598bc4496061",
+  "all_recovered": true,
+  "rows": [
+    {
+      "backend": "files",
+      "case": "A12",
+      "query": "end of sequence remaining token budget clipped generation stopping",
+      "domain_filter": null,
+      "actual_search": {
+        "schema_version": 1,
+        "snapshot": "71ddbb92417e50b326d50ccd85607fffa95f6eed7531f7c043d010c0e120b8d0",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.alpha-spending-stopping",
+            "version": 1,
+            "sha256": "54d4325ccdf1a12e50841ffc124dfa11fcf1dfbd0a254242fc916d8b5f573d06",
+            "title": "逐次错误预算下的随机停止保证",
+            "summary": "对同一稳定均值的每次查看分配可求和错误概率，以联合界保证任意数据依赖停止时的覆盖；保守且不保证早停。",
+            "status": "published",
+            "assumptions": [
+              "无限序列 X_i 相互独立、具有同一均值 μ 且落在已知确定区间 [a,b]",
+              "δ∈(0,1)，δ_t=δ/[t(t+1)] 在数据之前规定",
+              "评测对象、分布与取值范围固定；本条不覆盖复用数据训练后自适应选择的新模型"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-06-concentration/checks.json",
+                "docs/knowledge_learning/2026-10-06-concentration/verify.py"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "stopping"
+                ]
+              }
+            ],
+            "score": 5
+          },
+          {
+            "id": "math.similarity-invariants",
+            "version": 1,
+            "sha256": "b996c58a57eca839ca01d2ba30b2cc7891a8ee50a88bd916127f8f614acd41d2",
+            "title": "相似、等价、合同与坐标不变量",
+            "summary": "同一算子换基得到 S⁻¹AS，保持特征/最小多项式、trace、det、各 p(A) 的秩。",
+            "status": "published",
+            "assumptions": [
+              "A 是同一 V 上端omorphism 的矩阵；S 可逆；双线性型与内积型另行区分。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文逐项来源/证明核查；非 Lean 形式化证明",
+                "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "of"
+                ]
+              }
+            ],
+            "score": 5
+          },
+          {
+            "id": "ai.speculative-sampling-residual-exactness",
+            "version": 1,
+            "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331",
+            "title": "推测采样：剩余质量校正与分布不变条件",
+            "summary": "固定共同token空间、正确前缀和真实提议分布，以min(1,p/q)接受并在拒绝后抽取正部残差，恢复目标分布；greedy、树候选和MTP名称本身不保证随机采样无损。",
+            "status": "published",
+            "assumptions": [
+              "p与q为同一有限输出空间上的归一化分布，包含实际采样变换；p固定为所比较的目标生成策略",
+              "候选从实际q生成；接受检验随机数符合条件独立性，不能把argmax生成的点质量伪装成soft q",
+              "只对q(X)>0计算比值；Z=0意味着不会进入残差归一化分支，不要求目标支撑包含于提议支撑",
+              "链式验证的p/q、位置及缓存对应同一前缀；第一次拒绝后丢弃不再对应正确前缀的后续草稿",
+              "确定性候选消元的顺序不偷看本次接受随机数，拒绝后更新剩余分布；此特例不认证任意树实现",
+              "理论使用精确概率运算，有限精度/缓存/终止/随机数实现须另验；分布相同不等于same-seed逐字相同"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+              ]
+            },
+            "matches": [
+              {
+                "field": "summary",
+                "terms": [
+                  "token"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "token"
+                ]
+              }
+            ],
+            "score": 4
+          }
+        ]
+      },
+      "retained_id": "ai.speculative-sampling-residual-exactness",
+      "related": {
+        "snapshot": "71ddbb92417e50b326d50ccd85607fffa95f6eed7531f7c043d010c0e120b8d0",
+        "results": [
+          {
+            "type": "prerequisite",
+            "direction": "incoming",
+            "id": "ai.speculative-decoding-cost-bound",
+            "version": 1,
+            "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f",
+            "title": "推测解码：接受前缀尾和与成本盈亏条件"
+          }
+        ],
+        "truncated": false
+      },
+      "context": {
+        "schema_version": 1,
+        "snapshot": "71ddbb92417e50b326d50ccd85607fffa95f6eed7531f7c043d010c0e120b8d0",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "status": "ready",
+        "budget": {
+          "max_entries": 8,
+          "max_chars": 20000,
+          "used_chars": 11326,
+          "scope": "serialized entry payload characters, not model tokens or outer envelope"
+        },
+        "retrieved_ids": [
+          "ai.speculative-sampling-residual-exactness"
+        ],
+        "entries": [
+          {
+            "schema_version": 1,
+            "version": 1,
+            "status": "published",
+            "kind": "theorem",
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+              ]
+            },
+            "id": "ai.speculative-sampling-residual-exactness",
+            "title": "推测采样：剩余质量校正与分布不变条件",
+            "summary": "固定共同token空间、正确前缀和真实提议分布，以min(1,p/q)接受并在拒绝后抽取正部残差，恢复目标分布；greedy、树候选和MTP名称本身不保证随机采样无损。",
+            "aliases": [
+              "speculative sampling rejection correction",
+              "推测 解码 校正 随机 分布 无损",
+              "greedy same seed distribution equivalence",
+              "tree verifier deterministic candidate elimination",
+              "MTP proposal probability mismatch",
+              "modified rejection sampling",
+              "推测采样",
+              "修正拒绝采样"
+            ],
+            "domains": [
+              "ai-algorithms",
+              "probability",
+              "llm-inference"
+            ],
+            "structures": [
+              "分布保持",
+              "distribution-preservation",
+              "概率质量补偿",
+              "residual-mass-correction",
+              "提议与真实采样不匹配",
+              "proposal-law-mismatch",
+              "前缀条件一致性",
+              "prefix-conditioned-validation"
+            ],
+            "assumptions": [
+              "p与q为同一有限输出空间上的归一化分布，包含实际采样变换；p固定为所比较的目标生成策略",
+              "候选从实际q生成；接受检验随机数符合条件独立性，不能把argmax生成的点质量伪装成soft q",
+              "只对q(X)>0计算比值；Z=0意味着不会进入残差归一化分支，不要求目标支撑包含于提议支撑",
+              "链式验证的p/q、位置及缓存对应同一前缀；第一次拒绝后丢弃不再对应正确前缀的后续草稿",
+              "确定性候选消元的顺序不偷看本次接受随机数，拒绝后更新剩余分布；此特例不认证任意树实现",
+              "理论使用精确概率运算，有限精度/缓存/终止/随机数实现须另验；分布相同不等于same-seed逐字相同"
+            ],
+            "sources": [
+              {
+                "url": "https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf",
+                "locator": "ICML 2023, PMLR 202:19274–19286; Sections 2.2–2.3, Algorithm 1, Appendix A.1; PDF pages 2–3 and 11",
+                "accessed": "2026-10-07"
+              },
+              {
+                "url": "https://arxiv.org/pdf/2302.01318v1",
+                "locator": "Chen et al.; v1 2023-02-02; Algorithm 2 (PDF page 3), Modified Rejection Sampling (pages 4–5), Theorem 1 (pages 10–11); paper uses p=draft,q=target, opposite to this entry",
+                "accessed": "2026-10-07"
+              },
+              {
+                "url": "https://proceedings.neurips.cc/paper_files/paper/2025/file/c7b5a35ea98b62512a869c19ea7b03cb-Paper-Conference.pdf",
+                "locator": "NeurIPS 2025 formal proceedings; Sections 2.1–2.2, PDF page 4; proposal tree versus distribution-correct verifier",
+                "accessed": "2026-10-07"
+              },
+              {
+                "url": "https://github.com/SafeAILab/EAGLE/blob/cb7e0841fe0c206c6ed74a197ad5e2a1f13f5a2b/eagle/model/utils.py#L337-L417",
+                "locator": "evaluate_posterior; greedy branch and sequential point-proposal residual-elimination branch; static read only, no upstream execution",
+                "accessed": "2026-10-07"
+              }
+            ],
+            "requires": [],
+            "relations": [],
+            "content": "# 推测采样：剩余质量校正与分布不变条件\n\n## 问题触发\n\n小模型、MTP 预测头或候选树一次给出多个 token，怎样判断它能否替代目标模型的随机采样？这里判断的是输出分布；greedy 一致、单次相同文本和评测分数相近分别是更窄或不同的命题。\n\n## 精确结论（已知算法事实；本条重新推导）\n\n固定一个已提交前缀 h，在同一有限 token 空间令 p(x) 为目标采样分布，q(x) 为实际提议分布，均非负且归一化。从 q 抽 X，以 a(X)=min(1,p(X)/q(X)) 接受；拒绝时从 r(x)=[p(x)−q(x)]₊/Z 重新抽样，其中 Z=Σx[p(x)−q(x)]₊。最终输出 Y 严格服从 p。\n\n这里 p、q 是应用各自温度、top-k、top-p 等处理之后的实际分布，不是未经处理的 logits。目标 p 必须对应被比较的原始生成设置。若稀疏化、量化或额外截断使目标变成 p̃，校正至多恢复 p̃；相对 p̃ 的无损不说明相对原 dense 目标 p 无损，二者差异必须单独证明或测量。X 从 q 抽得，故实际访问的 q(X)>0；不要求 supp(p)⊆supp(q)。若 Z=0，则 p=q、必然接受，残差分支不可执行。\n\n链式块必须按次序核验，接受最长合法前缀；第一次拒绝后从该处残差取一个 token 并丢弃后续草稿。全部接受时可再从正确前缀的目标分布取一个 bonus token。每一步的目标概率、提议概率和 KV/位置状态都必须对应同一个真实前缀；在这些条件下逐 token 的条件分布不变，因而有限输出序列的联合分布不变。\n\n## 推导范围与边界\n\n接受并输出 x 的质量是 q(x)a(x)=min(p(x),q(x))。拒绝概率为 1−Σx min(p(x),q(x))=Z，故拒绝后输出 x 的质量是 Zr(x)=[p(x)−q(x)]₊。两项之和恰为 p(x)。这是有限概率代数证明，不是模型实验或形式化验证。\n\n这一论证只要求提议机制的实际条件分布已知且使用一致，不要求提议模型与目标模型架构相同。若 tokenizer 不同，须先给出落到同一输出空间的正确提议概率映射；不能直接比较无对应关系的 token ID。\n\n数值实现仍须处理下溢、零分母、归一化、缓存回滚和随机数状态。实数分布等价不承诺相同 seed 产生逐字相同序列，也不承诺不同数值 kernel 的 bitwise 等价。相同 EOS/长度终止规则可作用于正确生成的序列；不要把块尾被截断的 token 计入已发出吞吐量。\n\n## 算得出的正例\n\np=(3/5,3/10,1/10)，q=(1/5,1/2,3/10)。接受输出质量为 (1/5,3/10,1/10)，总接受率为 3/5；Z=2/5，r=(1,0,0)。补回残差后得到 (3/5,3/10,1/10)。即使 q=(1,0,0)，算法仍能产生 p 支撑中的其他 token；它们由拒绝分支补回。\n\n## 失败与反例（本条构造）\n\n- 同一例子中，若拒绝后直接抽 p，输出变为 (11/25,21/50,7/50)，不再是 p。是否碰巧通过少量样本不能修复概率恒等式。\n- 若生成时总取 q 的 argmax，却仍用软 q 计算接受比，真实提议已变为点质量；原公式的前提被破坏。\n- 对 p=(3/5,2/5)，始终选择最大概率 token 与目标 greedy 一致，却不保持随机采样 p。只有把目标本身定义成带固定 tie-break 的点质量时，greedy 验证才直接对应这一目标。\n- 若第二位置的目标计算使用了候选树的兄弟节点或已拒绝前缀，得到的是另一个条件分布；树注意力的并行形状本身不是正确性证明。\n\n## 树与 MTP 的合法使用边界\n\n树、MTP 和特征预测描述候选如何生成，并不单独决定核验规则是否无损。可以将它们接到经过证明的校正器，或另外证明整个核验过程；不能从其名称推出任意 sampling 配置下的分布等价。\n\n一个不同但合法的局部核验方式是确定性候选消元：在同一前缀下，按已定顺序考察不同 token c，当前剩余分布为 u；以 u(c) 接受 c，拒绝后把 c 的质量置零并归一化。把本次提议看成 q=δc，便得到上面的残差定理。候选耗尽后抽剩余分布。每次候选选择不得偷看本次接受所用的随机数，且沿树继续时仍须满足正确前缀条件。\n\n例如 p=(3/5,3/10,1/10)，先考察 b 再 c：接受 b 的总质量为 3/10，拒绝 b 后接受 c 的总质量为 (7/10)(1/7)=1/10，最终 a 占 3/5。它不要求把候选树置信分数当成一个一次性 q 分布。\n\n## 任务映射\n\n审阅声称“无损推测加速”的方案时先列四项：目标分布、实际提议规律、拒绝补偿、前缀/缓存一致性。能明确映射到本定理才采用；只给 greedy 相同或某 benchmark 分数相同，标记随机分布命题尚未验证。无损与能否加速还要分别检查成本条目。\n\n## 来源定位与阅读范围\n\n- Leviathan, Kalman, Matias，ICML 2023：正式版 §2.2–2.3、Algorithm 1、Appendix A.1，PDF pp.2–3、11；本条是原创符号重述与例子，不复制其正文。[正式论文](https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf)\n- Chen 等，arXiv:2302.01318v1，2023-02-02：Algorithm 2（PDF p.3）、Modified Rejection Sampling（pp.4–5）、Theorem 1（pp.10–11）。其 p/q 字母定义与本条相反；比值必须按“目标/提议”理解。[固定版本](https://arxiv.org/pdf/2302.01318v1)\n- EAGLE-3，NeurIPS 2025 正式版 §2.1–2.2，PDF p.4，复用校正采样并讨论树候选；它不是“任何树策略正确”的定理。[正式论文](https://proceedings.neurips.cc/paper_files/paper/2025/file/c7b5a35ea98b62512a869c19ea7b03cb-Paper-Conference.pdf)\n- SafeAILab/EAGLE，commit cb7e0841fe0c206c6ed74a197ad5e2a1f13f5a2b：utils.py 的 evaluate_posterior，L337–417。静态阅读确认 greedy 与随机消元分支分开，随机分支有 qx=1 与拒绝后的质量置零/归一化。本条只解释局部消元原则，未审计整个 runtime，也未运行上游代码。[固定代码](https://github.com/SafeAILab/EAGLE/blob/cb7e0841fe0c206c6ed74a197ad5e2a1f13f5a2b/eagle/model/utils.py#L337-L417)\n\n## 尚未验证项\n\n没有 GPU/真实模型实验；没有对 EAGLE、MTP 或任意生产实现给出端到端正确性认证；没有形式化证明。数值小例只能检查本条构造，不能代替全部采样器分支和数值稳定性测试。\n",
+            "path": "entries/ai-algorithms/ai.speculative-sampling-residual-exactness.json",
+            "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331",
+            "selection_reason": "retrieved"
+          },
+          {
+            "schema_version": 1,
+            "version": 1,
+            "status": "published",
+            "kind": "theorem",
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+              ]
+            },
+            "id": "ai.speculative-decoding-cost-bound",
+            "title": "推测解码：接受前缀尾和与成本盈亏条件",
+            "summary": "单提议接受率为1−TV；一轮输出长度由连续接受事件的尾和决定。只有附加恒定条件接受率和固定验证成本假设才得到几何加速式；树、MTP、batch变化必须重建事件与成本。",
+            "aliases": [
+              "speculative decoding speedup acceptance rate cost",
+              "推测解码 接受率 草稿开销",
+              "expected accepted prefix tail sum total variation",
+              "correlated acceptance draft verification overhead",
+              "tree MTP throughput latency boundary",
+              "speculative decoding walltime analysis",
+              "推测解码成本模型"
+            ],
+            "domains": [
+              "ai-algorithms",
+              "probability",
+              "performance-modeling"
+            ],
+            "structures": [
+              "接受前缀尾和",
+              "accepted-prefix-tail-sum",
+              "条件相关事件",
+              "conditional-event-dependence",
+              "成本盈亏阈值",
+              "cost-break-even",
+              "吞吐量与延迟口径",
+              "throughput-latency-accounting"
+            ],
+            "assumptions": [
+              "单提议1−TV恒等式沿用残差校正条目的真实p/q与正确前缀；不能直接套整棵树",
+              "固定正整数horizon γ，一轮L=N+1包含补偿或bonus，公式暂不包含EOS/最大长度截断",
+              "一般尾和无需独立性；几何式额外要求每个到达深度的条件接受概率为同一α",
+              "基线T、draft比率c、验证比率v及额外成本o按同一硬件/模型/采样/负载口径定义；γc假设串行每步draft成本相同",
+              "速度比公式对应长序列稳定成本模型；随机轮成本须满足长期均值比率成立条件，不能使用平均逐轮速度比",
+              "α>c的存在性阈值只适用于v=1,o=0的理想模型；真实v/o、树形及并发负载须另测"
+            ],
+            "sources": [
+              {
+                "url": "https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf",
+                "locator": "Sections 3.1–3.5, Theorem 3.5/3.8, Corollary 3.9, Appendix A.3; PDF pages 3–5 and 11–12",
+                "accessed": "2026-10-07"
+              },
+              {
+                "url": "https://proceedings.neurips.cc/paper_files/paper/2025/file/c7b5a35ea98b62512a869c19ea7b03cb-Paper-Conference.pdf",
+                "locator": "Sections 3 and 4.3/Table 3, PDF pages 4–6 and 8–9; bounded author experiment, not a theorem or local measurement",
+                "accessed": "2026-10-07"
+              }
+            ],
+            "requires": [
+              {
+                "id": "ai.speculative-sampling-residual-exactness",
+                "version": 1
+              }
+            ],
+            "relations": [
+              {
+                "type": "prerequisite",
+                "id": "ai.speculative-sampling-residual-exactness"
+              },
+              {
+                "type": "related",
+                "id": "infra.speculative-acceptance"
+              }
+            ],
+            "content": "# 推测解码：接受前缀尾和与成本盈亏条件\n\n## 问题触发\n\n“接受率高”“draft 更小”“一次验证多个 token”分别不足以证明延迟下降。先问接受率指单个候选、条件深度还是整棵树，再问验证、草拟与管理开销如何随形状和负载变化。\n\n## 前提和精确结论\n\n### 已知单提议接受率\n\n对残差校正条目中的同一前缀、实际归一化 p,q，单候选接受率 α(h)=Σx min(p(x|h),q(x|h))=1−TV(p,q)，其中 TV=½Σx|p−q|。这是单次从 q 抽样并校正的概率恒等式；不直接等于任意树 verifier 的整轮接受比例。\n\n### 本条推导：去掉独立性假设的前缀尾和\n\n固定 draft horizon γ，A_i 表示第 i 个草稿通过正确核验，N 是连续接受前缀长度。一轮输出 L=N+1，包含拒绝补偿或全接受后的 bonus，暂不截断 EOS/最大长度。则\n\nE[L] = 1 + Σ(i=1..γ) P(A_1∩…∩A_i)。\n\n若 b_i=P(A_i | A_1∩…∩A_(i−1))，到达概率为零之后的项取零，则 E[L]=1+Σ(i=1..γ)Π(j=1..i)b_j。这是条件概率链式法则，不要求各位置接受独立。不同前缀的平均 α 不能自动取代这些 b_i。\n\n### 已知理想化公式及本条成本推广\n\n若到达每个深度后的条件接受概率均为同一个 α，则 E[L]=Σ(i=0..γ)α^i；α<1 时为 (1−α^(γ+1))/(1−α)，α=1 时为 γ+1。\n\n以公平基线每 token 耗时 T 为单位，设一轮成本 C/T=γc+v(γ)+o(γ)，分别表示串行 draft、目标验证、其他开销。固定轮成本时，长序列平均速度比为 S=E[L]/(γc+v+o)，严格加速当且仅当 E[L]>γc+v+o。若轮成本随机，需要满足相应稳定/遍历或再生条件后比较 E[L]/E[C] 的长期 reward rate，不能用 E[L/C] 代替。这里不是对任意非平稳服务流的吞吐量定理。\n\n原论文的理想化成本是 v=1、o=0、固定 c。在此模型且固定 α 下，存在正整数 γ 获得 S>1，当且仅当 α>c：γ=1 给充分性；因为 Σ(i=1..γ)α^i≤γα，α≤c 时任何 γ 都不能严格获益。α>c 不是含额外验证开销时的通用阈值。\n\n## 推导范围\n\n对整数 N∈[0,γ]，逐点有 N=Σ(i=1..γ)1{N≥i}，取期望就是尾和公式。单候选接受率由 Σq·min(1,p/q) 得到；概率质量重叠与 TV 的恒等式给出第二种写法。成本式是已定义的同口径成本模型；真实 c、v、o 和上下文分布必须测量，不能用模型参数量替代。\n\n## 可复算正负例（本条构造，不是性能测量）\n\n1. α=4/5，γ=4，c=1/10：E[L]=2101/625=3.3616。v=1、o=0 时 S=2.401142857…；若同一接受行为下 v=4，则 S=0.764，反而更慢。\n2. γ=2，潜在接受事件边际各为 1/2：完全同成同败时 E[L]=2；独立时 7/4；互斥时 3/2。仅一个“平均接受率 50%”不能辨别三者。潜在事件可定义在预生成的完整草稿上，不代表拒绝后仍提交后续 token。\n3. α=1/2、c=1/10、v=1、o=0：γ=1 时 S=15/11>1；γ=20 时 S<2/3。延长 draft 可能把收益变成亏损。\n4. α=c=1/5 时 γ=1 仅打平，γ>1 更差；α=1 的端点不能直接代入 0/0 的几何商式。\n\n## 树、MTP 与实测外推的负例\n\n- 树有 K 个节点不意味着一轮发出 K+1 个 token；输出是一条经核验的前缀，验证成本与形状、mask、内存和 batch 有关。使用实测 L 与 C，或为特定树策略另建模型。\n- MTP 多头命中率、整棵树命中率与单提议 α(h) 不是同一个量；除非重建了实际条件分布和相应事件，不能塞入链式几何公式。\n- greedy 对齐不能代替随机采样准确性；随机分布不变也不推出低延迟，更不推出高 batch 吞吐量提高。\n- 在不同目标精度、不同采样参数或不同 batch 基线之间比较，改变了问题；应分别报告模型分布变化和系统速度变化。\n\n## 任务映射\n\n方案筛查：先验证残差校正的正确性，再收集每轮已提交 token 数 L、draft/verification/其他耗时、horizon/树形、batch、目标数值设置及 EOS 截断。用整体 ΣL/ΣC 比較同配置 baseline，而不是按轮速度比取均值。若只有接受率，输出成本阈值或待测条件，不给“必然快几倍”的结论。\n\n## 来源定位与已核查近期研究\n\n- Leviathan 等，ICML 2023 正式版 §3.1–3.5、Theorem 3.5、3.8、Corollary 3.9、Appendix A.3：原模型明确使用独立同分布近似与平行验证成本假设。本条的通用尾和、显式 v/o、必要条件与合成反例是为适用性审查重新组织的推导。[正式论文](https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf)\n- Li 等，EAGLE-3，NeurIPS 2025 正式版 §3、§4.3、Table 3：其近期贡献在训练/草拟机制；表中吞吐量结果来自固定 H100、LLaMA-Instruct 3.1 8B、MT-Bench、SGLang v0.4.4、chain length=3 的实验，不能当成本恒等式或本仓库实测。此处只读论文，无 SGLang 操作。[正式论文](https://proceedings.neurips.cc/paper_files/paper/2025/file/c7b5a35ea98b62512a869c19ea7b03cb-Paper-Conference.pdf)\n\n## 尚未验证项\n\n没有新训练、GPU benchmark、线上吞吐测量或自动 horizon 控制实验；没有给某现有 runtime 保证加速。EAGLE-3 的论文效果属于作者实验，仍需独立复现才能外推到本地部署。有限算例是数学检查，不是形式化证明。\n",
+            "path": "entries/ai-algorithms/ai.speculative-decoding-cost-bound.json",
+            "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f",
+            "selection_reason": "related"
+          }
+        ],
+        "knowledge_refs": [
+          {
+            "id": "ai.speculative-decoding-cost-bound",
+            "version": 1,
+            "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f"
+          },
+          {
+            "id": "ai.speculative-sampling-residual-exactness",
+            "version": 1,
+            "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331"
+          }
+        ],
+        "skipped": []
+      },
+      "target": "ai.speculative-decoding-cost-bound",
+      "recovered": true,
+      "operator_reason": "Human/agent relevance decision: speculative inference and sampling correctness/cost, not unrelated algebra or RL training. Discarded cards are not erased from original test results."
+    },
+    {
+      "backend": "sqlite",
+      "case": "A03",
+      "query": "identical distributions acceptance one zero residual normalization",
+      "domain_filter": null,
+      "actual_search": {
+        "schema_version": 1,
+        "snapshot": "71ddbb92417e50b326d50ccd85607fffa95f6eed7531f7c043d010c0e120b8d0",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "infra.speculative-acceptance",
+            "version": 1,
+            "sha256": "d713b2280b1b43dc109b635df3a522f92a5f3fc657dc719137402f8877c05b6a",
+            "title": "投机解码：接受率不能单独决定速度",
+            "summary": "ICML 2023 中较小 draft 在接受率略低时仍可更快；需要同时考虑 draft 成本、接受率和验证并行度。",
+            "status": "published",
+            "assumptions": [
+              "hardware: single TPU-v4",
+              "target: T5-XXL 11B",
+              "batch: 1",
+              "tasks: WMT EnDe and CNN/DailyMail"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-applicable",
+              "checks": [
+                "docs/knowledge_learning/2026-10-06-engineering/report.md#infra.speculative-acceptance"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 6
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.046649531024531024,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "问题触发",
+                "start_line": 3,
+                "end_line": 6,
+                "excerpt": "## 问题触发\n\n投机解码；draft acceptance；speculative decoding；proposal cost\n\n"
+              }
+            ]
+          },
+          {
+            "id": "ds.maxflow-matching",
+            "version": 1,
+            "sha256": "68e82e8fe97179a2d7ce409b1e23b6bbaa2367f61601daff8854b8d1c8c8cee1",
+            "title": "最大流：容量网络与二分图匹配",
+            "summary": "ACL mf_graph 是可复用残量网络入口；一般复杂度按 Dinic 最坏界 O(V²E)，特殊图的更好界需单独证明。",
+            "status": "published",
+            "assumptions": [
+              "graph: directed capacity network",
+              "capacity: nonnegative integer",
+              "source_sink: distinct"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-applicable",
+              "checks": [
+                "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.maxflow-matching"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 11
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 7
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04513891243464639,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "问题触发",
+                "start_line": 3,
+                "end_line": 6,
+                "excerpt": "## 问题触发\n\n二分图匹配；Dinic maxflow；residual graph\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "Observation / 实验 / 源码定位",
+                "start_line": 19,
+                "end_line": 23,
+                "excerpt": "## Observation / 实验 / 源码定位\n\n- add_edge 保存正反边；flow 用 level graph 和阻塞流更新 residual capacity。\n- flow 是增量修改残量状态；再次调用的结果不是自动从零重算。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.contraction-residual-certificate",
+            "version": 1,
+            "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+            "title": "收缩迭代的残差误差证书与不精确求解边界",
+            "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+            "status": "published",
+            "assumptions": [
+              "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+              "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+              "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+                "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 14
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 12
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 4
+              }
+            ],
+            "score": 0.0430274024024024,
+            "sections": []
+          }
+        ]
+      },
+      "retained_id": "infra.speculative-acceptance",
+      "related": {
+        "snapshot": "71ddbb92417e50b326d50ccd85607fffa95f6eed7531f7c043d010c0e120b8d0",
+        "results": [
+          {
+            "type": "related",
+            "direction": "incoming",
+            "id": "ai.speculative-decoding-cost-bound",
+            "version": 1,
+            "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f",
+            "title": "推测解码：接受前缀尾和与成本盈亏条件"
+          }
+        ],
+        "truncated": false
+      },
+      "context": {
+        "schema_version": 1,
+        "snapshot": "71ddbb92417e50b326d50ccd85607fffa95f6eed7531f7c043d010c0e120b8d0",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "status": "ready",
+        "budget": {
+          "max_entries": 8,
+          "max_chars": 20000,
+          "used_chars": 14118,
+          "scope": "serialized entry payload characters, not model tokens or outer envelope"
+        },
+        "retrieved_ids": [
+          "infra.speculative-acceptance"
+        ],
+        "entries": [
+          {
+            "schema_version": 1,
+            "id": "infra.speculative-acceptance",
+            "version": 1,
+            "status": "published",
+            "kind": "case",
+            "title": "投机解码：接受率不能单独决定速度",
+            "summary": "ICML 2023 中较小 draft 在接受率略低时仍可更快；需要同时考虑 draft 成本、接受率和验证并行度。",
+            "aliases": [
+              "投机解码",
+              "draft acceptance",
+              "speculative decoding",
+              "proposal cost"
+            ],
+            "domains": [
+              "ai-infra"
+            ],
+            "structures": [
+              "投机解码",
+              "draft acceptance",
+              "speculative decoding"
+            ],
+            "assumptions": [
+              "hardware: single TPU-v4",
+              "target: T5-XXL 11B",
+              "batch: 1",
+              "tasks: WMT EnDe and CNN/DailyMail"
+            ],
+            "sources": [
+              {
+                "url": "https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf",
+                "locator": "§3.3–3.4; §4.1 Table 2; Appendix A.3",
+                "accessed": "2026-10-06"
+              }
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-applicable",
+              "checks": [
+                "docs/knowledge_learning/2026-10-06-engineering/report.md#infra.speculative-acceptance"
+              ]
+            },
+            "requires": [],
+            "relations": [],
+            "reuse": {
+              "type": "paper-result",
+              "claim": "ICML 2023 中较小 draft 在接受率略低时仍可更快；需要同时考虑 draft 成本、接受率和验证并行度。",
+              "conditions": {
+                "hardware": "single TPU-v4",
+                "target": "T5-XXL 11B",
+                "batch": "1",
+                "tasks": "WMT EnDe and CNN/DailyMail"
+              },
+              "observations": [
+                "§4.1 Table 2：EnDe temp=0、γ=7，T5-small α=0.75、3.4×；T5-large α=0.82、1.7×。",
+                "相同 small draft 在 EnDe temp=1 报告 2.6×，CNN/DM temp=1、γ=5 报告 2.3×。"
+              ],
+              "limitations": [
+                "精确采样算法保留目标分布，不保证不同实现相同随机种子的逐 token 一致。",
+                "不能由 batch=1 推断高并发吞吐；拒绝修正、tokenizer 和 sampling 处理必须正确。"
+              ],
+              "minimal_checks": [
+                "先验证拒绝采样/目标分布，核对 tokenizer 和解码参数。",
+                "只用少量目标输入测 α、draft 时间、验证时间，避免盲扫 draft 大小。"
+              ],
+              "paper": {
+                "venue": "ICML",
+                "year": 2023,
+                "review_status": "peer-reviewed",
+                "local_reproduction": "not-run"
+              }
+            },
+            "content": "# 投机解码：接受率不能单独决定速度\n\n## 问题触发\n\n投机解码；draft acceptance；speculative decoding；proposal cost\n\n## 精确结论与证据身份\n\nICML 2023 中较小 draft 在接受率略低时仍可更快；需要同时考虑 draft 成本、接受率和验证并行度。\n\n以下是作者报告的结果；未在本机复现，不能作为本机测量。\n\n## 前提与比较设置\n\n- hardware: single TPU-v4\n- target: T5-XXL 11B\n- batch: 1\n- tasks: WMT EnDe and CNN/DailyMail\n\n## Observation / 实验 / 源码定位\n\n- §4.1 Table 2：EnDe temp=0、γ=7，T5-small α=0.75、3.4×；T5-large α=0.82、1.7×。\n- 相同 small draft 在 EnDe temp=1 报告 2.6×，CNN/DM temp=1、γ=5 报告 2.3×。\n\n## 可算例子与任务映射\n\nα=0.8、γ=4 时理想连续接受收益为 1+α+α²+α³+α⁴=3.3616 个 token；还须除以 draft+verification 成本，不能称 3.36× 实际加速。\n\n## 失败情形与不可推广范围\n\n- 精确采样算法保留目标分布，不保证不同实现相同随机种子的逐 token 一致。\n- 不能由 batch=1 推断高并发吞吐；拒绝修正、tokenizer 和 sampling 处理必须正确。\n\n## 最小迁移验证\n\n- 先验证拒绝采样/目标分布，核对 tokenizer 和解码参数。\n- 只用少量目标输入测 α、draft 时间、验证时间，避免盲扫 draft 大小。\n\n## 来源定位与尚未验证项\n\n- [§3.3–3.4; §4.1 Table 2; Appendix A.3](https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf)；查阅 2026-10-06。\n\n未验证新模型/新硬件/新数据上的收益；检索相关度不是可信度。资料里的命令不自动执行。显式复现和必做验收实验仍须执行。\n",
+            "path": "entries/ai-infra/infra.speculative-acceptance.json",
+            "sha256": "d713b2280b1b43dc109b635df3a522f92a5f3fc657dc719137402f8877c05b6a",
+            "selection_reason": "retrieved"
+          },
+          {
+            "schema_version": 1,
+            "version": 1,
+            "status": "published",
+            "kind": "theorem",
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+              ]
+            },
+            "id": "ai.speculative-decoding-cost-bound",
+            "title": "推测解码：接受前缀尾和与成本盈亏条件",
+            "summary": "单提议接受率为1−TV；一轮输出长度由连续接受事件的尾和决定。只有附加恒定条件接受率和固定验证成本假设才得到几何加速式；树、MTP、batch变化必须重建事件与成本。",
+            "aliases": [
+              "speculative decoding speedup acceptance rate cost",
+              "推测解码 接受率 草稿开销",
+              "expected accepted prefix tail sum total variation",
+              "correlated acceptance draft verification overhead",
+              "tree MTP throughput latency boundary",
+              "speculative decoding walltime analysis",
+              "推测解码成本模型"
+            ],
+            "domains": [
+              "ai-algorithms",
+              "probability",
+              "performance-modeling"
+            ],
+            "structures": [
+              "接受前缀尾和",
+              "accepted-prefix-tail-sum",
+              "条件相关事件",
+              "conditional-event-dependence",
+              "成本盈亏阈值",
+              "cost-break-even",
+              "吞吐量与延迟口径",
+              "throughput-latency-accounting"
+            ],
+            "assumptions": [
+              "单提议1−TV恒等式沿用残差校正条目的真实p/q与正确前缀；不能直接套整棵树",
+              "固定正整数horizon γ，一轮L=N+1包含补偿或bonus，公式暂不包含EOS/最大长度截断",
+              "一般尾和无需独立性；几何式额外要求每个到达深度的条件接受概率为同一α",
+              "基线T、draft比率c、验证比率v及额外成本o按同一硬件/模型/采样/负载口径定义；γc假设串行每步draft成本相同",
+              "速度比公式对应长序列稳定成本模型；随机轮成本须满足长期均值比率成立条件，不能使用平均逐轮速度比",
+              "α>c的存在性阈值只适用于v=1,o=0的理想模型；真实v/o、树形及并发负载须另测"
+            ],
+            "sources": [
+              {
+                "url": "https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf",
+                "locator": "Sections 3.1–3.5, Theorem 3.5/3.8, Corollary 3.9, Appendix A.3; PDF pages 3–5 and 11–12",
+                "accessed": "2026-10-07"
+              },
+              {
+                "url": "https://proceedings.neurips.cc/paper_files/paper/2025/file/c7b5a35ea98b62512a869c19ea7b03cb-Paper-Conference.pdf",
+                "locator": "Sections 3 and 4.3/Table 3, PDF pages 4–6 and 8–9; bounded author experiment, not a theorem or local measurement",
+                "accessed": "2026-10-07"
+              }
+            ],
+            "requires": [
+              {
+                "id": "ai.speculative-sampling-residual-exactness",
+                "version": 1
+              }
+            ],
+            "relations": [
+              {
+                "type": "prerequisite",
+                "id": "ai.speculative-sampling-residual-exactness"
+              },
+              {
+                "type": "related",
+                "id": "infra.speculative-acceptance"
+              }
+            ],
+            "content": "# 推测解码：接受前缀尾和与成本盈亏条件\n\n## 问题触发\n\n“接受率高”“draft 更小”“一次验证多个 token”分别不足以证明延迟下降。先问接受率指单个候选、条件深度还是整棵树，再问验证、草拟与管理开销如何随形状和负载变化。\n\n## 前提和精确结论\n\n### 已知单提议接受率\n\n对残差校正条目中的同一前缀、实际归一化 p,q，单候选接受率 α(h)=Σx min(p(x|h),q(x|h))=1−TV(p,q)，其中 TV=½Σx|p−q|。这是单次从 q 抽样并校正的概率恒等式；不直接等于任意树 verifier 的整轮接受比例。\n\n### 本条推导：去掉独立性假设的前缀尾和\n\n固定 draft horizon γ，A_i 表示第 i 个草稿通过正确核验，N 是连续接受前缀长度。一轮输出 L=N+1，包含拒绝补偿或全接受后的 bonus，暂不截断 EOS/最大长度。则\n\nE[L] = 1 + Σ(i=1..γ) P(A_1∩…∩A_i)。\n\n若 b_i=P(A_i | A_1∩…∩A_(i−1))，到达概率为零之后的项取零，则 E[L]=1+Σ(i=1..γ)Π(j=1..i)b_j。这是条件概率链式法则，不要求各位置接受独立。不同前缀的平均 α 不能自动取代这些 b_i。\n\n### 已知理想化公式及本条成本推广\n\n若到达每个深度后的条件接受概率均为同一个 α，则 E[L]=Σ(i=0..γ)α^i；α<1 时为 (1−α^(γ+1))/(1−α)，α=1 时为 γ+1。\n\n以公平基线每 token 耗时 T 为单位，设一轮成本 C/T=γc+v(γ)+o(γ)，分别表示串行 draft、目标验证、其他开销。固定轮成本时，长序列平均速度比为 S=E[L]/(γc+v+o)，严格加速当且仅当 E[L]>γc+v+o。若轮成本随机，需要满足相应稳定/遍历或再生条件后比较 E[L]/E[C] 的长期 reward rate，不能用 E[L/C] 代替。这里不是对任意非平稳服务流的吞吐量定理。\n\n原论文的理想化成本是 v=1、o=0、固定 c。在此模型且固定 α 下，存在正整数 γ 获得 S>1，当且仅当 α>c：γ=1 给充分性；因为 Σ(i=1..γ)α^i≤γα，α≤c 时任何 γ 都不能严格获益。α>c 不是含额外验证开销时的通用阈值。\n\n## 推导范围\n\n对整数 N∈[0,γ]，逐点有 N=Σ(i=1..γ)1{N≥i}，取期望就是尾和公式。单候选接受率由 Σq·min(1,p/q) 得到；概率质量重叠与 TV 的恒等式给出第二种写法。成本式是已定义的同口径成本模型；真实 c、v、o 和上下文分布必须测量，不能用模型参数量替代。\n\n## 可复算正负例（本条构造，不是性能测量）\n\n1. α=4/5，γ=4，c=1/10：E[L]=2101/625=3.3616。v=1、o=0 时 S=2.401142857…；若同一接受行为下 v=4，则 S=0.764，反而更慢。\n2. γ=2，潜在接受事件边际各为 1/2：完全同成同败时 E[L]=2；独立时 7/4；互斥时 3/2。仅一个“平均接受率 50%”不能辨别三者。潜在事件可定义在预生成的完整草稿上，不代表拒绝后仍提交后续 token。\n3. α=1/2、c=1/10、v=1、o=0：γ=1 时 S=15/11>1；γ=20 时 S<2/3。延长 draft 可能把收益变成亏损。\n4. α=c=1/5 时 γ=1 仅打平，γ>1 更差；α=1 的端点不能直接代入 0/0 的几何商式。\n\n## 树、MTP 与实测外推的负例\n\n- 树有 K 个节点不意味着一轮发出 K+1 个 token；输出是一条经核验的前缀，验证成本与形状、mask、内存和 batch 有关。使用实测 L 与 C，或为特定树策略另建模型。\n- MTP 多头命中率、整棵树命中率与单提议 α(h) 不是同一个量；除非重建了实际条件分布和相应事件，不能塞入链式几何公式。\n- greedy 对齐不能代替随机采样准确性；随机分布不变也不推出低延迟，更不推出高 batch 吞吐量提高。\n- 在不同目标精度、不同采样参数或不同 batch 基线之间比较，改变了问题；应分别报告模型分布变化和系统速度变化。\n\n## 任务映射\n\n方案筛查：先验证残差校正的正确性，再收集每轮已提交 token 数 L、draft/verification/其他耗时、horizon/树形、batch、目标数值设置及 EOS 截断。用整体 ΣL/ΣC 比較同配置 baseline，而不是按轮速度比取均值。若只有接受率，输出成本阈值或待测条件，不给“必然快几倍”的结论。\n\n## 来源定位与已核查近期研究\n\n- Leviathan 等，ICML 2023 正式版 §3.1–3.5、Theorem 3.5、3.8、Corollary 3.9、Appendix A.3：原模型明确使用独立同分布近似与平行验证成本假设。本条的通用尾和、显式 v/o、必要条件与合成反例是为适用性审查重新组织的推导。[正式论文](https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf)\n- Li 等，EAGLE-3，NeurIPS 2025 正式版 §3、§4.3、Table 3：其近期贡献在训练/草拟机制；表中吞吐量结果来自固定 H100、LLaMA-Instruct 3.1 8B、MT-Bench、SGLang v0.4.4、chain length=3 的实验，不能当成本恒等式或本仓库实测。此处只读论文，无 SGLang 操作。[正式论文](https://proceedings.neurips.cc/paper_files/paper/2025/file/c7b5a35ea98b62512a869c19ea7b03cb-Paper-Conference.pdf)\n\n## 尚未验证项\n\n没有新训练、GPU benchmark、线上吞吐测量或自动 horizon 控制实验；没有给某现有 runtime 保证加速。EAGLE-3 的论文效果属于作者实验，仍需独立复现才能外推到本地部署。有限算例是数学检查，不是形式化证明。\n",
+            "path": "entries/ai-algorithms/ai.speculative-decoding-cost-bound.json",
+            "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f",
+            "selection_reason": "related"
+          },
+          {
+            "schema_version": 1,
+            "version": 1,
+            "status": "published",
+            "kind": "theorem",
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+              ]
+            },
+            "id": "ai.speculative-sampling-residual-exactness",
+            "title": "推测采样：剩余质量校正与分布不变条件",
+            "summary": "固定共同token空间、正确前缀和真实提议分布，以min(1,p/q)接受并在拒绝后抽取正部残差，恢复目标分布；greedy、树候选和MTP名称本身不保证随机采样无损。",
+            "aliases": [
+              "speculative sampling rejection correction",
+              "推测 解码 校正 随机 分布 无损",
+              "greedy same seed distribution equivalence",
+              "tree verifier deterministic candidate elimination",
+              "MTP proposal probability mismatch",
+              "modified rejection sampling",
+              "推测采样",
+              "修正拒绝采样"
+            ],
+            "domains": [
+              "ai-algorithms",
+              "probability",
+              "llm-inference"
+            ],
+            "structures": [
+              "分布保持",
+              "distribution-preservation",
+              "概率质量补偿",
+              "residual-mass-correction",
+              "提议与真实采样不匹配",
+              "proposal-law-mismatch",
+              "前缀条件一致性",
+              "prefix-conditioned-validation"
+            ],
+            "assumptions": [
+              "p与q为同一有限输出空间上的归一化分布，包含实际采样变换；p固定为所比较的目标生成策略",
+              "候选从实际q生成；接受检验随机数符合条件独立性，不能把argmax生成的点质量伪装成soft q",
+              "只对q(X)>0计算比值；Z=0意味着不会进入残差归一化分支，不要求目标支撑包含于提议支撑",
+              "链式验证的p/q、位置及缓存对应同一前缀；第一次拒绝后丢弃不再对应正确前缀的后续草稿",
+              "确定性候选消元的顺序不偷看本次接受随机数，拒绝后更新剩余分布；此特例不认证任意树实现",
+              "理论使用精确概率运算，有限精度/缓存/终止/随机数实现须另验；分布相同不等于same-seed逐字相同"
+            ],
+            "sources": [
+              {
+                "url": "https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf",
+                "locator": "ICML 2023, PMLR 202:19274–19286; Sections 2.2–2.3, Algorithm 1, Appendix A.1; PDF pages 2–3 and 11",
+                "accessed": "2026-10-07"
+              },
+              {
+                "url": "https://arxiv.org/pdf/2302.01318v1",
+                "locator": "Chen et al.; v1 2023-02-02; Algorithm 2 (PDF page 3), Modified Rejection Sampling (pages 4–5), Theorem 1 (pages 10–11); paper uses p=draft,q=target, opposite to this entry",
+                "accessed": "2026-10-07"
+              },
+              {
+                "url": "https://proceedings.neurips.cc/paper_files/paper/2025/file/c7b5a35ea98b62512a869c19ea7b03cb-Paper-Conference.pdf",
+                "locator": "NeurIPS 2025 formal proceedings; Sections 2.1–2.2, PDF page 4; proposal tree versus distribution-correct verifier",
+                "accessed": "2026-10-07"
+              },
+              {
+                "url": "https://github.com/SafeAILab/EAGLE/blob/cb7e0841fe0c206c6ed74a197ad5e2a1f13f5a2b/eagle/model/utils.py#L337-L417",
+                "locator": "evaluate_posterior; greedy branch and sequential point-proposal residual-elimination branch; static read only, no upstream execution",
+                "accessed": "2026-10-07"
+              }
+            ],
+            "requires": [],
+            "relations": [],
+            "content": "# 推测采样：剩余质量校正与分布不变条件\n\n## 问题触发\n\n小模型、MTP 预测头或候选树一次给出多个 token，怎样判断它能否替代目标模型的随机采样？这里判断的是输出分布；greedy 一致、单次相同文本和评测分数相近分别是更窄或不同的命题。\n\n## 精确结论（已知算法事实；本条重新推导）\n\n固定一个已提交前缀 h，在同一有限 token 空间令 p(x) 为目标采样分布，q(x) 为实际提议分布，均非负且归一化。从 q 抽 X，以 a(X)=min(1,p(X)/q(X)) 接受；拒绝时从 r(x)=[p(x)−q(x)]₊/Z 重新抽样，其中 Z=Σx[p(x)−q(x)]₊。最终输出 Y 严格服从 p。\n\n这里 p、q 是应用各自温度、top-k、top-p 等处理之后的实际分布，不是未经处理的 logits。目标 p 必须对应被比较的原始生成设置。若稀疏化、量化或额外截断使目标变成 p̃，校正至多恢复 p̃；相对 p̃ 的无损不说明相对原 dense 目标 p 无损，二者差异必须单独证明或测量。X 从 q 抽得，故实际访问的 q(X)>0；不要求 supp(p)⊆supp(q)。若 Z=0，则 p=q、必然接受，残差分支不可执行。\n\n链式块必须按次序核验，接受最长合法前缀；第一次拒绝后从该处残差取一个 token 并丢弃后续草稿。全部接受时可再从正确前缀的目标分布取一个 bonus token。每一步的目标概率、提议概率和 KV/位置状态都必须对应同一个真实前缀；在这些条件下逐 token 的条件分布不变，因而有限输出序列的联合分布不变。\n\n## 推导范围与边界\n\n接受并输出 x 的质量是 q(x)a(x)=min(p(x),q(x))。拒绝概率为 1−Σx min(p(x),q(x))=Z，故拒绝后输出 x 的质量是 Zr(x)=[p(x)−q(x)]₊。两项之和恰为 p(x)。这是有限概率代数证明，不是模型实验或形式化验证。\n\n这一论证只要求提议机制的实际条件分布已知且使用一致，不要求提议模型与目标模型架构相同。若 tokenizer 不同，须先给出落到同一输出空间的正确提议概率映射；不能直接比较无对应关系的 token ID。\n\n数值实现仍须处理下溢、零分母、归一化、缓存回滚和随机数状态。实数分布等价不承诺相同 seed 产生逐字相同序列，也不承诺不同数值 kernel 的 bitwise 等价。相同 EOS/长度终止规则可作用于正确生成的序列；不要把块尾被截断的 token 计入已发出吞吐量。\n\n## 算得出的正例\n\np=(3/5,3/10,1/10)，q=(1/5,1/2,3/10)。接受输出质量为 (1/5,3/10,1/10)，总接受率为 3/5；Z=2/5，r=(1,0,0)。补回残差后得到 (3/5,3/10,1/10)。即使 q=(1,0,0)，算法仍能产生 p 支撑中的其他 token；它们由拒绝分支补回。\n\n## 失败与反例（本条构造）\n\n- 同一例子中，若拒绝后直接抽 p，输出变为 (11/25,21/50,7/50)，不再是 p。是否碰巧通过少量样本不能修复概率恒等式。\n- 若生成时总取 q 的 argmax，却仍用软 q 计算接受比，真实提议已变为点质量；原公式的前提被破坏。\n- 对 p=(3/5,2/5)，始终选择最大概率 token 与目标 greedy 一致，却不保持随机采样 p。只有把目标本身定义成带固定 tie-break 的点质量时，greedy 验证才直接对应这一目标。\n- 若第二位置的目标计算使用了候选树的兄弟节点或已拒绝前缀，得到的是另一个条件分布；树注意力的并行形状本身不是正确性证明。\n\n## 树与 MTP 的合法使用边界\n\n树、MTP 和特征预测描述候选如何生成，并不单独决定核验规则是否无损。可以将它们接到经过证明的校正器，或另外证明整个核验过程；不能从其名称推出任意 sampling 配置下的分布等价。\n\n一个不同但合法的局部核验方式是确定性候选消元：在同一前缀下，按已定顺序考察不同 token c，当前剩余分布为 u；以 u(c) 接受 c，拒绝后把 c 的质量置零并归一化。把本次提议看成 q=δc，便得到上面的残差定理。候选耗尽后抽剩余分布。每次候选选择不得偷看本次接受所用的随机数，且沿树继续时仍须满足正确前缀条件。\n\n例如 p=(3/5,3/10,1/10)，先考察 b 再 c：接受 b 的总质量为 3/10，拒绝 b 后接受 c 的总质量为 (7/10)(1/7)=1/10，最终 a 占 3/5。它不要求把候选树置信分数当成一个一次性 q 分布。\n\n## 任务映射\n\n审阅声称“无损推测加速”的方案时先列四项：目标分布、实际提议规律、拒绝补偿、前缀/缓存一致性。能明确映射到本定理才采用；只给 greedy 相同或某 benchmark 分数相同，标记随机分布命题尚未验证。无损与能否加速还要分别检查成本条目。\n\n## 来源定位与阅读范围\n\n- Leviathan, Kalman, Matias，ICML 2023：正式版 §2.2–2.3、Algorithm 1、Appendix A.1，PDF pp.2–3、11；本条是原创符号重述与例子，不复制其正文。[正式论文](https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf)\n- Chen 等，arXiv:2302.01318v1，2023-02-02：Algorithm 2（PDF p.3）、Modified Rejection Sampling（pp.4–5）、Theorem 1（pp.10–11）。其 p/q 字母定义与本条相反；比值必须按“目标/提议”理解。[固定版本](https://arxiv.org/pdf/2302.01318v1)\n- EAGLE-3，NeurIPS 2025 正式版 §2.1–2.2，PDF p.4，复用校正采样并讨论树候选；它不是“任何树策略正确”的定理。[正式论文](https://proceedings.neurips.cc/paper_files/paper/2025/file/c7b5a35ea98b62512a869c19ea7b03cb-Paper-Conference.pdf)\n- SafeAILab/EAGLE，commit cb7e0841fe0c206c6ed74a197ad5e2a1f13f5a2b：utils.py 的 evaluate_posterior，L337–417。静态阅读确认 greedy 与随机消元分支分开，随机分支有 qx=1 与拒绝后的质量置零/归一化。本条只解释局部消元原则，未审计整个 runtime，也未运行上游代码。[固定代码](https://github.com/SafeAILab/EAGLE/blob/cb7e0841fe0c206c6ed74a197ad5e2a1f13f5a2b/eagle/model/utils.py#L337-L417)\n\n## 尚未验证项\n\n没有 GPU/真实模型实验；没有对 EAGLE、MTP 或任意生产实现给出端到端正确性认证；没有形式化证明。数值小例只能检查本条构造，不能代替全部采样器分支和数值稳定性测试。\n",
+            "path": "entries/ai-algorithms/ai.speculative-sampling-residual-exactness.json",
+            "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331",
+            "selection_reason": "prerequisite"
+          }
+        ],
+        "knowledge_refs": [
+          {
+            "id": "ai.speculative-decoding-cost-bound",
+            "version": 1,
+            "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f"
+          },
+          {
+            "id": "ai.speculative-sampling-residual-exactness",
+            "version": 1,
+            "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331"
+          },
+          {
+            "id": "infra.speculative-acceptance",
+            "version": 1,
+            "sha256": "d713b2280b1b43dc109b635df3a522f92a5f3fc657dc719137402f8877c05b6a"
+          }
+        ],
+        "skipped": []
+      },
+      "target": "ai.speculative-sampling-residual-exactness",
+      "recovered": true,
+      "operator_reason": "Human/agent relevance decision: speculative inference and sampling correctness/cost, not unrelated algebra or RL training. Discarded cards are not erased from original test results."
+    },
+    {
+      "backend": "sqlite",
+      "case": "A12",
+      "query": "end of sequence remaining token budget clipped generation stopping",
+      "domain_filter": "ai-algorithms",
+      "actual_search": {
+        "schema_version": 1,
+        "snapshot": "71ddbb92417e50b326d50ccd85607fffa95f6eed7531f7c043d010c0e120b8d0",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "algo.rl-entropy-numerical-control",
+            "version": 1,
+            "sha256": "105a9ad56eb9c6cab2934173d3353e244c24b3696ff9b793782d11960b0a2651",
+            "title": "RL 熵坍缩：先核查 log-prob 精度、离策略更新与探索需求",
+            "summary": "ICLR 2026 的 Qwen3/AppWorld 与 AIME 实验发现，输出降精度可改变 clipping 与熵轨迹；保熵方法的收益依赖探索需求，不能只看最终熵。",
+            "status": "published",
+            "assumptions": [
+              "model: Qwen3-8B/32B; LoRA rank 16 alpha 32",
+              "data: AppWorld train 90; NuminaMath AMC/AIME filtered 563",
+              "stack: custom FSDP2, vLLM, Cut Cross-Entropy; typically 3 x 8 H100",
+              "metric: AppWorld TGC; AIME24/25 pass@1 with 4096-token budget"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-checked",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-rl-probability/report.md#algo.rl-entropy-numerical-control"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              }
+            ],
+            "score": 0.03278688524590164,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "前提",
+                "start_line": 15,
+                "end_line": 21,
+                "excerpt": "## 前提\n\n- model：Qwen3-8B/32B; LoRA rank 16 alpha 32\n- data：AppWorld train 90; NuminaMath AMC/AIME filtered 563\n- stack：custom FSDP2, vLLM, Cut Cross-Entropy; typically 3 x 8 H100\n- metric：AppWorld TGC; AIME24/25 pass@1 with 4096-token budget\n\n"
+              }
+            ]
+          },
+          {
+            "id": "algo.rl-spurious-reward-regimes",
+            "version": 1,
+            "sha256": "84b89bf957366dba328c3364c0be729843c630d02bbf04cfa7474b923ed1d744",
+            "title": "随机奖励与 clipping：熵下降不是推理能力提升的充分证据",
+            "summary": "ICLR 2026 在随机 Bernoulli 奖励的数学训练中区分 clipping 稳定性、初始策略偏斜和任务难度；关闭 clipping 可提高熵，也可能导致梯度爆炸。",
+            "status": "published",
+            "assumptions": [
+              "model: Qwen2.5-Math-7B; additional QwQ-32B and R1-Distill-Llama-8B cases",
+              "data: DeepScaleR or harder AIME Past training; MATH500 validation",
+              "reward: iid Bernoulli(1/2), independent of correctness",
+              "training: verl; batch 128; group 16; temperature 1.0; lr 5e-7; clip 0.2; KL 0"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-checked",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-rl-probability/report.md#algo.rl-spurious-reward-regimes"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              }
+            ],
+            "score": 0.03225806451612903,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "前提",
+                "start_line": 17,
+                "end_line": 23,
+                "excerpt": "## 前提\n\n- model：Qwen2.5-Math-7B; additional QwQ-32B and R1-Distill-Llama-8B cases\n- data：DeepScaleR or harder AIME Past training; MATH500 validation\n- reward：iid Bernoulli(1/2), independent of correctness\n- training：verl; batch 128; group 16; temperature 1.0; lr 5e-7; clip 0.2; KL 0\n\n"
+              }
+            ]
+          },
+          {
+            "id": "ai.speculative-sampling-residual-exactness",
+            "version": 1,
+            "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331",
+            "title": "推测采样：剩余质量校正与分布不变条件",
+            "summary": "固定共同token空间、正确前缀和真实提议分布，以min(1,p/q)接受并在拒绝后抽取正部残差，恢复目标分布；greedy、树候选和MTP名称本身不保证随机采样无损。",
+            "status": "published",
+            "assumptions": [
+              "p与q为同一有限输出空间上的归一化分布，包含实际采样变换；p固定为所比较的目标生成策略",
+              "候选从实际q生成；接受检验随机数符合条件独立性，不能把argmax生成的点质量伪装成soft q",
+              "只对q(X)>0计算比值；Z=0意味着不会进入残差归一化分支，不要求目标支撑包含于提议支撑",
+              "链式验证的p/q、位置及缓存对应同一前缀；第一次拒绝后丢弃不再对应正确前缀的后续草稿",
+              "确定性候选消元的顺序不偷看本次接受随机数，拒绝后更新剩余分布；此特例不认证任意树实现",
+              "理论使用精确概率运算，有限精度/缓存/终止/随机数实现须另验；分布相同不等于same-seed逐字相同"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              }
+            ],
+            "score": 0.03149801587301587,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "问题触发",
+                "start_line": 3,
+                "end_line": 6,
+                "excerpt": "## 问题触发\n\n小模型、MTP 预测头或候选树一次给出多个 token，怎样判断它能否替代目标模型的随机采样？这里判断的是输出分布；greedy 一致、单次相同文本和评测分数相近分别是更窄或不同的命题。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "精确结论（已知算法事实；本条重新推导）",
+                "start_line": 7,
+                "end_line": 14,
+                "excerpt": "## 精确结论（已知算法事实；本条重新推导）\n\n固定一个已提交前缀 h，在同一有限 token 空间令 p(x) 为目标采样分布，q(x) 为实际提议分布，均非负且归一化。从 q 抽 X，以 a(X)=min(1,p(X)/q(X)) 接受；拒绝时从 r(x)=[p(x)−q(x)]₊/Z 重新抽样，其中 Z=Σx[p(x)−q(x)]₊。最终输出 Y 严格服从 p。\n\n这里 p、q 是应用各自温度、top-k、top-p 等处理之后的实际分布，不是未经处理的 logits。目标 p 必须对应被比较的原始生成设置。若稀疏化、量化或额外截断使目标变成 p̃，校正至多恢复 p̃；相对 p̃ 的无损不说明相对原 dense 目标 p 无损，二者差异必须单独证明或测量。X 从 q 抽得，故实际访问的 q(X)>0；不要求 supp(p)⊆supp(q)。若 Z=0，则 p=q、必然接受，残差分支不可执行。\n\n链式块必须按次序核验，接受最长合法前缀；第一次拒绝后从该处残差取一个 token 并丢弃后续草稿。全部接受时可再从正确前缀的目标分布取一个 bonus token。每一步的目标概率、提议概率和 KV/位置状态都必须对应同一个真实前缀；在这些条件下逐 token 的条件分布不变，因而有限输出序列的联合分布不变。\n\n"
+              }
+            ]
+          }
+        ]
+      },
+      "retained_id": "ai.speculative-sampling-residual-exactness",
+      "related": {
+        "snapshot": "71ddbb92417e50b326d50ccd85607fffa95f6eed7531f7c043d010c0e120b8d0",
+        "results": [
+          {
+            "type": "prerequisite",
+            "direction": "incoming",
+            "id": "ai.speculative-decoding-cost-bound",
+            "version": 1,
+            "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f",
+            "title": "推测解码：接受前缀尾和与成本盈亏条件"
+          }
+        ],
+        "truncated": false
+      },
+      "context": {
+        "schema_version": 1,
+        "snapshot": "71ddbb92417e50b326d50ccd85607fffa95f6eed7531f7c043d010c0e120b8d0",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "status": "ready",
+        "budget": {
+          "max_entries": 8,
+          "max_chars": 20000,
+          "used_chars": 11326,
+          "scope": "serialized entry payload characters, not model tokens or outer envelope"
+        },
+        "retrieved_ids": [
+          "ai.speculative-sampling-residual-exactness"
+        ],
+        "entries": [
+          {
+            "schema_version": 1,
+            "version": 1,
+            "status": "published",
+            "kind": "theorem",
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+              ]
+            },
+            "id": "ai.speculative-sampling-residual-exactness",
+            "title": "推测采样：剩余质量校正与分布不变条件",
+            "summary": "固定共同token空间、正确前缀和真实提议分布，以min(1,p/q)接受并在拒绝后抽取正部残差，恢复目标分布；greedy、树候选和MTP名称本身不保证随机采样无损。",
+            "aliases": [
+              "speculative sampling rejection correction",
+              "推测 解码 校正 随机 分布 无损",
+              "greedy same seed distribution equivalence",
+              "tree verifier deterministic candidate elimination",
+              "MTP proposal probability mismatch",
+              "modified rejection sampling",
+              "推测采样",
+              "修正拒绝采样"
+            ],
+            "domains": [
+              "ai-algorithms",
+              "probability",
+              "llm-inference"
+            ],
+            "structures": [
+              "分布保持",
+              "distribution-preservation",
+              "概率质量补偿",
+              "residual-mass-correction",
+              "提议与真实采样不匹配",
+              "proposal-law-mismatch",
+              "前缀条件一致性",
+              "prefix-conditioned-validation"
+            ],
+            "assumptions": [
+              "p与q为同一有限输出空间上的归一化分布，包含实际采样变换；p固定为所比较的目标生成策略",
+              "候选从实际q生成；接受检验随机数符合条件独立性，不能把argmax生成的点质量伪装成soft q",
+              "只对q(X)>0计算比值；Z=0意味着不会进入残差归一化分支，不要求目标支撑包含于提议支撑",
+              "链式验证的p/q、位置及缓存对应同一前缀；第一次拒绝后丢弃不再对应正确前缀的后续草稿",
+              "确定性候选消元的顺序不偷看本次接受随机数，拒绝后更新剩余分布；此特例不认证任意树实现",
+              "理论使用精确概率运算，有限精度/缓存/终止/随机数实现须另验；分布相同不等于same-seed逐字相同"
+            ],
+            "sources": [
+              {
+                "url": "https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf",
+                "locator": "ICML 2023, PMLR 202:19274–19286; Sections 2.2–2.3, Algorithm 1, Appendix A.1; PDF pages 2–3 and 11",
+                "accessed": "2026-10-07"
+              },
+              {
+                "url": "https://arxiv.org/pdf/2302.01318v1",
+                "locator": "Chen et al.; v1 2023-02-02; Algorithm 2 (PDF page 3), Modified Rejection Sampling (pages 4–5), Theorem 1 (pages 10–11); paper uses p=draft,q=target, opposite to this entry",
+                "accessed": "2026-10-07"
+              },
+              {
+                "url": "https://proceedings.neurips.cc/paper_files/paper/2025/file/c7b5a35ea98b62512a869c19ea7b03cb-Paper-Conference.pdf",
+                "locator": "NeurIPS 2025 formal proceedings; Sections 2.1–2.2, PDF page 4; proposal tree versus distribution-correct verifier",
+                "accessed": "2026-10-07"
+              },
+              {
+                "url": "https://github.com/SafeAILab/EAGLE/blob/cb7e0841fe0c206c6ed74a197ad5e2a1f13f5a2b/eagle/model/utils.py#L337-L417",
+                "locator": "evaluate_posterior; greedy branch and sequential point-proposal residual-elimination branch; static read only, no upstream execution",
+                "accessed": "2026-10-07"
+              }
+            ],
+            "requires": [],
+            "relations": [],
+            "content": "# 推测采样：剩余质量校正与分布不变条件\n\n## 问题触发\n\n小模型、MTP 预测头或候选树一次给出多个 token，怎样判断它能否替代目标模型的随机采样？这里判断的是输出分布；greedy 一致、单次相同文本和评测分数相近分别是更窄或不同的命题。\n\n## 精确结论（已知算法事实；本条重新推导）\n\n固定一个已提交前缀 h，在同一有限 token 空间令 p(x) 为目标采样分布，q(x) 为实际提议分布，均非负且归一化。从 q 抽 X，以 a(X)=min(1,p(X)/q(X)) 接受；拒绝时从 r(x)=[p(x)−q(x)]₊/Z 重新抽样，其中 Z=Σx[p(x)−q(x)]₊。最终输出 Y 严格服从 p。\n\n这里 p、q 是应用各自温度、top-k、top-p 等处理之后的实际分布，不是未经处理的 logits。目标 p 必须对应被比较的原始生成设置。若稀疏化、量化或额外截断使目标变成 p̃，校正至多恢复 p̃；相对 p̃ 的无损不说明相对原 dense 目标 p 无损，二者差异必须单独证明或测量。X 从 q 抽得，故实际访问的 q(X)>0；不要求 supp(p)⊆supp(q)。若 Z=0，则 p=q、必然接受，残差分支不可执行。\n\n链式块必须按次序核验，接受最长合法前缀；第一次拒绝后从该处残差取一个 token 并丢弃后续草稿。全部接受时可再从正确前缀的目标分布取一个 bonus token。每一步的目标概率、提议概率和 KV/位置状态都必须对应同一个真实前缀；在这些条件下逐 token 的条件分布不变，因而有限输出序列的联合分布不变。\n\n## 推导范围与边界\n\n接受并输出 x 的质量是 q(x)a(x)=min(p(x),q(x))。拒绝概率为 1−Σx min(p(x),q(x))=Z，故拒绝后输出 x 的质量是 Zr(x)=[p(x)−q(x)]₊。两项之和恰为 p(x)。这是有限概率代数证明，不是模型实验或形式化验证。\n\n这一论证只要求提议机制的实际条件分布已知且使用一致，不要求提议模型与目标模型架构相同。若 tokenizer 不同，须先给出落到同一输出空间的正确提议概率映射；不能直接比较无对应关系的 token ID。\n\n数值实现仍须处理下溢、零分母、归一化、缓存回滚和随机数状态。实数分布等价不承诺相同 seed 产生逐字相同序列，也不承诺不同数值 kernel 的 bitwise 等价。相同 EOS/长度终止规则可作用于正确生成的序列；不要把块尾被截断的 token 计入已发出吞吐量。\n\n## 算得出的正例\n\np=(3/5,3/10,1/10)，q=(1/5,1/2,3/10)。接受输出质量为 (1/5,3/10,1/10)，总接受率为 3/5；Z=2/5，r=(1,0,0)。补回残差后得到 (3/5,3/10,1/10)。即使 q=(1,0,0)，算法仍能产生 p 支撑中的其他 token；它们由拒绝分支补回。\n\n## 失败与反例（本条构造）\n\n- 同一例子中，若拒绝后直接抽 p，输出变为 (11/25,21/50,7/50)，不再是 p。是否碰巧通过少量样本不能修复概率恒等式。\n- 若生成时总取 q 的 argmax，却仍用软 q 计算接受比，真实提议已变为点质量；原公式的前提被破坏。\n- 对 p=(3/5,2/5)，始终选择最大概率 token 与目标 greedy 一致，却不保持随机采样 p。只有把目标本身定义成带固定 tie-break 的点质量时，greedy 验证才直接对应这一目标。\n- 若第二位置的目标计算使用了候选树的兄弟节点或已拒绝前缀，得到的是另一个条件分布；树注意力的并行形状本身不是正确性证明。\n\n## 树与 MTP 的合法使用边界\n\n树、MTP 和特征预测描述候选如何生成，并不单独决定核验规则是否无损。可以将它们接到经过证明的校正器，或另外证明整个核验过程；不能从其名称推出任意 sampling 配置下的分布等价。\n\n一个不同但合法的局部核验方式是确定性候选消元：在同一前缀下，按已定顺序考察不同 token c，当前剩余分布为 u；以 u(c) 接受 c，拒绝后把 c 的质量置零并归一化。把本次提议看成 q=δc，便得到上面的残差定理。候选耗尽后抽剩余分布。每次候选选择不得偷看本次接受所用的随机数，且沿树继续时仍须满足正确前缀条件。\n\n例如 p=(3/5,3/10,1/10)，先考察 b 再 c：接受 b 的总质量为 3/10，拒绝 b 后接受 c 的总质量为 (7/10)(1/7)=1/10，最终 a 占 3/5。它不要求把候选树置信分数当成一个一次性 q 分布。\n\n## 任务映射\n\n审阅声称“无损推测加速”的方案时先列四项：目标分布、实际提议规律、拒绝补偿、前缀/缓存一致性。能明确映射到本定理才采用；只给 greedy 相同或某 benchmark 分数相同，标记随机分布命题尚未验证。无损与能否加速还要分别检查成本条目。\n\n## 来源定位与阅读范围\n\n- Leviathan, Kalman, Matias，ICML 2023：正式版 §2.2–2.3、Algorithm 1、Appendix A.1，PDF pp.2–3、11；本条是原创符号重述与例子，不复制其正文。[正式论文](https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf)\n- Chen 等，arXiv:2302.01318v1，2023-02-02：Algorithm 2（PDF p.3）、Modified Rejection Sampling（pp.4–5）、Theorem 1（pp.10–11）。其 p/q 字母定义与本条相反；比值必须按“目标/提议”理解。[固定版本](https://arxiv.org/pdf/2302.01318v1)\n- EAGLE-3，NeurIPS 2025 正式版 §2.1–2.2，PDF p.4，复用校正采样并讨论树候选；它不是“任何树策略正确”的定理。[正式论文](https://proceedings.neurips.cc/paper_files/paper/2025/file/c7b5a35ea98b62512a869c19ea7b03cb-Paper-Conference.pdf)\n- SafeAILab/EAGLE，commit cb7e0841fe0c206c6ed74a197ad5e2a1f13f5a2b：utils.py 的 evaluate_posterior，L337–417。静态阅读确认 greedy 与随机消元分支分开，随机分支有 qx=1 与拒绝后的质量置零/归一化。本条只解释局部消元原则，未审计整个 runtime，也未运行上游代码。[固定代码](https://github.com/SafeAILab/EAGLE/blob/cb7e0841fe0c206c6ed74a197ad5e2a1f13f5a2b/eagle/model/utils.py#L337-L417)\n\n## 尚未验证项\n\n没有 GPU/真实模型实验；没有对 EAGLE、MTP 或任意生产实现给出端到端正确性认证；没有形式化证明。数值小例只能检查本条构造，不能代替全部采样器分支和数值稳定性测试。\n",
+            "path": "entries/ai-algorithms/ai.speculative-sampling-residual-exactness.json",
+            "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331",
+            "selection_reason": "retrieved"
+          },
+          {
+            "schema_version": 1,
+            "version": 1,
+            "status": "published",
+            "kind": "theorem",
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+                "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+              ]
+            },
+            "id": "ai.speculative-decoding-cost-bound",
+            "title": "推测解码：接受前缀尾和与成本盈亏条件",
+            "summary": "单提议接受率为1−TV；一轮输出长度由连续接受事件的尾和决定。只有附加恒定条件接受率和固定验证成本假设才得到几何加速式；树、MTP、batch变化必须重建事件与成本。",
+            "aliases": [
+              "speculative decoding speedup acceptance rate cost",
+              "推测解码 接受率 草稿开销",
+              "expected accepted prefix tail sum total variation",
+              "correlated acceptance draft verification overhead",
+              "tree MTP throughput latency boundary",
+              "speculative decoding walltime analysis",
+              "推测解码成本模型"
+            ],
+            "domains": [
+              "ai-algorithms",
+              "probability",
+              "performance-modeling"
+            ],
+            "structures": [
+              "接受前缀尾和",
+              "accepted-prefix-tail-sum",
+              "条件相关事件",
+              "conditional-event-dependence",
+              "成本盈亏阈值",
+              "cost-break-even",
+              "吞吐量与延迟口径",
+              "throughput-latency-accounting"
+            ],
+            "assumptions": [
+              "单提议1−TV恒等式沿用残差校正条目的真实p/q与正确前缀；不能直接套整棵树",
+              "固定正整数horizon γ，一轮L=N+1包含补偿或bonus，公式暂不包含EOS/最大长度截断",
+              "一般尾和无需独立性；几何式额外要求每个到达深度的条件接受概率为同一α",
+              "基线T、draft比率c、验证比率v及额外成本o按同一硬件/模型/采样/负载口径定义；γc假设串行每步draft成本相同",
+              "速度比公式对应长序列稳定成本模型；随机轮成本须满足长期均值比率成立条件，不能使用平均逐轮速度比",
+              "α>c的存在性阈值只适用于v=1,o=0的理想模型；真实v/o、树形及并发负载须另测"
+            ],
+            "sources": [
+              {
+                "url": "https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf",
+                "locator": "Sections 3.1–3.5, Theorem 3.5/3.8, Corollary 3.9, Appendix A.3; PDF pages 3–5 and 11–12",
+                "accessed": "2026-10-07"
+              },
+              {
+                "url": "https://proceedings.neurips.cc/paper_files/paper/2025/file/c7b5a35ea98b62512a869c19ea7b03cb-Paper-Conference.pdf",
+                "locator": "Sections 3 and 4.3/Table 3, PDF pages 4–6 and 8–9; bounded author experiment, not a theorem or local measurement",
+                "accessed": "2026-10-07"
+              }
+            ],
+            "requires": [
+              {
+                "id": "ai.speculative-sampling-residual-exactness",
+                "version": 1
+              }
+            ],
+            "relations": [
+              {
+                "type": "prerequisite",
+                "id": "ai.speculative-sampling-residual-exactness"
+              },
+              {
+                "type": "related",
+                "id": "infra.speculative-acceptance"
+              }
+            ],
+            "content": "# 推测解码：接受前缀尾和与成本盈亏条件\n\n## 问题触发\n\n“接受率高”“draft 更小”“一次验证多个 token”分别不足以证明延迟下降。先问接受率指单个候选、条件深度还是整棵树，再问验证、草拟与管理开销如何随形状和负载变化。\n\n## 前提和精确结论\n\n### 已知单提议接受率\n\n对残差校正条目中的同一前缀、实际归一化 p,q，单候选接受率 α(h)=Σx min(p(x|h),q(x|h))=1−TV(p,q)，其中 TV=½Σx|p−q|。这是单次从 q 抽样并校正的概率恒等式；不直接等于任意树 verifier 的整轮接受比例。\n\n### 本条推导：去掉独立性假设的前缀尾和\n\n固定 draft horizon γ，A_i 表示第 i 个草稿通过正确核验，N 是连续接受前缀长度。一轮输出 L=N+1，包含拒绝补偿或全接受后的 bonus，暂不截断 EOS/最大长度。则\n\nE[L] = 1 + Σ(i=1..γ) P(A_1∩…∩A_i)。\n\n若 b_i=P(A_i | A_1∩…∩A_(i−1))，到达概率为零之后的项取零，则 E[L]=1+Σ(i=1..γ)Π(j=1..i)b_j。这是条件概率链式法则，不要求各位置接受独立。不同前缀的平均 α 不能自动取代这些 b_i。\n\n### 已知理想化公式及本条成本推广\n\n若到达每个深度后的条件接受概率均为同一个 α，则 E[L]=Σ(i=0..γ)α^i；α<1 时为 (1−α^(γ+1))/(1−α)，α=1 时为 γ+1。\n\n以公平基线每 token 耗时 T 为单位，设一轮成本 C/T=γc+v(γ)+o(γ)，分别表示串行 draft、目标验证、其他开销。固定轮成本时，长序列平均速度比为 S=E[L]/(γc+v+o)，严格加速当且仅当 E[L]>γc+v+o。若轮成本随机，需要满足相应稳定/遍历或再生条件后比较 E[L]/E[C] 的长期 reward rate，不能用 E[L/C] 代替。这里不是对任意非平稳服务流的吞吐量定理。\n\n原论文的理想化成本是 v=1、o=0、固定 c。在此模型且固定 α 下，存在正整数 γ 获得 S>1，当且仅当 α>c：γ=1 给充分性；因为 Σ(i=1..γ)α^i≤γα，α≤c 时任何 γ 都不能严格获益。α>c 不是含额外验证开销时的通用阈值。\n\n## 推导范围\n\n对整数 N∈[0,γ]，逐点有 N=Σ(i=1..γ)1{N≥i}，取期望就是尾和公式。单候选接受率由 Σq·min(1,p/q) 得到；概率质量重叠与 TV 的恒等式给出第二种写法。成本式是已定义的同口径成本模型；真实 c、v、o 和上下文分布必须测量，不能用模型参数量替代。\n\n## 可复算正负例（本条构造，不是性能测量）\n\n1. α=4/5，γ=4，c=1/10：E[L]=2101/625=3.3616。v=1、o=0 时 S=2.401142857…；若同一接受行为下 v=4，则 S=0.764，反而更慢。\n2. γ=2，潜在接受事件边际各为 1/2：完全同成同败时 E[L]=2；独立时 7/4；互斥时 3/2。仅一个“平均接受率 50%”不能辨别三者。潜在事件可定义在预生成的完整草稿上，不代表拒绝后仍提交后续 token。\n3. α=1/2、c=1/10、v=1、o=0：γ=1 时 S=15/11>1；γ=20 时 S<2/3。延长 draft 可能把收益变成亏损。\n4. α=c=1/5 时 γ=1 仅打平，γ>1 更差；α=1 的端点不能直接代入 0/0 的几何商式。\n\n## 树、MTP 与实测外推的负例\n\n- 树有 K 个节点不意味着一轮发出 K+1 个 token；输出是一条经核验的前缀，验证成本与形状、mask、内存和 batch 有关。使用实测 L 与 C，或为特定树策略另建模型。\n- MTP 多头命中率、整棵树命中率与单提议 α(h) 不是同一个量；除非重建了实际条件分布和相应事件，不能塞入链式几何公式。\n- greedy 对齐不能代替随机采样准确性；随机分布不变也不推出低延迟，更不推出高 batch 吞吐量提高。\n- 在不同目标精度、不同采样参数或不同 batch 基线之间比较，改变了问题；应分别报告模型分布变化和系统速度变化。\n\n## 任务映射\n\n方案筛查：先验证残差校正的正确性，再收集每轮已提交 token 数 L、draft/verification/其他耗时、horizon/树形、batch、目标数值设置及 EOS 截断。用整体 ΣL/ΣC 比較同配置 baseline，而不是按轮速度比取均值。若只有接受率，输出成本阈值或待测条件，不给“必然快几倍”的结论。\n\n## 来源定位与已核查近期研究\n\n- Leviathan 等，ICML 2023 正式版 §3.1–3.5、Theorem 3.5、3.8、Corollary 3.9、Appendix A.3：原模型明确使用独立同分布近似与平行验证成本假设。本条的通用尾和、显式 v/o、必要条件与合成反例是为适用性审查重新组织的推导。[正式论文](https://proceedings.mlr.press/v202/leviathan23a/leviathan23a.pdf)\n- Li 等，EAGLE-3，NeurIPS 2025 正式版 §3、§4.3、Table 3：其近期贡献在训练/草拟机制；表中吞吐量结果来自固定 H100、LLaMA-Instruct 3.1 8B、MT-Bench、SGLang v0.4.4、chain length=3 的实验，不能当成本恒等式或本仓库实测。此处只读论文，无 SGLang 操作。[正式论文](https://proceedings.neurips.cc/paper_files/paper/2025/file/c7b5a35ea98b62512a869c19ea7b03cb-Paper-Conference.pdf)\n\n## 尚未验证项\n\n没有新训练、GPU benchmark、线上吞吐测量或自动 horizon 控制实验；没有给某现有 runtime 保证加速。EAGLE-3 的论文效果属于作者实验，仍需独立复现才能外推到本地部署。有限算例是数学检查，不是形式化证明。\n",
+            "path": "entries/ai-algorithms/ai.speculative-decoding-cost-bound.json",
+            "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f",
+            "selection_reason": "related"
+          }
+        ],
+        "knowledge_refs": [
+          {
+            "id": "ai.speculative-decoding-cost-bound",
+            "version": 1,
+            "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f"
+          },
+          {
+            "id": "ai.speculative-sampling-residual-exactness",
+            "version": 1,
+            "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331"
+          }
+        ],
+        "skipped": []
+      },
+      "target": "ai.speculative-decoding-cost-bound",
+      "recovered": true,
+      "operator_reason": "Human/agent relevance decision: speculative inference and sampling correctness/cost, not unrelated algebra or RL training. Discarded cards are not erased from original test results."
+    }
+  ]
+}

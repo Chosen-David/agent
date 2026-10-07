@@ -1,0 +1,58 @@
+test_bad_import_does_not_change_corpus (test_knowledge_index.IndexTests.test_bad_import_does_not_change_corpus) ... ok
+test_failed_reindex_preserves_previous_index (test_knowledge_index.IndexTests.test_failed_reindex_preserves_previous_index) ... ok
+test_heading_tree_fences_and_section_read (test_knowledge_index.IndexTests.test_heading_tree_fences_and_section_read) ... ok
+test_incoming_relations_discover_new_corollary (test_knowledge_index.IndexTests.test_incoming_relations_discover_new_corollary) ... ok
+test_incremental_noop_update_remove_and_rebuild (test_knowledge_index.IndexTests.test_incremental_noop_update_remove_and_rebuild) ... FAIL
+test_index_search_pins_sections_filter_and_query_syntax (test_knowledge_index.IndexTests.test_index_search_pins_sections_filter_and_query_syntax) ... FAIL
+test_ingest_records_provenance_and_stays_candidate (test_knowledge_index.IndexTests.test_ingest_records_provenance_and_stays_candidate) ... FAIL
+test_isolated_index_and_tree_cli (test_knowledge_index.IndexTests.test_isolated_index_and_tree_cli) ... ERROR
+test_missing_unrelated_or_wrong_root_rejected (test_knowledge_index.IndexTests.test_missing_unrelated_or_wrong_root_rejected) ... ok
+test_stemming_and_engine_refresh (test_knowledge_index.IndexTests.test_stemming_and_engine_refresh) ... FAIL
+
+======================================================================
+ERROR: test_isolated_index_and_tree_cli (test_knowledge_index.IndexTests.test_isolated_index_and_tree_cli)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/22f05ff6bc29/agent-doc-layout-integrated-20261007/doc/results/combined-corpus-delta-v2-20261007/supplement-temp-u9m1mbo9/baseline907/tests/test_knowledge_index.py", line 149, in test_isolated_index_and_tree_cli
+    shutil.copytree(ROOT/'plugins/research-assistant/skills/model-with-knowledge',skill)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/shutil.py", line 598, in copytree
+    with os.scandir(src) as itr:
+         ^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/workspace/scratch/22f05ff6bc29/agent-doc-layout-integrated-20261007/doc/results/combined-corpus-delta-v2-20261007/supplement-temp-u9m1mbo9/baseline907/plugins/research-assistant/skills/model-with-knowledge'
+
+======================================================================
+FAIL: test_incremental_noop_update_remove_and_rebuild (test_knowledge_index.IndexTests.test_incremental_noop_update_remove_and_rebuild)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/22f05ff6bc29/agent-doc-layout-integrated-20261007/doc/results/combined-corpus-delta-v2-20261007/supplement-temp-u9m1mbo9/baseline907/tests/test_knowledge_index.py", line 26, in test_incremental_noop_update_remove_and_rebuild
+    self.assertEqual(build_index(self.store,self.db)['updated'],self.count)
+AssertionError: 75 != 76
+
+======================================================================
+FAIL: test_index_search_pins_sections_filter_and_query_syntax (test_knowledge_index.IndexTests.test_index_search_pins_sections_filter_and_query_syntax)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/22f05ff6bc29/agent-doc-layout-integrated-20261007/doc/results/combined-corpus-delta-v2-20261007/supplement-temp-u9m1mbo9/baseline907/tests/test_knowledge_index.py", line 53, in test_index_search_pins_sections_filter_and_query_syntax
+    self.assertEqual(con.execute('SELECT count(*) FROM docs').fetchone()[0],self.count)
+AssertionError: 75 != 76
+
+======================================================================
+FAIL: test_ingest_records_provenance_and_stays_candidate (test_knowledge_index.IndexTests.test_ingest_records_provenance_and_stays_candidate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/22f05ff6bc29/agent-doc-layout-integrated-20261007/doc/results/combined-corpus-delta-v2-20261007/supplement-temp-u9m1mbo9/baseline907/tests/test_knowledge_index.py", line 136, in test_ingest_records_provenance_and_stays_candidate
+    self.assertEqual(build_index(store,self.db)['indexed'],self.count)
+AssertionError: 75 != 76
+
+======================================================================
+FAIL: test_stemming_and_engine_refresh (test_knowledge_index.IndexTests.test_stemming_and_engine_refresh)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/22f05ff6bc29/agent-doc-layout-integrated-20261007/doc/results/combined-corpus-delta-v2-20261007/supplement-temp-u9m1mbo9/baseline907/tests/test_knowledge_index.py", line 95, in test_stemming_and_engine_refresh
+    self.assertEqual(result['updated'], self.count)
+AssertionError: 75 != 76
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.747s
+
+FAILED (failures=4, errors=1)

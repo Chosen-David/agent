@@ -1,0 +1,27 @@
+{
+  "integration_command": [
+    "python",
+    ".agent-runs/combined-release-v5/integrate.py"
+  ],
+  "test_command_template": [
+    "python",
+    "-m",
+    "unittest",
+    "discover",
+    "-s",
+    "tests",
+    "-p",
+    "PATTERN",
+    "-v"
+  ],
+  "test_commands_record": "doc/results/combined-integration-v5-20261007/test-commands.json",
+  "other_commands": [
+    "python scripts/project_docs.py --root \"$PWD\" validate",
+    "python scripts/sync_plugin_references.py --check"
+  ],
+  "accepted_tree": "5172ad32bf2957e89a9308989a44c326729c2370",
+  "base": "21cb9876084108cb8cb6a92c50279acbcb62648e",
+  "repeats": 1,
+  "scope": "V5 candidate-only integration of 68 upstream metadata/evidence paths: 127 tasks, 124 stable Plans, 80 unchanged published entries and three excluded candidates. Ten index tests and six representative backend rankings; unchanged historical regression evidence is scoped reuse, not a new full suite.",
+  "reproduction_note": "Forensic integration code requires its declared original base/tree in an isolated checkout; no destructive reset/clean/stash."
+}

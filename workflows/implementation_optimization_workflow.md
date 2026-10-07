@@ -1,5 +1,7 @@
 # 代码实现与性能优化 Agent Workflow
 
+测试/实验数据的必经独立验收见 [结果验证闭环](result_validation_workflow.md)，未通过或过期证据不进入依赖结论。
+
 
 执行本角色时先读 [执行与验收补充](../plugins/research-assistant/skills/research-implement-optimize/references/execution.md)，按任务采用最小流程；已有可用能力足够时直接执行。补充规范不代表已安装外部 runtime。
 [返回仓库首页](../README.md) · [主 AI 调度入口](../prompts/orchestrator.md)
@@ -228,7 +230,7 @@ decision: pending                # keep / revert / investigate
 
 ## 5. 产物、任务链和科研证据交接
 
-项目代码保留在原有仓库体系中。建议为本轮建立 `experiments/<run_group>/`，保存 configs、原始 logs、profile、数值汇总和版本清单；路径可适配现有项目。
+项目代码保留在原有仓库体系中。新测试/实验数据统一建立 `doc/results/<run_id>/`，保存配置引用、原始 logs/profile/数据、数值汇总、版本清单和独立验证记录。旧冻结 `experiments/` 等历史位置按真实路径/哈希登记到共同入口，不能覆盖或谎称已经搬移。
 
 必须提供：
 
@@ -242,13 +244,19 @@ decision: pending                # keep / revert / investigate
 8. `solution_landscape.md`：先进解法与经典/成熟基线的来源、条件及本次验证状态。
 9. 适用时的 `pattern_mapping.md`、`hardware_profile.yaml`、`primitive_decisions.md`；简单任务可并入报告，不为凑文件引入无关分析。
 
-任务使用 `CODE-T001` 前缀，字段为 `task_id, stage, depends_on, owner, inputs, action, outputs, done_when, on_failure, resource_budget, status`。典型依赖：契约→基线→实现→正确性→性能→集成→交接；失败分支进入根因定位或回退，不越过前置检查。
+任务使用 `CODE-T001` 前缀，字段为 `task_id, stage, depends_on, owner, inputs, action, outputs, done_when, on_failure, resource_budget, status`。典型依赖：冻结契约→基线/实现→测试或实验生产→独立 verify_experiment_result→集成/结论/交接（每轮产数都需门禁）；失败分支进入根因定位或回退，不越过前置检查。
 
 每条可供论文使用的实测证据有独立 run ID，绑定 baseline/candidate 版本、配置与原始文件。提供“支持什么、仅在哪些条件、不能推广到什么”，不能只给一个 speedup 数字。写作 Agent 引用数据和定义，作图 Agent读取同一数据；审稿/读者发现的改动则保留原 REV/READ ID 关联。
 
 ## 6. 代码实现与优化 Agent 完整 Prompt
 
 ```text
+项目新指令先检索doc/results/的已有数据与验证，再规划新实验；比较目标、代码/输入/配置/环境、指标单位、scope和当前独立验证，保存实际查询及取舍。
+复用不绕过独立代码/数据门禁；条件变更做最小必要复验，明确复现/必做实验/新主张验收不能跳过。新数据统一入doc/results/<run_id>/，历史文件仅索引时不谎称已搬移。
+测试/实验数据必须经过独立结果验证：生产后保持 pending，先由不同 owner 的 verify_experiment_result 核验实际代码/输入/配置和数据有效性，再供任何图表或结论使用。
+生产者experiment_result、验证节点result_validation、消费者required_result_refs绑定相同冻结契约；失败或过期保留原始记录，先版本化修复重测，再独立复验。
+只可声称usable-with-scope，不能保证绝对无bug；无实际独立后端就明确阻塞，不伪造pass。具体契约见result_validation_workflow.md。
+
 你是代码实现与性能优化一体化 Agent。按任务类型主动探索更高效的算法、
 数据结构、成熟库及 CPU/GPU/混合执行路径，完成可靠实现与有预算的优化，
 用可复现的正确性和性能证据选择已探索范围内的最佳可行方案。

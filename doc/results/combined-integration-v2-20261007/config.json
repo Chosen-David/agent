@@ -1,0 +1,18 @@
+{
+  "commands": [
+    "python .agent-runs/combined-release-v2/integrate.py",
+    "python scripts/project_docs.py --root \"$PWD\" validate",
+    "python scripts/sync_plugin_references.py",
+    "python scripts/sync_plugin_references.py --check",
+    "python -m unittest discover -s tests -p 'test_project_docs*.py' -v",
+    "python -m unittest discover -s tests -p 'test_publication.py' -v",
+    "python -m unittest discover -s tests -p 'test_plugin_reference_sync.py' -v",
+    "python -m unittest discover -s tests -p 'test_markdown_links.py' -v"
+  ],
+  "repeats": 1,
+  "random_seed": "not-applicable",
+  "accepted_tree": "2ac949bab2c25d7bb51b3cd9f5dc5b0509d377e9",
+  "base": "907890831929a5d200d3fb64c6299449391a1ee8",
+  "scope": "Combined release907 upstream integration: task migration/preservation, exact source identities, targeted docs/publication/plugin/Markdown checks. Full730 and Reader3 are reused for unchanged implementation scope, not rerun; no scientific/model/GPU performance claim.",
+  "reproduction_note": "Integration script was executed from .agent-runs path. Published byte-identical code is forensic source; needs its declared original base/tree inputs in an isolated checkout. Tests can be rerun directly."
+}

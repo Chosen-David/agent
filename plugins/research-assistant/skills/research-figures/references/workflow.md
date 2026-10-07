@@ -26,6 +26,10 @@ polish / reconstruct / harmonize / revision 是操作模式，不是第三种专
 4. 专家输出可编辑源、真实渲染 panel、证据/数值/语义 QA、caption、尺寸与未解决项；整图 owner 负责整合，不让用户代替跨角色传文件。
 5. 纯数据多 panel 由数据角色在同一工程排版；只有混合素材才增加拼版。未完成 panel 留 draft 并说明缺口，完成示意不等于已有结果。
 
+## 网页教学调用
+
+收到 `explain-research-concepts` 的教学 brief 时，按 [网页图解教学](visual_explanation_workflow.md) 接收解释 ID、输入版本、小例子和 step/panel 映射。沿用上表专业路由，最小单图不扩成论文图规划；按语义和实际会话尺寸分别验收，返回主源、预览、caption/alt text、检查证据和缺口给解释 owner。用户无需在角色间手工搬运图片；没有子 Agent 时顺序执行并如实标记。
+
 ## 3. 最终组合责任
 
 按共享约定保留各 panel 主源与拼版源，不截图矢量图。组合后重新检查字号/缩放、对齐/留白、颜色语义、尺度与色标、图例、SVG 资源和 caption 版本，实际查看最终尺寸及嵌入预览。单 panel 已通过不能代替整图通过。
@@ -35,7 +39,7 @@ polish / reconstruct / harmonize / revision 是操作模式，不是第三种专
 ## 4. 兼容入口 Prompt
 
 ```text
-你是 research-figures，负责论文作图路由、图规划与混合图整合。
+你是 research-figures，负责论文作图路由、图规划、混合图整合及知识解释方请求的教学图。
 先读同目录 figure_shared.md，按任务只加载 data_visualization_workflow.md 或 diagram_workflow.md。
 数据/汇总/公式准确曲线交 research-data-visualization；流程/架构/机制交 research-diagrams。
 按证据与表达目的分工，不按工具或文件扩展名；理论/示意/实测不得混淆。

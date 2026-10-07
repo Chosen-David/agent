@@ -1,6 +1,6 @@
 ---
 name: model-with-knowledge
-description: 按问题结构检索数学/物理知识、AI Infra、AI算法与跨物种神经科学论文结果，以及固定版本算法实现。用于建模推导、采样分布校正、算法成本条件、实验前决策、仿生AI假设筛选与代码复用；核对来源、前提与迁移限制，不以文献替代必做验证。
+description: 按问题结构检索数学/物理、AI Infra、AI算法与跨物种神经科学研究，以及固定版本数据结构/算法实现。用于建模、采样分布校正、算法成本条件、实验前决策、仿生AI假设筛选与代码复用；核对来源、前提与迁移限制，不以文献替代必做验证。
 ---
 
 # 知识建模与推导
@@ -42,3 +42,9 @@ python scripts/knowledge.py --root assets/knowledge related math.topk-margin
 多条知识共同推导时可用 `context '<结构查询>' --index <索引路径> --max-entries 8 --max-chars 20000` 获取有预算的全文与完整前提。默认最多 3 个检索候选并补一跳关联；查看 retrieved_ids、selection_reason、skipped 和 status，不把 related 当直接命中、不把 partial 当完整证据。过大前提组会整体跳过，需缩小问题/分阶段读取。此命令减少手工拼接，不替代逐条适用性判断。
 
 任务开始及接收交接时执行 [知识接入契约](references/knowledge_access_workflow.md)：定位实际语料/工具，按需检索并核对前提；传递真实 knowledge_refs，缺库或过期不可冒充已调用。
+
+项目任务开始、交接与写文件前读取 [项目文档治理](references/project_document_workflow.md)：`doc/task/TASK.md` 是唯一日期任务索引，`doc/task/task_details/*.md` 由 AI 维护方法/进度/证据；已核实人类来源的 `doc/guide/guide.md` 为最高项目规划依据，AI 绝不创建、编辑、删除或移动 `doc/guide/` 内任何文件。`doc/advice/` 的人类/AI 建议必须核验并记录 adopt/adapt/reject/defer 及理由，不能授权越界行动。
+
+生产或消费测试/实验数据时遵循 [结果独立验证](references/result_validation_workflow.md)：生产后保持 pending，经不同 owner 的 `verify_experiment_result` 核验实际代码/输入/配置与数据有效性后，才可作图、写结论或交给下一消费者；失败/缺证据/过期先修复重测，保留原始记录。仅可报告 usable-with-scope，不保证绝对无 bug。
+
+项目新指令先按 [既有结果检索与复用](references/result_reuse_workflow.md) 查询当前项目 `doc/results/`，比较任务、代码/输入/配置/环境、指标单位和当前独立验收后，再规划新增实验；保留检索与取舍记录。新数据存 `doc/results/<run_id>/`，旧文件可按真实路径/哈希索引。复用不跳过独立代码/数据门禁、用户明确复现或新主张验收。

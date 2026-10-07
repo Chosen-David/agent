@@ -140,6 +140,13 @@ class IndexTests(unittest.TestCase):
         self.assertEqual(len(store.records),self.total_count+1)
         with self.assertRaises(KnowledgeError): store.get('math.import-example')
         self.assertEqual(build_index(store,self.db)['indexed'],self.published_count)
+        with sqlite3.connect(self.db) as con:
+            indexed_ids={row[0] for row in con.execute('SELECT id FROM docs')}
+        published_ids={kid for kid,record in store.records.items() if record['status']=='published'}
+        unpublished_ids=set(store.records)-published_ids
+        self.assertEqual(indexed_ids,published_ids)
+        self.assertIn('math.import-example',unpublished_ids)
+        self.assertTrue(indexed_ids.isdisjoint(unpublished_ids))
         with self.assertRaisesRegex(KnowledgeError,'already exists'): ingest(self.root,meta,body)
 
     def test_bad_import_does_not_change_corpus(self):

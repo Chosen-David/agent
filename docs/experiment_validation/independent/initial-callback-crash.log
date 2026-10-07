@@ -1,0 +1,37 @@
+test_artifact_path_escape_and_symlink_are_rejected (__main__.ResultGateAcceptanceTests.test_artifact_path_escape_and_symlink_are_rejected) ... ok
+test_domain_omission_self_review_and_unjustified_na_are_rejected (__main__.ResultGateAcceptanceTests.test_domain_omission_self_review_and_unjustified_na_are_rejected) ... ok
+test_downstream_without_gate_dependency_or_contract_is_rejected (__main__.ResultGateAcceptanceTests.test_downstream_without_gate_dependency_or_contract_is_rejected) ... ok
+test_missing_callback_result_stays_pending_and_exception_never_passes (__main__.ResultGateAcceptanceTests.test_missing_callback_result_stays_pending_and_exception_never_passes) ... ERROR
+test_missing_producer_flag_does_not_bypass_trusted_consumer_requirement (__main__.ResultGateAcceptanceTests.test_missing_producer_flag_does_not_bypass_trusted_consumer_requirement) ... ok
+test_nonfinite_manifest_metric_and_rebound_output_are_rejected (__main__.ResultGateAcceptanceTests.test_nonfinite_manifest_metric_and_rebound_output_are_rejected) ... ok
+test_previous_gate_evidence_stales_after_rebound_result_change (__main__.ResultGateAcceptanceTests.test_previous_gate_evidence_stales_after_rebound_result_change) ... ok
+test_real_reference_check_accepts_correct_result_with_scoped_evidence (__main__.ResultGateAcceptanceTests.test_real_reference_check_accepts_correct_result_with_scoped_evidence) ... ok
+test_rebound_omitted_raw_row_is_rejected (__main__.ResultGateAcceptanceTests.test_rebound_omitted_raw_row_is_rejected) ... ok
+test_rebound_wrong_output_is_rejected_by_actual_numerical_check (__main__.ResultGateAcceptanceTests.test_rebound_wrong_output_is_rejected_by_actual_numerical_check) ... ok
+test_reporting_handler_consumer_cannot_rely_on_producer_pass_report (__main__.ResultGateAcceptanceTests.test_reporting_handler_consumer_cannot_rely_on_producer_pass_report) ... ok
+test_source_changes_invalidate_before_verifier_is_invoked (__main__.ResultGateAcceptanceTests.test_source_changes_invalidate_before_verifier_is_invoked) ... ok
+test_source_mutation_during_callback_blocks_mixed_snapshot_acceptance (__main__.ResultGateAcceptanceTests.test_source_mutation_during_callback_blocks_mixed_snapshot_acceptance) ... ok
+test_worker_pass_and_named_independent_reviewer_do_not_replace_host (__main__.ResultGateAcceptanceTests.test_worker_pass_and_named_independent_reviewer_do_not_replace_host) ... ok
+
+======================================================================
+ERROR: test_missing_callback_result_stays_pending_and_exception_never_passes (__main__.ResultGateAcceptanceTests.test_missing_callback_result_stays_pending_and_exception_never_passes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/22f05ff6bc29/doc-layout-acceptance-20261007/test_result_gate_acceptance.py", line 151, in test_missing_callback_result_stays_pending_and_exception_never_passes
+    result=self.inspect(broken)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/22f05ff6bc29/doc-layout-acceptance-20261007/test_result_gate_acceptance.py", line 94, in inspect
+    return gate.inspect_result(self.root,self.contract,self.independent_verifier if verifier is None else verifier)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/22f05ff6bc29/agent-doc-layout-20261007/agent_runtime/result_validation.py", line 284, in inspect_result
+    review = verifier(root, deepcopy(manifest), deepcopy(plan))
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/22f05ff6bc29/doc-layout-acceptance-20261007/test_result_gate_acceptance.py", line 150, in broken
+    def broken(*_): raise RuntimeError('synthetic verifier crashed')
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: synthetic verifier crashed
+
+----------------------------------------------------------------------
+Ran 14 tests in 0.373s
+
+FAILED (errors=1)

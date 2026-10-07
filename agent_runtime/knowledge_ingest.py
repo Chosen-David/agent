@@ -11,11 +11,14 @@ import tempfile
 
 if __package__:
     from .knowledge import KnowledgeStore, _json, _require, MAX_BYTES
+    from .project_docs import guard_write_path
 else:
     from knowledge import KnowledgeStore, _json, _require, MAX_BYTES
+    from project_docs import guard_write_path
 
 
 def ingest(root, metadata_path, body_path):
+    guard_write_path(Path(root) / 'entries')
     store=KnowledgeStore(root)
     def read(path):
         path=Path(path)
@@ -45,7 +48,7 @@ def ingest(root, metadata_path, body_path):
                  'scope':'Local attributed draft only; no claim of source verification or correctness.'}
         (folder/'provenance.txt').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
         candidate=KnowledgeStore(stage)
-        destination=store.root/'entries'/d['id']
+        destination=guard_write_path(store.root/'entries'/d['id'])
         _require(not destination.exists(), 'import target exists')
         _require(KnowledgeStore(store.root).snapshot==store.snapshot, 'corpus changed during import; retry')
         # Staging on destination filesystem makes the directory rename atomic;
@@ -54,6 +57,7 @@ def ingest(root, metadata_path, body_path):
         try:
             ready=staging/'entry'
             shutil.copytree(folder,ready)
+            guard_write_path(destination)
             os.rename(ready,destination)
         finally:
             shutil.rmtree(staging)

@@ -18,6 +18,8 @@ import time
 
 from .project_memory import check_task_memory
 from .task_manifest import atomic_json, requirements
+from .project_docs import (assert_ai_writable, check_document_refs, resolve_task_file,
+                           snapshot_project_docs)
 
 
 class PublicationError(ValueError):
@@ -168,13 +170,20 @@ class PublicationLedger:
                      authorization_reference=authorization_reference)
         self._scope(scope, 'freeze')
         candidate = self._candidate()
-        if 'TASK.md' not in candidate['files']:
-            raise PublicationError('root TASK.md must be part of the frozen tree')
+        task_file = resolve_task_file(self.root)
+        task_relative = task_file.relative_to(self.root).as_posix()
+        if task_relative not in candidate['files']:
+            raise PublicationError('resolved TASK.md must be part of the frozen tree')
         base = _git(self.root, 'rev-parse', 'HEAD').decode().strip()
         before = self._tree(base)
         after = {p: {'mode': v['mode'], 'oid': v['oid']} for p, v in candidate['files'].items()}
         changed = sorted(p for p in before.keys() | after.keys() if before.get(p) != after.get(p))
-        ids = {item['id'] for item in requirements(self.root / 'TASK.md')}
+        for name in changed:
+            try:
+                assert_ai_writable(self.root, name)
+            except ValueError as exc:
+                raise PublicationError('human guide changes cannot be included in an AI publication: ' + name) from exc
+        ids = {item['id'] for item in requirements(task_file)}
         if not changed or not isinstance(file_task_refs, dict) or set(file_task_refs) != set(changed):
             raise PublicationError('every changed file needs exact TASK ownership; no omitted or extra paths')
         for refs in file_task_refs.values():
@@ -182,7 +191,8 @@ class PublicationLedger:
                     or len(set(refs)) != len(refs)):
                 raise PublicationError('file ownership requires existing stable TASK IDs')
         candidate.update(base_commit=base, file_task_refs=copy.deepcopy(file_task_refs),
-                         task_sha256=_hash(_regular_bytes(self.root / 'TASK.md')))
+                         task_path=task_relative, task_sha256=_hash(_regular_bytes(task_file)),
+                         project_documents=snapshot_project_docs(self.root))
         return self._save({'schema_version': 'publication/v1', 'scope': scope, 'candidate': candidate,
                            'phase': 'pending', 'tested': False, 'committed': False,
                            'pushed': False, 'remote_verified': False, 'evidence': [],
@@ -191,8 +201,12 @@ class PublicationLedger:
     def _current(self, value):
         now = self._candidate()
         if (now['sha256'] != value['candidate']['sha256'] or
-                _hash(_regular_bytes(self.root / 'TASK.md')) != value['candidate']['task_sha256']):
+                _hash(_regular_bytes(resolve_task_file(self.root))) != value['candidate']['task_sha256']):
             raise PublicationError('candidate changed; freeze and independently test a new version')
+        try:
+            check_document_refs(self.root, value['candidate']['project_documents'])
+        except (ValueError, KeyError) as exc:
+            raise PublicationError('project documents changed; freeze and independently test a new version') from exc
 
     def _evidence(self, value):
         evidence = value['evidence']

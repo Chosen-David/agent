@@ -1,0 +1,32 @@
+EXPL-SOFTMAX-001 input v1
+Route: data_visualization. Type: theoretical calculation, no paper or measured data.
+
+Deliverables
+- softmax_temperature.png: 720 x 490 px, intended conversation-width preview.
+- softmax_temperature_2x.png: 1440 x 980 px, same chart with higher raster resolution.
+- softmax_temperature.svg: editable vector; labels remain text and request Noto Sans CJK JP. If that font is unavailable, an editor may substitute a font; supplied PNG is the verified preview.
+- draw_softmax_temperature.py: editable Python plotting/calculation source; no downloads or installation required.
+- softmax_temperature_data.json: inputs, full precision probabilities, 60-digit Decimal cross-check, category colors, and step/panel mapping.
+- softmax_temperature_data.csv: numeric data for reuse.
+
+Mapping
+S1 -> P1: title/formula block fixes logits=[2,1,0] and specifies positive temperature and division-by-T convention.
+S2 -> P2: three matched-scale bar panels, ordered T=0.5,1,2; within each panel z=2,1,0 from left to right. Probability p1,p2,p3 follows this logit order.
+S3 -> P3: dashed y=1/3 guide and footer show log-odds scaling, preserved order, and the limit as T increases without bound.
+Color mapping: blue #2878B5 -> z=2; orange #D8792B -> z=1; purple #8561B5 -> z=0. Repeated x labels provide redundant encoding; no arrows.
+
+Caption
+固定 logits=[2,1,0]，按 p_i(T)=exp(z_i/T)/sum_j exp(z_j/T) 计算。三幅图使用相同的 0–1 纵轴；T 从 0.5 增大到 2 时，分布变平缓，但概率排序不变。虚线为均匀分布 1/3；标注保留 4 位小数，因此总和可能略偏离 1。
+
+Alt text
+三个并排柱状图比较 softmax 温度。每幅图的横轴依次为 z=2、1、0，纵轴概率范围固定为 0 至 1。T=0.5 的概率为 0.8668、0.1173、0.0159；T=1 为 0.6652、0.2447、0.0900；T=2 为 0.5065、0.3072、0.1863。温度越高，最高概率下降，其余两项在这个例子中上升，分布更接近各项 1/3；最大 logit 对应的概率始终最大。
+
+Numerical/semantic checks
+PASS: Computed probabilities via max-shifted numpy exponentials and independently via unshifted Decimal exponentials at precision 60. Maximum tolerated absolute disagreement is 5e-16; all nine values pass. Sums differ from one by less than 5e-16. All entries are positive and p1>p2>p3 for all three T. ln(p1/p2)=1/T is checked to absolute error below 1e-15. Labels generated directly from computed values with standard 4-decimal formatting; T=1 rounded values sum to 0.9999 and chart explicitly warns about rounding. Positive T shrinks each absolute log-odds gap. Fixed finite logits imply the T->infinity uniform limit; this is an analytic statement, not an experimental finding. Initial computation check used an unnecessarily strict 2e-16 tolerance and rejected ordinary binary floating-point roundoff; it was changed to 5e-16 before final generation. No numbers were altered to force a label sum.
+
+Visual checks
+PASS: Opened final softmax_temperature.png with view_image at its actual 720 x 490 px size. Chinese and math glyphs are present. Title, definition, T labels, all nine probability labels, axis labels, and footer are legible. No label is clipped or overlaps a bar label or adjacent panel. All three axes span 0 to 1, bar/category/color order is consistent, and dashed guides are aligned at 1/3. No arrow ambiguity. Labels specify 4-decimal rounding. Raster image directly rendered by Matplotlib; not an unrendered SVG placeholder.
+The editable SVG is written successfully and has text/vector nodes; no independent browser/editor SVG rendering check was performed. The PNG is the visually accepted deliverable.
+
+Delivery status
+Files exist locally only. Worker has not uploaded or messaged the user. Parent must inspect and deliver through the supported attachment channel.

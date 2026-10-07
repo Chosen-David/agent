@@ -1,0 +1,4829 @@
+{
+  "schema_version": 1,
+  "scope": "Development/regression; same queries, gold, engines and context budgets. Baseline failures retained, not counted as candidate regressions.",
+  "no_new_regressions": true,
+  "regressions": [],
+  "suites": [
+    {
+      "suite": "original",
+      "query_sha256": "d2f1c6f0dacdd4f81cedb583035eccfa37aaf5a05d47435848f96c42a4dde807",
+      "runs": {
+        "baseline": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            "<evidence>/baseline/knowledge",
+            "--cases",
+            "<repo>/evals/knowledge/queries.json",
+            "--output",
+            "<evidence>/legacy/original-baseline.json"
+          ],
+          "exit_code": 1
+        },
+        "candidate": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            "knowledge",
+            "--cases",
+            "<repo>/evals/knowledge/queries.json",
+            "--output",
+            "<evidence>/legacy/original-candidate.json"
+          ],
+          "exit_code": 1
+        }
+      },
+      "backends": {
+        "files": {
+          "baseline": {
+            "mean_recall_at_3": 0.8095238095238095,
+            "mean_context_recall": 0.8571428571428571,
+            "mean_reciprocal_rank": 0.7857142857142857
+          },
+          "candidate": {
+            "mean_recall_at_3": 0.8095238095238095,
+            "mean_context_recall": 0.8571428571428571,
+            "mean_reciprocal_rank": 0.7857142857142857
+          },
+          "queries": [
+            {
+              "case": "dot-bound",
+              "baseline": {
+                "case": "dot-bound",
+                "query": "查询键误差 内积分数 范数",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "math.contraction-residual-certificate",
+                  "math.linear-solve-backward-error"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.contraction-residual-certificate",
+                  "math.linear-solve-backward-error",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.linear-system-stability",
+                  "physics.dimensionless"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 16975,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.021967079999740236
+              },
+              "candidate": {
+                "case": "dot-bound",
+                "query": "查询键误差 内积分数 范数",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "math.contraction-residual-certificate",
+                  "math.linear-solve-backward-error"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.contraction-residual-certificate",
+                  "math.linear-solve-backward-error",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.linear-system-stability",
+                  "physics.dimensionless"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 16975,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.024875428003724664
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "membership",
+              "baseline": {
+                "case": "membership",
+                "query": "分数扰动 间隔 集合 稳定",
+                "expected": [
+                  "math.topk-margin"
+                ],
+                "actual": [
+                  "math.topk-margin",
+                  "math.cauchy-schwarz",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.eigenspace-gap-perturbation",
+                  "math.low-rank-svd",
+                  "math.linear-solve-backward-error",
+                  "math.orthogonal-projection-qr",
+                  "math.score-difference-bound"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18211,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.021042494001449086
+              },
+              "candidate": {
+                "case": "membership",
+                "query": "分数扰动 间隔 集合 稳定",
+                "expected": [
+                  "math.topk-margin"
+                ],
+                "actual": [
+                  "math.topk-margin",
+                  "math.cauchy-schwarz",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.eigenspace-gap-perturbation",
+                  "math.low-rank-svd",
+                  "math.linear-solve-backward-error",
+                  "math.orthogonal-projection-qr",
+                  "math.score-difference-bound"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18211,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.02240323499427177
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "matrix-compression",
+              "baseline": {
+                "case": "matrix-compression",
+                "query": "矩阵压缩 低秩近似 残差",
+                "expected": [
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.low-rank-svd",
+                  "algo.lora-intrinsic-rank",
+                  "math.linear-solve-backward-error"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.low-rank-svd",
+                  "algo.lora-intrinsic-rank",
+                  "math.linear-solve-backward-error",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.data-processing-task-sufficiency",
+                  "math.matrix-rank-factorization"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19006,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.02340221099439077
+              },
+              "candidate": {
+                "case": "matrix-compression",
+                "query": "矩阵压缩 低秩近似 残差",
+                "expected": [
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.low-rank-svd",
+                  "algo.lora-intrinsic-rank",
+                  "math.linear-solve-backward-error"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.low-rank-svd",
+                  "algo.lora-intrinsic-rank",
+                  "math.linear-solve-backward-error",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.data-processing-task-sufficiency",
+                  "math.matrix-rank-factorization"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19006,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.021757030001026578
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "worker-merge",
+              "baseline": {
+                "case": "worker-merge",
+                "query": "交换 设备编号 可行性 代价",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "ds.segment-monoid",
+                  "math.symmetry-quotient",
+                  "prob.vector-variance-aware-concentration"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.segment-monoid",
+                  "math.symmetry-quotient",
+                  "prob.vector-variance-aware-concentration",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection",
+                  "math.betting-test-martingale"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19735,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.019528196004102938
+              },
+              "candidate": {
+                "case": "worker-merge",
+                "query": "交换 设备编号 可行性 代价",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "ds.segment-monoid",
+                  "math.symmetry-quotient",
+                  "prob.vector-variance-aware-concentration"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.segment-monoid",
+                  "math.symmetry-quotient",
+                  "prob.vector-variance-aware-concentration",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection",
+                  "math.betting-test-martingale"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19735,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.02422372500586789
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "physical-model",
+              "baseline": {
+                "case": "physical-model",
+                "query": "单位 周期 长度 重力 变量",
+                "expected": [
+                  "physics.dimensionless"
+                ],
+                "actual": [
+                  "prob.self-normalized-dimension-barrier",
+                  "math.similarity-invariants",
+                  "prob.conformal-policy-control"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "prob.self-normalized-dimension-barrier",
+                  "math.similarity-invariants",
+                  "prob.conformal-policy-control",
+                  "prob.vector-variance-aware-concentration",
+                  "math.jordan-generalized-eigenspaces"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19033,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.023923151005874388
+              },
+              "candidate": {
+                "case": "physical-model",
+                "query": "单位 周期 长度 重力 变量",
+                "expected": [
+                  "physics.dimensionless"
+                ],
+                "actual": [
+                  "prob.self-normalized-dimension-barrier",
+                  "math.similarity-invariants",
+                  "prob.conformal-policy-control"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "prob.self-normalized-dimension-barrier",
+                  "math.similarity-invariants",
+                  "prob.conformal-policy-control",
+                  "prob.vector-variance-aware-concentration",
+                  "math.jordan-generalized-eigenspaces"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19033,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.019763953998335637
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "english-alias",
+              "baseline": {
+                "case": "english-alias",
+                "query": "dot product error inner product bound",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "ds.faiss-exact-vector",
+                  "math.linear-solve-backward-error"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "ds.faiss-exact-vector",
+                  "math.linear-solve-backward-error",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.contraction-residual-certificate",
+                  "physics.dimensionless"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18567,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.017526408002595417
+              },
+              "candidate": {
+                "case": "english-alias",
+                "query": "dot product error inner product bound",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "ds.faiss-exact-vector",
+                  "math.linear-solve-backward-error"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "ds.faiss-exact-vector",
+                  "math.linear-solve-backward-error",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.contraction-residual-certificate",
+                  "physics.dimensionless"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18567,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.03133412200259045
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "cross-entry",
+              "baseline": {
+                "case": "cross-entry",
+                "query": "矩阵近似 查询 范数 分数误差 间隔",
+                "expected": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound"
+                ],
+                "recall_at_3": 0.6666666666666666,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation",
+                  "math.linear-solve-backward-error",
+                  "math.orthogonal-projection-qr"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18208,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0184671180031728
+              },
+              "candidate": {
+                "case": "cross-entry",
+                "query": "矩阵近似 查询 范数 分数误差 间隔",
+                "expected": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound"
+                ],
+                "recall_at_3": 0.6666666666666666,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation",
+                  "math.linear-solve-backward-error",
+                  "math.orthogonal-projection-qr"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18208,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.03253241199126933
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "no-hit",
+              "baseline": {
+                "case": "no-hit",
+                "query": "zzqxnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.01920882500417065
+              },
+              "candidate": {
+                "case": "no-hit",
+                "query": "zzqxnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.0322083439968992
+              },
+              "regressed_metrics": []
+            }
+          ]
+        },
+        "sqlite": {
+          "baseline": {
+            "mean_recall_at_3": 0.8095238095238095,
+            "mean_context_recall": 0.8571428571428571,
+            "mean_reciprocal_rank": 0.7619047619047619
+          },
+          "candidate": {
+            "mean_recall_at_3": 0.8095238095238095,
+            "mean_context_recall": 0.8571428571428571,
+            "mean_reciprocal_rank": 0.7619047619047619
+          },
+          "queries": [
+            {
+              "case": "dot-bound",
+              "baseline": {
+                "case": "dot-bound",
+                "query": "查询键误差 内积分数 范数",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate",
+                  "math.topk-margin",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation",
+                  "math.linear-solve-backward-error"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19696,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.004013832003693096
+              },
+              "candidate": {
+                "case": "dot-bound",
+                "query": "查询键误差 内积分数 范数",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate",
+                  "math.topk-margin",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation",
+                  "math.linear-solve-backward-error"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19696,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.006502238000393845
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "membership",
+              "baseline": {
+                "case": "membership",
+                "query": "分数扰动 间隔 集合 稳定",
+                "expected": [
+                  "math.topk-margin"
+                ],
+                "actual": [
+                  "math.topk-margin",
+                  "math.cauchy-schwarz",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.eigenspace-gap-perturbation",
+                  "math.low-rank-svd",
+                  "math.linear-solve-backward-error",
+                  "math.orthogonal-projection-qr",
+                  "math.score-difference-bound"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18211,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.003819403995294124
+              },
+              "candidate": {
+                "case": "membership",
+                "query": "分数扰动 间隔 集合 稳定",
+                "expected": [
+                  "math.topk-margin"
+                ],
+                "actual": [
+                  "math.topk-margin",
+                  "math.cauchy-schwarz",
+                  "math.eigenspace-gap-perturbation"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.eigenspace-gap-perturbation",
+                  "math.low-rank-svd",
+                  "math.linear-solve-backward-error",
+                  "math.orthogonal-projection-qr",
+                  "math.score-difference-bound"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18211,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00586949399439618
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "matrix-compression",
+              "baseline": {
+                "case": "matrix-compression",
+                "query": "矩阵压缩 低秩近似 残差",
+                "expected": [
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.low-rank-svd",
+                  "math.linear-solve-backward-error",
+                  "math.matrix-rank-factorization"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.low-rank-svd",
+                  "math.linear-solve-backward-error",
+                  "math.matrix-rank-factorization",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.data-processing-task-sufficiency",
+                  "math.moore-penrose-pseudoinverse",
+                  "physics.dimensionless"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19868,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.003725725007825531
+              },
+              "candidate": {
+                "case": "matrix-compression",
+                "query": "矩阵压缩 低秩近似 残差",
+                "expected": [
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.low-rank-svd",
+                  "math.matrix-rank-factorization",
+                  "math.linear-solve-backward-error"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.low-rank-svd",
+                  "math.matrix-rank-factorization",
+                  "math.linear-solve-backward-error",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.data-processing-task-sufficiency",
+                  "math.moore-penrose-pseudoinverse",
+                  "physics.dimensionless"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19868,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.006681473008939065
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "worker-merge",
+              "baseline": {
+                "case": "worker-merge",
+                "query": "交换 设备编号 可行性 代价",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "math.symmetry-quotient",
+                  "prob.vector-variance-aware-concentration",
+                  "ds.segment-monoid"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.symmetry-quotient",
+                  "prob.vector-variance-aware-concentration",
+                  "ds.segment-monoid",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection",
+                  "math.betting-test-martingale"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19735,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002763172989943996
+              },
+              "candidate": {
+                "case": "worker-merge",
+                "query": "交换 设备编号 可行性 代价",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "math.symmetry-quotient",
+                  "prob.vector-variance-aware-concentration",
+                  "ds.segment-monoid"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.symmetry-quotient",
+                  "prob.vector-variance-aware-concentration",
+                  "ds.segment-monoid",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection",
+                  "math.betting-test-martingale"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19735,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.005105023999931291
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "physical-model",
+              "baseline": {
+                "case": "physical-model",
+                "query": "单位 周期 长度 重力 变量",
+                "expected": [
+                  "physics.dimensionless"
+                ],
+                "actual": [
+                  "neuro.zapbench-forecasting-controls",
+                  "math.similarity-invariants",
+                  "prob.self-normalized-dimension-barrier"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "neuro.zapbench-forecasting-controls",
+                  "math.similarity-invariants",
+                  "prob.self-normalized-dimension-barrier",
+                  "neuro.zebrafish-modular-memory",
+                  "neuro.anesthesia-temporal-isolation"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19660,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.003239385987399146
+              },
+              "candidate": {
+                "case": "physical-model",
+                "query": "单位 周期 长度 重力 变量",
+                "expected": [
+                  "physics.dimensionless"
+                ],
+                "actual": [
+                  "neuro.zapbench-forecasting-controls",
+                  "math.similarity-invariants",
+                  "prob.self-normalized-dimension-barrier"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "neuro.zapbench-forecasting-controls",
+                  "math.similarity-invariants",
+                  "prob.self-normalized-dimension-barrier",
+                  "neuro.zebrafish-modular-memory",
+                  "neuro.anesthesia-temporal-isolation"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19660,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.0061345849971985444
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "english-alias",
+              "baseline": {
+                "case": "english-alias",
+                "query": "dot product error inner product bound",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "ds.faiss-exact-vector",
+                  "math.linear-solve-backward-error",
+                  "math.cauchy-schwarz"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.faiss-exact-vector",
+                  "math.linear-solve-backward-error",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate",
+                  "physics.dimensionless"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18567,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null,
+                "seconds": 0.0030220059998100623
+              },
+              "candidate": {
+                "case": "english-alias",
+                "query": "dot product error inner product bound",
+                "expected": [
+                  "math.cauchy-schwarz"
+                ],
+                "actual": [
+                  "ds.faiss-exact-vector",
+                  "math.linear-solve-backward-error",
+                  "math.cauchy-schwarz"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.faiss-exact-vector",
+                  "math.linear-solve-backward-error",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate",
+                  "physics.dimensionless"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18567,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.3333333333333333,
+                "no_hit_correct": null,
+                "seconds": 0.005245682012173347
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "cross-entry",
+              "baseline": {
+                "case": "cross-entry",
+                "query": "矩阵近似 查询 范数 分数误差 间隔",
+                "expected": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.topk-margin",
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound"
+                ],
+                "recall_at_3": 0.6666666666666666,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation",
+                  "math.linear-solve-backward-error",
+                  "math.orthogonal-projection-qr"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18211,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0034674329945119098
+              },
+              "candidate": {
+                "case": "cross-entry",
+                "query": "矩阵近似 查询 范数 分数误差 间隔",
+                "expected": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.low-rank-svd"
+                ],
+                "actual": [
+                  "math.topk-margin",
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound"
+                ],
+                "recall_at_3": 0.6666666666666666,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation",
+                  "math.linear-solve-backward-error",
+                  "math.orthogonal-projection-qr"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18211,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.004598125000484288
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "no-hit",
+              "baseline": {
+                "case": "no-hit",
+                "query": "zzqxnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.001551822992041707
+              },
+              "candidate": {
+                "case": "no-hit",
+                "query": "zzqxnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.001889862003736198
+              },
+              "regressed_metrics": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "suite": "round2",
+      "query_sha256": "cd6c287f42c6e1baa1713c6f9c151fcfd28f9c50968328f93b02fcf03e50731b",
+      "runs": {
+        "baseline": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            "<evidence>/baseline/knowledge",
+            "--cases",
+            "<repo>/evals/knowledge/round2-queries.json",
+            "--output",
+            "<evidence>/legacy/round2-baseline.json"
+          ],
+          "exit_code": 1
+        },
+        "candidate": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            "knowledge",
+            "--cases",
+            "<repo>/evals/knowledge/round2-queries.json",
+            "--output",
+            "<evidence>/legacy/round2-candidate.json"
+          ],
+          "exit_code": 1
+        }
+      },
+      "backends": {
+        "files": {
+          "baseline": {
+            "mean_recall_at_3": 0.75,
+            "mean_context_recall": 0.75,
+            "mean_reciprocal_rank": 0.6875
+          },
+          "candidate": {
+            "mean_recall_at_3": 0.75,
+            "mean_context_recall": 0.75,
+            "mean_reciprocal_rank": 0.6875
+          },
+          "queries": [
+            {
+              "case": "sensitivity",
+              "baseline": {
+                "case": "sensitivity",
+                "query": "tiny residual inaccurate solution linear equation",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.linear-solve-backward-error",
+                  "math.sylvester-equation-separation"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.linear-solve-backward-error",
+                  "math.sylvester-equation-separation",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19511,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.020406053998158313
+              },
+              "candidate": {
+                "case": "sensitivity",
+                "query": "tiny residual inaccurate solution linear equation",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.linear-solve-backward-error",
+                  "math.sylvester-equation-separation"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.linear-solve-backward-error",
+                  "math.sylvester-equation-separation",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19511,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.01984319199982565
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "averaging",
+              "baseline": {
+                "case": "averaging",
+                "query": "averaging representations projecting invariant subspaces",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection",
+                  "math.descent-lyapunov-certificate",
+                  "math.rational-canonical-cyclic"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "math.descent-lyapunov-certificate",
+                  "math.rational-canonical-cyclic",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.noether-invariants"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18237,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.025982428996940143
+              },
+              "candidate": {
+                "case": "averaging",
+                "query": "averaging representations projecting invariant subspaces",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection",
+                  "math.descent-lyapunov-certificate",
+                  "math.rational-canonical-cyclic"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "math.descent-lyapunov-certificate",
+                  "math.rational-canonical-cyclic",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.noether-invariants"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18237,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.021361263992730528
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "certificate",
+              "baseline": {
+                "case": "certificate",
+                "query": "certified global optimum upper lower bounds stopping search",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [
+                  "math.alpha-spending-stopping",
+                  "math.dual-certificates",
+                  "ds.faiss-exact-vector"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.alpha-spending-stopping",
+                  "math.hoeffding-bounded-mean",
+                  "math.dual-certificates",
+                  "ds.faiss-exact-vector",
+                  "math.betting-test-martingale"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 13745,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.023836692998884246
+              },
+              "candidate": {
+                "case": "certificate",
+                "query": "certified global optimum upper lower bounds stopping search",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [
+                  "math.alpha-spending-stopping",
+                  "math.dual-certificates",
+                  "ds.faiss-exact-vector"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.alpha-spending-stopping",
+                  "math.hoeffding-bounded-mean",
+                  "math.dual-certificates",
+                  "ds.faiss-exact-vector",
+                  "math.betting-test-martingale"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 13745,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.020118529006140307
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "simulation",
+              "baseline": {
+                "case": "simulation",
+                "query": "energies drift integration conserved quantities",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.noether-invariants",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 6898,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.01793412100232672
+              },
+              "candidate": {
+                "case": "simulation",
+                "query": "energies drift integration conserved quantities",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.noether-invariants",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 6898,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.01969082599680405
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "joint-error",
+              "baseline": {
+                "case": "joint-error",
+                "query": "整体 二范数 分数差 边界 间隔",
+                "expected": [
+                  "math.score-difference-bound"
+                ],
+                "actual": [
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.cauchy-schwarz"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation",
+                  "math.linear-solve-backward-error",
+                  "math.orthogonal-projection-qr"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18211,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.019071542003075592
+              },
+              "candidate": {
+                "case": "joint-error",
+                "query": "整体 二范数 分数差 边界 间隔",
+                "expected": [
+                  "math.score-difference-bound"
+                ],
+                "actual": [
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.cauchy-schwarz"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation",
+                  "math.linear-solve-backward-error",
+                  "math.orthogonal-projection-qr"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18211,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.019235783998738043
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "relabel",
+              "baseline": {
+                "case": "relabel",
+                "query": "重命名 等价 候选 去重",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "math.symmetry-quotient",
+                  "math.matrix-rank-factorization",
+                  "math.similarity-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.symmetry-quotient",
+                  "math.matrix-rank-factorization",
+                  "math.similarity-invariants",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection",
+                  "math.low-rank-svd",
+                  "math.jordan-generalized-eigenspaces",
+                  "math.bilinear-quadratic-inertia"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18070,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.02023035399906803
+              },
+              "candidate": {
+                "case": "relabel",
+                "query": "重命名 等价 候选 去重",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "math.symmetry-quotient",
+                  "math.matrix-rank-factorization",
+                  "math.similarity-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.symmetry-quotient",
+                  "math.matrix-rank-factorization",
+                  "math.similarity-invariants",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection",
+                  "math.low-rank-svd",
+                  "math.jordan-generalized-eigenspaces",
+                  "math.bilinear-quadratic-inertia"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18070,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.022340202005580068
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "illcondition-cn",
+              "baseline": {
+                "case": "illcondition-cn",
+                "query": "方程 残差 小 解 偏差 大",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "infra.flashattention2-occupancy",
+                  "math.linear-solve-backward-error",
+                  "math.sylvester-equation-separation"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "infra.flashattention2-occupancy",
+                  "math.linear-solve-backward-error",
+                  "math.sylvester-equation-separation",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18984,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.019491603001370095
+              },
+              "candidate": {
+                "case": "illcondition-cn",
+                "query": "方程 残差 小 解 偏差 大",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "infra.flashattention2-occupancy",
+                  "math.linear-solve-backward-error",
+                  "math.sylvester-equation-separation"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "infra.flashattention2-occupancy",
+                  "math.linear-solve-backward-error",
+                  "math.sylvester-equation-separation",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "math.contraction-residual-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18984,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.021933761003310792
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "symmetry-discrete",
+              "baseline": {
+                "case": "symmetry-discrete",
+                "query": "对称 分配 平均 整数 可行",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants",
+                  "math.data-processing-task-sufficiency",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 14809,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.02155184600269422
+              },
+              "candidate": {
+                "case": "symmetry-discrete",
+                "query": "对称 分配 平均 整数 可行",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants",
+                  "math.data-processing-task-sufficiency",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 14809,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.020091169004444964
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "no-matching-topic",
+              "baseline": {
+                "case": "no-matching-topic",
+                "query": "zzqxunknownspacetimeword",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.02061952000076417
+              },
+              "candidate": {
+                "case": "no-matching-topic",
+                "query": "zzqxunknownspacetimeword",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.020048495003720745
+              },
+              "regressed_metrics": []
+            }
+          ]
+        },
+        "sqlite": {
+          "baseline": {
+            "mean_recall_at_3": 0.75,
+            "mean_context_recall": 0.875,
+            "mean_reciprocal_rank": 0.625
+          },
+          "candidate": {
+            "mean_recall_at_3": 0.75,
+            "mean_context_recall": 0.875,
+            "mean_reciprocal_rank": 0.625
+          },
+          "queries": [
+            {
+              "case": "sensitivity",
+              "baseline": {
+                "case": "sensitivity",
+                "query": "tiny residual inaccurate solution linear equation",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "math.sylvester-equation-separation",
+                  "math.linear-solve-backward-error",
+                  "ds.maxflow-matching"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "math.sylvester-equation-separation",
+                  "math.linear-solve-backward-error",
+                  "ds.maxflow-matching",
+                  "math.linear-system-stability",
+                  "math.tensor-kronecker-calculus",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19846,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.004206155994324945
+              },
+              "candidate": {
+                "case": "sensitivity",
+                "query": "tiny residual inaccurate solution linear equation",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "math.sylvester-equation-separation",
+                  "math.linear-solve-backward-error",
+                  "ds.maxflow-matching"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "math.sylvester-equation-separation",
+                  "math.linear-solve-backward-error",
+                  "ds.maxflow-matching",
+                  "math.linear-system-stability",
+                  "math.tensor-kronecker-calculus",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19846,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.005009932996472344
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "averaging",
+              "baseline": {
+                "case": "averaging",
+                "query": "averaging representations projecting invariant subspaces",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.descent-lyapunov-certificate",
+                  "math.reynolds-projection",
+                  "math.orthogonal-projection-qr"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.descent-lyapunov-certificate",
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "math.orthogonal-projection-qr",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.noether-invariants",
+                  "math.low-rank-svd"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19443,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.0036750199942616746
+              },
+              "candidate": {
+                "case": "averaging",
+                "query": "averaging representations projecting invariant subspaces",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.descent-lyapunov-certificate",
+                  "math.reynolds-projection",
+                  "math.orthogonal-projection-qr"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.descent-lyapunov-certificate",
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "math.orthogonal-projection-qr",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.noether-invariants",
+                  "math.low-rank-svd"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19443,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.004114509996725246
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "certificate",
+              "baseline": {
+                "case": "certificate",
+                "query": "certified global optimum upper lower bounds stopping search",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [
+                  "math.alpha-spending-stopping",
+                  "math.dual-certificates",
+                  "prob.self-normalized-dimension-barrier"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.alpha-spending-stopping",
+                  "math.hoeffding-bounded-mean",
+                  "math.dual-certificates",
+                  "prob.self-normalized-dimension-barrier",
+                  "math.betting-test-martingale"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 15199,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.003884350007865578
+              },
+              "candidate": {
+                "case": "certificate",
+                "query": "certified global optimum upper lower bounds stopping search",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [
+                  "math.alpha-spending-stopping",
+                  "math.dual-certificates",
+                  "prob.self-normalized-dimension-barrier"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.alpha-spending-stopping",
+                  "math.hoeffding-bounded-mean",
+                  "math.dual-certificates",
+                  "prob.self-normalized-dimension-barrier",
+                  "math.betting-test-martingale"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 15199,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.003231124996091239
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "simulation",
+              "baseline": {
+                "case": "simulation",
+                "query": "energies drift integration conserved quantities",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [
+                  "physics.noether-invariants",
+                  "neuro.mammal-integration-anesthesia",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.noether-invariants",
+                  "neuro.mammal-integration-anesthesia",
+                  "math.descent-lyapunov-certificate",
+                  "neuro.anesthesia-temporal-isolation",
+                  "neuro.consciousness-adversarial-predictions"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19500,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.003382877999683842
+              },
+              "candidate": {
+                "case": "simulation",
+                "query": "energies drift integration conserved quantities",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [
+                  "physics.noether-invariants",
+                  "neuro.mammal-integration-anesthesia",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.noether-invariants",
+                  "neuro.mammal-integration-anesthesia",
+                  "math.descent-lyapunov-certificate",
+                  "neuro.anesthesia-temporal-isolation",
+                  "neuro.consciousness-adversarial-predictions"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19500,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.003769058996113017
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "joint-error",
+              "baseline": {
+                "case": "joint-error",
+                "query": "整体 二范数 分数差 边界 间隔",
+                "expected": [
+                  "math.score-difference-bound"
+                ],
+                "actual": [
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.cauchy-schwarz"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation",
+                  "math.linear-solve-backward-error",
+                  "math.orthogonal-projection-qr"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18211,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0033192650007549673
+              },
+              "candidate": {
+                "case": "joint-error",
+                "query": "整体 二范数 分数差 边界 间隔",
+                "expected": [
+                  "math.score-difference-bound"
+                ],
+                "actual": [
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.cauchy-schwarz"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.cauchy-schwarz",
+                  "math.score-difference-bound",
+                  "math.topk-margin",
+                  "math.low-rank-svd",
+                  "math.eigenspace-gap-perturbation",
+                  "math.linear-solve-backward-error",
+                  "math.orthogonal-projection-qr"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18211,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.003786314991884865
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "relabel",
+              "baseline": {
+                "case": "relabel",
+                "query": "重命名 等价 候选 去重",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "math.symmetry-quotient",
+                  "math.matrix-rank-factorization",
+                  "math.similarity-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.symmetry-quotient",
+                  "math.matrix-rank-factorization",
+                  "math.similarity-invariants",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection",
+                  "math.low-rank-svd",
+                  "math.jordan-generalized-eigenspaces",
+                  "math.bilinear-quadratic-inertia"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18070,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.003196674006176181
+              },
+              "candidate": {
+                "case": "relabel",
+                "query": "重命名 等价 候选 去重",
+                "expected": [
+                  "math.symmetry-quotient"
+                ],
+                "actual": [
+                  "math.symmetry-quotient",
+                  "math.matrix-rank-factorization",
+                  "math.similarity-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.symmetry-quotient",
+                  "math.matrix-rank-factorization",
+                  "math.similarity-invariants",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection",
+                  "math.low-rank-svd",
+                  "math.jordan-generalized-eigenspaces",
+                  "math.bilinear-quadratic-inertia"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18070,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0032165029988391325
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "illcondition-cn",
+              "baseline": {
+                "case": "illcondition-cn",
+                "query": "方程 残差 小 解 偏差 大",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "math.orthogonal-projection-qr",
+                  "math.linear-solve-backward-error",
+                  "infra.flashattention2-occupancy"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "math.orthogonal-projection-qr",
+                  "math.linear-solve-backward-error",
+                  "infra.flashattention2-occupancy",
+                  "math.low-rank-svd",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "physics.dimensionless"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 17894,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.004808615005458705
+              },
+              "candidate": {
+                "case": "illcondition-cn",
+                "query": "方程 残差 小 解 偏差 大",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "math.orthogonal-projection-qr",
+                  "math.linear-solve-backward-error",
+                  "infra.flashattention2-occupancy"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "math.orthogonal-projection-qr",
+                  "math.linear-solve-backward-error",
+                  "infra.flashattention2-occupancy",
+                  "math.low-rank-svd",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin",
+                  "math.score-difference-bound",
+                  "physics.dimensionless"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 17894,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.003697614010889083
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "symmetry-discrete",
+              "baseline": {
+                "case": "symmetry-discrete",
+                "query": "对称 分配 平均 整数 可行",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants",
+                  "math.data-processing-task-sufficiency",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 14809,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0029444109968608245
+              },
+              "candidate": {
+                "case": "symmetry-discrete",
+                "query": "对称 分配 平均 整数 可行",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "physics.noether-invariants",
+                  "math.data-processing-task-sufficiency",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 14809,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.003893614004482515
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "no-matching-topic",
+              "baseline": {
+                "case": "no-matching-topic",
+                "query": "zzqxunknownspacetimeword",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.002069548994768411
+              },
+              "candidate": {
+                "case": "no-matching-topic",
+                "query": "zzqxunknownspacetimeword",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.0021202340140007436
+              },
+              "regressed_metrics": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "suite": "morphology",
+      "query_sha256": "350550bdf3c139c889640e858fda17e9e19480a119e0818b89e150ee7c0b878d",
+      "runs": {
+        "baseline": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            "<evidence>/baseline/knowledge",
+            "--cases",
+            "<repo>/evals/knowledge/morphology-queries.json",
+            "--output",
+            "<evidence>/legacy/morphology-baseline.json"
+          ],
+          "exit_code": 1
+        },
+        "candidate": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            "knowledge",
+            "--cases",
+            "<repo>/evals/knowledge/morphology-queries.json",
+            "--output",
+            "<evidence>/legacy/morphology-candidate.json"
+          ],
+          "exit_code": 1
+        }
+      },
+      "backends": {
+        "files": {
+          "baseline": {
+            "mean_recall_at_3": 0.0,
+            "mean_context_recall": 0.0,
+            "mean_reciprocal_rank": 0
+          },
+          "candidate": {
+            "mean_recall_at_3": 0.0,
+            "mean_context_recall": 0.0,
+            "mean_reciprocal_rank": 0
+          },
+          "queries": [
+            {
+              "case": "plural-projection",
+              "baseline": {
+                "case": "plural-projection",
+                "query": "projections",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.020941926006344147
+              },
+              "candidate": {
+                "case": "plural-projection",
+                "query": "projections",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.01905954399262555
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "plural-residual",
+              "baseline": {
+                "case": "plural-residual",
+                "query": "residuals",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.020527132001006976
+              },
+              "candidate": {
+                "case": "plural-residual",
+                "query": "residuals",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.02216788700025063
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "plural-certificate",
+              "baseline": {
+                "case": "plural-certificate",
+                "query": "certificates",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.019457411995972507
+              },
+              "candidate": {
+                "case": "plural-certificate",
+                "query": "certificates",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.01887093498953618
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "conservation-inflection",
+              "baseline": {
+                "case": "conservation-inflection",
+                "query": "conserving",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.02098802301043179
+              },
+              "candidate": {
+                "case": "conservation-inflection",
+                "query": "conserving",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [],
+                "recall_at_3": 0.0,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.02068022899038624
+              },
+              "regressed_metrics": []
+            }
+          ]
+        },
+        "sqlite": {
+          "baseline": {
+            "mean_recall_at_3": 0.5,
+            "mean_context_recall": 0.75,
+            "mean_reciprocal_rank": 0.375
+          },
+          "candidate": {
+            "mean_recall_at_3": 0.5,
+            "mean_context_recall": 0.75,
+            "mean_reciprocal_rank": 0.375
+          },
+          "queries": [
+            {
+              "case": "plural-projection",
+              "baseline": {
+                "case": "plural-projection",
+                "query": "projections",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.orthogonal-projection-qr",
+                  "math.reynolds-projection"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.orthogonal-projection-qr",
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 10259,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.0035195899981772527
+              },
+              "candidate": {
+                "case": "plural-projection",
+                "query": "projections",
+                "expected": [
+                  "math.reynolds-projection"
+                ],
+                "actual": [
+                  "math.orthogonal-projection-qr",
+                  "math.reynolds-projection"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "math.orthogonal-projection-qr",
+                  "math.reynolds-projection",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 10259,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0.5,
+                "no_hit_correct": null,
+                "seconds": 0.0031639649969292805
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "plural-residual",
+              "baseline": {
+                "case": "plural-residual",
+                "query": "residuals",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-solve-backward-error"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-solve-backward-error",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18365,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.005018715994083323
+              },
+              "candidate": {
+                "case": "plural-residual",
+                "query": "residuals",
+                "expected": [
+                  "math.linear-system-stability"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-solve-backward-error"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-solve-backward-error",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18365,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.0036461370036704466
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "plural-certificate",
+              "baseline": {
+                "case": "plural-certificate",
+                "query": "certificates",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [
+                  "math.contraction-residual-certificate",
+                  "math.descent-lyapunov-certificate",
+                  "math.linear-solve-backward-error"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "math.contraction-residual-certificate",
+                  "math.descent-lyapunov-certificate",
+                  "math.linear-solve-backward-error",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "physics.noether-invariants"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18708,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.0041463270026724786
+              },
+              "candidate": {
+                "case": "plural-certificate",
+                "query": "certificates",
+                "expected": [
+                  "math.dual-certificates"
+                ],
+                "actual": [
+                  "math.contraction-residual-certificate",
+                  "math.descent-lyapunov-certificate",
+                  "math.linear-solve-backward-error"
+                ],
+                "recall_at_3": 0.0,
+                "context_ids": [
+                  "math.contraction-residual-certificate",
+                  "math.descent-lyapunov-certificate",
+                  "math.linear-solve-backward-error",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "physics.noether-invariants"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18708,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 0.0,
+                "reciprocal_rank": 0,
+                "no_hit_correct": null,
+                "seconds": 0.004415585004608147
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "conservation-inflection",
+              "baseline": {
+                "case": "conservation-inflection",
+                "query": "conserving",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.noether-invariants",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 6898,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0026749730022856966
+              },
+              "candidate": {
+                "case": "conservation-inflection",
+                "query": "conserving",
+                "expected": [
+                  "physics.noether-invariants"
+                ],
+                "actual": [
+                  "physics.noether-invariants"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "physics.noether-invariants",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 6898,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0018673489976208657
+              },
+              "regressed_metrics": []
+            }
+          ]
+        }
+      }
+    },
+    {
+      "suite": "engineering",
+      "query_sha256": "82aabcab83d288d6b013e6de85cd473a49e486ed3ed167e6696c08f0318d13e3",
+      "runs": {
+        "baseline": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            "<evidence>/baseline/knowledge",
+            "--cases",
+            "<repo>/evals/knowledge/engineering-queries.json",
+            "--output",
+            "<evidence>/legacy/engineering-baseline.json"
+          ],
+          "exit_code": 0
+        },
+        "candidate": {
+          "command": [
+            "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+            "<repo>/scripts/eval_knowledge.py",
+            "--root",
+            "knowledge",
+            "--cases",
+            "<repo>/evals/knowledge/engineering-queries.json",
+            "--output",
+            "<evidence>/legacy/engineering-candidate.json"
+          ],
+          "exit_code": 0
+        }
+      },
+      "backends": {
+        "files": {
+          "baseline": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 1.0
+          },
+          "candidate": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 1.0
+          },
+          "queries": [
+            {
+              "case": "draft-cost",
+              "baseline": {
+                "case": "draft-cost",
+                "query": "draft 接受率 验证成本 投机解码",
+                "expected": [
+                  "infra.speculative-acceptance"
+                ],
+                "actual": [
+                  "infra.speculative-acceptance",
+                  "algo.dora-magnitude-direction",
+                  "neuro.octopus-sleep-state-boundary"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.speculative-acceptance",
+                  "algo.dora-magnitude-direction",
+                  "neuro.octopus-sleep-state-boundary",
+                  "neuro.consciousness-adversarial-predictions"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 14235,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.018798928998876363
+              },
+              "candidate": {
+                "case": "draft-cost",
+                "query": "draft 接受率 验证成本 投机解码",
+                "expected": [
+                  "infra.speculative-acceptance"
+                ],
+                "actual": [
+                  "infra.speculative-acceptance",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.speculative-acceptance",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 14120,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.02633932100434322
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "kv-waste",
+              "baseline": {
+                "case": "kv-waste",
+                "query": "KV cache 碎片 请求调度 内存余量",
+                "expected": [
+                  "infra.pagedattention-kv"
+                ],
+                "actual": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "algo.gqa-uptraining"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "algo.gqa-uptraining"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 8566,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.018715867001446895
+              },
+              "candidate": {
+                "case": "kv-waste",
+                "query": "KV cache 碎片 请求调度 内存余量",
+                "expected": [
+                  "infra.pagedattention-kv"
+                ],
+                "actual": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "algo.gqa-uptraining"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "algo.gqa-uptraining"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 8566,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.02717082000162918
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "small-batch",
+              "baseline": {
+                "case": "small-batch",
+                "query": "小 batch 长序列 occupancy warp partition",
+                "expected": [
+                  "infra.flashattention2-occupancy"
+                ],
+                "actual": [
+                  "infra.flashattention2-occupancy",
+                  "math.descent-lyapunov-certificate",
+                  "algo.qlora-memory"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention2-occupancy",
+                  "math.descent-lyapunov-certificate",
+                  "algo.qlora-memory",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.noether-invariants"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18210,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.024963228002889082
+              },
+              "candidate": {
+                "case": "small-batch",
+                "query": "小 batch 长序列 occupancy warp partition",
+                "expected": [
+                  "infra.flashattention2-occupancy"
+                ],
+                "actual": [
+                  "infra.flashattention2-occupancy",
+                  "ai.speculative-decoding-cost-bound",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention2-occupancy",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 19154,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.02670473999751266
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "changed-baseline",
+              "baseline": {
+                "case": "changed-baseline",
+                "query": "Blackwell B200 cuDNN 版本 过时基线",
+                "expected": [
+                  "infra.flashattention4-blackwell"
+                ],
+                "actual": [
+                  "infra.flashattention4-blackwell",
+                  "neuro.zapbench-forecasting-controls",
+                  "ds.faiss-exact-vector"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention4-blackwell",
+                  "neuro.zapbench-forecasting-controls",
+                  "ds.faiss-exact-vector",
+                  "neuro.zebrafish-modular-memory",
+                  "neuro.anesthesia-temporal-isolation"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18743,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.024640240997541696
+              },
+              "candidate": {
+                "case": "changed-baseline",
+                "query": "Blackwell B200 cuDNN 版本 过时基线",
+                "expected": [
+                  "infra.flashattention4-blackwell"
+                ],
+                "actual": [
+                  "infra.flashattention4-blackwell",
+                  "neuro.zapbench-forecasting-controls",
+                  "ds.faiss-exact-vector"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention4-blackwell",
+                  "neuro.zapbench-forecasting-controls",
+                  "ds.faiss-exact-vector",
+                  "neuro.zebrafish-modular-memory",
+                  "neuro.anesthesia-temporal-isolation"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18743,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.02913472699583508
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "shared-heads",
+              "baseline": {
+                "case": "shared-heads",
+                "query": "KV heads 共享 额外训练 mean pooling",
+                "expected": [
+                  "algo.gqa-uptraining"
+                ],
+                "actual": [
+                  "algo.gqa-uptraining",
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.gqa-uptraining",
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 8566,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.025507953003398143
+              },
+              "candidate": {
+                "case": "shared-heads",
+                "query": "KV heads 共享 额外训练 mean pooling",
+                "expected": [
+                  "algo.gqa-uptraining"
+                ],
+                "actual": [
+                  "algo.gqa-uptraining",
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.gqa-uptraining",
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 8566,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.02392599500308279
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "quantized-storage",
+              "baseline": {
+                "case": "quantized-storage",
+                "query": "4bit finetuning NF4 double quantization",
+                "expected": [
+                  "algo.qlora-memory"
+                ],
+                "actual": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "math.data-processing-task-sufficiency"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "math.data-processing-task-sufficiency",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd",
+                  "math.rank-nullity-quotient"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 16007,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.02508768200641498
+              },
+              "candidate": {
+                "case": "quantized-storage",
+                "query": "4bit finetuning NF4 double quantization",
+                "expected": [
+                  "algo.qlora-memory"
+                ],
+                "actual": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "math.data-processing-task-sufficiency"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "math.data-processing-task-sufficiency",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd",
+                  "math.rank-nullity-quotient"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 16007,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.025962137995520607
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "preferences",
+              "baseline": {
+                "case": "preferences",
+                "query": "偏好学习 chosen rejected KL reference policy",
+                "expected": [
+                  "algo.dpo-offline-preferences"
+                ],
+                "actual": [
+                  "algo.dpo-offline-preferences",
+                  "algo.rs-grpo-exploration-tradeoff",
+                  "prob.conformal-policy-control"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.dpo-offline-preferences",
+                  "algo.rs-grpo-exploration-tradeoff",
+                  "prob.conformal-policy-control",
+                  "algo.rl-entropy-numerical-control"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 16884,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.02372554900648538
+              },
+              "candidate": {
+                "case": "preferences",
+                "query": "偏好学习 chosen rejected KL reference policy",
+                "expected": [
+                  "algo.dpo-offline-preferences"
+                ],
+                "actual": [
+                  "algo.dpo-offline-preferences",
+                  "algo.rs-grpo-exploration-tradeoff",
+                  "prob.conformal-policy-control"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.dpo-offline-preferences",
+                  "algo.rs-grpo-exploration-tradeoff",
+                  "prob.conformal-policy-control",
+                  "algo.rl-entropy-numerical-control"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 16884,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.022180145009770058
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "portable-adapter",
+              "baseline": {
+                "case": "portable-adapter",
+                "query": "adapter portability 量化迁移 训练预算",
+                "expected": [
+                  "algo.car-lora-transfer"
+                ],
+                "actual": [
+                  "algo.car-lora-transfer",
+                  "algo.nsa-native-training",
+                  "impl.peft-lora-dora"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.car-lora-transfer",
+                  "algo.nsa-native-training",
+                  "impl.peft-lora-dora"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9827,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.017221418005647138
+              },
+              "candidate": {
+                "case": "portable-adapter",
+                "query": "adapter portability 量化迁移 训练预算",
+                "expected": [
+                  "algo.car-lora-transfer"
+                ],
+                "actual": [
+                  "algo.car-lora-transfer",
+                  "algo.nsa-native-training",
+                  "impl.peft-lora-dora"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.car-lora-transfer",
+                  "algo.nsa-native-training",
+                  "impl.peft-lora-dora"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9827,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.025784541008761153
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "prefix-updates",
+              "baseline": {
+                "case": "prefix-updates",
+                "query": "点更新 区间求和 prefix sum",
+                "expected": [
+                  "ds.fenwick-point-range"
+                ],
+                "actual": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "algo.lora-intrinsic-rank"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "algo.lora-intrinsic-rank",
+                  "algo.rl-entropy-numerical-control"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 13659,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.020318533992394805
+              },
+              "candidate": {
+                "case": "prefix-updates",
+                "query": "点更新 区间求和 prefix sum",
+                "expected": [
+                  "ds.fenwick-point-range"
+                ],
+                "actual": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "ai.speculative-decoding-cost-bound"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 17864,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.024761068998486735
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "range-aggregate",
+              "baseline": {
+                "case": "range-aggregate",
+                "query": "区间聚合 非交换 运算 monoid",
+                "expected": [
+                  "ds.segment-monoid"
+                ],
+                "actual": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.data-processing-task-sufficiency"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.data-processing-task-sufficiency",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd",
+                  "math.rank-nullity-quotient"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 16482,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.018061378999846056
+              },
+              "candidate": {
+                "case": "range-aggregate",
+                "query": "区间聚合 非交换 运算 monoid",
+                "expected": [
+                  "ds.segment-monoid"
+                ],
+                "actual": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.data-processing-task-sufficiency"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.data-processing-task-sufficiency",
+                  "math.symmetry-quotient",
+                  "math.low-rank-svd",
+                  "math.rank-nullity-quotient"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 16482,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.02523175500391517
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "insertion-connectivity",
+              "baseline": {
+                "case": "insertion-connectivity",
+                "query": "增量连通性 insert-only union find",
+                "expected": [
+                  "ds.dsu-connectivity"
+                ],
+                "actual": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9164,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.020736842008773237
+              },
+              "candidate": {
+                "case": "insertion-connectivity",
+                "query": "增量连通性 insert-only union find",
+                "expected": [
+                  "ds.dsu-connectivity"
+                ],
+                "actual": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9164,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.02641598398622591
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "graph-matching",
+              "baseline": {
+                "case": "graph-matching",
+                "query": "二分图匹配 residual graph 容量网络",
+                "expected": [
+                  "ds.maxflow-matching"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "infra.flashinfer-scheduling",
+                  "math.contraction-residual-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "infra.flashinfer-scheduling",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18180,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.01771250400634017
+              },
+              "candidate": {
+                "case": "graph-matching",
+                "query": "二分图匹配 residual graph 容量网络",
+                "expected": [
+                  "ds.maxflow-matching"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "infra.flashinfer-scheduling",
+                  "math.contraction-residual-certificate"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "infra.flashinfer-scheduling",
+                  "math.contraction-residual-certificate",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.descent-lyapunov-certificate"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18180,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.025676521996501833
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "exact-vector",
+              "baseline": {
+                "case": "exact-vector",
+                "query": "向量检索 exact baseline L2 inner product",
+                "expected": [
+                  "ds.faiss-exact-vector"
+                ],
+                "actual": [
+                  "ds.faiss-exact-vector",
+                  "math.tensor-kronecker-calculus",
+                  "prob.vector-variance-aware-concentration"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.faiss-exact-vector",
+                  "math.tensor-kronecker-calculus",
+                  "prob.vector-variance-aware-concentration",
+                  "math.sylvester-equation-separation",
+                  "prob.self-normalized-dimension-barrier"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18034,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.018495921001886018
+              },
+              "candidate": {
+                "case": "exact-vector",
+                "query": "向量检索 exact baseline L2 inner product",
+                "expected": [
+                  "ds.faiss-exact-vector"
+                ],
+                "actual": [
+                  "ds.faiss-exact-vector",
+                  "math.tensor-kronecker-calculus",
+                  "prob.vector-variance-aware-concentration"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.faiss-exact-vector",
+                  "math.tensor-kronecker-calculus",
+                  "prob.vector-variance-aware-concentration",
+                  "math.sylvester-equation-separation",
+                  "prob.self-normalized-dimension-barrier"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18034,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.023705618994426914
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "recall-memory",
+              "baseline": {
+                "case": "recall-memory",
+                "query": "近似近邻 ANN memory ef recall",
+                "expected": [
+                  "ds.hnsw-recall-budget"
+                ],
+                "actual": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "infra.flashattention-io"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "infra.flashattention-io"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9311,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.019086999003775418
+              },
+              "candidate": {
+                "case": "recall-memory",
+                "query": "近似近邻 ANN memory ef recall",
+                "expected": [
+                  "ds.hnsw-recall-budget"
+                ],
+                "actual": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "infra.flashattention-io"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "infra.flashattention-io"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9311,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.023068228008924052
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "no-hit",
+              "baseline": {
+                "case": "no-hit",
+                "query": "zzqxengineeringnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.02009904000442475
+              },
+              "candidate": {
+                "case": "no-hit",
+                "query": "zzqxengineeringnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.022975439991569147
+              },
+              "regressed_metrics": []
+            }
+          ]
+        },
+        "sqlite": {
+          "baseline": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 1.0
+          },
+          "candidate": {
+            "mean_recall_at_3": 1.0,
+            "mean_context_recall": 1.0,
+            "mean_reciprocal_rank": 1.0
+          },
+          "queries": [
+            {
+              "case": "draft-cost",
+              "baseline": {
+                "case": "draft-cost",
+                "query": "draft 接受率 验证成本 投机解码",
+                "expected": [
+                  "infra.speculative-acceptance"
+                ],
+                "actual": [
+                  "infra.speculative-acceptance",
+                  "algo.dora-magnitude-direction",
+                  "neuro.octopus-sleep-state-boundary"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.speculative-acceptance",
+                  "algo.dora-magnitude-direction",
+                  "neuro.octopus-sleep-state-boundary",
+                  "neuro.consciousness-adversarial-predictions"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 14235,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.004567089010379277
+              },
+              "candidate": {
+                "case": "draft-cost",
+                "query": "draft 接受率 验证成本 投机解码",
+                "expected": [
+                  "infra.speculative-acceptance"
+                ],
+                "actual": [
+                  "infra.speculative-acceptance",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.speculative-acceptance",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 14120,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0052604840020649135
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "kv-waste",
+              "baseline": {
+                "case": "kv-waste",
+                "query": "KV cache 碎片 请求调度 内存余量",
+                "expected": [
+                  "infra.pagedattention-kv"
+                ],
+                "actual": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "ds.hnsw-recall-budget"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "ds.hnsw-recall-budget"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9417,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.004509163001785055
+              },
+              "candidate": {
+                "case": "kv-waste",
+                "query": "KV cache 碎片 请求调度 内存余量",
+                "expected": [
+                  "infra.pagedattention-kv"
+                ],
+                "actual": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "ds.hnsw-recall-budget"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.pagedattention-kv",
+                  "infra.flashinfer-scheduling",
+                  "ds.hnsw-recall-budget"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9417,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.002974376009660773
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "small-batch",
+              "baseline": {
+                "case": "small-batch",
+                "query": "小 batch 长序列 occupancy warp partition",
+                "expected": [
+                  "infra.flashattention2-occupancy"
+                ],
+                "actual": [
+                  "infra.flashattention2-occupancy",
+                  "ds.faiss-exact-vector",
+                  "infra.speculative-acceptance"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention2-occupancy",
+                  "ds.faiss-exact-vector",
+                  "infra.speculative-acceptance"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 8947,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0036728670092998073
+              },
+              "candidate": {
+                "case": "small-batch",
+                "query": "小 batch 长序列 occupancy warp partition",
+                "expected": [
+                  "infra.flashattention2-occupancy"
+                ],
+                "actual": [
+                  "infra.flashattention2-occupancy",
+                  "ai.speculative-decoding-cost-bound",
+                  "ds.faiss-exact-vector"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention2-occupancy",
+                  "ai.speculative-decoding-cost-bound",
+                  "ai.speculative-sampling-residual-exactness",
+                  "ds.faiss-exact-vector"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 17489,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.004468439001357183
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "changed-baseline",
+              "baseline": {
+                "case": "changed-baseline",
+                "query": "Blackwell B200 cuDNN 版本 过时基线",
+                "expected": [
+                  "infra.flashattention4-blackwell"
+                ],
+                "actual": [
+                  "infra.flashattention4-blackwell",
+                  "neuro.zapbench-forecasting-controls",
+                  "ds.faiss-exact-vector"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention4-blackwell",
+                  "neuro.zapbench-forecasting-controls",
+                  "ds.faiss-exact-vector",
+                  "neuro.zebrafish-modular-memory",
+                  "neuro.anesthesia-temporal-isolation"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18743,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.003859453005134128
+              },
+              "candidate": {
+                "case": "changed-baseline",
+                "query": "Blackwell B200 cuDNN 版本 过时基线",
+                "expected": [
+                  "infra.flashattention4-blackwell"
+                ],
+                "actual": [
+                  "infra.flashattention4-blackwell",
+                  "ds.faiss-exact-vector",
+                  "neuro.zapbench-forecasting-controls"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "infra.flashattention4-blackwell",
+                  "ds.faiss-exact-vector",
+                  "neuro.zapbench-forecasting-controls",
+                  "neuro.zebrafish-modular-memory",
+                  "neuro.anesthesia-temporal-isolation"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18743,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00398212400614284
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "shared-heads",
+              "baseline": {
+                "case": "shared-heads",
+                "query": "KV heads 共享 额外训练 mean pooling",
+                "expected": [
+                  "algo.gqa-uptraining"
+                ],
+                "actual": [
+                  "algo.gqa-uptraining",
+                  "algo.dora-magnitude-direction",
+                  "infra.pagedattention-kv"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.gqa-uptraining",
+                  "algo.dora-magnitude-direction",
+                  "infra.pagedattention-kv"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 8363,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.004339373001130298
+              },
+              "candidate": {
+                "case": "shared-heads",
+                "query": "KV heads 共享 额外训练 mean pooling",
+                "expected": [
+                  "algo.gqa-uptraining"
+                ],
+                "actual": [
+                  "algo.gqa-uptraining",
+                  "algo.dora-magnitude-direction",
+                  "infra.pagedattention-kv"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.gqa-uptraining",
+                  "algo.dora-magnitude-direction",
+                  "infra.pagedattention-kv"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 8363,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0032989049941534176
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "quantized-storage",
+              "baseline": {
+                "case": "quantized-storage",
+                "query": "4bit finetuning NF4 double quantization",
+                "expected": [
+                  "algo.qlora-memory"
+                ],
+                "actual": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9976,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0037908320082351565
+              },
+              "candidate": {
+                "case": "quantized-storage",
+                "query": "4bit finetuning NF4 double quantization",
+                "expected": [
+                  "algo.qlora-memory"
+                ],
+                "actual": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.qlora-memory",
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9976,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.003069375001359731
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "preferences",
+              "baseline": {
+                "case": "preferences",
+                "query": "偏好学习 chosen rejected KL reference policy",
+                "expected": [
+                  "algo.dpo-offline-preferences"
+                ],
+                "actual": [
+                  "algo.dpo-offline-preferences",
+                  "algo.rs-grpo-exploration-tradeoff",
+                  "prob.conformal-policy-control"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.dpo-offline-preferences",
+                  "algo.rs-grpo-exploration-tradeoff",
+                  "prob.conformal-policy-control",
+                  "algo.rl-entropy-numerical-control"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 16884,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0046209029969759285
+              },
+              "candidate": {
+                "case": "preferences",
+                "query": "偏好学习 chosen rejected KL reference policy",
+                "expected": [
+                  "algo.dpo-offline-preferences"
+                ],
+                "actual": [
+                  "algo.dpo-offline-preferences",
+                  "algo.rs-grpo-exploration-tradeoff",
+                  "prob.conformal-policy-control"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.dpo-offline-preferences",
+                  "algo.rs-grpo-exploration-tradeoff",
+                  "prob.conformal-policy-control",
+                  "algo.rl-entropy-numerical-control"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 16884,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.004563182999845594
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "portable-adapter",
+              "baseline": {
+                "case": "portable-adapter",
+                "query": "adapter portability 量化迁移 训练预算",
+                "expected": [
+                  "algo.car-lora-transfer"
+                ],
+                "actual": [
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora",
+                  "algo.dora-magnitude-direction"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora",
+                  "algo.dora-magnitude-direction"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9665,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.003449896990787238
+              },
+              "candidate": {
+                "case": "portable-adapter",
+                "query": "adapter portability 量化迁移 训练预算",
+                "expected": [
+                  "algo.car-lora-transfer"
+                ],
+                "actual": [
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora",
+                  "algo.dora-magnitude-direction"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "algo.car-lora-transfer",
+                  "impl.peft-lora-dora",
+                  "algo.dora-magnitude-direction"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9665,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.004128700995352119
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "prefix-updates",
+              "baseline": {
+                "case": "prefix-updates",
+                "query": "点更新 区间求和 prefix sum",
+                "expected": [
+                  "ds.fenwick-point-range"
+                ],
+                "actual": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "algo.lora-intrinsic-rank"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "algo.lora-intrinsic-rank",
+                  "algo.rl-entropy-numerical-control"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 13659,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0035830199922202155
+              },
+              "candidate": {
+                "case": "prefix-updates",
+                "query": "点更新 区间求和 prefix sum",
+                "expected": [
+                  "ds.fenwick-point-range"
+                ],
+                "actual": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "algo.lora-intrinsic-rank"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.fenwick-point-range",
+                  "ds.segment-monoid",
+                  "algo.lora-intrinsic-rank",
+                  "algo.rl-entropy-numerical-control"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 13659,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0034339340054430068
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "range-aggregate",
+              "baseline": {
+                "case": "range-aggregate",
+                "query": "区间聚合 非交换 运算 monoid",
+                "expected": [
+                  "ds.segment-monoid"
+                ],
+                "actual": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.symmetry-quotient"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.symmetry-quotient",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 14439,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.003438630999880843
+              },
+              "candidate": {
+                "case": "range-aggregate",
+                "query": "区间聚合 非交换 运算 monoid",
+                "expected": [
+                  "ds.segment-monoid"
+                ],
+                "actual": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.symmetry-quotient"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.segment-monoid",
+                  "ds.fenwick-point-range",
+                  "math.symmetry-quotient",
+                  "math.data-processing-task-sufficiency",
+                  "math.reynolds-projection"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 14439,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.003229481997550465
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "insertion-connectivity",
+              "baseline": {
+                "case": "insertion-connectivity",
+                "query": "增量连通性 insert-only union find",
+                "expected": [
+                  "ds.dsu-connectivity"
+                ],
+                "actual": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9164,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0027426629967521876
+              },
+              "candidate": {
+                "case": "insertion-connectivity",
+                "query": "增量连通性 insert-only union find",
+                "expected": [
+                  "ds.dsu-connectivity"
+                ],
+                "actual": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.dsu-connectivity",
+                  "ds.fenwick-point-range",
+                  "algo.gqa-uptraining"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 9164,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00294211799337063
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "graph-matching",
+              "baseline": {
+                "case": "graph-matching",
+                "query": "二分图匹配 residual graph 容量网络",
+                "expected": [
+                  "ds.maxflow-matching"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-solve-backward-error"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-solve-backward-error",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18365,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0036048170004505664
+              },
+              "candidate": {
+                "case": "graph-matching",
+                "query": "二分图匹配 residual graph 容量网络",
+                "expected": [
+                  "ds.maxflow-matching"
+                ],
+                "actual": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-solve-backward-error"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.maxflow-matching",
+                  "math.contraction-residual-certificate",
+                  "math.linear-solve-backward-error",
+                  "math.linear-system-stability",
+                  "physics.dimensionless",
+                  "math.cauchy-schwarz",
+                  "math.topk-margin"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 18365,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "partial",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.004385640000691637
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "exact-vector",
+              "baseline": {
+                "case": "exact-vector",
+                "query": "向量检索 exact baseline L2 inner product",
+                "expected": [
+                  "ds.faiss-exact-vector"
+                ],
+                "actual": [
+                  "ds.faiss-exact-vector",
+                  "math.tensor-kronecker-calculus",
+                  "math.cauchy-schwarz"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.faiss-exact-vector",
+                  "math.tensor-kronecker-calculus",
+                  "math.cauchy-schwarz",
+                  "math.sylvester-equation-separation",
+                  "math.score-difference-bound",
+                  "math.topk-margin"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 13279,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0036132690001977608
+              },
+              "candidate": {
+                "case": "exact-vector",
+                "query": "向量检索 exact baseline L2 inner product",
+                "expected": [
+                  "ds.faiss-exact-vector"
+                ],
+                "actual": [
+                  "ds.faiss-exact-vector",
+                  "math.tensor-kronecker-calculus",
+                  "math.cauchy-schwarz"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.faiss-exact-vector",
+                  "math.tensor-kronecker-calculus",
+                  "math.cauchy-schwarz",
+                  "math.sylvester-equation-separation",
+                  "math.score-difference-bound",
+                  "math.topk-margin"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 13279,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.0038042410014895722
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "recall-memory",
+              "baseline": {
+                "case": "recall-memory",
+                "query": "近似近邻 ANN memory ef recall",
+                "expected": [
+                  "ds.hnsw-recall-budget"
+                ],
+                "actual": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "prob.conformal-policy-control"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "prob.conformal-policy-control",
+                  "math.betting-test-martingale"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 14813,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.003380915994057432
+              },
+              "candidate": {
+                "case": "recall-memory",
+                "query": "近似近邻 ANN memory ef recall",
+                "expected": [
+                  "ds.hnsw-recall-budget"
+                ],
+                "actual": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "prob.conformal-policy-control"
+                ],
+                "recall_at_3": 1.0,
+                "context_ids": [
+                  "ds.hnsw-recall-budget",
+                  "algo.qlora-memory",
+                  "prob.conformal-policy-control",
+                  "math.betting-test-martingale"
+                ],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 14813,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "ready",
+                "context_recall": 1.0,
+                "reciprocal_rank": 1.0,
+                "no_hit_correct": null,
+                "seconds": 0.00398715199844446
+              },
+              "regressed_metrics": []
+            },
+            {
+              "case": "no-hit",
+              "baseline": {
+                "case": "no-hit",
+                "query": "zzqxengineeringnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.0015693390014348552
+              },
+              "candidate": {
+                "case": "no-hit",
+                "query": "zzqxengineeringnonexistent",
+                "expected": [],
+                "actual": [],
+                "recall_at_3": null,
+                "context_ids": [],
+                "context_budget": {
+                  "max_entries": 8,
+                  "max_chars": 20000,
+                  "used_chars": 0,
+                  "scope": "serialized entry payload characters, not model tokens or outer envelope"
+                },
+                "context_status": "no_hits",
+                "context_recall": null,
+                "reciprocal_rank": 0,
+                "no_hit_correct": true,
+                "seconds": 0.001623989999643527
+              },
+              "regressed_metrics": []
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "script_sha256": "40dfcc200af69d05b4e890d221e729d9fe28f178dccbc1a85ec0674560d87c13",
+  "eval_script_sha256": "de7cc6682b5faecbbaf431f1f5e1741cc46ba461b158f32adb7edb3759955753"
+}

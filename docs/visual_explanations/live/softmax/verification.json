@@ -1,0 +1,84 @@
+{
+  "explanation_id": "EXPL-SOFTMAX-001",
+  "input_version": "v1",
+  "definition": "p_i(T)=exp(z_i/T)/sum_j(exp(z_j/T)), T>0",
+  "data_kind": "theoretical calculated teaching example",
+  "method": "Python standard library decimal, 50-digit precision",
+  "external_sources": "Not retrieved; no web requested by parent. Standard definition is explicit and claims are derived from it.",
+  "numerical_checks": "PASS",
+  "checks": [
+    "normalization to within 1e-48",
+    "correct two-decimal percentage labels",
+    "positive-T category order",
+    "stable-softmax equivalence",
+    "adjacent odds identity",
+    "maximum probability decreases for requested T values",
+    "entropy increases for requested T values"
+  ],
+  "rounding_note": "T=1 displayed percentages sum to 99.99%, while unrounded probabilities normalize to 1.",
+  "rows": [
+    {
+      "T": "0.5",
+      "scaled_logits": [
+        "4",
+        "2",
+        "0E+1"
+      ],
+      "probabilities_decimal_50_digits": [
+        "0.86681333219733487114436782931532701766494579878539",
+        "0.11731042782619836253291058214592632894068603138531",
+        "0.015876239976466766322721588538746653394368169829291"
+      ],
+      "percentage_labels": [
+        "86.68",
+        "11.73",
+        "1.59"
+      ],
+      "normalization_error": "1E-50",
+      "adjacent_odds": "7.3890560989306502272304274605750078131803155705520",
+      "entropy_nats": "0.44105744405816331954955784787874407895839340755174"
+    },
+    {
+      "T": "1",
+      "scaled_logits": [
+        "2",
+        "1",
+        "0"
+      ],
+      "probabilities_decimal_50_digits": [
+        "0.66524095577482188952901828017474540493276906025054",
+        "0.24472847105479765247295961834076279719930007483797",
+        "0.090030573170380457998022101484491797867930864911466"
+      ],
+      "percentage_labels": [
+        "66.52",
+        "24.47",
+        "9.00"
+      ],
+      "normalization_error": "2E-50",
+      "adjacent_odds": "2.7182818284590452353602874713526624977572470936999",
+      "entropy_nats": "0.83239558183993887295192372585481684440810891296711"
+    },
+    {
+      "T": "2",
+      "scaled_logits": [
+        "1",
+        "0.5",
+        "0"
+      ],
+      "probabilities_decimal_50_digits": [
+        "0.50648039105565402590304212131375518366682932387879",
+        "0.30719588571849839707315714452976058291057457748681",
+        "0.18632372322584757702380073415648423342259609863440"
+      ],
+      "percentage_labels": [
+        "50.65",
+        "30.72",
+        "18.63"
+      ],
+      "normalization_error": "0E-49",
+      "adjacent_odds": "1.6487212707001281468486507878141635716537761007102",
+      "entropy_nats": "1.0201913367268313514168137569905146208520280614013"
+    }
+  ]
+}

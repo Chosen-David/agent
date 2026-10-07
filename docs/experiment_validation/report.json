@@ -1,0 +1,71 @@
+{
+  "schema_version": "experiment-validation-implementation-review/v1",
+  "recorded_at": "2026-10-07T03:12:03.586554+00:00",
+  "status": "scoped-program-and-independent-controls-passed",
+  "scope": "declared experiment producer/gate/consumer runtime, exact-version synthetic CPU and fault controls",
+  "source_and_evidence_sha256": {
+    "agent_runtime/result_validation.py": "61d259380818a7259c054b7a8ec55efb45e641554dc9f7830a309efaeadf12e1",
+    "scripts/validate_experiment_result.py": "bb2830de2c6372836ca9571ac094a328ede91bb3468bb7579c7204bd9d0e9c41",
+    "tests/test_result_validation.py": "47a3a15f31be4a2dbcfb40d87bd9b48250776a1a0dac0fc69870819965303a93",
+    "tests/test_result_gate_acceptance.py": "c58b912cf1851c6def90ca2da4671e671f23a0c097674214f4fe135dcf1c719e",
+    "workflows/result_validation_workflow.md": "5f9ecb909822f4d564cc87e390d8e45f35e73277a8618bdb66ddf7431996abc3",
+    "agent_runtime/task_manifest.py": "18a9ecfab29997d713b53ac2182e9beef7b8c71f0c1b1f4ec4b15234ee9072a3",
+    "agent_runtime/task_supervisor.py": "51a58faad545201a16ee4fab279b98425013fd8b719b138bd9c791ec94a6f2d0",
+    "docs/experiment_validation/program-tests.log": "0ae22da9f8b8502652ae636ed35c431a1f2c36b23ac8e0dfaceab40c7396d631",
+    "docs/experiment_validation/cli-positive.json": "a2f091803feff09e5412fe556eda568c44b338f8a9dd336f3e919dfbe2738bf7",
+    "docs/experiment_validation/cli-no-provider.json": "ae2d164623ecd70b7e6ca62d15549c5ba0cce43a4fd3a9a371c1b9a9d18368b8",
+    "docs/experiment_validation/independent/final-tests.log": "4b940bc99803734e98fda47603a9d58d04dd772c3f97e37f571e47d188e0221b",
+    "docs/experiment_validation/independent/frozen-acceptance.json": "fe42d9bc39c8249b95d079329cbc13e7c5d30d7a433bd33bce334b4c99fc74c8",
+    "docs/experiment_validation/independent/initial-callback-crash.log": "d0c3332499807372ab54117769be9b7e259a567284cb6d4757a644d532a2d38c",
+    "docs/experiment_validation/independent/reviewed-source.json": "0a076cd262e4bea7bfe7b84e0ff240a56a4ed0d8dd2c8504077b4135ae6a548e",
+    "docs/experiment_validation/reference-run-v2/code.py": "ed816647d1ebfdff3e7c51a1d32fb10ba5f81153ea61ae341aa13a2e09a7bf0a",
+    "docs/experiment_validation/reference-run-v2/config.json": "b407f80753b6e3714148e2f075ae7449ea845a57b166ea25f62ff2325a545efc",
+    "docs/experiment_validation/reference-run-v2/contract.json": "938848e14020838ecf68bf82af018fcde69f7f8a3021e72a9c41637ae18541e6",
+    "docs/experiment_validation/reference-run-v2/environment.json": "68d873bfc577bfd597b62c9642018ef3e541c009c8f3a45a8a9dced18ec1ad83",
+    "docs/experiment_validation/reference-run-v2/inputs.json": "035f6cbf03bd07750867f5bc283ac383fa91f9777b88bbf98d3b5e169508c85b",
+    "docs/experiment_validation/reference-run-v2/manifest.json": "ba9bfb4d431386e38cac2c40f348369d6be8a4c6972604ce1f0066c8eb5d08a2",
+    "docs/experiment_validation/reference-run-v2/output.json": "588a250896afb889b9e03de7fdfcba90f85ff36e5b5ae6c17fe689dbd089573e",
+    "docs/experiment_validation/reference-run-v2/raw.json": "5228fac4984a37c81996f4ba2691d41d201e25caec7200739a6cafa15b545374",
+    "docs/experiment_validation/reference-run-v2/scoped-check.json": "a2f091803feff09e5412fe556eda568c44b338f8a9dd336f3e919dfbe2738bf7",
+    "docs/experiment_validation/reference-run-v2/validation-plan.json": "058abca07cb14119b33cce74dea04b3549ff6996241f03c84598db386bbf5f2b",
+    "docs/experiment_validation/reference-run-v2/without-provider.json": "ae2d164623ecd70b7e6ca62d15549c5ba0cce43a4fd3a9a371c1b9a9d18368b8"
+  },
+  "checks": {
+    "implementation_tests": {
+      "passed": 18,
+      "failed": 0,
+      "command": "python -m unittest tests.test_result_validation -v"
+    },
+    "independent_tests": {
+      "passed": 14,
+      "failed": 0,
+      "test_file": "tests/test_result_gate_acceptance.py",
+      "reviewer": "independent architecture reviewer, separate fixture and frozen cases"
+    },
+    "cli": {
+      "trusted_adapter": "usable-with-scope; exit 0",
+      "without_provider": "pending; exit 2"
+    },
+    "runtime": "actual SQLite ReportingHandler producer → gate → consumer with callback-backed report/recovery verification"
+  },
+  "retained_failures": [
+    {
+      "finding": "Verifier RuntimeError escaped inspection",
+      "resolution": "Host-callback exceptions now return retriable pending; independently retested",
+      "evidence": "docs/experiment_validation/independent/initial-callback-crash.log"
+    },
+    {
+      "finding": "Initial fixture command metadata only loaded code while harness produced observations",
+      "resolution": "Initial raw/report preserved as superseded insufficient evidence; v2 actually runs recorded subprocess command",
+      "evidence": "docs/experiment_validation/reference-run-v1-metadata-correction/"
+    }
+  ],
+  "limits": [
+    "No absolute bug-free claim; finite synthetic independent checks only",
+    "No GPU, paid model, real scientific workload, speedup or installed-host deployment",
+    "Final integrated repository regression/publication remains owned by parent release process",
+    "Trusted host must authenticate reviewer provenance, classify all experiments and inspect dependency completeness",
+    "Hashes/JSON alone are not independent proof; unconfigured adapters leave results pending",
+    "Application-level declared-path controls are not OS security isolation"
+  ]
+}

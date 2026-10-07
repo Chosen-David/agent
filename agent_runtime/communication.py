@@ -12,6 +12,7 @@ from pathlib import Path
 import sqlite3
 
 from scripts.validate_handoff import _load_json, validate
+from .project_docs import guard_write_path
 
 
 KINDS = {'artifact', 'question', 'review', 'blocker', 'correction'}
@@ -59,7 +60,7 @@ class Mailbox:
         self.plan = json.loads(canonical(plan))
         self.run_id = self.plan['run_id']
         self.root = Path(artifact_root).resolve()
-        self.path = Path(db_path)
+        self.path = guard_write_path(db_path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
         with self.connect() as db:
             db.executescript('''
@@ -86,6 +87,7 @@ class Mailbox:
 
     @contextmanager
     def connect(self):
+        guard_write_path(self.path)
         db = sqlite3.connect(self.path, timeout=30)
         db.row_factory = sqlite3.Row
         try:

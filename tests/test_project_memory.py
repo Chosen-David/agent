@@ -248,5 +248,44 @@ class MemoryTests(unittest.TestCase):
         self.assertIn('stale', json.loads(failed.stderr)['error'])
 
 
+class DocumentMemoryTests(unittest.TestCase):
+    def test_guide_revision_invalidates_bound_interpretations_not_raw_measurements(self):
+        from agent_runtime.project_docs import migrate, snapshot_project_docs
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'TASK.md').write_text('## 2026-10-07\n- [ ] [T1] Validate result\n')
+            migrate(root, '2026-10-07')
+            guide = root / 'doc/guide/guide.md'; guide.write_text('Owner metric A')
+            ledger = MemoryLedger(root, create=True)
+            ledger.add('raw', 'observation', 'Original measured bytes', 'fixture:measurement', evidence='verified')
+            ledger.add('claim', 'claim', 'Accepted under metric A', 'fixture:independent-review',
+                       deps=['raw'], evidence='verified', document_refs=snapshot_project_docs(root))
+            ledger.add('report', 'artifact', 'Dependent report', 'fixture:report', deps=['claim'], evidence='verified')
+            ledger.check(['report'])
+            guide.write_text('Owner metric B')
+            for entry in ('claim', 'report'):
+                with self.assertRaisesRegex(MemoryError, 'document dependencies'):
+                    ledger.check([entry])
+            self.assertEqual(ledger.check(['raw'])[0]['content'], 'Original measured bytes')
+            self.assertEqual(ledger.history('claim')['entry']['content'], 'Accepted under metric A')
+
+    def test_progress_does_not_invalidate_memory_but_current_binding_required_for_revision(self):
+        from agent_runtime.project_docs import migrate, snapshot_project_docs, write_task_progress
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'TASK.md').write_text('## 2026-10-07\n- [ ] [T1] Validate result\n')
+            snapshot = migrate(root, '2026-10-07')
+            ledger = MemoryLedger(root, create=True)
+            ledger.add('intent', 'intention', 'Original plan', 'owner:1', evidence='user_confirmed', document_refs=snapshot)
+            write_task_progress(root, 'T1', 'Routine evidence append',
+                                expected_plan_sha256=snapshot['task_details']['T1']['sha256'])
+            ledger.check(['intent'])
+            with self.assertRaisesRegex(MemoryError, 'new current'):
+                ledger.correct('intent', 'intent-v2', 'Correction', 'owner:2', 'reason')
+            ledger.correct('intent', 'intent-v2', 'Correction', 'owner:2', 'reason',
+                           document_refs=snapshot_project_docs(root))
+            ledger.check(['intent-v2'])
+
+
 if __name__ == '__main__':
     unittest.main()

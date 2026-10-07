@@ -6,16 +6,33 @@
 
 适用于具备相应工具能力的 ChatGPT/Codex、Claude 及其他主 AI。当前提供科研/论文角色与独立旅行规划能力，并附完整工作流、可复制 Prompt 和插件包。未来可增加编程、学习、产品等领域的独立分类，不必改写主 AI 的身份。
 
+## 新指令先检索已有数据
+
+当前项目新数据统一存放在 `doc/results/<run_id>/`，保留元数据和验证记录。收到新指令先检索已有结果，比较任务、代码/输入/配置/环境、指标单位与当前独立验收，能复用的先复用，条件变化只补必要检查；明确复现和新主张验收不能跳过。旧冻结文件可按原路径/哈希索引，不把未搬移的文件说成已归集。[结果检索与复用](workflows/result_reuse_workflow.md)。
+
+## 每轮测试/实验数据的独立验证
+
+数据生产后保持待验；主 AI 在生产者与后续分析、图表、结论之间插入独立 `verify_experiment_result` 节点，核对实际代码、输入/配置和数据有效性。失败或版本过期先修复、重测和复验，保留原始记录；通过仅代表已验证范围内可用，不能保证绝对没有 bug。[执行契约与宿主边界](workflows/result_validation_workflow.md)。
+
+## 项目文档分层
+
+- [任务索引](doc/task/TASK.md)：按日期简洁列出任务；AI 在 `doc/task/task_details/*.md` 维护每项方法、进度、证据与下一步。
+- `doc/guide/`：人类专用，`guide.md` 是已核实人类来源后的最高项目规划依据。AI 只读，绝不创建、编辑、删除或移动其中的文件，初始化仅建空目录。
+- `doc/results/<run_id>/`：新数据、元数据和独立验证共享入口；新指令规划前先查询既有结果。
+- `doc/advice/`：人类和 AI 可编辑建议与反馈；核验后记录采用、调整后采用、拒绝或暂缓及理由，不盲从其他 AI。
+
+[目录说明与人类使用方式](doc/README.md) · [文档治理、任务绑定与恢复](workflows/project_document_workflow.md)。宿主安全/权限和用户当前明确决定继续适用；已有 `docs/` 研究证据保持原路径，根 `TASK.md` 迁移后仅作导航。
+
 ## Claude Code 快速接入
 
-[当前根任务清单](TASK.md) · [文件管理与跨 Agent 交接](workflows/code_organization_workflow.md)
+[当前任务清单](doc/task/TASK.md) · [文件管理与跨 Agent 交接](workflows/code_organization_workflow.md)
 
 ```bash
 git clone https://github.com/Chosen-David/agent.git
 python3 agent/setup.py --target /absolute/path/to/your-project
 ```
 
-一次接入主 AI 调度、15 个 Skills 和 15 个 Claude 子 Agent；Skills 随 clone 下载，保留已有项目规则。进入目标项目启动 Claude，即可按仓库逻辑路由任务、读取 TASK.md，并由主 AI 配置 tmux 监督。安装本身不启动模型或后台任务。[完整接入与更新说明](SETUP.md)。
+一次接入主 AI 调度、15 个 Skills 和 15 个 Claude 子 Agent；Skills 随 clone 下载，保留已有项目规则。进入目标项目启动 Claude，即可按仓库逻辑路由任务、读取 doc/task/TASK.md，并由主 AI 配置 tmux 监督。安装本身不启动模型或后台任务。[完整接入与更新说明](SETUP.md)。
 
 ## 2026-10-03：源码对照与逐角色执行验证
 
@@ -48,13 +65,13 @@ python scripts/prepare_agent_eval.py --dev-eval --out /tmp/agent-eval-new-run
 - [验证记录与测试边界](docs/task_supervisor_validation.md) · [计划模板](templates/task_dag.json)
 - `python scripts/demo_task_supervisor.py`：有时间上限的本地真实 IO 演示（合成任务，无模型调用）。
 
-## 2026-10-06：tmux 监督与 TASK.md 逐项核对
+## 2026-10-06：tmux 监督与 doc/task/TASK.md 逐项核对
 
-主 AI 统一维护任务链、监督器、定时器和各 Agent。支持**自动从项目 TASK.md 编排**与**用户手动触发编排**；两者都保留需求映射、数据/产物、独立验收和剩余事项。
+主 AI 统一维护任务链、监督器、定时器和各 Agent。支持**自动从项目 doc/task/TASK.md 编排**与**用户手动触发编排**；两者都保留需求映射、数据/产物、独立验收和剩余事项。
 
 - 默认用专用 detached tmux 会话启动监督器，SSH 断开后继续运行；worker 崩溃可在会话内重启并恢复同一 SQLite 状态。
 - 每个节点结束后更新 `progress.json`；全部要求验收通过且有结果报告后才生成 `final-report.json` 并退出。失败/清单变化保留监督，交由主 AI 恢复，不能伪报完成。
-- [启动、任务文件格式、主 AI 适配器和恢复说明](workflows/task_supervision_workflow.md#tmux-与-taskmd-闭环) · [TASK.md 模板](templates/TASK.md) · [验证记录](docs/tmux_supervisor_validation.md)
+- [启动、任务文件格式、主 AI 适配器和恢复说明](workflows/task_supervision_workflow.md#tmux-与任务文档闭环) · [doc/task/TASK.md 模板](templates/TASK.md) · [验证记录](docs/tmux_supervisor_validation.md)
 - 需要服务器已具备 tmux、Python 和真实主 AI/工作 Agent 后端；仓库更新不会自动部署到用户服务器。tmux 不跨主机断电/重启保活，默认后端仅验证文件。
 
 ## 从你的目标开始
@@ -228,7 +245,8 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 | [workflows/](workflows/) | 按角色独立的完整规范与 Prompt |
 | [plugins/research-assistant/](plugins/research-assistant/) | 按角色注册表同步的科研与论文学习插件包 |
 | [plugins/travel-assistant/](plugins/travel-assistant/) | 旅行规划技能插件包 |
-| [templates/](templates/) | 科研项目输入模板 |
+| [doc/](doc/) | 人类指南、日期任务索引、AI 任务详情与经评估建议 |
+| [templates/](templates/) | 任务/详情/建议格式与科研输入模板；不在 guide 内生成 |
 | [tests/](tests/) | 伴读生成器的边界检查 |
 | [docs/validation.md](docs/validation.md) | 本轮验证范围与限制 |
 | [docs/external_projects.md](docs/external_projects.md) | 外部 Agent/Skill/Workflow 项目的优缺点、沿用顺序与接入规则 |
@@ -238,7 +256,7 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 
 ## 项目记忆、纠错与结果管理
 
-将稳定规则放根 `AGENTS.md`、当前目标/验收/结果索引放根 `TASK.md`。用户纠正意图后，主 AI 按 [项目记忆流程](workflows/project_memory_workflow.md) 撤销受影响的旧结论并重新核验，保留原始观测和无关成果。项目账本不等同于平台云端记忆。
+稳定规则放根 `AGENTS.md`，日期任务索引放 `doc/task/TASK.md`，具体方法/验收/进度/证据放 `doc/task/task_details/*.md`；先核对人类指南与建议取舍。用户纠正意图后，主 AI 按 [项目记忆流程](workflows/project_memory_workflow.md) 撤销受影响的旧结论并重新核验，保留原始观测和无关成果。项目账本不等同于平台云端记忆。
 
 [文件管理 Agent](workflows/code_organization_workflow.md) 协调生产者/消费者、参数化脚本和产物索引；[报告工具](scripts/publish_report.py) 保留不可变 run 快照和稳定 latest 入口。脚本与账本需实际接入，文件存在不证明模型自动遵守或服务器已部署。
 

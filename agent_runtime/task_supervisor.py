@@ -22,6 +22,7 @@ import uuid
 
 from .core import ArtifactHandler, Engine, Store
 from .scheduler import LocalScheduler, arm
+from .project_docs import assert_ai_writable, guard_write_path, resolve_task_file
 from .task_manifest import (ReportingHandler, atomic_json, prepare, review,
                             validate_contract)
 
@@ -45,47 +46,48 @@ def load_backend(config, store):
         handler = ArtifactHandler(root)
         backend = {'handlers': {'verify_artifacts': handler},
                    'authorize': lambda plan, task, candidate: candidate is handler}
-    handlers = {name: ReportingHandler(h, root) for name, h in backend['handlers'].items()}
+    handlers = {name: ReportingHandler(h, root, backend.get('result_verifier')) for name, h in backend['handlers'].items()}
     authorize = backend['authorize']
     return (handlers, lambda plan, task, wrapper: authorize(plan, task, wrapper.handler),
-            backend.get('maintain'))
+            backend.get('maintain'), backend.get('result_verifier'))
 
 
-def publish(config, store, **extra):
-    report = review(store.snapshot(config['run_id']), config['project_root'])
+def publish(config, store, *, result_verifier=None, **extra):
+    report = review(store.snapshot(config['run_id']), config['project_root'], result_verifier)
     report.update(updated_at=time.time(), **extra)
     atomic_json(Path(config['state_dir']) / 'progress.json', report)
     return report
 
 
 class ManagedEngine(Engine):
-    def __init__(self, config, *args, **kwargs):
+    def __init__(self, config, *args, result_verifier=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.config = config
+        self.result_verifier = result_verifier
 
     def tick(self, run_id, event_id):
         # Re-read requirements before each dispatch; edits require explicit replan.
         snap = self.store.snapshot(run_id)
-        validate_contract(snap['plan'], self.config['project_root'])
+        validate_contract(snap['plan'], self.config['project_root'], check_adopted_advice=False)
         state = super().tick(run_id, event_id)
-        publish(self.config, self.store, last_event=event_id)
+        publish(self.config, self.store, result_verifier=self.result_verifier, last_event=event_id)
         return state
 
 
 def worker(config):
     if not os.environ.get('TMUX'):
         raise RuntimeError('managed supervisor must run inside tmux; use start')
-    state_dir = Path(config['state_dir'])
+    state_dir = assert_ai_writable(config['project_root'], config['state_dir'])
     # A DB has exactly one managed worker; duplicate starts cannot duplicate agents.
-    with (state_dir / 'worker.lock').open('a') as lock:
+    with guard_write_path(state_dir / 'worker.lock').open('a') as lock:
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             return 0
         store = Store(state_dir / 'state.sqlite')
         scheduler = LocalScheduler(store)
-        handlers, authorize, maintain = load_backend(config, store)
-        engine = ManagedEngine(config, store, handlers, authorize)
+        handlers, authorize, maintain, result_verifier = load_backend(config, store)
+        engine = ManagedEngine(config, store, handlers, authorize, result_verifier=result_verifier)
         service_id = 'tmux:' + uuid.uuid4().hex
         stopped = []
         signal.signal(signal.SIGTERM, lambda *_: stopped.append(True))
@@ -98,7 +100,7 @@ def worker(config):
                 atomic_json(state_dir / 'live.json', {
                     'run_id': config['run_id'], 'session': config['session'],
                     'pid': os.getpid(), 'heartbeat_at': time.time(), 'service_id': service_id})
-                report = publish(config, store)
+                report = publish(config, store, result_verifier=result_verifier)
                 if report['runtime_status'] == 'cancelled':
                     return 0
                 if report['runtime_status'] == 'done' and not report['source_error']:
@@ -108,11 +110,11 @@ def worker(config):
                         engine._check_done(plan, state)
                         engine._summary(plan, state)
                         store.save(db, config['run_id'], state)
-                    report = publish(config, store)
+                    report = publish(config, store, result_verifier=result_verifier)
                     if report['all_reportable']:
                         scheduler.stop(monitor_id)
                         monitor = store.snapshot(config['run_id'])['monitor']
-                        final = publish(config, store, monitor=scheduler.read(monitor_id) if monitor else None)
+                        final = publish(config, store, result_verifier=result_verifier, monitor=scheduler.read(monitor_id) if monitor else None)
                         atomic_json(state_dir / 'final-report.json', final)
                         return 0
                 try:
@@ -135,16 +137,16 @@ def worker(config):
                         scheduler.drain_once(engine, config['run_id'])
                     # Failed/source-changed chains keep the owner alive for recovery;
                     # they never produce a success report or repeatedly run failed work.
-                    publish(config, store, maintenance_available=maintain is not None)
+                    publish(config, store, result_verifier=result_verifier, maintenance_available=maintain is not None)
                 except Exception as exc:
-                    publish(config, store, supervisor_error=f'{type(exc).__name__}: {exc}')
+                    publish(config, store, result_verifier=result_verifier, supervisor_error=f'{type(exc).__name__}: {exc}')
                     print(f'supervision error: {type(exc).__name__}: {exc}', flush=True)
                 time.sleep(1)
             return 0
         finally:
             with store.transaction() as db:
                 db.execute('DELETE FROM services WHERE id=?', (service_id,))
-            (state_dir / 'live.json').unlink(missing_ok=True)
+            guard_write_path(state_dir / 'live.json').unlink(missing_ok=True)
 
 
 def guard(config_path):
@@ -152,7 +154,8 @@ def guard(config_path):
     if not os.environ.get('TMUX'):
         raise RuntimeError('guard requires tmux; use start')
     config = json.loads(Path(config_path).read_text())
-    with (Path(config['state_dir']) / 'supervisor.log').open('a', buffering=1) as log:
+    assert_ai_writable(config['project_root'], config['state_dir'])
+    with guard_write_path(Path(config['state_dir']) / 'supervisor.log').open('a', buffering=1) as log:
         while True:
             if Store(Path(config['state_dir']) / 'state.sqlite').snapshot(config['run_id'])['state']['status'] == 'cancelled':
                 return
@@ -193,13 +196,14 @@ def start(plan_path, project_root, state_dir, adapter=None):
     if not shutil.which('tmux'):
         raise RuntimeError('tmux unavailable; supervisor was NOT started (no foreground fallback)')
     plan = json.loads(Path(plan_path).read_text())
-    root, state_dir = Path(project_root).resolve(), Path(state_dir).resolve()
+    root = Path(project_root).resolve()
+    state_dir = assert_ai_writable(root, state_dir)
     validate_contract(plan, root)
     if any(t['action'] == 'configure_host_action' or t['done_when'].get('configure_acceptance') for t in plan['tasks']):
         raise ValueError('draft only: main AI must configure actions, dependencies and acceptance first')
     state_dir.mkdir(parents=True, exist_ok=True)
     # Serialize start/configuration changes, separate from the lifetime worker lock.
-    with (state_dir / 'launch.lock').open('a') as lock:
+    with guard_write_path(state_dir / 'launch.lock').open('a') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         config = {'run_id': plan['run_id'], 'project_root': str(root), 'state_dir': str(state_dir),
                   'adapter': str(Path(adapter).resolve()) if adapter else None,
@@ -213,12 +217,15 @@ def start(plan_path, project_root, state_dir, adapter=None):
         if hashlib.sha256(source_bytes).hexdigest() != plan['task_source']['sha256']:
             raise ValueError('TASK.md changed during startup; reconcile before dispatch')
         atomic_json(state_dir / 'source-snapshot.json', {
-            'sha256': plan['task_source']['sha256'], 'content': source_bytes.decode('utf-8')})
+            'sha256': plan['task_source']['sha256'], 'content': source_bytes.decode('utf-8'),
+            'project_documents': plan.get('project_documents'),
+            'guide_reviews': plan.get('guide_reviews'), 'advice_assessments': plan.get('advice_assessments')})
+        validate_contract(plan, root)
         atomic_json(config_path, config)
         existing = tmux('has-session', '-t', '=' + config['session'], check=False).returncode == 0
         if not existing:
-            (state_dir / 'final-report.json').unlink(missing_ok=True)
-            (state_dir / 'live.json').unlink(missing_ok=True)
+            guard_write_path(state_dir / 'final-report.json').unlink(missing_ok=True)
+            guard_write_path(state_dir / 'live.json').unlink(missing_ok=True)
             command = 'exec ' + shlex.join([sys.executable, '-m', 'agent_runtime.task_supervisor',
                                            '_guard', '--config', str(config_path)])
             tmux('new-session', '-d', '-s', config['session'], '-c', str(CODE_ROOT), command)
@@ -243,7 +250,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest='command', required=True)
     p = sub.add_parser('prepare')
-    p.add_argument('--task-file', default='TASK.md')
+    p.add_argument('--task-file', help='canonical index or legacy TASK; defaults to project resolver')
+    p.add_argument('--project-root', default='.')
     p.add_argument('--run-id', required=True)
     p.add_argument('--mode', choices=('auto', 'manual'), default='auto')
     p.add_argument('--authorization-reference', required=True)
@@ -260,7 +268,7 @@ def main():
             p.add_argument('--reference', required=True)
     args = parser.parse_args()
     if args.command == 'prepare':
-        plan = prepare(args.task_file, args.run_id, args.mode, args.authorization_reference)
+        plan = prepare(args.task_file or resolve_task_file(args.project_root), args.run_id, args.mode, args.authorization_reference)
         atomic_json(args.out, plan)
         result = {'status': 'draft', 'plan': str(Path(args.out).resolve()), 'tasks': len(plan['tasks'])}
     elif args.command == 'start':

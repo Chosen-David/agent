@@ -12,6 +12,10 @@
 - 同一项目沿用已验证 Skill 和风格锁；新项目先检查可用能力，再按需求有限选型。实际读取候选 SKILL.md、依赖、样例，不凭名字推断能力；离线可用已有代码并标 offline_fallback，不假装调用未安装工具。
 - 第三方审美预设不是科学规则；其强制字体、固定期刊尺寸、必加结论注释、必找一个问题或固定 legend 位置与任务冲突时不照搬。只报告实际观察的问题，原图已合格可保留。
 
+项目新指令先按 [既有结果检索与复用](result_reuse_workflow.md) 查 `doc/results/` 的相关数据及当前独立验证；来源/条件不匹配时不拼接旧结果或悄悄补造实验。
+
+对当前项目测试/实验产生的数据，先按 [结果验证闭环](result_validation_workflow.md) 消费带 `required_result_refs` 的 usable-with-scope 结果；pending、invalid 或代码/数据版本过期时不生成依赖结论图。数据格式检查、重新绘图或视觉 QA 不替代实际代码与数据的独立验收。文献原图/纯概念示意按其来源说明，不伪造本地实验验证。
+
 ## 2. 图与 panel 的交接契约
 
 沿用已有 FIG / FIG-T ID 和 run ID；专业拆分不重编号历史结果。最小单图记录可合并进 figure_notes.md，多图才分开计划、style、manifest 和 QA。字段只填适用项，不造未知值。

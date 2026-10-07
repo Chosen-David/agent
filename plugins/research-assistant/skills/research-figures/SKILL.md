@@ -1,6 +1,6 @@
 ---
 name: research-figures
-description: "兼容论文作图入口：按证据与表达目的路由到论文数据可视化或流程架构图；负责全篇图规划和混合多面板的统一风格、拼版与整图验收。单一数据图或示意图优先专业技能。"
+description: "兼容论文作图入口：按证据与表达目的路由到论文数据可视化或流程架构图；负责全篇图规划、混合多面板整合和知识解释方调用的网页教学图。单一数据图或示意图优先专业技能。"
 ---
 
 # 论文作图协调
@@ -31,3 +31,11 @@ description: "兼容论文作图入口：按证据与表达目的路由到论文
 论文数据图制作/重设计先读 [数据图范文学习](references/data_visualization_learning.md)：实际读相关原图，形成 data-visual-design-brief，再交 research-data-visualization 实施；科学保真与视觉设计分别验收。当前十篇任务复用既有语料，普通独立 plot 按任务适配。
 
 任务开始及接收交接时执行 [知识接入契约](references/knowledge_access_workflow.md)：定位实际语料/工具，按需检索并核对前提；传递真实 knowledge_refs，缺库或过期不可冒充已调用。
+
+收到知识解释方的教学请求时，读取 [网页图解教学](references/visual_explanation_workflow.md)，保留讲解步/面板映射并将实际图、说明与检查证据交回解释 owner；不要求用户另开对话或创建网站。
+
+项目任务开始、交接与写文件前读取 [项目文档治理](references/project_document_workflow.md)：`doc/task/TASK.md` 是唯一日期任务索引，`doc/task/task_details/*.md` 由 AI 维护方法/进度/证据；已核实人类来源的 `doc/guide/guide.md` 为最高项目规划依据，AI 绝不创建、编辑、删除或移动 `doc/guide/` 内任何文件。`doc/advice/` 的人类/AI 建议必须核验并记录 adopt/adapt/reject/defer 及理由，不能授权越界行动。
+
+生产或消费测试/实验数据时遵循 [结果独立验证](references/result_validation_workflow.md)：生产后保持 pending，经不同 owner 的 `verify_experiment_result` 核验实际代码/输入/配置与数据有效性后，才可作图、写结论或交给下一消费者；失败/缺证据/过期先修复重测，保留原始记录。仅可报告 usable-with-scope，不保证绝对无 bug。
+
+项目新指令先按 [既有结果检索与复用](references/result_reuse_workflow.md) 查询当前项目 `doc/results/`，比较任务、代码/输入/配置/环境、指标单位和当前独立验收后，再规划新增实验；保留检索与取舍记录。新数据存 `doc/results/<run_id>/`，旧文件可按真实路径/哈希索引。复用不跳过独立代码/数据门禁、用户明确复现或新主张验收。

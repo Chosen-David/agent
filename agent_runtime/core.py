@@ -19,6 +19,8 @@ import time
 from typing import Callable, Protocol
 import uuid
 
+from .project_docs import guard_write_path
+
 
 def packed(value):
     return json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False)
@@ -103,7 +105,7 @@ def wait_limit(task, node, now):
 
 class Store:
     def __init__(self, path):
-        self.path = str(Path(path).resolve())
+        self.path = str(guard_write_path(path))
         Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         with self.transaction() as db:
             db.execute('CREATE TABLE IF NOT EXISTS chains (id TEXT PRIMARY KEY, plan TEXT, state TEXT)')
@@ -116,6 +118,7 @@ class Store:
 
     @contextmanager
     def transaction(self):
+        guard_write_path(self.path)
         db = sqlite3.connect(self.path, timeout=30, isolation_level=None)
         db.row_factory = sqlite3.Row
         try:

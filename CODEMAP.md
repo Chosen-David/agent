@@ -50,6 +50,24 @@ NEURO-01–03：`knowledge/entries/neuroscience/` 与 `knowledge/neuroscience_so
 
 | MATH-15/16，ALG-01–05 | knowledge/entries/math.*（18新主题），docs/knowledge_learning/2026-10-07-algebra/ | 主AI知识维护 → 建模Skill、科研任务与下轮维护者 | 标准代数双索引、来源版本、76项有限检查、自然检索负结果、token成本与main发布证据；非模型收益 |
 
+2026-10-07 AIK / VEX 增量：
+
+| TASK | 实际锚点 | 生产者 → 消费者 | 用途 |
+|---|---|---|---|
+| AIK-01/02 | `knowledge/entries/ai-algorithms/ai.speculative-*`, `docs/knowledge_learning/2026-10-07-ai-algorithms/` | 知识维护/独立核验 → 建模与实现角色 | 推测采样残差校正、条件接受事件与成本边界，保留新旧检索失败及有界恢复 |
+| AIK-03 | `plugins/research-assistant/skills/model-with-knowledge/`, `knowledge/evaluation_holdouts.json` | 同步与发布验收 → 独立技能宿主/后续学习 | 版本语料快照及评测目标隔离；隔离元数据不是权限系统 |
+| VEX-01/02 | `workflows/visual_explanation_workflow.md`, `tests/test_visual_explanation.py`, `docs/visual_explanations/` | 知识解释 → 作图 → 解释消费/审查 | 网页轻量图解、步序对应、真实图像检查与已有交接完整性验证 |
+| VEX-03 | `scripts/sync_plugin_references.py` 与六个角色的生成引用 | 同步/主 AI → 分发技能与目标宿主 | 保持单包引用闭合；仓库发布与网页个人技能更新分开核验 |
+
+项目文档新架构：唯一活跃清单位于 `doc/task/TASK.md`，根 `TASK.md` 仅跳转；逐任务方法/进度/验收位于 `doc/task/task_details/`。人类专用 `doc/guide/` 只读，建议在 `doc/advice/` 评估后按任务采用。
+
+| TASK | 实际锚点 | 用途与边界 |
+|---|---|---|
+| DOC-01/02 | `agent_runtime/project_docs.py`, `scripts/project_docs.py` | 路径解析、可恢复迁移、稳定计划/可变进度、guide 依赖与应用内写入保护；不是 OS 沙箱 |
+| DOC-03/04 | `workflows/project_document_workflow.md`, `tests/test_project_docs_acceptance.py`, `tests/test_project_docs_workflow.py` | 主 AI/运行时/安装/独立技能接线、对照复验和统一发布 |
+| DATA-01/02/03 | `agent_runtime/result_validation.py`, `scripts/validate_experiment_result.py`, `workflows/result_validation_workflow.md`, `tests/test_result_validation.py`, `tests/test_result_gate_acceptance.py` | 每轮数据后的代码/数据版本与实际独立校验门禁；不承诺绝对无 bug 或未测性能 |
+| REUSE-01/02/03 | `agent_runtime/result_store.py`, `scripts/result_store.py`, `workflows/result_reuse_workflow.md`, `doc/results/`, `tests/test_result_reuse_acceptance.py` | 新命令先查历史结果，完整条件/时效/独立校验匹配后复用；不跳过显式复现和新主张验证 |
+
 | EK-112454-01–03 | `knowledge/entries/neuroscience/neuro.bumblebee-social-diffusion.*`, `evals/knowledge/bee-learning-queries.json`, `docs/knowledge_learning/2026-10-07-engineering-112454/` | 主AI/真实小时维护调用 → 知识检索、研究决策与下轮维护 | 3来源、1待发布复用卡，附表模型/计数限制；两步附录候选；全仓Windows回归阻塞，未推送；本机复现与AI收益未测 |
 
 | EK-115246-01–03 | `knowledge/entries/neuroscience/neuro.cephalopod-arm-segmentation.*`, `docs/knowledge_learning/2026-10-07-engineering-115246/verify.py`, `report.md`, `sources.json` | 主AI/既有真实小时桥 → 按需检索、研究决策与下轮维护 | 4来源、1candidate/0新增published；接口许可与重复单位诊断；旧检索非退化、相关13单测与Reader3通过；补图、数据和AI迁移未验收 |

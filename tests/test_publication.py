@@ -373,5 +373,34 @@ class PublicationTests(unittest.TestCase):
         self.assertEqual(self.ledger.status()['phase'], 'pending')
 
 
+    def test_canonical_project_index_and_details_are_frozen(self):
+        from agent_runtime.project_docs import migrate
+        migrate(self.root, '2026-10-07')
+        self.git('add', '-A')
+        mapping = {name: ['T1'] for name in self.git('diff', '--cached', '--name-only').splitlines()}
+        value = self.freeze(mapping)
+        self.assertEqual(value['candidate']['task_path'], 'doc/task/TASK.md')
+        self.assertEqual(set(value['candidate']['project_documents']['task_details']), {'T1', 'T2'})
+        self.ledger.mark_tested(self.evidence(value))
+
+    def test_ai_publication_cannot_include_any_guide_changes(self):
+        guide = self.root / 'doc/guide/guide.md'; guide.parent.mkdir(parents=True)
+        guide.write_text('Human fixture input, not AI output')
+        self.git('add', 'doc/guide/guide.md')
+        with self.assertRaisesRegex(PublicationError, 'human guide'):
+            self.freeze({'app.py': ['T1'], 'doc/guide/guide.md': ['T1']})
+        self.assertFalse(self.state.exists())
+
+    def test_ignored_human_guide_change_stales_candidate_without_git_tree_change(self):
+        guide = self.root / 'doc/guide/guide.md'; guide.parent.mkdir(parents=True)
+        guide.write_text('Human fixture input')
+        exclude = self.root / '.git/info/exclude'
+        exclude.write_text(exclude.read_text() + '\ndoc/guide/\n')
+        value = self.freeze()
+        guide.write_text('Changed human requirement')
+        with self.assertRaisesRegex(PublicationError, 'project documents changed'):
+            self.ledger.mark_tested(self.evidence(value))
+
+
 if __name__ == '__main__':
     unittest.main()
