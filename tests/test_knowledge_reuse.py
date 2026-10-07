@@ -83,9 +83,12 @@ class ReuseChecks(unittest.TestCase):
 
     def test_schedule_uses_shanghai_and_no_immediate_duplicate(self):
         monday=datetime(2026,10,5,7,59,tzinfo=SHANGHAI)
-        self.assertEqual(datetime.fromtimestamp(next_due(monday.timestamp()),SHANGHAI).hour,8)
+        self.assertEqual(datetime.fromtimestamp(next_due(monday.timestamp()),SHANGHAI),
+                         datetime(2026,10,5,8,59,tzinfo=SHANGHAI))
         due=datetime(2026,10,5,8,0,tzinfo=SHANGHAI)
-        self.assertEqual(datetime.fromtimestamp(next_due(due.timestamp()),SHANGHAI).weekday(),2)
+        self.assertEqual(next_due(due.timestamp())-due.timestamp(),3600)
+        self.assertEqual(datetime.fromtimestamp(next_due(due.timestamp()),SHANGHAI),
+                         datetime(2026,10,5,9,0,tzinfo=SHANGHAI))
 
 
 if __name__=='__main__': unittest.main()

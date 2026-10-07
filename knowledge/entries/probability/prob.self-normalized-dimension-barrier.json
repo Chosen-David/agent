@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "id": "prob.self-normalized-dimension-barrier",
+  "version": 1,
+  "status": "published",
+  "kind": "counterexample",
+  "title": "高维自归一化：无正则、双重统一界的维度障碍与平滑条件",
+  "summary": "COLT 2026 区分一维对数界与d≥2全对抗线性下界；受固定基准测度密度比约束的平滑协变量可恢复次线性界，不能无条件删除正则。",
+  "aliases": [
+    "self normalized martingale dimension barrier",
+    "高维无正则反例",
+    "doubly uniform regret",
+    "自适应协变量平滑密度比",
+    "sequential linear regression"
+  ],
+  "domains": [
+    "probability",
+    "sequential-decision"
+  ],
+  "structures": [
+    "self normalized martingale dimension barrier",
+    "高维无正则反例",
+    "doubly uniform regret",
+    "自适应协变量平滑密度比",
+    "sequential linear regression"
+  ],
+  "assumptions": [
+    "setting: online squared-loss linear regression; unrestricted comparator norm and covariate scale",
+    "noise: dyadic Rademacher martingale for lower bound; conditional sigma-sub-Gaussian for Theorem 11",
+    "smoothness: conditional covariate law relative to partial covariate history dominated by fixed mu with density ratio <= Ccov",
+    "response: Theorem 9 responses in [-1,1]; dimension-one theorem uses |y|<=m"
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/mlresearch/v336/main/assets/chen26f/chen26f.pdf",
+      "locator": "§3/Theorems 4–7 (PDF pp.8–10); Assumption 8, Theorems 9/11 (PDF pp.10–12); Appendices B–D",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-checked",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.self-normalized-dimension-barrier"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "prob.vector-variance-aware-concentration"
+    },
+    {
+      "type": "related",
+      "id": "math.betting-test-martingale"
+    }
+  ],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "COLT 2026 区分一维对数界与d≥2全对抗线性下界；受固定基准测度密度比约束的平滑协变量可恢复次线性界，不能无条件删除正则。",
+    "conditions": {
+      "setting": "online squared-loss linear regression; unrestricted comparator norm and covariate scale",
+      "noise": "dyadic Rademacher martingale for lower bound; conditional sigma-sub-Gaussian for Theorem 11",
+      "smoothness": "conditional covariate law relative to partial covariate history dominated by fixed mu with density ratio <= Ccov",
+      "response": "Theorem 9 responses in [-1,1]; dimension-one theorem uses |y|<=m"
+    },
+    "observations": [
+      "Theorem 4/5：一维 dyadic 自归一化指数矩界对应 O(log T) 控制；有界响应的在线回归可确定性达到 O(m² log T) 双重统一 regret。",
+      "Theorem 7：d≥2 时存在自适应 dyadic 构造，使 E||ST||²_(VT†)≥(1−ε²)T；尺度齐次后协变量也可有界。",
+      "Assumption 8/Theorems 9/11：固定基准测度的平滑条件给出含 sqrt(d Ccov T log(T/δ)) 的无正则界；Theorem 11还要求条件次高斯噪声。正文为理论研究，没有报告新数值实验。"
+    ],
+    "limitations": [
+      "下界针对双重统一、无正则及全对抗范围，不否定带特征/比较器限制、正则或随机设计的标准线性bandit结果。",
+      "固定有限时域T的概率界不能不加代价直接作所有t的置信序列。平滑密度比条件比口头“数据有噪声”强。",
+      "O/隐常数界不是可直接部署的置信半径；未独立逐行复核全部证明或运行形式化工具。"
+    ],
+    "minimal_checks": [
+      "明确是否真的要求同时与covariate尺度和comparator范数无关；核查维度、正则和噪声量词。",
+      "验证固定μ支配条件与Ccov来源，避免将输出噪声当作协变量平滑；奇异VT用伪逆并检查range条件。"
+    ],
+    "paper": {
+      "venue": "COLT",
+      "year": 2026,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}

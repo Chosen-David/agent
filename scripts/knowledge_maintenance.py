@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Owned tmux calendar runner for bounded, resumable knowledge maintenance.
+"""Owned tmux interval runner for bounded, resumable knowledge maintenance.
 
 The model command is explicit host configuration, never source material.
 No model or paid service is installed by this script.
@@ -7,6 +7,7 @@ No model or paid service is installed by this script.
 import argparse
 from datetime import datetime, timedelta, timezone
 import json
+import math
 import os
 from pathlib import Path
 import shlex
@@ -18,13 +19,40 @@ SOCKET = 'agent-knowledge'
 SHANGHAI = timezone(timedelta(hours=8))
 
 
-def next_due(now):
-    local = datetime.fromtimestamp(now, SHANGHAI)
-    for days in range(8):
-        date = (local + timedelta(days=days)).replace(hour=8, minute=0, second=0, microsecond=0)
-        if date.weekday() in (0, 2, 4) and date.timestamp() > now:
-            return date.timestamp()
-    raise RuntimeError('calendar did not produce a next run')
+def interval_seconds(config):
+    value = config.get('interval_seconds', 3600)
+    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+        raise ValueError('interval_seconds must be a positive integer')
+    return value
+
+
+def next_due(now, interval=3600):
+    return now + interval
+
+
+def advance_due(previous_due, now, interval):
+    """Keep the scheduled cadence, skipping elapsed slots after one round."""
+    return previous_due + max(1, math.floor((now - previous_due) / interval) + 1) * interval
+
+
+def load_state(config, now):
+    path = Path(config['state_dir'])/'state.json'
+    interval = interval_seconds(config)
+    try:
+        saved = json.loads(path.read_text(encoding='utf-8'))
+    except FileNotFoundError:
+        saved = {'rounds': []}
+    if saved.get('interval_seconds') != interval:
+        if 'next_due' in saved:
+            saved.setdefault('schedule_migrations', []).append({
+                'at': now, 'previous_due': saved['next_due'],
+                'previous_interval_seconds': saved.get('interval_seconds'),
+                'interval_seconds': interval})
+        saved.update(interval_seconds=interval, next_due=next_due(now, interval))
+    # Persist the migration before a heartbeat or a model launch. A guard restart
+    # must not reset the new due time or discard historical round receipts.
+    atomic(path, saved)
+    return saved
 
 
 def atomic(path, data):
@@ -50,7 +78,8 @@ def status(config):
     panes = tmux('list-panes', '-t', '=' + config['session'], '-F', '#{pane_dead}')
     return {'session': config['session'], 'socket': SOCKET,
             'live': fresh and panes.returncode == 0 and '0' in panes.stdout.splitlines(),
-            'worker': live, 'schedule': 'Monday/Wednesday/Friday 08:00 Asia/Shanghai',
+            'worker': live, 'interval_seconds': interval_seconds(config),
+            'schedule': f'Every {interval_seconds(config)} seconds; missed slots skipped; Asia/Shanghai display',
             'config': str(state/'launch.json')}
 
 
@@ -88,7 +117,8 @@ def run_round(config):
             child = subprocess.Popen(args, cwd=repo, stdout=log, stderr=subprocess.STDOUT)
             while child.poll() is None:
                 atomic(state/'live.json', {'pid':os.getpid(), 'heartbeat_at':time.time(),
-                       'session':config['session'], 'active_round':run_id, 'runner_pid':child.pid})
+                       'session':config['session'], 'active_round':run_id, 'runner_pid':child.pid,
+                       'interval_seconds':interval_seconds(config)})
                 time.sleep(5)
         result={'status':'runner_succeeded' if child.returncode==0 else 'runner_failed',
                 'exit_code':child.returncode,'run_id':run_id,'run_dir':str(run_dir),
@@ -106,13 +136,11 @@ def serve(config):
     if not os.environ.get('TMUX'):
         raise RuntimeError('serve must be launched by start inside owned tmux')
     state=Path(config['state_dir'])
-    try:
-        saved=json.loads((state/'state.json').read_text(encoding='utf-8'))
-    except FileNotFoundError:
-        saved={'next_due':next_due(time.time()),'rounds':[]}
+    saved=load_state(config, time.time())
     while not (state/'stop').exists():
         atomic(state/'live.json', {'pid':os.getpid(),'heartbeat_at':time.time(),
                                  'session':config['session'],'next_due':saved['next_due'],
+                                 'interval_seconds':saved['interval_seconds'],
                                  'next_due_shanghai':datetime.fromtimestamp(saved['next_due'],SHANGHAI).isoformat()})
         if time.time() >= saved['next_due']:
             try:
@@ -120,7 +148,7 @@ def serve(config):
             except Exception as exc:
                 result={'status':'runner_error','reason':f'{type(exc).__name__}: {exc}'}
             saved['rounds'].append(result)
-            saved['next_due']=next_due(time.time())
+            saved['next_due']=advance_due(saved['next_due'],time.time(),saved['interval_seconds'])
         atomic(state/'state.json',saved)
         time.sleep(20)
     (state/'live.json').unlink(missing_ok=True)

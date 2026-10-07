@@ -44,3 +44,4 @@ T24–T28 增量：`knowledge/entries/{ai-infra,ai-algorithms,data-structures}/`
 | EFF-03 | `docs/communication_efficiency/2026-10-07-selective/` | 公开合成fixture/实际tokenizer → 主 AI验收/下轮维护 | 同输入编码成本、包壳/无收益控制与本地pack延迟；无真实模型质量/账单收益声明 |
 | ADOPT-01–04 / SYNC-01–03 | `scripts/setup_codex.py`, `tests/test_codex_setup.py`, `templates/codex_global_instructions.md`, `docs/codex_adoption/` | 主 AI/已验证发布 → 本机 Codex/后续维护 | 技能归属、字节快照、备份与目标布局冲突预检；安装成功不等于模型行为改善 |
 | MATH-13/14 | `knowledge/entries/math.linear-solve-backward-error.*`, `docs/knowledge_learning/2026-10-07-conditioning/` | 主 AI知识维护 → 按需建模入口/科研工程任务 | 后向误差、逆界、排序及接地电路证书；近期低秩更新仅有限候选，未做模型A/B |
+| RLP-01–03 | `scripts/knowledge_maintenance.py`, `tests/test_knowledge_maintenance.py`, `knowledge/entries/{ai-algorithms,probability}/`, `evals/knowledge/rl-probability-queries.json`, `docs/knowledge_learning/2026-10-07-rl-probability/` | 原论文/主 AI → 检索与实验前决策/已部署 WSL tmux | 每3600秒固定周期、旧状态迁移、6张2026研究卡；保留失败检索和适用边界，无本机RL复现 |

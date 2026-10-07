@@ -1,8 +1,8 @@
 # 工程知识持续维护
 
-用户已授权的本机部署在 2026-10-07 验收：WSL 3.0.1、Ubuntu-26.04 (WSL2)、普通用户 wi、tmux 3.6。定时会话为 socket `agent-knowledge` / session `agent-knowledge-maintenance`；实时心跳与 pane 读回成功。下一次为 2026-10-09 08:00 Asia/Shanghai，之后每周一、三、五 08:00。
+用户已授权的本机部署在 2026-10-07 验收：WSL 3.0.1、Ubuntu-26.04 (WSL2)、普通用户 wi、tmux 3.6。定时会话为 socket `agent-knowledge` / session `agent-knowledge-maintenance`；实时心跳与 pane 读回成功。2026-10-07 按用户要求改为每隔 3600 秒一次；下次时间以 status 的 next_due_shanghai 为准。保留同一会话、配置、登录与历史轮次，未新增重复任务。迁移及研究卡证据见 [本轮报告](knowledge_learning/2026-10-07-rl-probability/report.md)。
 
-每轮执行 [学习 Prompt](../prompts/engineering_knowledge_continuous_learning.md)，轮转 AI Infra、AI 算法、数据结构，核查 3–6 个来源，最多发布 3 张卡、45 分钟。论文原始实验/消融与固定代码优先，保留反例与条件，不运行大型 GPU 实验。代码/检索/相关测试通过后，按已有授权发布 main；CLI 没有 Git 写认证时可用已连接 GitHub 写工具和 expected_sha 非强制更新。认证过期、保护规则或并发冲突未解决时保留成果并报告阻塞。
+每轮执行 [学习 Prompt](../prompts/engineering_knowledge_continuous_learning.md)，当前优先轮转 RL 与概率论，保留 AI Infra、AI 算法、数据结构的后续队列，核查 3–6 个来源，最多发布 3 张卡、45 分钟。论文原始实验/消融与固定代码优先，保留反例与条件，不运行大型 GPU 实验。代码/检索/相关测试通过后，按已有授权发布 main；CLI 没有 Git 写认证时可用已连接 GitHub 写工具和 expected_sha 非强制更新。认证过期、保护规则或并发冲突未解决时保留成果并报告阻塞。
 
 真实执行链是 WSL tmux → `knowledge_maintenance.py` → Windows Python → `run_knowledge_windows.py` → 原生 Codex CLI。复用已有 Windows 登录，凭据不复制进 Linux。旧 CLI 0.114.0 的模型请求被拒绝；实际改用桌面应用自带的 0.160.1，登录探测返回 READY。第二次只读验收成功读取 GitHub 仓库元数据（push=true），并执行 decision CLI，返回 `insufficient_context` / `automatic_skip_authorized=false`。这些证明执行器及连接器可调用，不等于后续每轮来源质量/写入必定成功。
 
@@ -33,7 +33,7 @@ wsl -d Ubuntu-26.04 -u wi -- tmux -L agent-knowledge attach -t agent-knowledge-m
 
 `start` 对同一配置复用已有会话；`stop` 等当前有界轮次结束后退出，仅停止自有维护任务。配置、state/live/receipt、supervisor.log 与每轮 prompt/events/final/receipt 保存在被 gitignore 的 `.agent-runs/engineering-kb/maintenance/`。模型退出码只是执行状态，必须阅读证据和最终报告才能接受成果。脏工作树会阻塞该轮，避免覆盖用户工作。
 
-guard 可在 scheduler 异常退出后重启，使用原有 next_due；停机后重新 start 会对已过期的 due 补跑一次，再按日历安排下轮，不追补无限轮次。若残留 round.lock，不凭过期时间删除：先核验记录中的 Windows/WSL 进程是否仍在运行和已有提交/成果，再人工恢复。没有已确认终态时，锁阻止重复模型执行。
+guard 可在 scheduler 异常退出后重启，使用原有 next_due；停机后重新 start 会对已过期的 due 补跑一次，再沿原固定周期安排下轮，跳过已错过的时段，不追补无限轮次或并发轮次。首次从旧周历迁移或改变 interval_seconds 时，记录迁移并从当前时刻加一个周期；同一周期的重启保留原 due。45 分钟轮次不会把下次推迟为结束后再等 1h。若残留 round.lock，不凭过期时间删除：先核验记录中的 Windows/WSL 进程是否仍在运行和已有提交/成果，再人工恢复。没有已确认终态时，锁阻止重复模型执行。
 
 tmux 可以在终端断开后继续；聊天界面本身无法迁移进 tmux。电脑关机、重启、睡眠或 WSL 被终止时任务不执行；本次未安装开机自启动，重新启动后运行上述 start 恢复。不要使用 kill-server 或停止用户其他会话。
 
@@ -48,6 +48,7 @@ tmux 可以在终端断开后继续；聊天界面本身无法迁移进 tmux。�
   "session": "agent-knowledge-maintenance",
   "windows_repo": "",
   "timeout_seconds": 2700,
+  "interval_seconds": 3600,
   "runner": ["/absolute/trusted-model-wrapper"]
 }
 ```

@@ -1,5 +1,15 @@
 # Agent 仓库任务总清单
 
+## 2026-10-07 每小时维护与 RL / 概率论前沿知识
+
+用户要求将现有维护改为每隔 1h，并立即优先补充 RL 与概率论的近期顶会研究结果。基线 `4c47a4492f39e4498a2aff6ff306f69cf01f67a3` 已先 pull；主 AI 单一作者，保留历史与现有 WSL/tmux 会话归属，不新增重复定时任务。
+
+- [ ] [RLP-01] 将既有维护改为 3600 秒固定周期，迁移旧周历状态、保持重启恢复与单轮互斥，真实部署并读回活性和下次到期。
+- [ ] [RLP-02] 核对 2026 年已接收原论文，补充 RL 与概率论知识卡；提炼实验/消融/定理、负结果、条件与来源定位，保留本机未复现状态。
+- [ ] [RLP-03] 验证新旧检索、决策边界与程序回归，同步插件，发布前再 fetch/整合、非强制 push、独立读回，并同步本机技能与督导收尾。
+
+实现/产物：`scripts/knowledge_maintenance.py`、`prompts/engineering_knowledge_continuous_learning.md`、`knowledge/entries/`、`docs/knowledge_learning/2026-10-07-rl-probability/`、`evals/knowledge/rl-probability-queries.json`；私有运行 `.agent-runs/rl-probability/`。运行中保持本 TASK 稳定，完成后统一记录收尾修订。
+
 ## 2026-10-07 Codex 技能更新冲突预检
 
 沿用户既有授权继续工程迭代，基线 `c0347c15ba889a1f3b5684fc3629561dc9114ff0` 已先 pull。主 AI 单一作者，沿用已安装技能与现有维护，不重复建立常驻学习任务。

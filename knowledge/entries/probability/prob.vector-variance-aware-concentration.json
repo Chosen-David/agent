@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "id": "prob.vector-variance-aware-concentration",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "向量自归一化：轻尾、方差自适应与序贯置信界的收益和代价",
+  "summary": "ALT 2026 在可分Hilbert空间构造超鞅，给出 Bernstein/Bennett 和混合序贯界；低方差合成bandit受益，高方差下并不总胜次高斯界。",
+  "aliases": [
+    "vector concentration Bernstein Bennett",
+    "向量自归一化方差",
+    "anytime valid kernel bandit",
+    "轻尾非次高斯",
+    "鞅自适应停止"
+  ],
+  "domains": [
+    "probability",
+    "sequential-decision"
+  ],
+  "structures": [
+    "vector concentration Bernstein Bennett",
+    "向量自归一化方差",
+    "anytime valid kernel bandit",
+    "轻尾非次高斯",
+    "鞅自适应停止"
+  ],
+  "assumptions": [
+    "process: predictable X_t; conditional mean-zero epsilon_t; fixed rho>0; separable Hilbert space",
+    "tails: conditional Bernstein moment condition, or bounded noise and predictable variance bounds",
+    "horizon: Theorems 9/10 deterministic horizon n and variance envelope Cn; Theorems 11/12 fully sequential mixtures",
+    "empirical_variance: Theorem 12 requires bounded noise with constant conditional variance and a valid variance confidence sequence"
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/mlresearch/v313/main/assets/martinez-taboada26a/martinez-taboada26a.pdf",
+      "locator": "Assumptions 3–5 (PDF pp.4–5); Theorems 9–12 (pp.10–11); §4.5/§5.3, Figure 1 (pp.12–16)",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-checked",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.vector-variance-aware-concentration"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "prob.self-normalized-dimension-barrier"
+    },
+    {
+      "type": "related",
+      "id": "math.betting-test-martingale"
+    }
+  ],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "ALT 2026 在可分Hilbert空间构造超鞅，给出 Bernstein/Bennett 和混合序贯界；低方差合成bandit受益，高方差下并不总胜次高斯界。",
+    "conditions": {
+      "process": "predictable X_t; conditional mean-zero epsilon_t; fixed rho>0; separable Hilbert space",
+      "tails": "conditional Bernstein moment condition, or bounded noise and predictable variance bounds",
+      "horizon": "Theorems 9/10 deterministic horizon n and variance envelope Cn; Theorems 11/12 fully sequential mixtures",
+      "empirical_variance": "Theorem 12 requires bounded noise with constant conditional variance and a valid variance confidence sequence"
+    },
+    "observations": [
+      "Assumptions 3–5/Theorem 9：若 sum σi²||Gi||²≤Cn² 为确定上界，则概率至少1−δ时，对t≤n有 ||(ρI+Vt)^−1/2 Mt||≤B log(2/δ)+Cn sqrt(2log(2/δ))。",
+      "Theorems 11/12 使用混合界适应随机停止；实用半径需数值求根且承担额外对数项，经验方差版不能任意推广到异方差。",
+      "§5.3/Fig.1：RBF长度0.01、ρ=0.05、δ=0.1、500轮合成GP-UCB；缩放Beta(5,5)/(20,20)/(50,50)低方差下混合Bennett较紧，缩放Uniform高方差下原次高斯界反而更紧。"
+    ],
+    "limitations": [
+      "beyond sub-Gaussian仍要求轻尾矩条件，不覆盖任意重尾/无限方差。dimension-free仍通过信息增益/谱等项含有效维度。",
+      "固定n内uniform不等于无限时域；不能事后挑Cn或混合θ而沿用原δ。作者没有调优实验超参数，不是普适SOTA比较。",
+      "与COLT无正则下界并不矛盾：本卡ρ>0、尾部与半径前提不同；完整证明未独立复核。"
+    ],
+    "minimal_checks": [
+      "核查可预测性与条件零均值，分清尾界B、方差σ²、确定Cn和经验置信序列。",
+      "选择固定时域或完整混合界并核对数值求根；保留ρ偏差项、有效维度及低/高方差对照。"
+    ],
+    "paper": {
+      "venue": "ALT",
+      "year": 2026,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}

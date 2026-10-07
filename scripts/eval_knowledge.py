@@ -17,12 +17,16 @@ def main():
     p.add_argument('--cases',default='evals/knowledge/queries.json')
     p.add_argument('--output',required=True)
     p.add_argument('--accept-context', action='store_true', help='gate on bounded graph context recall; still report raw Recall@3')
+    p.add_argument('--context-limit', type=int, default=3, help='context retrieval candidates (3..20); raw Recall@3 remains unchanged')
     p.add_argument('--require-backends', nargs='+', choices=['files','sqlite'], default=['files','sqlite'])
     args=p.parse_args()
+    if not 3 <= args.context_limit <= 20:
+        p.error('--context-limit must be 3..20')
     started=time.perf_counter();store=KnowledgeStore(args.root);load=time.perf_counter()-started
     cases=json.loads(Path(args.cases).read_text())['cases']
     out={'schema_version':1,'snapshot':store.snapshot,'entries':len(store.records),'load_seconds':load,
-         'scope':'Authored synthetic retrieval regression; not blind modeling, semantic retrieval or production speedup. Timings exclude corpus loading.','backends':{}}
+         'context_candidate_limit':args.context_limit,
+         'scope':'Authored synthetic retrieval regression; not blind modeling, semantic retrieval or production speedup. Timings cover raw top-3 search only and exclude corpus loading/context assembly.','backends':{}}
     with tempfile.TemporaryDirectory() as tmp:
         db=Path(tmp)/'search.sqlite';t=time.perf_counter();build_index(store,db);out['index_build_seconds']=time.perf_counter()-t
         for backend in ('files','sqlite'):
@@ -33,11 +37,15 @@ def main():
                 elapsed=time.perf_counter()-start
                 actual=[r['id'] for r in result['results']];expected=case['expected']
                 hit=[k for k in expected if k in actual]
-                context=store.context(result)
+                context_hits=result if args.context_limit==3 else (
+                    store.search(case['query'],limit=args.context_limit) if backend=='files' else
+                    indexed_search(store,db,case['query'],limit=args.context_limit))
+                context=store.context(context_hits)
                 context_ids=[d['id'] for d in context['entries']]
                 rows.append({'case':case['id'],'query':case['query'],'expected':expected,'actual':actual,
                              'recall_at_3':len(hit)/len(expected) if expected else None,
                              'context_ids':context_ids,
+                             'context_budget':context['budget'],'context_status':context['status'],
                              'context_recall':sum(k in context_ids for k in expected)/len(expected) if expected else None,
                              'reciprocal_rank':1/min(actual.index(k)+1 for k in hit) if hit else 0,
                              'no_hit_correct':not actual if not expected else None,'seconds':elapsed})
