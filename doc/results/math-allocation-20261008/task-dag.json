@@ -1,0 +1,62 @@
+{
+  "tasks": [
+    {
+      "task_id": "MATH-31",
+      "owner": "/root",
+      "action": "produce",
+      "depends_on": [],
+      "experiment_result": {
+        "result_id": "math-allocation-20261008",
+        "producer_task_id": "MATH-31",
+        "producer_actor": "/root",
+        "validation_plan": {
+          "path": "doc/results/math-allocation-20261008/validation-plan.json",
+          "sha256": "e611c0b76e6f316ab5e28fe47bcd833b0730f94f941660ac132be75d2a76ef38"
+        },
+        "scope": "finite additive discrete-budget optimization and public CPU fixtures; no model/e2e/GPU claims",
+        "manifest_path": "doc/results/math-allocation-20261008/manifest.json"
+      }
+    },
+    {
+      "task_id": "MATH-ALLOCATION-VERIFY",
+      "owner": "/root/allocation_verifier",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "MATH-31"
+      ],
+      "result_validation": {
+        "result_id": "math-allocation-20261008",
+        "producer_task_id": "MATH-31",
+        "producer_actor": "/root",
+        "validation_plan": {
+          "path": "doc/results/math-allocation-20261008/validation-plan.json",
+          "sha256": "e611c0b76e6f316ab5e28fe47bcd833b0730f94f941660ac132be75d2a76ef38"
+        },
+        "scope": "finite additive discrete-budget optimization and public CPU fixtures; no model/e2e/GPU claims",
+        "manifest_path": "doc/results/math-allocation-20261008/manifest.json"
+      }
+    },
+    {
+      "task_id": "MATH-32",
+      "owner": "/root",
+      "action": "publish",
+      "depends_on": [
+        "MATH-ALLOCATION-VERIFY"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-allocation-20261008",
+          "producer_task_id": "MATH-31",
+          "producer_actor": "/root",
+          "validation_plan": {
+            "path": "doc/results/math-allocation-20261008/validation-plan.json",
+            "sha256": "e611c0b76e6f316ab5e28fe47bcd833b0730f94f941660ac132be75d2a76ef38"
+          },
+          "scope": "finite additive discrete-budget optimization and public CPU fixtures; no model/e2e/GPU claims",
+          "manifest_path": "doc/results/math-allocation-20261008/manifest.json"
+        }
+      ]
+    }
+  ],
+  "execution_boundary": "bounded direct host maintenance; independent collaboration call; not deployed tmux/ManagedEngine/ReviewSession"
+}

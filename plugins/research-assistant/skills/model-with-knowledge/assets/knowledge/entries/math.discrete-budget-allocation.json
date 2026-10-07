@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "id": "math.discrete-budget-allocation",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "有限菜单离散预算分配与代理最优性证书",
+  "summary": "可加整数成本/损失下用DP求有限菜单精确解；λ加权和可漏掉未支配最优，弱对偶只认证代理而非端到端精度。",
+  "aliases": [
+    "multiple choice knapsack",
+    "逐层 配置 总预算 误差",
+    "有限菜单 整数资源 分配",
+    "比特 分配 编码失真",
+    "lambda unsupported Pareto"
+  ],
+  "domains": [
+    "optimization",
+    "probability-and-optimization"
+  ],
+  "structures": [
+    "discrete-budget",
+    "multiple-choice",
+    "dynamic-programming",
+    "optimality-gap",
+    "layer-allocation"
+  ],
+  "assumptions": [
+    "每组非空有限菜单，恰选一项；成本为非负整数，预算B为非负整数；允许空组序列边界",
+    "目标损失和资源成本均可加且固定；损失为有限实数；实测浮点最优性和硬延迟另需误差认证",
+    "对偶λ≥0且有限菜单min为真实值或认证下界；只认证已定义代理目标"
+  ],
+  "sources": [
+    {
+      "url": "https://see.stanford.edu/materials/lsocoee364a/05Duality.pdf",
+      "locator": "Boyd/Vandenberghe Duality slides5-2/5-3；支持经典弱对偶，DP和反例为本条目推导",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://arxiv.org/html/2603.18653v2",
+      "locator": "Shao arXiv2603.18653v2，2026-08-09；§1.2/4.1/5.5–5.6/6.1，LP/整数搜索区别；预印本，发表状态未核实",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "同名Markdown一般归纳/弱对偶推导；非形式化",
+      "doc/results/math-allocation-20261008/：公开CPU整数/Fraction验证及独立审查；不含模型/GPU"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.dual-certificates",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    },
+    {
+      "type": "related",
+      "id": "math.softmax-barycenter-error"
+    }
+  ]
+}

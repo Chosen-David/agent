@@ -94,3 +94,5 @@ SELF-SYNC-01–03：scripts/run_knowledge_windows.py 的 prepare_host / sync_hos
 | DUAL-01–03 | `agent_runtime/plan_review.py`, `prompts/planner_main.md`, `prompts/review_main.md`, `workflows/dual_main_workflow.md` | planner-main → 独立 review-main → protected Engine / publication → 原有独立结果 gate | 完整 DAG/身份/回执/有界返修；宿主适配器必须真实提供，CPU 测试不是模型质量收益 |
 
 | MATH-29/30 | `knowledge/entries/math.weighted-bilinear-low-rank.*`, `doc/results/math-weighted-bilinear-20261007/` | 数学producer → 独立验收 → 按需建模Skill | SPD乘积分布的分数目标；不含真实模型/RoPE/e2e最优 |
+
+- `doc/results/math-allocation-20261008/`: MATH-31/32 finite discrete-budget proof, exact CPU fixtures, independent review and retrieval/cost evidence; not production solver.

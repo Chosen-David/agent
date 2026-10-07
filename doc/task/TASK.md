@@ -2,6 +2,11 @@
 
 AI-maintained concise index; implementation and evidence live in linked details.
 
+## 2026-10-08
+
+- [x] [MATH-31] 补齐离散逐层预算分配、DP精确性/对偶缺口与跨域迁移，核查近期MCKP版本并独立验收。 ([detail](task_details/MATH-31.md))
+- [ ] [MATH-32] 同步知识/插件、相关回归与成本，刷新main普通发布并回读。 ([detail](task_details/MATH-32.md))
+
 ## 2026-10-07
 
 - [x] [MATH-29] 补齐二阶矩加权双线性低秩、传感器迁移/拒用反例；核查RoLA/SALS并独立验收。 ([detail](task_details/MATH-29.md))
