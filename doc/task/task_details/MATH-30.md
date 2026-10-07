@@ -17,3 +17,5 @@ Date: 2026-10-07
 
 - 独立验收v2 usable-with-scope：原始数据重跑一致、非零均值矩形Cholesky交叉检查、检索/引用与成本核对通过。代码绑定缺项与旧回执失效均保留并版本化修正。
 - 74项相关知识单测通过；格式87项有效、插件镜像与knowledge refs通过。当前仍无模型/GPU/未见验收。MATH-30等待实际main推送和远端SHA。
+
+- main知识提交8430d377e9329b220bbeb721d0df820919b82fff已实际发布并通过git fetch/ls-remote核对；远端tree fa4eeb68c46ed363b0e6ce3a1e95c512089ff098与本地验证树一致。HTTPS缺凭据，使用既有GitHub接口；未force更新，无SGLang写入。

@@ -5,7 +5,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-07
 
 - [x] [MATH-29] 补齐二阶矩加权双线性低秩、传感器迁移/拒用反例；核查RoLA/SALS并独立验收。 ([detail](task_details/MATH-29.md))
-- [ ] [MATH-30] 同步知识索引/插件，完成相关回归与成本记录，刷新main推送并核对远端。 ([detail](task_details/MATH-30.md))
+- [x] [MATH-30] 同步知识索引/插件，完成相关回归与成本记录，刷新main推送并核对远端。 ([detail](task_details/MATH-30.md))
 
 - [x] [MATH-27] 核验输出Gram几何、局部敏感度与边界，筛选近期研究并独立检查。 ([detail](task_details/MATH-27.md))
 - [x] [MATH-28] 同步按需知识、相关回归，刷新main直接发布并核对远端。 ([detail](task_details/MATH-28.md))

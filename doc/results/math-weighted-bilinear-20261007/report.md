@@ -26,3 +26,6 @@
 
 ## 独立验收
 独立宿主调用/root/weighted_bilinear_verifier完成六项检查，validation-v2.json为最终usable-with-scope；复跑原始数据字节一致，并用不同Cholesky化归交叉检查非零均值矩形产品分布。首次验收后补绑定SVD前置导致manifest变更，旧validation.json保持原记录，v2重新固定最终哈希。没有将哈希匹配当科学正确性。
+
+## 发布
+知识main提交`8430d377e9329b220bbeb721d0df820919b82fff`已发布，远端SHA与完整tree读回一致；先刷新再写入，保留失败推送与接口重试情况。任务关闭记录另以随后main提交保存。没有模型/生产收益声明。
