@@ -1,0 +1,147 @@
+{
+  "schema_version": 1,
+  "snapshot": "5d7c393b40b8ff269d88a37d79ea668aa96c084f8e6029ae7ce85fd8a4cff080",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.floating-dot-enclosure",
+      "version": 1,
+      "sha256": "e800ad6e5dbd1be9aa2de66da0e06933cccb84c41419668ae0550f4407db1bbb",
+      "title": "浮点点积外包与严格安全筛除",
+      "summary": "对存储binary64点积逐运算向外扩展，核对正确舍入/渐进下溢；累计丢失小项、量化原始输入及GPU排序目标需区分，未知前提拒用。",
+      "status": "published",
+      "assumptions": [
+        "输入为有限存储binary64数，目标为其精确实数点积；量化前输入和实际GPU结果是其他目标",
+        "每个标量加乘正确RN舍入到同一binary64格式、邻接nextafter正确、渐进下溢，无FTZ/未知重排或低精度路径",
+        "每步结果及外包邻接端点有限；无法满足则无法认证并保留/回退，不按失败值剪枝",
+        "安全筛除有全部逐项包络，tau取第k大下界，删除仅限U_i<tau，重排目标/tie规则一致",
+        "坐标投影误差界仅适用显式选坐标；学习投影、理想RoPE、输入误差与GPUkernel偏差须另行认证"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Conditional induction proof and exact-rational public CPU data at agent_doc/results/math-rounding-20261008/; independent actual code/math/data acceptance required before publication",
+          "No Lean/formal proof, platform-wide arithmetic certification, GPU/model/quality/token performance experiment"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "点积",
+            "筛除"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "点积",
+            "舍入"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "gpu",
+            "点积",
+            "舍入"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "gpu",
+            "点积",
+            "筛除",
+            "舍入"
+          ]
+        }
+      ],
+      "score": 33
+    },
+    {
+      "id": "math.residual-interval-screening",
+      "version": 1,
+      "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+      "title": "正交残差包络与安全候选筛除",
+      "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+      "status": "published",
+      "assumptions": [
+        "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+        "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+        "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+        "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+          "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "筛除"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "筛除"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "gpu",
+            "点积",
+            "筛除"
+          ]
+        }
+      ],
+      "score": 13
+    },
+    {
+      "id": "math.rotation-intertwiner",
+      "version": 1,
+      "sha256": "e7f20395508e5e0772b1fe0abaa690e7443df62e0d451e743c25ce1b5a6bc408",
+      "title": "实旋转交织映射与RoPE跨频率融合",
+      "summary": "固定频率潜表示需要交织条件；区分整数频率别名、同频复线性融合、低秩点积限制与有限长度近似缺陷。",
+      "status": "published",
+      "assumptions": [
+        "有限实线性映射；R(theta)为正交二维旋转；位置为整数",
+        "频率按2pi取模；0和pi需独立处理；连续位置不允许整数别名",
+        "近似长度界只在指定整数位置范围内；受限精确保真须明确数据支撑子空间"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Self-contained real planar proof; no Lean/formal verification",
+          "32 public CPU structural cases; independent result acceptance required"
+        ]
+      },
+      "matches": [
+        {
+          "field": "summary",
+          "terms": [
+            "点积"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "gpu",
+            "点积"
+          ]
+        }
+      ],
+      "score": 5
+    }
+  ]
+}
