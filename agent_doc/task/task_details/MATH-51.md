@@ -13,4 +13,4 @@ DAG: startup/prior_search -> independent_plan_review -> source/proof/design -> i
 
 ## Progress
 
-独立新上下文计划approve，另一个实际上下文document review为usable-with-scope，仅非实验文档。已读2026-09-22原始预印本v1相关R1–R4及PTX9.4正式文档；明确s/g/c/t目标、逐项δ膨胀与η分离条件，保留顺序/FMA/FTZ手算反例和跨域单位检查。没有新知识条目、生产代码、数值/模型/GPU/回归测试或token收益。本轮仅来源/知识结构/条件推导检查；公开例与预期检索任务不算未见模型验收。建议agent_doc/advice/GPU分数目标与证书迁移_by_gpt.md；证据agent_doc/results/math-gpu-ranking-contract-20261008/，远端发布待核对。下一步需实际kernel运算模型及GPU授权环境，保留原学科游标。
+独立新上下文计划approve，另一个实际上下文document review为usable-with-scope，仅非实验文档。已读2026-09-22原始预印本v1相关R1–R4及PTX9.4正式文档；明确s/g/c/t目标、逐项δ膨胀与η分离条件，保留顺序/FMA/FTZ手算反例和跨域单位检查。没有新知识条目、生产代码、数值/模型/GPU/回归测试或token收益。本轮仅来源/知识结构/条件推导检查；公开例与预期检索任务不算未见模型验收。建议agent_doc/advice/GPU分数目标与证书迁移_by_gpt.md；证据agent_doc/results/math-gpu-ranking-contract-20261008/，文档提交 b93e66c6f65cbc3a82c14472b9f657d8a38279d2 已经fetch/独立ls-remote和tree d98e3f5252060b143512a07bacd5f6e8bd6e1d65核对。下一步需实际kernel运算模型及GPU授权环境，保留原学科游标。
