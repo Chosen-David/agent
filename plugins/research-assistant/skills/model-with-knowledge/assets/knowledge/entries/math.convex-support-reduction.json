@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "id": "math.convex-support-reduction",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "有限凸输出的仿射秩支持约简与重新赋权边界",
+  "summary": "非负单位质量的固定加权输出可用至多仿射维数r+1个原点重新赋权表示；不保证原softmax子集或全query保真。",
+  "aliases": [
+    "代表 value 重加权 输出 凸组合",
+    "传感器 平均 代表 点 重加权",
+    "子集 原权重 归一化 误用",
+    "Caratheodory convex hull affine rank support reduction barycenter reweighting"
+  ],
+  "domains": [
+    "linear-algebra",
+    "probability-and-optimization"
+  ],
+  "structures": [
+    "convex-combination",
+    "affine-rank",
+    "weighted-output",
+    "attention-sparsification"
+  ],
+  "assumptions": [
+    "非空有限v_i∈R^p；α_i≥0且Σα_i=1；固定目标z=Σα_i v_i；允许改变保留点的权重。",
+    "固定线性W只保证Wz；query-oblivious、原权重重归一化与在线成本均需另证。"
+  ],
+  "sources": [
+    {
+      "url": "https://elliotpaquette.github.io/high-dimensional-probability/lectures/02-convex-hulls.html",
+      "locator": "作者讲义2026-09-02 §1 Theorem1及证明；r+1仿射秩精化为项目推导",
+      "accessed": "2026-10-09"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.06327v2",
+      "locator": "Cohen v2 2026-09-13 preprint Eq(1)-(3)、§7.7；仅定义与作者报告的界局限筛选，非复现/全证明核验",
+      "accessed": "2026-10-09"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "一般证明为非形式化数学推导；不是Lean。",
+      "agent_doc/results/math-convex-support-20261009：8个公开Fraction例、双后端结构检索、独立结果审查；不代表模型/GPU/e2e收益。"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.rank-nullity-quotient",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.softmax-barycenter-error"
+    },
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    }
+  ]
+}

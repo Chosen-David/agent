@@ -263,3 +263,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-08 正态混合时间一致边界
 
 - [ ] [RP-T-20261008-1515] 正态混合界已独立验收并推送main；远端CI查询Forbidden待核实。 ([detail](task_details/RP-T-20261008-1515.md))
+
+## 2026-10-09 凸输出表示
+
+- [ ] [MATH-52] 核验固定加权输出的有限支持约简、重赋权与全query边界。 ([detail](task_details/MATH-52.md))

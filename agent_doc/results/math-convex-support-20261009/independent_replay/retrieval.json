@@ -1,0 +1,1211 @@
+{
+  "scope": "Public structural checks only",
+  "snapshot": "84131951b4537ed33bf734f43b2cdf02f3fb377759d91c64f3deda658f12fc30",
+  "protocol_sha256": "99e7287c25eb42e3b7f7c844112e0de49aa98b8cca93e76e0a23be2ceeb86d06",
+  "load_seconds": 0.028543201995489653,
+  "index_build_seconds": 0.1314707399942563,
+  "records": [
+    {
+      "backend": "files-lexical-v1",
+      "case": "R1",
+      "query": "代表 value 重加权 输出 凸组合",
+      "actual": [
+        "math.convex-support-reduction",
+        "math.softmax-barycenter-error",
+        "math.attention-output-geometry"
+      ],
+      "hit": true,
+      "seconds": 0.015078584001457784,
+      "chars": 2813,
+      "bytes": 3752,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "84131951b4537ed33bf734f43b2cdf02f3fb377759d91c64f3deda658f12fc30",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.convex-support-reduction",
+            "version": 1,
+            "sha256": "9058ed02e646e728e2f365086ca0725852f6573f8317a6975cd80ccab00307aa",
+            "title": "有限凸输出的仿射秩支持约简与重新赋权边界",
+            "summary": "非负单位质量的固定加权输出可用至多仿射维数r+1个原点重新赋权表示；不保证原softmax子集或全query保真。",
+            "status": "published",
+            "assumptions": [
+              "非空有限v_i∈R^p；α_i≥0且Σα_i=1；固定目标z=Σα_i v_i；允许改变保留点的权重。",
+              "固定线性W只保证Wz；query-oblivious、原权重重归一化与在线成本均需另证。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "一般证明为非形式化数学推导；不是Lean。",
+                "agent_doc/results/math-convex-support-20261009：8个公开Fraction例、双后端结构检索、独立结果审查；不代表模型/GPU/e2e收益。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "输出"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "value",
+                  "代表",
+                  "凸组",
+                  "加权",
+                  "组合",
+                  "输出",
+                  "重加"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "加权",
+                  "输出"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "value",
+                  "代表",
+                  "加权",
+                  "输出",
+                  "重加"
+                ]
+              }
+            ],
+            "score": 51
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "加权",
+                  "输出"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "value",
+                  "加权",
+                  "输出"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "value",
+                  "输出"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "value",
+                  "凸组",
+                  "加权",
+                  "组合",
+                  "输出"
+                ]
+              }
+            ],
+            "score": 36
+          },
+          {
+            "id": "math.attention-output-geometry",
+            "version": 1,
+            "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+            "title": "固定value的Gram输出几何与局部敏感度",
+            "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+            "status": "published",
+            "assumptions": [
+              "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+              "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+              "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+                "CPU finite development checks; no Lean/model/GPU/e2e verification"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "value",
+                  "输出"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "输出"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "value",
+                  "输出"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "value",
+                  "凸组",
+                  "组合",
+                  "输出"
+                ]
+              }
+            ],
+            "score": 25
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R2",
+      "query": "传感器 平均 代表 点 重加权",
+      "actual": [
+        "math.convex-support-reduction",
+        "math.weighted-bilinear-low-rank",
+        "math.perturbation-propagation"
+      ],
+      "hit": true,
+      "seconds": 0.015217252999718767,
+      "chars": 2614,
+      "bytes": 3702,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "84131951b4537ed33bf734f43b2cdf02f3fb377759d91c64f3deda658f12fc30",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.convex-support-reduction",
+            "version": 1,
+            "sha256": "9058ed02e646e728e2f365086ca0725852f6573f8317a6975cd80ccab00307aa",
+            "title": "有限凸输出的仿射秩支持约简与重新赋权边界",
+            "summary": "非负单位质量的固定加权输出可用至多仿射维数r+1个原点重新赋权表示；不保证原softmax子集或全query保真。",
+            "status": "published",
+            "assumptions": [
+              "非空有限v_i∈R^p；α_i≥0且Σα_i=1；固定目标z=Σα_i v_i；允许改变保留点的权重。",
+              "固定线性W只保证Wz；query-oblivious、原权重重归一化与在线成本均需另证。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "一般证明为非形式化数学推导；不是Lean。",
+                "agent_doc/results/math-convex-support-20261009：8个公开Fraction例、双后端结构检索、独立结果审查；不代表模型/GPU/e2e收益。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "代表",
+                  "传感",
+                  "加权",
+                  "平均",
+                  "感器",
+                  "点",
+                  "重加"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "加权"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "代表",
+                  "传感",
+                  "加权",
+                  "平均",
+                  "感器",
+                  "重加"
+                ]
+              }
+            ],
+            "score": 44
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "加权"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "传感",
+                  "加权",
+                  "感器"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "加权"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传感",
+                  "加权",
+                  "感器"
+                ]
+              }
+            ],
+            "score": 26
+          },
+          {
+            "id": "math.perturbation-propagation",
+            "version": 1,
+            "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381",
+            "title": "有限复合映射的扰动传播与逐层误差预算",
+            "summary": "有已核实增益和同输入缺陷时，乘积加权传播局部误差；teacher缺陷与参考增益不能混用，经验吸收不是一致证书。",
+            "status": "published",
+            "assumptions": [
+              "有限复合映射/固定赋范空间，参考和近似轨迹实际输入均落在有效域",
+              "路线A参考F的输入增益及近似输入上同输入缺陷；路线B近似G的输入增益及参考输入缺陷，不混用",
+              "L与epsilon有限非负且范数/单位一致；全菜单保证需一致域/增益/缺陷覆盖全部可达状态"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired Markdown finite induction; nonformal; final publication requires independent review",
+                "doc/results/math-propagation-20261008/ CPU public fixtures only; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "传感",
+                  "感器"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "加权"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传感",
+                  "加权",
+                  "平均",
+                  "感器"
+                ]
+              }
+            ],
+            "score": 17
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R3",
+      "query": "子集 原权重 归一化 误用",
+      "actual": [
+        "math.convex-support-reduction",
+        "math.softmax-barycenter-error",
+        "math.attention-output-geometry"
+      ],
+      "hit": true,
+      "seconds": 0.014501921999908518,
+      "chars": 2589,
+      "bytes": 3512,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "84131951b4537ed33bf734f43b2cdf02f3fb377759d91c64f3deda658f12fc30",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.convex-support-reduction",
+            "version": 1,
+            "sha256": "9058ed02e646e728e2f365086ca0725852f6573f8317a6975cd80ccab00307aa",
+            "title": "有限凸输出的仿射秩支持约简与重新赋权边界",
+            "summary": "非负单位质量的固定加权输出可用至多仿射维数r+1个原点重新赋权表示；不保证原softmax子集或全query保真。",
+            "status": "published",
+            "assumptions": [
+              "非空有限v_i∈R^p；α_i≥0且Σα_i=1；固定目标z=Σα_i v_i；允许改变保留点的权重。",
+              "固定线性W只保证Wz；query-oblivious、原权重重归一化与在线成本均需另证。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "一般证明为非形式化数学推导；不是Lean。",
+                "agent_doc/results/math-convex-support-20261009：8个公开Fraction例、双后端结构检索、独立结果审查；不代表模型/GPU/e2e收益。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "一化",
+                  "原权",
+                  "子集",
+                  "归一",
+                  "权重",
+                  "误用"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "子集"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "一化",
+                  "原权",
+                  "子集",
+                  "归一",
+                  "权重"
+                ]
+              }
+            ],
+            "score": 38
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "一化",
+                  "归一"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "一化",
+                  "归一",
+                  "权重",
+                  "误用"
+                ]
+              }
+            ],
+            "score": 14
+          },
+          {
+            "id": "math.attention-output-geometry",
+            "version": 1,
+            "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+            "title": "固定value的Gram输出几何与局部敏感度",
+            "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+            "status": "published",
+            "assumptions": [
+              "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+              "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+              "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+                "CPU finite development checks; no Lean/model/GPU/e2e verification"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "权重"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "权重"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "一化",
+                  "归一",
+                  "权重",
+                  "误用"
+                ]
+              }
+            ],
+            "score": 12
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R1",
+      "query": "代表 value 重加权 输出 凸组合",
+      "actual": [
+        "math.convex-support-reduction",
+        "math.softmax-barycenter-error",
+        "math.attention-output-geometry"
+      ],
+      "hit": true,
+      "seconds": 0.005272178001177963,
+      "chars": 5351,
+      "bytes": 8510,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "84131951b4537ed33bf734f43b2cdf02f3fb377759d91c64f3deda658f12fc30",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.convex-support-reduction",
+            "version": 1,
+            "sha256": "9058ed02e646e728e2f365086ca0725852f6573f8317a6975cd80ccab00307aa",
+            "title": "有限凸输出的仿射秩支持约简与重新赋权边界",
+            "summary": "非负单位质量的固定加权输出可用至多仿射维数r+1个原点重新赋权表示；不保证原softmax子集或全query保真。",
+            "status": "published",
+            "assumptions": [
+              "非空有限v_i∈R^p；α_i≥0且Σα_i=1；固定目标z=Σα_i v_i；允许改变保留点的权重。",
+              "固定线性W只保证Wz；query-oblivious、原权重重归一化与在线成本均需另证。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "一般证明为非形式化数学推导；不是Lean。",
+                "agent_doc/results/math-convex-support-20261009：8个公开Fraction例、双后端结构检索、独立结果审查；不代表模型/GPU/e2e收益。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "问题结构与迁移",
+                "start_line": 23,
+                "end_line": 30,
+                "excerpt": "## 问题结构与迁移\n\n先抽取对象（固定value或W value）、权重、目标（单query输出）、约束（能否修改权重），再检索本ID与`math.rank-nullity-quotient@1`。检查非负/单位质量/固定目标后才应用。\n\n传感器加权平均可用原观测的少数代表点重新赋权，精确保留固定均值；不能保留全部协方差或所有未来任务。Indexer中z=Σsoftmax(score)ᵢvᵢ，定理给输出表示的存在性，而非token重合度指标或online候选算法。若已知完整α再做消元，dense teacher计算成本已经付出。可作为离线oracle，比较原权重子集和重新赋权的输出误差，判断value冗余是否值得探索；未验证前不得改生产注意力。\n\n原论文最新预印本Cohen2609.06327v2定义query-oblivious **unweighted** S，并要求query球内一致输出误差；这比固定query重新赋权强得多。Eq(3)以中心化key半径与query半径乘积定义ρ。§7.7作者报告在其两模型实验中带exp(ρ)的全球界给出超过cache的coreset；我们未复现，也未核验全文定理。这不证明所有压缩无效，只说明必须检查目标、量词和常数，不能把经典存在性当有效全局算法。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界与反例",
+                "start_line": 15,
+                "end_line": 22,
+                "excerpt": "## 正例、边界与反例\n\n一维v=(0,1,3)，α=(1/2,1/3,1/6)，z=5/6。只用0与3的新权重(13/18,5/18)仍给5/6；原权重在同子集重归一化为(3/4,1/4)，却给3/4，误差1/12。故存在性不等于softmax筛选结果精确。\n\n全部点相同(r=0)或singleton只需一个点；零权不需纳入支持。r维非退化simplex内部点的重心坐标唯一且全部为正，最坏需r+1个，界不能普遍缩到r。\n\nv=(0,1)、α=(2,−1)给−1在凸包外：负权或质量非1时本定理不可套用。两个query若分别趋向不同token，单query可重加权表示不证明同一小子集对所有query一致保真。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04838709677419355,
+            "sections": [
+              {
+                "node": "s1",
+                "title": "有限 softmax 与归一化加权输出误差",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 有限 softmax 与归一化加权输出误差\n\nID: `math.softmax-barycenter-error`；版本 1。问题触发：分数误差已知，如何控制加权输出？选出的集合重合度能否替代输出质量？先抽取支持集、归一化方式、value、输出度量；只需本卡，整体二范数误差转排序时另读 `math.score-difference-bound`。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "对象、前提和结论",
+                "start_line": 5,
+                "end_line": 17,
+                "excerpt": "## 对象、前提和结论\n\n固定非空有限集合 J，同一支持集上的有限实数 logits s,t；α=softmax(s)，β=softmax(t)。温度和 1/√d 已计入 logits。固定 value v_j∈R^p，固定线性映射 W:R^p→R^h，输出用任意范数。设 y=Σα_jv_j，ŷ=Σβ_jv_j，D=max_ij‖W(v_i−v_j)‖，e=t−s，w=max e−min e。\n\n经典 TV 恒等式（来源1，§4.1 Proposition 4.2，印刷页48）是 TV(α,β)=½Σ|α_j−β_j|。本卡以下是独立给出的有限推导，不声称研究新颖性，不是形式化证明：\n\n\\[\n\\|W(y-\\hat y)\\|\\le D\\,\\mathrm{TV}(\\alpha,\\beta)\n\\le D\\tanh\\!\\left(\\frac{\\operatorname{osc}(t-s)}4\\right).\n\\]\n\n此界对两个 token 可以取等号。误差的共同平移不起作用；若 ‖e‖∞≤ε，则输出≤D tanh(ε/2)。若已知整体 ‖e‖₂≤η，则 w≤√2η（最大最小坐标差与柯西不等式），得到 D tanh(η/(2√2))。不能把逐坐标 ε 当整体 η。D=0 时，无论排序/概率如何变，输出都相同。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.attention-output-geometry",
+            "version": 1,
+            "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+            "title": "固定value的Gram输出几何与局部敏感度",
+            "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+            "status": "published",
+            "assumptions": [
+              "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+              "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+              "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+                "CPU finite development checks; no Lean/model/GPU/e2e verification"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.047619047619047616,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界、误用反例",
+                "start_line": 44,
+                "end_line": 51,
+                "excerpt": "## 正例、边界、误用反例\n\nα=(1/3,1/3,1/3)、v=(0,1,100)、W=1。同为‖δ‖₂=√2·0.01，δ_A=(−.01,.01,0)使输出改变.01，δ_B=(−.01,0,.01)使输出改变1。相同概率误差不能确定输出质量。\n\n所有value相同，或W把差异全部投影到零，C/G敏感度为零，概率MSE仍可非零。n=1时J=0。固定大共同value偏移不影响差；浮点大偏移仍可能导致消减误差，实数平移恒等式不免除数值审查。\n\n对大扰动不能把G的局部二次损失当精确有限误差。模型后续非线性、不同query、不同生成轨迹改变α/V/W，旧G不能自动复用。负权重不满足凸组合余项证明；非归一化权重不满足共同value平移不变性。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "固定 value 的输出几何与局部 logits 敏感度",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 固定 value 的输出几何与局部 logits 敏感度\n\nID: `math.attention-output-geometry`；版本1。触发问题：两套权重或分数的误差大小相同，实际输出为何不同？先提取固定支持集、value、输出投影和实际下游映射；不加载整个知识库。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R2",
+      "query": "传感器 平均 代表 点 重加权",
+      "actual": [
+        "math.convex-support-reduction",
+        "math.weighted-bilinear-low-rank",
+        "math.singular-support-bilinear-low-rank"
+      ],
+      "hit": true,
+      "seconds": 0.004431276000104845,
+      "chars": 5659,
+      "bytes": 9904,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "84131951b4537ed33bf734f43b2cdf02f3fb377759d91c64f3deda658f12fc30",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.convex-support-reduction",
+            "version": 1,
+            "sha256": "9058ed02e646e728e2f365086ca0725852f6573f8317a6975cd80ccab00307aa",
+            "title": "有限凸输出的仿射秩支持约简与重新赋权边界",
+            "summary": "非负单位质量的固定加权输出可用至多仿射维数r+1个原点重新赋权表示；不保证原softmax子集或全query保真。",
+            "status": "published",
+            "assumptions": [
+              "非空有限v_i∈R^p；α_i≥0且Σα_i=1；固定目标z=Σα_i v_i；允许改变保留点的权重。",
+              "固定线性W只保证Wz；query-oblivious、原权重重归一化与在线成本均需另证。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "一般证明为非形式化数学推导；不是Lean。",
+                "agent_doc/results/math-convex-support-20261009：8个公开Fraction例、双后端结构检索、独立结果审查；不代表模型/GPU/e2e收益。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "问题结构与迁移",
+                "start_line": 23,
+                "end_line": 30,
+                "excerpt": "## 问题结构与迁移\n\n先抽取对象（固定value或W value）、权重、目标（单query输出）、约束（能否修改权重），再检索本ID与`math.rank-nullity-quotient@1`。检查非负/单位质量/固定目标后才应用。\n\n传感器加权平均可用原观测的少数代表点重新赋权，精确保留固定均值；不能保留全部协方差或所有未来任务。Indexer中z=Σsoftmax(score)ᵢvᵢ，定理给输出表示的存在性，而非token重合度指标或online候选算法。若已知完整α再做消元，dense teacher计算成本已经付出。可作为离线oracle，比较原权重子集和重新赋权的输出误差，判断value冗余是否值得探索；未验证前不得改生产注意力。\n\n原论文最新预印本Cohen2609.06327v2定义query-oblivious **unweighted** S，并要求query球内一致输出误差；这比固定query重新赋权强得多。Eq(3)以中心化key半径与query半径乘积定义ρ。§7.7作者报告在其两模型实验中带exp(ρ)的全球界给出超过cache的coreset；我们未复现，也未核验全文定理。这不证明所有压缩无效，只说明必须检查目标、量词和常数，不能把经典存在性当有效全局算法。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界与反例",
+                "start_line": 15,
+                "end_line": 22,
+                "excerpt": "## 正例、边界与反例\n\n一维v=(0,1,3)，α=(1/2,1/3,1/6)，z=5/6。只用0与3的新权重(13/18,5/18)仍给5/6；原权重在同子集重归一化为(3/4,1/4)，却给3/4，误差1/12。故存在性不等于softmax筛选结果精确。\n\n全部点相同(r=0)或singleton只需一个点；零权不需纳入支持。r维非退化simplex内部点的重心坐标唯一且全部为正，最坏需r+1个，界不能普遍缩到r。\n\nv=(0,1)、α=(2,−1)给−1在凸包外：负权或质量非1时本定理不可套用。两个query若分别趋向不同token，单query可重加权表示不证明同一小子集对所有query一致保真。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04838709677419355,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "可解决结构与不适用条件",
+                "start_line": 32,
+                "end_line": 40,
+                "excerpt": "## 可解决结构与不适用条件\n适用于已指定独立乘积分布下、有限维双线性分数的均方低秩近似，包括独立载荷/应变传感器的响应压缩。q为载荷系数，k为传感器模态，H为固定耦合；若单位不一致，先按物理量纲定义权重，不用无量纲误差冒充物理指标。\n\n真实attention同文档的q,k通常相关，因果位置采样也不是无条件独立。可用校准q×校准k全部笛卡尔积定义一个**经验乘积分布代理**，该有限目标严格成立；它不等于真实paired风险。需在独立文档留出集检查成对分数、排序、实际V/W输出及e2e。\n\npost-RoPE实际q/k也可定义此代理，但固定矩与独立性仍须核对；模型的不同位置/长度可能改变目标。一般A,B不相同、M不对称，不是UUᵀ。压缩维没有自动继承某个原始FC频率；不保证ARp=RbarpA。不能跨频率融合后声称单频RoPE无损。pre-RoPE低秩也不保证post-RoPE低秩。\n\n分数MSE不保证top-k保持，缺少逐点误差和排序margin时拒绝用math.topk-margin；也不保证softmax或value输出最优，后者按math.attention-output-geometry单独检验。缓存z_k是额外索引存储，最终保留全KV时不自动减总缓存。校准/投影计算成本需测量。\n\n"
+              },
+              {
+                "node": "s8",
+                "title": "验证状态",
+                "start_line": 44,
+                "end_line": 46,
+                "excerpt": "## 验证状态\n显示证明经独立数学审阅，CPU有限产品分布与随机SPD输入检查见doc/results/math-weighted-bilinear-20261007/。公开开发问题含未点名定理的压缩问题、传感器跨域与相关性/奇异性拒用；拒用为人工前提核对，不是模型测评。数值样例不替代一般证明。无Lean、真实模型A/B、GPU时延或未见模型验收；待执行留出协议不记为已完成。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.singular-support-bilinear-low-rank",
+            "version": 1,
+            "sha256": "60301c861c559bba11a030e7fe98e8a789ede04777b62cadad8cdfa5b5b79cd2",
+            "title": "奇异支持下的双线性低秩分数近似",
+            "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+              "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+              "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文条件式推导；非Lean形式化证明",
+                "agent_doc/results/math-singular-bilinear-20261008-v2/validate.py、raw.json：公开有限CPU检查；旧数值范围失败保存，v2独立回执另存；有限输出不保证任意病态尺度精度"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 7
+              }
+            ],
+            "score": 0.046671404880360104,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界与跨领域迁移",
+                "start_line": 31,
+                "end_line": 38,
+                "excerpt": "## 正例、边界与跨领域迁移\n\n线性传感器：a=(1,2,0)、b=(1,0,3)，q=u a为无量纲可编程增益，k=v b为电压(V)，u∈{−1,1}、v∈{−2,2}独立均匀。H=diag(2,5,7)以电导(S)计，分数为电流(A)，qᵀHk=2uv。两个二阶矩均rank1。\n\nr=1可取M0=a bᵀ/25（单位S），qᵀM0k=2uv，均方误差0 A²；||M0||F²=2/25 S²。取c=(2,−1,0)，N=c bᵀ则aᵀc=0，M0+N仍rank1、分数不变，范数平方为1252/25 S²。不可见自由度存在，规范解更小。反过来任意N如独立第三坐标可能增秩，必须核对。\n\n支持漂移：q=k=(0,1,0)（分别用gain/V单位），原分数5 A而M0给0，缺口5 A。校准零误差不代表未知工况无损。传感器仅合成线性映射验证，未测真实物理系统。\n\n"
+              },
+              {
+                "node": "s6",
+                "title": "对 indexer、NoPE/RoPE 与知识入口的意义",
+                "start_line": 49,
+                "end_line": 56,
+                "excerpt": "## 对 indexer、NoPE/RoPE 与知识入口的意义\n\n原对象q/k/H对应投影代理的分数；经验 q×k 笛卡尔积可以定义合法独立乘积分布，因此该**有限代理目标**可精确成立。真实因果paired风险、长度分布和文档留出必须另测。保留所用知识ID、版本、哈希与独立假设，不把所有条目装进上下文。\n\nNoPE可直接对固定内容分数建模；RoPE应明确使用实际post-RoPE向量或每个位置差对应的H，位置改变可能改变支持。NoPE+RoPE共同压缩不意味着潜在两维继承代表FC频率；跨频率 intertwining 另有条件。这里不修改旋转结构，不认证实数投影的浮点输出，也不保证top-k、V/W输出或e2e最优。\n\n最小可证伪预测：在相同索引维数下，支持内加权解的**冻结经验乘积MSE**等于C的尾和，且不差于可行rank同预算基线；若实际成对风险或留出排序变坏，则拒绝宣称质量改进。最终保留全KV时新增潜在key仍是额外缓存，投影/校准/数值秩评估成本需计入。无实际收益只保留知识与负结果，不接生产。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R3",
+      "query": "子集 原权重 归一化 误用",
+      "actual": [
+        "math.convex-support-reduction",
+        "math.softmax-barycenter-error",
+        "math.attention-output-geometry"
+      ],
+      "hit": true,
+      "seconds": 0.004194765999272931,
+      "chars": 5932,
+      "bytes": 9972,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "84131951b4537ed33bf734f43b2cdf02f3fb377759d91c64f3deda658f12fc30",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.convex-support-reduction",
+            "version": 1,
+            "sha256": "9058ed02e646e728e2f365086ca0725852f6573f8317a6975cd80ccab00307aa",
+            "title": "有限凸输出的仿射秩支持约简与重新赋权边界",
+            "summary": "非负单位质量的固定加权输出可用至多仿射维数r+1个原点重新赋权表示；不保证原softmax子集或全query保真。",
+            "status": "published",
+            "assumptions": [
+              "非空有限v_i∈R^p；α_i≥0且Σα_i=1；固定目标z=Σα_i v_i；允许改变保留点的权重。",
+              "固定线性W只保证Wz；query-oblivious、原权重重归一化与在线成本均需另证。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "一般证明为非形式化数学推导；不是Lean。",
+                "agent_doc/results/math-convex-support-20261009：8个公开Fraction例、双后端结构检索、独立结果审查；不代表模型/GPU/e2e收益。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界与反例",
+                "start_line": 15,
+                "end_line": 22,
+                "excerpt": "## 正例、边界与反例\n\n一维v=(0,1,3)，α=(1/2,1/3,1/6)，z=5/6。只用0与3的新权重(13/18,5/18)仍给5/6；原权重在同子集重归一化为(3/4,1/4)，却给3/4，误差1/12。故存在性不等于softmax筛选结果精确。\n\n全部点相同(r=0)或singleton只需一个点；零权不需纳入支持。r维非退化simplex内部点的重心坐标唯一且全部为正，最坏需r+1个，界不能普遍缩到r。\n\nv=(0,1)、α=(2,−1)给−1在凸包外：负权或质量非1时本定理不可套用。两个query若分别趋向不同token，单query可重加权表示不证明同一小子集对所有query一致保真。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "问题结构与迁移",
+                "start_line": 23,
+                "end_line": 30,
+                "excerpt": "## 问题结构与迁移\n\n先抽取对象（固定value或W value）、权重、目标（单query输出）、约束（能否修改权重），再检索本ID与`math.rank-nullity-quotient@1`。检查非负/单位质量/固定目标后才应用。\n\n传感器加权平均可用原观测的少数代表点重新赋权，精确保留固定均值；不能保留全部协方差或所有未来任务。Indexer中z=Σsoftmax(score)ᵢvᵢ，定理给输出表示的存在性，而非token重合度指标或online候选算法。若已知完整α再做消元，dense teacher计算成本已经付出。可作为离线oracle，比较原权重子集和重新赋权的输出误差，判断value冗余是否值得探索；未验证前不得改生产注意力。\n\n原论文最新预印本Cohen2609.06327v2定义query-oblivious **unweighted** S，并要求query球内一致输出误差；这比固定query重新赋权强得多。Eq(3)以中心化key半径与query半径乘积定义ρ。§7.7作者报告在其两模型实验中带exp(ρ)的全球界给出超过cache的coreset；我们未复现，也未核验全文定理。这不证明所有压缩无效，只说明必须检查目标、量词和常数，不能把经典存在性当有效全局算法。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04788306451612903,
+            "sections": [
+              {
+                "node": "s3",
+                "title": "可复核证明",
+                "start_line": 18,
+                "end_line": 32,
+                "excerpt": "## 可复核证明\n\n令 δ=α−β，其正、负部分总质量均为 T=TV。T=0 时结论显然；否则 WΣδv=T(a−b)，a,b 分别是正、负部分归一化后的 Wv 的凸组合。展开这两个组合的乘积权重，以三角不等式得到 ‖a−b‖≤D。\n\n令 X_j=exp(e_j)，m=min X>0，M=max X，μ=Σα_jX_j。β_j=α_jX_j/μ，所以 TV=E_α|X−μ|/(2μ)。m=M 时 TV=0。否则凸函数 |x−μ| 不超过区间端点的弦，取期望后\n\n\\[\n\\mathrm{TV}\\le\\frac{(M-\\mu)(\\mu-m)}{(M-m)\\mu}\n=\\frac{M+m-\\mu-mM/\\mu}{M-m}\n\\le\\frac{\\sqrt M-\\sqrt m}{\\sqrt M+\\sqrt m}\n=\\tanh(w/4).\n\\]\n\n最后一步用 μ+mM/μ≥2√(mM)。这是实数数学证明；计算时不应直接 exp 大误差，使用稳定 softmax 和 osc/tanh，避免溢出。尖锐例：w≥0，α=(1/(1+exp(w/2)),exp(w/2)/(1+exp(w/2)))，e=(w,0)，β 恰交换概率。v=(0,D)、W=I 时两界同时取等号。\n\n"
+              },
+              {
+                "node": "s6",
+                "title": "迁移及不适用范围",
+                "start_line": 63,
+                "end_line": 70,
+                "excerpt": "## 迁移及不适用范围\n\nAttention/indexer：qᵀk/√d 对应 s，FC/低秩预测决定 S，V 对应 v，输出投影块对应 W。NoPE/RoPE/混合均可在位置变换已完成后使用本界；本界不授权跨频率无损融合。应同时测 p_S、重合度、输出绝对误差和实际任务精度；最大质量降低最坏情况界，但不最小化具体 values 的实际误差。多头可逐头用 W_h 后把界相加，不能拿单头误差充当整个模型证书。\n\n物理线性混合：v 是同量纲 actuator force，权重是非负归一化混合，W 是固定坐标/测量映射；D 和误差单位均为 N，logits/TV 无量纲。真实非线性执行器不适用。Agent 文本通信的“消息重要性”不是此线性平均；没有实际对应对象只能保留类比，不据此删消息或修改生产路由。\n\n端到端：后续残差、非线性、多层及自回归状态未纳入。只有另行证明相应 Lipschitz 界/决策间隔和传播预算，才可能形成局部决策证书。不能由本卡或较小输出误差直接宣称 FASA 精度/省 token/速度改善。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.attention-output-geometry",
+            "version": 1,
+            "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+            "title": "固定value的Gram输出几何与局部敏感度",
+            "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+            "status": "published",
+            "assumptions": [
+              "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+              "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+              "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+                "CPU finite development checks; no Lean/model/GPU/e2e verification"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.047619047619047616,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界、误用反例",
+                "start_line": 44,
+                "end_line": 51,
+                "excerpt": "## 正例、边界、误用反例\n\nα=(1/3,1/3,1/3)、v=(0,1,100)、W=1。同为‖δ‖₂=√2·0.01，δ_A=(−.01,.01,0)使输出改变.01，δ_B=(−.01,0,.01)使输出改变1。相同概率误差不能确定输出质量。\n\n所有value相同，或W把差异全部投影到零，C/G敏感度为零，概率MSE仍可非零。n=1时J=0。固定大共同value偏移不影响差；浮点大偏移仍可能导致消减误差，实数平移恒等式不免除数值审查。\n\n对大扰动不能把G的局部二次损失当精确有限误差。模型后续非线性、不同query、不同生成轨迹改变α/V/W，旧G不能自动复用。负权重不满足凸组合余项证明；非归一化权重不满足共同value平移不变性。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "迁移与可证伪设计",
+                "start_line": 52,
+                "end_line": 59,
+                "excerpt": "## 迁移与可证伪设计\n\nIndexer固定trace：完整与稀疏注意力权重对应α/β（剪枝项补零），value对应V，当前头输出投影对应W。NoPE、RoPE和混合模型均在位置变换完成后适用；不授权跨频率精确融合。固定索引字节预算、最终KV预算和trace，比较输出误差与eᵀGe、重合度/质量的关联，再用未参与选择的文档测试。G是离线诊断/训练目标候选；完整C有n²成本，不能默认部署。计算精确误差直接用Zᵀδ，O(nh)，无需形成C。\n\n固定线性分类器ℓ_j=a_jᵀz+b_j，dense赢家c、真实margin γ_j=ℓ_c−ℓ_j>0。若已认证输出误差E，且每个j≠c满足‖a_c−a_j‖₂E<γ_j，则赢家保持；由柯西不等式逐对证明。只保证这个固定分类器/输入，不保证LLM生成序列或LongBench精度。\n\n跨域：非负归一化配料质量分数α/β、组分浓度V、固定线性传感器W，同样的Gram几何精确给浓度差平方，单位为浓度²；非线性化学反应、体积收缩、未归一化质量直接拒用。Agent文本消息不是固定线性混合，不将此式作为通信省token保证。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "context": {
+    "schema_version": 1,
+    "snapshot": "84131951b4537ed33bf734f43b2cdf02f3fb377759d91c64f3deda658f12fc30",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "status": "ready",
+    "budget": {
+      "max_entries": 3,
+      "max_chars": 13000,
+      "used_chars": 5918,
+      "scope": "serialized entry payload characters, not model tokens or outer envelope"
+    },
+    "retrieved_ids": [
+      "math.convex-support-reduction"
+    ],
+    "entries": [
+      {
+        "schema_version": 1,
+        "id": "math.convex-support-reduction",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "有限凸输出的仿射秩支持约简与重新赋权边界",
+        "summary": "非负单位质量的固定加权输出可用至多仿射维数r+1个原点重新赋权表示；不保证原softmax子集或全query保真。",
+        "aliases": [
+          "代表 value 重加权 输出 凸组合",
+          "传感器 平均 代表 点 重加权",
+          "子集 原权重 归一化 误用",
+          "Caratheodory convex hull affine rank support reduction barycenter reweighting"
+        ],
+        "domains": [
+          "linear-algebra",
+          "probability-and-optimization"
+        ],
+        "structures": [
+          "convex-combination",
+          "affine-rank",
+          "weighted-output",
+          "attention-sparsification"
+        ],
+        "assumptions": [
+          "非空有限v_i∈R^p；α_i≥0且Σα_i=1；固定目标z=Σα_i v_i；允许改变保留点的权重。",
+          "固定线性W只保证Wz；query-oblivious、原权重重归一化与在线成本均需另证。"
+        ],
+        "sources": [
+          {
+            "url": "https://elliotpaquette.github.io/high-dimensional-probability/lectures/02-convex-hulls.html",
+            "locator": "作者讲义2026-09-02 §1 Theorem1及证明；r+1仿射秩精化为项目推导",
+            "accessed": "2026-10-09"
+          },
+          {
+            "url": "https://arxiv.org/html/2609.06327v2",
+            "locator": "Cohen v2 2026-09-13 preprint Eq(1)-(3)、§7.7；仅定义与作者报告的界局限筛选，非复现/全证明核验",
+            "accessed": "2026-10-09"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "一般证明为非形式化数学推导；不是Lean。",
+            "agent_doc/results/math-convex-support-20261009：8个公开Fraction例、双后端结构检索、独立结果审查；不代表模型/GPU/e2e收益。"
+          ]
+        },
+        "requires": [
+          {
+            "id": "math.rank-nullity-quotient",
+            "version": 1
+          }
+        ],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.softmax-barycenter-error"
+          },
+          {
+            "type": "related",
+            "id": "math.attention-output-geometry"
+          }
+        ],
+        "content": "# 有限凸输出的仿射秩支持约简\n\nID: `math.convex-support-reduction`；版本1。经典定理与项目推导分开；来源见元数据和本轮sources.json。\n\n## 对象、假设与结论\n\n非空有限点v₁,…,vₙ∈Rᵖ，αᵢ≥0，Σαᵢ=1，固定z=Σαᵢvᵢ。r=dim aff{vᵢ}。存在原点子集S，|S|≤r+1，以及新权重βᵢ≥0、Σβᵢ=1，使z=Σᵢ∈Sβᵢvᵢ。允许新权重是关键。教材常写p+1；r+1精化可在仿射坐标中应用经典定理，也是下述增广秩推导的结果。不是本项目的新定理。\n\n## 可复核证明\n\n令M的列为(vᵢ,1)，则rank M=r+1。去掉零权后，若正支持数大于r+1，由秩零化度存在非零a满足Ma=0。故Σaᵢ=0，a同时有正负分量，且Σaᵢvᵢ=0。取θ=min_{aᵢ>0}αᵢ/aᵢ>0，β=α−θa：正a分量不负，负a分量增加，至少一项变零；质量和z保持。只在现有正支持中迭代，每次减少至少一个，有限步达到≤r+1。初始正支持自身的仿射维数可能更低，但全点r界仍正确。\n\n固定线性映射W后，可改对Wvᵢ进行约简，使用r_W=dim aff{Wvᵢ}。它只保留Wz；W非单射时不得宣称原z保真。此为经典定理的直接推论。\n\n## 正例、边界与反例\n\n一维v=(0,1,3)，α=(1/2,1/3,1/6)，z=5/6。只用0与3的新权重(13/18,5/18)仍给5/6；原权重在同子集重归一化为(3/4,1/4)，却给3/4，误差1/12。故存在性不等于softmax筛选结果精确。\n\n全部点相同(r=0)或singleton只需一个点；零权不需纳入支持。r维非退化simplex内部点的重心坐标唯一且全部为正，最坏需r+1个，界不能普遍缩到r。\n\nv=(0,1)、α=(2,−1)给−1在凸包外：负权或质量非1时本定理不可套用。两个query若分别趋向不同token，单query可重加权表示不证明同一小子集对所有query一致保真。\n\n## 问题结构与迁移\n\n先抽取对象（固定value或W value）、权重、目标（单query输出）、约束（能否修改权重），再检索本ID与`math.rank-nullity-quotient@1`。检查非负/单位质量/固定目标后才应用。\n\n传感器加权平均可用原观测的少数代表点重新赋权，精确保留固定均值；不能保留全部协方差或所有未来任务。Indexer中z=Σsoftmax(score)ᵢvᵢ，定理给输出表示的存在性，而非token重合度指标或online候选算法。若已知完整α再做消元，dense teacher计算成本已经付出。可作为离线oracle，比较原权重子集和重新赋权的输出误差，判断value冗余是否值得探索；未验证前不得改生产注意力。\n\n原论文最新预印本Cohen2609.06327v2定义query-oblivious **unweighted** S，并要求query球内一致输出误差；这比固定query重新赋权强得多。Eq(3)以中心化key半径与query半径乘积定义ρ。§7.7作者报告在其两模型实验中带exp(ρ)的全球界给出超过cache的coreset；我们未复现，也未核验全文定理。这不证明所有压缩无效，只说明必须检查目标、量词和常数，不能把经典存在性当有效全局算法。\n\n## 前置与相关关系\n\n强前置：`math.rank-nullity-quotient@1`用于核方向和rank；相关`math.softmax-barycenter-error`控制原权重截断输出，`math.attention-output-geometry`讨论value/Jacobian目标，均不为存在性自动提供端到端保证。\n\n## 验证方法与实际状态\n\n本轮Fraction增广RREF消元逐步记录质量、非负、固定输出和支持；8个公开开发例包括有符号拒用、simplex紧界、重复/零权/singleton。独立审查重算证据。一般证明是人工推导审查，不是Lean；浮点消元需另做秩阈值、误差与稳定性评估。双后端top3公开结构检索不等同模型识别/拒用实测。未见留出内容未读取；未测GPU、实际token、e2e、延迟或真实数据压缩收益。\n",
+        "path": "entries/math.convex-support-reduction.json",
+        "sha256": "9058ed02e646e728e2f365086ca0725852f6573f8317a6975cd80ccab00307aa",
+        "selection_reason": "retrieved"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.rank-nullity-quotient",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "向量空间、商空间与对偶查询的保真条件",
+        "summary": "dim V=dim ker T+dim im T；V/ker T≅im T。",
+        "aliases": [
+          "线性压缩 查询 核 空间 维数 解集 商空间 对偶",
+          "rank nullity quotient dual annihilator"
+        ],
+        "domains": [
+          "algebra",
+          "linear-algebra"
+        ],
+        "structures": [
+          "linear-algebra",
+          "linear-map",
+          "task-sufficiency"
+        ],
+        "assumptions": [
+          "V,W 为有限维 F 向量空间，T:V→W 线性，查询 q∈V* 线性；代数对偶不默认欧氏内积。"
+        ],
+        "sources": [
+          {
+            "url": "https://linear.axler.net/LADR4e.pdf",
+            "locator": "3.21、3.105、3.107、3.125、3.130；查询保真 iff 条件为本项目推导",
+            "accessed": "2026-10-07"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "正文逐项来源/证明核查；非 Lean 形式化证明",
+            "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+          ]
+        },
+        "requires": [],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.data-processing-task-sufficiency"
+          }
+        ],
+        "content": "# 向量空间、商空间与对偶查询的保真条件\n\n稳定 ID：math.rank-nullity-quotient；语义版本1；核查日期2026-10-07。\n\n## 对象、符号与前提\nV,W 为有限维 F 向量空间，T:V→W 线性，查询 q∈V* 线性；代数对偶不默认欧氏内积。\n\n## 基础定义与维数关系\n向量空间的子空间对加法与标量乘法封闭；span 是有限线性组合的集合；独立表示零组合只能有零系数；基是独立且张成的列表。有限维基的长度一致，作为维数。对 U,W⊆V，dim(U+W)=dim U+dim W−dim(U∩W)：将交的基分别延拓为 U、W 的基，合并后删掉交的重复基。U+W 为直和 iff 交为0；每个向量的两部分分解此时唯一。矩阵行消元是左乘可逆初等矩阵，不改变核或 Ax=b 的可解性（rhs 要同时变）。\n\n## 经典结论\ndim V=dim ker T+dim im T；V/ker T≅im T。Ax=b 可解 iff b∈im A，解集 x₀+ker A。仅从 Tx 恢复所有 x 的 q(x) iff q 在 ker T 上为零，等价 q=ℓ∘T；矩阵坐标下 q 属于 T 的行空间。\n\n## 证明思路与可复核推导\n把 ker T 的基延拓成 V 的基；补充基的像线性独立并张成 im T。映射 [x]→Tx 因核为零而良定义且双射。若查询保真则核内 x 与0编码相同所以 q(x)=0；反之定义 ℓ(Tx)=q(x)，对 im T 良定义，再延拓到 W。\n\n## 正例与边界\nT(x,y,z)=(x+y,z)，秩2核 span(1,−1,0)；q=x+y 可恢复，q=x 不可恢复。零映射的核是全部 V，只有零查询能无损恢复。\n\n## 误用反例与拒用条件\n降维不保证任意后续点积、非线性语义查询或排序保真。丢失核方向时增加 token 摘要不能自动恢复；需明确查询族或误差界。无限维时本条有限维计数不能照搬。\n\n## 问题结构与迁移\nAgent 通信中的精确线性摘要是一种商映射；仅在消费者查询族 annihilates kernel 时可证保真。自然语言摘要只有类比，不纳入生产保证。\n\n## 前置关系与来源版本\n基础前置：有限维空间、基、矩阵乘法和域算术；涉及内积的条目另需共轭转置/正定范数。本条在正文重述使用的基础结论，导航关联不要求一次加载整条课程。准确出处：[3.21、3.105、3.107、3.125、3.130；查询保真 iff 条件为本项目推导](https://linear.axler.net/LADR4e.pdf)。Axler 使用第四版、作者2026-08-16 PDF修订；Saad 使用第二版2003；Conrad未标日期的讲义以本轮PDF哈希固定；网页按标题日期与检索日期固定。PDF哈希/近期论文筛选见本轮 sources.json/research.md。\n\n## 验证状态与限制\n已核对所列来源的相关段落，并人工检查上面的证明思路/自推公式。verify.py 对该主题给公开正例、边界或反例；Fraction精确运算与float64数值检查分别标注。数学证明核查不是 Lean 形式化证明；计算实例不证明一般结论。未做同模型Agent A/B或真实GPU系统测试；没有性能收益声明。\n",
+        "path": "entries/math.rank-nullity-quotient.json",
+        "sha256": "8aca11b2697e73664732ce26ad7b1afcc118f452e800eb9652648ac136c9cc4c",
+        "selection_reason": "prerequisite"
+      }
+    ],
+    "knowledge_refs": [
+      {
+        "id": "math.convex-support-reduction",
+        "version": 1,
+        "sha256": "9058ed02e646e728e2f365086ca0725852f6573f8317a6975cd80ccab00307aa"
+      },
+      {
+        "id": "math.rank-nullity-quotient",
+        "version": 1,
+        "sha256": "8aca11b2697e73664732ce26ad7b1afcc118f452e800eb9652648ac136c9cc4c"
+      }
+    ],
+    "skipped": []
+  },
+  "token_cost": "unmeasured; chars/bytes not tokens",
+  "holdouts_metadata_sha256": "5a0572863e75526de915f22108fc90b5e8ce58de14292e7159054af3ba9fe48a"
+}

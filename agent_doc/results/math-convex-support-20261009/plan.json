@@ -1,0 +1,107 @@
+{
+  "scope": "Finite exact convex support reduction and fixed-output attention mapping; public structural retrieval only, no GPU/model/e2e gain",
+  "task_refs": [
+    "MATH-52"
+  ],
+  "budget_seconds": 1200,
+  "max_cycles": 2,
+  "max_attempts": 2,
+  "dag": [
+    {
+      "id": "independent-plan",
+      "action": "manual-independent-plan-review",
+      "acceptance": "Actual separate reviewer approves exact plan SHA before producer dispatch; receipt pinned by observed reviewer event."
+    },
+    {
+      "id": "produce",
+      "action": "produce",
+      "experiment_result": {
+        "result_id": "math-convex-support-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-convex-producer",
+        "manifest_path": "agent_doc/results/math-convex-support-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-convex-support-20261009/validation_plan.json",
+          "sha256": "11d3cca0b41bb127a0914c107763eec506e938962edf2c4ee6b0890e6acc83ab"
+        },
+        "scope": "Finite exact convex support reduction and fixed-output attention mapping; public structural retrieval only, no GPU/model/e2e gain"
+      },
+      "depends_on": [
+        "independent-plan"
+      ]
+    },
+    {
+      "id": "verify",
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "math-convex-support-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-convex-producer",
+        "manifest_path": "agent_doc/results/math-convex-support-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-convex-support-20261009/validation_plan.json",
+          "sha256": "11d3cca0b41bb127a0914c107763eec506e938962edf2c4ee6b0890e6acc83ab"
+        },
+        "scope": "Finite exact convex support reduction and fixed-output attention mapping; public structural retrieval only, no GPU/model/e2e gain"
+      },
+      "depends_on": [
+        "produce"
+      ]
+    },
+    {
+      "id": "publish",
+      "required_result_refs": [
+        {
+          "result_id": "math-convex-support-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-convex-producer",
+          "manifest_path": "agent_doc/results/math-convex-support-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/math-convex-support-20261009/validation_plan.json",
+            "sha256": "11d3cca0b41bb127a0914c107763eec506e938962edf2c4ee6b0890e6acc83ab"
+          },
+          "scope": "Finite exact convex support reduction and fixed-output attention mapping; public structural retrieval only, no GPU/model/e2e gain"
+        }
+      ],
+      "depends_on": [
+        "verify"
+      ]
+    }
+  ],
+  "bindings": {
+    "agent_doc/task/task_details/MATH-52.md": "97ea8fbe21a0bfd79da9147ed63168cc84a48acaad9b23708c5f6253953331d0",
+    "agent_doc/task/TASK.md": "f085b7c0811501e5627f275914eb3da7d86b4d9949af4f51d93cf36091aa13f4",
+    "agent_doc/results/math-convex-support-20261009/prior_search.json": "6e511fe60b7871d335b32d4804578ca101d598839cc6c31860cae5dd7d48b276",
+    "agent_doc/results/math-convex-support-20261009/knowledge_search.json": "c010ee9aad14f325467af939052d9ce2022302e69130f118c5a93fdc2cee3d4c",
+    "agent_doc/results/math-convex-support-20261009/cases.json": "bbcaacc4e548cb8b83db42ed7a38c48b65dc967babc6c4f4848af8e6fe203630",
+    "agent_doc/results/math-convex-support-20261009/retrieval_protocol.json": "99e7287c25eb42e3b7f7c844112e0de49aa98b8cca93e76e0a23be2ceeb86d06",
+    "agent_doc/results/math-convex-support-20261009/validation_plan.json": "11d3cca0b41bb127a0914c107763eec506e938962edf2c4ee6b0890e6acc83ab",
+    "AGENTS.md": "ff97d09aeb35cff3a973d1423f325ef6274f33b4c68830e8c899821e989bd63a",
+    "knowledge/learning_state.json": "7b7a3b0cb356605b9e6ead114be006b7f7d5461d4953aa93e7146cc043ebadbf",
+    "config/role_registry.json": "c231d5031aab337845de3e970f0253fc8d5156be3a3bdff839f2ebf696f7c5eb",
+    "agent_doc/guide/GUIDE.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_doc/guide/README.md": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+  },
+  "execution_kind": "actual local manual orchestration, not Engine schema/authentication",
+  "prior_reuse": "No old measured results consumed; retrieval incomplete and cards reused only with premise audit.",
+  "completed_prerequisites": [
+    "fresh main synchronization",
+    "guide inventory and actual prior-result/knowledge search"
+  ],
+  "publication_substeps": [
+    "usable-with-scope independent result receipt",
+    "fresh fetch and concurrency check",
+    "nonforce main push",
+    "remote SHA/tree readback"
+  ],
+  "frozen_commands": [
+    "python -m unittest tests.test_knowledge tests.test_knowledge_index tests.test_knowledge_math tests.test_knowledge_handoff tests.test_knowledge_reuse -v",
+    "python scripts/sync_plugin_references.py",
+    "python scripts/sync_plugin_references.py --check"
+  ],
+  "guide_inventory": [
+    "agent_doc/guide/README.md",
+    "agent_doc/guide/GUIDE.md"
+  ],
+  "progress_policy": "Frozen stable Plan snapshot retained; subsequent Progress append does not replace it."
+}

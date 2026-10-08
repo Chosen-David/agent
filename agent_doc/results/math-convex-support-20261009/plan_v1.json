@@ -1,0 +1,81 @@
+{
+  "scope": "Finite exact convex support reduction and fixed-output attention mapping; public structural retrieval only, no GPU/model/e2e gain",
+  "task_refs": [
+    "MATH-52"
+  ],
+  "budget_seconds": 1200,
+  "max_cycles": 2,
+  "max_attempts": 2,
+  "dag": [
+    {
+      "id": "produce",
+      "action": "produce",
+      "experiment_result": {
+        "result_id": "math-convex-support-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-convex-producer",
+        "manifest_path": "agent_doc/results/math-convex-support-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-convex-support-20261009/validation_plan.json",
+          "sha256": "29d5c43342ad4e14c89eb37ab92cb430e13b188c23f67a6980b8100b473af841"
+        },
+        "scope": "Finite exact convex support reduction and fixed-output attention mapping; public structural retrieval only, no GPU/model/e2e gain"
+      },
+      "depends_on": [
+        "independent-plan"
+      ]
+    },
+    {
+      "id": "verify",
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "math-convex-support-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-convex-producer",
+        "manifest_path": "agent_doc/results/math-convex-support-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-convex-support-20261009/validation_plan.json",
+          "sha256": "29d5c43342ad4e14c89eb37ab92cb430e13b188c23f67a6980b8100b473af841"
+        },
+        "scope": "Finite exact convex support reduction and fixed-output attention mapping; public structural retrieval only, no GPU/model/e2e gain"
+      },
+      "depends_on": [
+        "produce"
+      ]
+    },
+    {
+      "id": "publish",
+      "required_result_refs": [
+        {
+          "result_id": "math-convex-support-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-convex-producer",
+          "manifest_path": "agent_doc/results/math-convex-support-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/math-convex-support-20261009/validation_plan.json",
+            "sha256": "29d5c43342ad4e14c89eb37ab92cb430e13b188c23f67a6980b8100b473af841"
+          },
+          "scope": "Finite exact convex support reduction and fixed-output attention mapping; public structural retrieval only, no GPU/model/e2e gain"
+        }
+      ],
+      "depends_on": [
+        "verify"
+      ]
+    }
+  ],
+  "bindings": {
+    "agent_doc/task/task_details/MATH-52.md": "fa9142d212355a58ac0898d49cf722ef088e91fd1d4895c32ea306868b029ef5",
+    "agent_doc/task/TASK.md": "f085b7c0811501e5627f275914eb3da7d86b4d9949af4f51d93cf36091aa13f4",
+    "agent_doc/results/math-convex-support-20261009/prior_search.json": "6e511fe60b7871d335b32d4804578ca101d598839cc6c31860cae5dd7d48b276",
+    "agent_doc/results/math-convex-support-20261009/knowledge_search.json": "c010ee9aad14f325467af939052d9ce2022302e69130f118c5a93fdc2cee3d4c",
+    "agent_doc/results/math-convex-support-20261009/cases.json": "bbcaacc4e548cb8b83db42ed7a38c48b65dc967babc6c4f4848af8e6fe203630",
+    "agent_doc/results/math-convex-support-20261009/retrieval_protocol.json": "99e7287c25eb42e3b7f7c844112e0de49aa98b8cca93e76e0a23be2ceeb86d06",
+    "agent_doc/results/math-convex-support-20261009/validation_plan.json": "29d5c43342ad4e14c89eb37ab92cb430e13b188c23f67a6980b8100b473af841",
+    "AGENTS.md": "ff97d09aeb35cff3a973d1423f325ef6274f33b4c68830e8c899821e989bd63a",
+    "knowledge/learning_state.json": "7b7a3b0cb356605b9e6ead114be006b7f7d5461d4953aa93e7146cc043ebadbf",
+    "config/role_registry.json": "c231d5031aab337845de3e970f0253fc8d5156be3a3bdff839f2ebf696f7c5eb",
+    "agent_doc/guide/GUIDE.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "execution_kind": "actual local manual orchestration, not Engine schema/authentication",
+  "prior_reuse": "No old measured results consumed; retrieval incomplete and cards reused only with premise audit."
+}

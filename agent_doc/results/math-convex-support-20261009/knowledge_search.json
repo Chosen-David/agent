@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "snapshot": "d43e482d0207eb792941eb07c8b39203d6de93fcc049f8c36e74a26a2f97073f",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.softmax-barycenter-error",
+      "version": 1,
+      "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+      "title": "有限 softmax 与归一化加权输出误差",
+      "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+      "status": "published",
+      "assumptions": [
+        "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+        "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+        "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+          "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "加权",
+            "输出"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "加权",
+            "输出"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "输出"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "凸组",
+            "加权",
+            "组合",
+            "输出"
+          ]
+        }
+      ],
+      "score": 27
+    },
+    {
+      "id": "math.attention-output-geometry",
+      "version": 1,
+      "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+      "title": "固定value的Gram输出几何与局部敏感度",
+      "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+      "status": "published",
+      "assumptions": [
+        "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+        "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+        "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+          "CPU finite development checks; no Lean/model/GPU/e2e verification"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "输出"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "输出"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "输出"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "凸组",
+            "稀疏",
+            "组合",
+            "输出"
+          ]
+        }
+      ],
+      "score": 17
+    },
+    {
+      "id": "algo.nsa-native-training",
+      "version": 1,
+      "sha256": "881e71e4805ef18c4c2aecab243aef639e51ada5c48e5e5894b8ae45e249cd13",
+      "title": "NSA：原生稀疏训练不等于无损替换",
+      "summary": "ACL 2025 的 NSA 在共同训练设置下保持多数任务质量，并有明确退化项；它是训练架构变化，不能直接套到未训练的密集模型。",
+      "status": "published",
+      "assumptions": [
+        "model: 27B total / 3B active MoE with GQA",
+        "training: 270B tokens at 8k then 32k continuation",
+        "method: compression selection sliding-window branches"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.nsa-native-training"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "稀疏"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "稀疏"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "稀疏"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "稀疏"
+          ]
+        }
+      ],
+      "score": 15
+    }
+  ]
+}
