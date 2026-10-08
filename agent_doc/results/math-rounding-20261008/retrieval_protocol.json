@@ -1,0 +1,40 @@
+{
+  "schema_version": "public-knowledge-development-retrieval/v1",
+  "status": "public development; not unseen model evaluation",
+  "queries": [
+    {
+      "id": "R1",
+      "query": "乘加 累计 丢失 小项 认证 比较大小",
+      "domain": "numerical-analysis",
+      "expected_id": "math.floating-dot-enclosure",
+      "top_k": 3,
+      "applicability": "adopt only for stored finite binary64 target and certified arithmetic"
+    },
+    {
+      "id": "R2",
+      "query": "电导 电压 线性组合 舍入 区间",
+      "domain": "numerical-analysis",
+      "expected_id": "math.floating-dot-enclosure",
+      "top_k": 3,
+      "applicability": "adopt conditional interval transfer; conductance times voltage is current"
+    },
+    {
+      "id": "R3",
+      "query": "低精度 量化 原始输入 未知误差 证书",
+      "domain": "numerical-analysis",
+      "expected_id": "math.floating-dot-enclosure",
+      "top_k": 3,
+      "applicability": "reject extension to original inputs without certified component errors"
+    }
+  ],
+  "backends": [
+    "files-lexical-v1",
+    "sqlite-fts5-rrf-v1"
+  ],
+  "acceptance": "For each exact query/domain on both backends, expected_id in top3. Record all results, elapsed seconds, output chars/bytes. Human/code premise checks separately; retrieval success never model/scientific acceptance. Required decisions encoded in published validation fixtures; all become regression after disclosure.",
+  "context_budget": {
+    "max_entries": 3,
+    "max_chars": 12000,
+    "acceptance": "Need new card only for point-dot; inspect partial/skipped; actual token cost not available."
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "snapshot": "bf56958a2aca7e0eb9743c01e0517a624fdd40afc393e69112acdbdcd594f356",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.residual-interval-screening",
+      "version": 1,
+      "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+      "title": "正交残差包络与安全候选筛除",
+      "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+      "status": "published",
+      "assumptions": [
+        "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+        "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+        "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+        "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+          "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "筛除"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "筛除"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "外包",
+            "浮点",
+            "点积",
+            "筛除"
+          ]
+        }
+      ],
+      "score": 14
+    },
+    {
+      "id": "math.centered-covariance-merge",
+      "version": 1,
+      "sha256": "f9ebd428b6fd9f78ac667a6a2419e277c5d8ca1731d3e5357b25a9a62f7a9b28",
+      "title": "中心化协方差、可合并散布统计量与误差桥",
+      "summary": "区分二阶矩与中心协方差；按计数/均值/散布精确合并，避免遗漏组间项；统计保证与浮点稳定性分别审查。",
+      "status": "published",
+      "assumptions": [
+        "有限实向量，同维度/坐标/单位和相同预处理；精确恒等式不要求iid",
+        "A、B为不重复不遗漏的数据分区，计数为非负整数；空分区用单位元，不定义空均值",
+        "C_n=S/n对n≥1；S/(n−1)只对n≥2，称总体协方差无偏还需iid及有限二阶矩",
+        "概率误差桥需已证明的均值和二阶矩误差事件；合并公式不赋予独立性或覆盖保证",
+        "浮点不具有严格结合律；需单独检查输入精度、溢出、抵消及舍入误差"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-centering/verify.py",
+          "docs/knowledge_learning/2026-10-07-centering/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "summary",
+          "terms": [
+            "浮点"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "浮点",
+            "舍入"
+          ]
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "math.rotation-intertwiner",
+      "version": 1,
+      "sha256": "e7f20395508e5e0772b1fe0abaa690e7443df62e0d451e743c25ce1b5a6bc408",
+      "title": "实旋转交织映射与RoPE跨频率融合",
+      "summary": "固定频率潜表示需要交织条件；区分整数频率别名、同频复线性融合、低秩点积限制与有限长度近似缺陷。",
+      "status": "published",
+      "assumptions": [
+        "有限实线性映射；R(theta)为正交二维旋转；位置为整数",
+        "频率按2pi取模；0和pi需独立处理；连续位置不允许整数别名",
+        "近似长度界只在指定整数位置范围内；受限精确保真须明确数据支撑子空间"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Self-contained real planar proof; no Lean/formal verification",
+          "32 public CPU structural cases; independent result acceptance required"
+        ]
+      },
+      "matches": [
+        {
+          "field": "summary",
+          "terms": [
+            "点积"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "浮点",
+            "点积"
+          ]
+        }
+      ],
+      "score": 5
+    }
+  ]
+}

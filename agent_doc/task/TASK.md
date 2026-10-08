@@ -237,3 +237,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-08 绘图验收绑定
 
 - [x] [FIG-QA-01] 绑定图资产、用途与最终载体，补充分项验收及负例契约；独立复核、回归并普通发布 main。仅规范与分发验证，非视觉质量提升实测。 ([detail](task_details/FIG-QA-01.md))
+
+## 2026-10-08 浮点外包区间
+
+- [ ] [MATH-47] 核验浮点点积包络、严格筛除与传感器迁移；筛选近期误差研究，独立验收后main发布。 ([detail](task_details/MATH-47.md))

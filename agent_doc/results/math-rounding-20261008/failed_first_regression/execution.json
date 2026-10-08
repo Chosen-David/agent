@@ -1,0 +1,80 @@
+[
+  {
+    "name": "validation",
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "agent_doc/results/math-rounding-20261008/validate.py"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 0.05757916600123281,
+    "stdout": "agent_doc/results/math-rounding-20261008/validation.stdout",
+    "stderr": "agent_doc/results/math-rounding-20261008/validation.stderr",
+    "tail": "{\"dot_cases\": 103, \"corner_checks\": 64, \"screening_cases\": 24, \"refusals\": 9, \"all_exact_oracle_checks_pass\": true, \"seconds\": 0.01863028600018879}\n"
+  },
+  {
+    "name": "targeted",
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "unittest",
+      "tests.test_knowledge",
+      "tests.test_knowledge_index",
+      "tests.test_knowledge_math",
+      "tests.test_knowledge_handoff",
+      "tests.test_knowledge_reuse",
+      "-v"
+    ],
+    "returncode": 1,
+    "elapsed_seconds": 6.751818015998651,
+    "stdout": "agent_doc/results/math-rounding-20261008/targeted.stdout",
+    "stderr": "agent_doc/results/math-rounding-20261008/targeted.stderr",
+    "tail": "ng-enclosure\",\\n  \"next_topic\": \"Re[24433 chars]n}\\n'\n\n----------------------------------------------------------------------\nRan 52 tests in 6.661s\n\nFAILED (failures=1)\n"
+  },
+  {
+    "name": "full",
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "returncode": 1,
+    "elapsed_seconds": 61.96201377699981,
+    "stdout": "agent_doc/results/math-rounding-20261008/full.stdout",
+    "stderr": "agent_doc/results/math-rounding-20261008/full.stderr",
+    "tail": "ge/assets/knowledge/learning_state.json\n\n\n----------------------------------------------------------------------\nRan 851 tests in 61.454s\n\nFAILED (failures=2, skipped=8)\n"
+  },
+  {
+    "name": "sync",
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/sync_plugin_references.py",
+      "--check"
+    ],
+    "returncode": 1,
+    "elapsed_seconds": 0.1102335409996158,
+    "stdout": "agent_doc/results/math-rounding-20261008/sync.stdout",
+    "stderr": "agent_doc/results/math-rounding-20261008/sync.stderr",
+    "tail": "stale generated references:\n - plugins/research-assistant/skills/model-with-knowledge/assets/knowledge/learning_state.json\n"
+  },
+  {
+    "name": "reader",
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "apps/paper-reader/tests",
+      "-v"
+    ],
+    "returncode": 0,
+    "elapsed_seconds": 1.876374974999635,
+    "stdout": "agent_doc/results/math-rounding-20261008/reader.stdout",
+    "stderr": "agent_doc/results/math-rounding-20261008/reader.stderr",
+    "tail": "_pdf (test_app.ReaderTest.test_request_boundary_and_invalid_pdf) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 1.594s\n\nOK\n"
+  }
+]

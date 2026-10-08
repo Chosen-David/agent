@@ -1,0 +1,88 @@
+{
+  "decision": "EXECUTE",
+  "baseline": "38d3764b23412aab6c29152b4b92e6cc27c25692",
+  "task_refs": [
+    "MATH-47"
+  ],
+  "topic": "outward-rounded dot-product enclosures",
+  "methods": [
+    "For finite correctly RN-rounded result r of an exact primitive value x: prev(r)<=x<=next(r), assuming adjacent finite endpoints. Monotone add and four-corner multiplication propagate intervals by induction.",
+    "gamma_2n conservative no-range-error relative model crosscheck only; construct constants/bound upward or exactly; severe cancellation forbids relative-score heuristic.",
+    "Stored-input exact target only. Inputs with validated component boxes may widen; otherwise cannot certify quantized/original or production kernel target.",
+    "For all certified score intervals, remove only U_i<kth-largest L; exact rerank target and tie policy required. Counterexample: terminal one-ulp inflation cannot restore errors already lost in earlier operations."
+  ],
+  "allowed_writes": [
+    "knowledge/entries/math.floating-dot-enclosure.json",
+    "knowledge/entries/math.floating-dot-enclosure.md",
+    "knowledge/coverage.json",
+    "knowledge/learning_state.json",
+    "knowledge/README.md",
+    "plugins/research-assistant/skills/model-with-knowledge/assets/knowledge/",
+    "agent_doc/task/TASK.md",
+    "agent_doc/task/task_details/MATH-47.md",
+    "agent_doc/results/math-rounding-20261008/"
+  ],
+  "budget": {
+    "seconds": 2400,
+    "root_cpu_tests_seconds": 180,
+    "independent_cpu_tests_seconds": 180,
+    "plan_review_contexts": 1,
+    "result_review_contexts": 1,
+    "model_evaluation_calls": 0,
+    "remote_jobs": 0
+  },
+  "acceptance": "all validation_plan predicates + theorem-name-free domain-filtered file/SQLite retrieval. Existing holdouts unchanged; independent new cases once revealed become public regression; no retained unseen-model claim",
+  "sources": "sources.json",
+  "prior_results": "prior_decision.json",
+  "evidence_refs": [
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "8de1129b90bca31bb899f7524bbfb33d1723b87b227e0553097025137161b397"
+    },
+    {
+      "path": "agent_doc/task/task_details/MATH-47.md",
+      "sha256": "9aae0bca10a0261b4cf953d09efb1e6a19adde7afaf92b904d773cb77ca8a5a4"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    },
+    {
+      "path": "knowledge/coverage.json",
+      "sha256": "e0a68299f75b98bb172c7b872e843c7f56d1071d9b5b4ab93b8f2d910b5def5d"
+    },
+    {
+      "path": "knowledge/learning_state.json",
+      "sha256": "59eaedebf7e4a234cb2217ece27ef3125cfc119d7aa62157645625e0fdbb18e3"
+    },
+    {
+      "path": "config/role_registry.json",
+      "sha256": "c231d5031aab337845de3e970f0253fc8d5156be3a3bdff839f2ebf696f7c5eb"
+    },
+    {
+      "path": "agent_doc/results/math-rounding-20261008/sources.json",
+      "sha256": "0844c5542c4e2a3478d4538f444024f8b1892d645b2517271fce2c85c05138af"
+    },
+    {
+      "path": "agent_doc/results/math-rounding-20261008/prior_decision.json",
+      "sha256": "b3dafdf3d89a8e4c00a5f9d8c1edebcc096c4b83f500a73e726f1e2874b6fdff"
+    },
+    {
+      "path": "agent_doc/results/math-rounding-20261008/retrieval_protocol.json",
+      "sha256": "b39d453836e41fc9485c3106e18dfb6fcd39c94aad8b567814f809e7e00aa9ae"
+    }
+  ],
+  "limitations": [
+    "No rigorous GPU outward kernel, true model traces, quantified input error, Lean or model A/B",
+    "No producer output consumed before actual separate reviewer acceptance"
+  ],
+  "version": 2,
+  "retrieval_protocol": {
+    "path": "agent_doc/results/math-rounding-20261008/retrieval_protocol.json",
+    "sha256": "b39d453836e41fc9485c3106e18dfb6fcd39c94aad8b567814f809e7e00aa9ae"
+  }
+}
