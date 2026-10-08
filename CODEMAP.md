@@ -103,4 +103,5 @@ SELF-SYNC-01–03：scripts/run_knowledge_windows.py 的 prepare_host / sync_hos
 
 | MATH-37/38 | `knowledge/entries/math.sequence-tv-coupling.*`, `doc/results/math-sequence-tv-20261008/` | 主AI producer → 独立概率/代码数据验收 → 建模Skill | 有限生成分布TV与seed/greedy拒用；无模型e2e测量 |
 
+| MATH-39/40 | `knowledge/entries/math.softmax-kl-fisher.*`, `doc/results/math-softmax-kl-20261008/` | 主AI producer → 独立数学/代码数据验收 → model-with-knowledge | KL中心化/Fisher路径曲率与饱和拒用；无生产模型收益 |
 CONT-20261008-01–03: RL/SFT trajectory and horizon-aware testing cards → model-with-knowledge; existing engineering prompt obeys saved rotation cursor; scoped producer/verifier records in `doc/results/rl-probability-20261008/`; report in `docs/knowledge_learning/2026-10-08-rl-probability/`. Private canceled batch and machine service state remain `.agent-runs/` only.

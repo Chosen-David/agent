@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "id": "math.softmax-kl-fisher",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "有限softmax的KL与中心化Fisher曲率",
+  "summary": "分数误差在共同平移商空间中决定概率KL；用路径方差给全局上界与条件下界，饱和时不能由低秩分数MSE推出概率有效秩。",
+  "aliases": [
+    "概率 分数 误差 常数 偏移",
+    "能级 扰动 热平衡 概率",
+    "低秩 重建 饱和 概率",
+    "centered softmax KL Fisher"
+  ],
+  "domains": [
+    "linear-algebra",
+    "information-theory"
+  ],
+  "structures": [
+    "exponential-family",
+    "gauge-invariance",
+    "fisher-curvature",
+    "bregman-divergence",
+    "support-mismatch"
+  ],
+  "assumptions": [
+    "共同非空有限支持集、有限实logits；温度正且已计入，KL自然对数",
+    "概率下界须覆盖整个连接路径；Fisher近似需振幅R小；没有统一全局正下界",
+    "硬mask/greedy/不同支持集另处理；attention概率轴不等于输出词表生成轴"
+  ],
+  "sources": [
+    {
+      "url": "https://www.pure.ed.ac.uk/ws/portalfiles/portal/150063512/paper.pdf",
+      "locator": "Author accepted May15,2020 §1 eq1.1–1.4, §2 Hessian and §4 shifted algorithms; KL bounds derived here",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://arxiv.org/abs/2608.26052",
+      "locator": "Recent screening; exact version/read range in research.json; no local reproduction",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v306/boursier26a.html",
+      "locator": "ICML2026 PMLR306 9392–9429 publisher and conditional model; no arbitrary KV transfer",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "Self-contained finite derivations; no formal proof",
+      "doc/results/math-softmax-kl-20261008 public CPU cases; publication subject to independent acceptance"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.softmax-barycenter-error"
+    },
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    },
+    {
+      "type": "related",
+      "id": "math.weighted-bilinear-low-rank"
+    },
+    {
+      "type": "related",
+      "id": "math.sequence-tv-coupling"
+    }
+  ]
+}

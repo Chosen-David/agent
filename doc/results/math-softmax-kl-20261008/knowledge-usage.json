@@ -1,0 +1,969 @@
+{
+  "knowledge_root": "knowledge",
+  "knowledge_refs": [
+    {
+      "id": "math.softmax-kl-fisher",
+      "version": 1,
+      "sha256": "e8b5926cdfdd48d44a5b6c6e03ae4ee71ba1aade837c3d2f96beed5a36c9d7f9"
+    }
+  ],
+  "retrieval": [
+    {
+      "input": {
+        "prompt": "给所有预测分数一起加大常数，会让概率误差预算变大吗？",
+        "query": "概率 分数 误差 常数 偏移"
+      },
+      "domain": "information-theory",
+      "backend": "files",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "fc95818f63ca92ebf996b00fad329fc025ceeb23510d33952de98e7bec83719f",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.softmax-kl-fisher",
+            "version": 1,
+            "sha256": "e8b5926cdfdd48d44a5b6c6e03ae4ee71ba1aade837c3d2f96beed5a36c9d7f9",
+            "title": "有限softmax的KL与中心化Fisher曲率",
+            "summary": "分数误差在共同平移商空间中决定概率KL；用路径方差给全局上界与条件下界，饱和时不能由低秩分数MSE推出概率有效秩。",
+            "status": "published",
+            "assumptions": [
+              "共同非空有限支持集、有限实logits；温度正且已计入，KL自然对数",
+              "概率下界须覆盖整个连接路径；Fisher近似需振幅R小；没有统一全局正下界",
+              "硬mask/greedy/不同支持集另处理；attention概率轴不等于输出词表生成轴"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Self-contained finite derivations; no formal proof",
+                "doc/results/math-softmax-kl-20261008 public CPU cases; publication subject to independent acceptance"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "偏移",
+                  "分数",
+                  "常数",
+                  "概率",
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "分数",
+                  "概率",
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "分数",
+                  "常数",
+                  "概率",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 38
+          },
+          {
+            "id": "math.sequence-tv-coupling",
+            "version": 1,
+            "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+            "title": "有限序列分布的全变差与逐步耦合界",
+            "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+            "status": "published",
+            "assumptions": [
+              "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+              "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+              "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+                "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "概率",
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "常数",
+                  "概率",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 13
+          },
+          {
+            "id": "math.data-processing-task-sufficiency",
+            "version": 1,
+            "sha256": "641a0326aa9b82681619e2f6d82e77ba2b7076def3d4f086ac3037144e54e6c4",
+            "title": "数据处理不等式、支撑条件与任务充分压缩",
+            "summary": "有限字母的同一随机通道不会增加KL可区分性；目标→原始数据→摘要的Markov关系给互信息上界。保持任务后验才是充分性，摘要短、重建损失小或样本正确都不等于充分。",
+            "status": "published",
+            "assumptions": [
+              "本条结论限有限字母概率分布，使用同一对数底数；bit用log2",
+              "KL处理前后必须对P,Q应用同一行随机核K；p>0,q=0的项为正无穷",
+              "KL差值/后验等号公式要求P绝对连续于Q（有限字母下即支撑包含），避免无穷减无穷",
+              "任务Y、原数据X、摘要T满足Y→X→T；摘要随机性给定X不依赖Y",
+              "固定联合分布的任务充分性不能推广为所有任务/所有先验的统计充分性；引入外部R须扩展输入对象"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-information/verify.py",
+                "docs/knowledge_learning/2026-10-07-information/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "概率"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "概率",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 7
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "给所有预测分数一起加大常数，会让概率误差预算变大吗？",
+        "query": "概率 分数 误差 常数 偏移"
+      },
+      "domain": "information-theory",
+      "backend": "sqlite",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "fc95818f63ca92ebf996b00fad329fc025ceeb23510d33952de98e7bec83719f",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.softmax-kl-fisher",
+            "version": 1,
+            "sha256": "e8b5926cdfdd48d44a5b6c6e03ae4ee71ba1aade837c3d2f96beed5a36c9d7f9",
+            "title": "有限softmax的KL与中心化Fisher曲率",
+            "summary": "分数误差在共同平移商空间中决定概率KL；用路径方差给全局上界与条件下界，饱和时不能由低秩分数MSE推出概率有效秩。",
+            "status": "published",
+            "assumptions": [
+              "共同非空有限支持集、有限实logits；温度正且已计入，KL自然对数",
+              "概率下界须覆盖整个连接路径；Fisher近似需振幅R小；没有统一全局正下界",
+              "硬mask/greedy/不同支持集另处理；attention概率轴不等于输出词表生成轴"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Self-contained finite derivations; no formal proof",
+                "doc/results/math-softmax-kl-20261008 public CPU cases; publication subject to independent acceptance"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s1",
+                "title": "有限softmax的KL、中心化误差与Fisher曲率",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 有限softmax的KL、中心化误差与Fisher曲率\n\nID `math.softmax-kl-fisher`，版本1。触发：概率预测器的分数误差应使用哪个度量？低秩重建好是否代表概率质量好？本卡补齐KL几何，已有TV/输出界复用 `math.softmax-barycenter-error`，不重复称为新发现。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界和拒用",
+                "start_line": 42,
+                "end_line": 51,
+                "excerpt": "## 正例、边界和拒用\n\n- s=(0,0)，e=(a,−a)：KL(p||q)=log cosh a，R=2|a|，上界a²/2，局部a→0相切。a=1时KL≈.43378≤.5。\n- e=c1任意大：q=p，KL=0，d=R=0；原始||e||²可任意大。应在商空间Rⁿ/span{1}分析，不为共同shift分配低秩预算。\n- **无全局下界**：s=(M,0)，t=(M+1,0)，||d||²=½不变，而M→∞两分布趋于同一顶点，KL→0。任何不依赖概率下限的正二次下界都失败。这解释分数低秩不等于概率有效秩，不证明具体indexer收益。\n- 硬mask变化：p=(½,½)，q=(1,0)，KL(p||q)=∞；没有有限e不能套上述界。相同mask可限制到共同非空可见支持集后使用。\n- 温度τ：若原始扰动e_raw，R=osc(e_raw)/τ；忘记温度会使预算不可靠。τ=0/greedy不在softmax前提内；共同shift不影响argmax，但小概率KL也不保证greedy不翻转。\n- n=1、常数扰动均为0；空支持集未定义。自然对数的nat界换log2须除ln2。\n- 同样的KL/TV可对应不同value或任务损失。不能以本卡替代attention输出几何、端到端评测或未见测试。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.sequence-tv-coupling",
+            "version": 1,
+            "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+            "title": "有限序列分布的全变差与逐步耦合界",
+            "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+            "status": "published",
+            "assumptions": [
+              "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+              "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+              "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+                "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04838709677419355,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "例子、边界与误用",
+                "start_line": 39,
+                "end_line": 50,
+                "excerpt": "## 例子、边界与误用\n\nP全程确定输出0，Q在每个仍为全0的前缀以概率ε输出1，其余定义任意；n=2、ε=1/10时，整段TV=1−(9/10)²=19/100，取得乘积界。n=0两者是同一空序列，TV0；ε0/1、相同分布、互斥支持均正常处理。\n\n少量前缀不够：P、Q第一步都均匀0/1，第二步在前缀0都确定0，在前缀1则P确定0、Q确定1。只测前缀0会报δ=0，真实序列TV=1/2；完整P前缀均值为1/2。真正参考均值界仍有效，失败的是未测样本覆盖的主张。\n\n相同分布不保证任意耦合输出相同：P=Q=Ber(1/2)，同一U∼Uniform[0,1]可令X=1{U<1/2}、Y=1−X；边际相同且TV0，失配却1。“存在高匹配耦合”不等于实际引擎相同seed执行的耦合达到它。\n\nGreedy：p=(1/2+η,1/2−η)、q=(1/2−η,1/2+η)，η>0。TV=2η可任意小，但两个确定性argmax不同，解码输出分布TV1。若要greedy一致，另需每步稳定argmax/margin及一致的tie规则；不能把概率分布TV界直接代入离散解码。\n\nP=(1,0)、Q=(1−ε,ε)时TV=ε但KL(Q||P)=∞；TV不需要共同支持，KL有方向和支持条件。指标不同不构成哪种指标总是更好的结论。奖励常数跨度0给期望差0，即使TV大；输出分布接近是充分控制，不是任务质量的必要条件。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "迁移及相关关系",
+                "start_line": 51,
+                "end_line": 60,
+                "excerpt": "## 迁移及相关关系\n\nIndexer原问题：同一prompt下dense与稀疏完整执行的下一token核对应P_t/Q_t，包含变化的KV/历史、logit处理和随机执行。模型层隐藏误差/attention mass/选token重合度不等于δ；前一轮`math.perturbation-propagation`只处理固定输入连续状态。这里真正保留的是条件概率链和序列事件/期望指标，未自动打通隐藏误差到TV。\n\n最小可证伪验证：冻结prompt、采样规则、长度和method，沿dense采样轨迹在两个完整执行器上replay同一前缀，核对评分路径与生成路径、强制token之前的概率、支持集与归一化。测参考前缀δ或真实轨迹比值；样本需独立且估计误差另认证。另做greedy、自由生成任务质量和wall-clock实验，不把这些不同目标压成一个指标。原论文的系统测量不可当成本机验证；本轮未运行模型。\n\n跨域严格映射：有历史依赖的可靠性告警/通信协议，事件“整段发生故障”的概率差≤TV。有限条件核可精确验证，但模型是否刻画真实物理故障另需数据和机制依据。\n\n前置概念：有限概率质量、条件核与边际、三角不等式；本条推导无强依赖卡。相关：`math.perturbation-propagation`（连续状态）；`math.finite-menu-selection`（调参校准）；`ai.speculative-sampling-residual-exactness`（分布校正不等于seed一致）。概率耦合不是跨层资源目标的物理耦合。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.data-processing-task-sufficiency",
+            "version": 1,
+            "sha256": "641a0326aa9b82681619e2f6d82e77ba2b7076def3d4f086ac3037144e54e6c4",
+            "title": "数据处理不等式、支撑条件与任务充分压缩",
+            "summary": "有限字母的同一随机通道不会增加KL可区分性；目标→原始数据→摘要的Markov关系给互信息上界。保持任务后验才是充分性，摘要短、重建损失小或样本正确都不等于充分。",
+            "status": "published",
+            "assumptions": [
+              "本条结论限有限字母概率分布，使用同一对数底数；bit用log2",
+              "KL处理前后必须对P,Q应用同一行随机核K；p>0,q=0的项为正无穷",
+              "KL差值/后验等号公式要求P绝对连续于Q（有限字母下即支撑包含），避免无穷减无穷",
+              "任务Y、原数据X、摘要T满足Y→X→T；摘要随机性给定X不依赖Y",
+              "固定联合分布的任务充分性不能推广为所有任务/所有先验的统计充分性；引入外部R须扩展输入对象"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-information/verify.py",
+                "docs/knowledge_learning/2026-10-07-information/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.047619047619047616,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "可用结构与任务映射",
+                "start_line": 37,
+                "end_line": 44,
+                "excerpt": "## 可用结构与任务映射\n\n问题→列X,Y,T、查询与侧信息→核对同核/Markov/支撑→检索本ID→只加载必要正文→比较后验或明确未知→给条件式结果、拒用或补证。适用于统计聚合、诊断摘要、状态压缩与证据管道。来源版本、撤销事实、授权范围等字段若影响Y，不可当无关噪声丢弃。\n\n跨域：双传感器故障标志(U,V)，要报警“恰有一个故障”，奇偶摘要足够；要定位第一传感器则不够。这里保留逻辑真值关系与已声明概率表，不声称物理噪声独立或实际传感器误差已知；无量纲离散标志，不涉及守恒律。\n\nAgent迁移候选：是否允许使用产物依赖身份/版本与撤销状态，可把Y定义成有效性判断；如果摘要省略这些因素，不能认证充分。真实任务的联合分布与摘要核未知，只有审计路径；不修改生产摘要或自动放行。相关math.symmetry-quotient要求操作不变；math.low-rank-svd的重建误差也不自动等于任务信息损失。\n\n"
+              },
+              {
+                "node": "s6",
+                "title": "来源与验证状态",
+                "start_line": 45,
+                "end_line": 49,
+                "excerpt": "## 来源与验证状态\n\nPolyanskiy/Wu MIT6.441 Spring2016，Chapter2 §2.2 Theorem2.2 eq(2.3)，Chapter3 §3.1 Definition3.1/Theorem3.1；精确URL见配对JSON。读取相关节，未读全课程。\n\nverify.py枚举有限概率并用Fraction保存概率；对数用double、误差阈值1e-12，非形式化证明；退化/奇异支撑按扩展实数处理。knowledge_refs随检查保存。没有独立真实模型A/B、未见模型拒用测量或生产性能提升。公开题不当未见测试。\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "能级误差如何改变热平衡下的归一化权重？",
+        "query": "能级 扰动 热平衡 概率"
+      },
+      "domain": "information-theory",
+      "backend": "files",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "fc95818f63ca92ebf996b00fad329fc025ceeb23510d33952de98e7bec83719f",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.softmax-kl-fisher",
+            "version": 1,
+            "sha256": "e8b5926cdfdd48d44a5b6c6e03ae4ee71ba1aade837c3d2f96beed5a36c9d7f9",
+            "title": "有限softmax的KL与中心化Fisher曲率",
+            "summary": "分数误差在共同平移商空间中决定概率KL；用路径方差给全局上界与条件下界，饱和时不能由低秩分数MSE推出概率有效秩。",
+            "status": "published",
+            "assumptions": [
+              "共同非空有限支持集、有限实logits；温度正且已计入，KL自然对数",
+              "概率下界须覆盖整个连接路径；Fisher近似需振幅R小；没有统一全局正下界",
+              "硬mask/greedy/不同支持集另处理；attention概率轴不等于输出词表生成轴"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Self-contained finite derivations; no formal proof",
+                "doc/results/math-softmax-kl-20261008 public CPU cases; publication subject to independent acceptance"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "平衡",
+                  "扰动",
+                  "概率",
+                  "热平",
+                  "能级"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "概率"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "平衡",
+                  "扰动",
+                  "概率",
+                  "能级"
+                ]
+              }
+            ],
+            "score": 32
+          },
+          {
+            "id": "math.data-processing-task-sufficiency",
+            "version": 1,
+            "sha256": "641a0326aa9b82681619e2f6d82e77ba2b7076def3d4f086ac3037144e54e6c4",
+            "title": "数据处理不等式、支撑条件与任务充分压缩",
+            "summary": "有限字母的同一随机通道不会增加KL可区分性；目标→原始数据→摘要的Markov关系给互信息上界。保持任务后验才是充分性，摘要短、重建损失小或样本正确都不等于充分。",
+            "status": "published",
+            "assumptions": [
+              "本条结论限有限字母概率分布，使用同一对数底数；bit用log2",
+              "KL处理前后必须对P,Q应用同一行随机核K；p>0,q=0的项为正无穷",
+              "KL差值/后验等号公式要求P绝对连续于Q（有限字母下即支撑包含），避免无穷减无穷",
+              "任务Y、原数据X、摘要T满足Y→X→T；摘要随机性给定X不依赖Y",
+              "固定联合分布的任务充分性不能推广为所有任务/所有先验的统计充分性；引入外部R须扩展输入对象"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-information/verify.py",
+                "docs/knowledge_learning/2026-10-07-information/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "概率"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "概率"
+                ]
+              }
+            ],
+            "score": 6
+          },
+          {
+            "id": "math.sequence-tv-coupling",
+            "version": 1,
+            "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+            "title": "有限序列分布的全变差与逐步耦合界",
+            "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+            "status": "published",
+            "assumptions": [
+              "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+              "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+              "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+                "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "概率"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "概率"
+                ]
+              }
+            ],
+            "score": 6
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "能级误差如何改变热平衡下的归一化权重？",
+        "query": "能级 扰动 热平衡 概率"
+      },
+      "domain": "information-theory",
+      "backend": "sqlite",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "fc95818f63ca92ebf996b00fad329fc025ceeb23510d33952de98e7bec83719f",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.softmax-kl-fisher",
+            "version": 1,
+            "sha256": "e8b5926cdfdd48d44a5b6c6e03ae4ee71ba1aade837c3d2f96beed5a36c9d7f9",
+            "title": "有限softmax的KL与中心化Fisher曲率",
+            "summary": "分数误差在共同平移商空间中决定概率KL；用路径方差给全局上界与条件下界，饱和时不能由低秩分数MSE推出概率有效秩。",
+            "status": "published",
+            "assumptions": [
+              "共同非空有限支持集、有限实logits；温度正且已计入，KL自然对数",
+              "概率下界须覆盖整个连接路径；Fisher近似需振幅R小；没有统一全局正下界",
+              "硬mask/greedy/不同支持集另处理；attention概率轴不等于输出词表生成轴"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Self-contained finite derivations; no formal proof",
+                "doc/results/math-softmax-kl-20261008 public CPU cases; publication subject to independent acceptance"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "可迁移问题结构与最小验证",
+                "start_line": 52,
+                "end_line": 59,
+                "excerpt": "## 可迁移问题结构与最小验证\n\n**Indexer校准（待实测候选）**：代理与完整attention在同一query、历史、支持集的有效分数对应s,t；R/中心化误差/Fisher方向是可计算局部指标。NoPE、RoPE、混合都要求先完成实际位置变换与统一缩放；本卡不允许跨频率无损融合。如果代理仅选集合，最终使用原分数，此KL衡量的是选择代理，不能重复记作最终输出KL。\n\n冻结真实Q/K/V、层、method及投影维度预算；开发集同时保存中心化MSE、½Var_p(e)、精确KL、R、质量、output误差；检查局部代理随R增大何时失效，以及饱和层的排名是否不同。冻结方法后用新校准集及未见文档测质量/成本，再自由生成端到端。在输出词表上测KL须获取**完整执行器的生成概率**，不能把attention token轴的KL直接当输出词表轴KL。接 `math.sequence-tv-coupling` 时用已有TV条目从**输出logits**给单步δ上界，逐前缀满足才能传播；attention局部KL尚无自动跨层/自回归保证。没有真实trace，本轮不部署。\n\n**跨领域Boltzmann权重**：有限能级E_i、固定β>0，s_i=−βE_i；能量误差δE对应e_i=−βδE_i。能量共同基准平移不影响分布，R无量纲，KL用nat，KL≤β²osc(δE)²/8。保留的是归一化指数族的严格数学关系；真实平衡/温度和有限能级建模未检验。不能拿非平衡开放系统直接套平衡概率核。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界和拒用",
+                "start_line": 42,
+                "end_line": 51,
+                "excerpt": "## 正例、边界和拒用\n\n- s=(0,0)，e=(a,−a)：KL(p||q)=log cosh a，R=2|a|，上界a²/2，局部a→0相切。a=1时KL≈.43378≤.5。\n- e=c1任意大：q=p，KL=0，d=R=0；原始||e||²可任意大。应在商空间Rⁿ/span{1}分析，不为共同shift分配低秩预算。\n- **无全局下界**：s=(M,0)，t=(M+1,0)，||d||²=½不变，而M→∞两分布趋于同一顶点，KL→0。任何不依赖概率下限的正二次下界都失败。这解释分数低秩不等于概率有效秩，不证明具体indexer收益。\n- 硬mask变化：p=(½,½)，q=(1,0)，KL(p||q)=∞；没有有限e不能套上述界。相同mask可限制到共同非空可见支持集后使用。\n- 温度τ：若原始扰动e_raw，R=osc(e_raw)/τ；忘记温度会使预算不可靠。τ=0/greedy不在softmax前提内；共同shift不影响argmax，但小概率KL也不保证greedy不翻转。\n- n=1、常数扰动均为0；空支持集未定义。自然对数的nat界换log2须除ln2。\n- 同样的KL/TV可对应不同value或任务损失。不能以本卡替代attention输出几何、端到端评测或未见测试。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.sequence-tv-coupling",
+            "version": 1,
+            "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+            "title": "有限序列分布的全变差与逐步耦合界",
+            "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+            "status": "published",
+            "assumptions": [
+              "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+              "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+              "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+                "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.048131080389144903,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "对象与准确结论",
+                "start_line": 5,
+                "end_line": 24,
+                "excerpt": "## 对象与准确结论\n\n有限词表Σ、固定整数长度n≥0；P_t(·|h)、Q_t(·|h)是每个长度t−1前缀h上的概率核，诱导联合P(x)=Π_t P_t(x_t|x_{<t})、Q同理。零概率前缀的条件核可任意扩展，但用于一致界时也必须明确覆盖相关共享前缀。所有比较固定prompt、tokenizer、词表、温度、截断及停止规则；EOS若提前结束，统一吸收并padding到n。不把超长或无限时域搬入有限结论。\n\n单步δ_t(h)=TV(P_t,Q_t)=1/2Σ_a|P_t(a|h)−Q_t(a|h)|。一般有限分布满足\nTV(P,Q)=max_A|P(A)−Q(A)|=1−Σ_x min(P(x),Q(x))，属于[0,1]。\n\n**统一共享前缀界。** 若对各步所有相关共享前缀有δ_t(h)≤ε_t∈[0,1]，则\n\\[\n TV(P,Q)\\le 1-\\prod_{t=1}^n(1-\\varepsilon_t)\n \\le \\min\\{1,\\sum_t\\varepsilon_t\\}.\n\\]\n不要求时间步独立。**参考前缀均值界。** 不要求统一ε时仍有\n\\[\nTV(P,Q)\\le\\min\\{1,\\sum_t E_{H\\sim P_{<t}}\\delta_t(H)\\}.\n\\]\nP_{<t}是真实参考前缀分布，不是任意少量teacher数据的经验均值。两种上界互不替代，均可能很松。\n\n对有限序列上固定奖励f∈[a,b]，|E_P f−E_Q f|≤(b−a)TV(P,Q)。这是总体期望差界，不保证每条输出的奖励差，也不证明某个方案质量提升。若指标非有界或评价对象改变须另论。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "证明思路与可复核推导",
+                "start_line": 25,
+                "end_line": 38,
+                "excerpt": "## 证明思路与可复核推导\n\n以下为项目有限概率推导，经典基础来自下列官方讲义；未做形式化证明。\n\n有限分布p,q，c_a=min(p_a,q_a)，α=Σc。耦合的对角共同质量取c，若α<1，剩余矩阵取(p_a−c_a)(q_b−c_b)/(1−α)。它有正确边际；每个坐标两剩余质量不同时为正，故非对角剩余总量1−α=TV。α=1时只有共同对角，不除零。任何耦合的对角质量≤Σmin(p,q)，因此这个最大耦合达到最小失配概率。\n\n逐步构造耦合：在前缀还一致时，用当前两个条件核的最大耦合；已分歧后按各自正确条件核继续。每次一致事件的条件失配≤ε_t，所以全部n步一致概率≥Π(1−ε_t)。联合分布的TV≤该耦合的整段失配概率，不宣称逐步最大耦合也是整段最大耦合。第二个不等式由非负ε有限归纳。\n\n均值界另用混合联合R_t：前t步用P核、余下用Q核，R_0=Q、R_n=P。相邻R_t/R_{t−1}共用P前缀分布及Q后续核；把同前缀当前核差加上共同后缀，其TV≤E_{P_{<t}}δ_t（后缀是概率核，其总质量1）。三角不等式求和，再截到1。零P概率前缀不贡献均值；不依赖在那些前缀对P条件概率的统计估计。\n\n奖励界令g=(f−a)/(b−a)∈[0,1]（a=b时差0），用概率差正负部分各质量TV即可；最大事件指标达到该界。\n\n**可测量身份，不同于逐步上界：** 对X∼P，Z(X)=(1−Q(X)/P(X))_+∈[0,1]，则E_P Z=TV(P,Q)。只在P(X)>0的采样支持上算比值，不需Q绝对连续于P；直接展开Σ(P−Q)_+证明。真实轨迹概率必须来自与生成相同的条件核，重归一化top-k后测的是新的截断分布。指数乘积有下溢风险，应使用可信log概率/稳定运算，CPU精确小例不认证模型数值接口。有限样本置信区间另加载`math.hoeffding-bounded-mean`，本条不把经验估计写成真实TV。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.data-processing-task-sufficiency",
+            "version": 1,
+            "sha256": "641a0326aa9b82681619e2f6d82e77ba2b7076def3d4f086ac3037144e54e6c4",
+            "title": "数据处理不等式、支撑条件与任务充分压缩",
+            "summary": "有限字母的同一随机通道不会增加KL可区分性；目标→原始数据→摘要的Markov关系给互信息上界。保持任务后验才是充分性，摘要短、重建损失小或样本正确都不等于充分。",
+            "status": "published",
+            "assumptions": [
+              "本条结论限有限字母概率分布，使用同一对数底数；bit用log2",
+              "KL处理前后必须对P,Q应用同一行随机核K；p>0,q=0的项为正无穷",
+              "KL差值/后验等号公式要求P绝对连续于Q（有限字母下即支撑包含），避免无穷减无穷",
+              "任务Y、原数据X、摘要T满足Y→X→T；摘要随机性给定X不依赖Y",
+              "固定联合分布的任务充分性不能推广为所有任务/所有先验的统计充分性；引入外部R须扩展输入对象"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-information/verify.py",
+                "docs/knowledge_learning/2026-10-07-information/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04787506400409626,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "数学对象与经典结论",
+                "start_line": 5,
+                "end_line": 12,
+                "excerpt": "## 数学对象与经典结论\n\n概率向量P=(p_x)、Q=(q_x)；同一行随机核K(t|x)≥0且各行和1。输出p_t=Σ_x p_xK(t|x)，q_t相同定义。D(P||Q)=Σ p_x log2(p_x/q_x)，0项取0，p_x>0,q_x=0取+∞；D不是对称距离。经典数据处理：D(PK||QK)≤D(P||Q)，扩展实数也成立。若输入KL为∞，仍是合法不等式但不提供有限损失保证，不计算∞−∞。\n\n固定有限联合分布，Y是任务目标、X是数据、T是摘要。Markov Y→X→T 即 P(t|x,y)=P(t|x) 在正概率处成立。则 I(Y;T)≤I(Y;X)，且差值=I(Y;X|T)≥0。等号当且仅当 Y与X给定T条件独立，即 P(Y|x,t)=P(Y|t) 在正概率(x,t)处一致。\n\n这只是固定分布/目标的Bayesian任务充分性。经典统计充分性针对族P_X^θ，要求存在不随θ变的反向核P(X|T)；讲义Theorem3.1的互信息等号要求所有先验，不是仅一个退化先验。不能以固定测试目录答对所有已知题来认证总体充分。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "可复核推导",
+                "start_line": 13,
+                "end_line": 24,
+                "excerpt": "## 可复核推导\n\nKL：同一核下联合P_XT=p_xK(t|x)、Q_XT=q_xK(t|x)，核在似然比中约去，所以联合KL=input KL。若P≪Q，有限字母下都有限，分解 log(P_XT/Q_XT)=log(p_t/q_t)+log(P(x|t)/Q(x|t))，按P求和：\n\nD(P||Q)=D(PK||QK)+Σ_t p_t D(P(X|t)||Q(X|t)).\n\n条件项非负（Jensen对严格凸u log u）；等号当且仅当每个p_t>0的后验相同。零质量项跳过，q_t=0不会与p_t>0同现。非绝对连续情形可用log-sum扩展约定得到不等式，不借此声明有限后验差值恒等式。\n\nMI：链式法则 I(Y;X,T)=I(Y;X)+I(Y;T|X)=I(Y;T)+I(Y;X|T)。Markov使第一条件项0，另一个是加权后验KL，得界和等号。前置为条件概率、有限和、KL非负、链式展开；本条自足，无强制知识依赖。\n\n自己推导的决策含义：给定上述Markov与后验等号，任何有限动作、有限损失函数L(a,Y)的最优Bayes风险相同，因为每个后验可选同一最优动作。对一个任务风险相等不能反推后验等号：动作可能不区分后验差异。更不能据此承诺有限LLM推理器质量相同；计算资源、提示和解码能力不同。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "低维重建误差很大，就能断言概率预测一定差吗？",
+        "query": "低秩 重建 饱和 概率"
+      },
+      "domain": "information-theory",
+      "backend": "files",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "fc95818f63ca92ebf996b00fad329fc025ceeb23510d33952de98e7bec83719f",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.softmax-kl-fisher",
+            "version": 1,
+            "sha256": "e8b5926cdfdd48d44a5b6c6e03ae4ee71ba1aade837c3d2f96beed5a36c9d7f9",
+            "title": "有限softmax的KL与中心化Fisher曲率",
+            "summary": "分数误差在共同平移商空间中决定概率KL；用路径方差给全局上界与条件下界，饱和时不能由低秩分数MSE推出概率有效秩。",
+            "status": "published",
+            "assumptions": [
+              "共同非空有限支持集、有限实logits；温度正且已计入，KL自然对数",
+              "概率下界须覆盖整个连接路径；Fisher近似需振幅R小；没有统一全局正下界",
+              "硬mask/greedy/不同支持集另处理；attention概率轴不等于输出词表生成轴"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Self-contained finite derivations; no formal proof",
+                "doc/results/math-softmax-kl-20261008 public CPU cases; publication subject to independent acceptance"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "低秩",
+                  "概率",
+                  "重建",
+                  "饱和"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "低秩",
+                  "概率",
+                  "饱和"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "低秩",
+                  "概率",
+                  "重建",
+                  "饱和"
+                ]
+              }
+            ],
+            "score": 33
+          },
+          {
+            "id": "math.data-processing-task-sufficiency",
+            "version": 1,
+            "sha256": "641a0326aa9b82681619e2f6d82e77ba2b7076def3d4f086ac3037144e54e6c4",
+            "title": "数据处理不等式、支撑条件与任务充分压缩",
+            "summary": "有限字母的同一随机通道不会增加KL可区分性；目标→原始数据→摘要的Markov关系给互信息上界。保持任务后验才是充分性，摘要短、重建损失小或样本正确都不等于充分。",
+            "status": "published",
+            "assumptions": [
+              "本条结论限有限字母概率分布，使用同一对数底数；bit用log2",
+              "KL处理前后必须对P,Q应用同一行随机核K；p>0,q=0的项为正无穷",
+              "KL差值/后验等号公式要求P绝对连续于Q（有限字母下即支撑包含），避免无穷减无穷",
+              "任务Y、原数据X、摘要T满足Y→X→T；摘要随机性给定X不依赖Y",
+              "固定联合分布的任务充分性不能推广为所有任务/所有先验的统计充分性；引入外部R须扩展输入对象"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-information/verify.py",
+                "docs/knowledge_learning/2026-10-07-information/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "概率"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "重建"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "概率",
+                  "重建"
+                ]
+              }
+            ],
+            "score": 10
+          },
+          {
+            "id": "math.sequence-tv-coupling",
+            "version": 1,
+            "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+            "title": "有限序列分布的全变差与逐步耦合界",
+            "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+            "status": "published",
+            "assumptions": [
+              "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+              "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+              "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+                "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "概率"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "概率"
+                ]
+              }
+            ],
+            "score": 6
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "低维重建误差很大，就能断言概率预测一定差吗？",
+        "query": "低秩 重建 饱和 概率"
+      },
+      "domain": "information-theory",
+      "backend": "sqlite",
+      "result": {
+        "schema_version": 1,
+        "snapshot": "fc95818f63ca92ebf996b00fad329fc025ceeb23510d33952de98e7bec83719f",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.softmax-kl-fisher",
+            "version": 1,
+            "sha256": "e8b5926cdfdd48d44a5b6c6e03ae4ee71ba1aade837c3d2f96beed5a36c9d7f9",
+            "title": "有限softmax的KL与中心化Fisher曲率",
+            "summary": "分数误差在共同平移商空间中决定概率KL；用路径方差给全局上界与条件下界，饱和时不能由低秩分数MSE推出概率有效秩。",
+            "status": "published",
+            "assumptions": [
+              "共同非空有限支持集、有限实logits；温度正且已计入，KL自然对数",
+              "概率下界须覆盖整个连接路径；Fisher近似需振幅R小；没有统一全局正下界",
+              "硬mask/greedy/不同支持集另处理；attention概率轴不等于输出词表生成轴"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Self-contained finite derivations; no formal proof",
+                "doc/results/math-softmax-kl-20261008 public CPU cases; publication subject to independent acceptance"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s1",
+                "title": "有限softmax的KL、中心化误差与Fisher曲率",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 有限softmax的KL、中心化误差与Fisher曲率\n\nID `math.softmax-kl-fisher`，版本1。触发：概率预测器的分数误差应使用哪个度量？低秩重建好是否代表概率质量好？本卡补齐KL几何，已有TV/输出界复用 `math.softmax-barycenter-error`，不重复称为新发现。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界和拒用",
+                "start_line": 42,
+                "end_line": 51,
+                "excerpt": "## 正例、边界和拒用\n\n- s=(0,0)，e=(a,−a)：KL(p||q)=log cosh a，R=2|a|，上界a²/2，局部a→0相切。a=1时KL≈.43378≤.5。\n- e=c1任意大：q=p，KL=0，d=R=0；原始||e||²可任意大。应在商空间Rⁿ/span{1}分析，不为共同shift分配低秩预算。\n- **无全局下界**：s=(M,0)，t=(M+1,0)，||d||²=½不变，而M→∞两分布趋于同一顶点，KL→0。任何不依赖概率下限的正二次下界都失败。这解释分数低秩不等于概率有效秩，不证明具体indexer收益。\n- 硬mask变化：p=(½,½)，q=(1,0)，KL(p||q)=∞；没有有限e不能套上述界。相同mask可限制到共同非空可见支持集后使用。\n- 温度τ：若原始扰动e_raw，R=osc(e_raw)/τ；忘记温度会使预算不可靠。τ=0/greedy不在softmax前提内；共同shift不影响argmax，但小概率KL也不保证greedy不翻转。\n- n=1、常数扰动均为0；空支持集未定义。自然对数的nat界换log2须除ln2。\n- 同样的KL/TV可对应不同value或任务损失。不能以本卡替代attention输出几何、端到端评测或未见测试。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.data-processing-task-sufficiency",
+            "version": 1,
+            "sha256": "641a0326aa9b82681619e2f6d82e77ba2b7076def3d4f086ac3037144e54e6c4",
+            "title": "数据处理不等式、支撑条件与任务充分压缩",
+            "summary": "有限字母的同一随机通道不会增加KL可区分性；目标→原始数据→摘要的Markov关系给互信息上界。保持任务后验才是充分性，摘要短、重建损失小或样本正确都不等于充分。",
+            "status": "published",
+            "assumptions": [
+              "本条结论限有限字母概率分布，使用同一对数底数；bit用log2",
+              "KL处理前后必须对P,Q应用同一行随机核K；p>0,q=0的项为正无穷",
+              "KL差值/后验等号公式要求P绝对连续于Q（有限字母下即支撑包含），避免无穷减无穷",
+              "任务Y、原数据X、摘要T满足Y→X→T；摘要随机性给定X不依赖Y",
+              "固定联合分布的任务充分性不能推广为所有任务/所有先验的统计充分性；引入外部R须扩展输入对象"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-information/verify.py",
+                "docs/knowledge_learning/2026-10-07-information/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04838709677419355,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "可用结构与任务映射",
+                "start_line": 37,
+                "end_line": 44,
+                "excerpt": "## 可用结构与任务映射\n\n问题→列X,Y,T、查询与侧信息→核对同核/Markov/支撑→检索本ID→只加载必要正文→比较后验或明确未知→给条件式结果、拒用或补证。适用于统计聚合、诊断摘要、状态压缩与证据管道。来源版本、撤销事实、授权范围等字段若影响Y，不可当无关噪声丢弃。\n\n跨域：双传感器故障标志(U,V)，要报警“恰有一个故障”，奇偶摘要足够；要定位第一传感器则不够。这里保留逻辑真值关系与已声明概率表，不声称物理噪声独立或实际传感器误差已知；无量纲离散标志，不涉及守恒律。\n\nAgent迁移候选：是否允许使用产物依赖身份/版本与撤销状态，可把Y定义成有效性判断；如果摘要省略这些因素，不能认证充分。真实任务的联合分布与摘要核未知，只有审计路径；不修改生产摘要或自动放行。相关math.symmetry-quotient要求操作不变；math.low-rank-svd的重建误差也不自动等于任务信息损失。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "数学对象与经典结论",
+                "start_line": 5,
+                "end_line": 12,
+                "excerpt": "## 数学对象与经典结论\n\n概率向量P=(p_x)、Q=(q_x)；同一行随机核K(t|x)≥0且各行和1。输出p_t=Σ_x p_xK(t|x)，q_t相同定义。D(P||Q)=Σ p_x log2(p_x/q_x)，0项取0，p_x>0,q_x=0取+∞；D不是对称距离。经典数据处理：D(PK||QK)≤D(P||Q)，扩展实数也成立。若输入KL为∞，仍是合法不等式但不提供有限损失保证，不计算∞−∞。\n\n固定有限联合分布，Y是任务目标、X是数据、T是摘要。Markov Y→X→T 即 P(t|x,y)=P(t|x) 在正概率处成立。则 I(Y;T)≤I(Y;X)，且差值=I(Y;X|T)≥0。等号当且仅当 Y与X给定T条件独立，即 P(Y|x,t)=P(Y|t) 在正概率(x,t)处一致。\n\n这只是固定分布/目标的Bayesian任务充分性。经典统计充分性针对族P_X^θ，要求存在不随θ变的反向核P(X|T)；讲义Theorem3.1的互信息等号要求所有先验，不是仅一个退化先验。不能以固定测试目录答对所有已知题来认证总体充分。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.sequence-tv-coupling",
+            "version": 1,
+            "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+            "title": "有限序列分布的全变差与逐步耦合界",
+            "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+            "status": "published",
+            "assumptions": [
+              "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+              "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+              "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+                "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.047619047619047616,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "对象与准确结论",
+                "start_line": 5,
+                "end_line": 24,
+                "excerpt": "## 对象与准确结论\n\n有限词表Σ、固定整数长度n≥0；P_t(·|h)、Q_t(·|h)是每个长度t−1前缀h上的概率核，诱导联合P(x)=Π_t P_t(x_t|x_{<t})、Q同理。零概率前缀的条件核可任意扩展，但用于一致界时也必须明确覆盖相关共享前缀。所有比较固定prompt、tokenizer、词表、温度、截断及停止规则；EOS若提前结束，统一吸收并padding到n。不把超长或无限时域搬入有限结论。\n\n单步δ_t(h)=TV(P_t,Q_t)=1/2Σ_a|P_t(a|h)−Q_t(a|h)|。一般有限分布满足\nTV(P,Q)=max_A|P(A)−Q(A)|=1−Σ_x min(P(x),Q(x))，属于[0,1]。\n\n**统一共享前缀界。** 若对各步所有相关共享前缀有δ_t(h)≤ε_t∈[0,1]，则\n\\[\n TV(P,Q)\\le 1-\\prod_{t=1}^n(1-\\varepsilon_t)\n \\le \\min\\{1,\\sum_t\\varepsilon_t\\}.\n\\]\n不要求时间步独立。**参考前缀均值界。** 不要求统一ε时仍有\n\\[\nTV(P,Q)\\le\\min\\{1,\\sum_t E_{H\\sim P_{<t}}\\delta_t(H)\\}.\n\\]\nP_{<t}是真实参考前缀分布，不是任意少量teacher数据的经验均值。两种上界互不替代，均可能很松。\n\n对有限序列上固定奖励f∈[a,b]，|E_P f−E_Q f|≤(b−a)TV(P,Q)。这是总体期望差界，不保证每条输出的奖励差，也不证明某个方案质量提升。若指标非有界或评价对象改变须另论。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "证明思路与可复核推导",
+                "start_line": 25,
+                "end_line": 38,
+                "excerpt": "## 证明思路与可复核推导\n\n以下为项目有限概率推导，经典基础来自下列官方讲义；未做形式化证明。\n\n有限分布p,q，c_a=min(p_a,q_a)，α=Σc。耦合的对角共同质量取c，若α<1，剩余矩阵取(p_a−c_a)(q_b−c_b)/(1−α)。它有正确边际；每个坐标两剩余质量不同时为正，故非对角剩余总量1−α=TV。α=1时只有共同对角，不除零。任何耦合的对角质量≤Σmin(p,q)，因此这个最大耦合达到最小失配概率。\n\n逐步构造耦合：在前缀还一致时，用当前两个条件核的最大耦合；已分歧后按各自正确条件核继续。每次一致事件的条件失配≤ε_t，所以全部n步一致概率≥Π(1−ε_t)。联合分布的TV≤该耦合的整段失配概率，不宣称逐步最大耦合也是整段最大耦合。第二个不等式由非负ε有限归纳。\n\n均值界另用混合联合R_t：前t步用P核、余下用Q核，R_0=Q、R_n=P。相邻R_t/R_{t−1}共用P前缀分布及Q后续核；把同前缀当前核差加上共同后缀，其TV≤E_{P_{<t}}δ_t（后缀是概率核，其总质量1）。三角不等式求和，再截到1。零P概率前缀不贡献均值；不依赖在那些前缀对P条件概率的统计估计。\n\n奖励界令g=(f−a)/(b−a)∈[0,1]（a=b时差0），用概率差正负部分各质量TV即可；最大事件指标达到该界。\n\n**可测量身份，不同于逐步上界：** 对X∼P，Z(X)=(1−Q(X)/P(X))_+∈[0,1]，则E_P Z=TV(P,Q)。只在P(X)>0的采样支持上算比值，不需Q绝对连续于P；直接展开Σ(P−Q)_+证明。真实轨迹概率必须来自与生成相同的条件核，重归一化top-k后测的是新的截断分布。指数乘积有下溢风险，应使用可信log概率/稳定运算，CPU精确小例不认证模型数值接口。有限样本置信区间另加载`math.hoeffding-bounded-mean`，本条不把经验估计写成真实TV。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "loaded_ids": [
+    "math.softmax-kl-fisher"
+  ],
+  "mapping": "human-extracted object/premise queries; public developer checks, not model semantic/refusal evaluation"
+}

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "last_completed_round": "2026-10-08-sequence-tv",
-  "next_topic": "Preserve actual trace/model holdout backlog. Verify generation-faithful replay probabilities and sparse/dense kernels before sequence-TV estimation; separately measure greedy margins/free-generation e2e, no identical-seed inference.",
+  "last_completed_round": "2026-10-08-softmax-kl",
+  "next_topic": "Preserve actual model trace/unused holdout backlog. Check generation-faithful logits versus attention-token axis, centered KL/Fisher proxy vs span/saturation and temperature/mask, before any indexer deployment; no theoretical-card count as quality metric.",
   "open_questions": [
     "How well do larger independent task sets retrieve the right premises?",
     "Dense semantic retrieval and formal proving have not been evaluated; no global-optimality claim.",
@@ -20,7 +20,8 @@
     "Finite softmax/value bound validated structurally and on public CPU fixtures only; actual value diameter, matched-budget indexer output/e2e and model retrieval/refusal remain untested.",
     "Gram/Jacobian derived and finite CPU fixtures checked; no actual model trace, no downstream nonlinear/e2e certification, no GPU efficiency or unused model tests.",
     "Weighted bilinear score proxy verified only for independent product-law/SPD fixtures; paired real q/k, singular support, unchanged rotary schedule, matched output/e2e and GPU cost remain.",
-    "Exact additive menu optimizer certified only for finite CPU fixtures; real layer interactions, PP makespan, uncertainty and unused model acceptance remain."
+    "Exact additive menu optimizer certified only for finite CPU fixtures; real layer interactions, PP makespan, uncertainty and unused model acceptance remain.",
+    "Finite KL centered/Fisher path algebra covered; actual logit error, calibrated span/path floors, model e2e and unused semantic refusals untested."
   ],
   "history": [
     {
@@ -255,6 +256,15 @@
         "probability"
       ],
       "next_domain": "neuroscience"
+    },
+    {
+      "round": "2026-10-08-softmax-kl",
+      "entries": [
+        "math.softmax-kl-fisher"
+      ],
+      "evidence": "doc/results/math-softmax-kl-20261008/report.md",
+      "status": "independent-accepted-pending-publication",
+      "remote_verified": false
     }
   ],
   "engineering": {

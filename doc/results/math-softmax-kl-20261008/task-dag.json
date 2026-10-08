@@ -1,0 +1,64 @@
+{
+  "tasks": [
+    {
+      "task_id": "MATH-39",
+      "owner": "/root",
+      "action": "produce",
+      "produces_data": true,
+      "task_type": "experiment",
+      "depends_on": [],
+      "experiment_result": {
+        "result_id": "math-softmax-kl-20261008",
+        "producer_task_id": "MATH-39",
+        "producer_actor": "/root",
+        "validation_plan": {
+          "path": "doc/results/math-softmax-kl-20261008/validation-plan.json",
+          "sha256": "6d1b9fa9b67144f88a8e187f85a1fd8493c88aa680385ba9464130b361440fc0"
+        },
+        "scope": "finite full-support softmax KL/Fisher algebra; public CPU development fixtures and structural retrieval only; no model/performance/formal certification",
+        "manifest_path": "doc/results/math-softmax-kl-20261008/manifest.json"
+      }
+    },
+    {
+      "task_id": "MATH-SOFTMAX-KL-VERIFY",
+      "owner": "/root/softmax_kl_verifier",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "MATH-39"
+      ],
+      "result_validation": {
+        "result_id": "math-softmax-kl-20261008",
+        "producer_task_id": "MATH-39",
+        "producer_actor": "/root",
+        "validation_plan": {
+          "path": "doc/results/math-softmax-kl-20261008/validation-plan.json",
+          "sha256": "6d1b9fa9b67144f88a8e187f85a1fd8493c88aa680385ba9464130b361440fc0"
+        },
+        "scope": "finite full-support softmax KL/Fisher algebra; public CPU development fixtures and structural retrieval only; no model/performance/formal certification",
+        "manifest_path": "doc/results/math-softmax-kl-20261008/manifest.json"
+      }
+    },
+    {
+      "task_id": "MATH-40",
+      "owner": "/root",
+      "action": "publish",
+      "depends_on": [
+        "MATH-SOFTMAX-KL-VERIFY"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-softmax-kl-20261008",
+          "producer_task_id": "MATH-39",
+          "producer_actor": "/root",
+          "validation_plan": {
+            "path": "doc/results/math-softmax-kl-20261008/validation-plan.json",
+            "sha256": "6d1b9fa9b67144f88a8e187f85a1fd8493c88aa680385ba9464130b361440fc0"
+          },
+          "scope": "finite full-support softmax KL/Fisher algebra; public CPU development fixtures and structural retrieval only; no model/performance/formal certification",
+          "manifest_path": "doc/results/math-softmax-kl-20261008/manifest.json"
+        }
+      ]
+    }
+  ],
+  "boundary": "direct bounded host maintenance and actual independent collaboration; not managed engine/tmux deployment"
+}
