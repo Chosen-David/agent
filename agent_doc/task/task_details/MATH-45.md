@@ -14,3 +14,5 @@ Date: 2026-10-08
 revision3独立计划批准；v1空seeds拒绝记录保留，v2重新生产并独立验收usable-with-scope。1731条公开记录、4294额外有理数病例、Decimal80复核；相关70测试和插件快照检查通过。新卡published后3查询双后端6/6top3、5/6top1（显式学科），单卡正文7359bytes，1840仅bytes/4粗估；实际模型tokens未测。新版refs核对通过；检索、回归及报告等最终集成独立审查待完成，发布前刷新main。
 
 最终集成独立验收usable-with-scope：published refs、6/6top3、70回归、完整原始gzip恢复/保留拒绝均通过；修复前证据保留。科学与集成产物冻结，准备直接main发布，远端SHA核对待本轮最后步骤。
+
+已直接发布并原生fetch/ls-remote读回main 52e19cd170bb701c67795c15fc106eaa92c65a80，完整tree aa703f8bde2f42e468fa41fe51eedce26d614788与本地准备树一致。普通HTTPS push缺凭据，改用认证GitHub expected-SHA/non-force接口；未建PR、未强推。publication_by_gpt.json保存实证。本收尾只记录已核实发布，不改变冻结科学/集成产物；下一轮沿持续状态续接。

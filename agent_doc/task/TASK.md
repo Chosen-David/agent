@@ -228,4 +228,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-08 支持条件化与质量归一化
 
 - [x] [MATH-45] 补齐条件化、散度方向与质量不可识别推导，筛选近期原文。 ([detail](task_details/MATH-45.md))
-- [ ] [MATH-46] 独立代码/数据验收、有限检索、回归与main发布核对。 ([detail](task_details/MATH-46.md))
+- [x] [MATH-46] 独立代码/数据验收、有限检索、回归与main发布核对。 ([detail](task_details/MATH-46.md))
