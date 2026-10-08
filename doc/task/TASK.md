@@ -192,5 +192,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-08 RoPE交织结构
 
-- [ ] [MATH-41] 补齐旋转交织/频率融合前提，筛选近期等变研究。 ([detail](task_details/MATH-41.md))
-- [ ] [MATH-42] 独立验收、检索成本、回归与main发布读回。 ([detail](task_details/MATH-42.md))
+- [x] [MATH-41] 补齐旋转交织/频率融合前提，筛选近期等变研究。 ([detail](task_details/MATH-41.md))
+- [x] [MATH-42] 独立验收、检索成本、回归与main发布读回。 ([detail](task_details/MATH-42.md))
