@@ -1,0 +1,259 @@
+{
+  "queries": [
+    {
+      "query": "reasoning trajectories RL SFT entropy",
+      "response": {
+        "schema_version": 1,
+        "snapshot": "1ee332b3173fb2652610679ea29905f0ec22ad195fe098da7ac90fba27596e0b",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "algo.rl-entropy-numerical-control",
+            "version": 1,
+            "sha256": "105a9ad56eb9c6cab2934173d3353e244c24b3696ff9b793782d11960b0a2651",
+            "title": "RL 熵坍缩：先核查 log-prob 精度、离策略更新与探索需求",
+            "summary": "ICLR 2026 的 Qwen3/AppWorld 与 AIME 实验发现，输出降精度可改变 clipping 与熵轨迹；保熵方法的收益依赖探索需求，不能只看最终熵。",
+            "status": "published",
+            "assumptions": [
+              "model: Qwen3-8B/32B; LoRA rank 16 alpha 32",
+              "data: AppWorld train 90; NuminaMath AMC/AIME filtered 563",
+              "stack: custom FSDP2, vLLM, Cut Cross-Entropy; typically 3 x 8 H100",
+              "metric: AppWorld TGC; AIME24/25 pass@1 with 4096-token budget"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-checked",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-rl-probability/report.md#algo.rl-entropy-numerical-control"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "rl"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "entropy"
+                ]
+              },
+              {
+                "field": "structures",
+                "terms": [
+                  "entropy"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "entropy",
+                  "rl"
+                ]
+              }
+            ],
+            "score": 16
+          },
+          {
+            "id": "algo.rl-spurious-reward-regimes",
+            "version": 1,
+            "sha256": "84b89bf957366dba328c3364c0be729843c630d02bbf04cfa7474b923ed1d744",
+            "title": "随机奖励与 clipping：熵下降不是推理能力提升的充分证据",
+            "summary": "ICLR 2026 在随机 Bernoulli 奖励的数学训练中区分 clipping 稳定性、初始策略偏斜和任务难度；关闭 clipping 可提高熵，也可能导致梯度爆炸。",
+            "status": "published",
+            "assumptions": [
+              "model: Qwen2.5-Math-7B; additional QwQ-32B and R1-Distill-Llama-8B cases",
+              "data: DeepScaleR or harder AIME Past training; MATH500 validation",
+              "reward: iid Bernoulli(1/2), independent of correctness",
+              "training: verl; batch 128; group 16; temperature 1.0; lr 5e-7; clip 0.2; KL 0"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-checked",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-rl-probability/report.md#algo.rl-spurious-reward-regimes"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "entropy"
+                ]
+              },
+              {
+                "field": "structures",
+                "terms": [
+                  "entropy"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "entropy"
+                ]
+              }
+            ],
+            "score": 10
+          },
+          {
+            "id": "algo.car-lora-transfer",
+            "version": 1,
+            "sha256": "3aeedda61964f7f257ac0690922bf260933615ab522b9ebe1548bc476ce59ca2",
+            "title": "CAR-LoRA：量化迁移结果与训练预算混杂",
+            "summary": "ICLR 2026 的实验支持有限量化方案下的 adapter 迁移候选；训练轮数不同且 layer skipping 退化，不能据此承诺任意未来模型可用。",
+            "status": "published",
+            "assumptions": [
+              "models: Llama-3.1-8B Mistral-7B Gemma-2-9B",
+              "compression: INT8 FP4 NF4 structured pruning layer skipping",
+              "metric: reasoning benchmark accuracy"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "not-applicable",
+              "checks": [
+                "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.car-lora-transfer"
+              ]
+            },
+            "matches": [
+              {
+                "field": "content",
+                "terms": [
+                  "reasoning"
+                ]
+              }
+            ],
+            "score": 1
+          }
+        ]
+      }
+    },
+    {
+      "query": "bounded mean horizon betting deadline",
+      "response": {
+        "schema_version": 1,
+        "snapshot": "1ee332b3173fb2652610679ea29905f0ec22ad195fe098da7ac90fba27596e0b",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.betting-test-martingale",
+            "version": 1,
+            "sha256": "a082de859efe25ad7cef832d8c8433aaf0f72cd92399d6601c24eebe37cb5ca9",
+            "title": "可预测下注、条件均值与序贯检验有效性",
+            "summary": "有界观测在零假设下具有固定条件均值时，合法且只使用过去信息的乘积证据构成非负鞅；由Ville界控制任意停止误报。边际均值相同不够。",
+            "status": "published",
+            "assumptions": [
+              "过滤族 F_t 包含当前全部可用历史；X_t∈[0,1] 几乎处处",
+              "零假设下 E[X_t|F_(t-1)]=m，固定 m∈(0,1)，不能仅有边际均值m",
+              "lambda_t 是 F_(t-1) 可测，并满足 -1/(1-m)≤lambda_t≤1/m",
+              "初始财富 W_0=1；错误预算 alpha∈(0,1) 在检验前规定"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-betting/verify.py",
+                "docs/knowledge_learning/2026-10-07-betting/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "betting",
+                  "bounded",
+                  "mean"
+                ]
+              }
+            ],
+            "score": 15
+          },
+          {
+            "id": "math.dependent-mean-variance",
+            "version": 1,
+            "sha256": "03813de91ef8891cba4b6bcf95b9cb878ed4475533d5c430e582376c51ff4302",
+            "title": "依赖样本均值方差与目标专属有效样本量",
+            "summary": "从完整协方差计算固定n的均值方差；有效样本量只匹配该目标的方差，不证明独立性、高斯尾或二阶矩/子空间可靠性。",
+            "status": "published",
+            "assumptions": [
+              "n≥1事先固定；实标量过程有共同均值µ与有限二阶矩，协方差指真实模型量",
+              "平稳简式还要求γ_h=Cov(X_t,X_(t+h))不依赖t；γ0>0，负相关允许",
+              "AR(1)特例要求因果平稳初始化、|phi|<1及独立同分布零均值有限方差创新；不是从lag1估计直接得整个模型",
+              "高斯尾和平方相关公式额外要求联合高斯；平方例还要求µ=0，不能仅凭高斯边缘",
+              "样本ACF/phi/方差估计无本条误差认证；均值漂移、自适应抽样和停止时间需要另证"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-dependence/verify.py",
+                "docs/knowledge_learning/2026-10-07-dependence/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "mean"
+                ]
+              }
+            ],
+            "score": 5
+          },
+          {
+            "id": "math.hoeffding-bounded-mean",
+            "version": 1,
+            "sha256": "5da6b4040a6e6a838eb37d080b36b230e91ffc22d752146b888604f77a3aea0a",
+            "title": "有界独立样本的均值误差与样本量",
+            "summary": "固定样本量下用确定的取值范围约束样本均值误差；不能从观测极值猜范围或把重复记录当独立样本。",
+            "status": "published",
+            "assumptions": [
+              "X_i 相互独立，确定常数 a_i≤X_i≤b_i 几乎处处成立",
+              "n 在观察数据之前固定且 n≥1；目标为各期望的平均值",
+              "δ∈(0,1)，范围并非事后观测的最小/最大值"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-06-concentration/checks.json",
+                "docs/knowledge_learning/2026-10-06-concentration/verify.py"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "bounded"
+                ]
+              }
+            ],
+            "score": 5
+          }
+        ]
+      }
+    }
+  ],
+  "used_refs": [
+    {
+      "id": "algo.rl-entropy-numerical-control",
+      "version": 1,
+      "sha256": "105a9ad56eb9c6cab2934173d3353e244c24b3696ff9b793782d11960b0a2651"
+    },
+    {
+      "id": "math.betting-test-martingale",
+      "version": 1,
+      "sha256": "a082de859efe25ad7cef832d8c8433aaf0f72cd92399d6601c24eebe37cb5ca9"
+    },
+    {
+      "id": "prob.self-normalized-dimension-barrier",
+      "version": 1,
+      "sha256": "396aa263a1f4db2ae80ab07152c3f1e5cbaa10a49cf4817480cc5a86a88c4fda"
+    }
+  ],
+  "mapping": "Entropy precision is related but does not cover trajectory clustering; betting martingale supplies validity premises; existing COLT 2026 dimension barrier is not duplicated."
+}

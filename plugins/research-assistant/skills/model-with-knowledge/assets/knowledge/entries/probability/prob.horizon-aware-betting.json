@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "id": "prob.horizon-aware-betting",
+  "version": 1,
+  "status": "published",
+  "kind": "case",
+  "title": "有限预算序贯检验：增长最优不等于截止期检验力最优",
+  "summary": "ICML 2026 将有界均值检验的截止期拒绝概率作为控制目标；Kelly 的长期增长目标与它不同，安全可预测下注下的有效性和策略检验力须分开核对。",
+  "aliases": [
+    "horizon aware anytime valid testing",
+    "有限预算序贯检验",
+    "deadline limited power",
+    "predictable bounded mean betting",
+    "Kelly stopping threshold"
+  ],
+  "domains": [
+    "probability",
+    "sequential-decision",
+    "reinforcement-learning"
+  ],
+  "structures": [
+    "horizon aware anytime valid testing",
+    "有限预算序贯检验",
+    "deadline limited power",
+    "predictable bounded mean betting",
+    "Kelly stopping threshold"
+  ],
+  "assumptions": [
+    "observations: iid X in [0,1]; fixed null mean m in (0,1); fixed alpha and deadline N",
+    "policy: bet uses past filtration only; lambda in [-1/(1-m),1/m]; implementation uses inward epsilon 1e-3",
+    "evaluation: Beta/Beta-mixture experiments; deadline hit probability and approximate grid-inverted CS; no target-agent data",
+    "theory_scope: Thm3.1 compact feasible set, bounded log increments and separated Kelly maximizer; Props3.4/3.6 finite-support rate conditions"
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/taga26a/taga26a.pdf",
+      "locator": "§3/Thm3.1, Props3.4/3.6 (PDF pp.3–6); §4.1–4.4 (pp.7–9); Appendices E.2–E.6 (pp.19–20), F.4 (pp.21–22)",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-checked",
+    "checks": [
+      "docs/knowledge_learning/2026-10-08-rl-probability/report.md#prob.horizon-aware-betting"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.betting-test-martingale"
+    }
+  ],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "ICML 2026 将有界均值检验的截止期拒绝概率作为控制目标；Kelly 的长期增长目标与它不同，安全可预测下注下的有效性和策略检验力须分开核对。",
+    "conditions": {
+      "observations": "iid X in [0,1]; fixed null mean m in (0,1); fixed alpha and deadline N",
+      "policy": "bet uses past filtration only; lambda in [-1/(1-m),1/m]; implementation uses inward epsilon 1e-3",
+      "evaluation": "Beta/Beta-mixture experiments; deadline hit probability and approximate grid-inverted CS; no target-agent data",
+      "theory_scope": "Thm3.1 compact feasible set, bounded log increments and separated Kelly maximizer; Props3.4/3.6 finite-support rate conditions"
+    },
+    "observations": [
+      "§3–4：安全、可预测下注保障误报控制；有限时域检验力取决于策略与分布。Kelly/激进/保守区间来自条件理论与受限动作集的数值DP，不是无条件规则。",
+      "§4.4 比较 DQN、empirical Kelly、epsilon-schedule hedging 和 STaR 系列；所测分布中DQN改善截止期表现。Appendix E.6明确网格反演CS为启发式近似。"
+    ],
+    "limitations": [
+      "相关、漂移或数据泄漏不能仅凭有界性满足iid功效理论；有效性推广需另证条件均值。不要事后选择显著性或用当前样本选当前下注。",
+      "正文写500000训练episodes，E.5表写550000；未消解，不能视为精确训练复现配置。DQN并无普适最优证明，离散CS图不能认证连续参数覆盖。"
+    ],
+    "minimal_checks": [
+      "审核条件均值/独立性、采样规则与过滤信息；核对所有实际下注及数值安全边界。",
+      "在目标分布以固定alpha/N比较截止期检验力和误报，显式处理网格误差；用户指定复现仍执行。"
+    ],
+    "paper": {
+      "venue": "ICML",
+      "year": 2026,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  }
+}

@@ -4,6 +4,10 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-08
 
+- [x] [CONT-20261008-01] 阅读 RL／有限时域检验原始论文及固定代码，补齐可检索结论和拒用条件。 ([detail](task_details/CONT-20261008-01.md))
+- [x] [CONT-20261008-02] 修正轮转入口，验证新旧检索与决策边界，独立验收本轮数据。 ([detail](task_details/CONT-20261008-02.md))
+- [ ] [CONT-20261008-03] 整合 main、普通发布并远端核对，同步技能并恢复原小时 tmux 任务。 ([detail](task_details/CONT-20261008-03.md))
+
 - [x] [MATH-33] 核验有限菜单同时校准与选择后风险/成本均值，保留泄漏和依赖反例，筛选最新LTT/ReCIRC研究。 ([detail](task_details/MATH-33.md))
 - [x] [MATH-34] 独立验证、知识/插件与成本维护、相关回归；刷新main普通发布并远端核验。 ([detail](task_details/MATH-34.md))
 
