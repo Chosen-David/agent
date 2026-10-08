@@ -16,7 +16,3 @@ DAG：startup/prior reads→不同真实上下文计划approve→知识和公开
 ## Progress
 
 fresh clone c8da2cd，工作树启动干净，本轮无重复活动。guide为空/README只读；读latest TASK、角色、索引、持续状态、相关工作流。实际prior搜索partial保留；未采纳advice。等待独立审核。
-
-独立cycle1纠正schedule单调性，cycle2 approve；192次精确更新、6结构检索、53回归及488绑定获另一真实上下文usable-with-scope。检索attempt1断言ready失败，原始证据保留；attempt2只修复partial必需依赖判定，不改预算/查询。主AI经实际FINAL事件pin回执，inspect_result及ResultStore登记后消费。
-
-science main `4752f480882af9850f08ffa82830ec9c400c29f6` 已nonforce发布，fetch SHA/tree及ls-remote核对。原稳定Plan/索引/详情快照保留，当前checkbox/Progress和learningstate仅非语义收尾；不改变数学验收或用户授权。无模型/GPU/实际token/e2e结论，未改SGLang。

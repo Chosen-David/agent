@@ -274,4 +274,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-09 轻量凸输出求解
 
-- [ ] [MATH-54] 核验逐步非负重赋权、迭代误差及停止证书，筛选近期attention动力学研究。 ([detail](task_details/MATH-54.md))
+- [x] [MATH-54] 核验逐步非负重赋权、迭代误差及停止证书，筛选近期attention动力学研究。 ([detail](task_details/MATH-54.md))
