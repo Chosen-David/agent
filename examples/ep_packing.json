@@ -1,0 +1,29 @@
+{
+ "inventory": {
+  "schema_version": "ep-inventory/v1",
+  "observed_at": 1000,
+  "valid_for_seconds": 120,
+  "hosts": [
+   {"host_id": "gpu-a", "gpus": [
+    {"uuid": "GPU-a0", "model": "H20-141GB", "usable_memory_bytes": 150323855360, "in_use_memory_bytes": 0, "available": true, "shared_ok": true},
+    {"uuid": "GPU-a1", "model": "H20-141GB", "usable_memory_bytes": 150323855360, "in_use_memory_bytes": 0, "available": true, "shared_ok": true}
+   ]},
+   {"host_id": "gpu-b", "gpus": [
+    {"uuid": "GPU-b0", "model": "H20-141GB", "usable_memory_bytes": 150323855360, "in_use_memory_bytes": 25769803776, "available": true, "shared_ok": true},
+    {"uuid": "GPU-b1", "model": "H20-141GB", "usable_memory_bytes": 150323855360, "in_use_memory_bytes": 0, "available": false, "shared_ok": true}
+   ]}
+  ]
+ },
+ "jobs": [
+  {"job_id": "gov-sim-arm1", "depends_on": [], "priority": 50, "memory_bytes": 32212254720, "exclusive": true, "est_seconds": 14400, "gpu_models": []},
+  {"job_id": "gov-arm2", "depends_on": [], "priority": 50, "memory_bytes": 32212254720, "exclusive": true, "est_seconds": 10800, "gpu_models": []},
+  {"job_id": "repo-arm3", "depends_on": [], "priority": 40, "memory_bytes": 32212254720, "exclusive": false, "est_seconds": 5580, "gpu_models": []},
+  {"job_id": "qasper-arm4", "depends_on": [], "priority": 40, "memory_bytes": 32212254720, "exclusive": false, "est_seconds": 780, "gpu_models": []},
+  {"job_id": "qasper-arm5", "depends_on": [], "priority": 40, "memory_bytes": 32212254720, "exclusive": false, "est_seconds": 780, "gpu_models": []},
+  {"job_id": "mu-arm6", "depends_on": [], "priority": 40, "memory_bytes": 32212254720, "exclusive": false, "est_seconds": 1260, "gpu_models": []},
+  {"job_id": "done-arm7", "depends_on": [], "priority": 40, "memory_bytes": 32212254720, "exclusive": false, "est_seconds": 780, "gpu_models": []},
+  {"job_id": "huge-arm8", "depends_on": [], "priority": 10, "memory_bytes": 200000000000, "exclusive": false, "est_seconds": 600, "gpu_models": []},
+  {"job_id": "dep-arm9", "depends_on": ["qasper-arm4"], "priority": 30, "memory_bytes": 32212254720, "exclusive": false, "est_seconds": 780, "gpu_models": []}
+ ],
+ "verified_job_ids": ["done-arm7"]
+}
