@@ -262,4 +262,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-08 正态混合时间一致边界
 
-- [ ] [RP-T-20261008-1515] 核验条件次高斯正态混合界、随机停止与拒用反例；独立验收及检索非退化后发布。 ([detail](task_details/RP-T-20261008-1515.md))
+- [ ] [RP-T-20261008-1515] 正态混合界已独立验收并推送main；远端CI查询Forbidden待核实。 ([detail](task_details/RP-T-20261008-1515.md))
