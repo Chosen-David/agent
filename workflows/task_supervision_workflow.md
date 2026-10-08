@@ -175,3 +175,7 @@ handler 沿用现有 `run(task, Context)/verify(task, evidence)` 契约，report
 ## 独立主控计划审核
 
 受管复杂任务执行 `workflows/dual_main_workflow.md`（独立 Skill 使用同目录 `dual_main_workflow.md`）：planner-main 维护方案与唯一 TASK，review-main 由可信宿主独立新上下文审查 intent/guide/assumptions/prior_results/acceptance/risk/resources。新 prepare 默认保护，完整实际 DAG 与指南/采纳建议/证据版本绑定；approve 后仍需工具授权和独立结果验收。无可信回执不派发，revise/reject 版本化返修；Progress 追加不失效。缺宿主接口如实 blocked；旧计划仅宿主明确 legacy-unprotected 兼容，不宣称已全部升级。
+
+## 因果前置任务的拆分与并发
+
+规划/恢复时读取 [因果任务编排](causal_task_orchestration_workflow.md)。同一要求可展开多个独立子链，主 AI 根据依赖、资源与关键路径安排有界并发、局部流水和完整汇合；每份数据仍独立验收。当前 tick 每次领取一个节点，异步长作业重叠需要真实宿主 submit/poll 与资源准入；本说明不改变 runtime 行为或宣称已经部署多GPU。

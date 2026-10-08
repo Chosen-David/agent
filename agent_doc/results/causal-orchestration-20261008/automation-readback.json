@@ -1,0 +1,9 @@
+{
+  "task_id": "6ac49448fab08190a825f0db4a6f3ca9",
+  "is_enabled": true,
+  "schedule_before": "BEGIN:VEVENT\nDTSTART:20261006T143116Z\nRRULE:FREQ=HOURLY;INTERVAL=1;BYMINUTE=0\nEND:VEVENT",
+  "schedule_after": "BEGIN:VEVENT\nDTSTART:20261006T143116Z\nRRULE:FREQ=HOURLY;INTERVAL=1;BYMINUTE=0\nEND:VEVENT",
+  "previous_prompt_preserved": true,
+  "added_instruction": "十八 因果任务链拆分与资源感知并发（用户2026-10-08 10:54新增）\n主AI主动检查任务DAG的可并行部分，不把“一个任务链一次只推进一个任务”当默认。对因果前置任务可按数据集、种子、独立组件等拆成有父ID和稳定子ID的子任务链；例如8个独立数据集在真实已授权且可用的8张合适GPU上可并行，资源不足则有界排队，不假设卡数或擅增付费资源。先核对输入/共享状态独立性、全局数据拟合/随机性/统计语义、显存、CPU/RAM/I/O、资源预约与唯一输出路径；共享训练状态或后一步依赖前一步的任务不得伪拆。\n在现有DAG、宿主adapter、租约和取消机制内做fan-out/fan-in及必要流水线，不新增第二套done状态。冻结分片全集和粒度，按关键路径、预计耗时和资源匹配挑选就绪任务；优先合理的小粒度，估计启动/通信/汇总开销，收益未知标待测。每个产数子任务先独立代码/数据验收，允许只依赖已验收分片的局部后续先行；全局结论必须等待完整必需集合和汇总独立验收，检查遗漏、重复、版本/指标/权重一致，不将7/8当8/8。\n持久保存真实jobID、资源分配、幂等键及尝试；故障只重试受影响分片，版本化保留成功结果并重新核验适用性，不重置预算或把OOM降参混成同一实验。基准性能测量避免共卡/共享瓶颈干扰，固定比较条件；报告实际makespan、排队/启动/计算/验证/汇总成本及失败，无实测不许声称8倍提速。review-main审核拆分/因果/资源/汇总条件，主AI串行维护TASK。补全真实适配器和八分片、资源不足、单分片失败、共享状态不可拆等验收，沿用当前每小时调度、未完成批次与全部门禁。配置/规划通过不等于真实多GPU部署或加速。",
+  "verification": "Actual update followed by automations_peek; configuration only, not a completed scheduled execution."
+}

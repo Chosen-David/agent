@@ -401,3 +401,7 @@ on_failure、resource_budget、status。依赖有效且无环，前置失败不�
 AI Infra/AI 算法/数据结构实现先按 [工程知识复用](engineering_reuse.md) 检索实验与固定实现卡，再进入候选比较。核对论文 baseline、条件和负例；读取 commit/API/许可，优先成熟库，保留 correctness 与目标性能验收。论文结果只是 prior，不能填成本机 measured 或跳过用户必做实验。
 
 当任务需要数学/物理结构、误差界、对称简化或量纲分析时转 `model-with-knowledge` 并遵循 [知识建模流程](https://github.com/Chosen-David/agent/blob/main/workflows/knowledge_modeling_workflow.md)。从任务结构检索、核对全部假设，再返回推导、反例与知识版本引用；知识相关性不是适用性，推导不是性能实测。无此需求不增加步骤。
+
+## 实验子任务的因果拆分
+
+多数据集/种子/组件实验先按 [因果任务编排](causal_task_orchestration_workflow.md) 核对可拆性、资源准入和粒度成本，与主 AI 确定子ID、输入/协议、唯一输出、逐片验收与汇总规则。实现角色报告真实jobID和资源状态，不自行改变父任务必需集合或把部分成功当全局完成；性能测量保留排他与公平比较条件。

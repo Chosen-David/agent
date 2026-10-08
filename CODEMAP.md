@@ -127,3 +127,5 @@ DOC-SCOPE-01：在 SCOPE-01–03 项目初始化实现之上补齐跨项目切�
 
 - `agent_doc/README.md` 与 `advice/README.md`、`guide/README.md`、`task/README.md`、`results/README.md`：用户要求的职责、维护者、逐项回应与证据入口；任务详情职责合并在 task README，指南说明为本次明确授权，未修改 GUIDE.md 或通用守卫。
 - `agent_doc/task/task_details/DOC-ROLES-01.md`：本轮范围、检索取舍、文案复核和发布进度。
+
+ORCH-PAR-01：`workflows/causal_task_orchestration_workflow.md` → 通用/科研/planner/review主控、任务监督与实现角色；现有sync脚本生成插件引用。`agent_doc/results/causal-orchestration-20261008/` 保存本轮规划使用与独立核验，程序/规划证据不代表多GPU实测。

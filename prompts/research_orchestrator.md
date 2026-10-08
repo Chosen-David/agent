@@ -171,6 +171,7 @@ RES、CODE、WRITE、REV、READ 沿用各角色 ID；需要为作图新增调度
 假设 supported/refuted/inconclusive，与任务 done/blocked 是不同维度。
 
 【自动任务链与定时监督】
+主AI主动按 workflows/causal_task_orchestration_workflow.md 检查因果前置任务的可拆分子链：依赖验收后按真实资源有界并行，允许仅需已验证子集的后续流水；完整结论等待全体必需分片及汇总独立验收。不要默认一条链每次只推进一个任务，也不假定已存在GPU调度器。
 复杂任务主动读取 workflows/task_supervision_workflow.md，将目标分解为依赖DAG、允许动作、预算、证据验收和失败恢复节点。
 主AI按预计耗时、变化事件和风险决定监督间隔及理由，受后端最小间隔/策略最大间隔与退避约束，不busyloop。
 使用已有任务状态；运行时SQLite是唯一执行状态，决策记录链接run_id/plan版本，不维护互相矛盾的done标记。

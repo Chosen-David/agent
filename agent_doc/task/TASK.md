@@ -6,6 +6,8 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [DOC-ROLES-01] 用各目录 README 明确建议、人工指南、任务与结果分工及逐项回应责任。 ([detail](task_details/DOC-ROLES-01.md))
 
+- [ ] [ORCH-PAR-01] 前置因果链拆分、有界资源并发、分片验收与完整汇合；同步主AI入口及原小时任务，验收后直接main。 ([detail](task_details/ORCH-PAR-01.md))
+
 - [x] [DOC-SCOPE-01] 明确接入项目与 Agent 规则库的文档归属，同步入口与15份契约，保留程序及独立核验记录。 ([detail](task_details/DOC-SCOPE-01.md))
 
 - [x] [CONT-20261008-01] 阅读 RL／有限时域检验原始论文及固定代码，补齐可检索结论和拒用条件。 ([detail](task_details/CONT-20261008-01.md))
