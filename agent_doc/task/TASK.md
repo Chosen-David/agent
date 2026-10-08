@@ -270,4 +270,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-09 受限输出投影
 
-- [ ] [MATH-53] 核验选定value凸包最小输出误差、可行性及上下界证书。 ([detail](task_details/MATH-53.md))
+- [x] [MATH-53] 核验选定value凸包最小输出误差、可行性及上下界证书。 ([detail](task_details/MATH-53.md))
