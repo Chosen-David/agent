@@ -17,4 +17,4 @@ root唯一作者：TASK/MATH-50详情、新卡及镜像、README/coverage/learni
 
 ## Progress
 
-独立计划v1/v2和最终六域结果审查完成，usable-with-scope。首次JSON tuple/Fraction保存失败，代码/日志保留；修复仅tuple递归，预算/尝试未重置。最终25例、6次结构检索、53项定向测试及插件同步通过；3条按需闭包11719字符，token未计量。NoPE/RoPE/混合预测边界与paired反例入库；没有生产行为、模型/GPU/Lean/e2e收益。证据agent_doc/results/math-linear-residual-20261008-v2/；main发布待远端核对。
+独立计划v1/v2和最终六域结果审查完成，usable-with-scope。首次tuple/Fraction序列化失败，原代码/日志保留，修复后沿用原预算；最终25个精确案例、6次结构检索、53项定向测试及插件同步通过。闭包3条/11719字符，token未计量。NoPE/RoPE/混合预测边界、paired反例已入库；无生产行为、模型/GPU/Lean/e2e收益。科学提交 8c467f38c46e533423a95ae39c741a03db88fe42 已经native fetch与独立ls-remote核对，tree 35de2482556bc588bf854c789db4848d27bbf095。证据 agent_doc/results/math-linear-residual-20261008-v2/report_by_gpt.md；publication_receipt.json。下一步GPU残差证书与同预算模型实测；不将公开开发题当留出测试。
