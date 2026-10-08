@@ -18,12 +18,67 @@ import tempfile
 from urllib.parse import urlsplit
 
 CANONICAL_TASK = 'doc/task/TASK.md'
+DOCUMENT_DIRECTORIES = ('doc/task/task_details', 'doc/advice', 'doc/guide', 'doc/results')
 TASK_PATTERN = re.compile(r'^\s*[-*+] \[([ xX])\] \[([A-Za-z0-9][A-Za-z0-9_.-]*)\] (.+)$')
 DATE_PATTERN = re.compile(r'^## (\d{4}-\d{2}-\d{2})(?:\s|$)')
 
 
 class DocumentError(ValueError):
     """Document identity, ownership or dependency requires reconciliation."""
+
+
+def initialize_project_docs(root):
+    """Explicit project bootstrap, independent of workflow checkout or cwd.
+
+    Preflight all layout conflicts before writing. Preserve existing files and
+    create no human guide or fabricated task. This is not a filesystem transaction
+    against hostile concurrent path changes.
+    """
+    supplied = Path(root).absolute()
+    root = supplied.resolve()
+    for candidate in (supplied, root):
+        parts = tuple(part.casefold() for part in candidate.parts)
+        if any(parts[i:i + 2] == ('doc', 'guide') for i in range(len(parts) - 1)):
+            raise DocumentError('human-only doc/guide cannot be a project initialization target')
+    if not root.is_dir():
+        raise DocumentError('project root must be an existing directory')
+    directories = [_relative(root, name) for name in DOCUMENT_DIRECTORIES]
+    task = _relative(root, CANONICAL_TASK)
+    assert_ai_writable(root, CANONICAL_TASK)
+    for directory in directories:
+        for candidate in (directory, *directory.parents):
+            if candidate == root:
+                break
+            if candidate.exists() and not candidate.is_dir():
+                raise DocumentError('project document directory conflict: ' + str(candidate))
+    if task.exists() and not task.is_file():
+        raise DocumentError('canonical task index must be a regular file')
+    legacy = _relative(root, 'TASK.md')
+    if legacy.exists():
+        if not legacy.is_file():
+            raise DocumentError('legacy task index must be a regular file')
+        if not task.exists():
+            raise DocumentError('legacy TASK.md requires explicit inspect/migrate before initialization')
+        resolve_task_file(root)  # Reject two active lists; never silently choose.
+    created = []
+    for directory in directories:
+        if not directory.exists():
+            directory.mkdir(parents=True, exist_ok=True)
+            created.append(directory.relative_to(root).as_posix())
+    try:
+        # Exclusive creation preserves an index created by another process.
+        with task.open('x', encoding='utf-8', newline='\n') as stream:
+            stream.write('# 项目任务\n\n'
+                         '这是当前项目唯一日期任务索引；尚未填写已授权任务。\n'
+                         'AI 按日期和稳定任务 ID 维护索引与 task_details，不导入工作流仓库历史任务。\n'
+                         'doc/guide/GUIDE.md 由人类自行编写；AI 不在 doc/guide/ 创建任何文件。\n')
+        created.append(CANONICAL_TASK)
+    except FileExistsError:
+        pass
+    return {'status': 'initialized', 'project_root': str(root),
+            'task_index': CANONICAL_TASK, 'created': created,
+            'next': 'Read this project\'s human guide if present; register authorized tasks before dispatch. '
+                    'Initialization alone does not establish a valid execution plan.'}
 
 
 def _date(value):
@@ -500,6 +555,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', required=True)
     sub = parser.add_subparsers(dest='command', required=True)
+    sub.add_parser('init', help='initialize only the explicitly selected existing project')
     sub.add_parser('inspect')
     sub.add_parser('validate')
     action = sub.add_parser('migrate')
@@ -507,7 +563,9 @@ def main(argv=None):
     sub.add_parser('guard-write').add_argument('paths', nargs='+')
     args = parser.parse_args(argv)
     try:
-        if args.command == 'migrate':
+        if args.command == 'init':
+            result = initialize_project_docs(args.root)
+        elif args.command == 'migrate':
             result = migrate(args.root, args.date)
         elif args.command == 'guard-write':
             result = {'allowed': [str(assert_ai_writable(args.root, path)) for path in args.paths]}

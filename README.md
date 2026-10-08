@@ -2,6 +2,8 @@
 
 本机 Codex 接入：`python scripts/setup_codex.py` 安装 15 个用户级技能与按需调度入口；`--check` 核验版本，更新保护本机修改。[Codex 接入与每轮 pull→验证→push→同步流程](docs/codex_adoption/README.md)。
 
+**工作流装在 agent 库，项目文档放在你正在使用它的项目。** 开发 Project A 时，指南是 `ProjectA/doc/guide/GUIDE.md`，任务、建议、结果也都在 `ProjectA/doc/`。只有升级本仓库自身时才维护 `agent/doc/`。
+
 一个按**场景与能力**组织的通用 Agent 仓库。主 AI 根据用户目标选择工作流，保持通用身份；科研助手是其中一个专业组合，论文伴读与知识讲解也可以独立使用。
 
 适用于具备相应工具能力的 ChatGPT/Codex、Claude 及其他主 AI。当前提供科研/论文角色与独立旅行规划能力，并附完整工作流、可复制 Prompt 和插件包。未来可增加编程、学习、产品等领域的独立分类，不必改写主 AI 的身份。
@@ -16,8 +18,16 @@
 
 ## 项目文档分层
 
-- [任务索引](doc/task/TASK.md)：按日期简洁列出任务；AI 在 `doc/task/task_details/*.md` 维护每项方法、进度、证据与下一步。
-- `doc/guide/`：人类专用，`guide.md` 是已核实人类来源后的最高项目规划依据。AI 只读，绝不创建、编辑、删除或移动其中的文件，初始化仅建空目录。
+以下路径全部相对**当前接入项目**，不相对工作流安装位置。显式初始化一个已有项目（把示例路径换成你的项目）：
+
+```powershell
+python C:/Users/WI/Desktop/home_work/AI_LLM/agent/scripts/project_docs.py --root C:/work/ProjectA init
+```
+
+然后由你编写 `C:/work/ProjectA/doc/guide/GUIDE.md`，在 Project A 目录启动 AI。命令只建空目录和空任务索引，保留已有文件；缺少 Project A 的文档不应转而读取 agent 库自己的指南或历史任务。
+
+- `doc/task/TASK.md`：按日期简洁列出任务；AI 在 `doc/task/task_details/*.md` 维护每项方法、进度、证据与下一步。
+- `doc/guide/`：人类专用，`GUIDE.md` 是已核实人类来源后的最高项目规划依据。AI 只读，绝不创建、编辑、删除或移动其中的文件，初始化仅建空目录。
 - `doc/results/<run_id>/`：新数据、元数据和独立验证共享入口；新指令规划前先查询既有结果。
 - `doc/advice/`：人类和 AI 可编辑建议与反馈；核验后记录采用、调整后采用、拒绝或暂缓及理由，不盲从其他 AI。
 

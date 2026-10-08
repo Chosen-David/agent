@@ -23,6 +23,10 @@ class SetupTests(unittest.TestCase):
         self.assertEqual(result['status'], 'configured')
         self.assertEqual(result['skills'], len(setup.catalog()))
         self.assertEqual(result['subagents'], len(setup.catalog()))
+        manifest = json.loads((self.target / '.claude/agent-workflows/installation.json').read_text())
+        self.assertEqual(manifest['project_root'], str(self.target.resolve()))
+        self.assertEqual(manifest['repository'], str(ROOT))
+        self.assertNotEqual(manifest['project_root'], manifest['repository'])
         self.assertIn('Keep my instructions.', (self.target / 'CLAUDE.md').read_text())
         self.assertIn('TASK.md', (self.target / 'CLAUDE.md').read_text())
         for role, source, _ in setup.catalog():

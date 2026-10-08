@@ -52,7 +52,9 @@ def block():
 
 @.claude/agent-workflows/orchestrator.md
 
-仓库位置见 `.claude/agent-workflows/installation.json` 的 repository。
+工作流源码位置见 `.claude/agent-workflows/installation.json` 的 repository；目标项目见 project_root。
+Project A 的指南、任务、建议和结果全部属于 Project A/doc；仅维护工作流库自身时才使用该库的 doc。
+缺少当前项目指南或任务不能回退到工作流库的 doc；调用源码目录中的 CLI 也不改变目标项目。
 受管复杂任务使用 planner-main 和独立新上下文 review-main；入口见 .claude/agent-workflows/planner_main.md 与 review_main.md。
 安装不启动第二模型；缺真实宿主 reviewer/认证器时不得把自审当独立批准。
 主 AI 按导入的通用调度规则执行；其中 prompts/、workflows/、templates/、
@@ -228,7 +230,7 @@ def install(target):
                     '高频状态放 .agent-runs/<run_id>/，不另建活跃根 TASK.md。\n')
     commit = subprocess.run(['git', '-C', str(REPO), 'rev-parse', 'HEAD'],
                             capture_output=True, text=True, check=False).stdout.strip()
-    manifest = {'schema_version': 1, 'repository': str(REPO), 'commit': commit,
+    manifest = {'schema_version': 1, 'repository': str(REPO), 'project_root': str(target), 'commit': commit,
                 'files': {name: sha(text) for name, text in files.items()}, 'links': links}
     atomic_text(manifest_path, json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
     return check(target)
@@ -243,6 +245,8 @@ def check(target):
         manifest = json.loads(manifest_path.read_text())
         if manifest.get('repository') != str(REPO):
             errors.append('installation belongs to a different checkout')
+        if manifest.get('project_root', str(target)) != str(target):
+            errors.append('installation belongs to a different project')
     except (OSError, ValueError):
         errors.append('installation manifest missing/invalid')
     for relative, expected in files.items():

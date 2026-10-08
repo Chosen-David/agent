@@ -107,3 +107,9 @@ SELF-SYNC-01–03：scripts/run_knowledge_windows.py 的 prepare_host / sync_hos
 CONT-20261008-01–03: RL/SFT trajectory and horizon-aware testing cards → model-with-knowledge; existing engineering prompt obeys saved rotation cursor; scoped producer/verifier records in `doc/results/rl-probability-20261008/`; report in `docs/knowledge_learning/2026-10-08-rl-probability/`. Private canceled batch and machine service state remain `.agent-runs/` only.
 
 - `doc/results/math-rope-intertwiner-20261008/`: MATH-41/42 real planar rotation intertwiners, finite-context defects, public CPU verification and retrieval cost; no SGLang/model deployment.
+
+## ?????????SCOPE-01?03?
+
+- `agent_runtime/project_docs.py` / `scripts/project_docs.py`??? --root ? init??????????????????????
+- `tests/test_project_docs_init.py`??????????????????? CLI?
+- `doc/results/project-scope-20261008/`??????????????????????????????? SCOPE ?????

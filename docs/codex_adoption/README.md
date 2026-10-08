@@ -17,6 +17,18 @@ python scripts/setup_codex.py --check
 
 工作流相对仓库解析；当前项目以 `doc/task/TASK.md` 为唯一日期索引，AI 在 `doc/task/task_details/*.md` 维护方法/进度/证据。其他项目绝不导入本仓库历史任务。每个安装角色携带 `references/project_document_workflow.md`：先核对人类指南及建议取舍，AI 不得在 `doc/guide/` 写任何文件，`doc/advice/` 须经过 adopt/adapt/reject/defer 与理由评估。知识结论检查前提和版本，不冒充本机实验。
 
+## 将工作流用于 Project A
+
+用户级技能可以供多个项目使用；`setup_codex.py` 的安装目录与 agent 源码位置不决定当前项目文档的位置。明确目标后单独初始化一个已存在的项目：
+
+```powershell
+python C:/Users/WI/Desktop/home_work/AI_LLM/agent/scripts/project_docs.py --root C:/work/ProjectA init
+```
+
+你在 `C:/work/ProjectA/doc/guide/GUIDE.md` 编写 Project A 的目标、约束与验收；AI 在该项目的 `doc/task/`、`doc/advice/`、`doc/results/` 维护工作记录。初始化只建空目录和空任务索引，不编写指南、不复制 agent 的历史任务，也不启动后台服务。已有文档保留；旧根 TASK.md 需显式检查/迁移。
+
+在 Project A 目录启动 Codex，交接与运行时 CLI 显式传 `project_root` / `--root C:/work/ProjectA`。即使脚本位于 agent 库，也必须写入 Project A。缺少 Project A 的指南或任务不能回退到 agent/doc；只有升级 agent 库本身时，PROJECT_ROOT 才等于 agent 库根目录。
+
 ## 每轮迭代
 
 1. 读取当前项目人类指南、`doc/task/TASK.md`、关联详情/建议决定、运行状态及受影响输出。干净工作区先 `git pull --ff-only origin main`，或等效 fetch + fast-forward；有改动时保留检查点并整合，不用 hard reset 清理。记录本轮基线与目标。 每次成功 pull 后核对 HEAD 等于 fetched main，在模型轮次之间运行 python scripts/setup_codex.py 和 python scripts/setup_codex.py --check，再开始下一任务；本机技能冲突时保留修改并报告。

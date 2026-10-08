@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Inspect, migrate or check project documents without writing human guides."""
+"""Initialize, inspect or migrate an explicit project's documents; never write guides."""
 from pathlib import Path
 import sys
 
