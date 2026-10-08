@@ -213,4 +213,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-08 正交残差安全筛除
 
 - [x] [MATH-43] 补齐逐项残差包络与候选安全筛除，核查近期选择研究。 ([detail](task_details/MATH-43.md))
-- [ ] [MATH-44] 独立代码/数据验证、有限检索和回归，main发布读回。 ([detail](task_details/MATH-44.md))
+- [x] [MATH-44] 独立代码/数据验证、有限检索和回归，main发布读回。 ([detail](task_details/MATH-44.md))

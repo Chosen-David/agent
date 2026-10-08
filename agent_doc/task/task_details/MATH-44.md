@@ -12,3 +12,5 @@ Date: 2026-10-08
 已同步main b288930，工作树原先干净；空GUIDE只读，角色注册/知识状态已读取；上一数学任务completed。同主题未发现运行状态。实际结果检索partial（部分旧record缺失），不复用旧数字；知识基础按需show读取。产物agent_doc/results/math-screening-20261008/。
 
 独立数学与65生产算例scope通过，独立59049+3000精确病例；4组严格浮点界违例保留为未外包诊断，非生产证书。初次插件缺同步失败、phase2检索域参数记录遗漏pending、迁移namespace错误调用均保留，经对应修复/正确命令复验。新卡六次限定linear-algebra域均top3/五次top1，六旧代表无新增丢失；完整包2923tokens。知识47+namespace10检查通过；原未见目标未使用，无模型/GPU/Lean/e2e与省token收益声明。上游acf85d7已整合，agent_doc结果路径按新规范，旧冻结manifest/raw通过映射哈希核对。发布前等待独立最终记录及远端读回。
+
+已发布并读回 main 103188dd713e9137fd494f7d25def59aff731caf，完整树74694694515f03d3331111d1e7af5e781ff02ff6一致。本地Git缺HTTPS凭据，使用已认证GitHub接口expected-SHA/non-force更新，再由原生Git fetch/ls-remote独立核对；旧未跟踪缓存保留。独立final验收usable-with-scope；本收尾仅状态/发布记录，持续任务不结束。
