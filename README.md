@@ -110,7 +110,7 @@ python scripts/setup_codex.py --check
 <details>
 <summary><strong>展开全部 15 个角色与职责</strong></summary>
 
-以 [角色注册表](config/role_registry.json) 为准；科研插件包含 14 个角色，旅行插件包含 1 个角色。
+以 [角色注册表](config/role_registry.json) 为准；科研插件包含 14 个技能，旅行插件包含 1 个技能。
 
 | 角色 | 职责 |
 | :--- | :--- |
