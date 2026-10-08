@@ -1,0 +1,105 @@
+{
+  "case": "english-alias",
+  "query": "dot product error inner product bound",
+  "rows": {
+    "baseline": {
+      "case": "english-alias",
+      "query": "dot product error inner product bound",
+      "expected": [
+        "math.cauchy-schwarz"
+      ],
+      "actual": [
+        "ds.faiss-exact-vector",
+        "math.linear-solve-backward-error",
+        "math.cauchy-schwarz"
+      ],
+      "recall_at_3": 1.0,
+      "context_ids": [
+        "ds.faiss-exact-vector",
+        "math.linear-solve-backward-error",
+        "math.cauchy-schwarz",
+        "math.orthogonal-projection-qr",
+        "math.residual-interval-screening",
+        "physics.noether-invariants",
+        "math.topk-margin"
+      ],
+      "context_budget": {
+        "max_entries": 8,
+        "max_chars": 20000,
+        "used_chars": 19835,
+        "scope": "serialized entry payload characters, not model tokens or outer envelope"
+      },
+      "context_status": "partial",
+      "context_recall": 1.0,
+      "reciprocal_rank": 0.3333333333333333,
+      "no_hit_correct": null,
+      "seconds": 0.0036228620001566014
+    },
+    "integrated-baseline": {
+      "case": "english-alias",
+      "query": "dot product error inner product bound",
+      "expected": [
+        "math.cauchy-schwarz"
+      ],
+      "actual": [
+        "ds.faiss-exact-vector",
+        "math.floating-dot-enclosure",
+        "math.linear-solve-backward-error"
+      ],
+      "recall_at_3": 0.0,
+      "context_ids": [
+        "ds.faiss-exact-vector",
+        "math.floating-dot-enclosure",
+        "math.linear-solve-backward-error",
+        "math.cauchy-schwarz",
+        "physics.noether-invariants"
+      ],
+      "context_budget": {
+        "max_entries": 8,
+        "max_chars": 20000,
+        "used_chars": 18633,
+        "scope": "serialized entry payload characters, not model tokens or outer envelope"
+      },
+      "context_status": "partial",
+      "context_recall": 1.0,
+      "reciprocal_rank": 0,
+      "no_hit_correct": null,
+      "seconds": 0.004933874999551335
+    },
+    "final": {
+      "case": "english-alias",
+      "query": "dot product error inner product bound",
+      "expected": [
+        "math.cauchy-schwarz"
+      ],
+      "actual": [
+        "ds.faiss-exact-vector",
+        "math.floating-dot-enclosure",
+        "math.linear-solve-backward-error"
+      ],
+      "recall_at_3": 0.0,
+      "context_ids": [
+        "ds.faiss-exact-vector",
+        "math.floating-dot-enclosure",
+        "math.linear-solve-backward-error",
+        "math.cauchy-schwarz",
+        "physics.noether-invariants"
+      ],
+      "context_budget": {
+        "max_entries": 8,
+        "max_chars": 20000,
+        "used_chars": 18633,
+        "scope": "serialized entry payload characters, not model tokens or outer envelope"
+      },
+      "context_status": "partial",
+      "context_recall": 1.0,
+      "reciprocal_rank": 0,
+      "no_hit_correct": null,
+      "seconds": 0.0052122750003036344
+    }
+  },
+  "trigger": "Concurrent math.floating-dot-enclosure enters rank2; expected math.cauchy-schwarz leaves top3 before Freedman is included. Context still contains expected entry.",
+  "not_caused_by_candidate": true,
+  "minimal_followup": "On pinned pre/post concurrent corpora, inspect per-lane matches and rank for this generic mathematical bound query; assess source-appropriate retrieval metadata or consumer domain/structure disambiguation using separate fixed non-regression cases. Do not retarget the expected answer, stuff this exact query into an alias, widen retrieval gates after results, or change the search engine in this round.",
+  "actions_taken": "read-only diagnosis; no unrelated card, query fixture or engine changed"
+}

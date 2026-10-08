@@ -241,3 +241,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-08 浮点外包区间
 
 - [x] [MATH-47] 核验浮点点积包络、严格筛除与传感器迁移；筛选近期误差研究，独立验收后main发布。 ([detail](task_details/MATH-47.md))
+
+## 2026-10-08 标量方差预算
+
+- [ ] [EK-20261008-0915] 核验单项标量 Freedman 方差预算知识、反例及检索非退化；独立验收后发布，保留旧候选阻塞。 ([detail](task_details/EK-20261008-0915.md))

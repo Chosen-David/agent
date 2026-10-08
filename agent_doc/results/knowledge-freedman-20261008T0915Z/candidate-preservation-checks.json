@@ -1,0 +1,79 @@
+[
+  {
+    "name": "candidate-format",
+    "argv": [
+      "python",
+      "-m",
+      "agent_runtime.knowledge",
+      "--root",
+      "/tmp/knowledge-freedman-resume-validation",
+      "validate"
+    ],
+    "exit_code": 0,
+    "log": "candidate-format.log"
+  },
+  {
+    "name": "withdrawn-corpus-format",
+    "argv": [
+      "python",
+      "-m",
+      "agent_runtime.knowledge",
+      "--root",
+      "knowledge",
+      "validate"
+    ],
+    "exit_code": 0,
+    "log": "withdrawn-corpus-format.log"
+  },
+  {
+    "name": "withdrawn-sync",
+    "argv": [
+      "python",
+      "scripts/sync_plugin_references.py",
+      "--check"
+    ],
+    "exit_code": 0,
+    "log": "withdrawn-sync.log"
+  },
+  {
+    "name": "withdrawn-index",
+    "argv": [
+      "python",
+      "-m",
+      "agent_runtime.knowledge",
+      "--root",
+      "knowledge",
+      "index",
+      "--db",
+      ".knowledge-cache/search.sqlite"
+    ],
+    "exit_code": 0,
+    "log": "withdrawn-index.log"
+  },
+  {
+    "name": "knowledge-tests",
+    "argv": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-p",
+      "test_knowledge*.py",
+      "-v"
+    ],
+    "exit_code": 0,
+    "log": "knowledge-tests.log"
+  },
+  {
+    "name": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "log": "diff-check.log"
+  }
+]
