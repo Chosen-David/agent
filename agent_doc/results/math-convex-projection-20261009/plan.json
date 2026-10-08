@@ -1,0 +1,108 @@
+{
+  "task_refs": [
+    "MATH-53"
+  ],
+  "scope": "Finite rational prescribed convex-output projection and primal/lower-gap certificates; public structural retrieval only, no model/GPU/e2e benefit",
+  "budget_seconds": 1200,
+  "max_cycles": 2,
+  "max_attempts": 2,
+  "completed_prerequisites": [
+    "latest main fresh clone d9812e8",
+    "actual guide inventory/role/corpus/learning state reads",
+    "actual prior searches, no measured reuse"
+  ],
+  "dag": [
+    {
+      "id": "independent-plan",
+      "action": "manual-independent-plan-review",
+      "acceptance": "Actual distinct context approves exact plan SHA before dispatch"
+    },
+    {
+      "id": "produce",
+      "depends_on": [
+        "independent-plan"
+      ],
+      "experiment_result": {
+        "result_id": "math-convex-projection-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-projection-producer",
+        "manifest_path": "agent_doc/results/math-convex-projection-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-convex-projection-20261009/validation_plan.json",
+          "sha256": "ff15e106224efac192630306cd655e6f3fba0db6b21974d0bd6e8b0c677a54fe"
+        },
+        "scope": "Finite rational prescribed convex-output projection and primal/lower-gap certificates; public structural retrieval only, no model/GPU/e2e benefit"
+      }
+    },
+    {
+      "id": "verify",
+      "depends_on": [
+        "produce"
+      ],
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "math-convex-projection-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-projection-producer",
+        "manifest_path": "agent_doc/results/math-convex-projection-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-convex-projection-20261009/validation_plan.json",
+          "sha256": "ff15e106224efac192630306cd655e6f3fba0db6b21974d0bd6e8b0c677a54fe"
+        },
+        "scope": "Finite rational prescribed convex-output projection and primal/lower-gap certificates; public structural retrieval only, no model/GPU/e2e benefit"
+      }
+    },
+    {
+      "id": "publish",
+      "depends_on": [
+        "verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-convex-projection-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-projection-producer",
+          "manifest_path": "agent_doc/results/math-convex-projection-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/math-convex-projection-20261009/validation_plan.json",
+            "sha256": "ff15e106224efac192630306cd655e6f3fba0db6b21974d0bd6e8b0c677a54fe"
+          },
+          "scope": "Finite rational prescribed convex-output projection and primal/lower-gap certificates; public structural retrieval only, no model/GPU/e2e benefit"
+        }
+      ],
+      "ordered_substeps": [
+        "actual observed independent usable-with-scope and receipt pin",
+        "update task/learning snapshots without changing stable Plan",
+        "fresh fetch integrate concurrency",
+        "nonforce main push",
+        "remote SHA and tree readback"
+      ]
+    }
+  ],
+  "bindings": {
+    "AGENTS.md": "ff97d09aeb35cff3a973d1423f325ef6274f33b4c68830e8c899821e989bd63a",
+    "config/role_registry.json": "c231d5031aab337845de3e970f0253fc8d5156be3a3bdff839f2ebf696f7c5eb",
+    "agent_doc/task/TASK.md": "c5c1122a2a054decf2c932400e7e72aef763d00e7d0a763072eae35eb0528b61",
+    "agent_doc/task/task_details/MATH-53.md": "4c217b8576201c72b6549824dc62cba4506191cfd47e4c243d41b70af96fb908",
+    "knowledge/learning_state.json": "9f57a704b82caaa8f88e6b5a499d915fb79e6bc646b3e23eb30e55eb3f93235a",
+    "agent_doc/results/math-convex-projection-20261009/prior_search.json": "60ef47368f786a930be357b499a4b51ad47e6bb1e87658189e903edf2ce365ac",
+    "agent_doc/results/math-convex-projection-20261009/prior_decisions.json": "95b7192c94962db3101e3ae0c17daff4432d366612ef069d4a0264d87899b222",
+    "agent_doc/results/math-convex-projection-20261009/knowledge_search.json": "af6c53bd7328840f2991ca634c773cc3d5ca6a46458785685f72ce64c7b13759",
+    "agent_doc/results/math-convex-projection-20261009/cases.json": "356b0c355d6cea26802cf8e82eaf7e05831ab596bc0506f0c86d3804eef63c7b",
+    "agent_doc/results/math-convex-projection-20261009/retrieval_protocol.json": "5d30fb889f1938ed2c4f4aec00a951440aea117801a8a644be7947ae12bb237c",
+    "agent_doc/results/math-convex-projection-20261009/validation_plan.json": "ff15e106224efac192630306cd655e6f3fba0db6b21974d0bd6e8b0c677a54fe",
+    "agent_doc/guide/README.md": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261",
+    "agent_doc/guide/GUIDE.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "guide_inventory": [
+    "agent_doc/guide/README.md",
+    "agent_doc/guide/GUIDE.md"
+  ],
+  "commands": [
+    "python scripts/sync_plugin_references.py",
+    "python -m unittest tests.test_knowledge tests.test_knowledge_index tests.test_knowledge_math tests.test_knowledge_handoff tests.test_knowledge_reuse -v",
+    "python scripts/sync_plugin_references.py --check"
+  ],
+  "execution_kind": "Manual actual local orchestration; not Engine/ReviewSession authentication",
+  "progress_policy": "Frozen stable Plan snapshot retained; ordinary Progress and final checkbox closures identified separately"
+}

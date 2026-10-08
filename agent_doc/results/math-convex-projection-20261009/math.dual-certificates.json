@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "id": "math.dual-certificates",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "拉格朗日对偶界与最优性证书",
+  "summary": "用可行解给上界、合法对偶值给下界，评估搜索结果距全局最优的差距。",
+  "aliases": [
+    "Lagrange duality",
+    "optimality certificate",
+    "lower bound",
+    "duality gap",
+    "KKT",
+    "最优性证书",
+    "搜索 剪枝"
+  ],
+  "domains": [
+    "optimization"
+  ],
+  "structures": [
+    "lower-bound",
+    "constrained-optimization",
+    "optimality-gap"
+  ],
+  "assumptions": [
+    "原问题为最小化，约束写成 fi(x)≤0 与 hi(x)=0，定义域明确",
+    "不等式乘子 λ≥0，g(λ,ν) 是整个定义域上拉格朗日函数的下确界或其认证下界",
+    "强对偶与 KKT 充分性需额外凸性/约束资格，弱对偶本身无需凸性"
+  ],
+  "sources": [
+    {
+      "url": "https://see.stanford.edu/materials/lsocoee364a/05Duality.pdf",
+      "locator": "slides 5–2/5–3, 5–10/5–11, 5–18/5–19",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "同名 Markdown 的明确推导与反例；非形式化证明",
+      "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "content": "# 用上下界而不是猜测宣布最优\n\n## 定义与推导\n原问题 min f₀(x)，fi(x)≤0，hi(x)=0；L=f₀+Σλi fi+Σνi hi，g=inf_x L。\nλ≥0 时，对每个可行 x，有 g≤L(x,λ,ν)≤f₀(x)。所以任何合法 g 是最优值 p* 的下界；可行候选 x 给上界 f₀(x)。差 f₀(x)−g 给出该候选的次优误差上界，不需要强对偶。\n如果用数值算法近似算 inf L，它返回的函数值通常是 inf 的上界，不能直接冒充 g。需要解析解或可认证下界。\n\n## 强对偶的范围\n一般非凸问题未必强对偶。对有限值凸目标/凸不等式、仿射等式，在公共定义域内部存在满足等式且所有不等式严格成立的点，是一个足够的 Slater 条件；更一般相对内部版本不在本条展开。KKT 条件对凸可微问题给最优性证书，非凸时仅满足驻点条件不足以保证全局最优。\n\n## 例子与反例\nmin x²，约束 x≥1，写 fi=1−x。L=x²+λ(1−x)，配方得到 g=λ−λ²/4。\n取 λ=2 得下界 1；x=1 是可行且目标 1，证得最优。x=1.01 的目标为 1.0201，因此最优性差距≤0.0201。\n反例：无约束 f=x⁴−x²，x=0 梯度为零，却不是最小点。搜索没发现更好解也不等于有最优性证书。\n\n## 任务映射\n用于 Agent 搜索/规划的停止条件、资源预算分配与分支定界。先核对约束方向、乘子符号和可行性，再使用上下界；启发式评估不是认证界。不能凭小迭代变化或局部驻点宣称“最优版本”。\n",
+  "path": "entries/math.dual-certificates.json",
+  "sha256": "d165577ff3bfb7ebc14ff33ccc66d3641cf4f9afdae532636099bfefc07ab708",
+  "knowledge_refs": [
+    {
+      "id": "math.dual-certificates",
+      "version": 1,
+      "sha256": "d165577ff3bfb7ebc14ff33ccc66d3641cf4f9afdae532636099bfefc07ab708"
+    }
+  ]
+}

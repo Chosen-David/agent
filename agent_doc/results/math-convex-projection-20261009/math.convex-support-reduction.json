@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "id": "math.convex-support-reduction",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "有限凸输出的仿射秩支持约简与重新赋权边界",
+  "summary": "非负单位质量的固定加权输出可用至多仿射维数r+1个原点重新赋权表示；不保证原softmax子集或全query保真。",
+  "aliases": [
+    "代表 value 重加权 输出 凸组合",
+    "传感器 平均 代表 点 重加权",
+    "子集 原权重 归一化 误用",
+    "Caratheodory convex hull affine rank support reduction barycenter reweighting"
+  ],
+  "domains": [
+    "linear-algebra",
+    "probability-and-optimization"
+  ],
+  "structures": [
+    "convex-combination",
+    "affine-rank",
+    "weighted-output",
+    "attention-sparsification"
+  ],
+  "assumptions": [
+    "非空有限v_i∈R^p；α_i≥0且Σα_i=1；固定目标z=Σα_i v_i；允许改变保留点的权重。",
+    "固定线性W只保证Wz；query-oblivious、原权重重归一化与在线成本均需另证。"
+  ],
+  "sources": [
+    {
+      "url": "https://elliotpaquette.github.io/high-dimensional-probability/lectures/02-convex-hulls.html",
+      "locator": "作者讲义2026-09-02 §1 Theorem1及证明；r+1仿射秩精化为项目推导",
+      "accessed": "2026-10-09"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.06327v2",
+      "locator": "Cohen v2 2026-09-13 preprint Eq(1)-(3)、§7.7；仅定义与作者报告的界局限筛选，非复现/全证明核验",
+      "accessed": "2026-10-09"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "一般证明为非形式化数学推导；不是Lean。",
+      "agent_doc/results/math-convex-support-20261009：8个公开Fraction例、双后端结构检索、独立结果审查；不代表模型/GPU/e2e收益。"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.rank-nullity-quotient",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.softmax-barycenter-error"
+    },
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    }
+  ],
+  "content": "# 有限凸输出的仿射秩支持约简\n\nID: `math.convex-support-reduction`；版本1。经典定理与项目推导分开；来源见元数据和本轮sources.json。\n\n## 对象、假设与结论\n\n非空有限点v₁,…,vₙ∈Rᵖ，αᵢ≥0，Σαᵢ=1，固定z=Σαᵢvᵢ。r=dim aff{vᵢ}。存在原点子集S，|S|≤r+1，以及新权重βᵢ≥0、Σβᵢ=1，使z=Σᵢ∈Sβᵢvᵢ。允许新权重是关键。教材常写p+1；r+1精化可在仿射坐标中应用经典定理，也是下述增广秩推导的结果。不是本项目的新定理。\n\n## 可复核证明\n\n令M的列为(vᵢ,1)，则rank M=r+1。去掉零权后，若正支持数大于r+1，由秩零化度存在非零a满足Ma=0。故Σaᵢ=0，a同时有正负分量，且Σaᵢvᵢ=0。取θ=min_{aᵢ>0}αᵢ/aᵢ>0，β=α−θa：正a分量不负，负a分量增加，至少一项变零；质量和z保持。只在现有正支持中迭代，每次减少至少一个，有限步达到≤r+1。初始正支持自身的仿射维数可能更低，但全点r界仍正确。\n\n固定线性映射W后，可改对Wvᵢ进行约简，使用r_W=dim aff{Wvᵢ}。它只保留Wz；W非单射时不得宣称原z保真。此为经典定理的直接推论。\n\n## 正例、边界与反例\n\n一维v=(0,1,3)，α=(1/2,1/3,1/6)，z=5/6。只用0与3的新权重(13/18,5/18)仍给5/6；原权重在同子集重归一化为(3/4,1/4)，却给3/4，误差1/12。故存在性不等于softmax筛选结果精确。\n\n全部点相同(r=0)或singleton只需一个点；零权不需纳入支持。r维非退化simplex内部点的重心坐标唯一且全部为正，最坏需r+1个，界不能普遍缩到r。\n\nv=(0,1)、α=(2,−1)给−1在凸包外：负权或质量非1时本定理不可套用。两个query若分别趋向不同token，单query可重加权表示不证明同一小子集对所有query一致保真。\n\n## 问题结构与迁移\n\n先抽取对象（固定value或W value）、权重、目标（单query输出）、约束（能否修改权重），再检索本ID与`math.rank-nullity-quotient@1`。检查非负/单位质量/固定目标后才应用。\n\n传感器加权平均可用原观测的少数代表点重新赋权，精确保留固定均值；不能保留全部协方差或所有未来任务。Indexer中z=Σsoftmax(score)ᵢvᵢ，定理给输出表示的存在性，而非token重合度指标或online候选算法。若已知完整α再做消元，dense teacher计算成本已经付出。可作为离线oracle，比较原权重子集和重新赋权的输出误差，判断value冗余是否值得探索；未验证前不得改生产注意力。\n\n原论文最新预印本Cohen2609.06327v2定义query-oblivious **unweighted** S，并要求query球内一致输出误差；这比固定query重新赋权强得多。Eq(3)以中心化key半径与query半径乘积定义ρ。§7.7作者报告在其两模型实验中带exp(ρ)的全球界给出超过cache的coreset；我们未复现，也未核验全文定理。这不证明所有压缩无效，只说明必须检查目标、量词和常数，不能把经典存在性当有效全局算法。\n\n## 前置与相关关系\n\n强前置：`math.rank-nullity-quotient@1`用于核方向和rank；相关`math.softmax-barycenter-error`控制原权重截断输出，`math.attention-output-geometry`讨论value/Jacobian目标，均不为存在性自动提供端到端保证。\n\n## 验证方法与实际状态\n\n本轮Fraction增广RREF消元逐步记录质量、非负、固定输出和支持；8个公开开发例包括有符号拒用、simplex紧界、重复/零权/singleton。独立审查重算证据。一般证明是人工推导审查，不是Lean；浮点消元需另做秩阈值、误差与稳定性评估。双后端top3公开结构检索不等同模型识别/拒用实测。未见留出内容未读取；未测GPU、实际token、e2e、延迟或真实数据压缩收益。\n",
+  "path": "entries/math.convex-support-reduction.json",
+  "sha256": "9058ed02e646e728e2f365086ca0725852f6573f8317a6975cd80ccab00307aa",
+  "knowledge_refs": [
+    {
+      "id": "math.convex-support-reduction",
+      "version": 1,
+      "sha256": "9058ed02e646e728e2f365086ca0725852f6573f8317a6975cd80ccab00307aa"
+    },
+    {
+      "id": "math.rank-nullity-quotient",
+      "version": 1,
+      "sha256": "8aca11b2697e73664732ce26ad7b1afcc118f452e800eb9652648ac136c9cc4c"
+    }
+  ]
+}

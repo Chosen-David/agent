@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "id": "math.orthogonal-projection-qr",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "内积、正交投影、QR 与最小二乘",
+  "summary": "P=QQ* 为 span Q 的正交投影，Px 是唯一最小距离点，残差与该空间正交。",
+  "aliases": [
+    "投影 残差 正交 最小 二乘 内积 基 正规 方程",
+    "orthogonal projection QR least squares normal equations"
+  ],
+  "domains": [
+    "algebra",
+    "linear-algebra"
+  ],
+  "structures": [
+    "linear-algebra",
+    "least-squares",
+    "orthogonal-projection"
+  ],
+  "assumptions": [
+    "R/C 上正定 Euclidean 内积，Q*Q=I；A 满列秩时 thin QR=A=QR，R 可逆。"
+  ],
+  "sources": [
+    {
+      "url": "https://linear.axler.net/LADR4e.pdf",
+      "locator": "6.32、§6C 正交补/最小化；正规方程条件数为本项目 SVD 推导",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "正文逐项来源/证明核查；非 Lean 形式化证明",
+      "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.low-rank-svd"
+    },
+    {
+      "type": "related",
+      "id": "math.topk-margin"
+    }
+  ],
+  "content": "# 内积、正交投影、QR 与最小二乘\n\n稳定 ID：math.orthogonal-projection-qr；语义版本1；核查日期2026-10-07。\n\n## 对象、符号与前提\nR/C 上正定 Euclidean 内积，Q*Q=I；A 满列秩时 thin QR=A=QR，R 可逆。\n\n## 经典结论\nP=QQ* 为 span Q 的正交投影，Px 是唯一最小距离点，残差与该空间正交。满列秩最小二乘解由 Rz=Q*b 给出。κ₂(A*A)=κ₂(A)²，不建议用正规方程规避病态。\n\n## 证明思路与可复核推导\nx=Px+(I−P)x 为正交分解，任意 y∈span Q 有 ||x−y||²=||(I−P)x||²+||Px−y||²。Gram–Schmidt 每步扣除已有投影后归一化得到 QR。A*z 的优化残差变为 Q*Az=Q*b，故Rz；A*A 特征值为σ_i²，给条件数平方。\n\n## 正例与边界\nQ=e₁，x=(2,3)，投影(2,0)，残差3。A=[[1,0],[0,2],[0,0]]，b=(1,4,3)，解(1,2)，残差(0,0,−3)。\n\n## 误用反例与拒用条件\n列相关时 R 不可逆，不能用满列秩公式给唯一解；不定双线性型不支持平方范数 Pythagoras。经典 Gram–Schmidt 浮点下可能失去正交性；本条精确证明不代表后向稳定实现。\n\n## 问题结构与迁移\n小子空间近似先分解信号与残差，再判断排名误差；大残差不能以高解释方差自动忽略。\n\n## 前置关系与来源版本\n基础前置：有限维空间、基、矩阵乘法和域算术；涉及内积的条目另需共轭转置/正定范数。本条在正文重述使用的基础结论，导航关联不要求一次加载整条课程。准确出处：[6.32、§6C 正交补/最小化；正规方程条件数为本项目 SVD 推导](https://linear.axler.net/LADR4e.pdf)。Axler 使用第四版、作者2026-08-16 PDF修订；Saad 使用第二版2003；Conrad未标日期的讲义以本轮PDF哈希固定；网页按标题日期与检索日期固定。PDF哈希/近期论文筛选见本轮 sources.json/research.md。\n\n## 验证状态与限制\n已核对所列来源的相关段落，并人工检查上面的证明思路/自推公式。verify.py 对该主题给公开正例、边界或反例；Fraction精确运算与float64数值检查分别标注。数学证明核查不是 Lean 形式化证明；计算实例不证明一般结论。未做同模型Agent A/B或真实GPU系统测试；没有性能收益声明。\n",
+  "path": "entries/math.orthogonal-projection-qr.json",
+  "sha256": "3eff040b2613cd46350e9605cfa5c7b748e5a3bdb6bb0c173724f722d00225e8",
+  "knowledge_refs": [
+    {
+      "id": "math.orthogonal-projection-qr",
+      "version": 1,
+      "sha256": "3eff040b2613cd46350e9605cfa5c7b748e5a3bdb6bb0c173724f722d00225e8"
+    }
+  ]
+}

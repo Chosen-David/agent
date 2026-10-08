@@ -1,0 +1,171 @@
+{
+  "schema_version": 1,
+  "snapshot": "84131951b4537ed33bf734f43b2cdf02f3fb377759d91c64f3deda658f12fc30",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.attention-output-geometry",
+      "version": 1,
+      "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+      "title": "固定value的Gram输出几何与局部敏感度",
+      "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+      "status": "published",
+      "assumptions": [
+        "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+        "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+        "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+          "CPU finite development checks; no Lean/model/GPU/e2e verification"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "输出"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "权重",
+            "误差",
+            "输出"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "权重",
+            "误差",
+            "输出"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "最小",
+            "权重",
+            "误差",
+            "输出",
+            "非负"
+          ]
+        }
+      ],
+      "score": 34
+    },
+    {
+      "id": "math.softmax-barycenter-error",
+      "version": 1,
+      "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+      "title": "有限 softmax 与归一化加权输出误差",
+      "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+      "status": "published",
+      "assumptions": [
+        "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+        "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+        "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+          "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "误差",
+            "输出"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "误差",
+            "输出"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "误差",
+            "输出"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "最小",
+            "权重",
+            "误差",
+            "输出",
+            "非负"
+          ]
+        }
+      ],
+      "score": 31
+    },
+    {
+      "id": "math.convex-support-reduction",
+      "version": 1,
+      "sha256": "9058ed02e646e728e2f365086ca0725852f6573f8317a6975cd80ccab00307aa",
+      "title": "有限凸输出的仿射秩支持约简与重新赋权边界",
+      "summary": "非负单位质量的固定加权输出可用至多仿射维数r+1个原点重新赋权表示；不保证原softmax子集或全query保真。",
+      "status": "published",
+      "assumptions": [
+        "非空有限v_i∈R^p；α_i≥0且Σα_i=1；固定目标z=Σα_i v_i；允许改变保留点的权重。",
+        "固定线性W只保证Wz；query-oblivious、原权重重归一化与在线成本均需另证。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "一般证明为非形式化数学推导；不是Lean。",
+          "agent_doc/results/math-convex-support-20261009：8个公开Fraction例、双后端结构检索、独立结果审查；不代表模型/GPU/e2e收益。"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "输出"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "权重",
+            "输出"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "输出",
+            "非负"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "权重",
+            "误差",
+            "输出",
+            "非负"
+          ]
+        }
+      ],
+      "score": 25
+    }
+  ]
+}

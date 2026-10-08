@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "id": "math.convex-projection-certificate",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "选定凸输出的投影、误差下界与残差间隙证书",
+  "summary": "有限value凸包的平方误差投影以可行性和全顶点残差max认证；P−2g≤最优误差≤P，g=0 iff投影。",
+  "aliases": [
+    "选中 value 非负 重赋权 最小 输出误差",
+    "配方 配比 平均 最接近 目标 下界",
+    "线性 span 负权 投影 误用",
+    "convex hull projection value reweighting minimum output error Frank Wolfe gap supporting hyperplane"
+  ],
+  "domains": [
+    "optimization",
+    "linear-algebra"
+  ],
+  "structures": [
+    "convex-projection",
+    "simplex-weights",
+    "output-error-floor",
+    "primal-lower-gap"
+  ],
+  "assumptions": [
+    "非空有限v_i∈R^p和固定已知z；Euclidean平方误差；C=conv{v_i}，允许改变权重但β≥0且Σβ=1。",
+    "候选y必须属于C；h_C(r)=max_i r·v_i遍历C的全部给定点；只对明确选定value集合给界。",
+    "固定线性W可对Wv和Wz使用结论；只保真W输出，不保证raw输出、全部query或模型e2e。"
+  ],
+  "sources": [
+    {
+      "url": "https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf",
+      "locator": "Boyd–Vandenberghe2004 §4.2.3 pp139–140 Eq(4.20-21)和proof；投影及P−2g界为项目配方特化",
+      "accessed": "2026-10-09"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v306/schroder26a.html",
+      "locator": "WildCat ICML2026 PMLR306 pp108454–108484，§2.1/2.2/2.6、Alg2–3仅对象差异筛选，不背书完整理论或实验",
+      "accessed": "2026-10-09"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "精确展开/凸性证明人工审核，不是Lean或浮点数值证书。",
+      "agent_doc/results/math-convex-projection-20261009：12公开Fraction例、6结构检索、定向回归及独立六域验收；无模型/GPU实测。"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.dual-certificates",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.convex-support-reduction"
+    },
+    {
+      "type": "related",
+      "id": "math.orthogonal-projection-qr"
+    },
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    }
+  ]
+}
