@@ -22,6 +22,9 @@
 
 ```yaml
 id: fig_unique_id
+asset_id: null                 # 保留旧 FIG ID；区分同一内容的论文图/幻灯片等资产
+usage: null                    # paper / slide / teaching / other
+review_binding: {}             # 主源、导出、预览及承载文件路径/sha256，承载页码
 role: auto                     # concept / method / design / result / analysis / synthesis
 route: null                    # data_visualization / diagram / mixed / asset_only / clarify
 reader_question: null
@@ -35,7 +38,8 @@ data_transforms: []             # 如适用，记录筛选、聚合、归一化�
 analysis_definition: null
 semantic_contract: {}          # 如适用，节点/边/方向/边界/符号及依据
 visual_encoding: {}             # 变量/对象 → 颜色、位置、形状、线型
-dimensions: {}                  # 最终物理尺寸、panel 尺寸、规格来源
+dimensions: {}                  # 最终物理尺寸、panel 尺寸、嵌入比例、规格来源
+readability_profile: {}         # 用途阈值及依据，有效字号/上下标字号/线宽；未知标 provisional
 style_ref: null                 # 共享字体、层级、色板、留白、图例、panel 标号
 primary_skill: null
 editable_source: null           # 每 panel 一个主源；整图另有拼版源
@@ -49,10 +53,13 @@ qa:                            # 每项记录状态 + 证据/检查产物；not_
   semantic: pending
   visual: pending
   technical: pending
+  final_carrier: pending        # 正确资产在实际承载页/显示环境中的检查
   reproducibility: pending
   submission: unverified
 status: draft                  # draft / ready-for-review / submission-spec-verified
 ```
+
+asset_id 与 usage 绑定主源、最终导出、预览及承载文件的路径/sha256、页码、物理尺寸和嵌入比例；无分页载体时记录实际显示环境。最小单图可在 figure_notes.md 记录，不强制另建文件。换图、改版本、尺寸或嵌入比例后，受影响的 QA 失效并复验；同主题的不同用途资产不能互相代验。
 
 主源、数据快照与 caption 对应同一版本。caption 说明目的、panel、符号与来源；样本量、独立重复单位、误差定义、尺度、参数和文献编码只在适用时交代。概念图不强塞统计信息，理论数值例子不替代证明。
 
@@ -70,7 +77,7 @@ status: draft                  # draft / ready-for-review / submission-spec-veri
 
 执行 渲染 → 实际读图 → 记录具体问题 → 修改 → 重渲。已有图先看 before 再编辑，交付前看 after。通常最多三轮，通过即停；若仍有问题保留 draft，明确剩余项，不以迭代次数代替通过。
 
-每一轮记录预览路径、最终尺寸/嵌入比例、检查者/工具、具体观察和修正。屏幕放大看细节后，还要在最终论文尺寸与整页嵌入预览下检查；文件声明 300 DPI 不能证明清晰，程序无错不能证明美观。
+每一轮按 review_binding 核对实际打开的资产，再记录预览路径、最终尺寸/嵌入比例、检查者/工具、具体观察和修正。屏幕放大看细节后，还要按用途在最终实际尺寸与承载环境中检查；paper 需整页嵌入预览；文件声明 300 DPI 不能证明清晰，程序无错不能证明美观。
 
 | 检查维度 | 应有证据与通过条件 |
 | --- | --- |
@@ -81,11 +88,24 @@ status: draft                  # draft / ready-for-review / submission-spec-veri
 | 布局与留白 `whitespace` | 对齐、间距与 panel 比例有意图；画面平衡，不松散也不挤满 |
 | 图例与注释 | 位置贴合对象，说明必要信息，不压数据、不混淆箭头，不重复堆砌 |
 | 完整性与技术 | 检查真实最终导出格式、字体、外链资源、有效分辨率、SVG ID/marker/clipPath、比例 |
+| 最终载体 `final_carrier` | 实际尺寸单图、整页嵌入及灰度预览对应同一资产版本；非论文用途按真实显示环境检查，记录适用性 |
 | 复现 | 输入定位、版本、主源、重绘/拼版步骤齐全；手工步骤如实记录 |
 
-美感维度逐项记 pass / needs_revision / unverified，并给具体观察，不计算伪精确“审美总分”。数值或语义失败不能靠审美补分；视觉未实际检查不能为 pass。未满足项不自动退化为“仅能打开就交付”。无法实际查看图片时报告“视觉检查未完成”。
+有效字号与线宽按嵌入比例核对，单独检查上下标及辅助标签。readability_profile 的阈值来自任务用途、用户模板或已核实规格；无依据时标 provisional 并实际读图，不硬设“顶会统一规范”。满足数字阈值仍须人工/实际视觉审阅，不能保证可读。
 
-ready-for-review 需适用的科学、数值/语义、视觉、技术、复现项通过；submission-spec-verified 还需核对真实投稿规范，两者均不是外部学术认可。未知规范可留 submission=unverified 而完成通用图草稿。
+科学语义、几何技术、阅读美学与最终载体分别给出结论，不可相互抵消。关键词/节点存在不等于关系正确；XML、嵌字、出界或脚本检查通过不能自动授予视觉通过。下列负例必须退回相应检查：
+
+| 情境 | 判定与恢复条件 |
+| --- | --- |
+| paper 任务只查看 slide 或放大的 PNG | final_carrier=needs_revision；打开绑定的论文页和实际尺寸图复验 |
+| 文件哈希、页码或嵌入比例与审阅记录不符 | 受影响 QA=needs_revision；更新绑定并检查当前产物 |
+| 节点/关键词齐全但箭头起止关系错误 | semantic=needs_revision；修正关系并复核真实端点 |
+| 语义正确、无乱码，但核心机制只靠长段文字解释 | visual=needs_revision；以可见结构/编码表达机制并重新读图 |
+| 仅累计审读次数、模板化赞同或技术 pass | visual=needs_revision；补实际图的定位观察与判断 |
+
+美感维度逐项记 pass / needs_revision / unverified，并给具体观察，不计算伪精确“审美总分”。数值或语义失败不能靠审美补分；视觉未实际检查不能为 pass。未满足项不自动退化为“仅能打开就交付”。无法实际查看图片时报告“视觉检查未完成”。已到验收阶段仍未完成的适用项记 needs_revision，整体保留 draft；unverified 用于明确记录尚未验证，不能放行。
+
+ready-for-review 需适用的科学、数值/语义、视觉、技术、最终载体、复现项通过；submission-spec-verified 还需核对真实投稿规范，两者均不是外部学术认可。未知规范可留 submission=unverified 而完成通用图草稿。
 
 ## 5. 拼版、专业素材与交付
 

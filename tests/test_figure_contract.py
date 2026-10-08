@@ -225,6 +225,47 @@ class FigurePackageContractChecks(unittest.TestCase):
         ):
             self.require_pattern(pattern, text)
 
+    def test_review_binding_and_negative_acceptance_contracts(self):
+        # Normative rejection cases, not an executable image-quality validator.
+        text = read(ROOT / 'workflows/figure_shared.md')
+        for field in ('asset_id:', 'usage:', 'review_binding:',
+                      'readability_profile:', 'final_carrier:'):
+            self.require_token(field, text)
+        for pattern in (r'路径/sha256.*页码.*物理尺寸.*嵌入比例',
+                        r'QA.*失效.*复验', r'上下标.*辅助标签',
+                        r'阈值.*任务用途', r'provisional.*实际读图',
+                        r'实际尺寸单图.*整页嵌入.*灰度预览',
+                        r'整体保留 draft'):
+            self.require_pattern(pattern, text)
+        # Each failure must name its own failed gate and recovery, so a
+        # technical pass cannot accidentally become a visual acceptance.
+        cases = (
+            ('paper 任务只查看 slide', 'final_carrier', '复验'),
+            ('文件哈希、页码或嵌入比例', 'QA', '当前产物'),
+            ('节点/关键词齐全但箭头', 'semantic', '真实端点'),
+            ('语义正确、无乱码', 'visual', '重新读图'),
+            ('仅累计审读次数', 'visual', '定位观察'),
+        )
+        for trigger, gate, recovery in cases:
+            with self.subTest(trigger=trigger):
+                row = next(line for line in text.splitlines()
+                           if line.startswith('| ' + trigger))
+                self.require_token(gate + '=needs_revision', row)
+                self.require_token(recovery, row)
+
+    def test_diagram_mechanism_and_independent_visual_review_contract(self):
+        text = read(ROOT / 'workflows/diagram_workflow.md')
+        for pattern in (
+            r'paper.*slide.*teaching', r'复杂新架构.*两种低细节构图',
+            r'简单修图豁免', r'核心机制.*可见对象.*语义的连线',
+            r'不能.*虚构共享或层级', r'实际打开可比参考图',
+            r'不同实际上下文.*独立读图者.*review_binding',
+            r'先从图回答.*关键机制问题.*再与语义依据核对',
+            r'图中位置、观察、判断和理由', r'允许未发现缺陷.*不强造问题',
+            r'同版本复验', r'审读次数.*不能证明质量',
+        ):
+            self.require_pattern(pattern, text)
+
     def test_specialists_preserve_scientific_boundaries(self):
         data = read(ROOT / 'workflows/data_visualization_workflow.md')
         diagram = read(ROOT / 'workflows/diagram_workflow.md')
