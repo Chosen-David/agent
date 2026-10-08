@@ -15,3 +15,9 @@ DAG：独立新上下文计划审核→生产→另一独立上下文verify_expe
 ## Progress
 
 - startup main bfb4397清洁，fresh fetch一致；原始论文限定章节已读取。
+
+- 独立计划审核approve；另一上下文结果审核usable-with-scope，宿主观察实际完成并固定回执。
+- 10公开边界、6结构检索、53回归及镜像检查通过；509绑定前后相同。没有概率覆盖、Lean、LLM或GPU/e2e/token收益测量。
+- September2026距离排名preprint保留候选，最新版本未确认，不采用定量渐近迁移；失败attempt和manifest v1保留。
+- main科学提交0ae64c7927bec9e8e47376d4e29de814c9d41a1f，经fresh fetch SHA/tree及独立ls-remote核验。
+- 原next_topic GPU残差候选游标保留；下一步真实冻结trace的误差/gap/output/e2e与成本对照。报告：agent_doc/results/math-random-score-20261009/report_by_gpt.md。

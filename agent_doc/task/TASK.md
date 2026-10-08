@@ -278,4 +278,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-09 有限随机打分
 
-- [ ] [MATH-55] 核验有限随机投影内积分数、排名间隔与自适应/求逆边界；筛选近期研究，独立验收后main发布。 ([detail](task_details/MATH-55.md))
+- [x] [MATH-55] 核验有限随机投影内积分数、排名间隔与自适应/求逆边界；筛选近期研究，独立验收后main发布。 ([detail](task_details/MATH-55.md))
