@@ -1,0 +1,12 @@
+{
+  "review_actor": "independent-review",
+  "collaboration_identity": "/root/cluster_result_review",
+  "code_path": "agent_doc/results/cluster-planning-20261008/failed_v2/cluster_planning.py",
+  "code_sha256": "7f3044e0c06d651728c6e86feff87be05db45c05089a88bce412972764881dc9",
+  "input_mutation": "inventory.observed_at = 10**309",
+  "expected": "PlanningError before float conversion",
+  "raw_fixture_base": "examples/cluster_planning.json",
+  "actual": "OverflowError",
+  "reason": "int too large to convert to float",
+  "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 11, in <module>\n  File \"/workspace/scratch/1e3b490c36dd/agent/agent_doc/results/cluster-planning-20261008/failed_v2/cluster_planning.py\", line 153, in plan_wave\n    validate_inventory(inventory, now)\n  File \"/workspace/scratch/1e3b490c36dd/agent/agent_doc/results/cluster-planning-20261008/failed_v2/cluster_planning.py\", line 61, in validate_inventory\n    _need(_real(now) and _real(inventory['observed_at'])\n                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/workspace/scratch/1e3b490c36dd/agent/agent_doc/results/cluster-planning-20261008/failed_v2/cluster_planning.py\", line 41, in _real\n    return type(value) in (int, float) and math.isfinite(value) and low <= value <= high\n                                           ^^^^^^^^^^^^^^^^^^^^\nOverflowError: int too large to convert to float\n"
+}

@@ -1,0 +1,48 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance",
+  "criteria": {
+    "implementation": {
+      "procedure": "read actual planner, CLI, integration and trust boundaries",
+      "acceptance": "strict input contracts and advice-only boundary verified; primary research recommendations and main entry integration traced",
+      "allow_not_applicable": false
+    },
+    "reference_boundary": {
+      "procedure": "independent small placement cases and rejection edges",
+      "acceptance": "frozen_cases in plan_v2 pass including independently invented small cases; no GPU reuse, no partial gang, no dependency bypass; huge JSON integers in time/runtime/startup/link fields must reject cleanly with invalid JSON exit2, no traceback; valid JSON nested depth10000 under input size cap must return invalid/exit2 without traceback",
+      "allow_not_applicable": false
+    },
+    "data_integrity": {
+      "procedure": "check input/code/config/log hashes and failed runs",
+      "acceptance": "all frozen code/input/log hashes match; failed intermediate logs retained; baseline SHA and dirty code explicit",
+      "allow_not_applicable": false
+    },
+    "numerical_sanity": {
+      "procedure": "finite seconds/bytes, resource conservation and no overlap",
+      "acceptance": "no NaN/Inf, unit ambiguity, negative capacity or overlapping GPU placements; heuristic does not claim optimality",
+      "allow_not_applicable": false
+    },
+    "measurement_validity": {
+      "procedure": "no hardware performance or token claim; tests wall clock diagnostic only",
+      "acceptance": "independent checks pass within declared scope; retain all failures",
+      "allow_not_applicable": true
+    },
+    "reproducibility": {
+      "procedure": "rerun targeted suite and CLI frozen example",
+      "acceptance": "independent targeted suite and example reproduce; full required regressions pass",
+      "allow_not_applicable": false
+    }
+  },
+  "execution": {
+    "command": [
+      "python -m unittest tests.test_cluster_planning -v",
+      "python -m unittest discover -s tests -v",
+      "python -m unittest discover -s apps/paper-reader/tests -v"
+    ],
+    "environment_description": "local container CPU fixture, no GPU or remote hosts accessed",
+    "seeds": [
+      0
+    ],
+    "repeats": 1
+  }
+}

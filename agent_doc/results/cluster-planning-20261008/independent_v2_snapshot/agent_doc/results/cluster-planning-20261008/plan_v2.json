@@ -1,0 +1,105 @@
+{
+  "schema_version": "cluster-upgrade-plan/v2",
+  "decision": "EXECUTE",
+  "baseline": "31fc8c1722a542eafb8a5629e637120e6086adda",
+  "project_root": "/workspace/scratch/1e3b490c36dd/agent",
+  "goal": "main AI multi-host heterogeneous GPU task placement and artifact transport contracts with minimal context",
+  "scope": "deterministic advisory planner + CLI + main/workflow integration; no remote execution or reservations",
+  "allowed_writes": [
+    "agent_runtime/cluster_planning.py",
+    "scripts/plan_cluster.py",
+    "tests/test_cluster_planning.py",
+    "examples/cluster_planning.json",
+    "workflows/cluster_orchestration_workflow.md",
+    "workflows/causal_task_orchestration_workflow.md",
+    "prompts/orchestrator.md",
+    "prompts/research_orchestrator.md",
+    "prompts/planner_main.md",
+    "CODEMAP.md",
+    "agent_doc/task/TASK.md",
+    "agent_doc/task/task_details/CLUSTER-01.md",
+    "agent_doc/results/cluster-planning-20261008/"
+  ],
+  "implementation": [
+    "validate bounded fresh inventory of host/GPU UUID/model/usable memory/CPU/RAM/storage and directed network measurements",
+    "place dependency-ready bounded wave with exclusive GPU/CPU/RAM accounting, homogeneous gang and explicit distributed capability; no partial gang allocation",
+    "rank feasible candidates by runtime + startup + serial artifact staging estimates; no optimality claim; bound candidate search",
+    "hash-addressed artifact cache and transfer intents; reject missing path/network/capacity/unknown runtime, mutable refs and duplicated identifiers",
+    "actual bounded streaming local file hash/size verifier; no downloads or generated executable commands",
+    "main AI loads compact plan plus IDs/hashes only; trusted host reserves complete placement, stages verified inputs and polls existing job IDs"
+  ],
+  "acceptance": [
+    "dependency gate, heterogeneous memory match, CPU and GPU accounting, whole-gang admission, expired snapshot, unavailable link and cache hash integrity",
+    "adversarial types/NaN/duplicate GPU identities, unsupported MIG, all-invalid jobs and bounded combinatorics",
+    "CLI fixture and local streaming hash checks, unit and full repo + reader regressions",
+    "independent plan review then independent result/code review before publication"
+  ],
+  "limitations": [
+    "synthetic CPU fixtures only; no target machines authenticated",
+    "advisory candidates are not live reservations",
+    "no throughput/token/model quality improvement claim"
+  ],
+  "prior_results": {
+    "query": "GPU placement",
+    "hits": [
+      "combined-integration-v2-20261007",
+      "historical-vex-softmax-rope-20261007",
+      "kernel-feedback-20261008"
+    ],
+    "decision": "none match new placement code/topology; do not reuse pass labels",
+    "search_partial": true,
+    "errors": "existing result search index lists records missing at canonical paths; no global absence assertion"
+  },
+  "budget": {
+    "root_local_tests_seconds": 300,
+    "plan_review_calls": 2,
+    "result_review_calls": 2,
+    "remote_jobs": 0,
+    "paid_resources": 0
+  },
+  "research": {
+    "source_snapshot": "agent_doc/results/cluster-planning-20261008/sources.json",
+    "coverage": "2026 NCCL M2N v1, multi-model scheduler v1, SkyPilot 2026 blog, current Ray/Kueue docs, older NVIDIA topology blog; record actual read extent/status",
+    "acceptance": "all research-derived recommendations trace to opened primary sources; inaccessible papers excluded; no source performance transplanted"
+  },
+  "task_refs": [
+    "CLUSTER-01"
+  ],
+  "evidence_refs": [
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "c8ff2af55d9395fea492f9b53f53631e0f191b502a88277750b62299d56e5ded"
+    },
+    {
+      "path": "agent_doc/task/task_details/CLUSTER-01.md",
+      "sha256": "987e326e26cde1a33c3cb44d186e6d6babdebb480f2c6108cdc0acba2f27e45a"
+    },
+    {
+      "path": "agent_doc/results/cluster-planning-20261008/sources.json",
+      "sha256": "18ed2ea8e71ccf60b76da4a0dd0a45bccbdfab780fa6482d29e374467d7ebe5d"
+    },
+    {
+      "path": "agent_doc/results/cluster-planning-20261008/knowledge_use.json",
+      "sha256": "e7a3934df6f6835409dadafe0776e8c6e031dbe005928d7c00ad53f7cf3073ed"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "frozen_cases": [
+    "host A 24GB/host B 80GB, 48GB job only B; two jobs cannot use one GPU",
+    "per-node CPU/RAM and temporary staging disk charged within wave",
+    "2-node 1GPU gang requires same model, explicit capability, all directed links; failure leaves other single job feasible",
+    "verified dependency set gates ready tasks; executed ids never scheduled again",
+    "expired/future inventory rejected; nonfinite, bool/int confusion, duplicate global UUID, unsupported MIG rejected",
+    "known cached artifact SHA avoids transfer, wrong SHA/missing source/capacity/link blocks dependent placement",
+    "candidate combinations bounded; search-limit status distinct from mathematically infeasible",
+    "streaming local regular-file verifier rejects tamper/size/symlink; never executes plan commands",
+    "CLI deterministic fixture plus original full/reader suites"
+  ]
+}

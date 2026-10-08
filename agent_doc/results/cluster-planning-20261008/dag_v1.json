@@ -1,0 +1,83 @@
+{
+  "schema_version": "task-dag/v1",
+  "run_id": "cluster-planning-20261008-v1",
+  "user_goal": "main AI multi-host heterogeneous GPU task placement and artifact transport contracts with minimal context",
+  "authorization_reference": "current user multi-machine GPU orchestration upgrade; existing direct main authorization",
+  "tasks": [
+    {
+      "task_id": "produce",
+      "action": "local_implementation_tests",
+      "owner": "root-implementation",
+      "depends_on": [],
+      "done_when": "frozen code and all required logs",
+      "max_attempts": 2,
+      "estimated_seconds": 300,
+      "risk": "low",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "cluster-planning-20261008-v1",
+        "producer_task_id": "produce",
+        "producer_actor": "root-implementation",
+        "manifest_path": "agent_doc/results/cluster-planning-20261008/manifest_v1.json",
+        "validation_plan": {
+          "path": "agent_doc/results/cluster-planning-20261008/validation_plan_v1.json",
+          "sha256": "7ba71b70e7ead380f50f1cbc3f817cad6cd6fd30126e29ffebbc1db9c4fba1f8"
+        },
+        "scope": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance"
+      }
+    },
+    {
+      "task_id": "verify",
+      "action": "verify_experiment_result",
+      "owner": "independent-review",
+      "depends_on": [
+        "produce"
+      ],
+      "done_when": "usable-with-scope independent code and results",
+      "max_attempts": 2,
+      "estimated_seconds": 180,
+      "risk": "low",
+      "result_validation": {
+        "result_id": "cluster-planning-20261008-v1",
+        "producer_task_id": "produce",
+        "producer_actor": "root-implementation",
+        "manifest_path": "agent_doc/results/cluster-planning-20261008/manifest_v1.json",
+        "validation_plan": {
+          "path": "agent_doc/results/cluster-planning-20261008/validation_plan_v1.json",
+          "sha256": "7ba71b70e7ead380f50f1cbc3f817cad6cd6fd30126e29ffebbc1db9c4fba1f8"
+        },
+        "scope": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance"
+      }
+    },
+    {
+      "task_id": "publish",
+      "action": "publish_main",
+      "owner": "root-publication",
+      "depends_on": [
+        "verify"
+      ],
+      "done_when": "non-force main publication and remote SHA readback",
+      "max_attempts": 2,
+      "estimated_seconds": 120,
+      "risk": "medium",
+      "required_result_refs": [
+        {
+          "result_id": "cluster-planning-20261008-v1",
+          "producer_task_id": "produce",
+          "producer_actor": "root-implementation",
+          "manifest_path": "agent_doc/results/cluster-planning-20261008/manifest_v1.json",
+          "validation_plan": {
+            "path": "agent_doc/results/cluster-planning-20261008/validation_plan_v1.json",
+            "sha256": "7ba71b70e7ead380f50f1cbc3f817cad6cd6fd30126e29ffebbc1db9c4fba1f8"
+          },
+          "scope": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance"
+        }
+      ]
+    }
+  ],
+  "supervision": {
+    "min_seconds": 10,
+    "max_seconds": 60,
+    "rationale": "bounded local checks and real independent tool-context review; not deployed Engine"
+  }
+}

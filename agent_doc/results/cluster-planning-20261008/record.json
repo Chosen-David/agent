@@ -1,0 +1,346 @@
+{
+  "schema_version": "project-result-record/v1",
+  "run_id": "cluster-planning-20261008",
+  "summary": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance",
+  "result_id": "cluster-planning-20261008-v4",
+  "producer_task_id": "produce",
+  "origin": "native",
+  "registered_at": "2026-10-08T07:06:55.185533+00:00",
+  "measured_at": null,
+  "context": {
+    "scope": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance",
+    "code_revision": "31fc8c1722a542eafb8a5629e637120e6086adda + dirty files bound below",
+    "artifacts": {
+      "code": [
+        {
+          "path": "CODEMAP.md",
+          "sha256": "1b28cfe1c4bf6757f558277cb95d16efbe14fab01f219ee31bb6101331b2c2af"
+        },
+        {
+          "path": "agent_runtime/cluster_planning.py",
+          "sha256": "4912d4970c31e87999a4b5913e7185b4ada42c324c829b61d508554c34a18c9f"
+        },
+        {
+          "path": "prompts/orchestrator.md",
+          "sha256": "dc22eb923fbacb83b2c392321c4d93a70a7485705347bae519d175fd0261adf3"
+        },
+        {
+          "path": "scripts/plan_cluster.py",
+          "sha256": "80d90535bd03f576025d86e640a48d9460d469b8afb46427f9ece1329ea81334"
+        },
+        {
+          "path": "tests/test_cluster_planning.py",
+          "sha256": "80f5f472d167242a4332e9997be6c853d818bad0470c50f6857a995102d4f140"
+        },
+        {
+          "path": "workflows/cluster_orchestration_workflow.md",
+          "sha256": "e774cd9487cbb47de91c23862c2e9427d2ffee3f26b82cc536490538565fb72c"
+        }
+      ],
+      "inputs": [
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/knowledge_use.json",
+          "sha256": "e7a3934df6f6835409dadafe0776e8c6e031dbe005928d7c00ad53f7cf3073ed"
+        },
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/sources.json",
+          "sha256": "18ed2ea8e71ccf60b76da4a0dd0a45bccbdfab780fa6482d29e374467d7ebe5d"
+        },
+        {
+          "path": "examples/cluster_planning.json",
+          "sha256": "d591cc3f8be6a071b4c9b032a394863272abcd49977fa583fb4464930c0e6168"
+        }
+      ],
+      "config": [
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/dag_v4.json",
+          "sha256": "31614af2df3f629d9ca3280bf15e98f6c0da1e8985b3a9d6ed940775392f0a1d"
+        },
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/plan_v2.json",
+          "sha256": "ce3da590eb100a2d8430aeeabbe881693b0927117923991b9729bb399cc77e77"
+        }
+      ],
+      "environment": [
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/environment.json",
+          "sha256": "8c83804e6793d6eed0bef72059c02a8f189957c6fa784b3d07c2fb2daf858b88"
+        }
+      ]
+    },
+    "execution": {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python -m unittest tests.test_cluster_planning -v",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python -m unittest discover -s tests -v",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python -m unittest discover -s apps/paper-reader/tests -v",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python scripts/plan_cluster.py plan --input examples/cluster_planning.json --now 1001",
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python scripts/sync_plugin_references.py --check"
+      ],
+      "environment_description": "local CPU fixtures; no GPUs or remote hosts accessed; exact environment.json",
+      "seeds": [
+        0
+      ],
+      "repeats": 1
+    },
+    "metrics": [
+      {
+        "name": "fixture_placements",
+        "unit": "count"
+      },
+      {
+        "name": "full_skips",
+        "unit": "count"
+      },
+      {
+        "name": "full_tests_run",
+        "unit": "count"
+      },
+      {
+        "name": "reader_tests_run",
+        "unit": "count"
+      },
+      {
+        "name": "remote_jobs",
+        "unit": "count"
+      },
+      {
+        "name": "targeted_tests_run",
+        "unit": "count"
+      }
+    ]
+  },
+  "contract": {
+    "result_id": "cluster-planning-20261008-v4",
+    "producer_task_id": "produce",
+    "producer_actor": "root-implementation",
+    "manifest_path": "agent_doc/results/cluster-planning-20261008/manifest_v4.json",
+    "validation_plan": {
+      "path": "agent_doc/results/cluster-planning-20261008/validation_plan_v4.json",
+      "sha256": "1639a4279622c33f567c164d5eea88462030a43587ea826a68d5aa32f4b72fd7"
+    },
+    "scope": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance"
+  },
+  "manifest_ref": {
+    "path": "agent_doc/results/cluster-planning-20261008/manifest_v4.json",
+    "sha256": "1386a9e7947f5b6bbafda0accd559dc80aedb438b59b4910bde099eac2e0b644"
+  },
+  "artifacts": {
+    "code": [
+      {
+        "path": "agent_runtime/cluster_planning.py",
+        "sha256": "4912d4970c31e87999a4b5913e7185b4ada42c324c829b61d508554c34a18c9f"
+      },
+      {
+        "path": "scripts/plan_cluster.py",
+        "sha256": "80d90535bd03f576025d86e640a48d9460d469b8afb46427f9ece1329ea81334"
+      },
+      {
+        "path": "tests/test_cluster_planning.py",
+        "sha256": "80f5f472d167242a4332e9997be6c853d818bad0470c50f6857a995102d4f140"
+      },
+      {
+        "path": "prompts/orchestrator.md",
+        "sha256": "dc22eb923fbacb83b2c392321c4d93a70a7485705347bae519d175fd0261adf3"
+      },
+      {
+        "path": "workflows/cluster_orchestration_workflow.md",
+        "sha256": "e774cd9487cbb47de91c23862c2e9427d2ffee3f26b82cc536490538565fb72c"
+      },
+      {
+        "path": "CODEMAP.md",
+        "sha256": "1b28cfe1c4bf6757f558277cb95d16efbe14fab01f219ee31bb6101331b2c2af"
+      }
+    ],
+    "inputs": [
+      {
+        "path": "examples/cluster_planning.json",
+        "sha256": "d591cc3f8be6a071b4c9b032a394863272abcd49977fa583fb4464930c0e6168"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/sources.json",
+        "sha256": "18ed2ea8e71ccf60b76da4a0dd0a45bccbdfab780fa6482d29e374467d7ebe5d"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/knowledge_use.json",
+        "sha256": "e7a3934df6f6835409dadafe0776e8c6e031dbe005928d7c00ad53f7cf3073ed"
+      }
+    ],
+    "config": [
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/plan_v2.json",
+        "sha256": "ce3da590eb100a2d8430aeeabbe881693b0927117923991b9729bb399cc77e77"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/dag_v4.json",
+        "sha256": "31614af2df3f629d9ca3280bf15e98f6c0da1e8985b3a9d6ed940775392f0a1d"
+      }
+    ],
+    "raw_data": [
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/targeted_v4.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/targeted_v4.stderr",
+        "sha256": "e963e4830d1a760981781d732626491ea6072580e8a20bde01ef776d3b4eecf2"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/full_v4.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/full_v4.stderr",
+        "sha256": "c7ca3a020f65b03b0b2199011be02d999be4452c90b99e1a168721cfde3cf68a"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/reader_v4.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/reader_v4.stderr",
+        "sha256": "38c7aa2a8f61d5222cd8f630856507b82934968dbd8f2f45597cefd17291a624"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/cli_v4.stdout",
+        "sha256": "4f82d198fa04ce46c513a5a185fd6da74d9800b871ff94c914566d4d530d241b"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/cli_v4.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/reference_sync_v4.stdout",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/reference_sync_v4.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/execution_v4.json",
+        "sha256": "e251686e051dbbc37b9bdee86cbbbe7436ca24229da307041b4cf695c103ba7a"
+      }
+    ],
+    "outputs": [
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/cli_v4.stdout",
+        "sha256": "4f82d198fa04ce46c513a5a185fd6da74d9800b871ff94c914566d4d530d241b"
+      },
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/cluster_orchestration_upgrade_by_gpt.md",
+        "sha256": "c5a249186bbac228ac4ef1eeb328bb0919826cfed39433503a258b6379bf4a9c"
+      }
+    ],
+    "environment": [
+      {
+        "path": "agent_doc/results/cluster-planning-20261008/environment.json",
+        "sha256": "8c83804e6793d6eed0bef72059c02a8f189957c6fa784b3d07c2fb2daf858b88"
+      }
+    ]
+  },
+  "metrics": [
+    {
+      "name": "targeted_tests_run",
+      "value": 20,
+      "unit": "count"
+    },
+    {
+      "name": "full_tests_run",
+      "value": 833,
+      "unit": "count"
+    },
+    {
+      "name": "full_skips",
+      "value": 8,
+      "unit": "count"
+    },
+    {
+      "name": "reader_tests_run",
+      "value": 3,
+      "unit": "count"
+    },
+    {
+      "name": "fixture_placements",
+      "value": 3,
+      "unit": "count"
+    },
+    {
+      "name": "remote_jobs",
+      "value": 0,
+      "unit": "count"
+    }
+  ],
+  "validation_at_registration": {
+    "status": "usable-with-scope",
+    "scope": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance",
+    "errors": [],
+    "next_action": "consume only within validated scope",
+    "proof": {
+      "result_id": "cluster-planning-20261008-v4",
+      "manifest_path": "agent_doc/results/cluster-planning-20261008/manifest_v4.json",
+      "manifest_sha256": "1386a9e7947f5b6bbafda0accd559dc80aedb438b59b4910bde099eac2e0b644",
+      "artifact_hashes": {
+        "agent_doc/results/cluster-planning-20261008/validation_plan_v4.json": "1639a4279622c33f567c164d5eea88462030a43587ea826a68d5aa32f4b72fd7",
+        "agent_runtime/cluster_planning.py": "4912d4970c31e87999a4b5913e7185b4ada42c324c829b61d508554c34a18c9f",
+        "scripts/plan_cluster.py": "80d90535bd03f576025d86e640a48d9460d469b8afb46427f9ece1329ea81334",
+        "tests/test_cluster_planning.py": "80f5f472d167242a4332e9997be6c853d818bad0470c50f6857a995102d4f140",
+        "prompts/orchestrator.md": "dc22eb923fbacb83b2c392321c4d93a70a7485705347bae519d175fd0261adf3",
+        "workflows/cluster_orchestration_workflow.md": "e774cd9487cbb47de91c23862c2e9427d2ffee3f26b82cc536490538565fb72c",
+        "CODEMAP.md": "1b28cfe1c4bf6757f558277cb95d16efbe14fab01f219ee31bb6101331b2c2af",
+        "examples/cluster_planning.json": "d591cc3f8be6a071b4c9b032a394863272abcd49977fa583fb4464930c0e6168",
+        "agent_doc/results/cluster-planning-20261008/sources.json": "18ed2ea8e71ccf60b76da4a0dd0a45bccbdfab780fa6482d29e374467d7ebe5d",
+        "agent_doc/results/cluster-planning-20261008/knowledge_use.json": "e7a3934df6f6835409dadafe0776e8c6e031dbe005928d7c00ad53f7cf3073ed",
+        "agent_doc/results/cluster-planning-20261008/plan_v2.json": "ce3da590eb100a2d8430aeeabbe881693b0927117923991b9729bb399cc77e77",
+        "agent_doc/results/cluster-planning-20261008/dag_v4.json": "31614af2df3f629d9ca3280bf15e98f6c0da1e8985b3a9d6ed940775392f0a1d",
+        "agent_doc/results/cluster-planning-20261008/targeted_v4.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "agent_doc/results/cluster-planning-20261008/targeted_v4.stderr": "e963e4830d1a760981781d732626491ea6072580e8a20bde01ef776d3b4eecf2",
+        "agent_doc/results/cluster-planning-20261008/full_v4.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "agent_doc/results/cluster-planning-20261008/full_v4.stderr": "c7ca3a020f65b03b0b2199011be02d999be4452c90b99e1a168721cfde3cf68a",
+        "agent_doc/results/cluster-planning-20261008/reader_v4.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "agent_doc/results/cluster-planning-20261008/reader_v4.stderr": "38c7aa2a8f61d5222cd8f630856507b82934968dbd8f2f45597cefd17291a624",
+        "agent_doc/results/cluster-planning-20261008/cli_v4.stdout": "4f82d198fa04ce46c513a5a185fd6da74d9800b871ff94c914566d4d530d241b",
+        "agent_doc/results/cluster-planning-20261008/cli_v4.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "agent_doc/results/cluster-planning-20261008/reference_sync_v4.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "agent_doc/results/cluster-planning-20261008/reference_sync_v4.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "agent_doc/results/cluster-planning-20261008/execution_v4.json": "e251686e051dbbc37b9bdee86cbbbe7436ca24229da307041b4cf695c103ba7a",
+        "agent_doc/results/cluster-planning-20261008/cluster_orchestration_upgrade_by_gpt.md": "c5a249186bbac228ac4ef1eeb328bb0919826cfed39433503a258b6379bf4a9c",
+        "agent_doc/results/cluster-planning-20261008/environment.json": "8c83804e6793d6eed0bef72059c02a8f189957c6fa784b3d07c2fb2daf858b88"
+      },
+      "validation_plan_sha256": "1639a4279622c33f567c164d5eea88462030a43587ea826a68d5aa32f4b72fd7",
+      "scope": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance",
+      "status": "usable-with-scope",
+      "review_sha256": "90dbfe90c59b89e46a362767a0d8b35d5a36482e00dd88aa99c92f44fae30529",
+      "review_evidence": {
+        "agent_doc/results/cluster-planning-20261008/independent_review_by_gpt.md": "bd4440c436299d88843e751d7de1ef00a0ee5d8e2e431649693decc3108d32c4",
+        "agent_doc/results/cluster-planning-20261008/independent_targeted_v4.stderr": "d1c8c47bdf66e9700d41df5d38d4f1be54d03365414a234a18b7bb46484368a5",
+        "agent_doc/results/cluster-planning-20261008/independent_source_checks.json": "7b8bfbb4183ea1d0022085b2e97d290fef048db82c67f1c78dda936ee47f70c5",
+        "agent_doc/results/cluster-planning-20261008/independent_knowledge_pin.stdout": "a1874c758e1f77a574672067923be913dd5a1f6ec868a259fdc40ed0ad5bd52d",
+        "agent_doc/results/cluster-planning-20261008/independent_cases_by_gpt.py": "a770bf69a1caa01ec6f1e25e8872964ef2e3ba1b9b4ac31ac12ae1abdd7bce67",
+        "agent_doc/results/cluster-planning-20261008/independent_cases_v4.stderr": "08540836acc47f58ddcbc4b99f2f57c1f86cd39fa2aca72d96c09d7a4f7553e7",
+        "agent_doc/results/cluster-planning-20261008/independent_cases_v4.stdout": "95dbaf2b8eb1647aded82da918889ab50e81b693bd76d7f157d330e55a172c2e",
+        "agent_doc/results/cluster-planning-20261008/independent_reference_costs_v3.json": "c792741fee92d7fb70effb6498bb0f48015b2109180174244b9c0d1e97713366",
+        "agent_doc/results/cluster-planning-20261008/independent_v4_snapshot_proof.json": "a516ddbf2c57ea1ea5d33d5f0f75f9ce58bceeec732730a378c655ac0040a9b8",
+        "agent_doc/results/cluster-planning-20261008/independent_execution_v4.json": "343d89924490708cfaead95699563cc10ee63872ac4cff9330027dc2d19d964e",
+        "agent_doc/results/cluster-planning-20261008/independent_depth10000.stderr": "ce2833ce0f2a6dd1cf2531841a3dcf89ccdea4b5535e9a48d27e944d5373517c",
+        "agent_doc/results/cluster-planning-20261008/independent_cli_v4.stdout": "4f82d198fa04ce46c513a5a185fd6da74d9800b871ff94c914566d4d530d241b",
+        "agent_doc/results/cluster-planning-20261008/independent_full_v4.stderr": "628baa2c86872173a903c2ef8eec04abc57bbeb9514356163330d9875dca45c0",
+        "agent_doc/results/cluster-planning-20261008/independent_reader_v4.stderr": "32dda68bfe7763f252ccfea87b602049fa53100d90aef2a29a58f42788dc10f7"
+      },
+      "verifier": {
+        "actor": "independent-review",
+        "independent": true,
+        "source": "actual collaboration.spawn_agent dispatch from /root to /root/cluster_result_review",
+        "run_id": "cluster-result-review-v4-20261008",
+        "method": "Fresh-context actual code and raw-data audit, explicit cost/resource oracle, independent14 cases, targeted20/CLI/full833/reader3 reruns; two historical failures preserved"
+      },
+      "limitations": [
+        "Local CPU fixtures only; no authenticated remote host, GPU, live capacity or network measurements.",
+        "Actual reviewer identity is /root/cluster_result_review; no authenticated Engine deployment or installed supervisor asserted.",
+        "Finite cases do not certify absence of all bugs; greedy first-fit planner has no optimality, fairness or makespan guarantee.",
+        "No hardware performance, model quality or actual model token-saving acceptance.",
+        "Ray exact live page/version could not be independently refetched; no installed Ray API is accepted."
+      ]
+    }
+  },
+  "trust_note": "Stored validation is history, not a current trusted acceptance."
+}

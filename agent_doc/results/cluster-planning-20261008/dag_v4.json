@@ -1,0 +1,130 @@
+{
+  "schema_version": "task-dag/v1",
+  "run_id": "cluster-planning-20261008-v4",
+  "user_goal": "main AI multi-host heterogeneous GPU task placement and artifact transport contracts with minimal context",
+  "authorization_reference": "current user multi-machine GPU orchestration upgrade; existing direct main authorization",
+  "tasks": [
+    {
+      "task_id": "produce",
+      "action": "local_implementation_tests",
+      "owner": "root-implementation",
+      "depends_on": [],
+      "done_when": "frozen code and all required logs",
+      "max_attempts": 2,
+      "estimated_seconds": 300,
+      "risk": "low",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "cluster-planning-20261008-v4",
+        "producer_task_id": "produce",
+        "producer_actor": "root-implementation",
+        "manifest_path": "agent_doc/results/cluster-planning-20261008/manifest_v4.json",
+        "validation_plan": {
+          "path": "agent_doc/results/cluster-planning-20261008/validation_plan_v4.json",
+          "sha256": "1639a4279622c33f567c164d5eea88462030a43587ea826a68d5aa32f4b72fd7"
+        },
+        "scope": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance"
+      },
+      "task_refs": [
+        "CLUSTER-01"
+      ]
+    },
+    {
+      "task_id": "verify",
+      "action": "verify_experiment_result",
+      "owner": "independent-review",
+      "depends_on": [
+        "produce"
+      ],
+      "done_when": "usable-with-scope independent code and results",
+      "max_attempts": 2,
+      "estimated_seconds": 180,
+      "risk": "low",
+      "result_validation": {
+        "result_id": "cluster-planning-20261008-v4",
+        "producer_task_id": "produce",
+        "producer_actor": "root-implementation",
+        "manifest_path": "agent_doc/results/cluster-planning-20261008/manifest_v4.json",
+        "validation_plan": {
+          "path": "agent_doc/results/cluster-planning-20261008/validation_plan_v4.json",
+          "sha256": "1639a4279622c33f567c164d5eea88462030a43587ea826a68d5aa32f4b72fd7"
+        },
+        "scope": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance"
+      },
+      "task_refs": [
+        "CLUSTER-01"
+      ]
+    },
+    {
+      "task_id": "publish",
+      "action": "publish_main",
+      "owner": "root-publication",
+      "depends_on": [
+        "verify"
+      ],
+      "done_when": "non-force main publication and remote SHA readback",
+      "max_attempts": 2,
+      "estimated_seconds": 120,
+      "risk": "medium",
+      "required_result_refs": [
+        {
+          "result_id": "cluster-planning-20261008-v4",
+          "producer_task_id": "produce",
+          "producer_actor": "root-implementation",
+          "manifest_path": "agent_doc/results/cluster-planning-20261008/manifest_v4.json",
+          "validation_plan": {
+            "path": "agent_doc/results/cluster-planning-20261008/validation_plan_v4.json",
+            "sha256": "1639a4279622c33f567c164d5eea88462030a43587ea826a68d5aa32f4b72fd7"
+          },
+          "scope": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance"
+        }
+      ],
+      "task_refs": [
+        "CLUSTER-01"
+      ]
+    }
+  ],
+  "supervision": {
+    "min_seconds": 10,
+    "max_seconds": 60,
+    "rationale": "bounded local checks and real independent tool-context review; not deployed Engine"
+  },
+  "task_refs": [
+    "CLUSTER-01"
+  ],
+  "evidence_refs": [
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "c8ff2af55d9395fea492f9b53f53631e0f191b502a88277750b62299d56e5ded"
+    },
+    {
+      "path": "agent_doc/task/task_details/CLUSTER-01.md",
+      "sha256": "987e326e26cde1a33c3cb44d186e6d6babdebb480f2c6108cdc0acba2f27e45a"
+    },
+    {
+      "path": "agent_doc/results/cluster-planning-20261008/sources.json",
+      "sha256": "18ed2ea8e71ccf60b76da4a0dd0a45bccbdfab780fa6482d29e374467d7ebe5d"
+    },
+    {
+      "path": "agent_doc/results/cluster-planning-20261008/knowledge_use.json",
+      "sha256": "e7a3934df6f6835409dadafe0776e8c6e031dbe005928d7c00ad53f7cf3073ed"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "research": {
+    "source_snapshot": "agent_doc/results/cluster-planning-20261008/sources.json",
+    "coverage": "2026 NCCL M2N v1, multi-model scheduler v1, SkyPilot 2026 blog, current Ray/Kueue docs, older NVIDIA topology blog; record actual read extent/status",
+    "acceptance": "all research-derived recommendations trace to opened primary sources; inaccessible papers excluded; no source performance transplanted"
+  },
+  "implementation_plan": {
+    "path": "agent_doc/results/cluster-planning-20261008/plan_v2.json",
+    "sha256": "ce3da590eb100a2d8430aeeabbe881693b0927117923991b9729bb399cc77e77"
+  }
+}

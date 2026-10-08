@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "id": "math.discrete-budget-allocation",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "有限菜单离散预算分配与代理最优性证书",
+  "summary": "可加整数成本/损失下用DP求有限菜单精确解；λ加权和可漏掉未支配最优，弱对偶只认证代理而非端到端精度。",
+  "aliases": [
+    "multiple choice knapsack",
+    "逐层 配置 总预算 误差",
+    "有限菜单 整数资源 分配",
+    "比特 分配 编码失真",
+    "lambda unsupported Pareto"
+  ],
+  "domains": [
+    "optimization",
+    "probability-and-optimization"
+  ],
+  "structures": [
+    "discrete-budget",
+    "multiple-choice",
+    "dynamic-programming",
+    "optimality-gap",
+    "layer-allocation"
+  ],
+  "assumptions": [
+    "每组非空有限菜单，恰选一项；成本为非负整数，预算B为非负整数；允许空组序列边界",
+    "目标损失和资源成本均可加且固定；损失为有限实数；实测浮点最优性和硬延迟另需误差认证",
+    "对偶λ≥0且有限菜单min为真实值或认证下界；只认证已定义代理目标"
+  ],
+  "sources": [
+    {
+      "url": "https://see.stanford.edu/materials/lsocoee364a/05Duality.pdf",
+      "locator": "Boyd/Vandenberghe Duality slides5-2/5-3；支持经典弱对偶，DP和反例为本条目推导",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://arxiv.org/html/2603.18653v2",
+      "locator": "Shao arXiv2603.18653v2，2026-08-09；§1.2/4.1/5.5–5.6/6.1，LP/整数搜索区别；预印本，发表状态未核实",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "同名Markdown一般归纳/弱对偶推导；非形式化",
+      "doc/results/math-allocation-20261008/：公开CPU整数/Fraction验证及独立审查；不含模型/GPU"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.dual-certificates",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    },
+    {
+      "type": "related",
+      "id": "math.softmax-barycenter-error"
+    }
+  ],
+  "content": "# 有限菜单的离散预算分配：精确DP与对偶证书\n\nID: math.discrete-budget-allocation；version: 1。\n\n## 问题触发与数学对象\n\n多个模块各选一种配置，在总资源上限内尽量降低误差。先辨认是不是可加目标、可加成本、固定有限菜单；不要把实测端到端精度直接当逐层可加损失。\n\n有L个组，组l的非空有限选项集J_l；选项j有成本c_lj∈Z_{≥0}和有限实损失e_lj。预算B∈Z_{≥0}。每组恰选一项，最小化E(j)=Σ_l e_l,j_l，约束C(j)=Σ_l c_l,j_l≤B。损失可负，有限菜单保证可行时最优值存在。空组序列L=0允许作为边界，损失/成本为0。若Σ_l min_j c_lj>B则不可行，不返回虚假的零损失解。\n\n这里不需要统计独立性，而需要目标和成本真正可分离。外部模型若有交叉项，此数学问题仅是代理。\n\n## 精确结论与可复核推导\n\n**经典动态规划结构的本条目证明。** D_l(b)表示前l组在总成本至多b时的最小损失。D_0(b)=0；不可行值为+∞。\n\nD_l(b)=min_{j∈J_l,c_lj≤b} [e_lj+D_{l−1}(b−c_lj)]。\n\n证明：任意前l组可行组合取最后选项j，剩余组合成本至多b−c_lj，因此其损失不低于右侧；反过来每个有限右侧最小值由相应前缀和该j实现。归纳可得D_L(B)=p*。保留选项和前缀回溯即可得到可行最优组合。必须从上一组状态读，不能原地重复使用本组选项；零成本也不例外。\n\n操作数O((B+1)Σ_l|J_l|)，两行值表O(B+1)，若保存所有回溯指针需O(L(B+1))空间。该复杂度是伪多项式，不是按输入二进制位数的多项式；大B仍昂贵。成本为整数；损失的数学实数精确比较与实际浮点比较需区分。本轮脚本只验证小整数/有理数，不认证任意浮点实现。\n\n**已有弱对偶定理的可分离推论。** 使用强依赖 math.dual-certificates@1，令λ≥0，\n\ng(λ)=Σ_l min_j(e_lj+λc_lj)−λB。\n\n它是定义域J_1×…×J_L上拉格朗日函数的真正下确界，因此g(λ)≤p*。对任意可行组合j_f，p*≤E(j_f)，于是0≤E(j_f)−p*≤E(j_f)−g(λ)。若最小化拉格朗日函数的组合满足可行性和λ(C−B)=0，两个不等式取等号，得到最优性证书。仅“λ搜索稳定”或“选项不再变化”没有此保证。\n\n精确有限min可以算出合法界。浮点评价返回的近似min不自动是下界，需精确有理数或经认证的向下误差包络；普通数值容差只能报告数值检查。\n\n## 正例、边界与误用反例\n\n两组菜单均为(成本,损失)：第一组[(0,4),(2,0)]，第二组[(0,1),(2,0)]，B=2。精确解先升级第一组，E=1；λ=1时g=min(4,2)+min(1,2)−2=1，与可行解一致。传感器两通道编码时可把整数比特/存储块作为成本，把预先冻结的通道失真作为损失；只有总失真确实为二者之和，才保留此保证。\n\n**离散Pareto不等于加权和可达。** 一组[(0,5),(2,4),(3,0)]，B=2，整数最优是中间项，损失4，它不被其他单项支配。但若中间项最小化e+λc，与第一项比较要求λ≤1/2，与第三项比较要求λ≥4，矛盾。任何λ≥0均不会选择它。g(λ)=min(5−2λ,4,λ)，最佳下界5/3在λ=5/3取得，最优整数损失4，对偶缺口7/3。因此加权和、二分λ、只保留凸包选项，都可能遗漏整数最优；不能用“所有权重都试过”宣布全局最优。单组内有c_a≤c_b且e_a≤e_b，可删b而保留最优值；不同组不能相互删项。被凸包排除但未被支配的项应留在精确DP。\n\n**跨层耦合拒用。** 两组各有cheap=(1,1)、rich=(2,0)，B=3。可加代理选择一cheap一rich，代理损失1。若实际联合损失E_true(cheap,cheap)=0，E_true(cheap,rich)=E_true(rich,cheap)=10、E_true(rich,rich)=2，则真正可行最优是cheap/cheap。局部精确DP不证明联合精度最优。校准trace来自固定dense状态时，还可能受稀疏执行后的分布漂移影响。\n\n**连续成本离散化。** 对精确非负实成本t_lj、单位h>0，定义c_lj=ceil(t_lj/h)，B=floor(T/h)。若Σc≤B，则Σt≤hΣc≤hB≤T。只保留原问题的可行子集，可能丢失可行最优甚至全部可行解；无精度或原最优损失保证。例如两组唯一成本3/5、T=6/5、h=1，原问题可行，但舍入后2>1不可行。不能向下舍入成本来确保硬预算。浮点表示的decimal边界需要明确误差方向；样本延迟上界不等于未来运行时硬上界。\n\n## 逐层α/β/γ与Agent迁移\n\n| 原问题 | 理论对象 | 保留条件/丢失因素 |\n|---|---|---|\n| 每层候选α/β/γ及method组合 | 组l及有限菜单j | 候选包含固定参数和内核条件，组间兼容 |\n| KV读取字节或操作预算 | c_lj | 同单位可加；PP makespan、共享缓存和融合延迟未必可加 |\n| 固定trace的输出误差，带固定层权重 | e_lj | 仅冻结可加代理；不声称等于e2e精度 |\n| 全模型预算分配 | DP/对偶上下界 | 是代理最优性证书；实际e2e另测 |\n| Agent的token分配 | 配置与可加token成本 | 若输入、重试、消息依赖改变菜单成本/收益，固定表失效；无省token模型实测 |\n\n数学上推荐先在完整有限候选表上DP（含未被支配的非凸包项），用小规模穷举校验代理最优性，再与最优统一参数同预算比较输出/e2e和实测延迟。λ启发式可先产候选并提供下界，不替代DP/整数搜索。前4层Full Attention可作为单选菜单；必须计入总成本或一致地扣除固定开销。不要要求每层独立“最佳配置”同时满足全局预算。\n\n本轮只做合成菜单和编码渠道映射；没有模型trace、真实tokenizer账单、GPU、物理传感器实验或生产求解器变更。不改SGLang。\n\n## 前置与关系、验证状态、来源版本\n\n强依赖：math.dual-certificates@1的弱对偶符号、合法下确界和可行上界。math.attention-output-geometry、math.softmax-barycenter-error只帮助构造局部代理，不是本DP证明的前提，也不认证可加e2e。\n\n公开CPU开发验证见 doc/results/math-allocation-20261008/；整数/Fraction实例、穷举参考、失败前提检查和独立复核。不是Lean形式化证明，数值/有限枚举不代替上述一般归纳证明。公开后这些例子不再是未见测试；真实模型检索/拒用、未见题与生产A/B未执行。\n\n经典出处：Boyd与Vandenberghe官方Duality讲义5–2/5–3，https://see.stanford.edu/materials/lsocoee364a/05Duality.pdf ，2026-10-08核查；仅支持弱对偶基础，DP递推/舍入/具体反例为本条目明确推导。\n\n近期筛选：Zi Yuan Eric Shao, A Certifying MCKP Framework for Γ-Robust Discrete Pricing，arXiv:2603.18653v2，2026-08-09修订；2026-10-08核查§1.2/4.1/5.5–5.6/6.1及版本历史，预印本，正式发表状态未核实。https://arxiv.org/html/2603.18653v2 。关注LP界与保留非支配离散选项的区别；不把定价实验或条件O(1/n)保证移植到attention。未全文精读或复现该论文。\n",
+  "path": "entries/math.discrete-budget-allocation.json",
+  "sha256": "71cd29618df4439297c7b0d42f96e89230afeb5724aef660bfde2528d871e2dc",
+  "knowledge_refs": [
+    {
+      "id": "math.discrete-budget-allocation",
+      "version": 1,
+      "sha256": "71cd29618df4439297c7b0d42f96e89230afeb5724aef660bfde2528d871e2dc"
+    },
+    {
+      "id": "math.dual-certificates",
+      "version": 1,
+      "sha256": "d165577ff3bfb7ebc14ff33ccc66d3641cf4f9afdae532636099bfefc07ab708"
+    }
+  ]
+}

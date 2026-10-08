@@ -229,3 +229,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [MATH-45] 补齐条件化、散度方向与质量不可识别推导，筛选近期原文。 ([detail](task_details/MATH-45.md))
 - [x] [MATH-46] 独立代码/数据验收、有限检索、回归与main发布核对。 ([detail](task_details/MATH-46.md))
+
+## 2026-10-08 多机多卡任务编排
+
+- [ ] [CLUSTER-01] 多机异构 GPU 放置、数据交接与主 AI 入口升级，独立验证后发布。 ([detail](task_details/CLUSTER-01.md))

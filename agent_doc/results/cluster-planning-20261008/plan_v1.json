@@ -1,0 +1,60 @@
+{
+  "schema_version": "cluster-upgrade-plan/v1",
+  "decision": "EXECUTE",
+  "baseline": "31fc8c1722a542eafb8a5629e637120e6086adda",
+  "project_root": "/workspace/scratch/1e3b490c36dd/agent",
+  "goal": "main AI multi-host heterogeneous GPU task placement and artifact transport contracts with minimal context",
+  "scope": "deterministic advisory planner + CLI + main/workflow integration; no remote execution or reservations",
+  "allowed_writes": [
+    "agent_runtime/cluster_planning.py",
+    "scripts/plan_cluster.py",
+    "tests/test_cluster_planning.py",
+    "examples/cluster_planning.json",
+    "workflows/cluster_orchestration_workflow.md",
+    "workflows/causal_task_orchestration_workflow.md",
+    "prompts/orchestrator.md",
+    "prompts/research_orchestrator.md",
+    "prompts/planner_main.md",
+    "CODEMAP.md",
+    "agent_doc/task/TASK.md",
+    "agent_doc/task/task_details/CLUSTER-01.md",
+    "agent_doc/results/cluster-planning-20261008/"
+  ],
+  "implementation": [
+    "validate bounded fresh inventory of host/GPU UUID/model/usable memory/CPU/RAM/storage and directed network measurements",
+    "place dependency-ready bounded wave with exclusive GPU/CPU/RAM accounting, homogeneous gang and explicit distributed capability; no partial gang allocation",
+    "rank feasible candidates by runtime + startup + serial artifact staging estimates; no optimality claim; bound candidate search",
+    "hash-addressed artifact cache and transfer intents; reject missing path/network/capacity/unknown runtime, mutable refs and duplicated identifiers",
+    "actual bounded streaming local file hash/size verifier; no downloads or generated executable commands",
+    "main AI loads compact plan plus IDs/hashes only; trusted host reserves complete placement, stages verified inputs and polls existing job IDs"
+  ],
+  "acceptance": [
+    "dependency gate, heterogeneous memory match, CPU and GPU accounting, whole-gang admission, expired snapshot, unavailable link and cache hash integrity",
+    "adversarial types/NaN/duplicate GPU identities, unsupported MIG, all-invalid jobs and bounded combinatorics",
+    "CLI fixture and local streaming hash checks, unit and full repo + reader regressions",
+    "independent plan review then independent result/code review before publication"
+  ],
+  "limitations": [
+    "synthetic CPU fixtures only; no target machines authenticated",
+    "advisory candidates are not live reservations",
+    "no throughput/token/model quality improvement claim"
+  ],
+  "prior_results": {
+    "query": "GPU placement",
+    "hits": [
+      "combined-integration-v2-20261007",
+      "historical-vex-softmax-rope-20261007",
+      "kernel-feedback-20261008"
+    ],
+    "decision": "none match new placement code/topology; do not reuse pass labels",
+    "search_partial": true,
+    "errors": "existing result search index lists records missing at canonical paths; no global absence assertion"
+  },
+  "budget": {
+    "root_local_tests_seconds": 300,
+    "plan_review_calls": 2,
+    "result_review_calls": 2,
+    "remote_jobs": 0,
+    "paid_resources": 0
+  }
+}

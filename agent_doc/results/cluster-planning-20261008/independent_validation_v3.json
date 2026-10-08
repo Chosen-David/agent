@@ -1,0 +1,158 @@
+{
+  "schema_version": "experiment-validation/v1",
+  "result_id": "cluster-planning-20261008-v3",
+  "manifest_path": "agent_doc/results/cluster-planning-20261008/manifest_v3.json",
+  "manifest_sha256": "ae6b3ab7150559eb372b38ae5cd6da1e65ca9f7fd093722bb47e55703a434098",
+  "artifact_hashes": {
+    "agent_doc/results/cluster-planning-20261008/validation_plan_v3.json": "508f1b190add1add2e3072103bc85f1f4c149610ebed556d4ee65e499fa5712d",
+    "agent_runtime/cluster_planning.py": "4912d4970c31e87999a4b5913e7185b4ada42c324c829b61d508554c34a18c9f",
+    "scripts/plan_cluster.py": "4876dbdb234e38634e40d4e0795a385b200cfec81fe9a5409865c103a2a708fe",
+    "tests/test_cluster_planning.py": "cee5b6ee11e29f1b1b99d33300820ad26d6c52f563016940af89d673cf055490",
+    "prompts/orchestrator.md": "dc22eb923fbacb83b2c392321c4d93a70a7485705347bae519d175fd0261adf3",
+    "workflows/cluster_orchestration_workflow.md": "e774cd9487cbb47de91c23862c2e9427d2ffee3f26b82cc536490538565fb72c",
+    "CODEMAP.md": "1b28cfe1c4bf6757f558277cb95d16efbe14fab01f219ee31bb6101331b2c2af",
+    "examples/cluster_planning.json": "d591cc3f8be6a071b4c9b032a394863272abcd49977fa583fb4464930c0e6168",
+    "agent_doc/results/cluster-planning-20261008/sources.json": "18ed2ea8e71ccf60b76da4a0dd0a45bccbdfab780fa6482d29e374467d7ebe5d",
+    "agent_doc/results/cluster-planning-20261008/knowledge_use.json": "e7a3934df6f6835409dadafe0776e8c6e031dbe005928d7c00ad53f7cf3073ed",
+    "agent_doc/results/cluster-planning-20261008/plan_v2.json": "ce3da590eb100a2d8430aeeabbe881693b0927117923991b9729bb399cc77e77",
+    "agent_doc/results/cluster-planning-20261008/dag_v3.json": "939bdba985b60b2fa8f20e3d31a1040f75ec17665ed8533f223e69a4b901c672",
+    "agent_doc/results/cluster-planning-20261008/targeted_v3.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_doc/results/cluster-planning-20261008/targeted_v3.stderr": "3ad0857c8cae7701ad9a3111d29606aa337ca9d8a84400164ba1731cb1e6f336",
+    "agent_doc/results/cluster-planning-20261008/full_v3.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_doc/results/cluster-planning-20261008/full_v3.stderr": "141259604283689151935f6718064a287a5762db9c81ea5d790df1eebb93a6ed",
+    "agent_doc/results/cluster-planning-20261008/reader_v3.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_doc/results/cluster-planning-20261008/reader_v3.stderr": "8837437f5574162c2cc67c1e72af0376de4d356b6a33a9241b0629fbf1152aaf",
+    "agent_doc/results/cluster-planning-20261008/cli_v3.stdout": "4f82d198fa04ce46c513a5a185fd6da74d9800b871ff94c914566d4d530d241b",
+    "agent_doc/results/cluster-planning-20261008/cli_v3.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_doc/results/cluster-planning-20261008/reference_sync_v3.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_doc/results/cluster-planning-20261008/reference_sync_v3.stderr": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_doc/results/cluster-planning-20261008/execution_v3.json": "5845131a26e487a30762a98d26d053dba5c2c3947c7374c33fc080fc920a462a",
+    "agent_doc/results/cluster-planning-20261008/cluster_orchestration_upgrade_by_gpt.md": "9514d8bf5fc7ec55a4bba2b353e0a7e4a6387edd41c07fe6e8dfeae664b454e2",
+    "agent_doc/results/cluster-planning-20261008/environment.json": "8c83804e6793d6eed0bef72059c02a8f189957c6fa784b3d07c2fb2daf858b88"
+  },
+  "validation_plan_sha256": "508f1b190add1add2e3072103bc85f1f4c149610ebed556d4ee65e499fa5712d",
+  "scope": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance",
+  "status": "invalid",
+  "accepted": false,
+  "verifier": {
+    "actor": "independent-review",
+    "independent": true,
+    "source": "actual collaboration.spawn_agent dispatch from /root to /root/cluster_result_review",
+    "run_id": "cluster-result-review-v3-invalidation-20261008",
+    "method": "Fresh-context actual code and raw data review, explicit arithmetic oracle, independent 13 cases and targeted/CLI/full/reader reruns"
+  },
+  "limitations": [
+    "Local CPU fixtures only; no authenticated remote host, GPU, live capacity or network measurements.",
+    "Actual reviewer identity is /root/cluster_result_review; no authenticated Engine deployment or installed supervisor asserted.",
+    "Finite cases do not certify absence of all bugs; greedy first-fit planner has no optimality, fairness or makespan guarantee.",
+    "No hardware performance, model quality or actual model token-saving acceptance.",
+    "Ray exact live page/version could not be independently refetched; no installed Ray API is accepted."
+  ],
+  "checks": {
+    "implementation": {
+      "verdict": "fail",
+      "reason": "Deep JSON decoder raises uncaught RecursionError instead of invalid JSON exit2; prior finite-case acceptance rescinded.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_depth10000.json",
+          "sha256": "bdac01fae96e38fb30b2955615672752ffb9ddb477ba705aa4e079c50c7021bd"
+        },
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_depth10000.stderr",
+          "sha256": "ce2833ce0f2a6dd1cf2531841a3dcf89ccdea4b5535e9a48d27e944d5373517c"
+        },
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_review_v3_by_gpt.md",
+          "sha256": "3c6ae4a156a4738ab2437e80c1d2284546110b44a4a8c28f0f9578e68741905d"
+        }
+      ]
+    },
+    "reference_boundary": {
+      "verdict": "fail",
+      "reason": "Deep JSON decoder raises uncaught RecursionError instead of invalid JSON exit2; prior finite-case acceptance rescinded.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_depth10000.json",
+          "sha256": "bdac01fae96e38fb30b2955615672752ffb9ddb477ba705aa4e079c50c7021bd"
+        },
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_depth10000.stderr",
+          "sha256": "ce2833ce0f2a6dd1cf2531841a3dcf89ccdea4b5535e9a48d27e944d5373517c"
+        },
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_review_v3_by_gpt.md",
+          "sha256": "3c6ae4a156a4738ab2437e80c1d2284546110b44a4a8c28f0f9578e68741905d"
+        }
+      ]
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "All frozen hashes validated by _snapshot at actual absolute root before/after reruns; raw summaries match counts and failed v2 evidence remains retained.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_v3_snapshot_proof.json",
+          "sha256": "d018607cde248f4d49f53aa40f018d826fc3351594b18b00405af4a00a8a8ec3"
+        },
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_review_by_gpt.md",
+          "sha256": "b07074612eac37a044c8113eaede422c0045d4444524b0c5a945b33a8da9b028"
+        },
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_v2_reproducer.json",
+          "sha256": "fda9173011ba69db2b2fc814fa93ee664a2665f73a0279e68d2b465e0c4961a3"
+        }
+      ]
+    },
+    "numerical_sanity": {
+      "verdict": "pass",
+      "reason": "Explicit fixture arithmetic agrees, GPU UUIDs unique and CPU/RAM/disk conservation verified; nonfinite and oversized values reject.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_reference_costs_v3.json",
+          "sha256": "c792741fee92d7fb70effb6498bb0f48015b2109180174244b9c0d1e97713366"
+        },
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_cases_final_v3.stderr",
+          "sha256": "fb8568b9fa19d57e9109ba09123db238d4410221b2725b504fdc69fabe387bcc"
+        },
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_cli_v3.stdout",
+          "sha256": "4f82d198fa04ce46c513a5a185fd6da74d9800b871ff94c914566d4d530d241b"
+        }
+      ]
+    },
+    "measurement_validity": {
+      "verdict": "not_applicable",
+      "reason": "Synthetic feasibility checks only; diagnostic wall clocks do not support hardware, token or model-quality gain claims.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_review_by_gpt.md",
+          "sha256": "b07074612eac37a044c8113eaede422c0045d4444524b0c5a945b33a8da9b028"
+        },
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_execution_v3.json",
+          "sha256": "3c747419d85cf987437284ba7b1c6920c9f68b15534a485316918e14e2c340f4"
+        }
+      ]
+    },
+    "reproducibility": {
+      "verdict": "fail",
+      "reason": "Deep JSON decoder raises uncaught RecursionError instead of invalid JSON exit2; prior finite-case acceptance rescinded.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_depth10000.json",
+          "sha256": "bdac01fae96e38fb30b2955615672752ffb9ddb477ba705aa4e079c50c7021bd"
+        },
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_depth10000.stderr",
+          "sha256": "ce2833ce0f2a6dd1cf2531841a3dcf89ccdea4b5535e9a48d27e944d5373517c"
+        },
+        {
+          "path": "agent_doc/results/cluster-planning-20261008/independent_review_v3_by_gpt.md",
+          "sha256": "3c6ae4a156a4738ab2437e80c1d2284546110b44a4a8c28f0f9578e68741905d"
+        }
+      ]
+    }
+  },
+  "invalidation": "New independent depth10000 decoder overflow before publication; prior acceptance rescinded."
+}
