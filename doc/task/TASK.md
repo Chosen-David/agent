@@ -189,3 +189,8 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [MATH-39] 补齐有限softmax的KL/Fisher与饱和反例，筛选近期原文。 ([detail](task_details/MATH-39.md))
 - [x] [MATH-40] 独立代码/数据验收、检索成本、回归与main发布核对。 ([detail](task_details/MATH-40.md))
+
+## 2026-10-08 RoPE交织结构
+
+- [ ] [MATH-41] 补齐旋转交织/频率融合前提，筛选近期等变研究。 ([detail](task_details/MATH-41.md))
+- [ ] [MATH-42] 独立验收、检索成本、回归与main发布读回。 ([detail](task_details/MATH-42.md))

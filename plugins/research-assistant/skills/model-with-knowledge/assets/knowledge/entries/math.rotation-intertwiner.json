@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "id": "math.rotation-intertwiner",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "实旋转交织映射与RoPE跨频率融合",
+  "summary": "固定频率潜表示需要交织条件；区分整数频率别名、同频复线性融合、低秩点积限制与有限长度近似缺陷。",
+  "aliases": [
+    "旋转 融合 固定 频率",
+    "振子 对称 映射",
+    "位置 整数 频率 别名"
+  ],
+  "domains": [
+    "group-theory",
+    "linear-algebra"
+  ],
+  "structures": [
+    "intertwiner",
+    "equivariance",
+    "frequency-aliasing",
+    "rank-obstruction"
+  ],
+  "assumptions": [
+    "有限实线性映射；R(theta)为正交二维旋转；位置为整数",
+    "频率按2pi取模；0和pi需独立处理；连续位置不允许整数别名",
+    "近似长度界只在指定整数位置范围内；受限精确保真须明确数据支撑子空间"
+  ],
+  "sources": [
+    {
+      "url": "https://math.mit.edu/~etingof/reprbook.pdf",
+      "locator": "§2.3 Proposition2.3.9, Corollary2.3.10, Remark2.3.11; §3.1 Remark3.1.5; planar classification derived here",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v306/berndt26a.html",
+      "locator": "ICML2026 final PMLR306:7766–7790; PDF §2 and §3.1 read; not a RoPE compression result",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "Self-contained real planar proof; no Lean/formal verification",
+      "32 public CPU structural cases; independent result acceptance required"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.weighted-bilinear-low-rank"
+    },
+    {
+      "type": "related",
+      "id": "math.reynolds-projection"
+    }
+  ]
+}

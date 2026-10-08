@@ -1,0 +1,64 @@
+{
+  "tasks": [
+    {
+      "task_id": "MATH-41",
+      "owner": "/root",
+      "action": "produce",
+      "produces_data": true,
+      "task_type": "experiment",
+      "depends_on": [],
+      "experiment_result": {
+        "result_id": "math-rope-intertwiner-20261008",
+        "producer_task_id": "MATH-41",
+        "producer_actor": "/root",
+        "validation_plan": {
+          "path": "doc/results/math-rope-intertwiner-20261008/validation-plan.json",
+          "sha256": "780a23258692d92ed56fe0a85479ce54ff4b3c9b1b2e2dac7706e3f70b40af84"
+        },
+        "scope": "finite real planar rotation intertwiner classification and bounded approximate residuals; public CPU structural fixtures, no model/performance/formal guarantee",
+        "manifest_path": "doc/results/math-rope-intertwiner-20261008/manifest.json"
+      }
+    },
+    {
+      "task_id": "MATH-ROTATION-VERIFY",
+      "owner": "/root/rotation_verifier",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "MATH-41"
+      ],
+      "result_validation": {
+        "result_id": "math-rope-intertwiner-20261008",
+        "producer_task_id": "MATH-41",
+        "producer_actor": "/root",
+        "validation_plan": {
+          "path": "doc/results/math-rope-intertwiner-20261008/validation-plan.json",
+          "sha256": "780a23258692d92ed56fe0a85479ce54ff4b3c9b1b2e2dac7706e3f70b40af84"
+        },
+        "scope": "finite real planar rotation intertwiner classification and bounded approximate residuals; public CPU structural fixtures, no model/performance/formal guarantee",
+        "manifest_path": "doc/results/math-rope-intertwiner-20261008/manifest.json"
+      }
+    },
+    {
+      "task_id": "MATH-42",
+      "owner": "/root",
+      "action": "publish",
+      "depends_on": [
+        "MATH-ROTATION-VERIFY"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-rope-intertwiner-20261008",
+          "producer_task_id": "MATH-41",
+          "producer_actor": "/root",
+          "validation_plan": {
+            "path": "doc/results/math-rope-intertwiner-20261008/validation-plan.json",
+            "sha256": "780a23258692d92ed56fe0a85479ce54ff4b3c9b1b2e2dac7706e3f70b40af84"
+          },
+          "scope": "finite real planar rotation intertwiner classification and bounded approximate residuals; public CPU structural fixtures, no model/performance/formal guarantee",
+          "manifest_path": "doc/results/math-rope-intertwiner-20261008/manifest.json"
+        }
+      ]
+    }
+  ],
+  "boundary": "direct bounded host maintenance and actual independent collaboration; not managed engine/tmux deployment"
+}
