@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "id": "math.convex-projection-certificate",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "选定凸输出的投影、误差下界与残差间隙证书",
+  "summary": "有限value凸包的平方误差投影以可行性和全顶点残差max认证；P−2g≤最优误差≤P，g=0 iff投影。",
+  "aliases": [
+    "选中 value 非负 重赋权 最小 输出误差",
+    "配方 配比 平均 最接近 目标 下界",
+    "线性 span 负权 投影 误用",
+    "convex hull projection value reweighting minimum output error Frank Wolfe gap supporting hyperplane"
+  ],
+  "domains": [
+    "optimization",
+    "linear-algebra"
+  ],
+  "structures": [
+    "convex-projection",
+    "simplex-weights",
+    "output-error-floor",
+    "primal-lower-gap"
+  ],
+  "assumptions": [
+    "非空有限v_i∈R^p和固定已知z；Euclidean平方误差；C=conv{v_i}，允许改变权重但β≥0且Σβ=1。",
+    "候选y必须属于C；h_C(r)=max_i r·v_i遍历C的全部给定点；只对明确选定value集合给界。",
+    "固定线性W可对Wv和Wz使用结论；只保真W输出，不保证raw输出、全部query或模型e2e。"
+  ],
+  "sources": [
+    {
+      "url": "https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf",
+      "locator": "Boyd–Vandenberghe2004 §4.2.3 pp139–140 Eq(4.20-21)和proof；投影及P−2g界为项目配方特化",
+      "accessed": "2026-10-09"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v306/schroder26a.html",
+      "locator": "WildCat ICML2026 PMLR306 pp108454–108484，§2.1/2.2/2.6、Alg2–3仅对象差异筛选，不背书完整理论或实验",
+      "accessed": "2026-10-09"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "精确展开/凸性证明人工审核，不是Lean或浮点数值证书。",
+      "agent_doc/results/math-convex-projection-20261009：12公开Fraction例、6结构检索、定向回归及独立六域验收；无模型/GPU实测。"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.dual-certificates",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.convex-support-reduction"
+    },
+    {
+      "type": "related",
+      "id": "math.orthogonal-projection-qr"
+    },
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    }
+  ],
+  "content": "# 选定凸输出的投影与误差证书\n\n稳定ID `math.convex-projection-certificate`，版本1。经典凸最优性准则来自Boyd–Vandenberghe2004§4.2.3 pp139–140 Eq(4.20–21)及证明；下述有限凸包/误差证书为项目推导特化，不是新发现。源PDF固定摘要与近期研究阅读范围见本轮sources.json。\n\n## 数学对象、前提与准确结论\n\n给定非空有限v_i∈R^p、固定已知目标z，C=conv{v_i}，最小化p*=min_{x∈C}||z−x||₂²。允许保留点重新赋权β，但须β_i≥0、Σβ_i=1。C紧且凸，最优输出y*存在且唯一；权重可能不唯一（重复或仿射相关点）。\n\n对任何可行y=Σβ_i v_i，令r=z−y，P=||r||²，h_C(r)=max_i rᵀv_i，g=h_C(r)−rᵀy≥0。定义D=2rᵀz−||r||²−2h_C(r)=P−2g。则\n\n$$\\max(0,D)\\le p^*\\le P,\\qquad P-p^*\\le2g.$$\n\n并且g=0当且仅当y=y*；这等价于rᵀ(v_i−y)≤0对所有给定点成立。须完整遍历定义C的点，不能以采样max或未认证估计替代h_C。单位：P,D,g均为输出单位平方，不是attention mass、token overlap或任务精度。\n\n## 可复核推导\n\n存在性由紧性/连续性；若两个不同输出同为最优，平方范数严格凸性使其中点误差严格下降，故输出唯一。\n\n必要性：若y最优且存在x∈C使rᵀ(x−y)>0，沿可行线段y+t(x−y)，目标变化为−2t rᵀ(x−y)+t²||x−y||²，小正t下降，矛盾。充分性：若对全部点rᵀ(v_i−y)≤0，由凸组合对全部x∈C成立；展开||z−x||²=P+||x−y||²−2rᵀ(x−y)≥P。即教材一阶准则对平方距离的特化。\n\n任意a∈R^p、x∈C，由||z−x−a||²≥0，有||z−x||²≥2aᵀ(z−x)−||a||²≥2aᵀz−||a||²−2h_C(a)。取a=r得D；可行y给上界P，g≥0由y的凸组合可行性得到。g=0的等价条件由上述一阶准则得到。这里无需猜测Slater或把数值下确界当对偶值。另由投影展开P−p*≥||y−y*||²，因此||y−y*||²≤2g。\n\n## 正例、边界、误用反例\n\n- v=(0,3)，z=5/6：β=(13/18,5/18)，y=z，P=g=D=0，凸包能表示目标。\n- v=(0,1)，z=2：y*=1，r=1，P=D=1,g=0。即使重新赋权也不能降到零。线性span/仿射hull允许负权(−1,2)得到2，其误差0不能当凸输出可实现误差。\n- 三角形(0,0),(1,0),(0,1)，z=(1,1)：y*=(1/2,1/2)，p*=1/2，残差对两活跃点相等且对原点更小，证明输出误差下限。\n- 重复点(1),(1)对z=2：输出唯一为1，权重可以任意非负配比；不因KKT系数矩阵奇异宣称凸包不可行。singleton可直接认证。空C不适用。\n- 非最优可行y：v=(0,2),z=3,y=1，P=4,g=2,D=0，而真实p*=1；小/非零gap只给误差区间，不等于最优。负D可以合法但需截到0作有效非负下界。\n- 漏顶点：C=conv{0,2,4},z=4,y=2；完整g=4，D=−4。只看0、2会误报g=0、D=4，超过真实p*=0。证书覆盖必须完整，或为max提供合法上界；max下界不能用于这里的D下界。\n- y来自负权即使r=0也不是合法上界：v=(0,1),z=2,β=(−1,2)不可行，必须拒用。\n\n## 可以解决的问题结构与实际迁移\n\n抽取对象（被选中的value）、约束（非负、和1）、目标（固定dense teacher输出或指定均值）、误差（Euclidean或明确映射后Euclidean），检索本ID与`math.dual-certificates@1`。先核对可行性与全顶点覆盖，再认证上下界或拒用。\n\nIndexer：给定S，C_S=conv{v_i:i∈S}，目标z为固定query的dense输出。原权重截断重归一化给一个可行候选，所以p*_S≤其输出误差平方。若得到正D，则在保持这些原value与simplex约束下，任何重赋权都不能消除误差；这是子集几何不足。若p*_S≈0而实际误差大，重赋权或评分值得离线探索。两个集合的token overlap高低不决定其凸包距离。\n\n这只是离线诊断：需要dense z与选中values，优化/认证本身有成本，不提供online快速求解器或e2e提升。非线性下游、跨层反馈、多个query共同子集等需另测。若算法允许新的组合value、负权或改变目标，必须重建C，原证书不再界定它。\n\n配方/传感器迁移：用非负单位质量配比逼近目标成分/均值，投影给可达到的最低误差及可行停止条件；不是任意线性回归，也不保留协方差。可证伪预测：固定C/z条件下，所有可行重赋权的误差平方应≥认证D，且g=0候选与独立参考一致；若失败检查覆盖/符号/单位和算术。\n\n## 映射后的度量\n\n固定线性T时可将点换成Tv_i、目标Tz，在该Euclidean输出空间使用同一结论。只认证T输出；T有核时raw误差未必为零，原空间最优系数/输出也未必唯一。改变度量或量纲必须重新计算，不将原空间证书搬过去。\n\n## 近期研究：对象核对，非收益证据\n\nWildCat（Schröder–Mackey，ICML2026，PMLR306:108454–108484）§2.2在指数核空间做Nyström投影，§2.6/Algorithms2–3构造VS=WV及w=W1，再以加权归一化输出，并检查分母/clip。它涉及所有原values的压缩，不是本卡固定原value凸包上的单query β优化。仅凭“optimal weighting”不能认定权重具有本卡simplex约束；要逐项检查代表点、目标和可行域。本轮阅读这些定义/算子，未核验全文近线性误差定理、未复现GPU或模型实验，也不将正式发表当本项目收益。\n\n## 前置关系及实际验证状态\n\n强前置`math.dual-certificates@1`：可行上界与合法下界的方向；相关`math.convex-support-reduction`讨论自由挑选支持的存在性，`math.orthogonal-projection-qr`讨论子空间投影，`math.attention-output-geometry`讨论输出目标。它们不是指定凸子集优化的同义词。\n\n本轮12个公开Fraction例：有限小规模face KKT枚举、全点残差max和证书，含退化/空/负权/漏max及T核反例；一般证明为非形式化独立数学审查。没有Lean、浮点误差外包或大规模QP正确性保证。三条未提示定理名的结构查询×文件/SQLite后端是公开开发检索，不是模型检索/拒用或未见测试。实际token、GPU、model A/B与e2e均未测；未读取既有留出题内容。只发布经核验知识，不改生产注意力行为。\n",
+  "path": "entries/math.convex-projection-certificate.json",
+  "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c",
+  "knowledge_refs": [
+    {
+      "id": "math.convex-projection-certificate",
+      "version": 1,
+      "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c"
+    },
+    {
+      "id": "math.dual-certificates",
+      "version": 1,
+      "sha256": "d165577ff3bfb7ebc14ff33ccc66d3641cf4f9afdae532636099bfefc07ab708"
+    }
+  ]
+}

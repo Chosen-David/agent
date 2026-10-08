@@ -1,0 +1,1328 @@
+{
+  "scope": "Public structural checks only",
+  "snapshot": "9213eb37e9117538123d47adedd9a7b06b97f2e0fb7ecdd89fb3bdec17d68726",
+  "protocol_sha256": "1beade826b8e32171897a8f5d3b50402d82ac51305ae1b3b31b7aa738e57e555",
+  "load_seconds": 0.02705150900146691,
+  "index_build_seconds": 0.1339582239961601,
+  "records": [
+    {
+      "backend": "files-lexical-v1",
+      "case": "R1",
+      "query": "非负 权重 迭代 拟合 固定 输出",
+      "actual": [
+        "math.frank-wolfe-output-solver",
+        "math.convex-projection-certificate",
+        "math.contraction-residual-certificate"
+      ],
+      "hit": true,
+      "seconds": 0.004616691003320739,
+      "chars": 2664,
+      "bytes": 3786,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "9213eb37e9117538123d47adedd9a7b06b97f2e0fb7ecdd89fb3bdec17d68726",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.frank-wolfe-output-solver",
+            "version": 1,
+            "sha256": "90ccb92febf95e295600b4c33841f746e67541016cf440606642da83e5205ff5",
+            "title": "固定凸输出的逐步非负重赋权、迭代界与停止证书",
+            "summary": "完整残差oracle与可行simplex更新给固定平方输出FW递推、O(1/t)目标误差及gap停止；schedule不保证单调，部分max不认证。",
+            "status": "published",
+            "assumptions": [
+              "非空有限固定v_i、已知固定z，f=1/2||y−z||²，C=conv(v)，β≥0且Σβ=1。",
+              "精确oracle遍历全部定义C的点；近似oracle须认证加性缺口η，未控η不套无误差rate。",
+              "schedule gamma=2/(t+2),t从0；或精确[0,1]线搜索；gap停止只界距最优，非绝对输出误差。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-frank-wolfe-20261009：公开Fraction轨迹、检索与独立验收；非形式化/非模型GPU。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "固定",
+                  "输出",
+                  "迭代",
+                  "非负"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "固定",
+                  "拟合",
+                  "权重",
+                  "输出",
+                  "迭代",
+                  "非负"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "固定",
+                  "输出"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "固定",
+                  "拟合",
+                  "权重",
+                  "输出",
+                  "迭代",
+                  "非负"
+                ]
+              }
+            ],
+            "score": 62
+          },
+          {
+            "id": "math.convex-projection-certificate",
+            "version": 1,
+            "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c",
+            "title": "选定凸输出的投影、误差下界与残差间隙证书",
+            "summary": "有限value凸包的平方误差投影以可行性和全顶点残差max认证；P−2g≤最优误差≤P，g=0 iff投影。",
+            "status": "published",
+            "assumptions": [
+              "非空有限v_i∈R^p和固定已知z；Euclidean平方误差；C=conv{v_i}，允许改变权重但β≥0且Σβ=1。",
+              "候选y必须属于C；h_C(r)=max_i r·v_i遍历C的全部给定点；只对明确选定value集合给界。",
+              "固定线性W可对Wv和Wz使用结论；只保真W输出，不保证raw输出、全部query或模型e2e。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "精确展开/凸性证明人工审核，不是Lean或浮点数值证书。",
+                "agent_doc/results/math-convex-projection-20261009：12公开Fraction例、6结构检索、定向回归及独立六域验收；无模型/GPU实测。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "输出"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "输出",
+                  "非负"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "固定",
+                  "权重",
+                  "输出",
+                  "非负"
+                ]
+              }
+            ],
+            "score": 19
+          },
+          {
+            "id": "math.contraction-residual-certificate",
+            "version": 1,
+            "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+            "title": "收缩迭代的残差误差证书与不精确求解边界",
+            "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+            "status": "published",
+            "assumptions": [
+              "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+              "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+              "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+                "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "迭代"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "迭代"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "固定",
+                  "迭代"
+                ]
+              }
+            ],
+            "score": 12
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R2",
+      "query": "混合 配方 逐步 添加 成分 停止 误差",
+      "actual": [
+        "math.frank-wolfe-output-solver",
+        "math.convex-projection-certificate",
+        "math.contraction-residual-certificate"
+      ],
+      "hit": true,
+      "seconds": 0.004611803997249808,
+      "chars": 2754,
+      "bytes": 3892,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "9213eb37e9117538123d47adedd9a7b06b97f2e0fb7ecdd89fb3bdec17d68726",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.frank-wolfe-output-solver",
+            "version": 1,
+            "sha256": "90ccb92febf95e295600b4c33841f746e67541016cf440606642da83e5205ff5",
+            "title": "固定凸输出的逐步非负重赋权、迭代界与停止证书",
+            "summary": "完整残差oracle与可行simplex更新给固定平方输出FW递推、O(1/t)目标误差及gap停止；schedule不保证单调，部分max不认证。",
+            "status": "published",
+            "assumptions": [
+              "非空有限固定v_i、已知固定z，f=1/2||y−z||²，C=conv(v)，β≥0且Σβ=1。",
+              "精确oracle遍历全部定义C的点；近似oracle须认证加性缺口η，未控η不套无误差rate。",
+              "schedule gamma=2/(t+2),t从0；或精确[0,1]线搜索；gap停止只界距最优，非绝对输出误差。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-frank-wolfe-20261009：公开Fraction轨迹、检索与独立验收；非形式化/非模型GPU。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "停止",
+                  "逐步"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "停止",
+                  "成分",
+                  "混合",
+                  "添加",
+                  "误差",
+                  "逐步",
+                  "配方"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "停止",
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "停止",
+                  "成分",
+                  "混合",
+                  "添加",
+                  "误差",
+                  "逐步",
+                  "配方"
+                ]
+              }
+            ],
+            "score": 58
+          },
+          {
+            "id": "math.convex-projection-certificate",
+            "version": 1,
+            "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c",
+            "title": "选定凸输出的投影、误差下界与残差间隙证书",
+            "summary": "有限value凸包的平方误差投影以可行性和全顶点残差max认证；P−2g≤最优误差≤P，g=0 iff投影。",
+            "status": "published",
+            "assumptions": [
+              "非空有限v_i∈R^p和固定已知z；Euclidean平方误差；C=conv{v_i}，允许改变权重但β≥0且Σβ=1。",
+              "候选y必须属于C；h_C(r)=max_i r·v_i遍历C的全部给定点；只对明确选定value集合给界。",
+              "固定线性W可对Wv和Wz使用结论；只保真W输出，不保证raw输出、全部query或模型e2e。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "精确展开/凸性证明人工审核，不是Lean或浮点数值证书。",
+                "agent_doc/results/math-convex-projection-20261009：12公开Fraction例、6结构检索、定向回归及独立六域验收；无模型/GPU实测。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "误差",
+                  "配方"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "停止",
+                  "成分",
+                  "误差",
+                  "配方"
+                ]
+              }
+            ],
+            "score": 22
+          },
+          {
+            "id": "math.contraction-residual-certificate",
+            "version": 1,
+            "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+            "title": "收缩迭代的残差误差证书与不精确求解边界",
+            "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+            "status": "published",
+            "assumptions": [
+              "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+              "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+              "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+                "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "停止",
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "停止",
+                  "误差",
+                  "逐步"
+                ]
+              }
+            ],
+            "score": 21
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R3",
+      "query": "候选 部分 最大 残差 假收敛",
+      "actual": [
+        "math.frank-wolfe-output-solver",
+        "math.residual-interval-screening",
+        "math.descent-lyapunov-certificate"
+      ],
+      "hit": true,
+      "seconds": 0.004515722001087852,
+      "chars": 3016,
+      "bytes": 4324,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "9213eb37e9117538123d47adedd9a7b06b97f2e0fb7ecdd89fb3bdec17d68726",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.frank-wolfe-output-solver",
+            "version": 1,
+            "sha256": "90ccb92febf95e295600b4c33841f746e67541016cf440606642da83e5205ff5",
+            "title": "固定凸输出的逐步非负重赋权、迭代界与停止证书",
+            "summary": "完整残差oracle与可行simplex更新给固定平方输出FW递推、O(1/t)目标误差及gap停止；schedule不保证单调，部分max不认证。",
+            "status": "published",
+            "assumptions": [
+              "非空有限固定v_i、已知固定z，f=1/2||y−z||²，C=conv(v)，β≥0且Σβ=1。",
+              "精确oracle遍历全部定义C的点；近似oracle须认证加性缺口η，未控η不套无误差rate。",
+              "schedule gamma=2/(t+2),t从0；或精确[0,1]线搜索；gap停止只界距最优，非绝对输出误差。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-frank-wolfe-20261009：公开Fraction轨迹、检索与独立验收；非形式化/非模型GPU。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "候选",
+                  "假收",
+                  "收敛",
+                  "最大",
+                  "残差",
+                  "部分"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "残差",
+                  "部分"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "候选",
+                  "假收",
+                  "收敛",
+                  "最大",
+                  "残差",
+                  "部分"
+                ]
+              }
+            ],
+            "score": 42
+          },
+          {
+            "id": "math.residual-interval-screening",
+            "version": 1,
+            "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+            "title": "正交残差包络与安全候选筛除",
+            "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+              "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+              "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+              "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+                "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "候选",
+                  "残差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "候选",
+                  "残差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "候选",
+                  "残差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "候选",
+                  "最大",
+                  "残差",
+                  "部分"
+                ]
+              }
+            ],
+            "score": 30
+          },
+          {
+            "id": "math.descent-lyapunov-certificate",
+            "version": 1,
+            "sha256": "bc544371ae176fca157dcb900c31780de1f47cbab1d128210e14dc578855691c",
+            "title": "下降证书、驻点与不变集的收敛边界",
+            "summary": "可量化下降加下界控制耗散总量；光滑梯度步可保证梯度趋零，却不自动给全序列或全局最优。连续物理能量须检查最大不变零耗散集，动量方法须扩展状态。",
+            "status": "published",
+            "assumptions": [
+              "离散下降：V(x_(k+1))≤V(x_k)−W(x_k)，W≥0，轨迹上V有有限下界",
+              "GD具体界：f:R^n→R可微、欧氏梯度全局L-Lipschitz（L>0），f有有限下界；精确梯度、固定0<alpha<2/L",
+              "离散聚点结论另外需要紧致正不变域、连续更新和连续W；不保证全序列收敛",
+              "连续LaSalle：开放域中局部Lipschitz自治向量场，紧致正不变集合，V为C1且沿轨迹导数非正；结论为到最大不变零导数集的距离趋零",
+              "不能将连续能量导数直接当数值离散每步下降，不能将模型质量分数当已证明V"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-descent/verify.py",
+                "docs/knowledge_learning/2026-10-07-descent/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "收敛"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "收敛"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "最大"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "候选",
+                  "收敛",
+                  "最大",
+                  "残差",
+                  "部分"
+                ]
+              }
+            ],
+            "score": 18
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R1",
+      "query": "非负 权重 迭代 拟合 固定 输出",
+      "actual": [
+        "math.frank-wolfe-output-solver",
+        "math.convex-projection-certificate",
+        "math.contraction-residual-certificate"
+      ],
+      "hit": true,
+      "seconds": 0.00503227499575587,
+      "chars": 6410,
+      "bytes": 10876,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "9213eb37e9117538123d47adedd9a7b06b97f2e0fb7ecdd89fb3bdec17d68726",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.frank-wolfe-output-solver",
+            "version": 1,
+            "sha256": "90ccb92febf95e295600b4c33841f746e67541016cf440606642da83e5205ff5",
+            "title": "固定凸输出的逐步非负重赋权、迭代界与停止证书",
+            "summary": "完整残差oracle与可行simplex更新给固定平方输出FW递推、O(1/t)目标误差及gap停止；schedule不保证单调，部分max不认证。",
+            "status": "published",
+            "assumptions": [
+              "非空有限固定v_i、已知固定z，f=1/2||y−z||²，C=conv(v)，β≥0且Σβ=1。",
+              "精确oracle遍历全部定义C的点；近似oracle须认证加性缺口η，未控η不套无误差rate。",
+              "schedule gamma=2/(t+2),t从0；或精确[0,1]线搜索；gap停止只界距最优，非绝对输出误差。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-frank-wolfe-20261009：公开Fraction轨迹、检索与独立验收；非形式化/非模型GPU。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "检索、迁移与成本",
+                "start_line": 39,
+                "end_line": 48,
+                "excerpt": "## 检索、迁移与成本\n\n结构触发：非负权重迭代拟合固定输出、混合配方逐步添加成分、候选部分最大残差假收敛。先核对固定对象/目标/单位、simplex可行性及全oracle，再使用ID和强前置`math.convex-projection-certificate@1`（包含`math.dual-certificates@1`）。\n\nIndexer严格映射：对固定query，z是dense teacher输出，v_i为固定选中原values，β是允许新权重。可离线比较初始softmax子集重归一化与迭代结果；达到gap≤ε才认证与此子集的最优误差相差≤2ε。保持value和非负归一结构，丢失跨query共享、softmax参数化、跨层非线性与运行开销；不是线上选择速度或e2e改善。若原权重不可改变，本求解器只给诊断基准。\n\n每步穷举oracle约O(np)点积，加O(p)输出更新；若显式更新全部权重需O(n)，稀疏支持可按其大小处理。取得z与n个value已经有成本；投影-free不等于读数据-free、token-free或GPU更快。完整支持太大时只能研究可认证近似oracle，不能靠漏点省成本并称gap已认证。配方/传感器平均是同一数学问题；协方差、负权回归等不是。\n\n最小可证伪检查：固定C/z下每步β合法；展开等式成立；全gap上界误差；与独立解析最优比较。实际模型实验需要同模型权限/预算、matched index维度和完整e2e输出对照，未测不接生产。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "对象与准确条件",
+                "start_line": 5,
+                "end_line": 18,
+                "excerpt": "## 对象与准确条件\n\n非空有限原点v_i∈R^p，固定已知z；C=conv{v_i}，f(y)=1/2||y−z||²，f*=min_C f，h_t=f(y_t)−f*。所有权重β_i≥0、Σβ=1，y_t=Σβ_i v_i。D=diam(C)=max_{i,j}||v_i−v_j||。量纲：f,h,g,D²均为输出单位平方，不能当token overlap或attention mass。\n\n精确oracle选j_t∈argmax_i (z−y_t)ᵀv_i，d_t=v_j−y_t，g_t=(z−y_t)ᵀd_t。完整max给g_t≥h_t≥0；g_t≤ε认证f(y_t)−f*≤ε，即平方误差距最优≤2ε，不表示绝对误差≤2ε（f*可能正）。\n\n更新y_{t+1}=y_t+γ_t d_t、β_{t+1}=(1−γ_t)β_t+γ_t e_j，0≤γ≤1保证可行。两种policy：固定schedule γ_t=2/(t+2)，t=0开始；精确线搜索 γ=clip(g_t/||d_t||²,0,1)，d=0时γ=0。\n\n对schedule和精确线搜索都有\n\n$$h_{t+1}\\le(1-\\bar\\gamma_t)h_t+\\tfrac12\\bar\\gamma_t^2D^2,\\quad\\bar\\gamma_t=\\frac2{t+2},\\qquad h_t\\le\\frac{2D^2}{t+2}\\ (t\\ge1).$$\n\n只有线搜索保证f每步不增，固定schedule可能上升。h_t的O(1/t)不等于最后一步g_t同样O(1/t)；必须实际计算gap，不能按次数误报停止。D=0时所有点相同、h=0，但绝对f可为正。从一个顶点初始化，t步最多t+1个正权点；一般m_0点初始化最多m_0+t，不保证最小支持。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.convex-projection-certificate",
+            "version": 1,
+            "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c",
+            "title": "选定凸输出的投影、误差下界与残差间隙证书",
+            "summary": "有限value凸包的平方误差投影以可行性和全顶点残差max认证；P−2g≤最优误差≤P，g=0 iff投影。",
+            "status": "published",
+            "assumptions": [
+              "非空有限v_i∈R^p和固定已知z；Euclidean平方误差；C=conv{v_i}，允许改变权重但β≥0且Σβ=1。",
+              "候选y必须属于C；h_C(r)=max_i r·v_i遍历C的全部给定点；只对明确选定value集合给界。",
+              "固定线性W可对Wv和Wz使用结论；只保真W输出，不保证raw输出、全部query或模型e2e。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "精确展开/凸性证明人工审核，不是Lean或浮点数值证书。",
+                "agent_doc/results/math-convex-projection-20261009：12公开Fraction例、6结构检索、定向回归及独立六域验收；无模型/GPU实测。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04838709677419355,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "可以解决的问题结构与实际迁移",
+                "start_line": 33,
+                "end_line": 42,
+                "excerpt": "## 可以解决的问题结构与实际迁移\n\n抽取对象（被选中的value）、约束（非负、和1）、目标（固定dense teacher输出或指定均值）、误差（Euclidean或明确映射后Euclidean），检索本ID与`math.dual-certificates@1`。先核对可行性与全顶点覆盖，再认证上下界或拒用。\n\nIndexer：给定S，C_S=conv{v_i:i∈S}，目标z为固定query的dense输出。原权重截断重归一化给一个可行候选，所以p*_S≤其输出误差平方。若得到正D，则在保持这些原value与simplex约束下，任何重赋权都不能消除误差；这是子集几何不足。若p*_S≈0而实际误差大，重赋权或评分值得离线探索。两个集合的token overlap高低不决定其凸包距离。\n\n这只是离线诊断：需要dense z与选中values，优化/认证本身有成本，不提供online快速求解器或e2e提升。非线性下游、跨层反馈、多个query共同子集等需另测。若算法允许新的组合value、负权或改变目标，必须重建C，原证书不再界定它。\n\n配方/传感器迁移：用非负单位质量配比逼近目标成分/均值，投影给可达到的最低误差及可行停止条件；不是任意线性回归，也不保留协方差。可证伪预测：固定C/z条件下，所有可行重赋权的误差平方应≥认证D，且g=0候选与独立参考一致；若失败检查覆盖/符号/单位和算术。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "数学对象、前提与准确结论",
+                "start_line": 5,
+                "end_line": 14,
+                "excerpt": "## 数学对象、前提与准确结论\n\n给定非空有限v_i∈R^p、固定已知目标z，C=conv{v_i}，最小化p*=min_{x∈C}||z−x||₂²。允许保留点重新赋权β，但须β_i≥0、Σβ_i=1。C紧且凸，最优输出y*存在且唯一；权重可能不唯一（重复或仿射相关点）。\n\n对任何可行y=Σβ_i v_i，令r=z−y，P=||r||²，h_C(r)=max_i rᵀv_i，g=h_C(r)−rᵀy≥0。定义D=2rᵀz−||r||²−2h_C(r)=P−2g。则\n\n$$\\max(0,D)\\le p^*\\le P,\\qquad P-p^*\\le2g.$$\n\n并且g=0当且仅当y=y*；这等价于rᵀ(v_i−y)≤0对所有给定点成立。须完整遍历定义C的点，不能以采样max或未认证估计替代h_C。单位：P,D,g均为输出单位平方，不是attention mass、token overlap或任务精度。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.contraction-residual-certificate",
+            "version": 1,
+            "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+            "title": "收缩迭代的残差误差证书与不精确求解边界",
+            "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+            "status": "published",
+            "assumptions": [
+              "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+              "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+              "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+                "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.047619047619047616,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "对象、条件与经典结论",
+                "start_line": 5,
+                "end_line": 10,
+                "excerpt": "## 对象、条件与经典结论\n\n非空完备度量空间 (X,d)，自映射 G:X→X，存在统一 q∈[0,1) 使 d(Gx,Gy)≤q d(x,y)。则存在唯一不动点 x*，精确迭代 x_(k+1)=Gx_k 收敛。误差 ≤ q^k d(x_1,x_0)/(1−q)，k≥0；对 k≥1，误差 ≤ q d(x_k,x_(k−1))/(1−q)。q=0 时G恒定，一步精确；零次上界直接使用残差公式，避免0^0记法。\n\n来源：Voutsadakis，Introduction to Functional Analysis，May2023，pp7–11，p10误差推论。Bindel CS4220，2026-03-27，固定点与线性化讲义。只读这些相关章节，不声称全教材审查。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "问题结构、迁移与拒用",
+                "start_line": 29,
+                "end_line": 36,
+                "excerpt": "## 问题结构、迁移与拒用\n\n识别对象→指定域/范数→证明自映射与统一q→认证oracle误差→计算当前或返回点证书→按目标容差停止。少量检索本ID及需要的稳定性/量纲条目，不加载全库。缺任何条件则补证或拒用，不从轨迹估计硬证书。\n\n隐式Euler，物理方程 y′=−κy，κ单位1/s，步长h单位s。固定点 z=y_n−hκz，q=hκ无量纲；q=.5时上述证书适用，真解y_n/(1+q)。q=2时隐式Euler真解放大因子1/3仍稳定，但这一Picard求解器迭代发散。保留时间离散与求解器的精确方程关系；稳定积分方法不保证任意求解器收敛。耗散系统不要求此离散保持能量守恒。\n\nAgent数值工具在声明上述前提时可以提供解误差证书。文本反思、任务质量分数、token变化未定义同一确定映射与收缩范数，只有类比；不能据此修改主AI停止行为。本条目没有同模型预算A/B收益证据。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R2",
+      "query": "混合 配方 逐步 添加 成分 停止 误差",
+      "actual": [
+        "math.frank-wolfe-output-solver",
+        "math.convex-projection-certificate",
+        "math.contraction-residual-certificate"
+      ],
+      "hit": true,
+      "seconds": 0.003868106003210414,
+      "chars": 5392,
+      "bytes": 9082,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "9213eb37e9117538123d47adedd9a7b06b97f2e0fb7ecdd89fb3bdec17d68726",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.frank-wolfe-output-solver",
+            "version": 1,
+            "sha256": "90ccb92febf95e295600b4c33841f746e67541016cf440606642da83e5205ff5",
+            "title": "固定凸输出的逐步非负重赋权、迭代界与停止证书",
+            "summary": "完整残差oracle与可行simplex更新给固定平方输出FW递推、O(1/t)目标误差及gap停止；schedule不保证单调，部分max不认证。",
+            "status": "published",
+            "assumptions": [
+              "非空有限固定v_i、已知固定z，f=1/2||y−z||²，C=conv(v)，β≥0且Σβ=1。",
+              "精确oracle遍历全部定义C的点；近似oracle须认证加性缺口η，未控η不套无误差rate。",
+              "schedule gamma=2/(t+2),t从0；或精确[0,1]线搜索；gap停止只界距最优，非绝对输出误差。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-frank-wolfe-20261009：公开Fraction轨迹、检索与独立验收；非形式化/非模型GPU。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "检索、迁移与成本",
+                "start_line": 39,
+                "end_line": 48,
+                "excerpt": "## 检索、迁移与成本\n\n结构触发：非负权重迭代拟合固定输出、混合配方逐步添加成分、候选部分最大残差假收敛。先核对固定对象/目标/单位、simplex可行性及全oracle，再使用ID和强前置`math.convex-projection-certificate@1`（包含`math.dual-certificates@1`）。\n\nIndexer严格映射：对固定query，z是dense teacher输出，v_i为固定选中原values，β是允许新权重。可离线比较初始softmax子集重归一化与迭代结果；达到gap≤ε才认证与此子集的最优误差相差≤2ε。保持value和非负归一结构，丢失跨query共享、softmax参数化、跨层非线性与运行开销；不是线上选择速度或e2e改善。若原权重不可改变，本求解器只给诊断基准。\n\n每步穷举oracle约O(np)点积，加O(p)输出更新；若显式更新全部权重需O(n)，稀疏支持可按其大小处理。取得z与n个value已经有成本；投影-free不等于读数据-free、token-free或GPU更快。完整支持太大时只能研究可认证近似oracle，不能靠漏点省成本并称gap已认证。配方/传感器平均是同一数学问题；协方差、负权回归等不是。\n\n最小可证伪检查：固定C/z下每步β合法；展开等式成立；全gap上界误差；与独立解析最优比较。实际模型实验需要同模型权限/预算、matched index维度和完整e2e输出对照，未测不接生产。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "固定凸输出的逐步重赋权与停止证书",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 固定凸输出的逐步重赋权与停止证书\n\n稳定ID `math.frank-wolfe-output-solver`，版本1。经典方法来自Jaggi2013§2–3 Algorithm1/3、Theorem1。以下平方目标递推是项目独立特化推导，非新定理。不是生产求解器、attention机制等价或模型收益证据。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.convex-projection-certificate",
+            "version": 1,
+            "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c",
+            "title": "选定凸输出的投影、误差下界与残差间隙证书",
+            "summary": "有限value凸包的平方误差投影以可行性和全顶点残差max认证；P−2g≤最优误差≤P，g=0 iff投影。",
+            "status": "published",
+            "assumptions": [
+              "非空有限v_i∈R^p和固定已知z；Euclidean平方误差；C=conv{v_i}，允许改变权重但β≥0且Σβ=1。",
+              "候选y必须属于C；h_C(r)=max_i r·v_i遍历C的全部给定点；只对明确选定value集合给界。",
+              "固定线性W可对Wv和Wz使用结论；只保真W输出，不保证raw输出、全部query或模型e2e。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "精确展开/凸性证明人工审核，不是Lean或浮点数值证书。",
+                "agent_doc/results/math-convex-projection-20261009：12公开Fraction例、6结构检索、定向回归及独立六域验收；无模型/GPU实测。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.048131080389144903,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "可以解决的问题结构与实际迁移",
+                "start_line": 33,
+                "end_line": 42,
+                "excerpt": "## 可以解决的问题结构与实际迁移\n\n抽取对象（被选中的value）、约束（非负、和1）、目标（固定dense teacher输出或指定均值）、误差（Euclidean或明确映射后Euclidean），检索本ID与`math.dual-certificates@1`。先核对可行性与全顶点覆盖，再认证上下界或拒用。\n\nIndexer：给定S，C_S=conv{v_i:i∈S}，目标z为固定query的dense输出。原权重截断重归一化给一个可行候选，所以p*_S≤其输出误差平方。若得到正D，则在保持这些原value与simplex约束下，任何重赋权都不能消除误差；这是子集几何不足。若p*_S≈0而实际误差大，重赋权或评分值得离线探索。两个集合的token overlap高低不决定其凸包距离。\n\n这只是离线诊断：需要dense z与选中values，优化/认证本身有成本，不提供online快速求解器或e2e提升。非线性下游、跨层反馈、多个query共同子集等需另测。若算法允许新的组合value、负权或改变目标，必须重建C，原证书不再界定它。\n\n配方/传感器迁移：用非负单位质量配比逼近目标成分/均值，投影给可达到的最低误差及可行停止条件；不是任意线性回归，也不保留协方差。可证伪预测：固定C/z条件下，所有可行重赋权的误差平方应≥认证D，且g=0候选与独立参考一致；若失败检查覆盖/符号/单位和算术。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "选定凸输出的投影与误差证书",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 选定凸输出的投影与误差证书\n\n稳定ID `math.convex-projection-certificate`，版本1。经典凸最优性准则来自Boyd–Vandenberghe2004§4.2.3 pp139–140 Eq(4.20–21)及证明；下述有限凸包/误差证书为项目推导特化，不是新发现。源PDF固定摘要与近期研究阅读范围见本轮sources.json。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.contraction-residual-certificate",
+            "version": 1,
+            "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+            "title": "收缩迭代的残差误差证书与不精确求解边界",
+            "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+            "status": "published",
+            "assumptions": [
+              "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+              "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+              "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+                "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04762704813108039,
+            "sections": [
+              {
+                "node": "s1",
+                "title": "收缩迭代的残差误差证书",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 收缩迭代的残差误差证书\n\n稳定ID：`math.contraction-residual-certificate`，版本1。经典定理与本文推导分开标注；知识可发布，生产停止策略未验证。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界与误用",
+                "start_line": 21,
+                "end_line": 28,
+                "excerpt": "## 正例、边界与误用\n\n1. Gx=.99x+.01，x*=1，x0=0。第一步.01小于.02但返回点误差.99；证书也为.99。达到.02误差需390步。小步长在q接近1时尤其误导。\n2. Gx=.9x+1，真解10；G̃x=Gx−.1，在x=9计算残差0，真实误差1，η=.1的证书为1。不能宣称.01精度。\n3. q=1时恒等映射有多个不动点，不可除以1−q。开域(0,∞)上的Gx=x/2不是完备域，没有域内不动点；[0,1]上的x/2+1不自映射，收缩不够。\n4. A=[[.5,10],[0,.5]]，谱半径.5，但无穷范数算子界10.5；e0=(0,1)→(10,.5)，误差增大。不能将谱半径代入当前范数的逐步界。自推导：加权范数max(|x1|/40,|x2|)诱导行界max(.5+10/40,.5)=.75，故可用q=.75；换回普通无穷范数必须乘40，上界可能很松。\n5. 几个观测比率不提供全局q。凸域上处处导数算子范数≤q可用线段积分证明Lipschitz；非凸域不能省略连线条件。先验证域不变再使用导数界。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R3",
+      "query": "候选 部分 最大 残差 假收敛",
+      "actual": [
+        "math.frank-wolfe-output-solver",
+        "math.residual-interval-screening",
+        "math.descent-lyapunov-certificate"
+      ],
+      "hit": true,
+      "seconds": 0.004418447999341879,
+      "chars": 6392,
+      "bytes": 10991,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "9213eb37e9117538123d47adedd9a7b06b97f2e0fb7ecdd89fb3bdec17d68726",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.frank-wolfe-output-solver",
+            "version": 1,
+            "sha256": "90ccb92febf95e295600b4c33841f746e67541016cf440606642da83e5205ff5",
+            "title": "固定凸输出的逐步非负重赋权、迭代界与停止证书",
+            "summary": "完整残差oracle与可行simplex更新给固定平方输出FW递推、O(1/t)目标误差及gap停止；schedule不保证单调，部分max不认证。",
+            "status": "published",
+            "assumptions": [
+              "非空有限固定v_i、已知固定z，f=1/2||y−z||²，C=conv(v)，β≥0且Σβ=1。",
+              "精确oracle遍历全部定义C的点；近似oracle须认证加性缺口η，未控η不套无误差rate。",
+              "schedule gamma=2/(t+2),t从0；或精确[0,1]线搜索；gap停止只界距最优，非绝对输出误差。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-frank-wolfe-20261009：公开Fraction轨迹、检索与独立验收；非形式化/非模型GPU。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "检索、迁移与成本",
+                "start_line": 39,
+                "end_line": 48,
+                "excerpt": "## 检索、迁移与成本\n\n结构触发：非负权重迭代拟合固定输出、混合配方逐步添加成分、候选部分最大残差假收敛。先核对固定对象/目标/单位、simplex可行性及全oracle，再使用ID和强前置`math.convex-projection-certificate@1`（包含`math.dual-certificates@1`）。\n\nIndexer严格映射：对固定query，z是dense teacher输出，v_i为固定选中原values，β是允许新权重。可离线比较初始softmax子集重归一化与迭代结果；达到gap≤ε才认证与此子集的最优误差相差≤2ε。保持value和非负归一结构，丢失跨query共享、softmax参数化、跨层非线性与运行开销；不是线上选择速度或e2e改善。若原权重不可改变，本求解器只给诊断基准。\n\n每步穷举oracle约O(np)点积，加O(p)输出更新；若显式更新全部权重需O(n)，稀疏支持可按其大小处理。取得z与n个value已经有成本；投影-free不等于读数据-free、token-free或GPU更快。完整支持太大时只能研究可认证近似oracle，不能靠漏点省成本并称gap已认证。配方/传感器平均是同一数学问题；协方差、负权回归等不是。\n\n最小可证伪检查：固定C/z下每步β合法；展开等式成立；全gap上界误差；与独立解析最优比较。实际模型实验需要同模型权限/预算、matched index维度和完整e2e输出对照，未测不接生产。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "可复核证明",
+                "start_line": 19,
+                "end_line": 26,
+                "excerpt": "## 可复核证明\n\n由前置投影卡，完整残差gap给h≤g。精确平方展开任意γ：\n\n$$f(y+\\gamma d)=f(y)-\\gamma g+\\tfrac12\\gamma^2\\|d\\|^2.$$\n\n可行y、v_j∈C，||d||≤D。取schedule并用g≥h得到递推。t=0时γ=1，因此h_1≤D²/2≤2D²/3，不依赖任意大h_0。若h_t≤2D²/(t+2)，递推得h_{t+1}≤2D²(t+1)/(t+2)²≤2D²/(t+3)，最后一步由(t+1)(t+3)≤(t+2)²。线搜索最小化同一线段的精确凸二次函数，目标≤schedule候选，故同样递推且可取γ=0证明不增。归纳β更新保持simplex；每步最多添一个点。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.residual-interval-screening",
+            "version": 1,
+            "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+            "title": "正交残差包络与安全候选筛除",
+            "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+              "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+              "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+              "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+                "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04787506400409626,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "实际迁移与不适用条件",
+                "start_line": 26,
+                "end_line": 32,
+                "excerpt": "## 实际迁移与不适用条件\n严格映射：检索候选/attention token映射到键，原始点积分数到s，子空间代理到h，缓存逐键残差范数到e，边界不确定者到C。仅NoPE可在内容向量上核对；仅RoPE须在实际位置旋转后的q/k上统一投影；混合路径可直接投影全部实际向量，或对不相交子块的误差界求和。不能以pre-RoPE残差范数替代post-RoPE跨频率残差；旋转完整范数不变不代表对固定P的残差不变。\n\n原FC准确保留加遗漏部分正交压缩时，可对遗漏子块应用本规则。残差范数缓存增加存储，查询残差计算和全候选包络扫描也有成本。最坏C=N，需完整回退；near/far分别用固定quota，只能保证各区域quota目标，不自动保证全局Top-k。论文可以记录C/N、精算键数、误筛数、总索引/校准/缓存成本与e2e，不能仅报告重合度或理论FLOPs。\n\n跨域：传感器/文档最大内积检索使用同一向量内积结构，是严格数学映射；语义压缩token数与向量维数只是不同对象，不能据此宣称Agent省token。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "正交残差包络与安全候选筛除",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 正交残差包络与安全候选筛除\n\n稳定ID：math.residual-interval-screening；版本1；核查日期2026-10-08。经典基础为正交分解/Cauchy–Schwarz；下面筛除规则为项目自行推导，不宣称首次提出。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.descent-lyapunov-certificate",
+            "version": 1,
+            "sha256": "bc544371ae176fca157dcb900c31780de1f47cbab1d128210e14dc578855691c",
+            "title": "下降证书、驻点与不变集的收敛边界",
+            "summary": "可量化下降加下界控制耗散总量；光滑梯度步可保证梯度趋零，却不自动给全序列或全局最优。连续物理能量须检查最大不变零耗散集，动量方法须扩展状态。",
+            "status": "published",
+            "assumptions": [
+              "离散下降：V(x_(k+1))≤V(x_k)−W(x_k)，W≥0，轨迹上V有有限下界",
+              "GD具体界：f:R^n→R可微、欧氏梯度全局L-Lipschitz（L>0），f有有限下界；精确梯度、固定0<alpha<2/L",
+              "离散聚点结论另外需要紧致正不变域、连续更新和连续W；不保证全序列收敛",
+              "连续LaSalle：开放域中局部Lipschitz自治向量场，紧致正不变集合，V为C1且沿轨迹导数非正；结论为到最大不变零导数集的距离趋零",
+              "不能将连续能量导数直接当数值离散每步下降，不能将模型质量分数当已证明V"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-descent/verify.py",
+                "docs/knowledge_learning/2026-10-07-descent/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 5
+              }
+            ],
+            "score": 0.04764267990074442,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、误用与边界",
+                "start_line": 23,
+                "end_line": 30,
+                "excerpt": "## 正例、误用与边界\n\n1. f=x²/2，L=1，alpha=1/2，每步x减半，系数c=3/8；alpha=2使x↦−x且f不变，alpha>2发散。端点不能拿c=0除法或称驻点保证。\n2. 同f但alpha_k=2^(−k−2)，步长和1/2；x0=1，乘积x_k=∏(1−alpha_i)≥1−Σalpha_i≥1/2。f下降、差值趋零，梯度却不趋零；固定步长前提失效。\n3. f=cos x全局L=1且下界−1；x0=0梯度0，却是最大点。这是正确驻点结论，不是最优证书。\n4. f=1/(1+x²)，全局L=2（|f''|=|6x²−2|/(1+x²)^3≤2）、下界0；正初值alpha=1/4使x严格增加，若有有限极限则梯度必须0，但正有限x的梯度不为0，故轨迹趋∞。梯度趋零仍成立，不能凭它推断有有限收敛解或紧致域。\n5. 单纯V不增允许旋转/周期轨道；连续无阻尼振子能量恒定，非零轨道不会趋原点。需检查零耗散集的最大不变部分。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "对象与精确结论",
+                "start_line": 5,
+                "end_line": 16,
+                "excerpt": "## 对象与精确结论\n\n离散状态x_k，势函数V，耗散W≥0；假设V(x_(k+1))≤V(x_k)−W(x_k)，且V在轨迹上有下界V_inf。求和得Σ_(k<N)W(x_k)≤V(x_0)−V_inf，因此W(x_k)→0，且min_(k<N)W(x_k)≤(V(x_0)−V_inf)/N。这一望远镜结论是自行推导。它不要求紧致，但不保证x有聚点。\n\n如果x在紧致正不变集Ω，更新G和W连续，则所有聚点落在{W=0}，dist(x_k,{W=0}∩Ω)→0。证明：任一聚点由连续性继承W=0；若距离不趋零，紧致性给距离≥epsilon的子列聚点矛盾。距离到集合趋零不等于到单一点收敛。\n\n经典GD：f:R^n→R可微且梯度全局L-Lipschitz（欧氏范数，L>0），f_inf>−∞，精确更新x_next=x−alpha∇f(x)，固定0<alpha<2/L。令c=alpha(1−Lalpha/2)>0，则f_next≤f−c||∇f||²，Σ||∇f(x_k)||²≤(f(x0)−f_inf)/c，min_(k<N)||∇f||²≤(f(x0)−f_inf)/(cN)，梯度范数趋零。若另外轨迹有聚点，它是驻点。没有凸性不保证最小值，更没有一般全序列收敛结论。可计算的有限步证书需要已证明的数值下界，不能以目前最好值当f_inf；实际有噪声的函数/梯度须另外认证误差，不能直接当精确GD。\n\n来源讲义使用alpha≤1/L和下降alpha/2界；这里alpha<2/L的系数由同一上模型代入自行展开，不冒称原文直接写出这个范围。变步长时须保留c_k；若c_k无统一正下界，只得加权耗散有限，不自动推出每步梯度趋零。\n\n连续LaSalle（经典）：开放D内局部Lipschitz自治ODE xdot=F(x)，Ω⊂D紧致正不变，V∈C1(D)，Vdot=∇V·F≤0于Ω。令E={x∈Ω:Vdot=0}，M为E内最大不变集，则dist(x(t),M)→0。不要求E每一点为平衡；不能直接说每个状态收敛为唯一最优解。局部Lipschitz/紧致是本条显式加强条件，避免在线章节简写的连续性"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "context": {
+    "schema_version": 1,
+    "snapshot": "9213eb37e9117538123d47adedd9a7b06b97f2e0fb7ecdd89fb3bdec17d68726",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "status": "partial",
+    "budget": {
+      "max_entries": 3,
+      "max_chars": 16000,
+      "used_chars": 11417,
+      "scope": "serialized entry payload characters, not model tokens or outer envelope"
+    },
+    "retrieved_ids": [
+      "math.frank-wolfe-output-solver"
+    ],
+    "entries": [
+      {
+        "schema_version": 1,
+        "id": "math.convex-projection-certificate",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "选定凸输出的投影、误差下界与残差间隙证书",
+        "summary": "有限value凸包的平方误差投影以可行性和全顶点残差max认证；P−2g≤最优误差≤P，g=0 iff投影。",
+        "aliases": [
+          "选中 value 非负 重赋权 最小 输出误差",
+          "配方 配比 平均 最接近 目标 下界",
+          "线性 span 负权 投影 误用",
+          "convex hull projection value reweighting minimum output error Frank Wolfe gap supporting hyperplane"
+        ],
+        "domains": [
+          "optimization",
+          "linear-algebra"
+        ],
+        "structures": [
+          "convex-projection",
+          "simplex-weights",
+          "output-error-floor",
+          "primal-lower-gap"
+        ],
+        "assumptions": [
+          "非空有限v_i∈R^p和固定已知z；Euclidean平方误差；C=conv{v_i}，允许改变权重但β≥0且Σβ=1。",
+          "候选y必须属于C；h_C(r)=max_i r·v_i遍历C的全部给定点；只对明确选定value集合给界。",
+          "固定线性W可对Wv和Wz使用结论；只保真W输出，不保证raw输出、全部query或模型e2e。"
+        ],
+        "sources": [
+          {
+            "url": "https://web.stanford.edu/~boyd/cvxbook/bv_cvxbook.pdf",
+            "locator": "Boyd–Vandenberghe2004 §4.2.3 pp139–140 Eq(4.20-21)和proof；投影及P−2g界为项目配方特化",
+            "accessed": "2026-10-09"
+          },
+          {
+            "url": "https://proceedings.mlr.press/v306/schroder26a.html",
+            "locator": "WildCat ICML2026 PMLR306 pp108454–108484，§2.1/2.2/2.6、Alg2–3仅对象差异筛选，不背书完整理论或实验",
+            "accessed": "2026-10-09"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "精确展开/凸性证明人工审核，不是Lean或浮点数值证书。",
+            "agent_doc/results/math-convex-projection-20261009：12公开Fraction例、6结构检索、定向回归及独立六域验收；无模型/GPU实测。"
+          ]
+        },
+        "requires": [
+          {
+            "id": "math.dual-certificates",
+            "version": 1
+          }
+        ],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.convex-support-reduction"
+          },
+          {
+            "type": "related",
+            "id": "math.orthogonal-projection-qr"
+          },
+          {
+            "type": "related",
+            "id": "math.attention-output-geometry"
+          }
+        ],
+        "content": "# 选定凸输出的投影与误差证书\n\n稳定ID `math.convex-projection-certificate`，版本1。经典凸最优性准则来自Boyd–Vandenberghe2004§4.2.3 pp139–140 Eq(4.20–21)及证明；下述有限凸包/误差证书为项目推导特化，不是新发现。源PDF固定摘要与近期研究阅读范围见本轮sources.json。\n\n## 数学对象、前提与准确结论\n\n给定非空有限v_i∈R^p、固定已知目标z，C=conv{v_i}，最小化p*=min_{x∈C}||z−x||₂²。允许保留点重新赋权β，但须β_i≥0、Σβ_i=1。C紧且凸，最优输出y*存在且唯一；权重可能不唯一（重复或仿射相关点）。\n\n对任何可行y=Σβ_i v_i，令r=z−y，P=||r||²，h_C(r)=max_i rᵀv_i，g=h_C(r)−rᵀy≥0。定义D=2rᵀz−||r||²−2h_C(r)=P−2g。则\n\n$$\\max(0,D)\\le p^*\\le P,\\qquad P-p^*\\le2g.$$\n\n并且g=0当且仅当y=y*；这等价于rᵀ(v_i−y)≤0对所有给定点成立。须完整遍历定义C的点，不能以采样max或未认证估计替代h_C。单位：P,D,g均为输出单位平方，不是attention mass、token overlap或任务精度。\n\n## 可复核推导\n\n存在性由紧性/连续性；若两个不同输出同为最优，平方范数严格凸性使其中点误差严格下降，故输出唯一。\n\n必要性：若y最优且存在x∈C使rᵀ(x−y)>0，沿可行线段y+t(x−y)，目标变化为−2t rᵀ(x−y)+t²||x−y||²，小正t下降，矛盾。充分性：若对全部点rᵀ(v_i−y)≤0，由凸组合对全部x∈C成立；展开||z−x||²=P+||x−y||²−2rᵀ(x−y)≥P。即教材一阶准则对平方距离的特化。\n\n任意a∈R^p、x∈C，由||z−x−a||²≥0，有||z−x||²≥2aᵀ(z−x)−||a||²≥2aᵀz−||a||²−2h_C(a)。取a=r得D；可行y给上界P，g≥0由y的凸组合可行性得到。g=0的等价条件由上述一阶准则得到。这里无需猜测Slater或把数值下确界当对偶值。另由投影展开P−p*≥||y−y*||²，因此||y−y*||²≤2g。\n\n## 正例、边界、误用反例\n\n- v=(0,3)，z=5/6：β=(13/18,5/18)，y=z，P=g=D=0，凸包能表示目标。\n- v=(0,1)，z=2：y*=1，r=1，P=D=1,g=0。即使重新赋权也不能降到零。线性span/仿射hull允许负权(−1,2)得到2，其误差0不能当凸输出可实现误差。\n- 三角形(0,0),(1,0),(0,1)，z=(1,1)：y*=(1/2,1/2)，p*=1/2，残差对两活跃点相等且对原点更小，证明输出误差下限。\n- 重复点(1),(1)对z=2：输出唯一为1，权重可以任意非负配比；不因KKT系数矩阵奇异宣称凸包不可行。singleton可直接认证。空C不适用。\n- 非最优可行y：v=(0,2),z=3,y=1，P=4,g=2,D=0，而真实p*=1；小/非零gap只给误差区间，不等于最优。负D可以合法但需截到0作有效非负下界。\n- 漏顶点：C=conv{0,2,4},z=4,y=2；完整g=4，D=−4。只看0、2会误报g=0、D=4，超过真实p*=0。证书覆盖必须完整，或为max提供合法上界；max下界不能用于这里的D下界。\n- y来自负权即使r=0也不是合法上界：v=(0,1),z=2,β=(−1,2)不可行，必须拒用。\n\n## 可以解决的问题结构与实际迁移\n\n抽取对象（被选中的value）、约束（非负、和1）、目标（固定dense teacher输出或指定均值）、误差（Euclidean或明确映射后Euclidean），检索本ID与`math.dual-certificates@1`。先核对可行性与全顶点覆盖，再认证上下界或拒用。\n\nIndexer：给定S，C_S=conv{v_i:i∈S}，目标z为固定query的dense输出。原权重截断重归一化给一个可行候选，所以p*_S≤其输出误差平方。若得到正D，则在保持这些原value与simplex约束下，任何重赋权都不能消除误差；这是子集几何不足。若p*_S≈0而实际误差大，重赋权或评分值得离线探索。两个集合的token overlap高低不决定其凸包距离。\n\n这只是离线诊断：需要dense z与选中values，优化/认证本身有成本，不提供online快速求解器或e2e提升。非线性下游、跨层反馈、多个query共同子集等需另测。若算法允许新的组合value、负权或改变目标，必须重建C，原证书不再界定它。\n\n配方/传感器迁移：用非负单位质量配比逼近目标成分/均值，投影给可达到的最低误差及可行停止条件；不是任意线性回归，也不保留协方差。可证伪预测：固定C/z条件下，所有可行重赋权的误差平方应≥认证D，且g=0候选与独立参考一致；若失败检查覆盖/符号/单位和算术。\n\n## 映射后的度量\n\n固定线性T时可将点换成Tv_i、目标Tz，在该Euclidean输出空间使用同一结论。只认证T输出；T有核时raw误差未必为零，原空间最优系数/输出也未必唯一。改变度量或量纲必须重新计算，不将原空间证书搬过去。\n\n## 近期研究：对象核对，非收益证据\n\nWildCat（Schröder–Mackey，ICML2026，PMLR306:108454–108484）§2.2在指数核空间做Nyström投影，§2.6/Algorithms2–3构造VS=WV及w=W1，再以加权归一化输出，并检查分母/clip。它涉及所有原values的压缩，不是本卡固定原value凸包上的单query β优化。仅凭“optimal weighting”不能认定权重具有本卡simplex约束；要逐项检查代表点、目标和可行域。本轮阅读这些定义/算子，未核验全文近线性误差定理、未复现GPU或模型实验，也不将正式发表当本项目收益。\n\n## 前置关系及实际验证状态\n\n强前置`math.dual-certificates@1`：可行上界与合法下界的方向；相关`math.convex-support-reduction`讨论自由挑选支持的存在性，`math.orthogonal-projection-qr`讨论子空间投影，`math.attention-output-geometry`讨论输出目标。它们不是指定凸子集优化的同义词。\n\n本轮12个公开Fraction例：有限小规模face KKT枚举、全点残差max和证书，含退化/空/负权/漏max及T核反例；一般证明为非形式化独立数学审查。没有Lean、浮点误差外包或大规模QP正确性保证。三条未提示定理名的结构查询×文件/SQLite后端是公开开发检索，不是模型检索/拒用或未见测试。实际token、GPU、model A/B与e2e均未测；未读取既有留出题内容。只发布经核验知识，不改生产注意力行为。\n",
+        "path": "entries/math.convex-projection-certificate.json",
+        "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c",
+        "selection_reason": "prerequisite"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.dual-certificates",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "拉格朗日对偶界与最优性证书",
+        "summary": "用可行解给上界、合法对偶值给下界，评估搜索结果距全局最优的差距。",
+        "aliases": [
+          "Lagrange duality",
+          "optimality certificate",
+          "lower bound",
+          "duality gap",
+          "KKT",
+          "最优性证书",
+          "搜索 剪枝"
+        ],
+        "domains": [
+          "optimization"
+        ],
+        "structures": [
+          "lower-bound",
+          "constrained-optimization",
+          "optimality-gap"
+        ],
+        "assumptions": [
+          "原问题为最小化，约束写成 fi(x)≤0 与 hi(x)=0，定义域明确",
+          "不等式乘子 λ≥0，g(λ,ν) 是整个定义域上拉格朗日函数的下确界或其认证下界",
+          "强对偶与 KKT 充分性需额外凸性/约束资格，弱对偶本身无需凸性"
+        ],
+        "sources": [
+          {
+            "url": "https://see.stanford.edu/materials/lsocoee364a/05Duality.pdf",
+            "locator": "slides 5–2/5–3, 5–10/5–11, 5–18/5–19",
+            "accessed": "2026-10-06"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "同名 Markdown 的明确推导与反例；非形式化证明",
+            "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+          ]
+        },
+        "requires": [],
+        "relations": [],
+        "content": "# 用上下界而不是猜测宣布最优\n\n## 定义与推导\n原问题 min f₀(x)，fi(x)≤0，hi(x)=0；L=f₀+Σλi fi+Σνi hi，g=inf_x L。\nλ≥0 时，对每个可行 x，有 g≤L(x,λ,ν)≤f₀(x)。所以任何合法 g 是最优值 p* 的下界；可行候选 x 给上界 f₀(x)。差 f₀(x)−g 给出该候选的次优误差上界，不需要强对偶。\n如果用数值算法近似算 inf L，它返回的函数值通常是 inf 的上界，不能直接冒充 g。需要解析解或可认证下界。\n\n## 强对偶的范围\n一般非凸问题未必强对偶。对有限值凸目标/凸不等式、仿射等式，在公共定义域内部存在满足等式且所有不等式严格成立的点，是一个足够的 Slater 条件；更一般相对内部版本不在本条展开。KKT 条件对凸可微问题给最优性证书，非凸时仅满足驻点条件不足以保证全局最优。\n\n## 例子与反例\nmin x²，约束 x≥1，写 fi=1−x。L=x²+λ(1−x)，配方得到 g=λ−λ²/4。\n取 λ=2 得下界 1；x=1 是可行且目标 1，证得最优。x=1.01 的目标为 1.0201，因此最优性差距≤0.0201。\n反例：无约束 f=x⁴−x²，x=0 梯度为零，却不是最小点。搜索没发现更好解也不等于有最优性证书。\n\n## 任务映射\n用于 Agent 搜索/规划的停止条件、资源预算分配与分支定界。先核对约束方向、乘子符号和可行性，再使用上下界；启发式评估不是认证界。不能凭小迭代变化或局部驻点宣称“最优版本”。\n",
+        "path": "entries/math.dual-certificates.json",
+        "sha256": "d165577ff3bfb7ebc14ff33ccc66d3641cf4f9afdae532636099bfefc07ab708",
+        "selection_reason": "prerequisite"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.frank-wolfe-output-solver",
+        "version": 1,
+        "status": "published",
+        "kind": "method",
+        "title": "固定凸输出的逐步非负重赋权、迭代界与停止证书",
+        "summary": "完整残差oracle与可行simplex更新给固定平方输出FW递推、O(1/t)目标误差及gap停止；schedule不保证单调，部分max不认证。",
+        "aliases": [
+          "非负 权重 迭代 拟合 固定 输出",
+          "混合 配方 逐步 添加 成分 停止 误差",
+          "候选 部分 最大 残差 假收敛",
+          "Frank Wolfe conditional gradient sparse convex output reweighting full oracle gap"
+        ],
+        "domains": [
+          "optimization",
+          "linear-algebra"
+        ],
+        "structures": [
+          "convex-output-iteration",
+          "simplex-weights",
+          "oracle-error",
+          "gap-stopping"
+        ],
+        "assumptions": [
+          "非空有限固定v_i、已知固定z，f=1/2||y−z||²，C=conv(v)，β≥0且Σβ=1。",
+          "精确oracle遍历全部定义C的点；近似oracle须认证加性缺口η，未控η不套无误差rate。",
+          "schedule gamma=2/(t+2),t从0；或精确[0,1]线搜索；gap停止只界距最优，非绝对输出误差。"
+        ],
+        "sources": [
+          {
+            "url": "https://proceedings.mlr.press/v28/jaggi13.pdf",
+            "locator": "Algorithm1-3, Sections2-3, curvature Eq3, Theorem1; quadratic recurrence independently proved here; no whole-paper claim",
+            "accessed": "2026-10-09"
+          },
+          {
+            "url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/alcalde26a/alcalde26a.pdf",
+            "locator": "Sections1.1-1.2,2.1-2.3,3 Theorem3.1,4 Theorem4.2 premises; full proof appendices/model reproduction not checked",
+            "accessed": "2026-10-09"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "agent_doc/results/math-frank-wolfe-20261009：公开Fraction轨迹、检索与独立验收；非形式化/非模型GPU。"
+          ]
+        },
+        "requires": [
+          {
+            "id": "math.convex-projection-certificate",
+            "version": 1
+          }
+        ],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.convex-support-reduction"
+          },
+          {
+            "type": "related",
+            "id": "math.descent-lyapunov-certificate"
+          }
+        ],
+        "content": "# 固定凸输出的逐步重赋权与停止证书\n\n稳定ID `math.frank-wolfe-output-solver`，版本1。经典方法来自Jaggi2013§2–3 Algorithm1/3、Theorem1。以下平方目标递推是项目独立特化推导，非新定理。不是生产求解器、attention机制等价或模型收益证据。\n\n## 对象与准确条件\n\n非空有限原点v_i∈R^p，固定已知z；C=conv{v_i}，f(y)=1/2||y−z||²，f*=min_C f，h_t=f(y_t)−f*。所有权重β_i≥0、Σβ=1，y_t=Σβ_i v_i。D=diam(C)=max_{i,j}||v_i−v_j||。量纲：f,h,g,D²均为输出单位平方，不能当token overlap或attention mass。\n\n精确oracle选j_t∈argmax_i (z−y_t)ᵀv_i，d_t=v_j−y_t，g_t=(z−y_t)ᵀd_t。完整max给g_t≥h_t≥0；g_t≤ε认证f(y_t)−f*≤ε，即平方误差距最优≤2ε，不表示绝对误差≤2ε（f*可能正）。\n\n更新y_{t+1}=y_t+γ_t d_t、β_{t+1}=(1−γ_t)β_t+γ_t e_j，0≤γ≤1保证可行。两种policy：固定schedule γ_t=2/(t+2)，t=0开始；精确线搜索 γ=clip(g_t/||d_t||²,0,1)，d=0时γ=0。\n\n对schedule和精确线搜索都有\n\n$$h_{t+1}\\le(1-\\bar\\gamma_t)h_t+\\tfrac12\\bar\\gamma_t^2D^2,\\quad\\bar\\gamma_t=\\frac2{t+2},\\qquad h_t\\le\\frac{2D^2}{t+2}\\ (t\\ge1).$$\n\n只有线搜索保证f每步不增，固定schedule可能上升。h_t的O(1/t)不等于最后一步g_t同样O(1/t)；必须实际计算gap，不能按次数误报停止。D=0时所有点相同、h=0，但绝对f可为正。从一个顶点初始化，t步最多t+1个正权点；一般m_0点初始化最多m_0+t，不保证最小支持。\n\n## 可复核证明\n\n由前置投影卡，完整残差gap给h≤g。精确平方展开任意γ：\n\n$$f(y+\\gamma d)=f(y)-\\gamma g+\\tfrac12\\gamma^2\\|d\\|^2.$$\n\n可行y、v_j∈C，||d||≤D。取schedule并用g≥h得到递推。t=0时γ=1，因此h_1≤D²/2≤2D²/3，不依赖任意大h_0。若h_t≤2D²/(t+2)，递推得h_{t+1}≤2D²(t+1)/(t+2)²≤2D²/(t+3)，最后一步由(t+1)(t+3)≤(t+2)²。线搜索最小化同一线段的精确凸二次函数，目标≤schedule候选，故同样递推且可取γ=0证明不增。归纳β更新保持simplex；每步最多添一个点。\n\n## 近似oracle的方向与局限\n\n若只找到可行v_hat，令g_hat=(z−y)ᵀ(v_hat−y)，要有**认证上界**η≥max_i(z−y)ᵀv_i−(z−y)ᵀv_hat≥0，才可保证h≤g_hat+η，递推多出γ η。未规定η随时间的准确控制，不沿用上述无误差rate。采样max是full max下界，不能自给η；一次线搜索仍可不增，但不保证朝全域最优或能合法停止。近似梯度还需额外oracle/gradient误差，不强行套用。\n\n## 正例、边界与误用\n\n- 配方v=(0,3),z=5/6，y0=0：完整oracle=3。线搜索γ=5/18，一步到目标；schedule γ0=1跳到3，f由25/72上升至169/72，随后满足一般界。这个上升不是实现bug。\n- v=(0,1),z=2：最优y=1，f*=1/2；gap0认证最优而非零输出误差。负权(−1,2)不得作为可行输出。\n- C三角形(0,0),(1,0),(0,1)，z=(1,1)：最优y=(1/2,1/2),f*=1/4，有限迭代不需精确达到才能界误差。\n- C=conv{0,2,4},z=4,y=2：只查0,2得g_hat=0却h=2，full gap=4。合法η=4恢复上界，禁止假收敛。\n- 重复点/单点允许，不要求独立坐标或可逆Gram；空C、负权、变动z/改变可行点都需拒用或重建问题。固定policy没有统一线性收敛保证。\n\n## 检索、迁移与成本\n\n结构触发：非负权重迭代拟合固定输出、混合配方逐步添加成分、候选部分最大残差假收敛。先核对固定对象/目标/单位、simplex可行性及全oracle，再使用ID和强前置`math.convex-projection-certificate@1`（包含`math.dual-certificates@1`）。\n\nIndexer严格映射：对固定query，z是dense teacher输出，v_i为固定选中原values，β是允许新权重。可离线比较初始softmax子集重归一化与迭代结果；达到gap≤ε才认证与此子集的最优误差相差≤2ε。保持value和非负归一结构，丢失跨query共享、softmax参数化、跨层非线性与运行开销；不是线上选择速度或e2e改善。若原权重不可改变，本求解器只给诊断基准。\n\n每步穷举oracle约O(np)点积，加O(p)输出更新；若显式更新全部权重需O(n)，稀疏支持可按其大小处理。取得z与n个value已经有成本；投影-free不等于读数据-free、token-free或GPU更快。完整支持太大时只能研究可认证近似oracle，不能靠漏点省成本并称gap已认证。配方/传感器平均是同一数学问题；协方差、负权回归等不是。\n\n最小可证伪检查：固定C/z下每步β合法；展开等式成立；全gap上界误差；与独立解析最优比较。实际模型实验需要同模型权限/预算、matched index维度和完整e2e输出对照，未测不接生产。\n\n## 近期研究边界及验证等级\n\nAlcalde等《Attention’s forward pass and Frank-Wolfe》，ICML2026 PMLR306:1767–1800终版，检索2026-10-09。读取§1–3定义/假设与§4定理前提：研究hardmax token动力学，限制value矩阵与key-query符号，token凸包可随步数改变。与本卡固定已知z、固定C的误差优化不同；不因同名迭代把动力学定理搬给真实attention/indexer。未核验全部附录或复现实验。\n\n验证：公开10例/两policy12步的Fraction检查、无定理名三结构查询×两后端及知识回归，经过实际独立验收；不是Lean、浮点外包、模型检索拒用或未见测试。留出题内容未读。实际token、GPU、model A/B/e2e未知，不宣称收益。来源版本/hash/read extent见`agent_doc/results/math-frank-wolfe-20261009/sources.json`。\n",
+        "path": "entries/math.frank-wolfe-output-solver.json",
+        "sha256": "90ccb92febf95e295600b4c33841f746e67541016cf440606642da83e5205ff5",
+        "selection_reason": "retrieved"
+      }
+    ],
+    "knowledge_refs": [
+      {
+        "id": "math.convex-projection-certificate",
+        "version": 1,
+        "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c"
+      },
+      {
+        "id": "math.dual-certificates",
+        "version": 1,
+        "sha256": "d165577ff3bfb7ebc14ff33ccc66d3641cf4f9afdae532636099bfefc07ab708"
+      },
+      {
+        "id": "math.frank-wolfe-output-solver",
+        "version": 1,
+        "sha256": "90ccb92febf95e295600b4c33841f746e67541016cf440606642da83e5205ff5"
+      }
+    ],
+    "skipped": [
+      {
+        "id": "math.convex-support-reduction",
+        "reason": "complete prerequisite bundle exceeds context budget",
+        "selection_reason": "related"
+      },
+      {
+        "id": "math.descent-lyapunov-certificate",
+        "reason": "complete prerequisite bundle exceeds context budget",
+        "selection_reason": "related"
+      }
+    ]
+  },
+  "token_cost": "unmeasured; chars/bytes not tokens",
+  "holdouts_metadata_sha256": "5a0572863e75526de915f22108fc90b5e8ce58de14292e7159054af3ba9fe48a"
+}

@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "id": "math.frank-wolfe-output-solver",
+  "version": 1,
+  "status": "published",
+  "kind": "method",
+  "title": "固定凸输出的逐步非负重赋权、迭代界与停止证书",
+  "summary": "完整残差oracle与可行simplex更新给固定平方输出FW递推、O(1/t)目标误差及gap停止；schedule不保证单调，部分max不认证。",
+  "aliases": [
+    "非负 权重 迭代 拟合 固定 输出",
+    "混合 配方 逐步 添加 成分 停止 误差",
+    "候选 部分 最大 残差 假收敛",
+    "Frank Wolfe conditional gradient sparse convex output reweighting full oracle gap"
+  ],
+  "domains": [
+    "optimization",
+    "linear-algebra"
+  ],
+  "structures": [
+    "convex-output-iteration",
+    "simplex-weights",
+    "oracle-error",
+    "gap-stopping"
+  ],
+  "assumptions": [
+    "非空有限固定v_i、已知固定z，f=1/2||y−z||²，C=conv(v)，β≥0且Σβ=1。",
+    "精确oracle遍历全部定义C的点；近似oracle须认证加性缺口η，未控η不套无误差rate。",
+    "schedule gamma=2/(t+2),t从0；或精确[0,1]线搜索；gap停止只界距最优，非绝对输出误差。"
+  ],
+  "sources": [
+    {
+      "url": "https://proceedings.mlr.press/v28/jaggi13.pdf",
+      "locator": "Algorithm1-3, Sections2-3, curvature Eq3, Theorem1; quadratic recurrence independently proved here; no whole-paper claim",
+      "accessed": "2026-10-09"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/alcalde26a/alcalde26a.pdf",
+      "locator": "Sections1.1-1.2,2.1-2.3,3 Theorem3.1,4 Theorem4.2 premises; full proof appendices/model reproduction not checked",
+      "accessed": "2026-10-09"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "agent_doc/results/math-frank-wolfe-20261009：公开Fraction轨迹、检索与独立验收；非形式化/非模型GPU。"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.convex-projection-certificate",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.convex-support-reduction"
+    },
+    {
+      "type": "related",
+      "id": "math.descent-lyapunov-certificate"
+    }
+  ]
+}

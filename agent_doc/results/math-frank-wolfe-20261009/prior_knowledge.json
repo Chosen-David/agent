@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "snapshot": "81e405ef67e8934d4cc2f78ee5b357c75a3532c522b5a94fead5db51541a5af5",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.convex-projection-certificate",
+      "version": 1,
+      "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c",
+      "title": "选定凸输出的投影、误差下界与残差间隙证书",
+      "summary": "有限value凸包的平方误差投影以可行性和全顶点残差max认证；P−2g≤最优误差≤P，g=0 iff投影。",
+      "status": "published",
+      "assumptions": [
+        "非空有限v_i∈R^p和固定已知z；Euclidean平方误差；C=conv{v_i}，允许改变权重但β≥0且Σβ=1。",
+        "候选y必须属于C；h_C(r)=max_i r·v_i遍历C的全部给定点；只对明确选定value集合给界。",
+        "固定线性W可对Wv和Wz使用结论；只保真W输出，不保证raw输出、全部query或模型e2e。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "精确展开/凸性证明人工审核，不是Lean或浮点数值证书。",
+          "agent_doc/results/math-convex-projection-20261009：12公开Fraction例、6结构检索、定向回归及独立六域验收；无模型/GPU实测。"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "误差",
+            "输出"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "误差",
+            "输出",
+            "非负"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "误差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "权重",
+            "误差",
+            "输出",
+            "非负"
+          ]
+        }
+      ],
+      "score": 32
+    },
+    {
+      "id": "math.contraction-residual-certificate",
+      "version": 1,
+      "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+      "title": "收缩迭代的残差误差证书与不精确求解边界",
+      "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+      "status": "published",
+      "assumptions": [
+        "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+        "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+        "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+          "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "误差",
+            "迭代"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "误差",
+            "迭代"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "误差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "误差",
+            "迭代"
+          ]
+        }
+      ],
+      "score": 25
+    },
+    {
+      "id": "math.discrete-budget-allocation",
+      "version": 1,
+      "sha256": "71cd29618df4439297c7b0d42f96e89230afeb5724aef660bfde2528d871e2dc",
+      "title": "有限菜单离散预算分配与代理最优性证书",
+      "summary": "可加整数成本/损失下用DP求有限菜单精确解；λ加权和可漏掉未支配最优，弱对偶只认证代理而非端到端精度。",
+      "status": "published",
+      "assumptions": [
+        "每组非空有限菜单，恰选一项；成本为非负整数，预算B为非负整数；允许空组序列边界",
+        "目标损失和资源成本均可加且固定；损失为有限实数；实测浮点最优性和硬延迟另需误差认证",
+        "对偶λ≥0且有限菜单min为真实值或认证下界；只认证已定义代理目标"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名Markdown一般归纳/弱对偶推导；非形式化",
+          "doc/results/math-allocation-20261008/：公开CPU整数/Fraction验证及独立审查；不含模型/GPU"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "误差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "权重",
+            "误差",
+            "输出",
+            "非负"
+          ]
+        }
+      ],
+      "score": 9
+    }
+  ]
+}

@@ -1,0 +1,174 @@
+{
+  "task_refs": [
+    "MATH-54"
+  ],
+  "scope": "Exact finite convex-output Frank-Wolfe recurrence, feasible weights, gap stopping and misuse; public retrieval only, no model/GPU/e2e/token benefit",
+  "budget_seconds": 1200,
+  "max_cycles": 2,
+  "max_attempts": 2,
+  "authorization": "current user continuous foundation build/direct main publish",
+  "decision": "EXECUTE",
+  "startup_revision": "c8da2cd8c0481d4c8877a632111722d7743a245f",
+  "completed_prerequisites": [
+    "startup reads/fresh main/prior search with actual outputs"
+  ],
+  "evidence_refs": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "ff97d09aeb35cff3a973d1423f325ef6274f33b4c68830e8c899821e989bd63a"
+    },
+    {
+      "path": "prompts/decision_review.md",
+      "sha256": "55b793450ff0e3d29696dae7626afab7f15d1ab843baa396dcc1d564e532c849"
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "87e09dccdd7235f4f9a02deabca5ccf7a6329f130b497b7a9a96f70bf63b4aef"
+    },
+    {
+      "path": "agent_doc/task/task_details/MATH-54.md",
+      "sha256": "b192efeb936a4fea17220df8cf71ca11a20388dee9e2450fd007cd48319f3d17"
+    },
+    {
+      "path": "config/role_registry.json",
+      "sha256": "c231d5031aab337845de3e970f0253fc8d5156be3a3bdff839f2ebf696f7c5eb"
+    },
+    {
+      "path": "knowledge/learning_state.json",
+      "sha256": "12aeb78d262eb006cee986642ed89ae3fae6339989c25a17ae052677d7623c8a"
+    },
+    {
+      "path": "knowledge/README.md",
+      "sha256": "403af7e5f4abd9a36d58a1c30941d5a05f9273d1a454aaf3406d5b8e681b32fc"
+    },
+    {
+      "path": "knowledge/FORMAT.md",
+      "sha256": "ef6a2fa1048e2345573374c914d4e7cb4771e0e5882dadfd97dc6b1b3c24d3a0"
+    },
+    {
+      "path": "plugins/research-assistant/skills/model-with-knowledge/SKILL.md",
+      "sha256": "c1a060f682e5c1996d56978a68a5a9c916f828e7f2eec31a8892ab9b95d2c65b"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "agent_doc/results/math-frank-wolfe-20261009/sources.json",
+      "sha256": "ac428ada6e4450295912b35073480065be41413f91a4943fe92b7da7f59897ba"
+    },
+    {
+      "path": "agent_doc/results/math-frank-wolfe-20261009/prior_search.json",
+      "sha256": "2f360e2d5c3e65c6f3ef05b57794a99ec563816820e8071490dcc590260cc581"
+    },
+    {
+      "path": "agent_doc/results/math-frank-wolfe-20261009/prior_review.json",
+      "sha256": "15fc8e5a297b72ebd3d6b9bc9bed864767a5c3f0ac21ab836865f335bdbbd282"
+    },
+    {
+      "path": "agent_doc/results/math-frank-wolfe-20261009/prior_card.json",
+      "sha256": "6c3142bdf9626a8e477f98801ec60a5e73863ba267fa6bd0fd811e1d629ccdcb"
+    },
+    {
+      "path": "agent_doc/results/math-frank-wolfe-20261009/cases.json",
+      "sha256": "7a316dabacafb7508d34127c1e97401c896cc943a2ee84aca034ee3eab43158c"
+    },
+    {
+      "path": "agent_doc/results/math-frank-wolfe-20261009/retrieval_protocol.json",
+      "sha256": "1beade826b8e32171897a8f5d3b50402d82ac51305ae1b3b31b7aa738e57e555"
+    },
+    {
+      "path": "agent_doc/results/math-frank-wolfe-20261009/validation_plan.json",
+      "sha256": "eed60e36fb033ab574e462cf3fc3a2f46c314c97c75c64da985ee32267e830d3"
+    }
+  ],
+  "dag": [
+    {
+      "id": "independent-plan",
+      "acceptance": "Real fresh-context exact plan approval before producer"
+    },
+    {
+      "id": "produce",
+      "depends_on": [
+        "independent-plan"
+      ],
+      "experiment_result": {
+        "result_id": "math-frank-wolfe-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-fw-producer",
+        "manifest_path": "agent_doc/results/math-frank-wolfe-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-frank-wolfe-20261009/validation_plan.json",
+          "sha256": "eed60e36fb033ab574e462cf3fc3a2f46c314c97c75c64da985ee32267e830d3"
+        },
+        "scope": "Exact finite convex-output Frank-Wolfe recurrence, feasible weights, gap stopping and misuse; public retrieval only, no model/GPU/e2e/token benefit"
+      },
+      "commands": [
+        "python agent_doc/results/math-frank-wolfe-20261009/validate.py",
+        "python agent_doc/results/math-frank-wolfe-20261009/retrieve.py",
+        "python scripts/sync_plugin_references.py",
+        "python -m unittest tests.test_knowledge tests.test_knowledge_index tests.test_knowledge_math tests.test_knowledge_handoff tests.test_knowledge_reuse -v",
+        "python scripts/sync_plugin_references.py --check"
+      ]
+    },
+    {
+      "id": "verify",
+      "depends_on": [
+        "produce"
+      ],
+      "action": "verify_experiment_result",
+      "owner": "fresh independent context",
+      "result_validation": {
+        "result_id": "math-frank-wolfe-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-fw-producer",
+        "manifest_path": "agent_doc/results/math-frank-wolfe-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-frank-wolfe-20261009/validation_plan.json",
+          "sha256": "eed60e36fb033ab574e462cf3fc3a2f46c314c97c75c64da985ee32267e830d3"
+        },
+        "scope": "Exact finite convex-output Frank-Wolfe recurrence, feasible weights, gap stopping and misuse; public retrieval only, no model/GPU/e2e/token benefit"
+      }
+    },
+    {
+      "id": "publish",
+      "depends_on": [
+        "verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-frank-wolfe-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-fw-producer",
+          "manifest_path": "agent_doc/results/math-frank-wolfe-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/math-frank-wolfe-20261009/validation_plan.json",
+            "sha256": "eed60e36fb033ab574e462cf3fc3a2f46c314c97c75c64da985ee32267e830d3"
+          },
+          "scope": "Exact finite convex-output Frank-Wolfe recurrence, feasible weights, gap stopping and misuse; public retrieval only, no model/GPU/e2e/token benefit"
+        }
+      ],
+      "commands": [
+        "fresh fetch",
+        "nonforce main CAS publication",
+        "fetch/ls-remote SHA+tree verification"
+      ]
+    }
+  ],
+  "write_scope": [
+    "new math.frank-wolfe-output-solver card/mirror",
+    "README/coverage/learning state/task",
+    "new scoped resultdir"
+  ],
+  "prohibited": [
+    "SGLang",
+    "guide",
+    "production behavior",
+    "holdout content"
+  ],
+  "method": "f=half squared output; full oracle; gamma=2/(t+2) or exact clipped line search; prove h_{t+1}<= (1-gamma)h_t+gamma²D²/2; h_t<=2D²/(t+2),t>=1; gap>=h; approximate oracle needs certified additive deficit; no latest-paper dynamics transfer"
+}
