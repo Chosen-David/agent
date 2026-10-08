@@ -245,3 +245,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-08 标量方差预算
 
 - [ ] [EK-20261008-0915] 核验单项标量 Freedman 方差预算知识、反例及检索非退化；独立验收后发布，保留旧候选阻塞。 ([detail](task_details/EK-20261008-0915.md))
+
+## 2026-10-08 奇异支持与分数压缩
+
+- [ ] [MATH-48] 补齐奇异二阶矩下低秩分数最优解、边界与迁移；独立验收后main发布。 ([detail](task_details/MATH-48.md))

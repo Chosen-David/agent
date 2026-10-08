@@ -1,0 +1,89 @@
+{
+  "schema_version": "task-dag/v1",
+  "run_id": "math-singular-bilinear-20261008",
+  "user_goal": "Independent finite q/k with PSD noncentral second moments: support-aware rank-constrained score MSE, CPU exact/float fixtures and public structural retrieval; no model/GPU/e2e gain",
+  "authorization_reference": "current user continuous task and directmain instruction",
+  "tasks": [
+    {
+      "task_id": "produce",
+      "owner": "root-math-producer",
+      "action": "local_math_validation",
+      "task_type": "experiment",
+      "depends_on": [],
+      "experiment_result": {
+        "result_id": "math-singular-bilinear-20261008",
+        "producer_task_id": "produce",
+        "producer_actor": "root-math-producer",
+        "manifest_path": "agent_doc/results/math-singular-bilinear-20261008/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-singular-bilinear-20261008/validation_plan.json",
+          "sha256": "1a2b53f507634b394121e7b39af74715bef994cbee1d3dbe5369fe163c5c77ee"
+        },
+        "scope": "Independent finite q/k with PSD noncentral second moments: support-aware rank-constrained score MSE, CPU exact/float fixtures and public structural retrieval; no model/GPU/e2e gain"
+      },
+      "task_refs": [
+        "MATH-48"
+      ],
+      "max_attempts": 2,
+      "done_when": "Actual code/input/raw/output/environment frozen with pending result manifest; no acceptance/publication claimed"
+    },
+    {
+      "task_id": "verify",
+      "owner": "independent-math-review",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "produce"
+      ],
+      "result_validation": {
+        "result_id": "math-singular-bilinear-20261008",
+        "producer_task_id": "produce",
+        "producer_actor": "root-math-producer",
+        "manifest_path": "agent_doc/results/math-singular-bilinear-20261008/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-singular-bilinear-20261008/validation_plan.json",
+          "sha256": "1a2b53f507634b394121e7b39af74715bef994cbee1d3dbe5369fe163c5c77ee"
+        },
+        "scope": "Independent finite q/k with PSD noncentral second moments: support-aware rank-constrained score MSE, CPU exact/float fixtures and public structural retrieval; no model/GPU/e2e gain"
+      },
+      "task_refs": [
+        "MATH-48"
+      ],
+      "max_attempts": 2,
+      "done_when": "Independent actual code/source/data six-domain receipt usable-with-scope, hash-bound to frozen manifest"
+    },
+    {
+      "task_id": "publish",
+      "owner": "root-publication",
+      "action": "publish_main",
+      "depends_on": [
+        "verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-singular-bilinear-20261008",
+          "producer_task_id": "produce",
+          "producer_actor": "root-math-producer",
+          "manifest_path": "agent_doc/results/math-singular-bilinear-20261008/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/math-singular-bilinear-20261008/validation_plan.json",
+            "sha256": "1a2b53f507634b394121e7b39af74715bef994cbee1d3dbe5369fe163c5c77ee"
+          },
+          "scope": "Independent finite q/k with PSD noncentral second moments: support-aware rank-constrained score MSE, CPU exact/float fixtures and public structural retrieval; no model/GPU/e2e gain"
+        }
+      ],
+      "task_refs": [
+        "MATH-48"
+      ],
+      "max_attempts": 2,
+      "done_when": "Root refreshes main, publishes nonforce with expected parent and verifies remote SHA"
+    }
+  ],
+  "task_refs": [
+    "MATH-48"
+  ],
+  "supervision": {
+    "min_seconds": 10,
+    "max_seconds": 60,
+    "rationale": "direct local host; no deployment claim"
+  }
+}

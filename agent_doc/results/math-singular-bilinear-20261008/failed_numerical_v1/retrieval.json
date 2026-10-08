@@ -1,0 +1,1297 @@
+{
+  "scope": "Public structural checks only",
+  "snapshot": "da156f16458b8aa20e0e2050e2de7680966d55bfef79b5f79d4ba8c58578c1ef",
+  "protocol_sha256": "874e4e614a1f8c0969955724af6c981ec92d5fee2c12114ecb7a1d8f8a12481b",
+  "load_seconds": 0.030622455997217912,
+  "index_build_seconds": 0.14143544499893324,
+  "records": [
+    {
+      "backend": "files-lexical-v1",
+      "case": "R1",
+      "query": "秩亏 二阶矩 支持 空间 分数 压缩",
+      "actual": [
+        "math.singular-support-bilinear-low-rank",
+        "math.weighted-bilinear-low-rank",
+        "math.rank-nullity-quotient"
+      ],
+      "hit": true,
+      "seconds": 0.012441402999684215,
+      "chars": 2610,
+      "bytes": 3629,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "da156f16458b8aa20e0e2050e2de7680966d55bfef79b5f79d4ba8c58578c1ef",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.singular-support-bilinear-low-rank",
+            "version": 1,
+            "sha256": "2cf2c1a7d0ec74788c92fc5ca23fc2cb06f6031208c0120a0cbebec0ae08d7ca",
+            "title": "奇异支持下的双线性低秩分数近似",
+            "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+              "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+              "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文条件式推导；非Lean形式化证明",
+                "agent_doc/results/math-singular-bilinear-20261008/validate.py、raw.json：公开有限CPU检查；独立结果回执与发布记录另存"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "分数",
+                  "支持"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "二阶",
+                  "分数",
+                  "压缩",
+                  "支持",
+                  "秩亏",
+                  "空间",
+                  "阶矩"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "二阶",
+                  "支持",
+                  "阶矩"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "二阶",
+                  "分数",
+                  "压缩",
+                  "支持",
+                  "秩亏",
+                  "空间",
+                  "阶矩"
+                ]
+              }
+            ],
+            "score": 61
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "二阶",
+                  "分数",
+                  "阶矩"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "分数",
+                  "压缩"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "二阶",
+                  "分数",
+                  "空间",
+                  "阶矩"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "二阶",
+                  "分数",
+                  "压缩",
+                  "支持",
+                  "空间",
+                  "阶矩"
+                ]
+              }
+            ],
+            "score": 43
+          },
+          {
+            "id": "math.rank-nullity-quotient",
+            "version": 1,
+            "sha256": "8aca11b2697e73664732ce26ad7b1afcc118f452e800eb9652648ac136c9cc4c",
+            "title": "向量空间、商空间与对偶查询的保真条件",
+            "summary": "dim V=dim ker T+dim im T；V/ker T≅im T。",
+            "status": "published",
+            "assumptions": [
+              "V,W 为有限维 F 向量空间，T:V→W 线性，查询 q∈V* 线性；代数对偶不默认欧氏内积。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文逐项来源/证明核查；非 Lean 形式化证明",
+                "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "空间"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "压缩",
+                  "空间"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "空间"
+                ]
+              }
+            ],
+            "score": 16
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R2",
+      "query": "传感器 冗余 零方向 响应 压缩",
+      "actual": [
+        "math.singular-support-bilinear-low-rank",
+        "math.weighted-bilinear-low-rank",
+        "math.perturbation-propagation"
+      ],
+      "hit": true,
+      "seconds": 0.012313273997278884,
+      "chars": 2540,
+      "bytes": 3679,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "da156f16458b8aa20e0e2050e2de7680966d55bfef79b5f79d4ba8c58578c1ef",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.singular-support-bilinear-low-rank",
+            "version": 1,
+            "sha256": "2cf2c1a7d0ec74788c92fc5ca23fc2cb06f6031208c0120a0cbebec0ae08d7ca",
+            "title": "奇异支持下的双线性低秩分数近似",
+            "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+              "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+              "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文条件式推导；非Lean形式化证明",
+                "agent_doc/results/math-singular-bilinear-20261008/validate.py、raw.json：公开有限CPU检查；独立结果回执与发布记录另存"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "传感",
+                  "冗余",
+                  "压缩",
+                  "响应",
+                  "感器",
+                  "方向",
+                  "零方"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传感",
+                  "压缩",
+                  "感器",
+                  "方向"
+                ]
+              }
+            ],
+            "score": 39
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "传感",
+                  "压缩",
+                  "响应",
+                  "感器"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传感",
+                  "压缩",
+                  "响应",
+                  "感器",
+                  "方向"
+                ]
+              }
+            ],
+            "score": 25
+          },
+          {
+            "id": "math.perturbation-propagation",
+            "version": 1,
+            "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381",
+            "title": "有限复合映射的扰动传播与逐层误差预算",
+            "summary": "有已核实增益和同输入缺陷时，乘积加权传播局部误差；teacher缺陷与参考增益不能混用，经验吸收不是一致证书。",
+            "status": "published",
+            "assumptions": [
+              "有限复合映射/固定赋范空间，参考和近似轨迹实际输入均落在有效域",
+              "路线A参考F的输入增益及近似输入上同输入缺陷；路线B近似G的输入增益及参考输入缺陷，不混用",
+              "L与epsilon有限非负且范数/单位一致；全菜单保证需一致域/增益/缺陷覆盖全部可达状态"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired Markdown finite induction; nonformal; final publication requires independent review",
+                "doc/results/math-propagation-20261008/ CPU public fixtures only; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "传感",
+                  "感器"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传感",
+                  "响应",
+                  "感器",
+                  "方向"
+                ]
+              }
+            ],
+            "score": 14
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R3",
+      "query": "成对 相关 样本 中心 协方差 误用",
+      "actual": [
+        "math.centered-covariance-merge",
+        "math.singular-support-bilinear-low-rank",
+        "math.weighted-bilinear-low-rank"
+      ],
+      "hit": true,
+      "seconds": 0.01274979799927678,
+      "chars": 2771,
+      "bytes": 4070,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "da156f16458b8aa20e0e2050e2de7680966d55bfef79b5f79d4ba8c58578c1ef",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.centered-covariance-merge",
+            "version": 1,
+            "sha256": "f9ebd428b6fd9f78ac667a6a2419e277c5d8ca1731d3e5357b25a9a62f7a9b28",
+            "title": "中心化协方差、可合并散布统计量与误差桥",
+            "summary": "区分二阶矩与中心协方差；按计数/均值/散布精确合并，避免遗漏组间项；统计保证与浮点稳定性分别审查。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量，同维度/坐标/单位和相同预处理；精确恒等式不要求iid",
+              "A、B为不重复不遗漏的数据分区，计数为非负整数；空分区用单位元，不定义空均值",
+              "C_n=S/n对n≥1；S/(n−1)只对n≥2，称总体协方差无偏还需iid及有限二阶矩",
+              "概率误差桥需已证明的均值和二阶矩误差事件；合并公式不赋予独立性或覆盖保证",
+              "浮点不具有严格结合律；需单独检查输入精度、溢出、抵消及舍入误差"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-centering/verify.py",
+                "docs/knowledge_learning/2026-10-07-centering/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "中心",
+                  "协方",
+                  "方差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "中心",
+                  "协方",
+                  "方差"
+                ]
+              },
+              {
+                "field": "structures",
+                "terms": [
+                  "中心",
+                  "协方",
+                  "方差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "中心",
+                  "协方",
+                  "方差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "中心",
+                  "协方",
+                  "方差",
+                  "样本",
+                  "相关"
+                ]
+              }
+            ],
+            "score": 56
+          },
+          {
+            "id": "math.singular-support-bilinear-low-rank",
+            "version": 1,
+            "sha256": "2cf2c1a7d0ec74788c92fc5ca23fc2cb06f6031208c0120a0cbebec0ae08d7ca",
+            "title": "奇异支持下的双线性低秩分数近似",
+            "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+              "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+              "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文条件式推导；非Lean形式化证明",
+                "agent_doc/results/math-singular-bilinear-20261008/validate.py、raw.json：公开有限CPU检查；独立结果回执与发布记录另存"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "中心",
+                  "协方",
+                  "成对",
+                  "方差",
+                  "样本",
+                  "相关",
+                  "误用"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "中心",
+                  "样本"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "中心",
+                  "协方",
+                  "成对",
+                  "方差",
+                  "样本",
+                  "相关",
+                  "误用"
+                ]
+              }
+            ],
+            "score": 48
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "summary",
+                "terms": [
+                  "中心"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "中心",
+                  "协方",
+                  "成对",
+                  "方差",
+                  "样本",
+                  "相关",
+                  "误用"
+                ]
+              }
+            ],
+            "score": 10
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R1",
+      "query": "秩亏 二阶矩 支持 空间 分数 压缩",
+      "actual": [
+        "math.singular-support-bilinear-low-rank",
+        "math.weighted-bilinear-low-rank",
+        "math.cauchy-schwarz"
+      ],
+      "hit": true,
+      "seconds": 0.007179366999480408,
+      "chars": 5508,
+      "bytes": 9036,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "da156f16458b8aa20e0e2050e2de7680966d55bfef79b5f79d4ba8c58578c1ef",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.singular-support-bilinear-low-rank",
+            "version": 1,
+            "sha256": "2cf2c1a7d0ec74788c92fc5ca23fc2cb06f6031208c0120a0cbebec0ae08d7ca",
+            "title": "奇异支持下的双线性低秩分数近似",
+            "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+              "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+              "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文条件式推导；非Lean形式化证明",
+                "agent_doc/results/math-singular-bilinear-20261008/validate.py、raw.json：公开有限CPU检查；独立结果回执与发布记录另存"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.048915917503966164,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "触发问题与数学对象",
+                "start_line": 5,
+                "end_line": 12,
+                "excerpt": "## 触发问题与数学对象\n\n校准 query/key 的二阶矩秩亏，无法全空间 whitening inverse；应在明确的有效支持内求解，而不是把奇异性藏进逆矩阵。以下推广是项目自己的推导，使用经典截断 SVD 和 Moore–Penrose 伪逆，不声称新原创定理。\n\nq∈R^m、k∈R^n 独立，有限**非中心二阶矩** Sq=E[qqᵀ]≥0、Sk=E[kkᵀ]≥0；H∈R^(m×n)固定。目标是 J(M)=E[(qᵀ(H−M)k)²]，rank(M)≤r，r为0至min(m,n)的整数。q/k不必高斯或零均值。负特征值不符合二阶矩模型；中心协方差、真实 paired 分布、softmax、输出误差不是本目标。\n\nL=Sq^(1/2)、R=Sk^(1/2)是对称 PSD 平方根，L⁺、R⁺取**精确非零**特征值的倒数；Pq=L L⁺、Pk=R⁺ R是正交支持投影。C=L H R。零支持与空有效特征合法。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "准确结论与可复核推导",
+                "start_line": 13,
+                "end_line": 30,
+                "excerpt": "## 准确结论与可复核推导\n\n独立性和有限二阶矩给出 J(M)=tr((H−M)Sk(H−M)ᵀSq)=||L(H−M)R||F²。可先对k条件期望，再对q取迹；若同一文档成对样本相关，条件二阶矩依q而变，不能代换。\n\nC=Pq C Pk。选取 C 的秩≤r截断 SVD Cr，使其非零奇异向量留在这两个支持中，故 Pq Cr Pk=Cr。零奇异值项系数为0，不强迫任意零向量满足支持。重复奇异值允许不同的 Cr。\n\n规范回提升：M0=L⁺ Cr R⁺，rank(M0)≤r。因为 L M0 R=Pq Cr Pk=Cr，它达到\n\nmin_rank(M)≤r J(M)=Σ_(j>r) σj(C)²。\n\n下界来自任意 X=L M R的rank≤r与经典Eckart–Young–Mirsky；上界由上面的支持内回提升达到。奇异情况下 X 不遍历全部 rank≤r 矩阵；不能复用正定卡的全空间双射论证。只需存在支持内的最优 Cr。\n\n对一个**固定 Cr**，全部回提升满足 M=M0+N、L N R=0（等价 Pq N Pk=0）。M0=Pq M0 Pk，因此 Frobenius 内积〈M0,N〉=0，||M||F²=||M0||F²+||N||F²；M0是该固定Cr的唯一最小Frobenius范数回提升。若要求仍属于原秩预算，必须另外检查 rank(M0+N)≤r。不是所有不可见 N 都可加，也未证明不同 tied Cr 中哪一个回提升最小范数。\n\nnull(Sq) 中任意v满足E(vᵀq)²=0，故vᵀq=0几乎处处；有限维零空间基给 q=Pq q 几乎处处，k同理。于是不可见 N 在本分布下逐点几乎处处不改变分数，但这不保证新分布支持仍相同。\n\nCr=Ur Dr Vrᵀ时可用 A=Dr^(1/2)UrᵀL⁺、B=Dr^(1/2)VrᵀR⁺，M0=AᵀB，得到(Aq)ᵀ(Bk)；r=0用零矩阵/空特征。当r≥rank(C)时风险0，即使H全秩也可能成立；不能推成任意q/k无损。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.048651507139079855,
+            "sections": [
+              {
+                "node": "s3",
+                "title": "对象、假设与准确结论",
+                "start_line": 8,
+                "end_line": 16,
+                "excerpt": "## 对象、假设与准确结论\nq∈R^m,k∈R^n独立，Sq=E[qqᵀ]、Sk=E[kkᵀ]为有限正定非中心二阶矩。H∈R^(m×n)固定，目标分数qᵀHk，以qᵀMk近似，rank(M)≤r，r∈{0,…,min(m,n)}。中心化协方差不能直接替代Sq/Sk；无需零均值或高斯。\n\n设E=H−M，则\nL(M)=E[(qᵀEk)²]=tr(E Sk Eᵀ Sq)=||Sq^(1/2)(H−M)Sk^(1/2)||F²。\n取C=Sq^(1/2)HSk^(1/2)，对C截断SVD得Cr。最小值为Σ_(j>r)σj(C)²，最优解之一为\nM*=Sq^(−1/2)Cr Sk^(−1/2)。\n若Cr=Ur Dr Vrᵀ，设A=Dr^(1/2)UrᵀSq^(−1/2)，B=Dr^(1/2)VrᵀSk^(−1/2)，则M*=AᵀB，qᵀM*k=(Aq)ᵀ(Bk)。r=0时使用空特征/零矩阵；全秩预算时L=0。重复奇异值允许多个最优子空间，不宣称唯一。秩不足输入的伪逆/支持空间推广不包含在本条目的SPD接口中。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "正例、边界和误用反例",
+                "start_line": 23,
+                "end_line": 31,
+                "excerpt": "## 正例、边界和误用反例\nH=I2,Sq=diag(.01,100),Sk=diag(100,1)，r=1。K-PCA选第一坐标，分数误差为100；本目标选第二坐标，误差为1。key的高能量不等于query可见的高能量。\n\n非零均值：q≡2,k≡3,H=1,M=0，误差36；用中心化协方差会错误给0，非中心二阶矩4×9正确。\n\n相关性反例：q=k∈{−√2,0,√2}，概率{1/4,1/2,1/4}。两者二阶矩均1，但H=1,M=0时E(qk)²=2而非1。这里必须拒用独立因子化，不用样本数增加弥补缺前提。\n\nSq/Sk奇异或含负特征值时，本算法拒绝或转另一个经过核验的支持空间模型；正则化Sq+λI定义的是另一个目标，不能声称精确优化原风险。实际计算优先Cholesky/线性solve，不显式形成逆；记录最小特征值、条件数、dtype和重建残差。PSD数值噪声与真正非正定须区别处理。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.cauchy-schwarz",
+            "version": 1,
+            "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c",
+            "title": "Cauchy–Schwarz 与内积分数误差",
+            "summary": "由向量误差界推出查询与键的内积分数误差界。",
+            "status": "published",
+            "assumptions": [
+              "实向量 q、k、k_hat 维数相同，使用欧氏内积和二范数",
+              "已知键向量误差界；查询变化时必须另外计入误差"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "同名 Markdown 中的命题、推导与边界；非形式化证明",
+                "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 9
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 7
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 4
+              }
+            ],
+            "score": 0.04504312675751676,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "命题与符号",
+                "start_line": 3,
+                "end_line": 7,
+                "excerpt": "## 命题与符号\n实向量 u,v 满足 |uᵀv| ≤ ‖u‖₂‖v‖₂。因此固定 q 时，\n|qᵀk − qᵀk_hat| ≤ ‖q‖₂‖k−k_hat‖₂。\n来源支持基础不等式；分数误差是本条直接推论。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "误用与验证",
+                "start_line": 15,
+                "end_line": 21,
+                "excerpt": "## 误用与验证\n平均键误差不能替代每个键的上界。例：q=(1)，两个键误差为 0 和 2，\n均值为 1，却有分数误差 2。查询也变化时用分解\nqᵀk−q_hatᵀk_hat=(q−q_hat)ᵀk+q_hatᵀ(k−k_hat)，分别取界。\n范数界不自动保证排序、softmax 输出或模型任务精度。\n\n形式化来源索引：mathlib4 固定版本见元数据 sources。已阅读该文件的 Cauchy–Schwarz 变体说明；未运行 Lean，本条目的查询误差应用也没有形式化证明。\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R2",
+      "query": "传感器 冗余 零方向 响应 压缩",
+      "actual": [
+        "math.singular-support-bilinear-low-rank",
+        "math.weighted-bilinear-low-rank",
+        "math.perturbation-propagation"
+      ],
+      "hit": true,
+      "seconds": 0.005787090998637723,
+      "chars": 6266,
+      "bytes": 10914,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "da156f16458b8aa20e0e2050e2de7680966d55bfef79b5f79d4ba8c58578c1ef",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.singular-support-bilinear-low-rank",
+            "version": 1,
+            "sha256": "2cf2c1a7d0ec74788c92fc5ca23fc2cb06f6031208c0120a0cbebec0ae08d7ca",
+            "title": "奇异支持下的双线性低秩分数近似",
+            "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+              "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+              "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文条件式推导；非Lean形式化证明",
+                "agent_doc/results/math-singular-bilinear-20261008/validate.py、raw.json：公开有限CPU检查；独立结果回执与发布记录另存"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04865990111891752,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界与跨领域迁移",
+                "start_line": 31,
+                "end_line": 38,
+                "excerpt": "## 正例、边界与跨领域迁移\n\n线性传感器：a=(1,2,0)、b=(1,0,3)，q=u a为无量纲可编程增益，k=v b为电压(V)，u∈{−1,1}、v∈{−2,2}独立均匀。H=diag(2,5,7)以电导(S)计，分数为电流(A)，qᵀHk=2uv。两个二阶矩均rank1。\n\nr=1可取M0=a bᵀ/25（单位S），qᵀM0k=2uv，均方误差0 A²；||M0||F²=2/25 S²。取c=(2,−1,0)，N=c bᵀ则aᵀc=0，M0+N仍rank1、分数不变，范数平方为1252/25 S²。不可见自由度存在，规范解更小。反过来任意N如独立第三坐标可能增秩，必须核对。\n\n支持漂移：q=k=(0,1,0)（分别用gain/V单位），原分数5 A而M0给0，缺口5 A。校准零误差不代表未知工况无损。传感器仅合成线性映射验证，未测真实物理系统。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "误用反例与拒用",
+                "start_line": 39,
+                "end_line": 48,
+                "excerpt": "## 误用反例与拒用\n\n- **相关分布**：q=k∈{−1,0,1}，概率{1/4,1/2,1/4}，H=1、M=0。真实风险1/2；两侧二阶矩乘积仅1/4。不能把“paired样本”自动当独立。\n- **中心化误替**：q≡2、k≡3，H=1、M=0，风险36，而中心协方差都0。\n- **ridge改变目标**：Sq=Sk=diag(1,0)、H=diag(1,10)、r=1。支持目标选diag(1,0)，风险0。加λ=1后加权C=diag(2,10)，截断并反变换选diag(0,10)，原风险1。ridge可能有稳定性价值，但不是精确优化原风险；非本轮推荐生产默认。\n- **tiny≠zero**：q=(0,±10⁻⁶)、k=(±1,0)独立，H₂₁=10⁶。Sq唯一非零值10⁻¹²，原分数±1、丢弃方向的真实风险1。单看小特征值不能证明该方向无用。\n- 伪逆放大：平方根特征值10⁻⁶时，该方向whitened扰动10⁻¹²回提升可变10⁻⁶。数值阈值是新的截断模型，不是精确秩证书；同时记录目标变化和实际误差。\n\n实际原型使用**已声明的正交支持基**与严格正尺度，不根据容差声称识别真实支持。NaN/Inf、错形状、非正尺度、非正交基、非法rank、非实输入拒用。输入采样无足够证据时，只能给条件式结果。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04838709677419355,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "可解决结构与不适用条件",
+                "start_line": 32,
+                "end_line": 40,
+                "excerpt": "## 可解决结构与不适用条件\n适用于已指定独立乘积分布下、有限维双线性分数的均方低秩近似，包括独立载荷/应变传感器的响应压缩。q为载荷系数，k为传感器模态，H为固定耦合；若单位不一致，先按物理量纲定义权重，不用无量纲误差冒充物理指标。\n\n真实attention同文档的q,k通常相关，因果位置采样也不是无条件独立。可用校准q×校准k全部笛卡尔积定义一个**经验乘积分布代理**，该有限目标严格成立；它不等于真实paired风险。需在独立文档留出集检查成对分数、排序、实际V/W输出及e2e。\n\npost-RoPE实际q/k也可定义此代理，但固定矩与独立性仍须核对；模型的不同位置/长度可能改变目标。一般A,B不相同、M不对称，不是UUᵀ。压缩维没有自动继承某个原始FC频率；不保证ARp=RbarpA。不能跨频率融合后声称单频RoPE无损。pre-RoPE低秩也不保证post-RoPE低秩。\n\n分数MSE不保证top-k保持，缺少逐点误差和排序margin时拒绝用math.topk-margin；也不保证softmax或value输出最优，后者按math.attention-output-geometry单独检验。缓存z_k是额外索引存储，最终保留全KV时不自动减总缓存。校准/投影计算成本需测量。\n\n"
+              },
+              {
+                "node": "s8",
+                "title": "验证状态",
+                "start_line": 44,
+                "end_line": 46,
+                "excerpt": "## 验证状态\n显示证明经独立数学审阅，CPU有限产品分布与随机SPD输入检查见doc/results/math-weighted-bilinear-20261007/。公开开发问题含未点名定理的压缩问题、传感器跨域与相关性/奇异性拒用；拒用为人工前提核对，不是模型测评。数值样例不替代一般证明。无Lean、真实模型A/B、GPU时延或未见模型验收；待执行留出协议不记为已完成。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.perturbation-propagation",
+            "version": 1,
+            "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381",
+            "title": "有限复合映射的扰动传播与逐层误差预算",
+            "summary": "有已核实增益和同输入缺陷时，乘积加权传播局部误差；teacher缺陷与参考增益不能混用，经验吸收不是一致证书。",
+            "status": "published",
+            "assumptions": [
+              "有限复合映射/固定赋范空间，参考和近似轨迹实际输入均落在有效域",
+              "路线A参考F的输入增益及近似输入上同输入缺陷；路线B近似G的输入增益及参考输入缺陷，不混用",
+              "L与epsilon有限非负且范数/单位一致；全菜单保证需一致域/增益/缺陷覆盖全部可达状态"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired Markdown finite induction; nonformal; final publication requires independent review",
+                "doc/results/math-propagation-20261008/ CPU public fixtures only; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 7
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 4
+              }
+            ],
+            "score": 0.04642338900734423,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "迁移：逐层indexer与控制/数值计算",
+                "start_line": 47,
+                "end_line": 56,
+                "excerpt": "## 迁移：逐层indexer与控制/数值计算\n\n模型层的完整状态映射对应F_l，稀疏/近似层对应G_l；局部完整层输出缺陷对应ε，固定传播增益对应L。第一批完整层可有ε=0，但仍必须计输入差传播。注意力单元的误差尚需把残差、归一化与FFN等路径算入完整层；当前q/k/v固定的单头证书不自动包含改变的KV历史。\n\n若所有候选共享已认证L_l、ε_l(j)且覆盖所有组合，可令w_l=Π_{k>l}L_k，以Σ_l w_l ε_l(j_l)作为可加**上界代理**接到`math.discrete-budget-allocation`。最小化它不是直接最大化e2e精度；增益随配置/轨迹变化时，这个固定权重模型不成立。不要把实测吸收比当作认证w。自回归生成还改变token路径，除非扩展状态并认证读出/决策条件，否则单次固定输入传播界不保证整段输出一致。\n\n跨域严格结构是串联传感器处理/离散控制模块的状态误差传播；信号单位按每个空间标定，增益有输出/输入单位。ODE一步映射的稳定性属于同类结构，但本条不额外证明收敛阶或守恒。\n\n可证伪最小实验：固定prompt/teacher forcing，以真实稀疏层造成的方向和幅度做单层与双层扰动注入，观察最终隐藏状态/logits误差；比较未加权局部误差、冻结传播权重代理和最终误差排序。有限样本发现超界可反驳所用估计常数有效性，不能用没发现超界证明一致有效。预留新文档作后续未见测试；当前公开开发案例不能当未见。\n\n"
+              },
+              {
+                "node": "s7",
+                "title": "来源及版本",
+                "start_line": 63,
+                "end_line": 69,
+                "excerpt": "## 来源及版本\n\n- David Bindel，Cornell CS3220 Spring2012，Lecture25，PDF第5–6页的稳定性递推/展开：[官方讲义](https://www.cs.cornell.edu/~bindel/class/cs3220-s12/notes/lec25.pdf)。支撑经典局部到全局方法；上述异质路线A/B及indexer映射是项目推导。\n- Budzinskiy等，[Numerical stability analysis of large language models](https://arxiv.org/html/2503.10251v2)，v2更新2026-06-22；定向核查§1.2、§7.1 Theorem7.3。原文分析浮点误差和特定架构/残差增长条件，含高阶余项；本条精确条件式映射界未挪用其常数，不能把舍入误差与token剪枝视为相同。预印本，正式发表未核实，模板占位不构成接收证据。\n- Jing等，[Beyond Layer Importance in Layer-wise Sparsity](https://arxiv.org/html/2606.15161v1)，v1为2026-06-13；定向核查§3.2–3.5和§4。作者报告扰动响应依赖层与幅度；原对象是权重剪枝/归一化漂移，非indexer token选择定理。保持研究候选，不采用其经验比作全方向有限增益保证；未复现实验。\n\n上述原文于2026-10-08（Asia/Shanghai）检索核查；“近期筛选”不是全领域或全文覆盖。\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R3",
+      "query": "成对 相关 样本 中心 协方差 误用",
+      "actual": [
+        "math.singular-support-bilinear-low-rank",
+        "math.centered-covariance-merge",
+        "math.softmax-kl-fisher"
+      ],
+      "hit": true,
+      "seconds": 0.006067123998946045,
+      "chars": 6034,
+      "bytes": 10588,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "da156f16458b8aa20e0e2050e2de7680966d55bfef79b5f79d4ba8c58578c1ef",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.singular-support-bilinear-low-rank",
+            "version": 1,
+            "sha256": "2cf2c1a7d0ec74788c92fc5ca23fc2cb06f6031208c0120a0cbebec0ae08d7ca",
+            "title": "奇异支持下的双线性低秩分数近似",
+            "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+              "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+              "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文条件式推导；非Lean形式化证明",
+                "agent_doc/results/math-singular-bilinear-20261008/validate.py、raw.json：公开有限CPU检查；独立结果回执与发布记录另存"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.048915917503966164,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "误用反例与拒用",
+                "start_line": 39,
+                "end_line": 48,
+                "excerpt": "## 误用反例与拒用\n\n- **相关分布**：q=k∈{−1,0,1}，概率{1/4,1/2,1/4}，H=1、M=0。真实风险1/2；两侧二阶矩乘积仅1/4。不能把“paired样本”自动当独立。\n- **中心化误替**：q≡2、k≡3，H=1、M=0，风险36，而中心协方差都0。\n- **ridge改变目标**：Sq=Sk=diag(1,0)、H=diag(1,10)、r=1。支持目标选diag(1,0)，风险0。加λ=1后加权C=diag(2,10)，截断并反变换选diag(0,10)，原风险1。ridge可能有稳定性价值，但不是精确优化原风险；非本轮推荐生产默认。\n- **tiny≠zero**：q=(0,±10⁻⁶)、k=(±1,0)独立，H₂₁=10⁶。Sq唯一非零值10⁻¹²，原分数±1、丢弃方向的真实风险1。单看小特征值不能证明该方向无用。\n- 伪逆放大：平方根特征值10⁻⁶时，该方向whitened扰动10⁻¹²回提升可变10⁻⁶。数值阈值是新的截断模型，不是精确秩证书；同时记录目标变化和实际误差。\n\n实际原型使用**已声明的正交支持基**与严格正尺度，不根据容差声称识别真实支持。NaN/Inf、错形状、非正尺度、非正交基、非法rank、非实输入拒用。输入采样无足够证据时，只能给条件式结果。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "触发问题与数学对象",
+                "start_line": 5,
+                "end_line": 12,
+                "excerpt": "## 触发问题与数学对象\n\n校准 query/key 的二阶矩秩亏，无法全空间 whitening inverse；应在明确的有效支持内求解，而不是把奇异性藏进逆矩阵。以下推广是项目自己的推导，使用经典截断 SVD 和 Moore–Penrose 伪逆，不声称新原创定理。\n\nq∈R^m、k∈R^n 独立，有限**非中心二阶矩** Sq=E[qqᵀ]≥0、Sk=E[kkᵀ]≥0；H∈R^(m×n)固定。目标是 J(M)=E[(qᵀ(H−M)k)²]，rank(M)≤r，r为0至min(m,n)的整数。q/k不必高斯或零均值。负特征值不符合二阶矩模型；中心协方差、真实 paired 分布、softmax、输出误差不是本目标。\n\nL=Sq^(1/2)、R=Sk^(1/2)是对称 PSD 平方根，L⁺、R⁺取**精确非零**特征值的倒数；Pq=L L⁺、Pk=R⁺ R是正交支持投影。C=L H R。零支持与空有效特征合法。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.centered-covariance-merge",
+            "version": 1,
+            "sha256": "f9ebd428b6fd9f78ac667a6a2419e277c5d8ca1731d3e5357b25a9a62f7a9b28",
+            "title": "中心化协方差、可合并散布统计量与误差桥",
+            "summary": "区分二阶矩与中心协方差；按计数/均值/散布精确合并，避免遗漏组间项；统计保证与浮点稳定性分别审查。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量，同维度/坐标/单位和相同预处理；精确恒等式不要求iid",
+              "A、B为不重复不遗漏的数据分区，计数为非负整数；空分区用单位元，不定义空均值",
+              "C_n=S/n对n≥1；S/(n−1)只对n≥2，称总体协方差无偏还需iid及有限二阶矩",
+              "概率误差桥需已证明的均值和二阶矩误差事件；合并公式不赋予独立性或覆盖保证",
+              "浮点不具有严格结合律；需单独检查输入精度、溢出、抵消及舍入误差"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-centering/verify.py",
+                "docs/knowledge_learning/2026-10-07-centering/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.048651507139079855,
+            "sections": [
+              {
+                "node": "s3",
+                "title": "已有事实与本条推导",
+                "start_line": 6,
+                "end_line": 17,
+                "excerpt": "## 已有事实与本条推导\n经典来源给出标量样本散布和分块公式；下面的向量外积推广、误差桥和迁移范围在此自行推导，不声称新定理或新算法。\n对n≥1，m=(1/n)Σx_i，G=Σx_ix_iᵀ，S=Σ(x_i−m)(x_i−m)ᵀ=G−nmmᵀ。\nC_n=S/n为中心化经验二阶矩；n≥2时U_n=S/(n−1)为常用样本协方差。n=1时S=0但U_n未定义；空状态为合并单位元，不构造0/0。\n\n对两个非空、不重叠分区，令Δ=m_B−m_A、n=n_A+n_B：\nm=m_A+(n_B/n)Δ，\nS=S_A+S_B+(n_A n_B/n)ΔΔᵀ。\n证明：x−m=(x−m_A)+(m_A−m)，组内交叉项因Σ(x−m_A)=0消失；A、B两个均值偏差外积相加即上述系数。该证明仅用有限代数，不要求分区内部或相互独立。每次合并都等于并集统计量，故在精确算术中交换、结合且空状态为单位元。重复交付会改变多重集，不是幂等操作，必须由调用者检查分区ID/版本。\n\n加入一个x时，δ=x−m，m'=m+δ/(n+1)，S'=S+[n/(n+1)]δδᵀ。它等于把(n=1,m=x,S=0)状态合并，外积PSD。复杂度O(d²)每次更新/合并，状态O(d²)；不是每步两次独立外积的必然成本。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "可算例子、边界和拒用",
+                "start_line": 27,
+                "end_line": 33,
+                "excerpt": "## 可算例子、边界和拒用\nA={0}，B={2}（一维）各自S=0；合并m=1、S=2、C_n=1、U_n=2。直接平均局部协方差得到0，丢掉组间变化。\n向所有向量加常量a：中心S不变，M通常变化，中心PCA不等于原点score重构最优方向。\n将一次观测复制一万次，S=0；这不证明总体Σ=0或一万次独立测量。两个worker处理同一分区时不能合并后声称样本量翻倍。\n浮点G−nmmᵀ可在大均值、小波动下严重抵消，甚至负特征值；精确PSD推导不保证该浮点表达式PSD。中心更新通常有益，但不是无限输入下精确/最佳/免溢出的保证。输入转为float32前已经丢掉的波动不能由稳定更新恢复。\n对不同坐标或自适应低秩基产生的统计量不能直接合并；必须有一致坐标映射及丢失误差。只传对角项、均值或低秩草图一般不能重建完整协方差。加权数据需另外推导权重/自由度，不能直接把权重当本条整数n。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.softmax-kl-fisher",
+            "version": 1,
+            "sha256": "e8b5926cdfdd48d44a5b6c6e03ae4ee71ba1aade837c3d2f96beed5a36c9d7f9",
+            "title": "有限softmax的KL与中心化Fisher曲率",
+            "summary": "分数误差在共同平移商空间中决定概率KL；用路径方差给全局上界与条件下界，饱和时不能由低秩分数MSE推出概率有效秩。",
+            "status": "published",
+            "assumptions": [
+              "共同非空有限支持集、有限实logits；温度正且已计入，KL自然对数",
+              "概率下界须覆盖整个连接路径；Fisher近似需振幅R小；没有统一全局正下界",
+              "硬mask/greedy/不同支持集另处理；attention概率轴不等于输出词表生成轴"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Self-contained finite derivations; no formal proof",
+                "doc/results/math-softmax-kl-20261008 public CPU cases; publication subject to independent acceptance"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 5
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.04688263125763126,
+            "sections": [
+              {
+                "node": "s1",
+                "title": "有限softmax的KL、中心化误差与Fisher曲率",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 有限softmax的KL、中心化误差与Fisher曲率\n\nID `math.softmax-kl-fisher`，版本1。触发：概率预测器的分数误差应使用哪个度量？低秩重建好是否代表概率质量好？本卡补齐KL几何，已有TV/输出界复用 `math.softmax-barycenter-error`，不重复称为新发现。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "可迁移问题结构与最小验证",
+                "start_line": 52,
+                "end_line": 59,
+                "excerpt": "## 可迁移问题结构与最小验证\n\n**Indexer校准（待实测候选）**：代理与完整attention在同一query、历史、支持集的有效分数对应s,t；R/中心化误差/Fisher方向是可计算局部指标。NoPE、RoPE、混合都要求先完成实际位置变换与统一缩放；本卡不允许跨频率无损融合。如果代理仅选集合，最终使用原分数，此KL衡量的是选择代理，不能重复记作最终输出KL。\n\n冻结真实Q/K/V、层、method及投影维度预算；开发集同时保存中心化MSE、½Var_p(e)、精确KL、R、质量、output误差；检查局部代理随R增大何时失效，以及饱和层的排名是否不同。冻结方法后用新校准集及未见文档测质量/成本，再自由生成端到端。在输出词表上测KL须获取**完整执行器的生成概率**，不能把attention token轴的KL直接当输出词表轴KL。接 `math.sequence-tv-coupling` 时用已有TV条目从**输出logits**给单步δ上界，逐前缀满足才能传播；attention局部KL尚无自动跨层/自回归保证。没有真实trace，本轮不部署。\n\n**跨领域Boltzmann权重**：有限能级E_i、固定β>0，s_i=−βE_i；能量误差δE对应e_i=−βδE_i。能量共同基准平移不影响分布，R无量纲，KL用nat，KL≤β²osc(δE)²/8。保留的是归一化指数族的严格数学关系；真实平衡/温度和有限能级建模未检验。不能拿非平衡开放系统直接套平衡概率核。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "context": {
+    "schema_version": 1,
+    "snapshot": "da156f16458b8aa20e0e2050e2de7680966d55bfef79b5f79d4ba8c58578c1ef",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "status": "ready",
+    "budget": {
+      "max_entries": 3,
+      "max_chars": 18000,
+      "used_chars": 9261,
+      "scope": "serialized entry payload characters, not model tokens or outer envelope"
+    },
+    "retrieved_ids": [
+      "math.singular-support-bilinear-low-rank"
+    ],
+    "entries": [
+      {
+        "schema_version": 1,
+        "id": "math.low-rank-svd",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "截断 SVD 的最优低秩近似",
+        "summary": "谱范数和 Frobenius 范数下的低秩近似；不直接保证下游排序或加速。",
+        "aliases": [
+          "Eckart Young Mirsky",
+          "矩阵压缩",
+          "rank approximation",
+          "奇异值",
+          "低秩误差"
+        ],
+        "domains": [
+          "linear-algebra"
+        ],
+        "structures": [
+          "low-rank",
+          "error-bound"
+        ],
+        "assumptions": [
+          "有限实矩阵 A，r 为 0 到 min(m,n) 的整数",
+          "优化目标为谱范数或 Frobenius 范数，候选矩阵秩至多 r"
+        ],
+        "sources": [
+          {
+            "url": "https://www.cs.cornell.edu/courses/cs6210/2025fa/lec/2025-10-15.html",
+            "locator": "Low rank and Eckart–Young–Mirsky",
+            "accessed": "2026-10-06"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "同名 Markdown 中的命题、推导与边界；非形式化证明",
+            "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+          ]
+        },
+        "requires": [],
+        "relations": [
+          {
+            "type": "application",
+            "id": "math.topk-margin"
+          }
+        ],
+        "content": "# 截断 SVD\n\n## 命题\nA=UΣVᵀ，奇异值按降序排列；保留前 r 项得到 A_r。\n在 rank(B)≤r 中，A_r 最小化 ‖A−B‖₂ 和 ‖A−B‖F。\n谱范数残差为 σ_(r+1)，Frobenius 残差平方为尾部奇异值平方和。\nr=min(m,n) 时残差为零。最优解不一定唯一。\n\n## 证明线索\n正交变换不改变这两种范数。谱范数下，对任意秩至多 r 的 B，\n前 r+1 个右奇异向量张成的空间中存在单位 x 满足 Bx=0，故\n‖A−B‖₂≥‖Ax‖₂≥σ_(r+1)；A_r 达到该界。\n这里只展开谱范数证明，Frobenius 结论依来源核对；不声称完整形式化验证。\n\n## 实例与边界\nA=diag(5,2,0.1)，r=2，谱/Frobenius 残差均为 0.1。\n这不是逐元素最大误差目标的最优性定理，也不保证截断前后 Top-k 相同。\n是否加速还取决于分解成本、复用次数、矩阵尺寸和具体实现，必须实测。\n",
+        "path": "entries/math.low-rank-svd.json",
+        "sha256": "a62b7eb5702662d678165acad4d439826ac79260bc083dda8b8f7763681621b8",
+        "selection_reason": "prerequisite"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.moore-penrose-pseudoinverse",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "SVD、伪逆与最小范数解",
+        "summary": "A⁺=VΣ⁺U*，Σ⁺ 对非零奇异值取倒数、零保持零。",
+        "aliases": [
+          "奇异 秩亏 解 最小 范数 不一致 伪逆",
+          "Moore Penrose pseudoinverse minimum norm inconsistent system"
+        ],
+        "domains": [
+          "algebra",
+          "linear-algebra"
+        ],
+        "structures": [
+          "linear-algebra",
+          "least-squares",
+          "rank-deficiency"
+        ],
+        "assumptions": [
+          "A∈R/C^{m×n}，精确 SVD A=UΣV*，非零奇异值严格非零；* 为共轭转置。"
+        ],
+        "sources": [
+          {
+            "url": "https://linear.axler.net/LADR4e.pdf",
+            "locator": "7.70、7.76–7.78，printed275/PDF289；此处使用 SVD 定义重述与最小范数推导",
+            "accessed": "2026-10-07"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "正文逐项来源/证明核查；非 Lean 形式化证明",
+            "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+          ]
+        },
+        "requires": [],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.low-rank-svd"
+          }
+        ],
+        "content": "# SVD、伪逆与最小范数解\n\n稳定 ID：math.moore-penrose-pseudoinverse；语义版本1；核查日期2026-10-07。\n\n## 对象、符号与前提\nA∈R/C^{m×n}，精确 SVD A=UΣV*，非零奇异值严格非零；* 为共轭转置。\n\n## 经典结论\nA⁺=VΣ⁺U*，Σ⁺ 对非零奇异值取倒数、零保持零。满足 AA⁺A=A、A⁺AA⁺=A⁺、(AA⁺)*=AA⁺、(A⁺A)*=A⁺A；A⁺b 是所有最小二乘解中唯一最小范数解，全部解为 A⁺b+ker A。\n\n## 证明思路与可复核推导\n在酉坐标中 ||Ax−b||² 为独立分量平方和，非零σ方向取 x_i=b_i/σ_i，零σ方向任意；令这些自由分量0唯一最小范数。四个恒等式逐对角元素检查；任意满足它们的矩阵投影到同一像/行空间，再由 A 限制上的逆得唯一性。\n\n## 正例与边界\nA=diag(1,0)，b=(2,3)，A⁺b=(2,0)，全部最小二乘解(2,t)，最小残差3。A=0 时 A⁺=0。\n\n## 误用反例与拒用条件\ndiag(1,ε) 的逆含1/ε，ε→0 时并不收敛到 diag(1,0) 的伪逆。数值截断改变求解问题；不能声称容差阈值就是精确秩。\n\n## 问题结构与迁移\n冗余观测恢复/最小能量动作；低维解还需噪声与截断误差评估，不能只报拟合残差。\n\n## 前置关系与来源版本\n基础前置：有限维空间、基、矩阵乘法和域算术；涉及内积的条目另需共轭转置/正定范数。本条在正文重述使用的基础结论，导航关联不要求一次加载整条课程。准确出处：[7.70、7.76–7.78，printed275/PDF289；此处使用 SVD 定义重述与最小范数推导](https://linear.axler.net/LADR4e.pdf)。Axler 使用第四版、作者2026-08-16 PDF修订；Saad 使用第二版2003；Conrad未标日期的讲义以本轮PDF哈希固定；网页按标题日期与检索日期固定。PDF哈希/近期论文筛选见本轮 sources.json/research.md。\n\n## 验证状态与限制\n已核对所列来源的相关段落，并人工检查上面的证明思路/自推公式。verify.py 对该主题给公开正例、边界或反例；Fraction精确运算与float64数值检查分别标注。数学证明核查不是 Lean 形式化证明；计算实例不证明一般结论。未做同模型Agent A/B或真实GPU系统测试；没有性能收益声明。\n",
+        "path": "entries/math.moore-penrose-pseudoinverse.json",
+        "sha256": "2b3f966f028760e73ffd2b1162f41cd88c0351b5798238fa0223665576ccdb82",
+        "selection_reason": "prerequisite"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.singular-support-bilinear-low-rank",
+        "version": 1,
+        "status": "published",
+        "kind": "modeling-pattern",
+        "title": "奇异支持下的双线性低秩分数近似",
+        "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+        "aliases": [
+          "秩亏 二阶矩 支持 空间 分数 压缩",
+          "传感器 冗余 零方向 响应 压缩",
+          "成对 相关 样本 中心 协方差 误用",
+          "singular PSD support weighted bilinear score pseudoinverse lift"
+        ],
+        "domains": [
+          "linear-algebra",
+          "probability-and-optimization",
+          "numerical-analysis"
+        ],
+        "structures": [
+          "low-rank",
+          "rank-deficiency",
+          "bilinear-score",
+          "support-restriction",
+          "sensor-response"
+        ],
+        "assumptions": [
+          "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+          "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+          "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+        ],
+        "sources": [
+          {
+            "url": "https://nhigham.com/2023/07/25/what-is-the-pseudoinverse-of-a-matrix/",
+            "locator": "SVD伪逆表达式(1)、rank限定投影；概率支持推导属项目",
+            "accessed": "2026-10-08"
+          },
+          {
+            "url": "https://www.cs.cornell.edu/courses/cs6210/2025fa/lec/2025-10-15.html",
+            "locator": "2025-10-15 Low rank and Eckart–Young–Mirsky；只支撑经典SVD最优性",
+            "accessed": "2026-10-08"
+          },
+          {
+            "url": "https://arxiv.org/html/2605.15626v1",
+            "locator": "IO-SVD v1 2026-05-15 §3.1 Eq2–8/B.2：局部KL、矩解耦近似与damping；不是本卡PSD支持精确证明",
+            "accessed": "2026-10-08"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "正文条件式推导；非Lean形式化证明",
+            "agent_doc/results/math-singular-bilinear-20261008/validate.py、raw.json：公开有限CPU检查；独立结果回执与发布记录另存"
+          ]
+        },
+        "requires": [
+          {
+            "id": "math.low-rank-svd",
+            "version": 1
+          },
+          {
+            "id": "math.moore-penrose-pseudoinverse",
+            "version": 1
+          }
+        ],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.weighted-bilinear-low-rank"
+          },
+          {
+            "type": "related",
+            "id": "math.rotation-intertwiner"
+          },
+          {
+            "type": "related",
+            "id": "math.attention-output-geometry"
+          },
+          {
+            "type": "related",
+            "id": "math.floating-dot-enclosure"
+          }
+        ],
+        "content": "# 奇异支持下的双线性低秩分数近似\n\n稳定 ID：math.singular-support-bilinear-low-rank；版本1；核查日期2026-10-08。\n\n## 触发问题与数学对象\n\n校准 query/key 的二阶矩秩亏，无法全空间 whitening inverse；应在明确的有效支持内求解，而不是把奇异性藏进逆矩阵。以下推广是项目自己的推导，使用经典截断 SVD 和 Moore–Penrose 伪逆，不声称新原创定理。\n\nq∈R^m、k∈R^n 独立，有限**非中心二阶矩** Sq=E[qqᵀ]≥0、Sk=E[kkᵀ]≥0；H∈R^(m×n)固定。目标是 J(M)=E[(qᵀ(H−M)k)²]，rank(M)≤r，r为0至min(m,n)的整数。q/k不必高斯或零均值。负特征值不符合二阶矩模型；中心协方差、真实 paired 分布、softmax、输出误差不是本目标。\n\nL=Sq^(1/2)、R=Sk^(1/2)是对称 PSD 平方根，L⁺、R⁺取**精确非零**特征值的倒数；Pq=L L⁺、Pk=R⁺ R是正交支持投影。C=L H R。零支持与空有效特征合法。\n\n## 准确结论与可复核推导\n\n独立性和有限二阶矩给出 J(M)=tr((H−M)Sk(H−M)ᵀSq)=||L(H−M)R||F²。可先对k条件期望，再对q取迹；若同一文档成对样本相关，条件二阶矩依q而变，不能代换。\n\nC=Pq C Pk。选取 C 的秩≤r截断 SVD Cr，使其非零奇异向量留在这两个支持中，故 Pq Cr Pk=Cr。零奇异值项系数为0，不强迫任意零向量满足支持。重复奇异值允许不同的 Cr。\n\n规范回提升：M0=L⁺ Cr R⁺，rank(M0)≤r。因为 L M0 R=Pq Cr Pk=Cr，它达到\n\nmin_rank(M)≤r J(M)=Σ_(j>r) σj(C)²。\n\n下界来自任意 X=L M R的rank≤r与经典Eckart–Young–Mirsky；上界由上面的支持内回提升达到。奇异情况下 X 不遍历全部 rank≤r 矩阵；不能复用正定卡的全空间双射论证。只需存在支持内的最优 Cr。\n\n对一个**固定 Cr**，全部回提升满足 M=M0+N、L N R=0（等价 Pq N Pk=0）。M0=Pq M0 Pk，因此 Frobenius 内积〈M0,N〉=0，||M||F²=||M0||F²+||N||F²；M0是该固定Cr的唯一最小Frobenius范数回提升。若要求仍属于原秩预算，必须另外检查 rank(M0+N)≤r。不是所有不可见 N 都可加，也未证明不同 tied Cr 中哪一个回提升最小范数。\n\nnull(Sq) 中任意v满足E(vᵀq)²=0，故vᵀq=0几乎处处；有限维零空间基给 q=Pq q 几乎处处，k同理。于是不可见 N 在本分布下逐点几乎处处不改变分数，但这不保证新分布支持仍相同。\n\nCr=Ur Dr Vrᵀ时可用 A=Dr^(1/2)UrᵀL⁺、B=Dr^(1/2)VrᵀR⁺，M0=AᵀB，得到(Aq)ᵀ(Bk)；r=0用零矩阵/空特征。当r≥rank(C)时风险0，即使H全秩也可能成立；不能推成任意q/k无损。\n\n## 正例、边界与跨领域迁移\n\n线性传感器：a=(1,2,0)、b=(1,0,3)，q=u a为无量纲可编程增益，k=v b为电压(V)，u∈{−1,1}、v∈{−2,2}独立均匀。H=diag(2,5,7)以电导(S)计，分数为电流(A)，qᵀHk=2uv。两个二阶矩均rank1。\n\nr=1可取M0=a bᵀ/25（单位S），qᵀM0k=2uv，均方误差0 A²；||M0||F²=2/25 S²。取c=(2,−1,0)，N=c bᵀ则aᵀc=0，M0+N仍rank1、分数不变，范数平方为1252/25 S²。不可见自由度存在，规范解更小。反过来任意N如独立第三坐标可能增秩，必须核对。\n\n支持漂移：q=k=(0,1,0)（分别用gain/V单位），原分数5 A而M0给0，缺口5 A。校准零误差不代表未知工况无损。传感器仅合成线性映射验证，未测真实物理系统。\n\n## 误用反例与拒用\n\n- **相关分布**：q=k∈{−1,0,1}，概率{1/4,1/2,1/4}，H=1、M=0。真实风险1/2；两侧二阶矩乘积仅1/4。不能把“paired样本”自动当独立。\n- **中心化误替**：q≡2、k≡3，H=1、M=0，风险36，而中心协方差都0。\n- **ridge改变目标**：Sq=Sk=diag(1,0)、H=diag(1,10)、r=1。支持目标选diag(1,0)，风险0。加λ=1后加权C=diag(2,10)，截断并反变换选diag(0,10)，原风险1。ridge可能有稳定性价值，但不是精确优化原风险；非本轮推荐生产默认。\n- **tiny≠zero**：q=(0,±10⁻⁶)、k=(±1,0)独立，H₂₁=10⁶。Sq唯一非零值10⁻¹²，原分数±1、丢弃方向的真实风险1。单看小特征值不能证明该方向无用。\n- 伪逆放大：平方根特征值10⁻⁶时，该方向whitened扰动10⁻¹²回提升可变10⁻⁶。数值阈值是新的截断模型，不是精确秩证书；同时记录目标变化和实际误差。\n\n实际原型使用**已声明的正交支持基**与严格正尺度，不根据容差声称识别真实支持。NaN/Inf、错形状、非正尺度、非正交基、非法rank、非实输入拒用。输入采样无足够证据时，只能给条件式结果。\n\n## 对 indexer、NoPE/RoPE 与知识入口的意义\n\n原对象q/k/H对应投影代理的分数；经验 q×k 笛卡尔积可以定义合法独立乘积分布，因此该**有限代理目标**可精确成立。真实因果paired风险、长度分布和文档留出必须另测。保留所用知识ID、版本、哈希与独立假设，不把所有条目装进上下文。\n\nNoPE可直接对固定内容分数建模；RoPE应明确使用实际post-RoPE向量或每个位置差对应的H，位置改变可能改变支持。NoPE+RoPE共同压缩不意味着潜在两维继承代表FC频率；跨频率 intertwining 另有条件。这里不修改旋转结构，不认证实数投影的浮点输出，也不保证top-k、V/W输出或e2e最优。\n\n最小可证伪预测：在相同索引维数下，支持内加权解的**冻结经验乘积MSE**等于C的尾和，且不差于可行rank同预算基线；若实际成对风险或留出排序变坏，则拒绝宣称质量改进。最终保留全KV时新增潜在key仍是额外缓存，投影/校准/数值秩评估成本需计入。无实际收益只保留知识与负结果，不接生产。\n\n## 经典来源、近期研究与明确关系\n\n强前置math.low-rank-svd@1（Frobenius最优性）、math.moore-penrose-pseudoinverse@1（非零值回逆与投影）；math.weighted-bilinear-low-rank@1为正定特例导航，旧卡与已有引用不改写。\n\n核对Higham作者2023-07-25伪逆说明的SVD表达及rank限定投影；Bindel Cornell CS6210 2025-10-15讲义§Low rank and Eckart–Young–Mirsky。本文的概率/奇异支持/规范lift论证为项目推导，非原作者的新论文定理。讲义邻近公式有排版错误，不沿用错误维数。\n\n近期读取IO-SVD arXiv2605.15626v1（2026-05-15）；2026-10-08核对版本页历史只列v1，未验证最终发表，PDF标预印本。§3.1 Eq2–8、附录B.2把局部KL Taylor/线性化和矩解耦近似形成双侧权重，并使用damping。它压缩模型权重，左右度量并非本条的独立q/k二阶矩，不能把其局部代理当e2e精确最优或把本PSD回提升归于作者。未复现文中速度/精度。更近2609.15838原文不可得，仅检索候选，排除已验证依据。\n\n## 实际验证等级\n\nagent_doc/results/math-singular-bilinear-20261008/：72组对角有限乘积分布Fraction恒等式与rank预算闭式解；48组非坐标/零支持浮点支持基与SVD检查，容差1e-9缩放；物理单位与上述反例、非法输入另记raw。公开检查不替代一般证明；独立自然语言/代码复核不是Lean形式化验证。实际独立接受与发布状态以本轮回执为准。无模型检索/refusal实测、未见模型测试、GPU/e2e或token收益。\n",
+        "path": "entries/math.singular-support-bilinear-low-rank.json",
+        "sha256": "2cf2c1a7d0ec74788c92fc5ca23fc2cb06f6031208c0120a0cbebec0ae08d7ca",
+        "selection_reason": "retrieved"
+      }
+    ],
+    "knowledge_refs": [
+      {
+        "id": "math.low-rank-svd",
+        "version": 1,
+        "sha256": "a62b7eb5702662d678165acad4d439826ac79260bc083dda8b8f7763681621b8"
+      },
+      {
+        "id": "math.moore-penrose-pseudoinverse",
+        "version": 1,
+        "sha256": "2b3f966f028760e73ffd2b1162f41cd88c0351b5798238fa0223665576ccdb82"
+      },
+      {
+        "id": "math.singular-support-bilinear-low-rank",
+        "version": 1,
+        "sha256": "2cf2c1a7d0ec74788c92fc5ca23fc2cb06f6031208c0120a0cbebec0ae08d7ca"
+      }
+    ],
+    "skipped": []
+  },
+  "token_cost": "unmeasured; chars/bytes not tokens",
+  "holdouts_metadata_sha256": "5a0572863e75526de915f22108fc90b5e8ce58de14292e7159054af3ba9fe48a"
+}

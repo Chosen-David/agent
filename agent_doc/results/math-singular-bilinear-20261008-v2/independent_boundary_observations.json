@@ -1,0 +1,228 @@
+{
+  "status": "scoped-boundary-repair-passes",
+  "guard_cases": [
+    {
+      "id": "finite_scale_overflow_C",
+      "a": [
+        1e+308,
+        1.0
+      ],
+      "b": [
+        1e+308,
+        1.0
+      ],
+      "H": [
+        [
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ],
+      "r": 1,
+      "all_inputs_finite": true,
+      "expected": "ValueError",
+      "outcome": "rejected",
+      "message": "numerical range/decomposition failure: overflow encountered in multiply",
+      "warnings": []
+    },
+    {
+      "id": "finite_H_overflow_C",
+      "a": [
+        2.0,
+        1.0
+      ],
+      "b": [
+        2.0,
+        1.0
+      ],
+      "H": [
+        [
+          1e+308,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ],
+      "r": 1,
+      "all_inputs_finite": true,
+      "expected": "ValueError",
+      "outcome": "rejected",
+      "message": "numerical range/decomposition failure: overflow encountered in multiply",
+      "warnings": []
+    },
+    {
+      "id": "tiny_supported_scales",
+      "a": [
+        1e-320,
+        1.0
+      ],
+      "b": [
+        1.0,
+        1.0
+      ],
+      "H": [
+        [
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "r": 1,
+      "all_inputs_finite": true,
+      "expected": "ValueError",
+      "outcome": "rejected",
+      "message": "numerical range/decomposition failure: overflow encountered in divide",
+      "warnings": []
+    },
+    {
+      "id": "mixed_tiny_and_large_H",
+      "a": [
+        1e-320,
+        1.0
+      ],
+      "b": [
+        1.0,
+        1.0
+      ],
+      "H": [
+        [
+          1e+308,
+          1e+308
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "r": 1,
+      "all_inputs_finite": true,
+      "expected": "ValueError",
+      "outcome": "rejected",
+      "message": "numerical range/decomposition failure: overflow encountered in divide",
+      "warnings": []
+    },
+    {
+      "id": "finite_H_reconstruction_overflow",
+      "a": [
+        1.0,
+        1.0
+      ],
+      "b": [
+        1.0,
+        1.0
+      ],
+      "H": [
+        [
+          1.7e+308,
+          1.7e+308
+        ],
+        [
+          1.7e+308,
+          1.7e+308
+        ]
+      ],
+      "r": 1,
+      "all_inputs_finite": true,
+      "expected": "ValueError",
+      "outcome": "rejected",
+      "message": "nonfinite singular values",
+      "warnings": []
+    },
+    {
+      "id": "tail_only_overflow",
+      "a": [
+        1.0,
+        1.0
+      ],
+      "b": [
+        1.0,
+        1.0
+      ],
+      "H": [
+        [
+          1e+155,
+          0.0
+        ],
+        [
+          0.0,
+          1e+155
+        ]
+      ],
+      "r": 1,
+      "all_inputs_finite": true,
+      "expected": "ValueError",
+      "outcome": "rejected",
+      "message": "numerical range/decomposition failure: overflow encountered in square",
+      "warnings": []
+    },
+    {
+      "id": "injected_nonconvergence",
+      "kind": "injected error-path check, not backend observation",
+      "outcome": "rejected",
+      "message": "numerical range/decomposition failure: injected independent nonconvergence"
+    },
+    {
+      "id": "injected_nonfinite_left",
+      "kind": "injected error-path check, not backend observation",
+      "outcome": "rejected",
+      "message": "nonfinite left SVD"
+    },
+    {
+      "id": "injected_nonfinite_singular",
+      "kind": "injected error-path check, not backend observation",
+      "outcome": "rejected",
+      "message": "nonfinite singular values"
+    },
+    {
+      "id": "injected_nonfinite_right",
+      "kind": "injected error-path check, not backend observation",
+      "outcome": "rejected",
+      "message": "nonfinite right SVD"
+    }
+  ],
+  "representable_small_direction": {
+    "a": [
+      1.0,
+      1e-06
+    ],
+    "b": [
+      1.0,
+      1.0
+    ],
+    "H": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        1000000.0,
+        0.0
+      ]
+    ],
+    "M": [
+      [
+        0.0,
+        0.0
+      ],
+      [
+        1000000.0,
+        0.0
+      ]
+    ],
+    "tail": 0.0
+  },
+  "limitations": [
+    "Finite intermediate/output guards are range guards, not condition-number or numerical-accuracy certificates.",
+    "Injected error cases do not establish an observed NumPy nonconvergence event."
+  ],
+  "producer_code_sha256": "9ba96f203bc0c74d4fe92dec07ac20b81ff527960f3725ac322d23ee67e686d0",
+  "diagnostic_seconds": 0.004530633999820566
+}

@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "snapshot": "33a5af188546af1df0b75187ea779a7d44dd2c7e06104dadb803a76f9bbaf101",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.weighted-bilinear-low-rank",
+      "version": 1,
+      "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+      "title": "二阶矩加权的双线性低秩分数近似",
+      "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+      "status": "published",
+      "assumptions": [
+        "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+        "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+        "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "本条目显示的独立推导；非形式化证明",
+          "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "二阶",
+            "加权",
+            "双线",
+            "线性",
+            "阶矩"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "加权",
+            "压缩",
+            "双线",
+            "线性"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "二阶",
+            "加权",
+            "阶矩"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "二阶",
+            "加权",
+            "压缩",
+            "双线",
+            "奇异",
+            "线性",
+            "阶矩"
+          ]
+        }
+      ],
+      "score": 61
+    },
+    {
+      "id": "math.bilinear-quadratic-inertia",
+      "version": 1,
+      "sha256": "3cf008fec876c92712f421a7b71c6bef6ef7fac2082ea651305658ddfc862dee",
+      "title": "双线性型、二次型与实合同惯性",
+      "summary": "SᵀAS 的正、负、零惯性指数与 A 相同。",
+      "status": "published",
+      "assumptions": [
+        "A 为实对称 n×n；x=Sy，S 可逆。极化 q(x)=B(x,x) 恢复 B 的公式要求对称且特征不为2。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "正文逐项来源/证明核查；非 Lean 形式化证明",
+          "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "双线",
+            "线性"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "双线",
+            "线性"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "双线",
+            "线性"
+          ]
+        }
+      ],
+      "score": 22
+    },
+    {
+      "id": "math.gaussian-quadratic-energy",
+      "version": 1,
+      "sha256": "3580b149aab06433446fe8734f10b71e7e50455df4dec80b8b0bfa68e4ba9b3f",
+      "title": "高斯二次能量的谱尾界与相关样本二阶矩",
+      "summary": "联合高斯、固定PSD能量的误差同时依赖谱平方和及最大特征值；在已知可分离依赖模型下转换为保守协方差谱界，不以均值ESS或边缘正态代替前提。",
+      "status": "published",
+      "assumptions": [
+        "x联合零均值高斯、真实确定C=Cov(x)≥0；A为固定实对称PSD，随机但独立A仅允许条件化后另核查",
+        "t>0；B=C^(1/2)AC^(1/2)，范数为欧氏算子范数；B=0单独处理；非PSD/非零均值另证",
+        "矩阵迁移限定X=T^(1/2)GΣ^(1/2)，G的元素独立标准正态，T≥0且diag(T)=1，Σ≥0；n,d及抽样协议固定",
+        "谱界用真实确定tr(T²)、||T||和有效BΣ≥||Σ||；经验估计无误差认证不能代入",
+        "均值未知/样本中心化、同数据选投影、自适应停止、非可分离外积相关和真实token模型不由本条认证"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-quadratic/verify.py",
+          "docs/knowledge_learning/2026-10-07-quadratic/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "二阶",
+            "阶矩"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "二阶",
+            "阶矩"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "二阶",
+            "奇异",
+            "线性",
+            "阶矩"
+          ]
+        }
+      ],
+      "score": 22
+    }
+  ]
+}

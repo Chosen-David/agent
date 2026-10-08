@@ -1,0 +1,207 @@
+{
+  "status": "observed-boundary-failure-needs-bounded-repair",
+  "cases": [
+    {
+      "id": "finite_scale_overflow_C",
+      "a": [
+        1e+308,
+        1.0
+      ],
+      "b": [
+        1e+308,
+        1.0
+      ],
+      "H": [
+        [
+          1.0,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ],
+      "r": 1,
+      "all_inputs_finite": true,
+      "outcome": "returned",
+      "finite": {
+        "C": false,
+        "Cr": false,
+        "M": false,
+        "s": false,
+        "tail": false
+      },
+      "output_repr": {
+        "C": "array([[inf,  0.],\n       [ 0.,  1.]])",
+        "Cr": "array([[nan, nan],\n       [nan, nan]])",
+        "M": "array([[nan, nan],\n       [nan, nan]])",
+        "s": "array([nan, nan])",
+        "tail": "nan"
+      },
+      "warnings": [
+        "overflow encountered in multiply"
+      ]
+    },
+    {
+      "id": "finite_H_overflow_C",
+      "a": [
+        2.0,
+        1.0
+      ],
+      "b": [
+        2.0,
+        1.0
+      ],
+      "H": [
+        [
+          1e+308,
+          0.0
+        ],
+        [
+          0.0,
+          1.0
+        ]
+      ],
+      "r": 1,
+      "all_inputs_finite": true,
+      "outcome": "returned",
+      "finite": {
+        "C": false,
+        "Cr": false,
+        "M": false,
+        "s": false,
+        "tail": false
+      },
+      "output_repr": {
+        "C": "array([[inf,  0.],\n       [ 0.,  1.]])",
+        "Cr": "array([[nan, nan],\n       [nan, nan]])",
+        "M": "array([[nan, nan],\n       [nan, nan]])",
+        "s": "array([nan, nan])",
+        "tail": "nan"
+      },
+      "warnings": [
+        "overflow encountered in multiply"
+      ]
+    },
+    {
+      "id": "tiny_supported_scales",
+      "a": [
+        1e-320,
+        1.0
+      ],
+      "b": [
+        1.0,
+        1.0
+      ],
+      "H": [
+        [
+          1.0,
+          1.0
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "r": 1,
+      "all_inputs_finite": true,
+      "outcome": "returned",
+      "finite": {
+        "C": true,
+        "Cr": true,
+        "M": true,
+        "s": true,
+        "tail": true
+      },
+      "output_repr": {
+        "C": "array([[1.e-320, 1.e-320],\n       [1.e+000, 1.e+000]])",
+        "Cr": "array([[0., 0.],\n       [1., 1.]])",
+        "M": "array([[0., 0.],\n       [1., 1.]])",
+        "s": "array([1.41421356, 0.        ])",
+        "tail": "0.0"
+      },
+      "warnings": []
+    },
+    {
+      "id": "mixed_tiny_and_large_H",
+      "a": [
+        1e-320,
+        1.0
+      ],
+      "b": [
+        1.0,
+        1.0
+      ],
+      "H": [
+        [
+          1e+308,
+          1e+308
+        ],
+        [
+          1.0,
+          1.0
+        ]
+      ],
+      "r": 1,
+      "all_inputs_finite": true,
+      "outcome": "returned",
+      "finite": {
+        "C": true,
+        "Cr": true,
+        "M": true,
+        "s": true,
+        "tail": true
+      },
+      "output_repr": {
+        "C": "array([[9.99988867e-13, 9.99988867e-13],\n       [1.00000000e+00, 1.00000000e+00]])",
+        "Cr": "array([[9.99866856e-13, 9.99866856e-13],\n       [1.00000000e+00, 1.00000000e+00]])",
+        "M": "array([[9.99877987e+307, 9.99877987e+307],\n       [1.00000000e+000, 1.00000000e+000]])",
+        "s": "array([1.41421356e+00, 1.57009247e-16])",
+        "tail": "2.4651903510191397e-32"
+      },
+      "warnings": []
+    },
+    {
+      "id": "finite_H_reconstruction_overflow",
+      "a": [
+        1.0,
+        1.0
+      ],
+      "b": [
+        1.0,
+        1.0
+      ],
+      "H": [
+        [
+          1.7e+308,
+          1.7e+308
+        ],
+        [
+          1.7e+308,
+          1.7e+308
+        ]
+      ],
+      "r": 1,
+      "all_inputs_finite": true,
+      "outcome": "returned",
+      "finite": {
+        "C": true,
+        "Cr": false,
+        "M": false,
+        "s": false,
+        "tail": false
+      },
+      "output_repr": {
+        "C": "array([[1.7e+308, 1.7e+308],\n       [1.7e+308, 1.7e+308]])",
+        "Cr": "array([[inf, inf],\n       [inf, inf]])",
+        "M": "array([[nan, nan],\n       [nan, nan]])",
+        "s": "array([            inf, 5.70299757e+291])",
+        "tail": "inf"
+      },
+      "warnings": [
+        "invalid value encountered in matmul",
+        "overflow encountered in square"
+      ]
+    }
+  ]
+}

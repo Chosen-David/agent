@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "id": "math.singular-support-bilinear-low-rank",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "奇异支持下的双线性低秩分数近似",
+  "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+  "aliases": [
+    "秩亏 二阶矩 支持 空间 分数 压缩",
+    "传感器 冗余 零方向 响应 压缩",
+    "成对 相关 样本 中心 协方差 误用",
+    "singular PSD support weighted bilinear score pseudoinverse lift"
+  ],
+  "domains": [
+    "linear-algebra",
+    "probability-and-optimization",
+    "numerical-analysis"
+  ],
+  "structures": [
+    "low-rank",
+    "rank-deficiency",
+    "bilinear-score",
+    "support-restriction",
+    "sensor-response"
+  ],
+  "assumptions": [
+    "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+    "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+    "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+  ],
+  "sources": [
+    {
+      "url": "https://nhigham.com/2023/07/25/what-is-the-pseudoinverse-of-a-matrix/",
+      "locator": "SVD伪逆表达式(1)、rank限定投影；概率支持推导属项目",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://www.cs.cornell.edu/courses/cs6210/2025fa/lec/2025-10-15.html",
+      "locator": "2025-10-15 Low rank and Eckart–Young–Mirsky；只支撑经典SVD最优性",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://arxiv.org/html/2605.15626v1",
+      "locator": "IO-SVD v1 2026-05-15 §3.1 Eq2–8/B.2：局部KL、矩解耦近似与damping；不是本卡PSD支持精确证明",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "正文条件式推导；非Lean形式化证明",
+      "agent_doc/results/math-singular-bilinear-20261008/validate.py、raw.json：公开有限CPU检查；独立结果回执与发布记录另存"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.low-rank-svd",
+      "version": 1
+    },
+    {
+      "id": "math.moore-penrose-pseudoinverse",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.weighted-bilinear-low-rank"
+    },
+    {
+      "type": "related",
+      "id": "math.rotation-intertwiner"
+    },
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    },
+    {
+      "type": "related",
+      "id": "math.floating-dot-enclosure"
+    }
+  ]
+}

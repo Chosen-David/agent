@@ -1,0 +1,36 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "Independent finite q/k with PSD noncentral second moments: support-aware rank-constrained score MSE, CPU exact/float fixtures and public structural retrieval; no model/GPU/e2e gain",
+  "criteria": {
+    "implementation": {
+      "procedure": "Read actual executed exact and float code, sources and card; shape/rank/independence guards",
+      "acceptance": "No unsupported inference; correct pseudoinverse lift and reference separation",
+      "allow_not_applicable": false
+    },
+    "reference_boundary": {
+      "procedure": "Exact finite enumerations and independent SVD/support identities; misuse cases",
+      "acceptance": "Exact identities equal, floated differences <=1e-9 scaled, all declared counterexamples discriminate",
+      "allow_not_applicable": false
+    },
+    "data_integrity": {
+      "procedure": "Bind full corpus, protocol, executed code, raw inputs/outputs and all IDs",
+      "acceptance": "No missing raw samples, unique IDs, hashes current",
+      "allow_not_applicable": false
+    },
+    "numerical_sanity": {
+      "procedure": "Check PSD/symmetry, ranks, noncentral versus centered, units/finite values",
+      "acceptance": "Actual errors reported, tiny eigenvalues not called zero; no numerical proof claim",
+      "allow_not_applicable": false
+    },
+    "measurement_validity": {
+      "procedure": "Only diagnostic CPU times and chars/bytes; no tokenizer/model/GPU timing comparison",
+      "acceptance": "N/A for performance; no accuracy or savings claim",
+      "allow_not_applicable": true
+    },
+    "reproducibility": {
+      "procedure": "Independent actual small rerun without overwriting canonical raw and logs",
+      "acceptance": "All scoped results reproducible except elapsed; full relevant checks complete",
+      "allow_not_applicable": false
+    }
+  }
+}
