@@ -1,0 +1,31 @@
+# Independent MATH-55 plan review
+
+Verdict: **approve**
+
+Plan SHA-256: `780a9a449114b57f236e1522ff7f201880751b35110e7882ee96e467d7d5f06a`
+
+Reviewer: `/root/random_plan_review`, separate collaboration task delegated by `/root`; not producer.
+
+Approve the frozen substantive MATH-55 plan. I independently read the actual plan, task details, repository governance, validation/case/retrieval contracts, prior search and disposition records, existing top-k card and scoped local primary-source text. I recomputed the plan SHA-256 and every listed evidence digest: all match. Both local source PDF digests match sources.json. This is plan acceptance only, before production and independent result acceptance.
+
+Mathematical checks: for a nonzero fixed w, m||Aw||²/||w||² has chi-square(m) law. Its MGF is (1−2t)^(-m/2) for t<1/2. Chernoff gives upper-tail exponent m[epsilon−log(1+epsilon)]/2 and lower-tail exponent m[−epsilon−log(1−epsilon)]/2. For 0<epsilon<1, both are bounded using c=epsilon²/4−epsilon³/6>0, yielding failure at most 2exp(−mc) per vector. With unit u,v from nonzero query/key pairs, the at most 2QN vectors u±v need no mutual independence: union failure is at most 4QN exp(−mc). Consequently m≥ceil(log(4QN/delta)/c), with 0<delta<1 and positive integer Q,N,m, suffices. Zero event vectors are exact and skipped, and zero queries/keys give exact zero scores.
+
+Polarization on that simultaneous event bounds |<Au,Av>−<u,v>| by epsilon(||u+v||²+||u−v||²)/4=epsilon. Rescaling yields epsilon||q||||k||. Ranking must use either each pair's two error budgets or a conservative uniform budget epsilon||q|| max_j||k_j||; a boundary gap strictly larger than twice that uniform budget suffices for top-k set preservation. Equality can tie, lack of the sufficient margin does not imply a flip, and the set guarantee does not imply order within it.
+
+Rank-nullity supplies an adaptive nonzero kernel input when m<d, showing why the fixed independent quantifier is essential. The inverse boundary has a simple deterministic witness: F=diag(1,99), q=k=e1 and P=(1,1) preserve q's Euclidean self-score exactly, but q^T F^(-1)q=1 while (Pq)^T(PFP^T)^(-1)(Pq)=1/100. This refutes an implication from Euclidean preservation alone, not the scoped Gaussian probability theorem. The producer must preserve these distinctions in actual fixtures and prose; these are direct consequences of the approved method, not new acceptance conditions.
+
+The classic source is a peer-reviewed random-subspace proof; the iid Gaussian score corollary is the repository's own informal derivation, not an attribution to that orthogonal-map algorithm. The recent local PDF is explicitly arXiv:2602.10449v2 dated 13 February 2026, and its Theorem 1 is about injectivity on range(F) and an inverse-sensitive form. It is useful boundary motivation, with preprint status retained; its appendix proof, general regularized guarantees and reported model benefits are not adopted or reproduced.
+
+Prior search is incomplete and this limitation remains part of the result; absence of a record or a same-topic hit is not proof no earlier work exists. Since no old experiment data are accepted, this does not undermine the proposed new scoped evidence. The prior top-k card is derivation-reviewed, not formal. The new ten rational/dimension cases cannot test Gaussian statistical coverage or replace a general proof. Decimal dimensions are sanity checks and cannot be presented as certified transcendental rounding.
+
+Governance and host boundary: the real collaboration task is /root/random_plan_review, delegated by /root; I am a separate reviewer-context actor and did not author or modify the producer plan or TASK. Only plan_review.json and plan_review.md are written by this review. The collaboration host, not this self-reported JSON, owns proof of invocation/context isolation. No opaque invocation ID, ReviewSession authentication, deadline enforcement, tmux monitor or managed Engine runtime receipt is fabricated here. This substantive review does not certify those deployment mechanisms and must not be passed off as an authenticated main-plan-review/v1 receipt. Result verification must be performed in another independent context, and host authorization/hash freshness must still gate dispatch and publication.
+
+## Compact checks
+
+- intent: **pass** — MATH-55 matches the delegated user scope: continuous mathematical foundation maintenance with direct main publication; no production or SGLang changes.
+- guide: **pass** — All guide references match their pinned digests; GUIDE.md is empty and adds no substantive instruction. No human-only guide writes are planned.
+- assumptions: **pass** — Finite query/key sets are fixed independently of iid Gaussian entries with variance 1/m. Normalization, chi-square concentration, finite union and polarization support the stated score theorem. Explicit adaptive and inverse boundaries prevent invalid generalization.
+- prior_results: **pass** — Actual search records five lexical candidates and partial/missing-record errors. None is reused as Gaussian experiment data. The reused strict top-k theorem was compared with the current full corpus card and matches.
+- acceptance: **pass** — Ten fixed public case IDs, six fixed backend/query retrievals, independent proof/code/data validation, recursive hashes, regression and mirror checks form a concrete scoped acceptance gate. Exact witnesses are explicitly not statistical coverage or formal proof.
+- risk: **pass** — Permitted foundation artifacts only; prohibited SGLang, guide, production behavior and holdout content remain excluded. Mathematical scope excludes adaptive inputs, inverse-objective guarantees and all unmeasured model/token/GPU/e2e benefit claims.
+- resources: **pass** — Standard-library exact fixtures, local file/SQLite retrieval and independent delegated review are proportionate to 1200 seconds and at most two cycles/attempts. No GPU or remote supervisory deployment is needed or claimed; planner owns time accounting and publication permission checks.

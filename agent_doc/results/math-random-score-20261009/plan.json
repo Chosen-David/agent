@@ -1,0 +1,159 @@
+{
+  "task_refs": [
+    "MATH-55"
+  ],
+  "scope": "Fixed independent finite Gaussian sketches: inner-product error, strict ranking margin, adaptive/kernel and inverse-objective counterexamples; public structure checks only, no model/GPU/e2e/token benefit",
+  "budget_seconds": 1200,
+  "max_cycles": 2,
+  "max_attempts": 2,
+  "authorization": "user continuous foundation build/direct main publish",
+  "decision": "EXECUTE",
+  "startup_revision": "bfb43970b58bf52d5fdf7a714742322dbfe2aab5",
+  "evidence_refs": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "ff97d09aeb35cff3a973d1423f325ef6274f33b4c68830e8c899821e989bd63a"
+    },
+    {
+      "path": "prompts/decision_review.md",
+      "sha256": "55b793450ff0e3d29696dae7626afab7f15d1ab843baa396dcc1d564e532c849"
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "657eb9fedc5723e125c63667cd1b131da836b307a7e9c28da1f757b6f6b2094d"
+    },
+    {
+      "path": "agent_doc/task/task_details/MATH-55.md",
+      "sha256": "67cef2b820408540d4131c5d03eb996f1bdb11138ff55e0fae90d73166be7805"
+    },
+    {
+      "path": "config/role_registry.json",
+      "sha256": "c231d5031aab337845de3e970f0253fc8d5156be3a3bdff839f2ebf696f7c5eb"
+    },
+    {
+      "path": "knowledge/learning_state.json",
+      "sha256": "23e0a7f46ed45ebbdf7f07b618e39a1fb52dfd38c49c04dd070c25182de4f8e6"
+    },
+    {
+      "path": "knowledge/README.md",
+      "sha256": "f1601f17b9ab9c7b498df9407150f5f1200a0ef6e7be97fa6b5911316ee8d2d3"
+    },
+    {
+      "path": "knowledge/FORMAT.md",
+      "sha256": "ef6a2fa1048e2345573374c914d4e7cb4771e0e5882dadfd97dc6b1b3c24d3a0"
+    },
+    {
+      "path": "plugins/research-assistant/skills/model-with-knowledge/SKILL.md",
+      "sha256": "c1a060f682e5c1996d56978a68a5a9c916f828e7f2eec31a8892ab9b95d2c65b"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "agent_doc/results/math-random-score-20261009/sources.json",
+      "sha256": "606d3d4605c0333858f2592ac5d2531c7342e08f2a9b9f2b6be6d40bdeec72f1"
+    },
+    {
+      "path": "agent_doc/results/math-random-score-20261009/prior_search.json",
+      "sha256": "2160f2c36cc1508b04e6a2ebff446332f50607096b4fc5738bd04218ee987859"
+    },
+    {
+      "path": "agent_doc/results/math-random-score-20261009/prior_review.json",
+      "sha256": "3cded5947ae01fbb9103152461495905f35606ebd04bade6509d2e5a870a1869"
+    },
+    {
+      "path": "agent_doc/results/math-random-score-20261009/prior_card.json",
+      "sha256": "3dcb96228eaed6e461c270363559cc0c4c6883e83fcf8e6a3d7fe1e0f39d9e75"
+    },
+    {
+      "path": "agent_doc/results/math-random-score-20261009/cases.json",
+      "sha256": "907130aa32be668b3765d3a7c8cf61b649de7d4a09369b5c6b07431a6c151720"
+    },
+    {
+      "path": "agent_doc/results/math-random-score-20261009/retrieval_protocol.json",
+      "sha256": "75d35039e242b7c25f0e0a3a3d827206e2e3e8c68df1713e36438b88de8f88bd"
+    },
+    {
+      "path": "agent_doc/results/math-random-score-20261009/validation_plan.json",
+      "sha256": "c4bce0822e8aff038e3930f11ea040dedfb5f28293f66d18135cdd76c0958187"
+    }
+  ],
+  "dag": [
+    {
+      "id": "independent-plan",
+      "acceptance": "Actual fresh independent plan approval before producer"
+    },
+    {
+      "id": "produce",
+      "depends_on": [
+        "independent-plan"
+      ],
+      "experiment_result": {
+        "result_id": "math-random-score-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-random-producer",
+        "manifest_path": "agent_doc/results/math-random-score-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-random-score-20261009/validation_plan.json",
+          "sha256": "c4bce0822e8aff038e3930f11ea040dedfb5f28293f66d18135cdd76c0958187"
+        },
+        "scope": "Fixed independent finite Gaussian sketches: inner-product error, strict ranking margin, adaptive/kernel and inverse-objective counterexamples; public structure checks only, no model/GPU/e2e/token benefit"
+      }
+    },
+    {
+      "id": "verify",
+      "depends_on": [
+        "produce"
+      ],
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "math-random-score-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-random-producer",
+        "manifest_path": "agent_doc/results/math-random-score-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-random-score-20261009/validation_plan.json",
+          "sha256": "c4bce0822e8aff038e3930f11ea040dedfb5f28293f66d18135cdd76c0958187"
+        },
+        "scope": "Fixed independent finite Gaussian sketches: inner-product error, strict ranking margin, adaptive/kernel and inverse-objective counterexamples; public structure checks only, no model/GPU/e2e/token benefit"
+      }
+    },
+    {
+      "id": "publish",
+      "depends_on": [
+        "verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-random-score-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-random-producer",
+          "manifest_path": "agent_doc/results/math-random-score-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/math-random-score-20261009/validation_plan.json",
+            "sha256": "c4bce0822e8aff038e3930f11ea040dedfb5f28293f66d18135cdd76c0958187"
+          },
+          "scope": "Fixed independent finite Gaussian sketches: inner-product error, strict ranking margin, adaptive/kernel and inverse-objective counterexamples; public structure checks only, no model/GPU/e2e/token benefit"
+        }
+      ]
+    }
+  ],
+  "write_scope": [
+    "new math.gaussian-projection-score card/mirror",
+    "README/coverage/task/learning state",
+    "new scoped resultdir"
+  ],
+  "prohibited": [
+    "SGLang",
+    "guide",
+    "production behavior",
+    "holdout content"
+  ],
+  "method": "# [MATH-55] 有限随机投影与打分\n\n## Plan\n\n授权：持续基础知识建设；直接main发布。主写者root，SGLang/guide/生产行为/未用测试内容禁止修改。\n\n方法：iid N(0,1/m)高斯矩阵，固定且独立于矩阵的Q个query、N个key；归一化后用u±v的至多2QN事件，以chi-square MGF与Chernoff给出c=epsilon²/4−epsilon³/6，再极化内积误差epsilon||q||||k||；strict margin衔接math.topk-margin。零向量、间隔等号、自适应核向量、F=diag(1,99)求逆反例。经典来源与2026 preprint v2明确分开。\n\n验收：完整非形式化证明审核、10个有理数/维度公开检查、三条不提示定理名结构检索的file/SQLite两后端，相关知识回归与镜像检查；没有模型实测，不报告能力/e2e/token收益。旧未用测试仅固定元数据哈希，不读取内容。\n\nDAG：独立新上下文计划审核→生产→另一独立上下文verify_experiment_result→验收消费者→fresh fetch/非强推main/远端核验。1200秒、最多2个审核cycle/2个生产attempt；无远端监督服务或GPU，不宣称已部署，真实调用生命周期本地记录。\n\n历史检索已执行，原始partial与缺record错误保留；相关旧数据前提不一致不复用，仅复用排名间隔条目。保持其他任务与next_topic游标。\n\n",
+  "cycle": 1
+}

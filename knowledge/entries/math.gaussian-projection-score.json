@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "id": "math.gaussian-projection-score",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "有限高斯降维的内积分数、严格排名与量词边界",
+  "summary": "固定且独立于iid高斯投影的有限query/key，用chi-square集中与极化给内积误差；严格间隔才保排名，自适应输入和求逆目标不认证。",
+  "aliases": [
+    "有限 随机 降维 内积 打分 误差",
+    "传感器 压缩 向量 排名 间隔",
+    "投影 之后 选择 输入 核空间 失效",
+    "Gaussian sketch finite bilinear polarization Johnson Lindenstrauss ranking margin"
+  ],
+  "domains": [
+    "linear-algebra",
+    "probability-and-optimization"
+  ],
+  "structures": [
+    "finite-family-sketch",
+    "inner-product-error",
+    "strict-ranking-margin",
+    "adaptive-input-boundary"
+  ],
+  "assumptions": [
+    "实向量q_a,k_i固定或随机但独立于A；Q,N为有限正整数，A的条目iid N(0,1/m)，m为正整数。",
+    "epsilon,delta在(0,1)；概率关于A，有限集合在抽样前固定；零向量单独精确处理。",
+    "排名额外要求完整候选分数逐项误差及严格分界gap；attention scale必须一起传播，不认证softmax/value/e2e。"
+  ],
+  "sources": [
+    {
+      "url": "https://cseweb.ucsd.edu/~dasgupta/papers/jl.pdf",
+      "locator": "Section2 Theorem2.1/Lemma2.2 and proof; Section3 Gaussian discussion. Our iid Gaussian MGF/polarization corollary is independently derived, not their orthogonal-map algorithm.",
+      "accessed": "2026-10-09"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2602.10449v2",
+      "locator": "Abstract/Section1 setup/contributions/Section2.1 Theorem1 statement. No appendix proof adoption or reproduction; own exact inverse witness used.",
+      "accessed": "2026-10-09"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "agent_doc/results/math-random-score-20261009：10公开精确边界检查、结构检索及独立审核；非形式化/非模型实测。"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.topk-margin",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.rotation-intertwiner"
+    },
+    {
+      "type": "related",
+      "id": "math.weighted-bilinear-low-rank"
+    },
+    {
+      "type": "related",
+      "id": "math.rank-nullity-quotient"
+    }
+  ]
+}

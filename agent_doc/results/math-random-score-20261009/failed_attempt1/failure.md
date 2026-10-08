@@ -1,0 +1,1 @@
+Public retrieval found the intended card and complete strong closure but included optional math.cauchy-schwarz. Producer harness incorrectly required exact two-entry equality instead of complete required subset within max_entries=3. Fix assertion only; unchanged protocol, budget, queries, corpus and mathematical acceptance. No model outcome inferred.

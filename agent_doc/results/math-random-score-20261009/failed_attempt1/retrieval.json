@@ -1,0 +1,1311 @@
+{
+  "scope": "Public structural checks only",
+  "snapshot": "b4ca0daf3bad406601371f7afcc6addafafcece99e96eff5ed043eef69a9d69e",
+  "protocol_sha256": "75d35039e242b7c25f0e0a3a3d827206e2e3e8c68df1713e36438b88de8f88bd",
+  "load_seconds": 0.027679662001901306,
+  "index_build_seconds": 0.13485948200104758,
+  "records": [
+    {
+      "backend": "files-lexical-v1",
+      "case": "R1",
+      "query": "有限 随机 降维 内积 打分 误差",
+      "actual": [
+        "math.gaussian-projection-score",
+        "math.perturbation-propagation",
+        "math.cauchy-schwarz"
+      ],
+      "hit": true,
+      "seconds": 0.016853668996191118,
+      "chars": 2593,
+      "bytes": 3657,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "b4ca0daf3bad406601371f7afcc6addafafcece99e96eff5ed043eef69a9d69e",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.gaussian-projection-score",
+            "version": 1,
+            "sha256": "7eace52e6bbbf50bae1163a405bc9a2cd6ff8118ee7da6d599dc8f12cb3d130c",
+            "title": "有限高斯降维的内积分数、严格排名与量词边界",
+            "summary": "固定且独立于iid高斯投影的有限query/key，用chi-square集中与极化给内积误差；严格间隔才保排名，自适应输入和求逆目标不认证。",
+            "status": "published",
+            "assumptions": [
+              "实向量q_a,k_i固定或随机但独立于A；Q,N为有限正整数，A的条目iid N(0,1/m)，m为正整数。",
+              "epsilon,delta在(0,1)；概率关于A，有限集合在抽样前固定；零向量单独精确处理。",
+              "排名额外要求完整候选分数逐项误差及严格分界gap；attention scale必须一起传播，不认证softmax/value/e2e。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-random-score-20261009：10公开精确边界检查、结构检索及独立审核；非形式化/非模型实测。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "内积",
+                  "有限",
+                  "降维"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "内积",
+                  "打分",
+                  "有限",
+                  "误差",
+                  "降维",
+                  "随机"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "内积",
+                  "有限",
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "内积",
+                  "打分",
+                  "有限",
+                  "误差",
+                  "降维",
+                  "随机"
+                ]
+              }
+            ],
+            "score": 60
+          },
+          {
+            "id": "math.perturbation-propagation",
+            "version": 1,
+            "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381",
+            "title": "有限复合映射的扰动传播与逐层误差预算",
+            "summary": "有已核实增益和同输入缺陷时，乘积加权传播局部误差；teacher缺陷与参考增益不能混用，经验吸收不是一致证书。",
+            "status": "published",
+            "assumptions": [
+              "有限复合映射/固定赋范空间，参考和近似轨迹实际输入均落在有效域",
+              "路线A参考F的输入增益及近似输入上同输入缺陷；路线B近似G的输入增益及参考输入缺陷，不混用",
+              "L与epsilon有限非负且范数/单位一致；全菜单保证需一致域/增益/缺陷覆盖全部可达状态"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Paired Markdown finite induction; nonformal; final publication requires independent review",
+                "doc/results/math-propagation-20261008/ CPU public fixtures only; no model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "有限",
+                  "误差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "有限",
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "有限",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 25
+          },
+          {
+            "id": "math.cauchy-schwarz",
+            "version": 1,
+            "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c",
+            "title": "Cauchy–Schwarz 与内积分数误差",
+            "summary": "由向量误差界推出查询与键的内积分数误差界。",
+            "status": "published",
+            "assumptions": [
+              "实向量 q、k、k_hat 维数相同，使用欧氏内积和二范数",
+              "已知键向量误差界；查询变化时必须另外计入误差"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "同名 Markdown 中的命题、推导与边界；非形式化证明",
+                "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "内积",
+                  "误差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "内积",
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "内积",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 23
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R2",
+      "query": "传感器 压缩 向量 排名 间隔",
+      "actual": [
+        "math.gaussian-projection-score",
+        "math.singular-support-bilinear-low-rank",
+        "math.weighted-bilinear-low-rank"
+      ],
+      "hit": true,
+      "seconds": 0.015721784002380446,
+      "chars": 2608,
+      "bytes": 3827,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "b4ca0daf3bad406601371f7afcc6addafafcece99e96eff5ed043eef69a9d69e",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.gaussian-projection-score",
+            "version": 1,
+            "sha256": "7eace52e6bbbf50bae1163a405bc9a2cd6ff8118ee7da6d599dc8f12cb3d130c",
+            "title": "有限高斯降维的内积分数、严格排名与量词边界",
+            "summary": "固定且独立于iid高斯投影的有限query/key，用chi-square集中与极化给内积误差；严格间隔才保排名，自适应输入和求逆目标不认证。",
+            "status": "published",
+            "assumptions": [
+              "实向量q_a,k_i固定或随机但独立于A；Q,N为有限正整数，A的条目iid N(0,1/m)，m为正整数。",
+              "epsilon,delta在(0,1)；概率关于A，有限集合在抽样前固定；零向量单独精确处理。",
+              "排名额外要求完整候选分数逐项误差及严格分界gap；attention scale必须一起传播，不认证softmax/value/e2e。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-random-score-20261009：10公开精确边界检查、结构检索及独立审核；非形式化/非模型实测。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "排名"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "传感",
+                  "压缩",
+                  "向量",
+                  "感器",
+                  "排名",
+                  "间隔"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "排名",
+                  "间隔"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传感",
+                  "压缩",
+                  "向量",
+                  "感器",
+                  "排名"
+                ]
+              }
+            ],
+            "score": 46
+          },
+          {
+            "id": "math.singular-support-bilinear-low-rank",
+            "version": 1,
+            "sha256": "60301c861c559bba11a030e7fe98e8a789ede04777b62cadad8cdfa5b5b79cd2",
+            "title": "奇异支持下的双线性低秩分数近似",
+            "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+              "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+              "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文条件式推导；非Lean形式化证明",
+                "agent_doc/results/math-singular-bilinear-20261008-v2/validate.py、raw.json：公开有限CPU检查；旧数值范围失败保存，v2独立回执另存；有限输出不保证任意病态尺度精度"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "传感",
+                  "压缩",
+                  "感器"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传感",
+                  "压缩",
+                  "向量",
+                  "感器"
+                ]
+              }
+            ],
+            "score": 19
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "传感",
+                  "压缩",
+                  "感器"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传感",
+                  "压缩",
+                  "感器"
+                ]
+              }
+            ],
+            "score": 18
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R3",
+      "query": "投影 之后 选择 输入 核空间 失效",
+      "actual": [
+        "math.gaussian-projection-score",
+        "math.eigenspace-gap-perturbation",
+        "math.reynolds-projection"
+      ],
+      "hit": true,
+      "seconds": 0.015418476003105752,
+      "chars": 2803,
+      "bytes": 4087,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "b4ca0daf3bad406601371f7afcc6addafafcece99e96eff5ed043eef69a9d69e",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.gaussian-projection-score",
+            "version": 1,
+            "sha256": "7eace52e6bbbf50bae1163a405bc9a2cd6ff8118ee7da6d599dc8f12cb3d130c",
+            "title": "有限高斯降维的内积分数、严格排名与量词边界",
+            "summary": "固定且独立于iid高斯投影的有限query/key，用chi-square集中与极化给内积误差；严格间隔才保排名，自适应输入和求逆目标不认证。",
+            "status": "published",
+            "assumptions": [
+              "实向量q_a,k_i固定或随机但独立于A；Q,N为有限正整数，A的条目iid N(0,1/m)，m为正整数。",
+              "epsilon,delta在(0,1)；概率关于A，有限集合在抽样前固定；零向量单独精确处理。",
+              "排名额外要求完整候选分数逐项误差及严格分界gap；attention scale必须一起传播，不认证softmax/value/e2e。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-random-score-20261009：10公开精确边界检查、结构检索及独立审核；非形式化/非模型实测。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "之后",
+                  "失效",
+                  "投影",
+                  "核空",
+                  "空间",
+                  "输入",
+                  "选择"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "投影",
+                  "输入"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "之后",
+                  "投影",
+                  "空间",
+                  "输入",
+                  "选择"
+                ]
+              }
+            ],
+            "score": 46
+          },
+          {
+            "id": "math.eigenspace-gap-perturbation",
+            "version": 1,
+            "sha256": "9737b6e1fb288bf682e23f1910f32aadc43421bd42821550a82e419303a7e292",
+            "title": "谱隙、子空间扰动与投影打分证书",
+            "summary": "实对称矩阵的隔离特征值簇可用边界谱隙控制子空间误差；主方向稳定取决于误差与谱隙的比值。投影比较消除符号和簇内旋转歧义，可传播到有范数约束的打分。",
+            "status": "published",
+            "assumptions": [
+              "A与Ahat=A+E是同维实对称矩阵，使用一致坐标及欧氏算子/Frobenius范数",
+              "特征值降序，目标为同一索引区间r..s；d=s-r+1，外侧边界谱隙g=min(lambda_(r-1)-lambda_r,lambda_s-lambda_(s+1))>0，端点取无穷",
+              "U与Uhat列正交；比较投影或主角度，不能直接比较未对齐的基",
+              "本文自推较紧rank-one界另需目标最大特征值、g=lambda_1-lambda_2>0、认证epsilon>=||E||op且epsilon<g；epsilon<g/2额外认证扰动后最大特征值简单",
+              "打分迁移需q,k位于同一欧氏坐标系、目标确为q^T P k；只控制换基误差，不控制舍弃补空间或完整注意力输出"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-subspace/verify.py",
+                "docs/knowledge_learning/2026-10-07-subspace/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "投影",
+                  "空间"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "投影",
+                  "空间"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "投影",
+                  "空间"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "失效",
+                  "投影",
+                  "空间",
+                  "选择"
+                ]
+              }
+            ],
+            "score": 30
+          },
+          {
+            "id": "math.reynolds-projection",
+            "version": 1,
+            "sha256": "cb53f2b6e98118357083d4d8b99cd7e89faa531cb00695d11c0252a22a6d904b",
+            "title": "有限群平均与不变子空间投影",
+            "summary": "对有限群表示做平均可投影到不变子空间；凸性决定能否把对称解平均为可行解。",
+            "status": "published",
+            "assumptions": [
+              "G 为有限群，ρ 是有限维实线性表示，使用精确的全群均匀平均",
+              "正交投影结论额外要求每个 ρ(g) 为正交矩阵",
+              "优化平均要求可行集凸且群不变、目标凸且群不变"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "同名 Markdown 的明确推导与反例；非形式化证明",
+                "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "投影",
+                  "空间"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "投影"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "投影",
+                  "空间"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "投影",
+                  "空间"
+                ]
+              }
+            ],
+            "score": 23
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R1",
+      "query": "有限 随机 降维 内积 打分 误差",
+      "actual": [
+        "math.gaussian-projection-score",
+        "math.cauchy-schwarz",
+        "math.eigenspace-gap-perturbation"
+      ],
+      "hit": true,
+      "seconds": 0.004602506996889133,
+      "chars": 4491,
+      "bytes": 7188,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "b4ca0daf3bad406601371f7afcc6addafafcece99e96eff5ed043eef69a9d69e",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.gaussian-projection-score",
+            "version": 1,
+            "sha256": "7eace52e6bbbf50bae1163a405bc9a2cd6ff8118ee7da6d599dc8f12cb3d130c",
+            "title": "有限高斯降维的内积分数、严格排名与量词边界",
+            "summary": "固定且独立于iid高斯投影的有限query/key，用chi-square集中与极化给内积误差；严格间隔才保排名，自适应输入和求逆目标不认证。",
+            "status": "published",
+            "assumptions": [
+              "实向量q_a,k_i固定或随机但独立于A；Q,N为有限正整数，A的条目iid N(0,1/m)，m为正整数。",
+              "epsilon,delta在(0,1)；概率关于A，有限集合在抽样前固定；零向量单独精确处理。",
+              "排名额外要求完整候选分数逐项误差及严格分界gap；attention scale必须一起传播，不认证softmax/value/e2e。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-random-score-20261009：10公开精确边界检查、结构检索及独立审核；非形式化/非模型实测。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "迁移与不适用条件",
+                "start_line": 43,
+                "end_line": 50,
+                "excerpt": "## 迁移与不适用条件\n\n原问题→理论：冻结完整query/key轨迹→有限向量；压缩索引→共用A；完整内积分数→s；代理误差→E；排序→strict gap。NoPE直接适用此数学对象。RoPE只能对**先完成各位置旋转后的固定向量**使用A；先投影再按代表频率旋转须另证AR_m=barR_m A，见rotation-intertwiner。NoPE+RoPE应记录实际拼接/scale；不从名字推断维度/误差。此映射保留线性内积与有限集合，未保留推理反馈、value加权输出或e2e精度。\n\n跨领域传感器匹配也可映射为固定测量向量与模板打分。可证伪预测：逐项核验u±v事件及strict gap成立后，精确算术下排名必须保持；不满足条件的实验只报告经验误差/召回。索引缓存、投影成本、GPU访存/浮点/量化误差均未被该定理消除。\n\n建议最小研究：固定同一轨迹/候选/预算，比较选坐标与高斯草图，报告逐项分数误差分布、分界gap、候选召回、attention-output误差、e2e和总延迟/新增缓存；Gaussian仅基线候选，无生产采用/收益结论。不能拿重合度单一指标代替输出或任务质量。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "math.gaussian-projection-score@1 — 有限高斯打分降维",
+                "start_line": 1,
+                "end_line": 2,
+                "excerpt": "# math.gaussian-projection-score@1 — 有限高斯打分降维\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.cauchy-schwarz",
+            "version": 1,
+            "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c",
+            "title": "Cauchy–Schwarz 与内积分数误差",
+            "summary": "由向量误差界推出查询与键的内积分数误差界。",
+            "status": "published",
+            "assumptions": [
+              "实向量 q、k、k_hat 维数相同，使用欧氏内积和二范数",
+              "已知键向量误差界；查询变化时必须另外计入误差"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "同名 Markdown 中的命题、推导与边界；非形式化证明",
+                "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04762704813108039,
+            "sections": [
+              {
+                "node": "s1",
+                "title": "内积误差界",
+                "start_line": 1,
+                "end_line": 2,
+                "excerpt": "# 内积误差界\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "实例",
+                "start_line": 12,
+                "end_line": 14,
+                "excerpt": "## 实例\nq=(3,4)，k−k_hat=(0.06,0.08)，内积误差 0.5，范数乘积也是 0.5。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.eigenspace-gap-perturbation",
+            "version": 1,
+            "sha256": "9737b6e1fb288bf682e23f1910f32aadc43421bd42821550a82e419303a7e292",
+            "title": "谱隙、子空间扰动与投影打分证书",
+            "summary": "实对称矩阵的隔离特征值簇可用边界谱隙控制子空间误差；主方向稳定取决于误差与谱隙的比值。投影比较消除符号和簇内旋转歧义，可传播到有范数约束的打分。",
+            "status": "published",
+            "assumptions": [
+              "A与Ahat=A+E是同维实对称矩阵，使用一致坐标及欧氏算子/Frobenius范数",
+              "特征值降序，目标为同一索引区间r..s；d=s-r+1，外侧边界谱隙g=min(lambda_(r-1)-lambda_r,lambda_s-lambda_(s+1))>0，端点取无穷",
+              "U与Uhat列正交；比较投影或主角度，不能直接比较未对齐的基",
+              "本文自推较紧rank-one界另需目标最大特征值、g=lambda_1-lambda_2>0、认证epsilon>=||E||op且epsilon<g；epsilon<g/2额外认证扰动后最大特征值简单",
+              "打分迁移需q,k位于同一欧氏坐标系、目标确为q^T P k；只控制换基误差，不控制舍弃补空间或完整注意力输出"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-subspace/verify.py",
+                "docs/knowledge_learning/2026-10-07-subspace/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 11
+              }
+            ],
+            "score": 0.046342571558382555,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "任务映射与成立边界",
+                "start_line": 47,
+                "end_line": 54,
+                "excerpt": "## 任务映射与成立边界\n\n**自推打分传播：** 若beta≥||Phat-P||op，且||q||≤Q、||k_i||≤K，则|q^T(Phat-P)k_i|≤QK beta。原投影分数第k名与第k+1名差gamma>2QK beta时，候选集合稳定。这只使用内积定义、算子范数与差分代数，独立于关联条目；相关score/topk知识供导航复查。\n\n对于“先子空间→near/far→两端L1/L2”的算法，只在**确实使用这个投影分数**且其余量固定的消费点成立。near/far分区变化、完整点积分数、量化、截断补空间和近似细筛需另外控制；低秩近似误差与换基误差不同。q或k范数未受控时不能推广统一排名保证。未修改任何实际稀疏注意力行为。\n\n物理迁移：固定正定质量M和对称刚度K的无阻尼方程M x''+Kx=0，先在质量坐标y=M^(1/2)x构造A=M^(-1/2) K M^(-1/2)。模态特征值为频率平方，g、epsilon均为s^(-2)，角度界无量纲；A、Ahat须使用同一M和坐标。直接给一般非对称M^(-1)K套对称定理错误；M也变化须先计入坐标和矩阵误差。这里只是精确方程映射及合成数值验证，无真实物理实验。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "谱隙、子空间扰动与投影打分证书",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 谱隙、子空间扰动与投影打分证书\n\n稳定ID `math.eigenspace-gap-perturbation`，v1。来源固定arXiv1405.0680v1；近期采样论文只在本轮研究记录中作为候选。这里的结论限实对称有限维矩阵。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R2",
+      "query": "传感器 压缩 向量 排名 间隔",
+      "actual": [
+        "math.gaussian-projection-score",
+        "math.singular-support-bilinear-low-rank",
+        "math.weighted-bilinear-low-rank"
+      ],
+      "hit": true,
+      "seconds": 0.004571320998365991,
+      "chars": 6055,
+      "bytes": 10690,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "b4ca0daf3bad406601371f7afcc6addafafcece99e96eff5ed043eef69a9d69e",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.gaussian-projection-score",
+            "version": 1,
+            "sha256": "7eace52e6bbbf50bae1163a405bc9a2cd6ff8118ee7da6d599dc8f12cb3d130c",
+            "title": "有限高斯降维的内积分数、严格排名与量词边界",
+            "summary": "固定且独立于iid高斯投影的有限query/key，用chi-square集中与极化给内积误差；严格间隔才保排名，自适应输入和求逆目标不认证。",
+            "status": "published",
+            "assumptions": [
+              "实向量q_a,k_i固定或随机但独立于A；Q,N为有限正整数，A的条目iid N(0,1/m)，m为正整数。",
+              "epsilon,delta在(0,1)；概率关于A，有限集合在抽样前固定；零向量单独精确处理。",
+              "排名额外要求完整候选分数逐项误差及严格分界gap；attention scale必须一起传播，不认证softmax/value/e2e。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-random-score-20261009：10公开精确边界检查、结构检索及独立审核；非形式化/非模型实测。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "迁移与不适用条件",
+                "start_line": 43,
+                "end_line": 50,
+                "excerpt": "## 迁移与不适用条件\n\n原问题→理论：冻结完整query/key轨迹→有限向量；压缩索引→共用A；完整内积分数→s；代理误差→E；排序→strict gap。NoPE直接适用此数学对象。RoPE只能对**先完成各位置旋转后的固定向量**使用A；先投影再按代表频率旋转须另证AR_m=barR_m A，见rotation-intertwiner。NoPE+RoPE应记录实际拼接/scale；不从名字推断维度/误差。此映射保留线性内积与有限集合，未保留推理反馈、value加权输出或e2e精度。\n\n跨领域传感器匹配也可映射为固定测量向量与模板打分。可证伪预测：逐项核验u±v事件及strict gap成立后，精确算术下排名必须保持；不满足条件的实验只报告经验误差/召回。索引缓存、投影成本、GPU访存/浮点/量化误差均未被该定理消除。\n\n建议最小研究：固定同一轨迹/候选/预算，比较选坐标与高斯草图，报告逐项分数误差分布、分界gap、候选召回、attention-output误差、e2e和总延迟/新增缓存；Gaussian仅基线候选，无生产采用/收益结论。不能拿重合度单一指标代替输出或任务质量。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界与误用",
+                "start_line": 31,
+                "end_line": 42,
+                "excerpt": "## 正例、边界与误用\n\n公开精确事件例：A=diag(1,4/5)，u=(1,0),v=(0,1),epsilon=2/5。u±v平方范数2变41/25，相对误差9/50<2/5，点积保持0。这只是一个确定事件样例，不是高斯覆盖实验。\n\n严格排名例：s=(1,0),hat_s=(9/10,1/10),E=1/10，gap1>1/5，集合保持。gap=2E的s=(1/5,0),hat_s=(1/10,1/10)产生tie；gap<E的s=(1/20,0),hat_s=(−1/20,1/10)翻转。u=−v时u+v=0，不能除以零；零向量直接处理。\n\n量词反例：m<d时rank-nullity给非零x∈ker(A)。观察A后取单位x，||Ax||²=0而||x||²=1。不存在该维度下对全部R^d的近等距保证。此x依赖A，未违反固定有限集概率命题。真实模型query若受该sketch影响而生成，不自动满足独立条件；需新的自适应分析或冻结独立轨迹。\n\n求逆反例（本项目精确推导）：g=g'=e1，F=diag(1,99)，P=[1,1]。有限集合{g}的范数/自内积由P精确保持，但g^T F^{-1}g=1，而(Pg)^T(PFP^T)^{-1}(Pg)=1/100。不能把有限向量的几何误差直接当作影响函数误差。P不是高斯样本，此例反驳逻辑蕴含，不反驳高斯定理。F全秩，P不在range(F)上单射。\n\n维度诊断：Q=1,N=1024,epsilon=1/5,delta=1/20时上述充分m约1306，已超过常见d=128。它不能凭该常数为压缩提供可用认证；不意味着所有较低m都失败。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.singular-support-bilinear-low-rank",
+            "version": 1,
+            "sha256": "60301c861c559bba11a030e7fe98e8a789ede04777b62cadad8cdfa5b5b79cd2",
+            "title": "奇异支持下的双线性低秩分数近似",
+            "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+              "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+              "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文条件式推导；非Lean形式化证明",
+                "agent_doc/results/math-singular-bilinear-20261008-v2/validate.py、raw.json：公开有限CPU检查；旧数值范围失败保存，v2独立回执另存；有限输出不保证任意病态尺度精度"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04788306451612903,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界与跨领域迁移",
+                "start_line": 31,
+                "end_line": 38,
+                "excerpt": "## 正例、边界与跨领域迁移\n\n线性传感器：a=(1,2,0)、b=(1,0,3)，q=u a为无量纲可编程增益，k=v b为电压(V)，u∈{−1,1}、v∈{−2,2}独立均匀。H=diag(2,5,7)以电导(S)计，分数为电流(A)，qᵀHk=2uv。两个二阶矩均rank1。\n\nr=1可取M0=a bᵀ/25（单位S），qᵀM0k=2uv，均方误差0 A²；||M0||F²=2/25 S²。取c=(2,−1,0)，N=c bᵀ则aᵀc=0，M0+N仍rank1、分数不变，范数平方为1252/25 S²。不可见自由度存在，规范解更小。反过来任意N如独立第三坐标可能增秩，必须核对。\n\n支持漂移：q=k=(0,1,0)（分别用gain/V单位），原分数5 A而M0给0，缺口5 A。校准零误差不代表未知工况无损。传感器仅合成线性映射验证，未测真实物理系统。\n\n"
+              },
+              {
+                "node": "s6",
+                "title": "对 indexer、NoPE/RoPE 与知识入口的意义",
+                "start_line": 49,
+                "end_line": 56,
+                "excerpt": "## 对 indexer、NoPE/RoPE 与知识入口的意义\n\n原对象q/k/H对应投影代理的分数；经验 q×k 笛卡尔积可以定义合法独立乘积分布，因此该**有限代理目标**可精确成立。真实因果paired风险、长度分布和文档留出必须另测。保留所用知识ID、版本、哈希与独立假设，不把所有条目装进上下文。\n\nNoPE可直接对固定内容分数建模；RoPE应明确使用实际post-RoPE向量或每个位置差对应的H，位置改变可能改变支持。NoPE+RoPE共同压缩不意味着潜在两维继承代表FC频率；跨频率 intertwining 另有条件。这里不修改旋转结构，不认证实数投影的浮点输出，也不保证top-k、V/W输出或e2e最优。\n\n最小可证伪预测：在相同索引维数下，支持内加权解的**冻结经验乘积MSE**等于C的尾和，且不差于可行rank同预算基线；若实际成对风险或留出排序变坏，则拒绝宣称质量改进。最终保留全KV时新增潜在key仍是额外缓存，投影/校准/数值秩评估成本需计入。无实际收益只保留知识与负结果，不接生产。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 6
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.046897546897546896,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "可解决结构与不适用条件",
+                "start_line": 32,
+                "end_line": 40,
+                "excerpt": "## 可解决结构与不适用条件\n适用于已指定独立乘积分布下、有限维双线性分数的均方低秩近似，包括独立载荷/应变传感器的响应压缩。q为载荷系数，k为传感器模态，H为固定耦合；若单位不一致，先按物理量纲定义权重，不用无量纲误差冒充物理指标。\n\n真实attention同文档的q,k通常相关，因果位置采样也不是无条件独立。可用校准q×校准k全部笛卡尔积定义一个**经验乘积分布代理**，该有限目标严格成立；它不等于真实paired风险。需在独立文档留出集检查成对分数、排序、实际V/W输出及e2e。\n\npost-RoPE实际q/k也可定义此代理，但固定矩与独立性仍须核对；模型的不同位置/长度可能改变目标。一般A,B不相同、M不对称，不是UUᵀ。压缩维没有自动继承某个原始FC频率；不保证ARp=RbarpA。不能跨频率融合后声称单频RoPE无损。pre-RoPE低秩也不保证post-RoPE低秩。\n\n分数MSE不保证top-k保持，缺少逐点误差和排序margin时拒绝用math.topk-margin；也不保证softmax或value输出最优，后者按math.attention-output-geometry单独检验。缓存z_k是额外索引存储，最终保留全KV时不自动减总缓存。校准/投影计算成本需测量。\n\n"
+              },
+              {
+                "node": "s8",
+                "title": "验证状态",
+                "start_line": 44,
+                "end_line": 46,
+                "excerpt": "## 验证状态\n显示证明经独立数学审阅，CPU有限产品分布与随机SPD输入检查见doc/results/math-weighted-bilinear-20261007/。公开开发问题含未点名定理的压缩问题、传感器跨域与相关性/奇异性拒用；拒用为人工前提核对，不是模型测评。数值样例不替代一般证明。无Lean、真实模型A/B、GPU时延或未见模型验收；待执行留出协议不记为已完成。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R3",
+      "query": "投影 之后 选择 输入 核空间 失效",
+      "actual": [
+        "math.gaussian-projection-score",
+        "math.eigenspace-gap-perturbation",
+        "math.floating-dot-enclosure"
+      ],
+      "hit": true,
+      "seconds": 0.005570590001298115,
+      "chars": 6613,
+      "bytes": 11088,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "b4ca0daf3bad406601371f7afcc6addafafcece99e96eff5ed043eef69a9d69e",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.gaussian-projection-score",
+            "version": 1,
+            "sha256": "7eace52e6bbbf50bae1163a405bc9a2cd6ff8118ee7da6d599dc8f12cb3d130c",
+            "title": "有限高斯降维的内积分数、严格排名与量词边界",
+            "summary": "固定且独立于iid高斯投影的有限query/key，用chi-square集中与极化给内积误差；严格间隔才保排名，自适应输入和求逆目标不认证。",
+            "status": "published",
+            "assumptions": [
+              "实向量q_a,k_i固定或随机但独立于A；Q,N为有限正整数，A的条目iid N(0,1/m)，m为正整数。",
+              "epsilon,delta在(0,1)；概率关于A，有限集合在抽样前固定；零向量单独精确处理。",
+              "排名额外要求完整候选分数逐项误差及严格分界gap；attention scale必须一起传播，不认证softmax/value/e2e。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-random-score-20261009：10公开精确边界检查、结构检索及独立审核；非形式化/非模型实测。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "问题触发与准确结论",
+                "start_line": 3,
+                "end_line": 16,
+                "excerpt": "## 问题触发与准确结论\n\n对象：Q个查询q_a∈R^d、N个键k_i∈R^d；实欧氏内积；A∈R^{m×d}条目独立N(0,1/m)。集合固定或独立于A，epsilon,delta∈(0,1)。概率关于投影抽样，不是关于任意事后选择输入。\n\n**本项目推导的经典集中论证之内积推论**：令c(epsilon)=epsilon²/4−epsilon³/6>0。若\n\nm ≥ ceil(log(4QN/delta)/c(epsilon))，\n\n则以至少1−delta的概率，同时有\n\n|〈Aq_a,Ak_i〉−〈q_a,k_i〉| ≤ epsilon||q_a||||k_i||，所有a,i。\n\n这是充分维度，不是最小维度，也不保证m<d。固定某次抽样，结论是高概率而非该抽样的确定证书；可另外逐项核验指定有限事件。任意固定/训练投影、PCA、列稀疏符号矩阵不自动共享此高斯常数。\n\n"
+              },
+              {
+                "node": "s6",
+                "title": "来源及研究筛选",
+                "start_line": 51,
+                "end_line": 57,
+                "excerpt": "## 来源及研究筛选\n\n经典：Dasgupta & Gupta，Random Structures & Algorithms22(1):60–65 (2003)，DOI10.1002/rsa.10073；作者PDF Section2 Theorem2.1/Lemma2.2及证明，Section3比较独立高斯映射。其Section2随机正交子空间算法与本文iid高斯映射不同；本文自行推导标准归一化和上述有限内积推论。\n\n近期：Hu et al., A Unified Theory of Random Projection for Influence Functions，arXiv2602.10449 **v2 2026-02-13**（v1 2026-02-11），2026-10-09检索，预印本；仅读摘要、Section1及Section2.1 Theorem1陈述。作者报告未正则化影响在range(F)上对所有g,g'精确保留当且仅当P在该空间单射；本文不采纳未读附录/regularized常数，只用自行可复算反例标记任务对象差异。未复现论文实验；正式发表状态未独立核验。\n\n实际状态：公开精确检查与独立非形式化推导审核，双后端结构检索；不是Lean证明、概率覆盖Monte Carlo、LLM拒用测验或GPU/e2e/token提升。未使用的模型holdouts未读取；公开案例之后只能算开发/回归用例。\n"
+              }
+            ]
+          },
+          {
+            "id": "math.eigenspace-gap-perturbation",
+            "version": 1,
+            "sha256": "9737b6e1fb288bf682e23f1910f32aadc43421bd42821550a82e419303a7e292",
+            "title": "谱隙、子空间扰动与投影打分证书",
+            "summary": "实对称矩阵的隔离特征值簇可用边界谱隙控制子空间误差；主方向稳定取决于误差与谱隙的比值。投影比较消除符号和簇内旋转歧义，可传播到有范数约束的打分。",
+            "status": "published",
+            "assumptions": [
+              "A与Ahat=A+E是同维实对称矩阵，使用一致坐标及欧氏算子/Frobenius范数",
+              "特征值降序，目标为同一索引区间r..s；d=s-r+1，外侧边界谱隙g=min(lambda_(r-1)-lambda_r,lambda_s-lambda_(s+1))>0，端点取无穷",
+              "U与Uhat列正交；比较投影或主角度，不能直接比较未对齐的基",
+              "本文自推较紧rank-one界另需目标最大特征值、g=lambda_1-lambda_2>0、认证epsilon>=||E||op且epsilon<g；epsilon<g/2额外认证扰动后最大特征值简单",
+              "打分迁移需q,k位于同一欧氏坐标系、目标确为q^T P k；只控制换基误差，不控制舍弃补空间或完整注意力输出"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-subspace/verify.py",
+                "docs/knowledge_learning/2026-10-07-subspace/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04762704813108039,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界和误用反例",
+                "start_line": 39,
+                "end_line": 46,
+                "excerpt": "## 正例、边界和误用反例\n\nA=diag(2,1)，E的两非对角元为0.1；epsilon=0.1、g=1。theta=atan(0.2)/2，实际sin(theta)≈0.09854，小于证书1/9。验证脚本检查闭式特征方程、投影幂等性、范数和误差界。\n\nA=diag(1+delta,1)，E=diag(-delta,delta)，delta>0可任意小；主方向翻转90度，特征值变化≤delta。epsilon/g=1，故不能宣称“绝对矩阵误差小就稳定”。A=I、任意小diag(t,-t)与diag(-t,t)选择相反主方向，未扰动单方向不存在唯一目标。\n\nA=diag(3,3,1)的前两列可旋转90度，基差Frobenius范数2，但P完全相同；第一单向量的簇外边界为零，而完整二维簇的边界为2。这不是理论冲突。非对称矩阵不得沿用以上公式；应另核验奇异子空间、Hermitian变换或非正规条件数。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "谱隙、子空间扰动与投影打分证书",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 谱隙、子空间扰动与投影打分证书\n\n稳定ID `math.eigenspace-gap-perturbation`，v1。来源固定arXiv1405.0680v1；近期采样论文只在本轮研究记录中作为候选。这里的结论限实对称有限维矩阵。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.floating-dot-enclosure",
+            "version": 1,
+            "sha256": "e800ad6e5dbd1be9aa2de66da0e06933cccb84c41419668ae0550f4407db1bbb",
+            "title": "浮点点积外包与严格安全筛除",
+            "summary": "对存储binary64点积逐运算向外扩展，核对正确舍入/渐进下溢；累计丢失小项、量化原始输入及GPU排序目标需区分，未知前提拒用。",
+            "status": "published",
+            "assumptions": [
+              "输入为有限存储binary64数，目标为其精确实数点积；量化前输入和实际GPU结果是其他目标",
+              "每个标量加乘正确RN舍入到同一binary64格式、邻接nextafter正确、渐进下溢，无FTZ/未知重排或低精度路径",
+              "每步结果及外包邻接端点有限；无法满足则无法认证并保留/回退，不按失败值剪枝",
+              "安全筛除有全部逐项包络，tau取第k大下界，删除仅限U_i<tau，重排目标/tie规则一致",
+              "坐标投影误差界仅适用显式选坐标；学习投影、理想RoPE、输入误差与GPUkernel偏差须另行认证"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Conditional induction proof and exact-rational public CPU data at agent_doc/results/math-rounding-20261008/; independent actual code/math/data acceptance required before publication",
+                "No Lean/formal proof, platform-wide arithmetic certification, GPU/model/quality/token performance experiment"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 5
+              }
+            ],
+            "score": 0.04738666351569577,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "严格迁移：坐标粗筛＋遗漏项界",
+                "start_line": 64,
+                "end_line": 85,
+                "excerpt": "## 严格迁移：坐标粗筛＋遗漏项界\n\n沿用 `math.residual-interval-screening@1` 的有效逐项包络要求，不更改其版本/历史引用。为避免未知学习投影误差，演示只选固定坐标S，其余坐标H；P为精确坐标投影。\n\n对q与第i个键k_i，粗分数 `a_i=sum_{j∈S} q_j k_ij` 用逐运算包络。遗漏项满足直接三角界\n\\[\n\\left|\\sum_{j\\in H}q_j k_{ij}\\right|\n\\le \\max_{j\\in H}|q_j|\\,\\sum_{j\\in H}|k_{ij}|.\n\\]\n空H令右边0。对键的非负绝对和逐步外包取得上界，对查询max取精确存储值最大绝对值，再向外乘法；得到认证的ρ_i。用外包加法组合 `[a_i^- -ρ_i,a_i^+ +ρ_i]`。本轮demo重算键和，未实测预缓存性能。\n\n令τ为第k大下界，仅删除 `U_i<τ`；**相等必须保留**。被删项至少有k个别的下界高于其上界，因此不可能属于实数目标Top-k；对保留项用同一精确目标及tie规则重排，恢复一个原Top-k解。候选可退化为全量，这是合法负结果。\n\n| 输入形式 | 可严格映射的目标 | 仍须另查 |\n|---|---|---|\n| 仅NoPE | 相同存储q/k的实数点积 | 输入量化、实际GPU累加器目标 |\n| 仅RoPE | 已在正确位置旋转并存储后的q/k点积 | 理想旋转、sin/cos、位置/频率布局和旋转舍入误差 |\n| NoPE+RoPE | 各分量包络再外包相加、已知标量外包相乘 | 缩放目标、两个路径精度及mask是否一致 |\n| 学习U或低秩表示 | 仅其存储压缩坐标的点积 | 原空间投影缺陷、非正交性、逐项真实残差；未知则不证原分数 |\n\n本证书指向存储输入的精确实数目标。若要保护实际dense kernel的浮点Top-k，还需另有每项kernel结果距该实数目标的认证界ζ_i，再向外扩展区间。否则真实数学排序与dense浮点排序可能不同。它也不提供注意力质量、质量总量或e2e精度保证。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "可复核例子、边界和反例",
+                "start_line": 56,
+                "end_line": 63,
+                "excerpt": "## 可复核例子、边界和反例\n\n1. `x=(2^53,1,-2^53), y=(1,1,1)`，精确s=1，普通顺序结果为0。仅给最终0补一邻接ULP的区间约为 `[-2^-1074,2^-1074]`，不含1；逐步外包则包含1，但可能很宽。\n2. 最小正次正规数 `η=2^-1074` 与0.5相乘，精确结果 `η/2`，RN结果为0；渐进下溢条件下 `[down(0),up(0)]`包含它。相对误差模型不能直接解释为误差≤u倍真值。\n3. FTZ反例：把 `2^-1022 * 0.25` 非法地冲刷成0，则真值 `2^-1024`远大于0的邻接间隔，上述邻接包络失效。这是算术前提失效，不能用一次探针当作所有kernel已认证。\n4. 有限输入也可能在乘法/加法/向外一邻接步溢出；本方法拒绝给有限证书。维度不匹配、NaN输入、反向端点或非法k同样拒用。\n5. 缓存量化结果0乘1的存储目标接近0，无法担保量化前原始1000的分数。没有输入误差界时拒绝原始输入目标；存储dtype更高不改变这个事实。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "context": {
+    "schema_version": 1,
+    "snapshot": "b4ca0daf3bad406601371f7afcc6addafafcece99e96eff5ed043eef69a9d69e",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "status": "partial",
+    "budget": {
+      "max_entries": 3,
+      "max_chars": 17000,
+      "used_chars": 8346,
+      "scope": "serialized entry payload characters, not model tokens or outer envelope"
+    },
+    "retrieved_ids": [
+      "math.gaussian-projection-score"
+    ],
+    "entries": [
+      {
+        "schema_version": 1,
+        "id": "math.cauchy-schwarz",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "Cauchy–Schwarz 与内积分数误差",
+        "summary": "由向量误差界推出查询与键的内积分数误差界。",
+        "aliases": [
+          "柯西施瓦茨",
+          "dot product error",
+          "inner product bound",
+          "查询键误差",
+          "分数扰动"
+        ],
+        "domains": [
+          "linear-algebra"
+        ],
+        "structures": [
+          "error-bound",
+          "inner-product"
+        ],
+        "assumptions": [
+          "实向量 q、k、k_hat 维数相同，使用欧氏内积和二范数",
+          "已知键向量误差界；查询变化时必须另外计入误差"
+        ],
+        "sources": [
+          {
+            "url": "https://people.math.wisc.edu/~gemeyer/math340/Notes3.html",
+            "locator": "Theorem 5.3；原页面部分不等号编码缺失，下面给出独立推导",
+            "accessed": "2026-10-06"
+          },
+          {
+            "url": "https://github.com/leanprover-community/mathlib4/blob/eb681fbdc4a4f09fe5385666cc194b335df59611/Mathlib/Analysis/InnerProductSpace/Basic.lean",
+            "locator": "文件文档的 inner_mul_inner_self_le 及 Cauchy–Schwarz 变体；仅检查源文件，未运行 Lean",
+            "accessed": "2026-10-06"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "同名 Markdown 中的命题、推导与边界；非形式化证明",
+            "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+          ]
+        },
+        "requires": [],
+        "relations": [],
+        "content": "# 内积误差界\n\n## 命题与符号\n实向量 u,v 满足 |uᵀv| ≤ ‖u‖₂‖v‖₂。因此固定 q 时，\n|qᵀk − qᵀk_hat| ≤ ‖q‖₂‖k−k_hat‖₂。\n来源支持基础不等式；分数误差是本条直接推论。\n\n## 推导\nv=0 时显然。否则取 t=(uᵀv)/‖v‖₂²，由 ‖u−tv‖₂²≥0 得\n‖u‖₂²−(uᵀv)²/‖v‖₂²≥0。取平方根，再令 u=q、v=k−k_hat。\n\n## 实例\nq=(3,4)，k−k_hat=(0.06,0.08)，内积误差 0.5，范数乘积也是 0.5。\n\n## 误用与验证\n平均键误差不能替代每个键的上界。例：q=(1)，两个键误差为 0 和 2，\n均值为 1，却有分数误差 2。查询也变化时用分解\nqᵀk−q_hatᵀk_hat=(q−q_hat)ᵀk+q_hatᵀ(k−k_hat)，分别取界。\n范数界不自动保证排序、softmax 输出或模型任务精度。\n\n形式化来源索引：mathlib4 固定版本见元数据 sources。已阅读该文件的 Cauchy–Schwarz 变体说明；未运行 Lean，本条目的查询误差应用也没有形式化证明。\n",
+        "path": "entries/math.cauchy-schwarz.json",
+        "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c",
+        "selection_reason": "prerequisite"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.gaussian-projection-score",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "有限高斯降维的内积分数、严格排名与量词边界",
+        "summary": "固定且独立于iid高斯投影的有限query/key，用chi-square集中与极化给内积误差；严格间隔才保排名，自适应输入和求逆目标不认证。",
+        "aliases": [
+          "有限 随机 降维 内积 打分 误差",
+          "传感器 压缩 向量 排名 间隔",
+          "投影 之后 选择 输入 核空间 失效",
+          "Gaussian sketch finite bilinear polarization Johnson Lindenstrauss ranking margin"
+        ],
+        "domains": [
+          "linear-algebra",
+          "probability-and-optimization"
+        ],
+        "structures": [
+          "finite-family-sketch",
+          "inner-product-error",
+          "strict-ranking-margin",
+          "adaptive-input-boundary"
+        ],
+        "assumptions": [
+          "实向量q_a,k_i固定或随机但独立于A；Q,N为有限正整数，A的条目iid N(0,1/m)，m为正整数。",
+          "epsilon,delta在(0,1)；概率关于A，有限集合在抽样前固定；零向量单独精确处理。",
+          "排名额外要求完整候选分数逐项误差及严格分界gap；attention scale必须一起传播，不认证softmax/value/e2e。"
+        ],
+        "sources": [
+          {
+            "url": "https://cseweb.ucsd.edu/~dasgupta/papers/jl.pdf",
+            "locator": "Section2 Theorem2.1/Lemma2.2 and proof; Section3 Gaussian discussion. Our iid Gaussian MGF/polarization corollary is independently derived, not their orthogonal-map algorithm.",
+            "accessed": "2026-10-09"
+          },
+          {
+            "url": "https://arxiv.org/pdf/2602.10449v2",
+            "locator": "Abstract/Section1 setup/contributions/Section2.1 Theorem1 statement. No appendix proof adoption or reproduction; own exact inverse witness used.",
+            "accessed": "2026-10-09"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "agent_doc/results/math-random-score-20261009：10公开精确边界检查、结构检索及独立审核；非形式化/非模型实测。"
+          ]
+        },
+        "requires": [
+          {
+            "id": "math.topk-margin",
+            "version": 1
+          }
+        ],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.rotation-intertwiner"
+          },
+          {
+            "type": "related",
+            "id": "math.weighted-bilinear-low-rank"
+          },
+          {
+            "type": "related",
+            "id": "math.rank-nullity-quotient"
+          }
+        ],
+        "content": "# math.gaussian-projection-score@1 — 有限高斯打分降维\n\n## 问题触发与准确结论\n\n对象：Q个查询q_a∈R^d、N个键k_i∈R^d；实欧氏内积；A∈R^{m×d}条目独立N(0,1/m)。集合固定或独立于A，epsilon,delta∈(0,1)。概率关于投影抽样，不是关于任意事后选择输入。\n\n**本项目推导的经典集中论证之内积推论**：令c(epsilon)=epsilon²/4−epsilon³/6>0。若\n\nm ≥ ceil(log(4QN/delta)/c(epsilon))，\n\n则以至少1−delta的概率，同时有\n\n|〈Aq_a,Ak_i〉−〈q_a,k_i〉| ≤ epsilon||q_a||||k_i||，所有a,i。\n\n这是充分维度，不是最小维度，也不保证m<d。固定某次抽样，结论是高概率而非该抽样的确定证书；可另外逐项核验指定有限事件。任意固定/训练投影、PCA、列稀疏符号矩阵不自动共享此高斯常数。\n\n## 可复核证明（非形式化）\n\n1. 对任意固定非零x，每行Ax为方差||x||²/m的独立正态，Z=m||Ax||²/||x||²为chi-square_m。由高斯积分，E exp(tZ)=(1−2t)^{-m/2},t<1/2。\n2. Markov/Chernoff优化：上尾取t=epsilon/[2(1+epsilon)]，得到Pr[Z≥m(1+epsilon)]≤exp(−m(epsilon−log(1+epsilon))/2)。下尾用E exp(−tZ)，t=epsilon/[2(1−epsilon)]，得到Pr[Z≤m(1−epsilon)]≤exp(−m(−epsilon−log(1−epsilon))/2)。\n3. 对0<e<1，e−log(1+e)≥e²/2−e³/3：左右差在0为0，导数e³/(1+e)≥0。−e−log(1−e)≥e²/2：左右差导数e²/(1−e)≥0。因此两尾之和≤2exp(−mc)。零x恒为0不需概率。\n4. 对非零q,k归一化u=q/||q||、v=k/||k||。所有u+v和u−v共至多2QN个固定向量，union bound（不需事件相互独立）失败≤4QN exp(−mc)≤delta。\n5. 在这些向量的相对平方范数误差均≤epsilon的事件上，极化恒等式给出\n\n|〈Au,Av〉−〈u,v〉| ≤ epsilon(||u+v||²+||u−v||²)/4 = epsilon。\n\n最后乘回两向量范数；零query/key分数精确为0。这一步是条件事件蕴含，不依赖A的分布；概率认证依赖第1–4步。\n\n**排名衔接**：对固定query，E_i=epsilon||q||||k_i||。若完整分数s_i中每个入选i与未入选j均满足s_i−s_j>E_i+E_j，则代理保留Top-k；统一E则gap>2E，见强依赖math.topk-margin@1。等号只保证非反转，可出现tie，不能保证集合不变。注意力logit为s/√d时E也除√d。没有margin证书不能从平均小误差推断保排名。\n\n## 正例、边界与误用\n\n公开精确事件例：A=diag(1,4/5)，u=(1,0),v=(0,1),epsilon=2/5。u±v平方范数2变41/25，相对误差9/50<2/5，点积保持0。这只是一个确定事件样例，不是高斯覆盖实验。\n\n严格排名例：s=(1,0),hat_s=(9/10,1/10),E=1/10，gap1>1/5，集合保持。gap=2E的s=(1/5,0),hat_s=(1/10,1/10)产生tie；gap<E的s=(1/20,0),hat_s=(−1/20,1/10)翻转。u=−v时u+v=0，不能除以零；零向量直接处理。\n\n量词反例：m<d时rank-nullity给非零x∈ker(A)。观察A后取单位x，||Ax||²=0而||x||²=1。不存在该维度下对全部R^d的近等距保证。此x依赖A，未违反固定有限集概率命题。真实模型query若受该sketch影响而生成，不自动满足独立条件；需新的自适应分析或冻结独立轨迹。\n\n求逆反例（本项目精确推导）：g=g'=e1，F=diag(1,99)，P=[1,1]。有限集合{g}的范数/自内积由P精确保持，但g^T F^{-1}g=1，而(Pg)^T(PFP^T)^{-1}(Pg)=1/100。不能把有限向量的几何误差直接当作影响函数误差。P不是高斯样本，此例反驳逻辑蕴含，不反驳高斯定理。F全秩，P不在range(F)上单射。\n\n维度诊断：Q=1,N=1024,epsilon=1/5,delta=1/20时上述充分m约1306，已超过常见d=128。它不能凭该常数为压缩提供可用认证；不意味着所有较低m都失败。\n\n## 迁移与不适用条件\n\n原问题→理论：冻结完整query/key轨迹→有限向量；压缩索引→共用A；完整内积分数→s；代理误差→E；排序→strict gap。NoPE直接适用此数学对象。RoPE只能对**先完成各位置旋转后的固定向量**使用A；先投影再按代表频率旋转须另证AR_m=barR_m A，见rotation-intertwiner。NoPE+RoPE应记录实际拼接/scale；不从名字推断维度/误差。此映射保留线性内积与有限集合，未保留推理反馈、value加权输出或e2e精度。\n\n跨领域传感器匹配也可映射为固定测量向量与模板打分。可证伪预测：逐项核验u±v事件及strict gap成立后，精确算术下排名必须保持；不满足条件的实验只报告经验误差/召回。索引缓存、投影成本、GPU访存/浮点/量化误差均未被该定理消除。\n\n建议最小研究：固定同一轨迹/候选/预算，比较选坐标与高斯草图，报告逐项分数误差分布、分界gap、候选召回、attention-output误差、e2e和总延迟/新增缓存；Gaussian仅基线候选，无生产采用/收益结论。不能拿重合度单一指标代替输出或任务质量。\n\n## 来源及研究筛选\n\n经典：Dasgupta & Gupta，Random Structures & Algorithms22(1):60–65 (2003)，DOI10.1002/rsa.10073；作者PDF Section2 Theorem2.1/Lemma2.2及证明，Section3比较独立高斯映射。其Section2随机正交子空间算法与本文iid高斯映射不同；本文自行推导标准归一化和上述有限内积推论。\n\n近期：Hu et al., A Unified Theory of Random Projection for Influence Functions，arXiv2602.10449 **v2 2026-02-13**（v1 2026-02-11），2026-10-09检索，预印本；仅读摘要、Section1及Section2.1 Theorem1陈述。作者报告未正则化影响在range(F)上对所有g,g'精确保留当且仅当P在该空间单射；本文不采纳未读附录/regularized常数，只用自行可复算反例标记任务对象差异。未复现论文实验；正式发表状态未独立核验。\n\n实际状态：公开精确检查与独立非形式化推导审核，双后端结构检索；不是Lean证明、概率覆盖Monte Carlo、LLM拒用测验或GPU/e2e/token提升。未使用的模型holdouts未读取；公开案例之后只能算开发/回归用例。\n",
+        "path": "entries/math.gaussian-projection-score.json",
+        "sha256": "7eace52e6bbbf50bae1163a405bc9a2cd6ff8118ee7da6d599dc8f12cb3d130c",
+        "selection_reason": "retrieved"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.topk-margin",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "有界分数误差下的 Top-k 稳定性",
+        "summary": "用边界分数间隔判断近似排序能否保留 Top-k 集合。",
+        "aliases": [
+          "排序会不会变",
+          "ranking stability",
+          "top-k",
+          "候选筛选",
+          "近似分数",
+          "间隔"
+        ],
+        "domains": [
+          "linear-algebra",
+          "optimization"
+        ],
+        "structures": [
+          "ranking",
+          "error-bound"
+        ],
+        "assumptions": [
+          "有限 n 个实分数，1≤k<n，原分数降序排列",
+          "每个分数均满足绝对误差≤ε，而不是仅平均误差",
+          "边界间隔 Δ=s_(k)−s_(k+1) 严格大于 2ε"
+        ],
+        "sources": [
+          {
+            "url": "https://people.math.wisc.edu/~gemeyer/math340/Notes3.html",
+            "locator": "Theorem 5.3 仅支持内积误差上界；Top-k 命题为本条显式推导",
+            "accessed": "2026-10-06"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "同名 Markdown 中的命题、推导与边界；非形式化证明",
+            "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+          ]
+        },
+        "requires": [
+          {
+            "id": "math.cauchy-schwarz",
+            "version": 1
+          }
+        ],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.low-rank-svd"
+          }
+        ],
+        "content": "# Top-k 的充分条件\n\n## 命题与推导\n若每项 |s_i−s_hat_i|≤ε 且 Δ=s_(k)−s_(k+1)>2ε，则 Top-k 集合不变。\n对任何原集合内 i 与集合外 j，\ns_hat_i−s_hat_j ≥ s_i−s_j−2ε ≥ Δ−2ε > 0。\n这保证集合，不保证集合内部顺序。本命题是本库给出的推导，不能冒称来源原文定理。\n\n## 实例\n原分数 (0.9,0.7,0.2)，k=2，ε=0.1，Δ=0.5>0.2，集合稳定。\n\n## 反例\n(0.501,0.500)，k=1，ε=0.001；扰动为 (−0.001,+0.001) 后变成\n(0.500,0.501)，排序翻转。Δ=2ε 时也可能出现并列，不能省去严格不等号。\n条件不满足只能说“此条件无法保证”，不能断言必然翻转。\n\n## 与矩阵近似的连接\nK 的每列为一个键，s=Kᵀq，固定 q；若 ‖K−K_hat‖₂≤δ，则\n每项分数误差≤‖q‖₂δ，可令 ε=‖q‖₂δ 再检查间隔。\n观测的平均误差、采样最大误差都不自动成为全体分数的保证。\n",
+        "path": "entries/math.topk-margin.json",
+        "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792",
+        "selection_reason": "prerequisite"
+      }
+    ],
+    "knowledge_refs": [
+      {
+        "id": "math.cauchy-schwarz",
+        "version": 1,
+        "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c"
+      },
+      {
+        "id": "math.gaussian-projection-score",
+        "version": 1,
+        "sha256": "7eace52e6bbbf50bae1163a405bc9a2cd6ff8118ee7da6d599dc8f12cb3d130c"
+      },
+      {
+        "id": "math.topk-margin",
+        "version": 1,
+        "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792"
+      }
+    ],
+    "skipped": [
+      {
+        "id": "math.rotation-intertwiner",
+        "reason": "complete prerequisite bundle exceeds context budget",
+        "selection_reason": "related"
+      },
+      {
+        "id": "math.weighted-bilinear-low-rank",
+        "reason": "complete prerequisite bundle exceeds context budget",
+        "selection_reason": "related"
+      },
+      {
+        "id": "math.rank-nullity-quotient",
+        "reason": "complete prerequisite bundle exceeds context budget",
+        "selection_reason": "related"
+      }
+    ]
+  },
+  "token_cost": "unmeasured; chars/bytes not tokens",
+  "holdouts_metadata_sha256": "5a0572863e75526de915f22108fc90b5e8ce58de14292e7159054af3ba9fe48a"
+}
