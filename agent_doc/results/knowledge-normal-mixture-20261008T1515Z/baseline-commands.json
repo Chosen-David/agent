@@ -1,0 +1,186 @@
+[
+  {
+    "name": "validate",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "agent_runtime.knowledge",
+      "--root",
+      "knowledge",
+      "validate"
+    ],
+    "exit_code": 0,
+    "seconds": 0.09346365928649902,
+    "log": "baseline-validate.log",
+    "sha256": "0c469802262424d8e1489ccdf125573e9d1c07eb730b36a0600db0e13d8f60a5"
+  },
+  {
+    "name": "sync",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/sync_plugin_references.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.09643220901489258,
+    "log": "baseline-sync.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "sync-check",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/sync_plugin_references.py",
+      "--check"
+    ],
+    "exit_code": 0,
+    "seconds": 0.09316635131835938,
+    "log": "baseline-sync-check.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "index",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "agent_runtime.knowledge",
+      "--root",
+      "knowledge",
+      "index",
+      "--db",
+      ".knowledge-cache/search.sqlite"
+    ],
+    "exit_code": 0,
+    "seconds": 0.11204051971435547,
+    "log": "baseline-index.log",
+    "sha256": "25f80db7f018d4ce4585927a886871579b73247c9b63da438b5c57e94bcf33a7"
+  },
+  {
+    "name": "original",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/queries.json",
+      "--accept-context",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-normal-mixture-20261008T1515Z/baseline-original.json"
+    ],
+    "exit_code": 1,
+    "seconds": 0.617872953414917,
+    "log": "baseline-original.log",
+    "sha256": "06833f562838a6a50fc9901aa946e1990f46e39ac6b8b1a29902ba699e8d788b"
+  },
+  {
+    "name": "original-context8",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/queries.json",
+      "--accept-context",
+      "--context-limit",
+      "8",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-normal-mixture-20261008T1515Z/baseline-original-context8.json"
+    ],
+    "exit_code": 1,
+    "seconds": 0.9646461009979248,
+    "log": "baseline-original-context8.log",
+    "sha256": "fd28b0a1cc040ba07b97f70276b5ade9c29f670e2a78b6669abdc2c4867c0a7d"
+  },
+  {
+    "name": "round2",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/round2-queries.json",
+      "--accept-context",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-normal-mixture-20261008T1515Z/baseline-round2.json"
+    ],
+    "exit_code": 1,
+    "seconds": 0.698267936706543,
+    "log": "baseline-round2.log",
+    "sha256": "0d2f7d61fefa8c53666b81792ecc4c26d3d166de12e20d49be8fc788da012582"
+  },
+  {
+    "name": "round2-context8",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/round2-queries.json",
+      "--accept-context",
+      "--context-limit",
+      "8",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-normal-mixture-20261008T1515Z/baseline-round2-context8.json"
+    ],
+    "exit_code": 1,
+    "seconds": 1.2493822574615479,
+    "log": "baseline-round2-context8.log",
+    "sha256": "c9c1f1c505dfd9d8e8baf97954713625b819235aefeb06f1ee6655824e145e78"
+  },
+  {
+    "name": "morphology",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/morphology-queries.json",
+      "--require-backends",
+      "sqlite",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-normal-mixture-20261008T1515Z/baseline-morphology.json"
+    ],
+    "exit_code": 1,
+    "seconds": 0.47528886795043945,
+    "log": "baseline-morphology.log",
+    "sha256": "8730247fb2d4019129d7679284c29e590830203f76144c6753f68eb58ed63615"
+  },
+  {
+    "name": "full-tests",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 64.78777503967285,
+    "log": "baseline-full-tests.log",
+    "sha256": "b5500d0dbf7b4a2618f2cb709d1c5cf2635336dc0d837cf0d5ff8e81f09ef6d6"
+  },
+  {
+    "name": "reader-tests",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "apps/paper-reader/tests",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 1.758800745010376,
+    "log": "baseline-reader-tests.log",
+    "sha256": "b12230bf40d5b93e6426d3b4d5d9a3db8fbf23b3c57c7adef4a25a0a15f7b951"
+  },
+  {
+    "name": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "seconds": 0.005796909332275391,
+    "log": "baseline-diff-check.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

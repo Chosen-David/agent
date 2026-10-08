@@ -1,0 +1,991 @@
+{
+  "runs": [
+    {
+      "time_utc": "2026-10-08T15:22:34.175733+00:00",
+      "snapshot": "2a6011ec463635871e0a81c750323648b9b73eba472fa35f64a951101bb67656",
+      "cases_sha256": "6120eb62238f9f66f42d25dd2e6ec8e5e8fbdbeee470c641fd80a681724f3613",
+      "verifier_sha256": "00c91ef1fe8d875b863ba449630cd067fc94c64a25863c3b5ade76aebbb6d53a",
+      "candidate": {
+        "schema_version": 1,
+        "id": "math.normal-mixture-boundary",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "条件次高斯过程的双侧正态混合边界",
+        "summary": "固定高斯混合将条件次高斯累积误差变成随可预测方差代理变化的双侧时间一致边界；经验方差、边际次高斯与事后调参不自动有效。",
+        "aliases": [
+          "normal mixture boundary",
+          "Gaussian mixture confidence sequence",
+          "time uniform subGaussian variance proxy",
+          "双侧正态混合边界",
+          "可预测方差代理随机停止"
+        ],
+        "domains": [
+          "probability",
+          "statistics"
+        ],
+        "structures": [
+          "conditional-subgaussian",
+          "time-uniform-boundary",
+          "variance-proxy",
+          "confidence-sequence",
+          "条件次高斯 时间一致 双侧 混合"
+        ],
+        "assumptions": [
+          "离散过滤族，有限实适应增量D_t及有限非负可预测q_t，所有有限t的S_t和V_t有限",
+          "每个固定实λ满足E[exp(λD_t)|F_(t−1)]≤exp(λ²q_t/2)几乎处处；q不是仅凭方差或样本估计设定",
+          "ρ>0和δ∈(0,1)在观测前固定；ρ与V同单位，不事后择优",
+          "指数过程关于样本与λ联合可测；非负混合允许条件Tonelli"
+        ],
+        "sources": [
+          {
+            "url": "https://arxiv.org/html/1810.08240v9",
+            "locator": "Fixedv9(2022-08-06), §3.2 equation14; AppendixA.3 Lemma2 mixture proof and Proposition5 equation51; §3.5 tuning. l0=1 conditional-MGF specialization; square-completion and finite-stop details expanded locally.",
+            "accessed": "2026-10-08"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "not-checked",
+          "checks": [
+            "agent_doc/results/knowledge-normal-mixture-20261008T1515Z/report.md",
+            "agent_doc/results/knowledge-normal-mixture-20261008T1515Z/source-review.md",
+            "agent_doc/results/knowledge-normal-mixture-20261008T1515Z/checks.json",
+            "agent_doc/results/knowledge-normal-mixture-20261008T1515Z/independent_review.md"
+          ]
+        },
+        "requires": [],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.freedman-variance-budget"
+          },
+          {
+            "type": "related",
+            "id": "math.betting-test-martingale"
+          },
+          {
+            "type": "related",
+            "id": "math.alpha-spending-stopping"
+          }
+        ],
+        "content": "# 条件次高斯过程的双侧正态混合边界\n\nScope: a fixed Gaussian mixture gives a two-sided time-uniform boundary for a scalar conditionally sub-Gaussian sum with a predictable variance proxy. It is not an empirical-variance plug-in rule or an extension from one-sided bounded increments alone.\n\n## 触发与精确假设\n累计噪声的可证明方差代理随时间变化，且要持续查看或随机停止时使用。离散过滤族(F_t)，D_t为F_t可测的有限实数；q_t≥0为F_(t−1)可测的有限量。对每个固定λ∈R及t≥1，几乎处处有\nE[exp(λD_t)|F_(t−1)]≤exp(λ²q_t/2)。\n这是本条采用的充分条件，蕴含条件零均值；不是仅假定Var(D_t|过去)≤q_t。定义S_0=V_0=0，S_t=ΣD_j、V_t=Σq_j，各有限t均有限。无需iid；真实观测信息必须包含在过滤族内。q_t称条件次高斯方差代理，可能大于真实条件方差。\n\n预先固定δ∈(0,1)、ρ>0，ρ与V同单位。对v≥0，定义\nb(v)=sqrt((v+ρ)[2log(1/δ)+log(1+v/ρ)])。\n则 P(存在t≥1: |S_t|≥b(V_t))≤δ。两侧已同时包含，公式内无需再将δ除2。有限停止事件满足P(τ<∞且|S_τ|≥b(V_τ))≤δ；不等于给定τ有限的条件概率，也不保证最终停止。\n\n## 证明展开及来源边界\n这是公开正态混合界在初值1下的充分条件特例；以下是本卡自行写出的积分与停止证明，非新定理、非形式化证明。\n对固定λ，L_t(λ)=exp(λS_t−λ²V_t/2)；条件MGF与q_t的可预测性给E[L_t(λ)|F_(t−1)]≤L_(t−1)(λ)，L_0=1。关于(ω,λ)的指数表达联合可测且非负。取固定概率密度sqrt(ρ/(2π)) exp(−ρλ²/2)，在整个R上积分。条件Tonelli交换非负积分与条件期望，得混合M_t也是非负超鞅，E M_t≤1。\n平方配方给\nM_t = sqrt(ρ/(ρ+V_t)) exp(S_t²/[2(ρ+V_t)])。\n这使用积分变量λ的正态混合，不要求观测D_t本身正态；λ的混合分布方差是1/ρ。\n令T为首次M_t≥1/δ。对任意确定N，停止过程M_(t∧T)通过条件期望分解仍为非负超鞅，故1≥E M_(T∧N)≥P(T≤N)/δ。令N递增，事件连续性给P(T<∞)≤δ。闭式M_t≥1/δ恰等价于|S_t|≥b(V_t)，因此无需对两个尾部另做联合界。\n\n## 可算应用与单位\n新公平符号Z_t独立于F_(t−1)，D_t=A_(t−1)Z_t，其中A_(t−1)由过去决定且有限。条件MGF为cosh(λA)≤exp(λ²A²/2)，可取q_t=A²。证明此不等式可比较幂级数：(2k)!≥2^k k!。允许依赖过去的异方差幅度，不能用当前Z_t决定A。\n例如ρ=1、δ=.05，累计V=4时b≈6.165；S=6尚未越界。若传感器增量单位是mV，q、V、ρ单位为mV²，b与S单位为mV。整体尺度乘c>0时S和b乘c，V与ρ必须一起乘c²。\n对恒定条件均值μ的观测Y_t，若D_t=Y_t−μ满足上述MGF且q_t不依赖未知μ，则C_t=[平均Y_t−b(V_t)/t,平均Y_t+b(V_t)/t]为同时覆盖至少1−δ的置信序列。若代理依赖待检验的μ，应逐μ反演检验集合，不能把一个代入值当统一半宽。固定ρ时边界约sqrt(v log v)，不宣称LIL最优或比所有拼接界窄。\n\n## 拒用、边界与数值\n1. 仅有真实方差不够：D=+4、−4各概率1/32，其余为0，均值0、方差1。错误取q=1、ρ=1、δ=.05给b(1)≈3.656；实际一步双侧越界概率1/16>.05。该分布有界，但q=1不满足所需MGF；λ=1即有(15+cosh4)/16>exp(1/2)。可以另证更大的代理，但不能沿用真实方差1。\n2. 单次公平±1观测若把经验中心方差置0，取ρ=.01、δ=.05会得到b(0)≈.2448，实际越界概率1。原合法代理为1，不能事后降成0。\n3. 重复同一公平符号D_t=Z，边际均值0、边际次高斯不变，但观察一次后后续条件均值为Z。错误取V_t=t时，ρ=1、δ=.05、t=100有|S|=100>b(100)≈32.73，越界概率1。\n4. ρ和混合权重须预定。看完路径再选ρ、逐时刻最小化b或只报告最有利检验，没有本条单一δ保证；多个预定检验可另分配δ预算，但那是额外校准。只有Freedman的单侧上界及条件二阶矩不足以支持本条全实λ假设。\n5. v=0允许，b(0)=sqrt(2ρlog(1/δ))>0；ρ=0、δ≤0或δ≥1不属于定义域。q_t=0的合法增量为0，不能用零代理隐藏噪声。\n\n计算log M=S²/[2(V+ρ)]−log1p(V/ρ)/2并与log(1/δ)比较；避免先计算巨大exp。负V、NaN/Inf或非法δ/ρ应拒绝。极端比例、平方溢出、临界浮点比较须重新缩放或高精度核对，本卡不是经认证的数值库。置信有效性不授权省略必做实验，有限CPU枚举也不证明真实模型满足MGF。\n\n## 来源、关系与未验证\nHoward、Ramdas、McAuliffe、Sekhon，固定arXiv:1810.08240v9（2022-08-06），2026-10-08读取；§3.2式(14)、Appendix A.3 Lemma2及Proposition5式(51)，§3.5固定调参讨论。原文一般表述含初始常数l0，本卡为l0=1并采用更具体的条件MGF充分条件。Prop5未逐行给出上述完整积分，完整标量展开与反例是本卡的推导。页面标示arXiv永久非独占发布许可；不复制原文、代码或图，未宣称PDF字节与正式刊物相同。\n\nmath.freedman-variance-budget提供另一种固定预算控制，math.betting-test-martingale提供有界下注例子，math.alpha-spending-stopping提供可求和错误预算；仅作导航。本卡证明自包含，无强依赖条目。没有真实A/B、GPU、未知方差估计、最优功效或无限期形式化验证。\n",
+        "path": "entries/math.normal-mixture-boundary.json",
+        "sha256": "571c1efaa0ce36b0b2a1d11836b3c28d689e19ae14df568efe699ea3a34de00b",
+        "knowledge_refs": [
+          {
+            "id": "math.normal-mixture-boundary",
+            "version": 1,
+            "sha256": "571c1efaa0ce36b0b2a1d11836b3c28d689e19ae14df568efe699ea3a34de00b"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "Gaussian mixture quadrature",
+          "pass": true,
+          "detail": [
+            {
+              "s": 1.2,
+              "v": 0.5,
+              "rho": 3,
+              "quadrature": 1.1372794305146454,
+              "closed": 1.1372794305146452,
+              "relative_error": 2.220446049250313e-16
+            },
+            {
+              "s": -2.1,
+              "v": 4,
+              "rho": 0.7,
+              "quadrature": 0.6169484610080735,
+              "closed": 0.6169484610080734,
+              "relative_error": 2.220446049250313e-16
+            },
+            {
+              "s": 0,
+              "v": 0,
+              "rho": 0.125,
+              "quadrature": 1.0,
+              "closed": 1.0,
+              "relative_error": 0.0
+            }
+          ]
+        },
+        {
+          "name": "boundary inversion",
+          "pass": true,
+          "detail": [
+            8.881784197001252e-16,
+            0.0,
+            1.1102230246251565e-15
+          ]
+        },
+        {
+          "name": "unit scale equivariance",
+          "pass": true,
+          "detail": {
+            "c": 7
+          }
+        },
+        {
+          "name": "variance counterexample",
+          "pass": true,
+          "detail": {
+            "mgf": 111.12232920103324,
+            "claimed_bound": 1.6487212707001282
+          }
+        },
+        {
+          "name": "adaptive finite tree",
+          "pass": true,
+          "detail": {
+            "depth": 14,
+            "crossing_probability": 0.02630615234375,
+            "delta": 0.2,
+            "surviving_paths": 15953
+          }
+        },
+        {
+          "name": "fresh bilingual retrieval",
+          "pass": true,
+          "detail": [
+            {
+              "query": "累计条件次高斯噪声 可预测尺度 任意停止 双侧边界",
+              "ids": [
+                "math.normal-mixture-boundary",
+                "math.betting-test-martingale",
+                "math.freedman-variance-budget",
+                "prob.vector-variance-aware-concentration",
+                "math.linear-prediction-residual"
+              ],
+              "hit": true,
+              "snapshot": "2a6011ec463635871e0a81c750323648b9b73eba472fa35f64a951101bb67656"
+            },
+            {
+              "query": "不预设总方差预算 连续监测 误差边界",
+              "ids": [
+                "math.freedman-variance-budget",
+                "math.normal-mixture-boundary",
+                "math.perturbation-propagation",
+                "math.centered-covariance-merge",
+                "math.contraction-residual-certificate"
+              ],
+              "hit": true,
+              "snapshot": "2a6011ec463635871e0a81c750323648b9b73eba472fa35f64a951101bb67656"
+            },
+            {
+              "query": "在线测量 正态噪声 自适应尺度 时间一致保证",
+              "ids": [
+                "math.normal-mixture-boundary",
+                "prob.vector-variance-aware-concentration",
+                "neuro.anesthesia-temporal-isolation",
+                "prob.self-normalized-dimension-barrier",
+                "math.sequence-tv-coupling"
+              ],
+              "hit": true,
+              "snapshot": "2a6011ec463635871e0a81c750323648b9b73eba472fa35f64a951101bb67656"
+            },
+            {
+              "query": "adaptive Gaussian innovations predictable scale uniform crossing boundary",
+              "ids": [
+                "math.normal-mixture-boundary",
+                "prob.self-normalized-dimension-barrier",
+                "prob.horizon-aware-betting",
+                "math.freedman-variance-budget",
+                "ai.speculative-decoding-cost-bound"
+              ],
+              "hit": true,
+              "snapshot": "2a6011ec463635871e0a81c750323648b9b73eba472fa35f64a951101bb67656"
+            },
+            {
+              "query": "subGaussian cumulative error intrinsic time two sided confidence sequence",
+              "ids": [
+                "math.normal-mixture-boundary",
+                "neuro.anesthesia-temporal-isolation",
+                "algo.lora-intrinsic-rank",
+                "math.linear-solve-backward-error",
+                "math.cauchy-schwarz"
+              ],
+              "hit": true,
+              "snapshot": "2a6011ec463635871e0a81c750323648b9b73eba472fa35f64a951101bb67656"
+            },
+            {
+              "query": "unbounded martingale differences normal mixture sequential boundary",
+              "ids": [
+                "prob.self-normalized-dimension-barrier",
+                "math.normal-mixture-boundary",
+                "math.freedman-variance-budget",
+                "math.betting-test-martingale",
+                "ai.speculative-decoding-cost-bound"
+              ],
+              "hit": true,
+              "snapshot": "2a6011ec463635871e0a81c750323648b9b73eba472fa35f64a951101bb67656"
+            }
+          ]
+        },
+        {
+          "name": "dependency closure",
+          "pass": true,
+          "detail": [
+            {
+              "id": "math.normal-mixture-boundary",
+              "version": 1,
+              "sha256": "571c1efaa0ce36b0b2a1d11836b3c28d689e19ae14df568efe699ea3a34de00b"
+            }
+          ]
+        },
+        {
+          "name": "published dependency versions",
+          "pass": true,
+          "detail": []
+        },
+        {
+          "name": "stale digest rejection",
+          "pass": true,
+          "detail": {
+            "checked_refs": [
+              {
+                "id": "math.normal-mixture-boundary",
+                "version": 1,
+                "sha256": "571c1efaa0ce36b0b2a1d11836b3c28d689e19ae14df568efe699ea3a34de00b"
+              }
+            ]
+          }
+        }
+      ],
+      "machine_pass": true,
+      "manual_scientific_review_required": true,
+      "manual_scientific_review": {
+        "verdict": "usable-with-scope",
+        "reviewer": "/root/mixture_unseen",
+        "cases": [
+          {
+            "id": "adaptive-gaussian-metrology",
+            "verdict": "pass",
+            "reason": "Conditional Gaussian MGF is exp(lambda² a_t²/2) for past-measurable amplitudes. Candidate requires no increment bound; apply with q=a²."
+          },
+          {
+            "id": "bounded-adaptive-control",
+            "verdict": "pass",
+            "reason": "Candidate proves cosh comparison and predictable-amplitude construction. Independent exact depth-14 tree satisfies finite-horizon crossing constraint."
+          },
+          {
+            "id": "rare-spike-variance",
+            "verdict": "pass",
+            "reason": "Independent spike MGF=0.99+0.01cosh(10)>exp(.5). Candidate explicitly refuses substituting mere conditional variance and gives another strict crossing counterexample."
+          },
+          {
+            "id": "shared-hidden-drift",
+            "verdict": "pass",
+            "reason": "Candidate explicitly distinguishes marginal from conditional subGaussian behavior. Shared sign has nonzero conditional drift after first observation and is rejected."
+          },
+          {
+            "id": "post-hoc-rho-selection",
+            "verdict": "pass",
+            "reason": "Candidate requires fixed rho and rejects pathwise tuning; additional calibrated budget needed."
+          },
+          {
+            "id": "zero-proxy-initialization",
+            "verdict": "pass",
+            "reason": "Candidate admits v=0 but excludes rho=0. The all-zero process has M=1 and positive boundary; no crossing."
+          },
+          {
+            "id": "random-stopping-survival",
+            "verdict": "pass",
+            "reason": "Candidate correctly bounds the finite stopping joint event and explicitly disclaims conditioning on stopping or guaranteed termination."
+          },
+          {
+            "id": "one-sided-domain-insufficient",
+            "verdict": "pass",
+            "reason": "Candidate requires all real lambda and integrates full real line. Positive-only or local-MGF certificates do not satisfy its stated premise, so this use is rejected."
+          },
+          {
+            "id": "scale-equivariance",
+            "verdict": "pass",
+            "reason": "Candidate explicitly scales V and rho by c² and S by c; independent numerical c=7 check passed."
+          }
+        ],
+        "proof_review": "Fixed-lambda exponential supermartingale, conditional Tonelli, square completion, finite stopped nonnegative supermartingale and increasing union are self-contained and correctly sequenced. Two-sided event follows from S squared, without extra delta/2. requires=[] is defensible; navigation links are not silently used as proof dependencies.",
+        "source_check": {
+          "url": "https://arxiv.org/html/1810.08240v9",
+          "accessed": "2026-10-08",
+          "locators": [
+            "Section 3.2 equation (14)",
+            "Appendix A.3 Proposition 5 equation (51)"
+          ],
+          "finding": "Independently opened fixed-version primary source; l0=1 algebra matches card boundary and all-time two-sided inequality."
+        },
+        "limitations": [
+          "Formal proof not run.",
+          "Finite numerical cases and lexical search do not establish empirical LLM application success or real sensor assumptions.",
+          "No strong dependencies exist, so a nontrivial omitted-dependency negative case is not applicable to this card.",
+          "Canonical publication and final metadata refs need fresh readback."
+        ]
+      }
+    },
+    {
+      "time_utc": "2026-10-08T15:24:10.983222+00:00",
+      "snapshot": "8d034cfb373a5302194a9de1c832f908b202532e420acccd1812a57216745844",
+      "cases_sha256": "6120eb62238f9f66f42d25dd2e6ec8e5e8fbdbeee470c641fd80a681724f3613",
+      "verifier_sha256": "00c91ef1fe8d875b863ba449630cd067fc94c64a25863c3b5ade76aebbb6d53a",
+      "candidate": {
+        "schema_version": 1,
+        "id": "math.normal-mixture-boundary",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "条件次高斯过程的双侧正态混合边界",
+        "summary": "固定高斯混合将条件次高斯累积误差变成随可预测方差代理变化的双侧时间一致边界；经验方差、边际次高斯与事后调参不自动有效。",
+        "aliases": [
+          "normal mixture boundary",
+          "Gaussian mixture confidence sequence",
+          "time uniform subGaussian variance proxy",
+          "双侧正态混合边界",
+          "可预测方差代理随机停止"
+        ],
+        "domains": [
+          "probability",
+          "statistics"
+        ],
+        "structures": [
+          "conditional-subgaussian",
+          "time-uniform-boundary",
+          "variance-proxy",
+          "confidence-sequence",
+          "条件次高斯 时间一致 双侧 混合"
+        ],
+        "assumptions": [
+          "离散过滤族，有限实适应增量D_t及有限非负可预测q_t，所有有限t的S_t和V_t有限",
+          "每个固定实λ满足E[exp(λD_t)|F_(t−1)]≤exp(λ²q_t/2)几乎处处；q不是仅凭方差或样本估计设定",
+          "ρ>0和δ∈(0,1)在观测前固定；ρ与V同单位，不事后择优",
+          "指数过程关于样本与λ联合可测；非负混合允许条件Tonelli"
+        ],
+        "sources": [
+          {
+            "url": "https://arxiv.org/html/1810.08240v9",
+            "locator": "Fixedv9(2022-08-06), §3.2 equation14; AppendixA.3 Lemma2 mixture proof and Proposition5 equation51; §3.5 tuning. l0=1 conditional-MGF specialization; square-completion and finite-stop details expanded locally.",
+            "accessed": "2026-10-08"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "not-checked",
+          "checks": [
+            "agent_doc/results/knowledge-normal-mixture-20261008T1515Z/report.md",
+            "agent_doc/results/knowledge-normal-mixture-20261008T1515Z/source-review.md",
+            "agent_doc/results/knowledge-normal-mixture-20261008T1515Z/checks.json",
+            "agent_doc/results/knowledge-normal-mixture-20261008T1515Z/independent_review.md"
+          ]
+        },
+        "requires": [],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.freedman-variance-budget"
+          },
+          {
+            "type": "related",
+            "id": "math.betting-test-martingale"
+          },
+          {
+            "type": "related",
+            "id": "math.alpha-spending-stopping"
+          }
+        ],
+        "content": "# 条件次高斯过程的双侧正态混合边界\n\nScope: a fixed Gaussian mixture gives a two-sided time-uniform boundary for a scalar conditionally sub-Gaussian sum with a predictable variance proxy. It is not an empirical-variance plug-in rule or an extension from one-sided bounded increments alone.\n\n## 触发与精确假设\n累计噪声的可证明方差代理随时间变化，且要持续查看或随机停止时使用。离散过滤族(F_t)，D_t为F_t可测的有限实数；q_t≥0为F_(t−1)可测的有限量。对每个固定λ∈R及t≥1，几乎处处有\nE[exp(λD_t)|F_(t−1)]≤exp(λ²q_t/2)。\n这是本条采用的充分条件，不是仅假定Var(D_t|过去)≤q_t。若需要经典L1意义的条件均值，须另核实可积性；本条非负指数过程证明不依赖无条件E|D_t|有限。定义S_0=V_0=0，S_t=ΣD_j、V_t=Σq_j，各有限t均有限。无需iid；真实观测信息必须包含在过滤族内。q_t称条件次高斯方差代理，可能大于真实条件方差。\n\n预先固定δ∈(0,1)、ρ>0，ρ与V同单位。对v≥0，定义\nb(v)=sqrt((v+ρ)[2log(1/δ)+log(1+v/ρ)])。\n则 P(存在t≥1: |S_t|≥b(V_t))≤δ。两侧已同时包含，公式内无需再将δ除2。有限停止事件满足P(τ<∞且|S_τ|≥b(V_τ))≤δ；不等于给定τ有限的条件概率，也不保证最终停止。\n\n## 证明展开及来源边界\n这是公开正态混合界在初值1下的充分条件特例；以下是本卡自行写出的积分与停止证明，非新定理、非形式化证明。\n对固定λ，L_t(λ)=exp(λS_t−λ²V_t/2)；条件MGF与q_t的可预测性给E[L_t(λ)|F_(t−1)]≤L_(t−1)(λ)，L_0=1。关于(ω,λ)的指数表达联合可测且非负。取固定概率密度sqrt(ρ/(2π)) exp(−ρλ²/2)，在整个R上积分。条件Tonelli交换非负积分与条件期望，得混合M_t也是非负超鞅，E M_t≤1。\n平方配方给\nM_t = sqrt(ρ/(ρ+V_t)) exp(S_t²/[2(ρ+V_t)])。\n这使用积分变量λ的正态混合，不要求观测D_t本身正态；λ的混合分布方差是1/ρ。\n令T为首次M_t≥1/δ。对任意确定N，停止过程M_(t∧T)通过条件期望分解仍为非负超鞅，故1≥E M_(T∧N)≥P(T≤N)/δ。令N递增，事件连续性给P(T<∞)≤δ。闭式M_t≥1/δ恰等价于|S_t|≥b(V_t)，因此无需对两个尾部另做联合界。\n\n## 可算应用与单位\n新公平符号Z_t独立于F_(t−1)，D_t=A_(t−1)Z_t，其中A_(t−1)由过去决定且有限。条件MGF为cosh(λA)≤exp(λ²A²/2)，可取q_t=A²。证明此不等式可比较幂级数：(2k)!≥2^k k!。允许依赖过去的异方差幅度，不能用当前Z_t决定A。\n例如ρ=1、δ=.05，累计V=4时b≈6.165；S=6尚未越界。若传感器增量单位是mV，q、V、ρ单位为mV²，b与S单位为mV。整体尺度乘c>0时S和b乘c，V与ρ必须一起乘c²。\n对恒定条件均值μ的观测Y_t，若D_t=Y_t−μ满足上述MGF且q_t不依赖未知μ，则C_t=[平均Y_t−b(V_t)/t,平均Y_t+b(V_t)/t]为同时覆盖至少1−δ的置信序列。若代理依赖待检验的μ，应逐μ反演检验集合，不能把一个代入值当统一半宽。固定ρ时边界约sqrt(v log v)，不宣称LIL最优或比所有拼接界窄。\n\n## 拒用、边界与数值\n1. 仅有真实方差不够：D=+4、−4各概率1/32，其余为0，均值0、方差1。错误取q=1、ρ=1、δ=.05给b(1)≈3.656；实际一步双侧越界概率1/16>.05。该分布有界，但q=1不满足所需MGF；λ=1即有(15+cosh4)/16>exp(1/2)。可以另证更大的代理，但不能沿用真实方差1。\n2. 单次公平±1观测若把经验中心方差置0，取ρ=.01、δ=.05会得到b(0)≈.2448，实际越界概率1。原合法代理为1，不能事后降成0。\n3. 重复同一公平符号D_t=Z，边际均值0、边际次高斯不变，但观察一次后后续条件均值为Z。错误取V_t=t时，ρ=1、δ=.05、t=100有|S|=100>b(100)≈32.73，越界概率1。\n4. ρ和混合权重须预定。看完路径再选ρ、逐时刻最小化b或只报告最有利检验，没有本条单一δ保证；多个预定检验可另分配δ预算，但那是额外校准。只有Freedman的单侧上界及条件二阶矩不足以支持本条全实λ假设。\n5. v=0允许，b(0)=sqrt(2ρlog(1/δ))>0；ρ=0、δ≤0或δ≥1不属于定义域。q_t=0的合法增量为0，不能用零代理隐藏噪声。\n\n计算log M=S²/[2(V+ρ)]−log1p(V/ρ)/2并与log(1/δ)比较；避免先计算巨大exp。负V、NaN/Inf或非法δ/ρ应拒绝。极端比例、平方溢出、临界浮点比较须重新缩放或高精度核对，本卡不是经认证的数值库。置信有效性不授权省略必做实验，有限CPU枚举也不证明真实模型满足MGF。\n\n## 来源、关系与未验证\nHoward、Ramdas、McAuliffe、Sekhon，固定arXiv:1810.08240v9（2022-08-06），2026-10-08读取；§3.2式(14)、Appendix A.3 Lemma2及Proposition5式(51)，§3.5固定调参讨论。原文一般表述含初始常数l0，本卡为l0=1并采用更具体的条件MGF充分条件。Prop5未逐行给出上述完整积分，完整标量展开与反例是本卡的推导。页面标示arXiv永久非独占发布许可；不复制原文、代码或图，未宣称PDF字节与正式刊物相同。\n\nmath.freedman-variance-budget提供另一种固定预算控制，math.betting-test-martingale提供有界下注例子，math.alpha-spending-stopping提供可求和错误预算；仅作导航。本卡证明自包含，无强依赖条目。没有真实A/B、GPU、未知方差估计、最优功效或无限期形式化验证。\n",
+        "path": "entries/math.normal-mixture-boundary.json",
+        "sha256": "9de2108490547d0c90e3eede3076f2647f127395aa6b526a6cf8e5589356c6e1",
+        "knowledge_refs": [
+          {
+            "id": "math.normal-mixture-boundary",
+            "version": 1,
+            "sha256": "9de2108490547d0c90e3eede3076f2647f127395aa6b526a6cf8e5589356c6e1"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "Gaussian mixture quadrature",
+          "pass": true,
+          "detail": [
+            {
+              "s": 1.2,
+              "v": 0.5,
+              "rho": 3,
+              "quadrature": 1.1372794305146454,
+              "closed": 1.1372794305146452,
+              "relative_error": 2.220446049250313e-16
+            },
+            {
+              "s": -2.1,
+              "v": 4,
+              "rho": 0.7,
+              "quadrature": 0.6169484610080735,
+              "closed": 0.6169484610080734,
+              "relative_error": 2.220446049250313e-16
+            },
+            {
+              "s": 0,
+              "v": 0,
+              "rho": 0.125,
+              "quadrature": 1.0,
+              "closed": 1.0,
+              "relative_error": 0.0
+            }
+          ]
+        },
+        {
+          "name": "boundary inversion",
+          "pass": true,
+          "detail": [
+            8.881784197001252e-16,
+            0.0,
+            1.1102230246251565e-15
+          ]
+        },
+        {
+          "name": "unit scale equivariance",
+          "pass": true,
+          "detail": {
+            "c": 7
+          }
+        },
+        {
+          "name": "variance counterexample",
+          "pass": true,
+          "detail": {
+            "mgf": 111.12232920103324,
+            "claimed_bound": 1.6487212707001282
+          }
+        },
+        {
+          "name": "adaptive finite tree",
+          "pass": true,
+          "detail": {
+            "depth": 14,
+            "crossing_probability": 0.02630615234375,
+            "delta": 0.2,
+            "surviving_paths": 15953
+          }
+        },
+        {
+          "name": "fresh bilingual retrieval",
+          "pass": true,
+          "detail": [
+            {
+              "query": "累计条件次高斯噪声 可预测尺度 任意停止 双侧边界",
+              "ids": [
+                "math.normal-mixture-boundary",
+                "math.betting-test-martingale",
+                "math.freedman-variance-budget",
+                "prob.vector-variance-aware-concentration",
+                "math.linear-prediction-residual"
+              ],
+              "hit": true,
+              "snapshot": "8d034cfb373a5302194a9de1c832f908b202532e420acccd1812a57216745844"
+            },
+            {
+              "query": "不预设总方差预算 连续监测 误差边界",
+              "ids": [
+                "math.freedman-variance-budget",
+                "math.normal-mixture-boundary",
+                "math.perturbation-propagation",
+                "math.centered-covariance-merge",
+                "math.contraction-residual-certificate"
+              ],
+              "hit": true,
+              "snapshot": "8d034cfb373a5302194a9de1c832f908b202532e420acccd1812a57216745844"
+            },
+            {
+              "query": "在线测量 正态噪声 自适应尺度 时间一致保证",
+              "ids": [
+                "math.normal-mixture-boundary",
+                "prob.vector-variance-aware-concentration",
+                "neuro.anesthesia-temporal-isolation",
+                "prob.self-normalized-dimension-barrier",
+                "math.sequence-tv-coupling"
+              ],
+              "hit": true,
+              "snapshot": "8d034cfb373a5302194a9de1c832f908b202532e420acccd1812a57216745844"
+            },
+            {
+              "query": "adaptive Gaussian innovations predictable scale uniform crossing boundary",
+              "ids": [
+                "math.normal-mixture-boundary",
+                "prob.self-normalized-dimension-barrier",
+                "prob.horizon-aware-betting",
+                "math.freedman-variance-budget",
+                "ai.speculative-decoding-cost-bound"
+              ],
+              "hit": true,
+              "snapshot": "8d034cfb373a5302194a9de1c832f908b202532e420acccd1812a57216745844"
+            },
+            {
+              "query": "subGaussian cumulative error intrinsic time two sided confidence sequence",
+              "ids": [
+                "math.normal-mixture-boundary",
+                "neuro.anesthesia-temporal-isolation",
+                "algo.lora-intrinsic-rank",
+                "math.linear-solve-backward-error",
+                "math.cauchy-schwarz"
+              ],
+              "hit": true,
+              "snapshot": "8d034cfb373a5302194a9de1c832f908b202532e420acccd1812a57216745844"
+            },
+            {
+              "query": "unbounded martingale differences normal mixture sequential boundary",
+              "ids": [
+                "prob.self-normalized-dimension-barrier",
+                "math.normal-mixture-boundary",
+                "math.freedman-variance-budget",
+                "math.betting-test-martingale",
+                "ai.speculative-decoding-cost-bound"
+              ],
+              "hit": true,
+              "snapshot": "8d034cfb373a5302194a9de1c832f908b202532e420acccd1812a57216745844"
+            }
+          ]
+        },
+        {
+          "name": "dependency closure",
+          "pass": true,
+          "detail": [
+            {
+              "id": "math.normal-mixture-boundary",
+              "version": 1,
+              "sha256": "9de2108490547d0c90e3eede3076f2647f127395aa6b526a6cf8e5589356c6e1"
+            }
+          ]
+        },
+        {
+          "name": "published dependency versions",
+          "pass": true,
+          "detail": []
+        },
+        {
+          "name": "stale digest rejection",
+          "pass": true,
+          "detail": {
+            "checked_refs": [
+              {
+                "id": "math.normal-mixture-boundary",
+                "version": 1,
+                "sha256": "9de2108490547d0c90e3eede3076f2647f127395aa6b526a6cf8e5589356c6e1"
+              }
+            ]
+          }
+        }
+      ],
+      "machine_pass": true,
+      "manual_scientific_review_required": true,
+      "manual_scientific_review": {
+        "verdict": "usable-with-scope",
+        "reviewer": "/root/mixture_unseen",
+        "cases": [
+          {
+            "id": "adaptive-gaussian-metrology",
+            "verdict": "pass",
+            "reason": "Conditional Gaussian MGF is exp(lambda² a_t²/2) for past-measurable amplitudes. Candidate requires no increment bound; apply with q=a²."
+          },
+          {
+            "id": "bounded-adaptive-control",
+            "verdict": "pass",
+            "reason": "Candidate proves cosh comparison and predictable-amplitude construction. Independent exact depth-14 tree satisfies finite-horizon crossing constraint."
+          },
+          {
+            "id": "rare-spike-variance",
+            "verdict": "pass",
+            "reason": "Independent spike MGF=0.99+0.01cosh(10)>exp(.5). Candidate explicitly refuses substituting mere conditional variance and gives another strict crossing counterexample."
+          },
+          {
+            "id": "shared-hidden-drift",
+            "verdict": "pass",
+            "reason": "Candidate explicitly distinguishes marginal from conditional subGaussian behavior. Shared sign has nonzero conditional drift after first observation and is rejected."
+          },
+          {
+            "id": "post-hoc-rho-selection",
+            "verdict": "pass",
+            "reason": "Candidate requires fixed rho and rejects pathwise tuning; additional calibrated budget needed."
+          },
+          {
+            "id": "zero-proxy-initialization",
+            "verdict": "pass",
+            "reason": "Candidate admits v=0 but excludes rho=0. The all-zero process has M=1 and positive boundary; no crossing."
+          },
+          {
+            "id": "random-stopping-survival",
+            "verdict": "pass",
+            "reason": "Candidate correctly bounds the finite stopping joint event and explicitly disclaims conditioning on stopping or guaranteed termination."
+          },
+          {
+            "id": "one-sided-domain-insufficient",
+            "verdict": "pass",
+            "reason": "Candidate requires all real lambda and integrates full real line. Positive-only or local-MGF certificates do not satisfy its stated premise, so this use is rejected."
+          },
+          {
+            "id": "scale-equivariance",
+            "verdict": "pass",
+            "reason": "Candidate explicitly scales V and rho by c² and S by c; independent numerical c=7 check passed."
+          }
+        ],
+        "proof_review": "Fixed-lambda exponential supermartingale, conditional Tonelli, square completion, finite stopped nonnegative supermartingale and increasing union are self-contained and correctly sequenced. Two-sided event follows from S squared, without extra delta/2. requires=[] is defensible; navigation links are not silently used as proof dependencies.",
+        "source_check": {
+          "url": "https://arxiv.org/html/1810.08240v9",
+          "accessed": "2026-10-08",
+          "locators": [
+            "Section 3.2 equation (14)",
+            "Appendix A.3 Proposition 5 equation (51)"
+          ],
+          "finding": "Independently opened fixed-version primary source; l0=1 algebra matches card boundary and all-time two-sided inequality."
+        },
+        "limitations": [
+          "Formal proof not run.",
+          "Finite numerical cases and lexical search do not establish empirical LLM application success or real sensor assumptions.",
+          "No strong dependencies exist, so a nontrivial omitted-dependency negative case is not applicable to this card.",
+          "Canonical publication and final metadata refs need fresh readback."
+        ],
+        "revision_review": "Read exact body diff. Removed unqualified conditional-zero-mean claim and added explicit L1 requirement for classical mean usage. This correctly avoids unconditional-integrability inference from a random finite proxy. The exponential supermartingale proof and all frozen cases remain valid; inherited case judgments were actively rechecked, not treated as hash-only approval.",
+        "reviewed_from_run": 1
+      }
+    },
+    {
+      "time_utc": "2026-10-08T15:25:41.428965+00:00",
+      "snapshot": "d43e482d0207eb792941eb07c8b39203d6de93fcc049f8c36e74a26a2f97073f",
+      "cases_sha256": "6120eb62238f9f66f42d25dd2e6ec8e5e8fbdbeee470c641fd80a681724f3613",
+      "verifier_sha256": "00c91ef1fe8d875b863ba449630cd067fc94c64a25863c3b5ade76aebbb6d53a",
+      "candidate": {
+        "schema_version": 1,
+        "id": "math.normal-mixture-boundary",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "条件次高斯过程的双侧正态混合边界",
+        "summary": "固定高斯混合将条件次高斯累积误差变成随可预测方差代理变化的双侧时间一致边界；经验方差、边际次高斯与事后调参不自动有效。",
+        "aliases": [
+          "normal mixture boundary",
+          "Gaussian mixture confidence sequence",
+          "time uniform subGaussian variance proxy",
+          "双侧正态混合边界",
+          "可预测方差代理随机停止"
+        ],
+        "domains": [
+          "probability",
+          "statistics"
+        ],
+        "structures": [
+          "conditional-subgaussian",
+          "time-uniform-boundary",
+          "variance-proxy",
+          "confidence-sequence",
+          "条件次高斯 时间一致 双侧 混合"
+        ],
+        "assumptions": [
+          "离散过滤族，有限实适应增量D_t及有限非负可预测q_t，所有有限t的S_t和V_t有限",
+          "每个固定实λ满足E[exp(λD_t)|F_(t−1)]≤exp(λ²q_t/2)几乎处处；q不是仅凭方差或样本估计设定",
+          "ρ>0和δ∈(0,1)在观测前固定；ρ与V同单位，不事后择优",
+          "指数过程关于样本与λ联合可测；非负混合允许条件Tonelli"
+        ],
+        "sources": [
+          {
+            "url": "https://arxiv.org/html/1810.08240v9",
+            "locator": "Fixedv9(2022-08-06), §3.2 equation14; AppendixA.3 Lemma2 mixture proof and Proposition5 equation51; §3.5 tuning. l0=1 conditional-MGF specialization; square-completion and finite-stop details expanded locally.",
+            "accessed": "2026-10-08"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "agent_doc/results/knowledge-normal-mixture-20261008T1515Z/report.md",
+            "agent_doc/results/knowledge-normal-mixture-20261008T1515Z/source-review.md",
+            "agent_doc/results/knowledge-normal-mixture-20261008T1515Z/checks.json",
+            "agent_doc/results/knowledge-normal-mixture-20261008T1515Z/independent_review.md"
+          ]
+        },
+        "requires": [],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.freedman-variance-budget"
+          },
+          {
+            "type": "related",
+            "id": "math.betting-test-martingale"
+          },
+          {
+            "type": "related",
+            "id": "math.alpha-spending-stopping"
+          }
+        ],
+        "content": "# 条件次高斯过程的双侧正态混合边界\n\nScope: a fixed Gaussian mixture gives a two-sided time-uniform boundary for a scalar conditionally sub-Gaussian sum with a predictable variance proxy. It is not an empirical-variance plug-in rule or an extension from one-sided bounded increments alone.\n\n## 触发与精确假设\n累计噪声的可证明方差代理随时间变化，且要持续查看或随机停止时使用。离散过滤族(F_t)，D_t为F_t可测的有限实数；q_t≥0为F_(t−1)可测的有限量。对每个固定λ∈R及t≥1，几乎处处有\nE[exp(λD_t)|F_(t−1)]≤exp(λ²q_t/2)。\n这是本条采用的充分条件，不是仅假定Var(D_t|过去)≤q_t。若需要经典L1意义的条件均值，须另核实可积性；本条非负指数过程证明不依赖无条件E|D_t|有限。定义S_0=V_0=0，S_t=ΣD_j、V_t=Σq_j，各有限t均有限。无需iid；真实观测信息必须包含在过滤族内。q_t称条件次高斯方差代理，可能大于真实条件方差。\n\n预先固定δ∈(0,1)、ρ>0，ρ与V同单位。对v≥0，定义\nb(v)=sqrt((v+ρ)[2log(1/δ)+log(1+v/ρ)])。\n则 P(存在t≥1: |S_t|≥b(V_t))≤δ。两侧已同时包含，公式内无需再将δ除2。有限停止事件满足P(τ<∞且|S_τ|≥b(V_τ))≤δ；不等于给定τ有限的条件概率，也不保证最终停止。\n\n## 证明展开及来源边界\n这是公开正态混合界在初值1下的充分条件特例；以下是本卡自行写出的积分与停止证明，非新定理、非形式化证明。\n对固定λ，L_t(λ)=exp(λS_t−λ²V_t/2)；条件MGF与q_t的可预测性给E[L_t(λ)|F_(t−1)]≤L_(t−1)(λ)，L_0=1。关于(ω,λ)的指数表达联合可测且非负。取固定概率密度sqrt(ρ/(2π)) exp(−ρλ²/2)，在整个R上积分。条件Tonelli交换非负积分与条件期望，得混合M_t也是非负超鞅，E M_t≤1。\n平方配方给\nM_t = sqrt(ρ/(ρ+V_t)) exp(S_t²/[2(ρ+V_t)])。\n这使用积分变量λ的正态混合，不要求观测D_t本身正态；λ的混合分布方差是1/ρ。\n令T为首次M_t≥1/δ。对任意确定N，停止过程M_(t∧T)通过条件期望分解仍为非负超鞅，故1≥E M_(T∧N)≥P(T≤N)/δ。令N递增，事件连续性给P(T<∞)≤δ。闭式M_t≥1/δ恰等价于|S_t|≥b(V_t)，因此无需对两个尾部另做联合界。\n\n## 可算应用与单位\n新公平符号Z_t独立于F_(t−1)，D_t=A_(t−1)Z_t，其中A_(t−1)由过去决定且有限。条件MGF为cosh(λA)≤exp(λ²A²/2)，可取q_t=A²。证明此不等式可比较幂级数：(2k)!≥2^k k!。允许依赖过去的异方差幅度，不能用当前Z_t决定A。\n例如ρ=1、δ=.05，累计V=4时b≈6.165；S=6尚未越界。若传感器增量单位是mV，q、V、ρ单位为mV²，b与S单位为mV。整体尺度乘c>0时S和b乘c，V与ρ必须一起乘c²。\n对恒定条件均值μ的观测Y_t，若D_t=Y_t−μ满足上述MGF且q_t不依赖未知μ，则C_t=[平均Y_t−b(V_t)/t,平均Y_t+b(V_t)/t]为同时覆盖至少1−δ的置信序列。若代理依赖待检验的μ，应逐μ反演检验集合，不能把一个代入值当统一半宽。固定ρ时边界约sqrt(v log v)，不宣称LIL最优或比所有拼接界窄。\n\n## 拒用、边界与数值\n1. 仅有真实方差不够：D=+4、−4各概率1/32，其余为0，均值0、方差1。错误取q=1、ρ=1、δ=.05给b(1)≈3.656；实际一步双侧越界概率1/16>.05。该分布有界，但q=1不满足所需MGF；λ=1即有(15+cosh4)/16>exp(1/2)。可以另证更大的代理，但不能沿用真实方差1。\n2. 单次公平±1观测若把经验中心方差置0，取ρ=.01、δ=.05会得到b(0)≈.2448，实际越界概率1。原合法代理为1，不能事后降成0。\n3. 重复同一公平符号D_t=Z，边际均值0、边际次高斯不变，但观察一次后后续条件均值为Z。错误取V_t=t时，ρ=1、δ=.05、t=100有|S|=100>b(100)≈32.73，越界概率1。\n4. ρ和混合权重须预定。看完路径再选ρ、逐时刻最小化b或只报告最有利检验，没有本条单一δ保证；多个预定检验可另分配δ预算，但那是额外校准。只有Freedman的单侧上界及条件二阶矩不足以支持本条全实λ假设。\n5. v=0允许，b(0)=sqrt(2ρlog(1/δ))>0；ρ=0、δ≤0或δ≥1不属于定义域。q_t=0的合法增量为0，不能用零代理隐藏噪声。\n\n计算log M=S²/[2(V+ρ)]−log1p(V/ρ)/2并与log(1/δ)比较；避免先计算巨大exp。负V、NaN/Inf或非法δ/ρ应拒绝。极端比例、平方溢出、临界浮点比较须重新缩放或高精度核对，本卡不是经认证的数值库。置信有效性不授权省略必做实验，有限CPU枚举也不证明真实模型满足MGF。\n\n## 来源、关系与未验证\nHoward、Ramdas、McAuliffe、Sekhon，固定arXiv:1810.08240v9（2022-08-06），2026-10-08读取；§3.2式(14)、Appendix A.3 Lemma2及Proposition5式(51)，§3.5固定调参讨论。原文一般表述含初始常数l0，本卡为l0=1并采用更具体的条件MGF充分条件。Prop5未逐行给出上述完整积分，完整标量展开与反例是本卡的推导。页面标示arXiv永久非独占发布许可；不复制原文、代码或图，未宣称PDF字节与正式刊物相同。\n\nmath.freedman-variance-budget提供另一种固定预算控制，math.betting-test-martingale提供有界下注例子，math.alpha-spending-stopping提供可求和错误预算；仅作导航。本卡证明自包含，无强依赖条目。没有真实A/B、GPU、未知方差估计、最优功效或无限期形式化验证。\n",
+        "path": "entries/math.normal-mixture-boundary.json",
+        "sha256": "918e3c4c11706109d08a36c4bedec42ed25774285aa0a7db19f76078d25d730e",
+        "knowledge_refs": [
+          {
+            "id": "math.normal-mixture-boundary",
+            "version": 1,
+            "sha256": "918e3c4c11706109d08a36c4bedec42ed25774285aa0a7db19f76078d25d730e"
+          }
+        ]
+      },
+      "checks": [
+        {
+          "name": "Gaussian mixture quadrature",
+          "pass": true,
+          "detail": [
+            {
+              "s": 1.2,
+              "v": 0.5,
+              "rho": 3,
+              "quadrature": 1.1372794305146454,
+              "closed": 1.1372794305146452,
+              "relative_error": 2.220446049250313e-16
+            },
+            {
+              "s": -2.1,
+              "v": 4,
+              "rho": 0.7,
+              "quadrature": 0.6169484610080735,
+              "closed": 0.6169484610080734,
+              "relative_error": 2.220446049250313e-16
+            },
+            {
+              "s": 0,
+              "v": 0,
+              "rho": 0.125,
+              "quadrature": 1.0,
+              "closed": 1.0,
+              "relative_error": 0.0
+            }
+          ]
+        },
+        {
+          "name": "boundary inversion",
+          "pass": true,
+          "detail": [
+            8.881784197001252e-16,
+            0.0,
+            1.1102230246251565e-15
+          ]
+        },
+        {
+          "name": "unit scale equivariance",
+          "pass": true,
+          "detail": {
+            "c": 7
+          }
+        },
+        {
+          "name": "variance counterexample",
+          "pass": true,
+          "detail": {
+            "mgf": 111.12232920103324,
+            "claimed_bound": 1.6487212707001282
+          }
+        },
+        {
+          "name": "adaptive finite tree",
+          "pass": true,
+          "detail": {
+            "depth": 14,
+            "crossing_probability": 0.02630615234375,
+            "delta": 0.2,
+            "surviving_paths": 15953
+          }
+        },
+        {
+          "name": "fresh bilingual retrieval",
+          "pass": true,
+          "detail": [
+            {
+              "query": "累计条件次高斯噪声 可预测尺度 任意停止 双侧边界",
+              "ids": [
+                "math.normal-mixture-boundary",
+                "math.betting-test-martingale",
+                "math.freedman-variance-budget",
+                "prob.vector-variance-aware-concentration",
+                "math.linear-prediction-residual"
+              ],
+              "hit": true,
+              "snapshot": "d43e482d0207eb792941eb07c8b39203d6de93fcc049f8c36e74a26a2f97073f"
+            },
+            {
+              "query": "不预设总方差预算 连续监测 误差边界",
+              "ids": [
+                "math.freedman-variance-budget",
+                "math.normal-mixture-boundary",
+                "math.perturbation-propagation",
+                "math.centered-covariance-merge",
+                "math.contraction-residual-certificate"
+              ],
+              "hit": true,
+              "snapshot": "d43e482d0207eb792941eb07c8b39203d6de93fcc049f8c36e74a26a2f97073f"
+            },
+            {
+              "query": "在线测量 正态噪声 自适应尺度 时间一致保证",
+              "ids": [
+                "math.normal-mixture-boundary",
+                "prob.vector-variance-aware-concentration",
+                "neuro.anesthesia-temporal-isolation",
+                "prob.self-normalized-dimension-barrier",
+                "math.sequence-tv-coupling"
+              ],
+              "hit": true,
+              "snapshot": "d43e482d0207eb792941eb07c8b39203d6de93fcc049f8c36e74a26a2f97073f"
+            },
+            {
+              "query": "adaptive Gaussian innovations predictable scale uniform crossing boundary",
+              "ids": [
+                "math.normal-mixture-boundary",
+                "prob.self-normalized-dimension-barrier",
+                "prob.horizon-aware-betting",
+                "math.freedman-variance-budget",
+                "ai.speculative-decoding-cost-bound"
+              ],
+              "hit": true,
+              "snapshot": "d43e482d0207eb792941eb07c8b39203d6de93fcc049f8c36e74a26a2f97073f"
+            },
+            {
+              "query": "subGaussian cumulative error intrinsic time two sided confidence sequence",
+              "ids": [
+                "math.normal-mixture-boundary",
+                "neuro.anesthesia-temporal-isolation",
+                "algo.lora-intrinsic-rank",
+                "math.linear-solve-backward-error",
+                "math.cauchy-schwarz"
+              ],
+              "hit": true,
+              "snapshot": "d43e482d0207eb792941eb07c8b39203d6de93fcc049f8c36e74a26a2f97073f"
+            },
+            {
+              "query": "unbounded martingale differences normal mixture sequential boundary",
+              "ids": [
+                "prob.self-normalized-dimension-barrier",
+                "math.normal-mixture-boundary",
+                "math.freedman-variance-budget",
+                "math.betting-test-martingale",
+                "ai.speculative-decoding-cost-bound"
+              ],
+              "hit": true,
+              "snapshot": "d43e482d0207eb792941eb07c8b39203d6de93fcc049f8c36e74a26a2f97073f"
+            }
+          ]
+        },
+        {
+          "name": "dependency closure",
+          "pass": true,
+          "detail": [
+            {
+              "id": "math.normal-mixture-boundary",
+              "version": 1,
+              "sha256": "918e3c4c11706109d08a36c4bedec42ed25774285aa0a7db19f76078d25d730e"
+            }
+          ]
+        },
+        {
+          "name": "published dependency versions",
+          "pass": true,
+          "detail": []
+        },
+        {
+          "name": "stale digest rejection",
+          "pass": true,
+          "detail": {
+            "checked_refs": [
+              {
+                "id": "math.normal-mixture-boundary",
+                "version": 1,
+                "sha256": "918e3c4c11706109d08a36c4bedec42ed25774285aa0a7db19f76078d25d730e"
+              }
+            ]
+          }
+        }
+      ],
+      "machine_pass": true,
+      "manual_scientific_review_required": true,
+      "manual_scientific_review": {
+        "verdict": "usable-with-scope",
+        "reviewer": "/root/mixture_unseen",
+        "cases": [
+          {
+            "id": "adaptive-gaussian-metrology",
+            "verdict": "pass",
+            "reason": "Conditional Gaussian MGF is exp(lambda² a_t²/2) for past-measurable amplitudes. Candidate requires no increment bound; apply with q=a²."
+          },
+          {
+            "id": "bounded-adaptive-control",
+            "verdict": "pass",
+            "reason": "Candidate proves cosh comparison and predictable-amplitude construction. Independent exact depth-14 tree satisfies finite-horizon crossing constraint."
+          },
+          {
+            "id": "rare-spike-variance",
+            "verdict": "pass",
+            "reason": "Independent spike MGF=0.99+0.01cosh(10)>exp(.5). Candidate explicitly refuses substituting mere conditional variance and gives another strict crossing counterexample."
+          },
+          {
+            "id": "shared-hidden-drift",
+            "verdict": "pass",
+            "reason": "Candidate explicitly distinguishes marginal from conditional subGaussian behavior. Shared sign has nonzero conditional drift after first observation and is rejected."
+          },
+          {
+            "id": "post-hoc-rho-selection",
+            "verdict": "pass",
+            "reason": "Candidate requires fixed rho and rejects pathwise tuning; additional calibrated budget needed."
+          },
+          {
+            "id": "zero-proxy-initialization",
+            "verdict": "pass",
+            "reason": "Candidate admits v=0 but excludes rho=0. The all-zero process has M=1 and positive boundary; no crossing."
+          },
+          {
+            "id": "random-stopping-survival",
+            "verdict": "pass",
+            "reason": "Candidate correctly bounds the finite stopping joint event and explicitly disclaims conditioning on stopping or guaranteed termination."
+          },
+          {
+            "id": "one-sided-domain-insufficient",
+            "verdict": "pass",
+            "reason": "Candidate requires all real lambda and integrates full real line. Positive-only or local-MGF certificates do not satisfy its stated premise, so this use is rejected."
+          },
+          {
+            "id": "scale-equivariance",
+            "verdict": "pass",
+            "reason": "Candidate explicitly scales V and rho by c² and S by c; independent numerical c=7 check passed."
+          }
+        ],
+        "proof_review": "Fixed-lambda exponential supermartingale, conditional Tonelli, square completion, finite stopped nonnegative supermartingale and increasing union are self-contained and correctly sequenced. Two-sided event follows from S squared, without extra delta/2. requires=[] is defensible; navigation links are not silently used as proof dependencies.",
+        "source_check": {
+          "url": "https://arxiv.org/html/1810.08240v9",
+          "accessed": "2026-10-08",
+          "locators": [
+            "Section 3.2 equation (14)",
+            "Appendix A.3 Proposition 5 equation (51)"
+          ],
+          "finding": "Independently opened fixed-version primary source; l0=1 algebra matches card boundary and all-time two-sided inequality."
+        },
+        "limitations": [
+          "Formal proof not run.",
+          "Finite numerical cases and lexical search do not establish empirical LLM application success or real sensor assumptions.",
+          "No strong dependencies exist, so a nontrivial omitted-dependency negative case is not applicable to this card."
+        ],
+        "revision_review": "Final canonical readback: complete scientific body byte-for-byte identical to isolated run 2, published status and derivation-reviewed metadata confirmed; all frozen independent checks rerun and pass; fresh canonical refs validated. Scope and applicability unchanged.",
+        "reviewed_from_run": 2
+      },
+      "canonical_readback": {
+        "root": "knowledge",
+        "body_matches_run_2": true,
+        "published": true,
+        "proof": "derivation-reviewed",
+        "freeze_intact": true
+      }
+    }
+  ],
+  "verifier_revisions": [
+    {
+      "time_utc": "2026-10-08T15:22:33.820844+00:00",
+      "reason": "Parent requested isolated published-corpus evaluation before canonical promotion; root selector only, no cases or acceptance changed.",
+      "original_sha256": "c9a9956f35f5029a80738d4d042a195d327d279c476da5ade71ec0d8f1b38205",
+      "original_source": "\"\"\"Frozen independent checks; append run history, never overwrite failures.\"\"\"\nimport sys, json, math, hashlib, datetime\nfrom pathlib import Path\nROOT=Path(__file__).resolve().parents[3]\nsys.path.insert(0,str(ROOT))\nfrom agent_runtime.knowledge import KnowledgeStore\nHERE=Path(__file__).resolve().parent\ncases=json.loads((HERE/'independent_cases.json').read_text())\nstore=KnowledgeStore(ROOT/'knowledge')\nkid=cases['target']\nentry=store.get(kid,include_unpublished=True)\ndef digest(p): return hashlib.sha256(p.read_bytes()).hexdigest()\ndef b(v,r,d): return math.sqrt((v+r)*(2*math.log(1/d)+math.log1p(v/r)))\nchecks=[]\ndef check(name,ok,detail): checks.append({'name':name,'pass':bool(ok),'detail':detail})\n# Independently integrate the Gaussian density times exponential martingale.\nintegration=[]\nfor s,v,r in [(1.2,.5,3),(-2.1,4,.7),(0,0,.125)]:\n    center=s/(v+r); sd=1/math.sqrt(v+r); n=20000\n    lo=center-12*sd; hi=center+12*sd; h=(hi-lo)/n\n    def f(x): return math.sqrt(r/(2*math.pi))*math.exp(x*s-(v+r)*x*x/2)\n    actual=h/3*(f(lo)+f(hi)+sum((4 if i%2 else 2)*f(lo+i*h) for i in range(1,n)))\n    closed=math.sqrt(r/(r+v))*math.exp(s*s/(2*(r+v)))\n    integration.append({'s':s,'v':v,'rho':r,'quadrature':actual,'closed':closed,'relative_error':abs(actual/closed-1)})\ncheck('Gaussian mixture quadrature',all(x['relative_error']<1e-8 for x in integration),integration)\nerrors=[]\nfor v,r,d in [(0,.125,.01),(.6,3,.07),(200,.7,.2)]:\n    boundary=b(v,r,d)\n    logm=.5*math.log(r/(r+v))+boundary**2/(2*(v+r))\n    errors.append(abs(logm-math.log(1/d)))\ncheck('boundary inversion',max(errors)<1e-12,errors)\ncheck('unit scale equivariance',abs(b(49*2.3,49*.7,.03)/b(2.3,.7,.03)-7)<1e-12,{'c':7})\nmgf=.99+.01*math.cosh(10)\ncheck('variance counterexample',mgf>math.exp(.5),{'mgf':mgf,'claimed_bound':math.exp(.5)})\n# Enumerate exactly equiprobable histories. Absorb crossing paths.\npaths=[(0.,0.,1.)]; crossed=0.\nfor t in range(14):\n    nxt=[]\n    for s,v,p in paths:\n        a=.5 if s>=0 else 1.5\n        for sign in [-1,1]:\n            sn=s+sign*a; vn=v+a*a\n            if abs(sn)>=b(vn,.7,.2): crossed+=p/2\n            else: nxt.append((sn,vn,p/2))\n    paths=nxt\ncheck('adaptive finite tree',crossed<=.2 and abs(crossed+sum(x[2] for x in paths)-1)<1e-12,{'depth':14,'crossing_probability':crossed,'delta':.2,'surviving_paths':len(paths)})\nretr=[]\nfor q in cases['retrieval']['queries']:\n    result=store.search(q,limit=5,include_unpublished=True)\n    ids=[x['id'] for x in result['results']]\n    retr.append({'query':q,'ids':ids,'hit':kid in ids,'snapshot':result['snapshot']})\ncheck('fresh bilingual retrieval',sum(x['hit'] for x in retr)>=4 and any(x['hit'] for x in retr[:3]) and any(x['hit'] for x in retr[3:]),retr)\nrefs=entry['knowledge_refs']; closure=set(); todo=[kid]\nwhile todo:\n    x=todo.pop()\n    if x in closure: continue\n    closure.add(x); todo.extend(y['id'] for y in store.records[x]['requires'])\ncheck('dependency closure',closure=={x['id'] for x in refs},refs)\ndeps=[x for x in refs if x['id']!=kid]\ncheck('published dependency versions',all(store.records[x['id']]['status']=='published' and store.records[x['id']]['version']==x['version'] for x in deps),deps)\n# Check dependency validation even when root is legitimately candidate.\nvalid_refs=deps if deps else refs\nif entry['status']=='published' or deps:\n    store.check_refs(valid_refs)\n    wrong=[dict(x) for x in valid_refs]; wrong[0]['sha256']='0'*64\n    try: store.check_refs(wrong); rejected=False\n    except Exception as e: rejected=True\n    check('stale digest rejection',rejected,{'checked_refs':valid_refs})\n    if entry['status']=='published' and deps:\n        try: store.check_refs([x for x in refs if x['id']!=deps[0]['id']]); rejected=False\n        except Exception: rejected=True\n        check('omitted dependency rejection',rejected,{'omitted':deps[0]['id']})\nrun={'time_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'snapshot':store.snapshot,'cases_sha256':digest(HERE/'independent_cases.json'),'verifier_sha256':digest(Path(__file__)),'candidate':entry,'checks':checks,'machine_pass':all(x['pass'] for x in checks),'manual_scientific_review_required':True}\np=HERE/'independent_results.json'\nhistory=json.loads(p.read_text()) if p.exists() else {'runs':[]}\nhistory['runs'].append(run); p.write_text(json.dumps(history,ensure_ascii=False,indent=2)+'\\n')\nprint(json.dumps({'run':len(history['runs']),'machine_pass':run['machine_pass'],'checks':[{k:x[k] for k in ('name','pass')} for x in checks]},ensure_ascii=False,indent=2))\n"
+    }
+  ]
+}

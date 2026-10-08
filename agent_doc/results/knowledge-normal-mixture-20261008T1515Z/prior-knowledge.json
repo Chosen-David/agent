@@ -1,0 +1,513 @@
+{
+  "Gaussian normal mixture time uniform boundary variance proxy": {
+    "schema_version": 1,
+    "snapshot": "5d7c393b40b8ff269d88a37d79ea668aa96c084f8e6029ae7ce85fd8a4cff080",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "results": [
+      {
+        "id": "prob.self-normalized-dimension-barrier",
+        "version": 1,
+        "sha256": "396aa263a1f4db2ae80ab07152c3f1e5cbaa10a49cf4817480cc5a86a88c4fda",
+        "title": "高维自归一化：无正则、双重统一界的维度障碍与平滑条件",
+        "summary": "COLT 2026 区分一维对数界与d≥2全对抗线性下界；受固定基准测度密度比约束的平滑协变量可恢复次线性界，不能无条件删除正则。",
+        "status": "published",
+        "assumptions": [
+          "setting: online squared-loss linear regression; unrestricted comparator norm and covariate scale",
+          "noise: dyadic Rademacher martingale for lower bound; conditional sigma-sub-Gaussian for Theorem 11",
+          "smoothness: conditional covariate law relative to partial covariate history dominated by fixed mu with density ratio <= Ccov",
+          "response: Theorem 9 responses in [-1,1]; dimension-one theorem uses |y|<=m"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "not-checked",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.self-normalized-dimension-barrier"
+          ]
+        },
+        "matches": [
+          {
+            "field": "aliases",
+            "terms": [
+              "uniform"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "uniform"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "uniform"
+            ]
+          }
+        ],
+        "score": 10
+      },
+      {
+        "id": "math.data-processing-task-sufficiency",
+        "version": 1,
+        "sha256": "641a0326aa9b82681619e2f6d82e77ba2b7076def3d4f086ac3037144e54e6c4",
+        "title": "数据处理不等式、支撑条件与任务充分压缩",
+        "summary": "有限字母的同一随机通道不会增加KL可区分性；目标→原始数据→摘要的Markov关系给互信息上界。保持任务后验才是充分性，摘要短、重建损失小或样本正确都不等于充分。",
+        "status": "published",
+        "assumptions": [
+          "本条结论限有限字母概率分布，使用同一对数底数；bit用log2",
+          "KL处理前后必须对P,Q应用同一行随机核K；p>0,q=0的项为正无穷",
+          "KL差值/后验等号公式要求P绝对连续于Q（有限字母下即支撑包含），避免无穷减无穷",
+          "任务Y、原数据X、摘要T满足Y→X→T；摘要随机性给定X不依赖Y",
+          "固定联合分布的任务充分性不能推广为所有任务/所有先验的统计充分性；引入外部R须扩展输入对象"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-information/verify.py",
+            "docs/knowledge_learning/2026-10-07-information/checks.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "aliases",
+            "terms": [
+              "proxy"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "proxy"
+            ]
+          }
+        ],
+        "score": 6
+      },
+      {
+        "id": "math.freedman-variance-budget",
+        "version": 1,
+        "sha256": "1fa401c6307800e52301c08f3a4528f5c0587d30c0a712c1d74512b807e65e8b",
+        "title": "标量Freedman界：可预测方差预算与停止事件",
+        "summary": "条件零均值鞅差在确定增量上界下，以固定可预测二次变差预算控制跨时刻越界；不能把经验方差或逐时刻选取的预算直接代入同一错误概率。",
+        "status": "published",
+        "assumptions": [
+          "离散过滤族F_t，D_t适应且每个t平方可积，E[D_t|F_(t-1)]=0；S_0=V_0=0",
+          "确定R>0，D_t≤R几乎处处；上尾不要求下界，双侧另需|D_t|≤R",
+          "V_t=sum_{j≤t}E[D_j²|F_(j-1)]，不是样本方差或sum D_j²",
+          "x≥0与v>0事先固定；阈值反演δ∈(0,1)固定；预算变化需单独校准",
+          "停止结论只约束{τ<∞,S_τ≥x,V_τ≤v}联合事件，不是条件概率且不保证τ有限"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "agent_doc/results/knowledge-freedman-20261008T0915Z/report.md",
+            "agent_doc/results/knowledge-freedman-20261008T0915Z/checks.json",
+            "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_review.md",
+            "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_results.json",
+            "agent_doc/results/knowledge-freedman-20261008T1215Z/report.md",
+            "agent_doc/results/knowledge-freedman-20261008T1215Z/independent_review.md",
+            "agent_doc/results/knowledge-freedman-20261008T1215Z/integration_review.md"
+          ]
+        },
+        "matches": [
+          {
+            "field": "aliases",
+            "terms": [
+              "variance"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "variance"
+            ]
+          }
+        ],
+        "score": 6
+      },
+      {
+        "id": "ai.speculative-decoding-cost-bound",
+        "version": 1,
+        "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f",
+        "title": "推测解码：接受前缀尾和与成本盈亏条件",
+        "summary": "单提议接受率为1−TV；一轮输出长度由连续接受事件的尾和决定。只有附加恒定条件接受率和固定验证成本假设才得到几何加速式；树、MTP、batch变化必须重建事件与成本。",
+        "status": "published",
+        "assumptions": [
+          "单提议1−TV恒等式沿用残差校正条目的真实p/q与正确前缀；不能直接套整棵树",
+          "固定正整数horizon γ，一轮L=N+1包含补偿或bonus，公式暂不包含EOS/最大长度截断",
+          "一般尾和无需独立性；几何式额外要求每个到达深度的条件接受概率为同一α",
+          "基线T、draft比率c、验证比率v及额外成本o按同一硬件/模型/采样/负载口径定义；γc假设串行每步draft成本相同",
+          "速度比公式对应长序列稳定成本模型；随机轮成本须满足长期均值比率成立条件，不能使用平均逐轮速度比",
+          "α>c的存在性阈值只适用于v=1,o=0的理想模型；真实v/o、树形及并发负载须另测"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+            "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+            "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+            "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+            "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+            "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+            "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+          ]
+        },
+        "matches": [
+          {
+            "field": "aliases",
+            "terms": [
+              "boundary"
+            ]
+          }
+        ],
+        "score": 5
+      },
+      {
+        "id": "math.finite-menu-selection",
+        "version": 1,
+        "sha256": "12a6934e379b7392d9272dcec55abdbc148464d435ed4ae437955b0f5dfa85b8",
+        "title": "有限冻结候选的同时校准与选择后风险",
+        "summary": "用有界均值与联合界校准整个冻结菜单；选择后均值风险≤最优+两份误差+求解误差，期望成本认证不等于单次硬预算。",
+        "status": "published",
+        "assumptions": [
+          "菜单及每个损失/成本可测函数、已知范围在校准前固定，或由独立学习集产生；M≥1有限",
+          "n≥1预先固定，独立同分布校准对象来自与声明目标相同P；候选之间可相关，重复同文档不算新iid对象",
+          "δ∈(0,1)，损失/成本有已知确定有限范围；比较对象须在所选可行集内；均值非单次保证"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "同名Markdown的联合/选择/期望成本推导和泄漏反例；非形式化",
+            "doc/results/math-selection-20261008/：公开CPU结构/精确概率与独立检查，不含模型/GPU"
+          ]
+        },
+        "matches": [
+          {
+            "field": "aliases",
+            "terms": [
+              "uniform"
+            ]
+          }
+        ],
+        "score": 5
+      }
+    ]
+  },
+  "高斯混合 方差代理 随机停止": {
+    "schema_version": 1,
+    "snapshot": "5d7c393b40b8ff269d88a37d79ea668aa96c084f8e6029ae7ce85fd8a4cff080",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "results": [
+      {
+        "id": "prob.vector-variance-aware-concentration",
+        "version": 1,
+        "sha256": "a39d6f473786b20228fd60342b0f364b39b7e396b45cb8a537e9e776054ff974",
+        "title": "向量自归一化：轻尾、方差自适应与序贯置信界的收益和代价",
+        "summary": "ALT 2026 在可分Hilbert空间构造超鞅，给出 Bernstein/Bennett 和混合序贯界；低方差合成bandit受益，高方差下并不总胜次高斯界。",
+        "status": "published",
+        "assumptions": [
+          "process: predictable X_t; conditional mean-zero epsilon_t; fixed rho>0; separable Hilbert space",
+          "tails: conditional Bernstein moment condition, or bounded noise and predictable variance bounds",
+          "horizon: Theorems 9/10 deterministic horizon n and variance envelope Cn; Theorems 11/12 fully sequential mixtures",
+          "empirical_variance: Theorem 12 requires bounded noise with constant conditional variance and a valid variance confidence sequence"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "not-checked",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.vector-variance-aware-concentration"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "停止",
+              "方差",
+              "高斯"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "停止",
+              "方差",
+              "高斯"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "方差",
+              "混合",
+              "高斯"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "停止",
+              "方差",
+              "机停",
+              "混合",
+              "随机",
+              "高斯"
+            ]
+          }
+        ],
+        "score": 47
+      },
+      {
+        "id": "math.alpha-spending-stopping",
+        "version": 1,
+        "sha256": "54d4325ccdf1a12e50841ffc124dfa11fcf1dfbd0a254242fc916d8b5f573d06",
+        "title": "逐次错误预算下的随机停止保证",
+        "summary": "对同一稳定均值的每次查看分配可求和错误概率，以联合界保证任意数据依赖停止时的覆盖；保守且不保证早停。",
+        "status": "published",
+        "assumptions": [
+          "无限序列 X_i 相互独立、具有同一均值 μ 且落在已知确定区间 [a,b]",
+          "δ∈(0,1)，δ_t=δ/[t(t+1)] 在数据之前规定",
+          "评测对象、分布与取值范围固定；本条不覆盖复用数据训练后自适应选择的新模型"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-06-concentration/checks.json",
+            "docs/knowledge_learning/2026-10-06-concentration/verify.py"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "停止",
+              "机停",
+              "随机"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "停止",
+              "随机"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "停止"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "停止"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "停止",
+              "机停",
+              "随机"
+            ]
+          }
+        ],
+        "score": 35
+      },
+      {
+        "id": "math.dependent-mean-variance",
+        "version": 1,
+        "sha256": "03813de91ef8891cba4b6bcf95b9cb878ed4475533d5c430e582376c51ff4302",
+        "title": "依赖样本均值方差与目标专属有效样本量",
+        "summary": "从完整协方差计算固定n的均值方差；有效样本量只匹配该目标的方差，不证明独立性、高斯尾或二阶矩/子空间可靠性。",
+        "status": "published",
+        "assumptions": [
+          "n≥1事先固定；实标量过程有共同均值µ与有限二阶矩，协方差指真实模型量",
+          "平稳简式还要求γ_h=Cov(X_t,X_(t+h))不依赖t；γ0>0，负相关允许",
+          "AR(1)特例要求因果平稳初始化、|phi|<1及独立同分布零均值有限方差创新；不是从lag1估计直接得整个模型",
+          "高斯尾和平方相关公式额外要求联合高斯；平方例还要求µ=0，不能仅凭高斯边缘",
+          "样本ACF/phi/方差估计无本条误差认证；均值漂移、自适应抽样和停止时间需要另证"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-dependence/verify.py",
+            "docs/knowledge_learning/2026-10-07-dependence/checks.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "方差",
+              "高斯"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "方差",
+              "高斯"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "停止",
+              "差代",
+              "方差",
+              "高斯"
+            ]
+          }
+        ],
+        "score": 29
+      },
+      {
+        "id": "math.gaussian-quadratic-energy",
+        "version": 1,
+        "sha256": "3580b149aab06433446fe8734f10b71e7e50455df4dec80b8b0bfa68e4ba9b3f",
+        "title": "高斯二次能量的谱尾界与相关样本二阶矩",
+        "summary": "联合高斯、固定PSD能量的误差同时依赖谱平方和及最大特征值；在已知可分离依赖模型下转换为保守协方差谱界，不以均值ESS或边缘正态代替前提。",
+        "status": "published",
+        "assumptions": [
+          "x联合零均值高斯、真实确定C=Cov(x)≥0；A为固定实对称PSD，随机但独立A仅允许条件化后另核查",
+          "t>0；B=C^(1/2)AC^(1/2)，范数为欧氏算子范数；B=0单独处理；非PSD/非零均值另证",
+          "矩阵迁移限定X=T^(1/2)GΣ^(1/2)，G的元素独立标准正态，T≥0且diag(T)=1，Σ≥0；n,d及抽样协议固定",
+          "谱界用真实确定tr(T²)、||T||和有效BΣ≥||Σ||；经验估计无误差认证不能代入",
+          "均值未知/样本中心化、同数据选投影、自适应停止、非可分离外积相关和真实token模型不由本条认证"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-quadratic/verify.py",
+            "docs/knowledge_learning/2026-10-07-quadratic/checks.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "高斯"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "高斯"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "高斯"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "方差",
+              "高斯"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "方差",
+              "随机",
+              "高斯"
+            ]
+          }
+        ],
+        "score": 23
+      },
+      {
+        "id": "math.freedman-variance-budget",
+        "version": 1,
+        "sha256": "1fa401c6307800e52301c08f3a4528f5c0587d30c0a712c1d74512b807e65e8b",
+        "title": "标量Freedman界：可预测方差预算与停止事件",
+        "summary": "条件零均值鞅差在确定增量上界下，以固定可预测二次变差预算控制跨时刻越界；不能把经验方差或逐时刻选取的预算直接代入同一错误概率。",
+        "status": "published",
+        "assumptions": [
+          "离散过滤族F_t，D_t适应且每个t平方可积，E[D_t|F_(t-1)]=0；S_0=V_0=0",
+          "确定R>0，D_t≤R几乎处处；上尾不要求下界，双侧另需|D_t|≤R",
+          "V_t=sum_{j≤t}E[D_j²|F_(j-1)]，不是样本方差或sum D_j²",
+          "x≥0与v>0事先固定；阈值反演δ∈(0,1)固定；预算变化需单独校准",
+          "停止结论只约束{τ<∞,S_τ≥x,V_τ≤v}联合事件，不是条件概率且不保证τ有限"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "agent_doc/results/knowledge-freedman-20261008T0915Z/report.md",
+            "agent_doc/results/knowledge-freedman-20261008T0915Z/checks.json",
+            "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_review.md",
+            "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_results.json",
+            "agent_doc/results/knowledge-freedman-20261008T1215Z/report.md",
+            "agent_doc/results/knowledge-freedman-20261008T1215Z/independent_review.md",
+            "agent_doc/results/knowledge-freedman-20261008T1215Z/integration_review.md"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "停止",
+              "方差"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "停止",
+              "差代",
+              "方差",
+              "混合",
+              "随机"
+            ]
+          }
+        ],
+        "score": 22
+      }
+    ]
+  }
+}

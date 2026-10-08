@@ -259,3 +259,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-50] 核验保留坐标线性预测、残差分数风险及旋转边界；独立验收后main发布。 ([detail](task_details/MATH-50.md))
 
 - [x] [MATH-51] 核查GPU算术前提，形成分数目标与证书迁移候选设计。 ([detail](task_details/MATH-51.md))
+
+## 2026-10-08 正态混合时间一致边界
+
+- [ ] [RP-T-20261008-1515] 核验条件次高斯正态混合界、随机停止与拒用反例；独立验收及检索非退化后发布。 ([detail](task_details/RP-T-20261008-1515.md))

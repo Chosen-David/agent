@@ -1,0 +1,73 @@
+{
+  "reviewer": "mixture_plan",
+  "role": "independent-source-and-plan-review",
+  "accessed": "2026-10-08",
+  "start_sha": "b93e66c6f65cbc3a82c14472b9f657d8a38279d2",
+  "plan_verdict": "approve",
+  "scope": "One candidate creation and finite CPU checks; not publication acceptance",
+  "source": {
+    "url": "https://arxiv.org/pdf/1810.08240v9",
+    "version": "v9",
+    "version_date": "2022-08-06",
+    "locators": [
+      "Section 3.2, Lemma 2 and equation (14), PDF pp. 8-9",
+      "Appendix A.3, Lemma 2 proof and Proposition 5 equation (51), PDF pp. 26-27"
+    ],
+    "access": "Actual web PDF text and arXiv abstract-page reads",
+    "license": "Parent reports HTML page declares arXiv perpetual non-exclusive license; reviewer license-link retrieval failed; license terms not independently retrieved",
+    "limitations": [
+      "No PDF byte hash obtained; direct urllib access returned HTTP tunnel 403",
+      "Journal byte identity not checked",
+      "Source reading is not a new experiment or unseen test",
+      "Proposition 5 statement is checked; full Gaussian integral is a local derivation, not a verbatim proof reproduced from that proposition"
+    ]
+  },
+  "local_reads": [
+    "AGENTS.md",
+    "prompts/decision_review.md",
+    "workflows/project_document_workflow.md",
+    "agent_doc/guide/GUIDE.md (empty)",
+    "knowledge/FORMAT.md",
+    "knowledge/evaluation_holdouts.json (public metadata only)",
+    "knowledge/entries/math.freedman-variance-budget.md",
+    "knowledge/entries/math.betting-test-martingale.md",
+    "knowledge/entries/math.alpha-spending-stopping.md",
+    "knowledge/entries/probability/prob.vector-variance-aware-concentration.md",
+    "agent_doc/task/task_details/EK-20261008-0915.md"
+  ],
+  "gap": "Scalar closed-form normal mixture with a predictable conditional-MGF variance proxy and complete local proof is not covered by inspected prior cards. Existing vector card is a different research-summary scope.",
+  "recommendations": [
+    "Self-contained requires=[] with related betting card; include finite-truncation Ville proof",
+    "State all-real-lambda conditional MGF, predictable finite nonnegative proxies, fixed rho>0 and delta in (0,1)",
+    "Explain joint measurability and nonnegative Tonelli exchange",
+    "Distinguish variance proxy from true conditional or empirical variance",
+    "Retain finite-check scope, raw failures and independent frozen cases"
+  ],
+  "candidate_scientific_review": {
+    "verdict": "usable-with-scope",
+    "findings": [
+      "Main MGF supermartingale, Tonelli, Gaussian integral, Ville and boundary inversion are mathematically sound.",
+      "The sentence claiming conditional mean zero should be removed or explicitly localized: finite random q does not imply unconditional L1 integrability of D. The theorem itself does not require this assertion."
+    ],
+    "reviewed_files": {
+      "candidate/math.normal-mixture-boundary.md": "094932212ab677067d2343c9f5b4c9757bbbb913dc8b82133fa28ca167d6ed30",
+      "candidate/math.normal-mixture-boundary.json": "746b236be15f5022cc2b174c79a4b68f868b72108b9ccdc62eba764e7e5510a6",
+      "verify.py": "ad8a145c570b52f849719e99522c24a841b78e2d6dd4c0fbde21245607fb09ff",
+      "checks.json": "ef039e794b8d7698972f823f1d7127af96362343699a8bd5b3d1bc686c625da4"
+    },
+    "development_evidence": {
+      "checks": 14,
+      "independent_rerun": "runpy execution with Path.write_text intercepted in memory; all output fields match existing checks.json",
+      "source_hash_matches": true,
+      "iid_crossing_probability": 0.018629229197864933,
+      "decimal_precision": 80,
+      "all_256_boundary_errors_lt": 1e-12,
+      "minimum_high_precision_lattice_gap": "0.001728495163294502266246229742728581295515636872900583274192166163274564744213"
+    },
+    "scope": "Scientific derivation and existing finite development code/data; independent frozen cases were not accessed; no publication approval",
+    "prior_verdict": "revise-minor-wording",
+    "proof_recommendation": "derivation-reviewed",
+    "repair_verified": "Removed unqualified conditional-mean claim; explicitly distinguishes classical L1 integrability from nonnegative exponential proof. Main formula and verification script unchanged.",
+    "final_card_sha256": "094932212ab677067d2343c9f5b4c9757bbbb913dc8b82133fa28ca167d6ed30"
+  }
+}
