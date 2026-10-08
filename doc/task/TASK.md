@@ -4,6 +4,8 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-08
 
+- [x] [DOC-SCOPE-01] 明确接入项目与 Agent 规则库的文档归属，同步入口与15份契约，保留程序及独立核验记录。 ([detail](task_details/DOC-SCOPE-01.md))
+
 - [x] [CONT-20261008-01] 阅读 RL／有限时域检验原始论文及固定代码，补齐可检索结论和拒用条件。 ([detail](task_details/CONT-20261008-01.md))
 - [x] [CONT-20261008-02] 修正轮转入口，验证新旧检索与决策边界，独立验收本轮数据。 ([detail](task_details/CONT-20261008-02.md))
 - [x] [CONT-20261008-03] 整合 main、普通发布并远端核对，同步技能并恢复原小时 tmux 任务。 ([detail](task_details/CONT-20261008-03.md))

@@ -12,7 +12,7 @@
 | 开发 Project B | `/work/ProjectB` | `/work/ProjectB/doc/guide/GUIDE.md`、`doc/task/TASK.md`、`doc/results/` |
 | 升级 agent 仓库本身 | agent 仓库根目录 | agent 仓库自己的 `doc/` |
 
-表中相对路径都相对各行 PROJECT_ROOT。指南、任务、建议、项目数据和高频状态各自留在目标项目；源码中的公共知识与流程按 WORKFLOW_ROOT 读取。交接和 CLI 显式传递目标绝对路径，即使从源码目录运行命令也不改变项目归属。当前项目缺少指南或任务时不能回退使用 agent 仓库的指南、历史任务或历史实验结果。
+表中相对路径都相对各行 PROJECT_ROOT。指南、任务、建议、项目数据和高频状态各自留在目标项目；源码中的公共知识与流程按 WORKFLOW_ROOT 读取。交接和 CLI 显式传递目标绝对路径，即使从源码目录运行命令也不改变项目归属。当前项目缺少指南或任务时不能回退使用 agent 仓库的指南、历史任务或历史实验结果。 切换目标项目时重新加载其指南、任务、项目记忆与相关证据；委派和恢复核对交接中的 project_root，不沿用上一项目的规划约束。
 
 新项目的文档布局须在接入项目下初始化。人类在该项目的 `doc/guide/GUIDE.md` 编写自己的目标与约束；AI 只创建空目录、空任务索引并登记已授权任务，不拷贝 agent/doc 的内容。
 
@@ -85,9 +85,9 @@ Date: 2026-10-07
 
 ```bash
 python /absolute/agent/scripts/project_docs.py --root /absolute/ProjectA init
-python scripts/project_docs.py --root /absolute/project inspect
-python scripts/project_docs.py --root /absolute/project validate
-python scripts/project_docs.py --root /absolute/project guard-write doc/task/task_details/DOC-01.md doc/advice/DOC-01-v1.md
+python /absolute/agent/scripts/project_docs.py --root /absolute/ProjectA inspect
+python /absolute/agent/scripts/project_docs.py --root /absolute/ProjectA validate
+python /absolute/agent/scripts/project_docs.py --root /absolute/ProjectA guard-write doc/task/task_details/DOC-01.md doc/advice/DOC-01-v1.md
 ```
 
 `init` 要求目标项目目录已存在；预检目录冲突、链接和旧根清单，保留已有文件，不创建任何指南文件。空索引没有虚构任务，必须按用户授权补充日期、ID 与详情后才能通过执行计划检查；`init` 成功不等于可以派发任务。它不安装技能、不启动模型或定时器。Codex 用户可单独调用此入口，Claude 的 `setup.py --target /absolute/ProjectA` 已包含项目文档初始化。
@@ -111,7 +111,7 @@ python scripts/project_docs.py --root /absolute/project guard-write doc/task/tas
 有旧根清单时先 inspect，核查运行中任务/引用、用户改动、ID/日期和写入授权。显式迁移命令：
 
 ```bash
-python scripts/project_docs.py --root /absolute/project migrate --date 2026-10-07
+python /absolute/agent/scripts/project_docs.py --root /absolute/ProjectA migrate --date 2026-10-07
 ```
 
 迁移应保留原始字节到 `doc/task/legacy/`，拆出详情并生成简洁日期索引，根文件仅留下导航；遇到已有 canonical 或冲突先核对，不混出两份活跃清单。人工核验迁移前后 ID、状态、原始内容、证据链接和取消/阻塞记录，更新仍活跃的调用入口；历史实验快照和引用说明保持原样。不得将旧 `docs/` 整体搬入 `doc/`。

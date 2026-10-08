@@ -55,6 +55,7 @@ def block():
 工作流源码位置见 `.claude/agent-workflows/installation.json` 的 repository；目标项目见 project_root。
 Project A 的指南、任务、建议和结果全部属于 Project A/doc；仅维护工作流库自身时才使用该库的 doc。
 缺少当前项目指南或任务不能回退到工作流库的 doc；调用源码目录中的 CLI 也不改变目标项目。
+切换项目重新读取其指南、任务、项目记忆与证据；委派和恢复核对 project_root，不沿用上一项目约束。
 受管复杂任务使用 planner-main 和独立新上下文 review-main；入口见 .claude/agent-workflows/planner_main.md 与 review_main.md。
 安装不启动第二模型；缺真实宿主 reviewer/认证器时不得把自审当独立批准。
 主 AI 按导入的通用调度规则执行；其中 prompts/、workflows/、templates/、
