@@ -30,4 +30,4 @@
 
 ## 发布和持续任务
 
-发布前再次 fetch/整合 main；以正常非强制方式发布并独立核对 SHA 和完整树，随后同步本机技能。具体回读与原小时 tmux 会话恢复证据在 publication-readback.md；此前本轮发布状态为待回读。WSL/tmux 可跨终端断连持续运行，Windows 关机/重启不保证会话存活。
+发布前再次 fetch/整合 main；以正常非强制方式发布并独立核对 SHA 和完整树，随后同步本机技能。源成果 main 0e26c87 已核对完整树并同步本机；具体回读与原小时 tmux 会话恢复证据见 [publication-readback.md](publication-readback.md)。WSL/tmux 可跨终端断连持续运行，Windows 关机/重启不保证会话存活。
