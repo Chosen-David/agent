@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "frozen_at": "2026-10-08T12:17:56.595561+00:00",
+  "baseline_commit": "2325e3d266aa7fb3c819cb52d6ba41db54ac5c90",
+  "scope": "Independent first-exposure cases; later fixes are regression only. No held-out paper content accessed.",
+  "cases": [
+    {
+      "id": "alias_en_isolated",
+      "kind": "synthetic_alias",
+      "query": "chromatic lantern renewal",
+      "body": "# 可预测补偿\n给定过去信息，校正增量的均值为零。\n",
+      "expect": "published alias-only target has document-bm25 and section-bm25 evidence; no claim of scientific applicability"
+    },
+    {
+      "id": "alias_zh_isolated",
+      "kind": "synthetic_alias",
+      "query": "琥珀潮汐约束",
+      "body": "# Conditional cancellation\nThe compensated update has zero conditional mean.\n",
+      "expect": "published alias-only target has document-bm25 and section-bm25 evidence"
+    },
+    {
+      "id": "real_alias_perturbation",
+      "kind": "real_alias",
+      "query": "layerwise error amplification",
+      "target": "math.perturbation-propagation",
+      "expect": "top 3 with section-bm25; verify query vocabulary absent from title summary body"
+    },
+    {
+      "id": "real_alias_conservation",
+      "kind": "real_alias",
+      "query": "cyclic coordinate",
+      "target": "physics.noether-invariants",
+      "expect": "top 3 with section-bm25; verify query vocabulary absent from title summary body"
+    },
+    {
+      "id": "unknown_alias",
+      "kind": "no_hit",
+      "query": "xylophonicquasar9981",
+      "expect": "zero results"
+    },
+    {
+      "id": "ambiguous_alias",
+      "kind": "ambiguous",
+      "query": "opal comet mechanism",
+      "expect": "both published targets remain eligible, applicability unchecked"
+    },
+    {
+      "id": "candidate_alias_exclusion",
+      "kind": "candidate",
+      "query": "cobalt zephyr bridge",
+      "expect": "candidate excluded from files and SQLite; published twin remains retrievable"
+    },
+    {
+      "id": "domain_alias_filter",
+      "kind": "domain",
+      "query": "amber orbit constraint",
+      "domain": "probability",
+      "expect": "only matching domain survives before top-1 truncation"
+    },
+    {
+      "id": "strong_refs",
+      "kind": "refs",
+      "target": "math.alpha-spending-stopping",
+      "expect": "complete closure accepted; omitted prerequisite, stale hash, unknown fabricated ref rejected; context max_entries=1 excludes incomplete bundle"
+    },
+    {
+      "id": "freedman_adaptive_gate",
+      "kind": "scientific",
+      "scenario": "Let independent Rademacher signs epsilon_i drive X_i=a_i epsilon_i, a_i=1 when S_(i-1)<=0 else 1/4, i<=7. Use t=2 and fixed v=3 for the event exists k: S_k>=t and V_k<=v. Exhaustively enumerate paths, compare to exp(-t^2/(2*(v+t/3))).",
+      "expect": "applicable: predictable amplitudes, mean zero conditional increments, |X|<=1, predictable variance sum a_i^2; finite check supports the stated joint event only"
+    },
+    {
+      "id": "freedman_future_gate_refusal",
+      "kind": "scientific_refusal",
+      "scenario": "Let epsilon_i be fair independent signs but choose a_i=1 when epsilon_i=+1 else 1/4 and X_i=a_i epsilon_i. Claim conditional mean zero because signs are fair and use sum a_i^2 as predictable variance.",
+      "expect": "reject: future-dependent amplitude; E[X_i|past]=3/8, so no martingale-difference premise; sum a_i^2 not predictable"
+    }
+  ]
+}

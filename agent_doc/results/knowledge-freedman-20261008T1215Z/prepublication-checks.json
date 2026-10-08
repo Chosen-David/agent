@@ -1,0 +1,54 @@
+{
+  "time": "2026-10-08T12:30:25.093220+00:00",
+  "commands": [
+    {
+      "argv": [
+        "python",
+        "-m",
+        "agent_runtime.knowledge",
+        "--root",
+        "knowledge",
+        "validate"
+      ],
+      "exit_code": 0,
+      "stdout": "{\n  \"valid\": true,\n  \"entries\": 101,\n  \"snapshot\": \"d8596dde2d2ad320b22e91b2c1c17208ae2007b40546e30b9ba20a7f2b0ad6f0\",\n  \"scope\": \"structural validation only; not scientific proof\"\n}\n",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "python",
+        "scripts/sync_plugin_references.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD",
+        "origin/main"
+      ],
+      "exit_code": 0,
+      "stdout": "2325e3d266aa7fb3c819cb52d6ba41db54ac5c90\n2325e3d266aa7fb3c819cb52d6ba41db54ac5c90\n",
+      "stderr": ""
+    }
+  ],
+  "no_concurrent_head_change": true,
+  "scope": "Metadata-only closure after candidate validation; executable code/cards/corpus snapshot unchanged",
+  "local_branch": "work",
+  "target_ref": "refs/heads/main",
+  "push_plan": "git push origin HEAD:main (ordinary non-force)"
+}

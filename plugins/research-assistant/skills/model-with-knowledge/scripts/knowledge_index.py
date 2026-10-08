@@ -20,7 +20,7 @@ else:
     from project_docs import guard_write_path
 
 INDEX_VERSION = '1'
-ENGINE_VERSION = 'fts5-porter-context-v2'
+ENGINE_VERSION = 'fts5-porter-alias-first-section-v4'
 
 
 def sections(record):
@@ -134,8 +134,14 @@ def build_index(store, path, *, rebuild=False):
                 context=' '.join([d['summary'],*d['aliases'],*d['domains'],*d['structures'],*d['assumptions']])
                 con.execute('INSERT INTO entries VALUES (?,?)',(kid,d['sha256']))
                 con.execute('INSERT INTO docs VALUES (?,?,?,?)',(kid,_tokenize(d['title']),_tokenize(context),_tokenize(d['content'])))
-                for node in sections(d):
-                    con.execute('INSERT INTO chunks VALUES (?,?,?,?,?)',(kid,node['node'],_tokenize(node['title']),_tokenize(d['title']+' '+d['summary']),_tokenize(node['text'])))
+                # Index document aliases once, on the first section, avoiding
+                # repetition across every body section. Excerpts remain literal.
+                section_context=_tokenize(d['title']+' '+d['summary'])
+                for position,node in enumerate(sections(d)):
+                    context_with_aliases=section_context
+                    if position == 0:
+                        context_with_aliases=_tokenize(' '.join([d['title'],d['summary'],*d['aliases']]))
+                    con.execute('INSERT INTO chunks VALUES (?,?,?,?,?)',(kid,node['node'],_tokenize(node['title']),context_with_aliases,_tokenize(node['text'])))
             for key,value in [('root',str(store.root)),('snapshot',store.snapshot),('engine_version',ENGINE_VERSION)]:
                 con.execute('INSERT OR REPLACE INTO meta VALUES (?,?)',(key,value))
         return {'backend':'sqlite-fts5-rrf-v1','snapshot':store.snapshot,'indexed':len(current),

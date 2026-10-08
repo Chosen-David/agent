@@ -1,0 +1,374 @@
+{
+  "schema_version": 1,
+  "snapshot": "4057c141dbd838780c4ef5049121b8f0350051ce114e1334d9d63a517b69dac3",
+  "backend": "sqlite-fts5-rrf-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "ds.faiss-exact-vector",
+      "version": 1,
+      "sha256": "2ca159a814b69cd3984d49e5e71f494ac145b129ada2c6f0e5ae702064c35eb4",
+      "title": "Faiss IndexFlat：精确向量搜索强基线",
+      "summary": "需要精确召回或评估 ANN 时，先用 Faiss IndexFlat 建立强基线；精确扫描每 query 约 O(nd)，并考虑 batched BLAS 路径。",
+      "status": "published",
+      "assumptions": [
+        "operation: dense vector nearest-neighbor search",
+        "metric: L2 or inner product",
+        "quality: exact"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.faiss-exact-vector"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 4
+        },
+        {
+          "retriever": "section-bm25",
+          "rank": 1
+        },
+        {
+          "retriever": "curated-structure",
+          "rank": 3
+        }
+      ],
+      "score": 0.047891458495966696,
+      "sections": [
+        {
+          "node": "s2",
+          "title": "问题触发",
+          "start_line": 3,
+          "end_line": 6,
+          "excerpt": "## 问题触发\n\n向量检索 exact baseline；Faiss IndexFlat；L2 inner product\n\n"
+        },
+        {
+          "node": "s4",
+          "title": "前提与比较设置",
+          "start_line": 13,
+          "end_line": 18,
+          "excerpt": "## 前提与比较设置\n\n- operation: dense vector nearest-neighbor search\n- metric: L2 or inner product\n- quality: exact\n\n"
+        }
+      ]
+    },
+    {
+      "id": "math.floating-dot-enclosure",
+      "version": 1,
+      "sha256": "e800ad6e5dbd1be9aa2de66da0e06933cccb84c41419668ae0550f4407db1bbb",
+      "title": "浮点点积外包与严格安全筛除",
+      "summary": "对存储binary64点积逐运算向外扩展，核对正确舍入/渐进下溢；累计丢失小项、量化原始输入及GPU排序目标需区分，未知前提拒用。",
+      "status": "published",
+      "assumptions": [
+        "输入为有限存储binary64数，目标为其精确实数点积；量化前输入和实际GPU结果是其他目标",
+        "每个标量加乘正确RN舍入到同一binary64格式、邻接nextafter正确、渐进下溢，无FTZ/未知重排或低精度路径",
+        "每步结果及外包邻接端点有限；无法满足则无法认证并保留/回退，不按失败值剪枝",
+        "安全筛除有全部逐项包络，tau取第k大下界，删除仅限U_i<tau，重排目标/tie规则一致",
+        "坐标投影误差界仅适用显式选坐标；学习投影、理想RoPE、输入误差与GPUkernel偏差须另行认证"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Conditional induction proof and exact-rational public CPU data at agent_doc/results/math-rounding-20261008/; independent actual code/math/data acceptance required before publication",
+          "No Lean/formal proof, platform-wide arithmetic certification, GPU/model/quality/token performance experiment"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 3
+        },
+        {
+          "retriever": "section-bm25",
+          "rank": 8
+        },
+        {
+          "retriever": "curated-structure",
+          "rank": 4
+        }
+      ],
+      "score": 0.04620389822595705,
+      "sections": []
+    },
+    {
+      "id": "math.linear-solve-backward-error",
+      "version": 1,
+      "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+      "title": "线性求解的后向误差、条件性与下游误差证书",
+      "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+      "status": "published",
+      "assumptions": [
+        "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+        "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+        "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+        "下游排序须真实线性评分映射和严格逐对误差间隔"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+          "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 12
+        },
+        {
+          "retriever": "section-bm25",
+          "rank": 2
+        },
+        {
+          "retriever": "curated-structure",
+          "rank": 7
+        }
+      ],
+      "score": 0.04494329428128176,
+      "sections": [
+        {
+          "node": "s8",
+          "title": "来源、版本与验证",
+          "start_line": 48,
+          "end_line": 52,
+          "excerpt": "## 来源、版本与验证\n\n- Higham, *Accuracy and Stability of Numerical Algorithms*, 第二版，2002，Chapter 7, pp119–137，§7.1 Theorem 7.1（Rigal–Gaches）、(7.1)–(7.2)，联合后向误差；[SIAM 章节](https://epubs.siam.org/doi/10.1137/1.9780898718027.ch7)。出版网页2012上线日期不当作书籍年份。网页式(7.3)的显示符号与残差定义疑似不一致，本条独立推导扰动并精确检查；未核实原版PDF排印问题。\n- Timo Betcke, UCL MATH0058, [Backward error and condition number](https://tbetcke.github.io/math0058_lecture_notes/linear_system_error.html)，无固定版本，检索2026-10-07；Backward error、Neumann lemma、Sensitivity各节。使用定义与推导，不依赖网页末行的等号排版。\n- 实际检查：`docs/knowledge_learning/2026-10-07-conditioning/verify.py`、`checks.json`，Fraction精确有限输入、binary64取消误差、物理单位与奇异反例。数学证明为人工核查，未运行Lean；有限样例不替代一般证明。近期低秩更新仅研究筛选，见同目录research.md，无生产算法替换或模型A/B。\n"
+        }
+      ]
+    },
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c",
+      "title": "Cauchy–Schwarz 与内积分数误差",
+      "summary": "由向量误差界推出查询与键的内积分数误差界。",
+      "status": "published",
+      "assumptions": [
+        "实向量 q、k、k_hat 维数相同，使用欧氏内积和二范数",
+        "已知键向量误差界；查询变化时必须另外计入误差"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 中的命题、推导与边界；非形式化证明",
+          "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 1
+        },
+        {
+          "retriever": "curated-structure",
+          "rank": 1
+        }
+      ],
+      "score": 0.03278688524590164,
+      "sections": []
+    },
+    {
+      "id": "math.residual-interval-screening",
+      "version": 1,
+      "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+      "title": "正交残差包络与安全候选筛除",
+      "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+      "status": "published",
+      "assumptions": [
+        "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+        "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+        "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+        "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+          "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 2
+        },
+        {
+          "retriever": "curated-structure",
+          "rank": 2
+        }
+      ],
+      "score": 0.03225806451612903,
+      "sections": []
+    },
+    {
+      "id": "physics.noether-invariants",
+      "version": 1,
+      "sha256": "99b6271d2b9541456921ec84a50a189dc8b231bfe174184036ab75034807859c",
+      "title": "Noether 对称性与能量守恒检查",
+      "summary": "连续变分对称性可产生守恒量；用动力学前提检查模拟器和跨学科类比。",
+      "status": "published",
+      "assumptions": [
+        "有限自由度光滑拉格朗日系统 L(q,q_dot,t)，轨迹满足 Euler–Lagrange 方程",
+        "点变换结论采用连续生成元 ξ(q) 且 δL=0，未含时间变换与边界项的一般情形",
+        "自治能量结论要求 L 无显含时间；外力/耗散需重新建模"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 的明确推导与反例；非形式化证明",
+          "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 5
+        },
+        {
+          "retriever": "section-bm25",
+          "rank": 4
+        }
+      ],
+      "score": 0.031009615384615385,
+      "sections": []
+    },
+    {
+      "id": "math.perturbation-propagation",
+      "version": 1,
+      "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381",
+      "title": "有限复合映射的扰动传播与逐层误差预算",
+      "summary": "有已核实增益和同输入缺陷时，乘积加权传播局部误差；teacher缺陷与参考增益不能混用，经验吸收不是一致证书。",
+      "status": "published",
+      "assumptions": [
+        "有限复合映射/固定赋范空间，参考和近似轨迹实际输入均落在有效域",
+        "路线A参考F的输入增益及近似输入上同输入缺陷；路线B近似G的输入增益及参考输入缺陷，不混用",
+        "L与epsilon有限非负且范数/单位一致；全菜单保证需一致域/增益/缺陷覆盖全部可达状态"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Paired Markdown finite induction; nonformal; final publication requires independent review",
+          "doc/results/math-propagation-20261008/ CPU public fixtures only; no model/GPU"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 6
+        },
+        {
+          "retriever": "curated-structure",
+          "rank": 9
+        }
+      ],
+      "score": 0.02964426877470356,
+      "sections": []
+    },
+    {
+      "id": "math.linear-system-stability",
+      "version": 1,
+      "sha256": "caacac2221436b3cd671b9a307f8598e8481af537400839a430f5558bd04b4a4",
+      "title": "条件数、残差与有限扰动误差界",
+      "summary": "小残差不保证小解误差；用条件数与显式扰动条件评估线性求解可靠性。",
+      "status": "published",
+      "assumptions": [
+        "A 为可逆实方阵，b 非零，使用相容诱导矩阵范数",
+        "有限扰动公式要求 κ(A)‖E‖/‖A‖<1；不能把一阶近似当任意扰动保证"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 的明确推导与反例；非形式化证明",
+          "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 7
+        },
+        {
+          "retriever": "curated-structure",
+          "rank": 8
+        }
+      ],
+      "score": 0.029631255487269532,
+      "sections": []
+    },
+    {
+      "id": "math.softmax-barycenter-error",
+      "version": 1,
+      "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+      "title": "有限 softmax 与归一化加权输出误差",
+      "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+      "status": "published",
+      "assumptions": [
+        "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+        "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+        "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+          "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 13
+        },
+        {
+          "retriever": "section-bm25",
+          "rank": 3
+        }
+      ],
+      "score": 0.029571646010002173,
+      "sections": []
+    },
+    {
+      "id": "math.softmax-kl-fisher",
+      "version": 1,
+      "sha256": "e8b5926cdfdd48d44a5b6c6e03ae4ee71ba1aade837c3d2f96beed5a36c9d7f9",
+      "title": "有限softmax的KL与中心化Fisher曲率",
+      "summary": "分数误差在共同平移商空间中决定概率KL；用路径方差给全局上界与条件下界，饱和时不能由低秩分数MSE推出概率有效秩。",
+      "status": "published",
+      "assumptions": [
+        "共同非空有限支持集、有限实logits；温度正且已计入，KL自然对数",
+        "概率下界须覆盖整个连接路径；Fisher近似需振幅R小；没有统一全局正下界",
+        "硬mask/greedy/不同支持集另处理；attention概率轴不等于输出词表生成轴"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Self-contained finite derivations; no formal proof",
+          "doc/results/math-softmax-kl-20261008 public CPU cases; publication subject to independent acceptance"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 16
+        },
+        {
+          "retriever": "section-bm25",
+          "rank": 5
+        }
+      ],
+      "score": 0.02854251012145749,
+      "sections": []
+    }
+  ]
+}

@@ -101,6 +101,33 @@ class IndexTests(unittest.TestCase):
         self.assertEqual(result['updated'], self.published_count)
         self.assertFalse(build_index(self.store,self.db)['engine_changed'])
 
+    def test_alias_only_section_lane_without_fabricated_excerpt(self):
+        path=self.root/'entries/math.cauchy-schwarz.json'
+        metadata=json.loads(path.read_text())
+        metadata['aliases'].append('zqxmetadataonly')
+        path.write_text(json.dumps(metadata))
+        store=KnowledgeStore(self.root)
+        build_index(store,self.db)
+        row=indexed_search(store,self.db,'zqxmetadataonly')['results'][0]
+        self.assertEqual(row['id'],metadata['id'])
+        self.assertIn('section-bm25',[match['retriever'] for match in row['matches']])
+        self.assertEqual(row['sections'],[])
+        with sqlite3.connect(self.db) as con:
+            contexts=con.execute('SELECT context FROM chunks WHERE id=?',(metadata['id'],)).fetchall()
+        self.assertGreater(len(contexts),1)
+        self.assertEqual(sum('zqxmetadataonly' in value for value, in contexts),1)
+        # A persisted v2 cache must not silently retain alias-blind chunks.
+        with sqlite3.connect(self.db) as con:
+            con.execute("UPDATE meta SET value='fts5-porter-context-v2' WHERE key='engine_version'")
+            con.execute("UPDATE chunks SET context='' WHERE id=?",(metadata['id'],))
+        with self.assertRaisesRegex(KnowledgeError,'stale index engine'):
+            indexed_search(store,self.db,'zqxmetadataonly')
+        rebuilt=build_index(store,self.db)
+        self.assertTrue(rebuilt['engine_changed'])
+        self.assertEqual(rebuilt['updated'],self.published_count)
+        row=indexed_search(store,self.db,'zqxmetadataonly')['results'][0]
+        self.assertIn('section-bm25',[match['retriever'] for match in row['matches']])
+
     def test_incoming_relations_discover_new_corollary(self):
         results=self.store.related('math.topk-margin')['results']
         self.assertTrue(any(x['id']=='math.score-difference-bound' and x['direction']=='incoming' for x in results))

@@ -1,0 +1,186 @@
+[
+  {
+    "name": "validate",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "agent_runtime.knowledge",
+      "--root",
+      "knowledge",
+      "validate"
+    ],
+    "exit_code": 0,
+    "seconds": 0.06182861328125,
+    "log": "candidate-validate.log",
+    "sha256": "27ca2e7356198ddaa6a944ba8c479ef1ca631a1f2ae0583da5b1cce7755038c1"
+  },
+  {
+    "name": "sync",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/sync_plugin_references.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.0773470401763916,
+    "log": "candidate-sync.log",
+    "sha256": "55ce47991e83e146c8707fe11d05c1e94ab9bc5399b2acde5228d325fef259e4"
+  },
+  {
+    "name": "sync-check",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/sync_plugin_references.py",
+      "--check"
+    ],
+    "exit_code": 0,
+    "seconds": 0.07321310043334961,
+    "log": "candidate-sync-check.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "index",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "agent_runtime.knowledge",
+      "--root",
+      "knowledge",
+      "index",
+      "--db",
+      ".knowledge-cache/search.sqlite"
+    ],
+    "exit_code": 0,
+    "seconds": 0.07765388488769531,
+    "log": "candidate-index.log",
+    "sha256": "8f4580650c80222dada97ee789f7a36d7196ec3a2b9cfd52dca9cb62f498ac56"
+  },
+  {
+    "name": "original",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/queries.json",
+      "--accept-context",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-freedman-20261008T1215Z/candidate-original.json"
+    ],
+    "exit_code": 1,
+    "seconds": 0.5146040916442871,
+    "log": "candidate-original.log",
+    "sha256": "7804ef630bada1756387a3831983659ec3817ef9c0c64731b3721ea4f81bfd55"
+  },
+  {
+    "name": "original-context8",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/queries.json",
+      "--accept-context",
+      "--context-limit",
+      "8",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-freedman-20261008T1215Z/candidate-original-context8.json"
+    ],
+    "exit_code": 1,
+    "seconds": 0.9511020183563232,
+    "log": "candidate-original-context8.log",
+    "sha256": "2239c5c3e14703f29870e1e2bd901e7f28f9bc301f7fc090fed643999e26b058"
+  },
+  {
+    "name": "round2",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/round2-queries.json",
+      "--accept-context",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-freedman-20261008T1215Z/candidate-round2.json"
+    ],
+    "exit_code": 1,
+    "seconds": 0.5557866096496582,
+    "log": "candidate-round2.log",
+    "sha256": "ec3c230117cac4ea93fa48c23166560af2f185a8c566933f0a9c849d45662c44"
+  },
+  {
+    "name": "round2-context8",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/round2-queries.json",
+      "--accept-context",
+      "--context-limit",
+      "8",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-freedman-20261008T1215Z/candidate-round2-context8.json"
+    ],
+    "exit_code": 1,
+    "seconds": 1.0191595554351807,
+    "log": "candidate-round2-context8.log",
+    "sha256": "6bdf679ad22a4c6b60565580e5d0cd374d8ca75be20f544f9f38c6078d97e41e"
+  },
+  {
+    "name": "morphology",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/morphology-queries.json",
+      "--require-backends",
+      "sqlite",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-freedman-20261008T1215Z/candidate-morphology.json"
+    ],
+    "exit_code": 1,
+    "seconds": 0.3726973533630371,
+    "log": "candidate-morphology.log",
+    "sha256": "516bf8837efbc94cb3487ebe333e1fdd59e30bf22387753fb60a5db49d3ccd86"
+  },
+  {
+    "name": "full-tests",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 58.6977162361145,
+    "log": "candidate-full-tests.log",
+    "sha256": "7c8e8a5a8a8b16d760c5949e7048a4f95638ed39f641b397fdc6980326c17ac5"
+  },
+  {
+    "name": "reader-tests",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "apps/paper-reader/tests",
+      "-v"
+    ],
+    "exit_code": 0,
+    "seconds": 1.813934087753296,
+    "log": "candidate-reader-tests.log",
+    "sha256": "71fc2e6de1457a5b1e62cb9aaeb6666a2cb655beae5cf4f06a4bd66a2cd10924"
+  },
+  {
+    "name": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "seconds": 0.008065223693847656,
+    "log": "candidate-diff-check.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]

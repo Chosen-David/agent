@@ -1,0 +1,154 @@
+[
+  {
+    "name": "validate",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "agent_runtime.knowledge",
+      "--root",
+      "knowledge",
+      "validate"
+    ],
+    "exit_code": 0,
+    "seconds": 0.0609440803527832,
+    "log": "repair-first-validate.log",
+    "sha256": "ab104698626466eb0d3b2ea204abe0e06d10feb24af885fbd379a4fc891fd6db"
+  },
+  {
+    "name": "sync",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/sync_plugin_references.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.07375454902648926,
+    "log": "repair-first-sync.log",
+    "sha256": "77d0dae5dc9c2f44a11a7329a645f7ca52a0f5ef549a72ca800f1830b648968e"
+  },
+  {
+    "name": "sync-check",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/sync_plugin_references.py",
+      "--check"
+    ],
+    "exit_code": 0,
+    "seconds": 0.07389426231384277,
+    "log": "repair-first-sync-check.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "name": "index",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-m",
+      "agent_runtime.knowledge",
+      "--root",
+      "knowledge",
+      "index",
+      "--db",
+      ".knowledge-cache/search.sqlite"
+    ],
+    "exit_code": 0,
+    "seconds": 0.22125005722045898,
+    "log": "repair-first-index.log",
+    "sha256": "cd70efd50b2d16fe6aecd959471aaaa48aaac4b01397bb7c0c9004a5af5e09c0"
+  },
+  {
+    "name": "original",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/queries.json",
+      "--accept-context",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-freedman-20261008T1215Z/repair-first-original.json"
+    ],
+    "exit_code": 1,
+    "seconds": 0.567296028137207,
+    "log": "repair-first-original.log",
+    "sha256": "5d971225bc063172c52817624464591d0f92cad8877e1effc4c788f3fc172862"
+  },
+  {
+    "name": "original-context8",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/queries.json",
+      "--accept-context",
+      "--context-limit",
+      "8",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-freedman-20261008T1215Z/repair-first-original-context8.json"
+    ],
+    "exit_code": 1,
+    "seconds": 0.9282450675964355,
+    "log": "repair-first-original-context8.log",
+    "sha256": "adadec05e7115b40a133d1def3004dfbc6c78b669e7894ea9ef0e61f895b464b"
+  },
+  {
+    "name": "round2",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/round2-queries.json",
+      "--accept-context",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-freedman-20261008T1215Z/repair-first-round2.json"
+    ],
+    "exit_code": 1,
+    "seconds": 0.6795730590820312,
+    "log": "repair-first-round2.log",
+    "sha256": "60718f38f9f8532747849e4e2d2ac033165ec25d2e9237a7cbd7f1eb3e4aeb12"
+  },
+  {
+    "name": "round2-context8",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/round2-queries.json",
+      "--accept-context",
+      "--context-limit",
+      "8",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-freedman-20261008T1215Z/repair-first-round2-context8.json"
+    ],
+    "exit_code": 1,
+    "seconds": 1.0259582996368408,
+    "log": "repair-first-round2-context8.log",
+    "sha256": "57c063ff9f21219721e23cc4259e73b273e97791a113fb9b5d537f4ab28ad45c"
+  },
+  {
+    "name": "morphology",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "scripts/eval_knowledge.py",
+      "--cases",
+      "evals/knowledge/morphology-queries.json",
+      "--require-backends",
+      "sqlite",
+      "--output",
+      "/workspace/agent/agent_doc/results/knowledge-freedman-20261008T1215Z/repair-first-morphology.json"
+    ],
+    "exit_code": 1,
+    "seconds": 0.33815884590148926,
+    "log": "repair-first-morphology.log",
+    "sha256": "fe5952ee257fba6b88eeb35bac55186540ed816977ac87468747095f1fa02485"
+  },
+  {
+    "name": "diff-check",
+    "argv": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "seconds": 0.007561922073364258,
+    "log": "repair-first-diff-check.log",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+]
