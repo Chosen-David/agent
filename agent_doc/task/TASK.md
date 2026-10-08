@@ -207,4 +207,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [NS-01] 迁移工作流专属文档目录及根和路径契约 ([detail](task_details/NS-01.md))
 - [x] [NS-02] 验证普通 doc 保留、历史映射、指南保护与回归 ([detail](task_details/NS-02.md))
-- [ ] [NS-03] 整合 main 后直接发布并同步本机技能 ([detail](task_details/NS-03.md))
+- [x] [NS-03] 整合 main 后直接发布并同步本机技能 ([detail](task_details/NS-03.md))
