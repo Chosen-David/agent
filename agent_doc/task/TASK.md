@@ -220,3 +220,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [MATH-43] 补齐逐项残差包络与候选安全筛除，核查近期选择研究。 ([detail](task_details/MATH-43.md))
 - [x] [MATH-44] 独立代码/数据验证、有限检索和回归，main发布读回。 ([detail](task_details/MATH-44.md))
+
+## 2026-10-08 首页展示
+
+- [x] [README-01] 重构总 README 与准确架构图，核验阅读体验、链接和能力边界后发布 main。 ([detail](task_details/README-01.md))

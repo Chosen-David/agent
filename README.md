@@ -1,289 +1,230 @@
+<div align="center">
+
+<img src="docs/assets/readme/hero.svg" alt="Agent Workflows — From intent to verified artifacts" width="100%">
+
 # Agent Workflows
 
-工作流文档统一放在当前项目的 **`agent_doc/`**，项目已有 `doc/` 和 `docs/` 保留原用途。Project A 使用 `ProjectA/agent_doc/`；升级本仓库时使用 `agent/agent_doc/`。已有旧工作流目录只在明确确认归属后迁移。
+**让通用 AI 按需协作，把目标推进为可核验的交付。**
 
-本机 Codex 接入：`python scripts/setup_codex.py` 安装 15 个用户级技能与按需调度入口；`--check` 核验版本，更新保护本机修改。[Codex 接入与每轮 pull→验证→push→同步流程](docs/codex_adoption/README.md)。
+科研 · 代码与 Kernel · 论文学习 · 旅行规划
 
-**工作流装在 agent 库，项目文档放在你正在使用它的项目。** 开发 Project A 时，指南是 `ProjectA/agent_doc/guide/GUIDE.md`，任务、建议、结果也都在 `ProjectA/agent_doc/`。只有升级本仓库自身时才维护 `agent/agent_doc/`。
+[快速开始](#快速开始) · [能力地图](#能力地图) · [系统架构](#系统架构) · [项目文档](#项目文档属于你的项目) · [开发与验证](#开发与验证)
 
-一个按**场景与能力**组织的通用 Agent 仓库。主 AI 根据用户目标选择工作流，保持通用身份；科研助手是其中一个专业组合，论文伴读与知识讲解也可以独立使用。
+</div>
 
-适用于具备相应工具能力的 ChatGPT/Codex、Claude 及其他主 AI。当前提供科研/论文角色与独立旅行规划能力，并附完整工作流、可复制 Prompt 和插件包。未来可增加编程、学习、产品等领域的独立分类，不必改写主 AI 的身份。
+---
 
-## 新指令先检索已有数据
+把专业能力接入你正在工作的项目：主 AI 保持通用身份，按目标选择技能，围绕代码、数据、图表与文稿组织协作。简单问题直接处理；复杂任务才使用计划审核、任务 DAG、版本化交接与独立验收。
 
-当前项目新数据统一存放在 `agent_doc/results/<run_id>/`，保留元数据和验证记录。收到新指令先检索已有结果，比较任务、代码/输入/配置/环境、指标单位与当前独立验收，能复用的先复用，条件变化只补必要检查；明确复现和新主张验收不能跳过。旧冻结文件可按原路径/哈希索引，不把未搬移的文件说成已归集。[结果检索与复用](workflows/result_reuse_workflow.md)。
+仓库提供 **15 个角色技能、2 个插件包、可复制工作流，以及可选的本地运行时**。模型、工具、认证和运行资源由实际宿主提供；安装工作流本身不会启动模型或后台服务。
 
-## 每轮测试/实验数据的独立验证
+### 为什么这样组织
 
-数据生产后保持待验；主 AI 在生产者与后续分析、图表、结论之间插入独立 `verify_experiment_result` 节点，核对实际代码、输入/配置和数据有效性。失败或版本过期先修复、重测和复验，保留原始记录；通过仅代表已验证范围内可用，不能保证绝对没有 bug。[执行契约与宿主边界](workflows/result_validation_workflow.md)。
+| 按需组合 | 交付可追溯 | 项目各自独立 |
+| :--- | :--- | :--- |
+| 一个通用主 AI，按任务加载专业角色；无需每次启动整套科研流程。 | 从输入、实现到最终产物保留版本与证据；结果经过独立检查再消费。 | Project A 的指南、任务与结果留在 Project A，接入多个项目也不混用上下文。 |
 
-## 项目文档分层
+## 快速开始
 
-以下路径全部相对**当前接入项目**，不相对工作流安装位置。显式初始化一个已有项目（把示例路径换成你的项目）：
+选择与你的宿主匹配的一条接入路径。**需要完整的 Claude 项目调度时选本地安装；只按需使用插件技能时选 marketplace，避免在同一项目重复安装同名技能。**
 
-```powershell
-python C:/Users/WI/Desktop/home_work/AI_LLM/agent/scripts/project_docs.py --root C:/work/ProjectA init
-```
+### Claude Code · 完整项目接入
 
-然后由你编写 `C:/work/ProjectA/agent_doc/guide/GUIDE.md`，在 Project A 目录启动 AI。命令只建空目录和空任务索引，保留已有文件；缺少 Project A 的文档不应转而读取 agent 库自己的指南或历史任务。
-
-- `agent_doc/task/TASK.md`：按日期简洁列出任务；AI 在 `agent_doc/task/task_details/*.md` 维护每项方法、进度、证据与下一步。
-- `agent_doc/guide/`：人类专用，`GUIDE.md` 是已核实人类来源后的最高项目规划依据。AI 只读，绝不创建、编辑、删除或移动其中的文件，初始化仅建空目录。
-- `agent_doc/results/<run_id>/`：新数据、元数据和独立验证共享入口；新指令规划前先查询既有结果。
-- `agent_doc/advice/`：人类和 AI 可编辑建议与反馈；核验后记录采用、调整后采用、拒绝或暂缓及理由，不盲从其他 AI。
-
-[目录说明与人类使用方式](agent_doc/README.md) · [文档治理、任务绑定与恢复](workflows/project_document_workflow.md)。宿主安全/权限和用户当前明确决定继续适用；已有 `docs/` 研究证据保持原路径，根 `TASK.md` 迁移后仅作导航。
-
-## Claude Code 快速接入
-
-[当前任务清单](agent_doc/task/TASK.md) · [文件管理与跨 Agent 交接](workflows/code_organization_workflow.md)
+需要 Python 3.10+、Git 和可用的 Claude Code。安装脚本无 pip 依赖；Linux/WSL 推荐，原生 Windows 需要目录符号链接权限。
 
 ```bash
 git clone https://github.com/Chosen-David/agent.git
-python3 agent/setup.py --target /absolute/path/to/your-project
+python3 agent/setup.py --target /absolute/path/to/ProjectA
 ```
 
-一次接入主 AI 调度、15 个 Skills 和 15 个 Claude 子 Agent；Skills 随 clone 下载，保留已有项目规则。进入目标项目启动 Claude，即可按仓库逻辑路由任务、读取 agent_doc/task/TASK.md，并由主 AI 配置 tmux 监督。安装本身不启动模型或后台任务。[完整接入与更新说明](SETUP.md)。
+随后进入 **Project A** 启动 `claude`。安装会保留已有项目规则，接入全部角色技能和 Claude 子 Agent。检查安装：
 
-## 2026-10-03：源码对照与逐角色执行验证
+```bash
+python3 /absolute/path/to/agent/setup.py --target /absolute/path/to/ProjectA --check
+```
 
-本轮阅读8个上游项目的实际skills/相关实现，为全部12个技能补充执行与验收步骤，保留现有通用调度、证据和权限边界。不是把外部Agent原样替换进来，也没有自动部署第三方runtime。
+[安装内容、旧项目迁移、更新与卸载 →](SETUP.md)
 
-- [详细组织分析、上游取舍与逐角色改进](docs/comprehensive_upgrade_2026-10-03.md)
-- [可复跑任务集、实际产物与评测边界](evals/README.md)
-- [角色入口清单](config/role_registry.json) · [上游版本锁](docs/upstream_sources.lock.json)
-- [后端探测与候选](config/backend_registry.json) · [产物交接校验](docs/handoff_validation.md)
+<details>
+<summary><strong>Codex · 用户级技能接入</strong></summary>
+
+在已克隆、已提交的 agent 仓库中执行：
+
+```bash
+cd agent
+python scripts/setup_codex.py
+python scripts/setup_codex.py --check
+```
+
+脚本管理用户级技能与调度入口，保留既有指引；同名或本机修改冲突会阻止覆盖。随后在目标项目中启动 Codex。文件接线成功与模型实际发现/调用是两项检查。
+
+[安装、版本同步与恢复说明 →](docs/codex_adoption/README.md)
+
+</details>
+
+<details>
+<summary><strong>Claude marketplace · 按需安装技能包</strong></summary>
+
+在支持插件的 Claude Code 交互会话中添加本仓库 marketplace，再选择需要的插件：
+
+```text
+/plugin marketplace add Chosen-David/agent
+/plugin install research-assistant@chosen-david-agent-skills
+/plugin install travel-assistant@chosen-david-agent-skills
+```
+
+在插件界面确认安装范围和实际启用状态。插件名来自本库 [marketplace 清单](.claude-plugin/marketplace.json)；命令方式核对于 2026-10-08，见 [Claude Code 官方说明](https://code.claude.com/docs/en/discover-plugins)。此方式与完整项目安装的接入范围不同，不自动配置主 AI 监督器。
+
+</details>
+
+<details>
+<summary><strong>其他主 AI / 网页会话 · 使用独立工作流</strong></summary>
+
+让宿主读取 [通用调度入口](prompts/orchestrator.md)，或上传所需的 [工作流 Markdown](workflows/)。只提供链接不能证明模型已经读到文件；能否执行取决于宿主实际工具和权限。仓库也保留 [Codex 插件目录](.agents/plugins/marketplace.json)，是否支持导入及实际安装状态需在对应客户端确认。
+
+```text
+当前项目：Project A（给出真实路径或上传材料）
+目标：追踪推理热路径，提出并验证一个优化候选。
+约束：先保持正确性；没有目标硬件时只交设计和待测项。
+交付：代码定位、候选取舍、验证证据和下一步。
+按需选择技能，不必启动所有角色。
+```
+
+</details>
+
+## 能力地图
+
+从你想拿到的产物出发，再选择工作流。
+
+| 你要完成的事 | 交付重点 | 入口 |
+| :--- | :--- | :--- |
+| **推进科研项目** | 查新、可证伪假设、最小实验、写作与审读衔接 | [科研主调度](prompts/research_orchestrator.md) |
+| **读懂代码与系统** | 固定 commit 的调用路径、控制/数据流与机制证据 | [代码阅读](workflows/code_reading_workflow.md) |
+| **实现与性能优化** | 正确性基线、profiling、CPU/GPU 候选及测量边界 | [实现与优化](workflows/implementation_optimization_workflow.md) · [编译反馈](workflows/kernel_optimization_feedback.md) |
+| **画清方法与结果** | 可编辑架构图、可追溯数据图、最终尺寸检查 | [架构图](workflows/diagram_workflow.md) · [数据可视化](workflows/data_visualization_workflow.md) |
+| **写作与修订论文** | 模板、证据忠实、引用、科学审稿、最终 PDF 逐页检查 | [写作](workflows/paper_writing_workflow.md) · [审稿](workflows/reviewer_workflow.md) · [PDF 审读](workflows/reader_workflow.md) |
+| **陪读与理解知识** | 原文定位、讲解卡、直觉/公式/例子与按需图解 | [论文伴读](workflows/paper_reading_companion_workflow.md) · [概念讲解](workflows/concept_explanation_workflow.md) |
+| **调用知识建模** | 按结构检索、核对前提、跨领域映射与拒用反例 | [知识库](knowledge/README.md) · [建模](workflows/knowledge_modeling_workflow.md) |
+| **规划可执行旅行** | 营业窗口、通勤、预约、午休、预算与行程修订 | [旅行规划](workflows/travel_planning_workflow.md) |
+
+<details>
+<summary><strong>展开全部 15 个角色与职责</strong></summary>
+
+以 [角色注册表](config/role_registry.json) 为准；科研插件包含 14 个角色，旅行插件包含 1 个角色。
+
+| 角色 | 职责 |
+| :--- | :--- |
+| `research-assistant` | 科研任务协调与交付汇总 |
+| `research-explore` | 查新、假设与实验设计 |
+| `research-implement-optimize` | 代码实现、正确性与性能优化 |
+| `research-figures` | 混合图、多面板与整体风格协调 |
+| `research-diagrams` | 方法、流程与系统架构图 |
+| `research-data-visualization` | 实验数据与统计图表 |
+| `research-write` | 论文写作与修订 |
+| `research-review` | 贡献、方法、证据与科学审稿 |
+| `research-read-pdf` | 最终 PDF 逐页视觉与读者检查 |
+| `paper-reading-companion` | 原文伴读与阅读状态 |
+| `explain-research-concepts` | 概念、公式、机制与教学图解 |
+| `code-reading` | 源码定位与机制分析 |
+| `code-organization` | 文件组织、产物交接与 CODEMAP |
+| `model-with-knowledge` | 基于有条件知识的建模与推导 |
+| `travel-planner` | 旅行研究、行程与约束核验 |
+
+[科研插件](plugins/research-assistant/) · [旅行插件](plugins/travel-assistant/) · [模式与跨模式调用](prompts/modes.md)
+
+</details>
+
+## 系统架构
+
+![系统架构：通用主 AI 按需调用专业角色，在实际宿主提供的模型、工具与权限下工作；产物保存在目标项目，独立验收后交付，未通过则返修。](docs/assets/readme/architecture.svg)
+
+图展示的是**职责与交付关系**。独立角色需由宿主实际派发；没有该能力时可顺序执行相同工作流，但不能把角色名称当成多个模型已运行。
+
+### 从产出到可信交付
+
+复杂任务在执行前固定目标、输入、约束与验收条件；执行后让独立检查者读取实际产物。发现问题时，以稳定 ID、位置、版本和复验条件交回责任方，保留首轮意见和修订记录。
+
+| 机制 | 解决的问题 | 实现与边界 |
+| :--- | :--- | :--- |
+| **计划审核与任务 DAG** | 遗漏要求、错误依赖、重复派发 | [双主 AI](workflows/dual_main_workflow.md) · [任务监督](workflows/task_supervision_workflow.md) |
+| **资源感知并发** | 可并行任务被串行化、汇总缺分片 | [因果拆分与完整汇总](workflows/causal_task_orchestration_workflow.md)；仅使用实际已授权资源 |
+| **定向证据交接** | 旧消息、版本漂移、返修无法闭环 | [通信工作流](workflows/agent_communication_workflow.md)；本地收件箱是 opt-in，不是独立模型调度器 |
+| **独立结果验收** | 产出文件就被当作成功、旧 pass 被复用 | [结果校验](workflows/result_validation_workflow.md) · [检索与复用](workflows/result_reuse_workflow.md) |
+| **知识与项目记忆** | 前提失效、纠错后旧结论继续传播 | [知识接入](workflows/knowledge_access_workflow.md) · [项目记忆](workflows/project_memory_workflow.md) |
+
+本地 `agent_runtime/` 提供持久状态、租约、重试和取消等执行基础。真实模型 adapter、凭据、服务器资源与后台部署需另行接入；tmux 可应对 SSH 断开，不能保证跨主机断电或重启继续运行。
+
+## 项目文档属于你的项目
+
+**工作流安装在哪里，与项目文档写在哪里，是两件事。**
+
+| 本次工作 | 指南、任务与结果的位置 |
+| :--- | :--- |
+| 开发 Project A | `ProjectA/agent_doc/` |
+| 开发 Project B | `ProjectB/agent_doc/` |
+| 升级本仓库 | `agent/agent_doc/` |
+
+在已有目标项目下显式初始化，示例路径请替换为真实绝对路径：
+
+```bash
+python /absolute/path/to/agent/scripts/project_docs.py --root /absolute/path/to/ProjectA init
+```
+
+| 相对目标项目的路径 | 内容与维护者 |
+| :--- | :--- |
+| `agent_doc/guide/GUIDE.md` | **人类编写，AI 只读。** 初始化仅创建空目录，不代写指南。 |
+| `agent_doc/task/TASK.md` | 主 AI 维护的唯一任务索引，详情放 `task/task_details/`。 |
+| `agent_doc/advice/` | 人类/AI 建议；先核验证据再采用，不自动成为授权。 |
+| `agent_doc/results/<run_id>/` | 数据、元信息、真实产物及独立验证记录。 |
+
+已有 `doc/`、`docs/` 保留原用途；缺少 Project A 的指南时不回退读取 agent 库的指南或历史任务。旧根 `TASK.md` 需要先检查再显式迁移。
+
+[项目目录说明](agent_doc/README.md) · [治理、边界与恢复](workflows/project_document_workflow.md)
+
+## 论文伴读：两种使用方式
+
+| 本地 Web 阅读器 | 离线伴读页 |
+| :--- | :--- |
+| PDF 原页与提问、讲解、笔记并排；可显式连接本机已登录的 Codex CLI。 | 由 PDF 生成自包含 HTML，内嵌原页和已有讲解卡，支持分批页码。 |
+| [启动与模型连接说明](apps/paper-reader/README.md) | [生成脚本与流程](workflows/paper_reading_companion_workflow.md) |
+
+离线页本身不带实时模型后端；本地 Web 阅读器也不会自动继承当前网页聊天。生成页面或渲染 PDF 不等于 AI 已阅读所有页。
+
+## 开发与验证
+
+在完整 checkout 的仓库根目录运行基础检查；部分可选测试需要额外依赖，跳过项应单独报告。
 
 ```bash
 python -m unittest discover -s tests -v
 python -m unittest discover -s apps/paper-reader/tests -v
 python scripts/sync_plugin_references.py --check
-python scripts/discover_backends.py --pretty
-python scripts/prepare_agent_eval.py --dev-eval --out /tmp/agent-eval-new-run
+python scripts/project_docs.py --root . validate
 ```
 
-后端探测只检查模块、命令和distribution元数据；`available`不代表模型、凭据、服务、语料或授权已就绪。测试准备脚本只产生隔离材料，需实际执行任务并复核产物后才能评分。科研引用由脚本维护；旅行入口保留最新main已对齐的共享契约，分别维护导航。
+这些检查覆盖程序行为、结构契约与包内引用；**不能替代真实角色任务、同条件性能测量或宿主集成验证**。当前仓库没有用一个总分代表所有能力。
 
-代码阅读新增独立轻量入口：[code-reading](plugins/research-assistant/skills/code-reading/SKILL.md)，可追踪 commit/函数/行号、默认与可选机制、控制与数据流。[采用依据与许可证](docs/code_reading_sources.md) · [验证与限制](docs/code_reading_validation.md)。
+- [评测入口与任务集](evals/README.md)：程序测试、真实角色任务、交接、A/B 与外部集成分开记录。
+- [后端注册表](config/backend_registry.json)：可发现不等于凭据、模型或服务已就绪。
+- [代码 Agent 最近升级](agent_doc/results/kernel-feedback-20261008/report_by_gpt.md)：编译诊断、条件化优化与验证范围。
+- [持续优化台账](docs/continuous_optimization/README.md)：研究依据、负结果与未完成事项。
 
-第二轮代码阅读补充：按需覆盖卡、跨模型/消费者核查与声明契约检查；[源码取舍和任务评测](docs/code_reading_v2_upgrade.md)。
+### 深入阅读与参与
 
-## 自动任务链与持久监督
+| 想了解什么 | 去哪里 |
+| :--- | :--- |
+| 主 AI 如何选择工作流 | [通用调度](prompts/orchestrator.md) · [决策协议](prompts/decision_review.md) |
+| 代码和产物如何组织 | [CODEMAP](CODEMAP.md) · [文件管理与交接](workflows/code_organization_workflow.md) |
+| 如何借鉴外部实现 | [生态对照](docs/agent_landscape.md) · [外部项目取舍](docs/external_projects.md) |
+| 贡献新能力或复现问题 | [仓库协作规则](AGENTS.md) · [任务索引](agent_doc/task/TASK.md) · [Issues](https://github.com/Chosen-David/agent/issues) |
 
-主 AI 对复杂任务主动编排依赖 DAG，以完成证据推进任务，支持持久状态、事件去重、租约恢复、退避、取消和自有 monitor 收尾。新增标准库可运行核心；不自动部署服务，主机关闭后本地进程不会继续运行。
+提交改进时说明真实问题、触发方式、预期交付与可复核证据。新增角色应有清晰边界、输入输出和降级方式；优先复用现有工作流。性能收益需要同条件测量，美观的图表也必须忠实于方法与数据。
 
-- [使用与宿主边界](workflows/task_supervision_workflow.md) · [10篇原始论文及开源源码取舍](docs/supervisor_research/README.md)
-- [验证记录与测试边界](docs/task_supervisor_validation.md) · [计划模板](templates/task_dag.json)
-- `python scripts/demo_task_supervisor.py`：有时间上限的本地真实 IO 演示（合成任务，无模型调用）。
+---
 
-## 2026-10-06：tmux 监督与 agent_doc/task/TASK.md 逐项核对
+<div align="center">
 
-主 AI 统一维护任务链、监督器、定时器和各 Agent。支持**自动从项目 agent_doc/task/TASK.md 编排**与**用户手动触发编排**；两者都保留需求映射、数据/产物、独立验收和剩余事项。
+**从目标出发，以证据交付。**
 
-- 默认用专用 detached tmux 会话启动监督器，SSH 断开后继续运行；worker 崩溃可在会话内重启并恢复同一 SQLite 状态。
-- 每个节点结束后更新 `progress.json`；全部要求验收通过且有结果报告后才生成 `final-report.json` 并退出。失败/清单变化保留监督，交由主 AI 恢复，不能伪报完成。
-- [启动、任务文件格式、主 AI 适配器和恢复说明](workflows/task_supervision_workflow.md#tmux-与任务文档闭环) · [agent_doc/task/TASK.md 模板](templates/TASK.md) · [验证记录](docs/tmux_supervisor_validation.md)
-- 需要服务器已具备 tmux、Python 和真实主 AI/工作 Agent 后端；仓库更新不会自动部署到用户服务器。tmux 不跨主机断电/重启保活，默认后端仅验证文件。
+[开始接入](#快速开始) · [浏览工作流](workflows/) · [查看实现](CODEMAP.md)
 
-## 从你的目标开始
-
-| 目标 | 路由 |
-| --- | --- |
-| 让主 AI 根据各种任务选择合适 Agent | [通用主 AI 调度](prompts/orchestrator.md) |
-| 推进科研项目，串起多个角色 | [科研项目调度](prompts/research_orchestrator.md) |
-| 上传论文，边读英文原文边提问 | [论文伴读](workflows/paper_reading_companion_workflow.md) |
-| 理解概念、公式、图或技术机制 | [知识点讲解](workflows/concept_explanation_workflow.md) |
-| 只读理解代码、核查报告中的机制 | [代码阅读](workflows/code_reading_workflow.md) |
-| 文件管理、跨 Agent 交接、目录规划与脚本↔实验↔结果映射 | [代码组织](workflows/code_organization_workflow.md) |
-| 单独实现代码或提高性能 | [实现与优化](workflows/implementation_optimization_workflow.md) |
-| 规划城市游、情侣旅行或周末行程 | [旅行规划](workflows/travel_planning_workflow.md) |
-| 没有匹配的工作流 | 主 AI 用通用能力处理，按需发现新 Skill，不强行转成科研任务 |
-
-**分类是导航，不是限制。** 实现优化可以用于普通软件任务；知识讲解可以脱离论文；科研项目也可以调用伴读。安装专业技能不应让所有聊天都变成科研流程。
-
-## 模式：默认编排，灵活调用
-
-支持通用/自动、科研助手、论文伴读、代码实现与优化、知识学习、旅行规划等模式。模式选择默认流程，Agent 按能力跨模式复用。科研中随时调用知识讲解；伴读中可以调用代码实现；临时任务结束后回到原来的研究任务或阅读位置，不必反复切换整个模式。
-
-用户可直接说“进入科研模式”“陪我读这篇论文”，也可以只提出任务让主 AI 判断。模式不增加权限或预算。完整规则见 [模式与跨模式调用](prompts/modes.md)。
-
-## 主 AI：先核验方案，再执行
-
-主调度先检查目标、假设、真实接口与可行性。原方案成立就执行；实质更优方案或重大设计分歧先写入项目临时区/方案文档，在对话简述依据，等用户对齐再实施。证据不足先验证，不编造数据或文献；简单任务不会强制变成研究项目。见 [反思与决策协议](prompts/decision_review.md)。
-
-检查顺序为目的 → 合理性 → 接口与资源 → 同约束下比较 A/B → 证据 → 执行决策。接口用代表性输入输出核验；结论逐项对应实现、测试、数据或权威来源。可用 [方案提案模板](templates/decision_proposal.md) 记录等待对齐的版本与范围，续跑及角色交接保留同一决策；同意验证 B 不自动授权实施 B。
-
-本仓库 `.codex/config.toml` 为支持该设置的 Codex 项目默认请求 `model_reasoning_effort = "high"`，不锁定模型。实际档位取决于模型、客户端、项目可信状态及更高优先级配置；不等于已开启 ChatGPT/Claude 的深度思考开关，不修改全局设置。部署和验证边界见 [验证记录](docs/main_ai_validation.md)。
-
-旅行同步已按用户对齐方案采用 [插件内共享契约](plugins/travel-assistant/skills/travel-planner/references/planning_contract.md)，两种入口分别保留导航与详细工作流。设计依据见 [接口评估](docs/decisions/travel_workflow_sync.md)；没有接入 JourneyPilot runtime。
-
-## 监督触发时的有界续跑
-
-已有授权任务链被真实监督器触发、相关选择仍未答复时，低风险可逆细节可先选临时默认并记录；竞争思路先完成用户方案 A，再用独立 `agent-explore-<task-id>` 分支/任务链探索 B。只有预先确定的目标改善与全部必要非退化检查通过、权限与预算允许且可回滚，才替换工作产物。未确定优胜就保留 A；明确等待/停止及审批边界不被沉默覆盖。仓库只提供 [协议](workflows/supervised_continuation_workflow.md) 与 [记录模板](templates/supervised_task_chain.yaml)，没有安装监督器或自动运行实验。
-
-## 旅行规划
-
-[旅行规划工作流](workflows/travel_planning_workflow.md) 会结合天气、开放/营业时间、逐段交通、用户已订酒店/活动、体力与午休约束生成可执行行程；复杂旅行采用 JourneyPilot 风格的 RequestContract → 候选研究/准入/选择 → 行程 → Intent Fidelity Gate → DeliveryBundle，并支持阶段状态与断点续跑。插件入口位于 [plugins/travel-assistant/](plugins/travel-assistant/)。
-
-## 科研与论文生产
-
-| Agent | 主要交付 | 工作流 |
-| --- | --- | --- |
-| 科研探索 | 查新证据、可证伪假设、最小判别实验、研究任务链 | [research_workflow.md](workflows/research_workflow.md) |
-| 实现与优化 | 先进解法比较、正确代码、复杂度、CPU/GPU 实测与优化 | [implementation_optimization_workflow.md](workflows/implementation_optimization_workflow.md) |
-| 论文数据可视化 `research-data-visualization` | 真实数值、主动美学设计、可复现数据图与数值/视觉检查 | [data_visualization_workflow.md](workflows/data_visualization_workflow.md) |
-| 流程与架构图 `research-diagrams` | 精美布局、准确节点/箭头语义、可编辑源与最终尺寸检查 | [diagram_workflow.md](workflows/diagram_workflow.md) |
-| 作图协调 `research-figures` | 旧入口兼容、图规划、混合多 panel 风格/拼版与整图验收 | [figure_workflow.md](workflows/figure_workflow.md) |
-| 论文写作 | 指定模板下的源稿、引用核验、证据账本与可构建 PDF | [paper_writing_workflow.md](workflows/paper_writing_workflow.md) |
-| 论文审稿 | 最新文献核验、贡献价值比较、科学审阅与修订任务链 | [reviewer_workflow.md](workflows/reviewer_workflow.md) |
-| 最终 PDF 读者检查 | 实际逐页看图，检查乱码、重叠、图文含义与叙事理解 | [reader_workflow.md](workflows/reader_workflow.md) |
-
-作图角色共享 [证据、设计与 QA 契约](workflows/figure_shared.md)。单图直接调用专业技能；混合图按 panel 分工并指定唯一整图负责人。美观不允许改数据或虚构结构；实际尺寸读图与可编辑源是验收要求。测试与边界见 [作图验证记录](docs/figure_validation.md)。
-
-审稿人每轮按当前日期核查领域知识与相关文献，逐贡献评估**新颖性、可行性、必要性和收益代价**。它比较强基线与替代路线，区分投稿时贡献和今天的研究价值；可比性不足时不能仅凭 SOTA 数字否定工作。最终输出核验 → 判别实验/修订 → 复查的任务链。
-
-## 论文阅读与学习
-
-| Agent | 主要交付 | 工作流 |
-| --- | --- | --- |
-| 论文伴读 | PDF/链接接入、英文原文定位、双栏阅读页、阅读状态和问题交接 | [paper_reading_companion_workflow.md](workflows/paper_reading_companion_workflow.md) |
-| 科研知识点讲解 | 核查来源、直觉、小例子、公式推导、图解和解释卡片 | [concept_explanation_workflow.md](workflows/concept_explanation_workflow.md) |
-
-伴读服务用户阅读节奏；最终 PDF 读者检查服务论文质量验收，两者不混用。伴读中的知识问题交给讲解角色；没有独立 Agent 功能的平台可顺序执行相同流程，不能声称已启动另一个模型。
-
-双栏 HTML 左侧保留 PDF 原页，右侧保存讲解卡片，并生成带论文 hash、页码和问题的提问上下文。**目前没有实时模型后端：复制上下文回聊天问答，再由主 AI 更新卡片。** 不保证能改变 ChatGPT 的原生界面布局。
-
-## 快速开始
-
-```bash
-git clone https://github.com/Chosen-David/agent.git
-cd agent
-```
-
-通用主 AI 入口：
-
-```text
-读取 README.md 和 prompts/orchestrator.md。
-根据我的当前目标选择需要的工作流，保持通用助手身份。
-目标：[填写]
-已有材料：[路径、上传文件或链接]
-约束/交付要求：[填写已知信息]
-在授权范围执行到交付完成，不强制启动所有角色。
-```
-
-论文伴读：
-
-```text
-按 workflows/paper_reading_companion_workflow.md 陪我读这篇论文。
-保留英文原文，优先显示原文与讲解并排的阅读界面。
-知识问题使用 concept_explanation_workflow.md 核查并解释，必要时画直观图。
-论文：[上传 PDF 或链接]
-当前问题：[可选]
-```
-
-单独科研任务读取对应 workflow 中的完整 Prompt 即可。完整科研项目使用 [科研专用调度](prompts/research_orchestrator.md) 与 [项目输入模板](templates/project_brief.md)。聊天平台不能读本地仓库时上传相应 Markdown；只贴网址不能保证模型已经读到文件。
-
-## 科研助手插件包
-
-[plugins/research-assistant/](plugins/research-assistant/) 包含 14 个技能：
-
-`code-organization`、`code-reading`、`research-assistant`、`research-explore`、`research-implement-optimize`、`research-figures`、`research-data-visualization`、`research-diagrams`、`research-write`、`research-review`、`research-read-pdf`、`paper-reading-companion`、`explain-research-concepts`。
-
-这是面向科研与论文学习的技能包，不是通用主 AI 的替代品。仓库顶层通用调度独立存在。每个 Skill 有触发范围、完整参考流程和 `allow_implicit_invocation: true`，表示在相关任务中允许自动选择；并非每条消息都执行科研流程。
-
-- `plugin.json`：可移植插件描述与 OpenAI 界面元数据。
-- `.agents/plugins/marketplace.json`：本仓库的插件目录，配置 `INSTALLED_BY_DEFAULT`。
-- `.codex/config.toml`：支持该机制且信任本项目的本地客户端中，配置该插件 `enabled = true`。
-
-这些是**分发配置，不是账户安装证明**。克隆仓库不会把插件自动注册到所有 GPT 会话。ChatGPT 的技能保存、插件连接和公开目录发布是不同操作；平台审核仍需正常通过。官方机制会变化，使用时查 [构建插件](https://developers.openai.com/plugins/build/plugins) 与 [连接 ChatGPT](https://developers.openai.com/plugins/deploy/connect-chatgpt)。
-
-当前支持该命令的 Codex 客户端可先核对 `codex plugin marketplace --help`，再添加仓库目录：
-
-```bash
-codex plugin marketplace add Chosen-David/agent
-```
-
-之后在该客户端确认实际安装和启用状态。没有此命令或 GPT 不支持仓库插件导入时，使用平台正式的技能安装方式；不能把配置复制到未知目录就声称完成安装。仓库不提供绕过平台审核的步骤。
-
-## 本地 Web 阅读器
-
-新增 [apps/paper-reader](apps/paper-reader/README.md)：在自己的电脑启动后，左侧看 PDF，右侧提问、保存讲解与笔记。可连接本机使用 ChatGPT 登录的 Codex 客户端，加载同一知识讲解规范；并非自动继承当前网页对话。支持 arXiv 导入与 QuantMLA 示例。真实模型连接需在运行电脑上登录验证。
-
-```bash
-python -m pip install -r apps/paper-reader/requirements.txt
-python apps/paper-reader/app.py
-```
-
-启动后在该电脑打开 `http://127.0.0.1:8765`；在线讲解另需官方 Codex CLI 和有效登录，详见应用 README。
-
-## 生成离线伴读页
-
-需要本地 PDF、Python 和 PyMuPDF。按当前环境决定是否安装缺失依赖：
-
-```bash
-python -m pip install pymupdf
-python plugins/research-assistant/skills/paper-reading-companion/scripts/build_reader.py paper.pdf --out reading/paper.html --pages 1-8
-```
-
-页面内嵌原页图与文本，可离线阅读；默认最多渲染前 20 页，支持 `--pages 1-3,7` 分批。`--notes notes.json` 加入 hash 匹配的解释卡片，格式见伴读工作流。渲染覆盖不等于 AI 已读覆盖。脚本不自动下载论文、不提供模型 API、不内置密钥。
-
-## 外部项目沿用
-
-现有各 Agent 与成熟开源项目的逐项对照、替换/组合建议见 [Agent 开源生态对照](docs/agent_landscape.md)。
-
-本仓库不重新实现所有 Agent 框架。主 AI 在现有能力不足时，可按 [外部 Agent 项目沿用与能力发现](docs/external_projects.md) 进入经过筛选的项目读取当前实现，并区分方法论借鉴、Skill 复用、可选代码依赖与 runtime 接入。
-
-当前默认建议：Anthropic Skills 用作 Skill 组织参考；Superpowers 借鉴 Skill discovery 与回归测试；BMad 借鉴 right-sized workflow 与上下文延续；Fabric 作为单步 Pattern 补充库。OpenAI Agents SDK、LangGraph、Agency Swarm、MetaGPT 只在运行时需求真实出现时按需使用或参考，不作为全局依赖。
-
-## 共同约定
-
-- **动态选型。** 先寻找当前更适合的 Skill，有证据的优势才替换后备。同项目锁定已验证版本，文献和技术事实按本轮时效核查。
-- **方案可反思。** 保留用户硬约束，比较先进算法、数据结构、成熟库和 CPU/GPU 路线；按需关联 LeetCode 模式，说明工程场景的差异。
-- **硬件与性能靠证据。** 核实型号/ISA 后选 PTX 或 CPU 原语，正确性、复杂度和实际测量分开报告；无 GPU 不声称 GPU 已验证。
-- **讲解不猜。** 区分论文原话、外部事实、推导与教学例子。图形帮助理解，不能代替证据或真实测量。
-- **模板与原页优先。** 写作遵循用户模板，最终 PDF 检查实际查看每页图片，提取文本或编译成功不等于验收。
-- **意见先核验。** 审稿/读者的疑点可能被反证推翻；确认后再改，生成新产物后复查，保留稳定 ID 和依赖。
-- **权限不扩张。** 技能启用不自动授予第三方账户、昂贵实验、后台运行或公开发布权限。
-
-后备入口最初核查于 2026-10-01。第三方 Skill 不随本仓库分发；安装前检查其当下依赖、权限与许可证。没有“永久最好”的固定清单，也没有一次安装所有候选的脚本。
-
-## 目录与扩展
-
-| 路径 | 用途 |
-| --- | --- |
-| [prompts/orchestrator.md](prompts/orchestrator.md) | 通用主 AI 路由 |
-| [prompts/research_orchestrator.md](prompts/research_orchestrator.md) | 科研组合调度 |
-| [workflows/](workflows/) | 按角色独立的完整规范与 Prompt |
-| [plugins/research-assistant/](plugins/research-assistant/) | 按角色注册表同步的科研与论文学习插件包 |
-| [plugins/travel-assistant/](plugins/travel-assistant/) | 旅行规划技能插件包 |
-| [agent_doc/](agent_doc/) | 人类指南、日期任务索引、AI 任务详情与经评估建议 |
-| [templates/](templates/) | 任务/详情/建议格式与科研输入模板；不在 guide 内生成 |
-| [tests/](tests/) | 伴读生成器的边界检查 |
-| [docs/validation.md](docs/validation.md) | 本轮验证范围与限制 |
-| [docs/external_projects.md](docs/external_projects.md) | 外部 Agent/Skill/Workflow 项目的优缺点、沿用顺序与接入规则 |
-| [docs/agent_landscape.md](docs/agent_landscape.md) | 现有 Agent 与 PaperQA2、GPT Researcher、STORM、AI Scientist、coding agent 等的对照与优先路由 |
-
-新增领域时加入独立工作流及入口，写明触发范围、依赖、输入输出、证据标准、验收与降级方式。简单任务不必创建任务链；复杂项目按实际需要组合角色。当前还未实现的领域只作为扩展方向，不列成已有 Agent。
-
-## 项目记忆、纠错与结果管理
-
-稳定规则放根 `AGENTS.md`，日期任务索引放 `agent_doc/task/TASK.md`，具体方法/验收/进度/证据放 `agent_doc/task/task_details/*.md`；先核对人类指南与建议取舍。用户纠正意图后，主 AI 按 [项目记忆流程](workflows/project_memory_workflow.md) 撤销受影响的旧结论并重新核验，保留原始观测和无关成果。项目账本不等同于平台云端记忆。
-
-[文件管理 Agent](workflows/code_organization_workflow.md) 协调生产者/消费者、参数化脚本和产物索引；[报告工具](scripts/publish_report.py) 保留不可变 run 快照和稳定 latest 入口。脚本与账本需实际接入，文件存在不证明模型自动遵守或服务器已部署。
-
-[2026-10-06 的 11 篇论文综合、实现与验证](docs/continuous_optimization/rounds/2026-10-06-memory/round.md) 记录采用理由、负结果和未验证项；后续接续 [持续优化台账](docs/continuous_optimization/README.md)，不以单次测试宣布性能到顶。
-
-## 可扩展基础知识库
-
-[知识库入口](knowledge/README.md) · [建模流程](workflows/knowledge_modeling_workflow.md) · [上游取舍与架构图](docs/knowledge_upstreams.md) · [持续学习任务 Prompt](prompts/math_knowledge_continuous_learning.md)。
-
-知识按 Git 管理的 JSON + Markdown 条目维护；`model-with-knowledge` 按问题结构检索、检查前提再推导。已提供 39 条知识：17 条数学/物理种子与 22 张工程复用卡、只读检索器、版本依赖验收和独立 Skill 快照。已提供可重建的 SQLite FTS5/BM25 索引、结构排名融合、章节导航、增量更新和候选导入；无独立数据库服务。工程持续学习提供真实 WSL/tmux 调度入口，部署与恢复见 [维护说明](docs/knowledge_maintenance.md)；语料规模和真实任务效果仍需后续评测。
-
-第二轮已加入条件数与残差、群平均投影、对偶最优性证书、Noether 守恒检查及整体误差排序界；检索增加英文词干、反向关联和有预算的完整前提上下文。验收见 [第二轮记录](docs/knowledge_learning/2026-10-06-round2/report.md)。
-
-工程升级覆盖 AI Infra、AI 算法与数据结构算法；主 AI 实验前检索原论文 observations/实验条件，代码 Agent 读取固定版本的成熟实现。见 [工程复用流程](workflows/engineering_knowledge_reuse_workflow.md)、[来源与核验报告](docs/knowledge_learning/2026-10-06-engineering/report.md) 和 [定时学习 Prompt](prompts/engineering_knowledge_continuous_learning.md)。
-
-## 双主 AI 组织
-
-复杂受管项目由 [planner-main](prompts/planner_main.md) 列方案/维护 TASK/执行，由 [review-main](prompts/review_main.md) 在独立新上下文审核完整计划。见 [契约、运行时接入与边界](workflows/dual_main_workflow.md)。15 个专业角色保留；审核不替代人工指南、工具权限、独立结果验收或发布授权。缺宿主真实调用与认证器会阻塞保护计划；安装提示文件不等于两个模型已经运行。
+</div>
