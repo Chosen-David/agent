@@ -244,7 +244,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-08 标量方差预算
 
-- [ ] [EK-20261008-0915] Freedman与直接别名检索修复已独立验收；主线发布/远端CI回执待闭环，旧候选阻塞保留。 ([detail](task_details/EK-20261008-0915.md))
+- [ ] [EK-20261008-0915] Freedman与直接别名检索修复已验收并推送main；GitHub CI查询Forbidden待核实，旧候选阻塞保留。 ([detail](task_details/EK-20261008-0915.md))
 
 ## 2026-10-08 奇异支持与分数压缩
 
