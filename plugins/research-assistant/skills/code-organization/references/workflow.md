@@ -8,16 +8,16 @@
 
 `code-organization` 同时承担文件管理 Agent：项目开始先规划存放位置，Agent 交接时登记产物，每个任务完成后增量核对，整轮结束后整理映射和提出归档方案。它与实现、实验、作图、写作、审稿等 Agent 协作，主 AI 是唯一协调者。简单单文件任务沿用已有目录，不强制创建一套新结构。
 
-- 主 AI：确定项目根、任务版本、写入负责人、允许动作和输出目录；维护 doc/task/TASK.md，最终批准完整性。
+- 主 AI：确定项目根、任务版本、写入负责人、允许动作和输出目录；维护 agent_doc/task/TASK.md，最终批准完整性。
 - 文件管理 Agent：只读盘点、为新产物建议路径、维护 CODEMAP/产物清单，检查重复、散落文件、引用与消费者；不替实验 Agent 改数据，不把文件存在当任务完成。
-- 生产 Agent：写入分配路径，交付产物清单、任务 ID、来源、校验信息与状态；不要自创第二份 doc/task/TASK.md 或随手向根目录写图表/日志。
+- 生产 Agent：写入分配路径，交付产物清单、任务 ID、来源、校验信息与状态；不要自创第二份 agent_doc/task/TASK.md 或随手向根目录写图表/日志。
 - 消费 Agent：按清单中的准确路径读取，反馈缺失/过期/不匹配；不要默默复制一个“final_v2_new”到另一个目录。
 
-## doc/task/TASK.md：唯一总清单
+## agent_doc/task/TASK.md：唯一总清单
 
-`<project_root>/doc/task/TASK.md` 是当前项目唯一活跃清单；按日期简洁列稳定 ID、目标、状态与 `task_details/<ID>.md` 链接。主 AI 串行维护索引，各角色只能写被分配的详情和产物，不在根目录或角色目录另建活跃 TASK。旧根清单仅迁移前兼容读取，迁移后只留导航并保存原始历史；不同时维护两个版本。
+`<project_root>/agent_doc/task/TASK.md` 是当前项目唯一活跃清单；按日期简洁列稳定 ID、目标、状态与 `task_details/<ID>.md` 链接。主 AI 串行维护索引，各角色只能写被分配的详情和产物，不在根目录或角色目录另建活跃 TASK。旧根清单仅迁移前兼容读取，迁移后只留导航并保存原始历史；不同时维护两个版本。
 
-先读 [项目文档治理](project_document_workflow.md)。人类专用 `doc/guide/GUIDE.md` 的已核实约束优先用于项目规划；AI 不得在 `doc/guide/` 创建/修改/删除/移动任何文件，必要目录说明也不能写在那里。`doc/advice/` 允许人类/AI编辑；先核验证据与指南一致性，再记录采用/调整后采用/拒绝/暂缓及理由。
+先读 [项目文档治理](project_document_workflow.md)。人类专用 `agent_doc/guide/GUIDE.md` 的已核实约束优先用于项目规划；AI 不得在 `agent_doc/guide/` 创建/修改/删除/移动任何文件，必要目录说明也不能写在那里。`agent_doc/advice/` 允许人类/AI编辑；先核验证据与指南一致性，再记录采用/调整后采用/拒绝/暂缓及理由。
 
 主 AI 在新会话/续跑、委派、任务结果、监督检查和最终汇报前核对指南、索引、相关详情、建议取舍及运行状态。每个详情指定唯一作者，按 `## Plan` 固定方法/验收/约束，按 `## Progress` 追加实际进度、数据/证据、失败和下一步；用户手改先核对，不能覆盖。主 AI 汇总方法/需求变化并版本化重规划。
 
@@ -29,13 +29,13 @@
 
 | 内容 | 默认位置 | 规则 |
 | --- | --- | --- |
-| 任务索引/详情 | `doc/task/TASK.md`、`doc/task/task_details/<ID>.md` | 日期索引由主 AI 串行维护，详情按任务指定 AI 作者 |
-| 人类指南 | `doc/guide/` | 人类编辑和发布，AI 不写任何文件，包括目录说明或 .gitkeep |
-| 建议与取舍 | `doc/advice/` | 人类/AI 可写，证据核验及 adopt/adapt/reject/defer 理由齐全 |
-| 说明与映射 | `README.md`、`doc/README.md`、`CODEMAP.md` | 指向同一套文档，不复制任务清单 |
+| 任务索引/详情 | `agent_doc/task/TASK.md`、`agent_doc/task/task_details/<ID>.md` | 日期索引由主 AI 串行维护，详情按任务指定 AI 作者 |
+| 人类指南 | `agent_doc/guide/` | 人类编辑和发布，AI 不写任何文件，包括目录说明或 .gitkeep |
+| 建议与取舍 | `agent_doc/advice/` | 人类/AI 可写，证据核验及 adopt/adapt/reject/defer 理由齐全 |
+| 说明与映射 | `README.md`、`agent_doc/README.md`、`CODEMAP.md` | 指向同一套文档，不复制任务清单 |
 | 可复用实现 | `src/` 或项目已有源码目录；`scripts/` | 不放临时日志/模型输出 |
 | 输入与原始数据 | `data/raw/`；`data/processed/` | 标来源、版本；原始数据保持只读，不重复复制大文件 |
-| 实验与指标 | `doc/results/<run_id>/` | 新数据/元数据/验证统一归集，区分 raw/derived/synthetic；旧冻结产物可哈希索引引用，不强移 |
+| 实验与指标 | `agent_doc/results/<run_id>/` | 新数据/元数据/验证统一归集，区分 raw/derived/synthetic；旧冻结产物可哈希索引引用，不强移 |
 | 图表 | `figures/<task_id>/` | 区分 source/ 与 export/，中文/英文版本可定位 |
 | 报告与交付 | `reports/<task_id>/` 或既有 `docs/` | 最终文件有明确版本/来源，不散落根目录 |
 | 运行状态/临时文件 | `.agent-runs/<run_id>/` | 日志、DB、状态、临时草稿；私密数据不提交公共仓库 |
@@ -53,7 +53,7 @@
   "producer": "research-implement-optimize",
   "artifacts": [
     {
-      "path": "doc/results/run-001/metrics.json",
+      "path": "agent_doc/results/run-001/metrics.json",
       "kind": "measured-result",
       "status": "final",
       "sha256": "actual-content-sha256",
@@ -66,20 +66,20 @@
 
 文件管理 Agent 核对路径存在/位于项目约定目录、来源/哈希、同路径多作者、消费者引用、临时与正式版本。未生成的计划输出标 `planned`，不得写假哈希或说已交付。实际交接清单放 `.agent-runs/<run_id>/artifacts/<task_id>.json` 或项目现有 manifest 目录；汇总写 CODEMAP，不把同一二进制产物复制给每个消费者。
 
-产物报告继续满足 [监督工作流](https://github.com/Chosen-David/agent/blob/main/workflows/task_supervision_workflow.md) 的 summary/data/evidence 契约；整理通过不替代技术验收。文件管理返回缺失/孤儿/冲突及下一责任人，主 AI 编入修复节点后重新核对 doc/task/TASK.md。
+产物报告继续满足 [监督工作流](https://github.com/Chosen-David/agent/blob/main/workflows/task_supervision_workflow.md) 的 summary/data/evidence 契约；整理通过不替代技术验收。文件管理返回缺失/孤儿/冲突及下一责任人，主 AI 编入修复节点后重新核对 agent_doc/task/TASK.md。
 
 ## 每轮执行
 
-1. **只读盘点**：先检索 doc/results/ 中相关既有数据/验证，再读 doc/task/TASK.md、已有 CODEMAP、最新进度、git status、实际活跃作业/生产者与消费者；用 `rg --files` 和 `rg` 追踪文件/路径，不靠文件名或 mtime 猜归属。
+1. **只读盘点**：先检索 agent_doc/results/ 中相关既有数据/验证，再读 agent_doc/task/TASK.md、已有 CODEMAP、最新进度、git status、实际活跃作业/生产者与消费者；用 `rg --files` 和 `rg` 追踪文件/路径，不靠文件名或 mtime 猜归属。
 2. **分配与登记**：新产物先确定目录和单一作者。接收各 Agent 清单，增量更新 CODEMAP 表格：`任务 ID | 结论/状态 | 生产者 | 脚本 | 数据 | 产物/版本 | 消费者/引用`。不重排无关历史行。
-3. **目录说明**：始终排除人类专用 `doc/guide/`；仅其他必要目录写一段用途、命名规则及索引链接；避免为每个临时目录生成 README。
+3. **目录说明**：始终排除人类专用 `agent_doc/guide/`；仅其他必要目录写一段用途、命名规则及索引链接；避免为每个临时目录生成 README。
 4. **提出整理**：列出散落、孤儿、重复、命名漂移文件及引用证据；无法判定的标 unknown/backlog。已引用文件核查代码/文档/任务计划/manifest/论文路径；哈希相同不等于可删除。
 5. **授权内执行**：对停止使用且已核查的文件以逻辑组 git mv，修复所有消费者和清单引用，保留可回滚点。无 git 或未知外部消费者时先提案；不改逻辑、原始数据和活跃输出路径。删除不自动执行。
 6. **验收交接**：实际检查新路径、引用、相关脚本最小运行；将“对应 TASK 的哪项、文件/数据在哪里、哪些还未整理/阻塞、下一负责人”返回主 AI。主 AI 再更新进度并决定下一任务，不能因目录看起来整齐就宣布全链完成。
 
 ## 验收与限制
 
-本轮各 Agent 声明的产物应 **100% 登记或明确标缺失/unknown**；历史活跃脚本映射目标 ≥95%，缺口必须列出，不能用旧比例掩盖新产物丢失。确认单一 doc/task/TASK.md、无多作者覆盖、消费者引用有效、正式/临时数据区分、无活跃路径移动、删除项 0。不能证明的运行状态视为未知并保留路径，推进其他可安全整理部分。
+本轮各 Agent 声明的产物应 **100% 登记或明确标缺失/unknown**；历史活跃脚本映射目标 ≥95%，缺口必须列出，不能用旧比例掩盖新产物丢失。确认单一 agent_doc/task/TASK.md、无多作者覆盖、消费者引用有效、正式/临时数据区分、无活跃路径移动、删除项 0。不能证明的运行状态视为未知并保留路径，推进其他可安全整理部分。
 
 [执行与验收细则](execution.md)。
 

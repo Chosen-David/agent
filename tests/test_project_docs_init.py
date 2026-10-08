@@ -29,39 +29,39 @@ class ProjectDocumentInitTests(unittest.TestCase):
             result = initialize_project_docs(target)
             self.assertEqual(result['project_root'], str(target.resolve()))
             self.assertNotEqual((target / CANONICAL_TASK).read_bytes(), source)
-            self.assertFalse(list((target / 'doc/task/task_details').iterdir()))
-            self.assertFalse(list((target / 'doc/guide').iterdir()))
-            self.assertTrue((target / 'doc/results').is_dir())
+            self.assertFalse(list((target / 'agent_doc/task/task_details').iterdir()))
+            self.assertFalse(list((target / 'agent_doc/guide').iterdir()))
+            self.assertTrue((target / 'agent_doc/results').is_dir())
             with self.assertRaises(DocumentError):
                 snapshot_project_docs(target)  # Empty index is not dispatch-ready.
-        (self.project / 'doc/advice/only-A.md').write_text('A', encoding='utf-8')
-        self.assertFalse((second / 'doc/advice/only-A.md').exists())
+        (self.project / 'agent_doc/advice/only-A.md').write_text('A', encoding='utf-8')
+        self.assertFalse((second / 'agent_doc/advice/only-A.md').exists())
         self.assertEqual((REPO / CANONICAL_TASK).read_bytes(), source)
 
     def test_idempotent_and_preserves_all_existing_project_files(self):
         initialize_project_docs(self.project)
-        files = [self.project / CANONICAL_TASK, self.project / 'doc/task/task_details/A.md',
-                 self.project / 'doc/advice/A.md', self.project / 'doc/results/existing.json']
+        files = [self.project / CANONICAL_TASK, self.project / 'agent_doc/task/task_details/A.md',
+                 self.project / 'agent_doc/advice/A.md', self.project / 'agent_doc/results/existing.json']
         for index, path in enumerate(files):
             path.write_bytes(f'existing-{index}\r\n'.encode())
         before = [(p.read_bytes(), p.stat().st_mtime_ns) for p in files]
         self.assertEqual(initialize_project_docs(self.project)['created'], [])
         self.assertEqual(before, [(p.read_bytes(), p.stat().st_mtime_ns) for p in files])
-        self.assertFalse(list((self.project / 'doc/guide').iterdir()))
+        self.assertFalse(list((self.project / 'agent_doc/guide').iterdir()))
 
     def test_directory_conflict_is_preflighted_before_any_new_documents(self):
-        (self.project / 'doc').mkdir()
-        (self.project / 'doc/results').write_bytes(b'preserve')
+        (self.project / 'agent_doc').mkdir()
+        (self.project / 'agent_doc/results').write_bytes(b'preserve')
         with self.assertRaises(DocumentError):
             initialize_project_docs(self.project)
-        self.assertEqual([p.name for p in (self.project / 'doc').iterdir()], ['results'])
-        self.assertEqual((self.project / 'doc/results').read_bytes(), b'preserve')
+        self.assertEqual([p.name for p in (self.project / 'agent_doc').iterdir()], ['results'])
+        self.assertEqual((self.project / 'agent_doc/results').read_bytes(), b'preserve')
 
     def test_legacy_task_requires_explicit_migration(self):
         (self.project / 'TASK.md').write_bytes(b'- [ ] [OLD] Existing task\n')
         with self.assertRaisesRegex(DocumentError, 'migrate'):
             initialize_project_docs(self.project)
-        self.assertFalse((self.project / 'doc').exists())
+        self.assertFalse((self.project / 'agent_doc').exists())
 
     def test_two_active_task_indexes_rejected_without_changes(self):
         initialize_project_docs(self.project)
@@ -100,15 +100,15 @@ class ProjectDocumentInitTests(unittest.TestCase):
     def test_symlinked_document_directory_is_refused_before_writes(self):
         outside = self.base / 'outside'
         outside.mkdir()
-        (self.project / 'doc').mkdir()
+        (self.project / 'agent_doc').mkdir()
         try:
-            (self.project / 'doc/advice').symlink_to(outside, target_is_directory=True)
+            (self.project / 'agent_doc/advice').symlink_to(outside, target_is_directory=True)
         except OSError:
             self.skipTest('symlink creation unavailable')
         with self.assertRaises(DocumentError):
             initialize_project_docs(self.project)
         self.assertFalse(list(outside.iterdir()))
-        self.assertFalse((self.project / 'doc/task').exists())
+        self.assertFalse((self.project / 'agent_doc/task').exists())
 
 
 if __name__ == '__main__':

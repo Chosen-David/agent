@@ -49,7 +49,7 @@ def requirements(path):
     """Read stable IDs; canonical index additionally binds dates and details."""
     path = Path(path)
     return parse_requirements(path.read_text(encoding='utf-8'),
-                              canonical=path.parts[-3:] == ('doc', 'task', 'TASK.md'))
+                              canonical=path.parts[-3:] == ('agent_doc', 'task', 'TASK.md'))
 
 
 
@@ -128,7 +128,7 @@ def validate_contract(plan, root, *, check_adopted_advice=True, required_task_re
         raise ValueError('task source mode must be auto or manual')
     path = (root / source['path']).resolve()
     if path != resolve_task_file(root):
-        raise ValueError('the single task source must be doc/task/TASK.md (legacy project-root TASK.md only before migration)')
+        raise ValueError('the single task source must be agent_doc/task/TASK.md (legacy project-root TASK.md only before migration)')
     if not path.is_relative_to(root) or digest(path) != source['sha256']:
         raise ValueError('TASK.md missing, changed or outside project; reconcile and version the plan')
     items = requirements(path)
@@ -161,8 +161,8 @@ def validate_contract(plan, root, *, check_adopted_advice=True, required_task_re
                 task.get('experiment_result') is not None):
             contract_path = Path(task['experiment_result']['manifest_path'])
             if (task.get('result_storage') != 'central' or contract_path.is_absolute()
-                    or '..' in contract_path.parts or contract_path.parts[:2] != ('doc', 'results')):
-                raise ValueError('new canonical data producers require central doc/results/<run_id> storage')
+                    or '..' in contract_path.parts or contract_path.parts[:2] != ('agent_doc', 'results')):
+                raise ValueError('new canonical data producers require central agent_doc/results/<run_id> storage')
         refs = task.get('task_refs')
         if not isinstance(refs, list) or not refs or not all(isinstance(r, str) and r in ids for r in refs):
             raise ValueError('each runtime task must map to known TASK.md IDs')
@@ -177,7 +177,7 @@ def validate_contract(plan, root, *, check_adopted_advice=True, required_task_re
                 assert_ai_writable(root, output_path)
         report = (root / task['report_path']).resolve()
         if (not report.is_relative_to(root) or report in report_paths or report == path
-                or report.is_relative_to(root / 'doc/task')):
+                or report.is_relative_to(root / 'agent_doc/task')):
             raise ValueError('unique result report paths inside project required')
         report_paths.add(report)
     if covered != ids:

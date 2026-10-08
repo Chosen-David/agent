@@ -24,8 +24,8 @@ def installation_root(path):
     path = Path(path).absolute()
     for candidate in (path, path.resolve()):
         parts = tuple(part.casefold() for part in candidate.parts)
-        if any(parts[i:i + 2] == ('doc', 'guide') for i in range(len(parts) - 1)):
-            raise ValueError('Human-only doc/guide cannot be an installer target')
+        if any(parts[i] in ('doc', 'agent_doc') and parts[i + 1] == 'guide' for i in range(len(parts) - 1)):
+            raise ValueError('Human-only agent_doc/guide cannot be an installer target')
     return path.resolve()
 
 
@@ -59,21 +59,21 @@ Project A 的指南、任务、建议和结果全部属于 Project A/doc；仅�
 受管复杂任务使用 planner-main 和独立新上下文 review-main；入口见 .claude/agent-workflows/planner_main.md 与 review_main.md。
 安装不启动第二模型；缺真实宿主 reviewer/认证器时不得把自审当独立批准。
 主 AI 按导入的通用调度规则执行；其中 prompts/、workflows/、templates/、
-config/、scripts/、knowledge/ 与 agent_runtime 均相对该仓库解析，项目输入和 doc/task/TASK.md 相对当前项目。
-doc/task/TASK.md 是当前项目唯一日期任务索引，详情 doc/task/task_details/*.md 由 AI 维护方法/进度/证据。
+config/、scripts/、knowledge/ 与 agent_runtime 均相对该仓库解析，项目输入和 agent_doc/task/TASK.md 相对当前项目。
+agent_doc/task/TASK.md 是当前项目唯一日期任务索引，详情 agent_doc/task/task_details/*.md 由 AI 维护方法/进度/证据。
 启动/恢复、委派前和逐任务结束先读人类指南、索引/详情及建议取舍；固定 Plan 与可追加 Progress 分开。
-人类发布且来源已核实的 doc/guide/GUIDE.md 是最高项目规划依据；AI 绝不创建、编辑、删除或移动 doc/guide/ 内文件。
-doc/advice/ 是人类/AI可编辑建议，必须核验并记录 adopt/adapt/reject/defer 与理由，不能当授权。
+人类发布且来源已核实的 agent_doc/guide/GUIDE.md 是最高项目规划依据；AI 绝不创建、编辑、删除或移动 agent_doc/guide/ 内文件。
+agent_doc/advice/ 是人类/AI可编辑建议，必须核验并记录 adopt/adapt/reject/defer 与理由，不能当授权。
 用户手动要求编排时合并目标后走同一闭环；总清单由主 AI 串行维护，各 Agent 交接证据。
 code-organization 同时管理文件：规划输出目录、产物清单和消费者引用，防止散落和覆盖。
 主 AI 负责 Skills、工作 Agent、任务链、定时器及 tmux 监督器的配置、维护和恢复。
 执行运行时 CLI 时从仓库目录启动，明确指定当前项目的绝对路径。
 需要专业角色时按已安装的 Skill 和匹配的 agent-* 子 Agent 分配工作；简单任务直接处理。
-项目新指令先按 result_reuse_workflow.md 检索 doc/results/，核对代码/输入/配置/环境/指标及当前验证，再规划新增实验。
-新数据进入 doc/results/<run_id>/；复用不跳过明确复现或必要独立验证。
+项目新指令先按 result_reuse_workflow.md 检索 agent_doc/results/，核对代码/输入/配置/环境/指标及当前验证，再规划新增实验。
+新数据进入 agent_doc/results/<run_id>/；复用不跳过明确复现或必要独立验证。
 每轮测试/实验数据须经独立 verify_experiment_result 节点后才能进入消费者/结论；失败或过期需修复重测。
 通过仅代表 usable-with-scope，不能保证绝对无bug；角色读取包内 result_validation_workflow.md。
-每个结果都对照 doc/task/TASK.md 的任务、数据、证据和剩余事项；全部可核验且可汇报才收尾。
+每个结果都对照 agent_doc/task/TASK.md 的任务、数据、证据和剩余事项；全部可核验且可汇报才收尾。
 遵循当前宿主权限和用户约束，不因导入规则而绕过权限。仓库文件存在不代表后台进程运行。
 {END}'''
 
@@ -114,14 +114,14 @@ skills:
 ---
 
 按预加载的 {name} Skill 执行主 AI 分配的任务。不得替换用户目标或扩大授权。
-先核对交接中的 task_id、doc/task/TASK.md requirement ID、document_refs、输入、约束、依赖和验收。
-先读本 Skill 的 references/result_reuse_workflow.md，检索 doc/results/ 并核对适用条件和当前独立验证后再决定新增实验。
-读取本 Skill 的 references/project_document_workflow.md；先核对人类指南和建议取舍，AI 永不写 doc/guide/。
+先核对交接中的 task_id、agent_doc/task/TASK.md requirement ID、document_refs、输入、约束、依赖和验收。
+先读本 Skill 的 references/result_reuse_workflow.md，检索 agent_doc/results/ 并核对适用条件和当前独立验证后再决定新增实验。
+读取本 Skill 的 references/project_document_workflow.md；先核对人类指南和建议取舍，AI 永不写 agent_doc/guide/。
 只维护分配给本角色的 task_details 详情和输出，不并发修改总清单；建议不构成授权。
 读取 Skill 内 execution/workflow 等所需引用；保留具体数据、单位、日志和产物路径。
 测试/实验数据须按 references/result_validation_workflow.md 经独立 verify_experiment_result；未通过不用于结论。
 向主 AI 返回结论、真实证据、验收状态、未完成项与恢复条件。
-不要自行声明全链完成；由主 AI 对照 doc/task/TASK.md 汇总并维护 tmux 监督器。
+不要自行声明全链完成；由主 AI 对照 agent_doc/task/TASK.md 汇总并维护 tmux 监督器。
 '''
 
 
@@ -166,9 +166,9 @@ def checked_skill_link(target, relative):
 
 def project_document_layout(target):
     """Read-only preflight; never create a second task list or touch guide files."""
-    task = checked_target(target, 'doc/task/TASK.md')
+    task = checked_target(target, 'agent_doc/task/TASK.md')
     directories = [checked_target(target, relative) for relative in
-                   ('doc/task/task_details', 'doc/advice', 'doc/guide', 'doc/results')]
+                   ('agent_doc/task/task_details', 'agent_doc/advice', 'agent_doc/guide', 'agent_doc/results')]
     for directory in directories:
         for candidate in (directory, *directory.parents):
             if candidate == target:
@@ -176,7 +176,7 @@ def project_document_layout(target):
             if candidate.exists() and not candidate.is_dir():
                 raise ValueError('project document directory conflict: ' + str(candidate))
     if task.exists() and not task.is_file():
-        raise ValueError('canonical task index is not a regular file: doc/task/TASK.md')
+        raise ValueError('canonical task index is not a regular file: agent_doc/task/TASK.md')
     legacy = checked_target(target, 'TASK.md')
     if legacy.exists():
         if not legacy.is_file():
@@ -186,7 +186,7 @@ def project_document_layout(target):
                              'python scripts/project_docs.py --root PROJECT migrate --date YYYY-MM-DD')
         # A migrated root file may be a pointer, but never another checkbox list.
         if re.search(r'^\s*[-*+]\s+\[[ xX]\]', legacy.read_text(encoding='utf-8'), re.M):
-            raise ValueError('Two active task lists; preserve and reconcile TASK.md and doc/task/TASK.md')
+            raise ValueError('Two active task lists; preserve and reconcile TASK.md and agent_doc/task/TASK.md')
     return task, directories
 
 
@@ -219,7 +219,7 @@ def install(target):
         if not os.path.lexists(path):
             path.symlink_to(source, target_is_directory=True)
     atomic_text(claude, merged)
-    # mkdir is the only initialization permitted in human-owned doc/guide/.
+    # mkdir is the only initialization permitted in human-owned agent_doc/guide/.
     for directory in document_directories:
         directory.mkdir(parents=True, exist_ok=True)
     if not task_file.exists():
@@ -227,7 +227,7 @@ def install(target):
                     '这是当前项目唯一日期任务索引，由主 AI 串行维护。\n'
                     '尚未填写已授权任务；收到用户目标后保留原始要求，按日期登记稳定 ID 与详情链接。\n'
                     '每项方法、验收、进度、证据与下一步由 AI 维护在 task_details/<ID>.md。\n'
-                    '人类指南 doc/guide/GUIDE.md 只读；建议 doc/advice/ 须核验并记录取舍理由。\n'
+                    '人类指南 agent_doc/guide/GUIDE.md 只读；建议 agent_doc/advice/ 须核验并记录取舍理由。\n'
                     '高频状态放 .agent-runs/<run_id>/，不另建活跃根 TASK.md。\n')
     commit = subprocess.run(['git', '-C', str(REPO), 'rev-parse', 'HEAD'],
                             capture_output=True, text=True, check=False).stdout.strip()
@@ -267,7 +267,7 @@ def check(target):
     try:
         task_file, document_directories = project_document_layout(target)
         if not task_file.is_file():
-            errors.append('canonical doc/task/TASK.md missing')
+            errors.append('canonical agent_doc/task/TASK.md missing')
         for directory in document_directories:
             if not directory.is_dir():
                 errors.append('project document directory missing: ' + str(directory.relative_to(target)))
@@ -278,7 +278,7 @@ def check(target):
             'capabilities': {'python': sys.version.split()[0], 'claude_cli': shutil.which('claude'),
                              'tmux': shutil.which('tmux'), 'model_auth': 'not_checked',
                              'supervisor': 'not_started', 'host_adapter': 'project_specific'},
-            'next': 'Start/restart Claude Code in target, inspect /memory and /agents, then read human guide, doc/task/TASK.md, task details and assessed advice.'}
+            'next': 'Start/restart Claude Code in target, inspect /memory and /agents, then read human guide, agent_doc/task/TASK.md, task details and assessed advice.'}
 
 
 def uninstall(target):
@@ -289,7 +289,7 @@ def uninstall(target):
     if manifest.get('repository') != str(REPO):
         raise ValueError('installation belongs to a different checkout')
     # Preflight every removal before deleting any owned file. A newly redirected
-    # skills parent must never cause removals inside human-owned doc/guide/.
+    # skills parent must never cause removals inside human-owned agent_doc/guide/.
     for relative in manifest['files']:
         if relative not in expected:
             raise ValueError('unexpected managed path')

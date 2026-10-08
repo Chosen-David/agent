@@ -6,13 +6,13 @@
 
 交接最少包含 goal/hypothesis、CODE/RES ID、代码 commit 与 dirty diff、数据版本与样本 ID、配置/种子/指标、已授权资源预算、状态、产物证据、下一负责人和阻塞。任务发出不是完成：接收方交回命令、退出状态、manifest、原始样本和检查结果后才能标 executed；静态检查、合成测试、真实任务、真实硬件分别记账。
 
-复用项目现有 `src/`、`scripts/`、`tests/`、`configs/`；新实验数据/运行元数据/验证统一放 `doc/results/<run_id>/`。旧冻结 `results/` 或其他历史数据只按真实路径/哈希索引，不强制迁移。每轮 immutable run ID，配置与代码/数据指纹跟随结果；不要覆盖旧基线。抽象只提取已重复且语义一致的代码；注释解释假设、计时边界、布局和非显然选择，不做无关清理。
+复用项目现有 `src/`、`scripts/`、`tests/`、`configs/`；新实验数据/运行元数据/验证统一放 `agent_doc/results/<run_id>/`。旧冻结 `results/` 或其他历史数据只按真实路径/哈希索引，不强制迁移。每轮 immutable run ID，配置与代码/数据指纹跟随结果；不要覆盖旧基线。抽象只提取已重复且语义一致的代码；注释解释假设、计时边界、布局和非显然选择，不做无关清理。
 
 ## 新实验前检索共享结果
 
-先按 [既有结果检索与复用](result_reuse_workflow.md) 查询 `doc/results/`，比较任务目标、代码/输入/配置/环境、指标单位、scope 与当前独立验证，保留实际查询及复用/拒用理由。匹配且仍有效的数据可以直接进入受控复用路径；改变前提先做最小必要复验，明确要求复现、指定实验或新主张验收仍执行。复用不能绕过下一节的独立代码与数据检查。
+先按 [既有结果检索与复用](result_reuse_workflow.md) 查询 `agent_doc/results/`，比较任务目标、代码/输入/配置/环境、指标单位、scope 与当前独立验证，保留实际查询及复用/拒用理由。匹配且仍有效的数据可以直接进入受控复用路径；改变前提先做最小必要复验，明确要求复现、指定实验或新主张验收仍执行。复用不能绕过下一节的独立代码与数据检查。
 
-新数据、运行元数据和验证记录统一规划到 `doc/results/<run_id>/`；既有冻结或大文件可在共同入口按原路径/哈希登记，不复制出冲突真相、不谎称全部搬移。脚本采用显式 output_root，保持实际运行原始记录与验证依赖可追溯。
+新数据、运行元数据和验证记录统一规划到 `agent_doc/results/<run_id>/`；既有冻结或大文件可在共同入口按原路径/哈希登记，不复制出冲突真相、不谎称全部搬移。脚本采用显式 output_root，保持实际运行原始记录与验证依赖可追溯。
 
 ## 每轮数据后的强制独立验证
 
@@ -46,8 +46,8 @@ implementation skill 自带 `scripts/experiment.py`（Python 标准库），CLI�
 python scripts/experiment.py probe
 python scripts/experiment.py probe --gpu
 python scripts/experiment.py plan --config references/experiment.example.json
-python scripts/experiment.py run --config references/experiment.example.json --run-id cpu-001 --output doc/results
-python scripts/experiment.py run --config references/experiment.example.json --run-id cpu-002 --output doc/results --resume-from doc/results/cpu-001/checkpoint-0004.json
+python scripts/experiment.py run --config references/experiment.example.json --run-id cpu-001 --output agent_doc/results
+python scripts/experiment.py run --config references/experiment.example.json --run-id cpu-002 --output agent_doc/results --resume-from agent_doc/results/cpu-001/checkpoint-0004.json
 ```
 
 从 skill 根目录运行；仓库内路径前缀是 `plugins/research-assistant/skills/research-implement-optimize/`。`probe --gpu` 仅尝试带超时的 `nvidia-smi` 只读查询，不分配 GPU；未知状态不当作 idle。默认不查询 GPU。`plan` 是 dry-run，不预留资源；GPU 一律 blocked，真实 owner/lease、quota/内存准入和模型 adapter 由现有项目/调度器负责接入。此 CPU 入口不提供 GPU shard 执行；下节可选适配层由可信项目 runner 显式接入。
@@ -90,6 +90,6 @@ plan 用新鲜、严格解析的 `nvidia-smi` 快照，在授权 UUID 清单内�
 
 ## 意图版本、参数化实验与纠错
 
-执行前绑定 doc/task/TASK.md 的需求、意图 memory_refs、输入/脚本/配置版本与计时范围。相同实验协议复用一个参数化入口；dataset/seed/method/output_root 等作为配置，结果存唯一 run 目录，不复制脚本改常量。输出应保留复现命令、环境、实际调用参数、原始日志、汇总与结论限制；脚本复用不授权改变科学协议。
+执行前绑定 agent_doc/task/TASK.md 的需求、意图 memory_refs、输入/脚本/配置版本与计时范围。相同实验协议复用一个参数化入口；dataset/seed/method/output_root 等作为配置，结果存唯一 run 目录，不复制脚本改常量。输出应保留复现命令、环境、实际调用参数、原始日志、汇总与结论限制；脚本复用不授权改变科学协议。
 
 收到用户纠正时读取项目记忆纠错契约，先隔离受影响结论与待执行依赖，保留旧测量。可复用的观测先按新目标重新验收，再新建派生分析；无法复用的只重跑受影响部分。自我反思发现替代方案时先保留提案，完成用户 TASK 基线后才在有授权/预算/真实监督条件的 agent/<task>/<run> 隔离分支测试；用数据比较，不改旧基线来制造提升。

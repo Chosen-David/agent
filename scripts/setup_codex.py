@@ -27,8 +27,8 @@ def writable_installation_root(path):
     path = Path(path).absolute()
     for candidate in (path, path.resolve()):
         parts = tuple(part.casefold() for part in candidate.parts)
-        if any(parts[i:i + 2] == ('doc', 'guide') for i in range(len(parts) - 1)):
-            raise ValueError('Human-only doc/guide cannot be an installer destination')
+        if any(parts[i] in ('doc', 'agent_doc') and parts[i + 1] == 'guide' for i in range(len(parts) - 1)):
+            raise ValueError('Human-only agent_doc/guide cannot be an installer destination')
     return path.resolve()
 
 

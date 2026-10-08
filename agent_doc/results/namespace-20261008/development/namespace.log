@@ -1,0 +1,37 @@
+test_both_guide_namespaces_reject_rebased_case_and_controlled_writes (test_agent_doc_namespace.AgentDocumentNamespaceTests.test_both_guide_namespaces_reject_rebased_case_and_controlled_writes) ... ok
+test_existing_project_doc_and_other_project_stay_untouched (test_agent_doc_namespace.AgentDocumentNamespaceTests.test_existing_project_doc_and_other_project_stay_untouched) ... ok
+test_explicit_canonical_task_infers_real_project_and_validates_details (test_agent_doc_namespace.AgentDocumentNamespaceTests.test_explicit_canonical_task_infers_real_project_and_validates_details) ... FAIL
+test_invalid_marker_schema_duplicate_keys_and_case_collisions_refused (test_agent_doc_namespace.AgentDocumentNamespaceTests.test_invalid_marker_schema_duplicate_keys_and_case_collisions_refused) ... ok
+test_malformed_legacy_path_cannot_escape_or_redirect (test_agent_doc_namespace.AgentDocumentNamespaceTests.test_malformed_legacy_path_cannot_escape_or_redirect) ... ok
+test_preserved_legacy_contract_consumption_and_managed_input_binding (test_agent_doc_namespace.AgentDocumentNamespaceTests.test_preserved_legacy_contract_consumption_and_managed_input_binding) ... ERROR
+test_symlinked_relocated_artifact_and_marker_refused (test_agent_doc_namespace.AgentDocumentNamespaceTests.test_symlinked_relocated_artifact_and_marker_refused) ... skipped 'symlink creation unavailable'
+test_three_readers_resolve_only_registered_unchanged_bytes (test_agent_doc_namespace.AgentDocumentNamespaceTests.test_three_readers_resolve_only_registered_unchanged_bytes) ... ok
+test_unregistered_paths_and_collisions_do_not_silently_choose (test_agent_doc_namespace.AgentDocumentNamespaceTests.test_unregistered_paths_and_collisions_do_not_silently_choose) ... ok
+
+======================================================================
+ERROR: test_preserved_legacy_contract_consumption_and_managed_input_binding (test_agent_doc_namespace.AgentDocumentNamespaceTests.test_preserved_legacy_contract_consumption_and_managed_input_binding)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WI\Desktop\home_work\AI_LLM\agent\tests\test_agent_doc_namespace.py", line 180, in test_preserved_legacy_contract_consumption_and_managed_input_binding
+    plan_review.current_inputs(self.root, plan)
+  File "C:\Users\WI\Desktop\home_work\AI_LLM\agent\agent_runtime\plan_review.py", line 172, in current_inputs
+    validate_contract(plan, root, check_adopted_advice=True, required_task_refs=publication_task_refs)
+  File "C:\Users\WI\Desktop\home_work\AI_LLM\agent\agent_runtime\task_manifest.py", line 165, in validate_contract
+    raise ValueError('new canonical data producers require central agent_doc/results/<run_id> storage')
+ValueError: new canonical data producers require central agent_doc/results/<run_id> storage
+
+======================================================================
+FAIL: test_explicit_canonical_task_infers_real_project_and_validates_details (test_agent_doc_namespace.AgentDocumentNamespaceTests.test_explicit_canonical_task_infers_real_project_and_validates_details)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\WI\Desktop\home_work\AI_LLM\agent\tests\test_agent_doc_namespace.py", line 60, in test_explicit_canonical_task_infers_real_project_and_validates_details
+    self.assertEqual(plan['task_source']['path'], 'agent_doc/task/TASK.md')
+AssertionError: 'C:\\Users\\WI\\AppData\\Local\\Temp\\tmp639gd5vs\\agent_doc\\task\\TASK.md' != 'agent_doc/task/TASK.md'
+- C:\Users\WI\AppData\Local\Temp\tmp639gd5vs\agent_doc\task\TASK.md
++ agent_doc/task/TASK.md
+
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.912s
+
+FAILED (failures=1, errors=1, skipped=1)

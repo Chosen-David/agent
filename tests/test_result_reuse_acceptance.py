@@ -93,10 +93,10 @@ class PriorResultReuseAcceptanceTests(unittest.TestCase):
         record=self.register()['record']
         self.assertEqual(record['origin'],'historical-external-reference')
         self.assertEqual((self.root/'run/raw.json').read_bytes(),before)
-        self.assertTrue((self.root/'doc/results'/self.run_id/'record.json').is_file())
+        self.assertTrue((self.root/'agent_doc/results'/self.run_id/'record.json').is_file())
 
     def test_central_manifest_raw_and_outputs_register_natively(self):
-        base=f'doc/results/{self.run_id}'
+        base=f'agent_doc/results/{self.run_id}'
         for role in ('raw_data','outputs'):
             old=self.manifest['artifacts'][role][0]['path'];new=base+'/'+Path(old).name
             (self.root/new).parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(self.root/old,self.root/new)
@@ -194,7 +194,7 @@ class PriorResultReuseAcceptanceTests(unittest.TestCase):
         self.assertTrue(any(item['run_id']==self.run_id and item['decision']=='reuse' for item in result['results']),result)
 
     def test_partial_broken_scan_and_unbound_fresh_timestamp_do_not_claim_completeness(self):
-        (self.root/'doc/results/empty-first').mkdir(parents=True)
+        (self.root/'agent_doc/results/empty-first').mkdir(parents=True)
         shown=self.register()
         result=self.store.search('not-matching-anything',limit=1,max_scan=1)
         self.assertNotEqual(result['status'],'no_hits')
@@ -206,7 +206,7 @@ class PriorResultReuseAcceptanceTests(unittest.TestCase):
         self.assertNotEqual(result['decision'],'reuse')
 
     def test_existing_historical_registration_does_not_bypass_central_raw_path_rule(self):
-        base=f'doc/results/{self.run_id}'
+        base=f'agent_doc/results/{self.run_id}'
         self.contract['manifest_path']=base+'/manifest.json'
         self.manifest['manifest_path']=self.contract['manifest_path']
         self.write(self.contract['manifest_path'],self.manifest)
@@ -222,12 +222,12 @@ class PriorResultReuseAcceptanceTests(unittest.TestCase):
         self.assertNotEqual(result['decision'],'reuse');self.assertEqual(self.verifier_calls,0)
 
     def test_result_registry_alias_and_rebased_guide_root_are_protected(self):
-        guide=self.root/'doc/guide';guide.mkdir(parents=True)
+        guide=self.root/'agent_doc/guide';guide.mkdir(parents=True)
         (guide/'policy.md').write_text('Synthetic human-only policy.\n')
-        (self.root/'doc/results').symlink_to(guide,target_is_directory=True)
+        (self.root/'agent_doc/results').symlink_to(guide,target_is_directory=True)
         with self.assertRaises(ValueError):self.register()
         self.assertEqual([p.name for p in guide.iterdir()],['policy.md'])
-        (self.root/'doc/results').unlink()
+        (self.root/'agent_doc/results').unlink()
         nested=reuse.ResultStore(guide)
         with self.assertRaises(ValueError):nested.register_history('bad','Synthetic',[{'path':'policy.md','sha256':hashlib.sha256((guide/'policy.md').read_bytes()).hexdigest()}])
         self.assertEqual([p.name for p in guide.iterdir()],['policy.md'])
@@ -236,7 +236,7 @@ class PriorResultReuseAcceptanceTests(unittest.TestCase):
         original=self.bytes()
         with patch.object(reuse.os,'link',side_effect=OSError('synthetic interrupted publish')):
             with self.assertRaises(OSError):self.register()
-        self.assertFalse((self.root/'doc/results'/self.run_id/'record.json').exists())
+        self.assertFalse((self.root/'agent_doc/results'/self.run_id/'record.json').exists())
         self.assertEqual(self.bytes(),original)
         self.register();self.assertEqual(self.decision()['decision'],'reuse')
 
@@ -258,7 +258,7 @@ class PriorResultReuseAcceptanceTests(unittest.TestCase):
         self.assertEqual(outcome.status,'pending');self.assertEqual(len(calls),1)
         search=calls[0]['prior_result_search']
         self.assertEqual(search['status'],'no_hits');self.assertFalse(search['partial']);self.assertEqual(search['errors'],[])
-        self.assertFalse((self.root/'doc/results').exists())
+        self.assertFalse((self.root/'agent_doc/results').exists())
 
     def test_real_candidate_blocks_producer_even_if_plan_forges_no_hits(self):
         self.register();task,calls,observer=self.task_and_observer()

@@ -4,17 +4,17 @@
 
 ## 执行要点
 
-1. 定位当前项目根，先读已核实人类指南、建议取舍，再读 `doc/task/TASK.md` 和对应 `task_details/*.md`；自动/手动任务链都引用同一文件。主 AI 是总清单唯一作者，其他 Agent 提交差异/证据，不各建 doc/task/TASK.md。
+1. 定位当前项目根，先读已核实人类指南、建议取舍，再读 `agent_doc/task/TASK.md` 和对应 `task_details/*.md`；自动/手动任务链都引用同一文件。主 AI 是总清单唯一作者，其他 Agent 提交差异/证据，不各建 agent_doc/task/TASK.md。
 2. 先只读盘点 CODEMAP、最新进度、git status、活跃作业及生产者/消费者引用；记录无法访问的状态，不能把未知写成已停止。
 3. 任务开始前规划新输出目录与唯一 owner；生产 Agent 每次返回 task_id/task_refs、准确路径、kind/status、来源、真实哈希和消费者。消费者反馈缺失/过期，文件管理 Agent 登记并报告主 AI。
-4. 增量更新 CODEMAP/必要目录说明，绝不在 `doc/guide/` 写任何文件；详情 Plan/Progress 按单一作者维护。本轮产物全部登记或明确标缺失，原始数据不复制/改写。普通已授权文档直接落盘供复核，不强制额外询问。
+4. 增量更新 CODEMAP/必要目录说明，绝不在 `agent_doc/guide/` 写任何文件；详情 Plan/Progress 按单一作者维护。本轮产物全部登记或明确标缺失，原始数据不复制/改写。普通已授权文档直接落盘供复核，不强制额外询问。
 5. 散落/孤儿/重复文件先查全仓 `rg` 引用（含文档、任务计划、清单、论文），形成重组提案；历史 mtime 仅线索，不能单独证明“无用”。
 6. 在现有授权内对停用且可回滚路径按逻辑组 git mv，修复引用，最小运行复核；重要删除或未知消费者不自行处理。不移动运行中/状态未知路径。
 7. 每次交接向主 AI 返回对应 TASK 的条目、数据/产物、验证、剩余整理项与责任人。主 AI 写 progress，需求变化版本化；监督结束后才统一汇总日期索引勾选，并保留旧源快照/哈希。
 
 ## 验收清单
 
-- [ ] doc/task/TASK.md 是唯一活跃日期索引，详情 ID/日期/链接、指南约束和建议取舍与角色交接一致；
+- [ ] agent_doc/task/TASK.md 是唯一活跃日期索引，详情 ID/日期/链接、指南约束和建议取舍与角色交接一致；
 - [ ] 本轮声明产物 100% 登记或明确标缺失/unknown，历史活跃脚本映射目标 ≥95%；
 - [ ] CODEMAP 每行至少一个实际可核对的脚本/产物/commit 锚点，带 task_id 和生产者/消费者；
 - [ ] 正式产物与临时状态分开，data 的实测/推导/示例类型可识别；
@@ -30,4 +30,4 @@
 
 知识需求与交接按 [知识接入契约](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/code-organization/references/knowledge_access_workflow.md) 执行；保留实际查询/前提核对证据及完整 knowledge_refs，无需求时注明原因。
 
-项目新指令先按 [既有结果检索与复用](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/code-organization/references/result_reuse_workflow.md) 查 `doc/results/` 的数据与当前验证，比较任务/代码/输入/配置/环境/指标单位后再安排新实验；复用保留独立代码/数据门禁，明确复现与新主张必做验收不能跳过。
+项目新指令先按 [既有结果检索与复用](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/code-organization/references/result_reuse_workflow.md) 查 `agent_doc/results/` 的数据与当前验证，比较任务/代码/输入/配置/环境/指标单位后再安排新实验；复用保留独立代码/数据门禁，明确复现与新主张必做验收不能跳过。

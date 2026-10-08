@@ -22,7 +22,7 @@
 - 反馈原文完整保存，不截断、不只保留赞成/反对结论。单份响应上限 1 MiB，超限明确拒绝，不能静默压缩。版本化回执保存完整反馈；适配器按需引用历史，必要时读取全文，不把全部聊天历史塞入每次调用。
 - 可信 authenticate 回调重新检查 request_sha256、review_sha256、实际 planner/reviewer invocation_id/context_id/host_source、fresh_context 与 budget_valid。仅返回 True 不能通过。reviewer proof 可是宿主签名或宿主只读记录的标识；它本身不是信任来源。
 
-用户当前明确决定和宿主权限始终优先，已核实人工 guide 约束项目规划。审核发现指南冲突必须返修/拒绝；两个 AI 一致也不能覆盖指南或扩大权限。整个 doc/guide/ 永远由人类维护。
+用户当前明确决定和宿主权限始终优先，已核实人工 guide 约束项目规划。审核发现指南冲突必须返修/拒绝；两个 AI 一致也不能覆盖指南或扩大权限。整个 agent_doc/guide/ 永远由人类维护。
 
 ## 有界返修与实际执行
 

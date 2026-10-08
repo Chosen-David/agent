@@ -6,7 +6,7 @@
 
 ## 任务链与权限
 
-沿用当前项目唯一 `doc/task/TASK.md` 及相关 `task_details`、人工指南和已评估建议；不创建另一份任务列表，不写 `doc/guide/`。主 AI 在实验前固定需求、允许资源、验收协议、独立验收者与消费依赖。
+沿用当前项目唯一 `agent_doc/task/TASK.md` 及相关 `task_details`、人工指南和已评估建议；不创建另一份任务列表，不写 `agent_doc/guide/`。主 AI 在实验前固定需求、允许资源、验收协议、独立验收者与消费依赖。
 
 DAG 必须是 `producer → verify_experiment_result → consumers`。主 AI 将准确率、性能、模型、CPU/GPU、合成以及探索实验都明确分类；数据生产任务用 `task_type: experiment` 或 `produces_data: true` 并声明 `experiment_result`。不能改成 `false`、`synthetic` 或 `derived` 来绕过已声明的消费依赖。纯非实验任务和旧非测量报告保持兼容；程序无法从任意任务自然语言发现全部隐藏实验，可信主 AI/宿主负责完整分类。
 

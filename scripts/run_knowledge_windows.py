@@ -62,7 +62,7 @@ def git_sync(repo, run, environment, *, before):
     # Only knowledge maintenance output is eligible for local reconciliation.
     changed=git('diff','HEAD','--name-only').splitlines()+git('ls-files','--others','--exclude-standard').splitlines()
     prefixes=('knowledge/','evals/knowledge/','docs/knowledge_learning/',
-              'doc/task/','doc/results/',
+              'agent_doc/task/','agent_doc/results/',
               'plugins/research-assistant/skills/model-with-knowledge/assets/knowledge/')
     if any(p not in ('TASK.md','README.md','CODEMAP.md') and not p.startswith(prefixes) for p in changed):
         raise RuntimeError('Changes outside knowledge maintenance scope; preserve for review')

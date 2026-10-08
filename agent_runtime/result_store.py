@@ -20,8 +20,9 @@ import tempfile
 
 from .project_docs import assert_ai_writable
 from .result_validation import inspect_result
+from .legacy_result_paths import legacy_read_binding, check_relocated_digest, relocated_digest_matches
 
-HOME = 'doc/results'
+HOME = 'agent_doc/results'
 SCHEMA = 'project-result-record/v1'
 CONTEXT_FIELDS = ('scope', 'code_revision', 'artifacts', 'execution', 'metrics')
 METADATA_LIMIT = 1024 * 1024
@@ -61,7 +62,8 @@ def _path(root, value):
 
 
 def _read(root, value, limit=METADATA_LIMIT):
-    path = _path(root, value)
+    read_path, relocated_digest = legacy_read_binding(root, value)
+    path = _path(root, read_path)
     fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
     with os.fdopen(fd, 'rb') as stream:
         info = os.fstat(stream.fileno())
@@ -69,6 +71,7 @@ def _read(root, value, limit=METADATA_LIMIT):
         _need(info.st_size <= limit, 'result input exceeds read bound')
         data = stream.read(limit + 1)
     _need(len(data) <= limit, 'result input grew beyond read bound')
+    check_relocated_digest(data, relocated_digest)
     return data
 
 
@@ -95,7 +98,8 @@ def _ref(value):
 
 def _check_ref(root, ref):
     _ref(ref)
-    path = _path(root, ref['path'])
+    read_path, relocated_digest = legacy_read_binding(root, ref['path'])
+    path = _path(root, read_path)
     fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
     digest, size = hashlib.sha256(), 0
     with os.fdopen(fd, 'rb') as stream:
@@ -107,6 +111,8 @@ def _check_ref(root, ref):
             _need(size <= ARTIFACT_LIMIT, 'artifact grew beyond hash bound')
             digest.update(block)
     _need(digest.hexdigest() == ref['sha256'], 'stale artifact: ' + ref['path'])
+    _need(relocated_digest_matches(digest.hexdigest(), relocated_digest),
+          'relocated historical result bytes changed')
 
 
 def _timestamp(value):
@@ -458,8 +464,8 @@ def register_task_result(root, task):
     manifest = _json(_read(store.root, contract['manifest_path'], 16 * METADATA_LIMIT))
     run_id = _identifier(manifest['run_id'])
     canonical = Path(contract['manifest_path']).is_relative_to(Path(HOME) / run_id)
-    if task.get('result_storage') == 'central' or (store.root / 'doc/task/TASK.md').exists():
-        _need(canonical, 'central result producer requires doc/results/<run_id>/ manifest')
+    if task.get('result_storage') == 'central' or (store.root / 'agent_doc/task/TASK.md').exists():
+        _need(canonical, 'central result producer requires agent_doc/results/<run_id>/ manifest')
         _need(all(Path(ref['path']).is_relative_to(Path(HOME) / run_id)
                   for role in ('raw_data', 'outputs') for ref in manifest['artifacts'][role]),
               'central result producer requires centralized raw_data/outputs, including replay')

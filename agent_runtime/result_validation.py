@@ -17,6 +17,7 @@ import re
 import stat
 
 from .core import Outcome
+from .legacy_result_paths import legacy_read_binding, check_relocated_digest
 
 CHECKS = ('implementation', 'reference_boundary', 'data_integrity',
           'numerical_sanity', 'measurement_validity', 'reproducibility')
@@ -58,7 +59,8 @@ def _path(root, value):
 
 
 def _bytes(root, value):
-    path = _path(root, value)
+    read_path, relocated_digest = legacy_read_binding(root, value)
+    path = _path(root, read_path)
     fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NONBLOCK', 0) | getattr(os, 'O_NOFOLLOW', 0))
     with os.fdopen(fd, 'rb') as stream:
         info = os.fstat(stream.fileno())
@@ -66,6 +68,7 @@ def _bytes(root, value):
         _need(info.st_size <= LIMIT, 'artifact exceeds 16 MiB bound; use bounded shard manifests')
         data = stream.read(LIMIT + 1)
     _need(len(data) <= LIMIT, 'artifact grew beyond verification bound')
+    check_relocated_digest(data, relocated_digest)
     return data
 
 

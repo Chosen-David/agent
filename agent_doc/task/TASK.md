@@ -197,8 +197,14 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-41] 补齐旋转交织/频率融合前提，筛选近期等变研究。 ([detail](task_details/MATH-41.md))
 - [x] [MATH-42] 独立验收、检索成本、回归与main发布读回。 ([detail](task_details/MATH-42.md))
 
-## 2026-10-08 ????????
+## 2026-10-08 接入项目文档归属
 
-- [x] [SCOPE-01] ???????????????????????????? ([detail](task_details/SCOPE-01.md))
-- [x] [SCOPE-02] ???????????????????????? ([detail](task_details/SCOPE-02.md))
-- [x] [SCOPE-03] ???? main ??????????????? ([detail](task_details/SCOPE-03.md))
+- [x] [SCOPE-01] 明确当前项目根，新增显式目标初始化并修正入口 ([detail](task_details/SCOPE-01.md))
+- [x] [SCOPE-02] 验证项目隔离、保留与拒绝边界并独立复验 ([detail](task_details/SCOPE-02.md))
+- [x] [SCOPE-03] 整合 main 后发布核验并同步本机技能 ([detail](task_details/SCOPE-03.md))
+
+## 2026-10-08 agent_doc 命名空间
+
+- [x] [NS-01] 迁移工作流专属文档目录及根和路径契约 ([detail](task_details/NS-01.md))
+- [x] [NS-02] 验证普通 doc 保留、历史映射、指南保护与回归 ([detail](task_details/NS-02.md))
+- [ ] [NS-03] 整合 main 后直接发布并同步本机技能 ([detail](task_details/NS-03.md))

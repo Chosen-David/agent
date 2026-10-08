@@ -17,8 +17,8 @@ import stat
 import tempfile
 from urllib.parse import urlsplit
 
-CANONICAL_TASK = 'doc/task/TASK.md'
-DOCUMENT_DIRECTORIES = ('doc/task/task_details', 'doc/advice', 'doc/guide', 'doc/results')
+CANONICAL_TASK = 'agent_doc/task/TASK.md'
+DOCUMENT_DIRECTORIES = ('agent_doc/task/task_details', 'agent_doc/advice', 'agent_doc/guide', 'agent_doc/results')
 TASK_PATTERN = re.compile(r'^\s*[-*+] \[([ xX])\] \[([A-Za-z0-9][A-Za-z0-9_.-]*)\] (.+)$')
 DATE_PATTERN = re.compile(r'^## (\d{4}-\d{2}-\d{2})(?:\s|$)')
 
@@ -38,8 +38,8 @@ def initialize_project_docs(root):
     root = supplied.resolve()
     for candidate in (supplied, root):
         parts = tuple(part.casefold() for part in candidate.parts)
-        if any(parts[i:i + 2] == ('doc', 'guide') for i in range(len(parts) - 1)):
-            raise DocumentError('human-only doc/guide cannot be a project initialization target')
+        if any(parts[i] in ('doc', 'agent_doc') and parts[i + 1] == 'guide' for i in range(len(parts) - 1)):
+            raise DocumentError('human-only agent_doc/guide cannot be a project initialization target')
     if not root.is_dir():
         raise DocumentError('project root must be an existing directory')
     directories = [_relative(root, name) for name in DOCUMENT_DIRECTORIES]
@@ -71,7 +71,7 @@ def initialize_project_docs(root):
             stream.write('# 项目任务\n\n'
                          '这是当前项目唯一日期任务索引；尚未填写已授权任务。\n'
                          'AI 按日期和稳定任务 ID 维护索引与 task_details，不导入工作流仓库历史任务。\n'
-                         'doc/guide/GUIDE.md 由人类自行编写；AI 不在 doc/guide/ 创建任何文件。\n')
+                         'agent_doc/guide/GUIDE.md 由人类自行编写；AI 不在 agent_doc/guide/ 创建任何文件。\n')
         created.append(CANONICAL_TASK)
     except FileExistsError:
         pass
@@ -157,12 +157,12 @@ def resolve_task_file(root):
         return canonical
     if legacy.exists():
         return legacy
-    raise DocumentError('missing doc/task/TASK.md (or unmigrated project-root TASK.md)')
+    raise DocumentError('missing agent_doc/task/TASK.md (or unmigrated project-root TASK.md)')
 
 
 def project_root_for_task(task_file):
     path = Path(os.path.abspath(task_file))
-    if path.parts[-3:] == ('doc', 'task', 'TASK.md'):
+    if path.parts[-3:] == ('agent_doc', 'task', 'TASK.md'):
         return path.parents[2]
     return path.parent
 
@@ -191,12 +191,12 @@ def snapshot_project_docs(root):
     items = parse_requirements(raw.decode('utf-8'), canonical=canonical)
     details = {}
     if canonical:
-        expected = {f'doc/task/{item["detail"]}' for item in items}
-        actual = set(_inventory(root, 'doc/task/task_details'))
+        expected = {f'agent_doc/task/{item["detail"]}' for item in items}
+        actual = set(_inventory(root, 'agent_doc/task/task_details'))
         if actual != expected:
             raise DocumentError('task detail/index mismatch: missing or orphan detail files')
         for item in items:
-            rel = f'doc/task/{item["detail"]}'
+            rel = f'agent_doc/task/{item["detail"]}'
             data = regular_bytes(root, rel)
             text = data.decode('utf-8').replace('\r\n', '\n')
             planning, _ = split_detail(text)
@@ -206,8 +206,8 @@ def snapshot_project_docs(root):
             details[item['id']] = {'path': rel, 'sha256': hashlib.sha256(planning.encode('utf-8')).hexdigest()}
     return {'schema_version': 'project-documents/v1', 'layout': 'canonical' if canonical else 'legacy',
             'task_index': {'path': path.relative_to(root).as_posix(), 'sha256': hashlib.sha256(raw).hexdigest()},
-            'task_details': details, 'guides': _inventory(root, 'doc/guide'),
-            'advice': _inventory(root, 'doc/advice'), 'adopted_advice': {}}
+            'task_details': details, 'guides': _inventory(root, 'agent_doc/guide'),
+            'advice': _inventory(root, 'agent_doc/advice'), 'adopted_advice': {}}
 
 
 def check_document_refs(root, refs):
@@ -229,7 +229,7 @@ def check_document_refs(root, refs):
 def check_task_documents(root, task):
     refs = task.get('document_refs')
     if refs is None:
-        if (Path(root) / CANONICAL_TASK).exists() or _inventory(Path(root).resolve(), 'doc/guide'):
+        if (Path(root) / CANONICAL_TASK).exists() or _inventory(Path(root).resolve(), 'agent_doc/guide'):
             raise DocumentError('task document dependencies missing; explicitly replan before execution')
         return None
     current = check_document_refs(root, refs)
@@ -386,21 +386,23 @@ def assert_ai_writable(root, path):
     root = supplied_root.resolve()
     target = Path(os.path.abspath(root / path))
     for candidate in (supplied_root, root, target, target.resolve()):
-        if any(ancestor.name == 'guide' and ancestor.parent.name == 'doc'
+        if any(ancestor.name.casefold() == 'guide' and ancestor.parent.name.casefold() in ('doc', 'agent_doc')
                for ancestor in (candidate, *candidate.parents)):
-            raise DocumentError('doc/guide is human-only; rebased roots and aliases cannot grant AI writes')
+            raise DocumentError('agent_doc/guide is human-only; rebased roots and aliases cannot grant AI writes')
     if not target.is_relative_to(root):
         raise DocumentError('controlled write outside project')
-    guide = root / 'doc/guide'
-    if target.is_relative_to(guide) or guide.is_relative_to(target):
-        raise DocumentError('doc/guide is human-only; AI writes are forbidden')
+    for directory in ('agent_doc/guide', 'doc/guide'):
+        guide = root / directory
+        if target.is_relative_to(guide) or (guide.is_relative_to(target) and
+                (directory.startswith('agent_doc/') or guide.exists())):
+            raise DocumentError('human-only guide; AI writes are forbidden')
     _relative(root, target)
     if target.exists() and target.is_file() and target.stat().st_nlink > 1:
-        guides = root / 'doc/guide'
-        if guides.exists():
-            for name in _inventory(root, 'doc/guide'):
-                if os.path.samefile(target, root / name):
-                    raise DocumentError('hard-linked human guide cannot be written by AI')
+        for directory in ('agent_doc/guide', 'doc/guide'):
+            if (root / directory).exists():
+                for name in _inventory(root, directory):
+                    if os.path.samefile(target, root / name):
+                        raise DocumentError('hard-linked human guide cannot be written by AI')
     return target
 
 
@@ -409,8 +411,8 @@ def guard_write_path(path):
     path = Path(os.path.abspath(path))
     for candidate in (path, path.resolve()):
         for ancestor in (candidate, *candidate.parents):
-            if ancestor.name == 'guide' and ancestor.parent.name == 'doc':
-                raise DocumentError('doc/guide is human-only; AI writes are forbidden')
+            if ancestor.name.casefold() == 'guide' and ancestor.parent.name.casefold() in ('doc', 'agent_doc'):
+                raise DocumentError('agent_doc/guide is human-only; AI writes are forbidden')
     # Locate a known project to catch aliases and hardlinks as well.
     for root in path.parents:
         if (root / CANONICAL_TASK).exists() or (root / 'TASK.md').exists() or (root / '.git').exists():
@@ -452,8 +454,8 @@ def migrate(root, date):
     text = raw.decode('utf-8')
     items = parse_requirements(text)
     sha = hashlib.sha256(raw).hexdigest()
-    archive = f'doc/task/legacy/TASK.{sha}.md'
-    files = {archive: raw, f'doc/task/legacy/migration.{sha}.json':
+    archive = f'agent_doc/task/legacy/TASK.{sha}.md'
+    files = {archive: raw, f'agent_doc/task/legacy/migration.{sha}.json':
              (json.dumps({'source': 'TASK.md', 'source_sha256': sha, 'archive': archive,
                           'original_relative_link_base': '.', 'archive_relative_link_base': '../../..'},
                          indent=2) + '\n').encode('utf-8')}
@@ -506,7 +508,7 @@ def migrate(root, date):
                 'Bare code paths and archive-relative links retain the original project-root base.\n'
                 'Migration preserves the original checkbox as history, not independent acceptance.\n'
                 'Dates use the nearest dated heading, or the explicitly supplied migration date.\n')
-        files[f'doc/task/task_details/{task_id}.md'] = body.encode('utf-8')
+        files[f'agent_doc/task/task_details/{task_id}.md'] = body.encode('utf-8')
     index = '# Project tasks\n\nAI-maintained concise index; implementation and evidence live in linked details.\n'
     for task_date, group in groups.items():
         index += f'\n## {task_date}\n\n'
@@ -515,13 +517,13 @@ def migrate(root, date):
             index += f'- [{mark}] [{item["id"]}] {item["title"]} ([detail](task_details/{item["id"]}.md))\n'
     files[CANONICAL_TASK] = index.encode('utf-8')
     pointer = ('# Project task index moved\n\n'
-               'The single active task list is [doc/task/TASK.md](doc/task/TASK.md).\n'
-               f'Historical source is preserved at [legacy TASK](doc/task/legacy/TASK.{sha}.md).\n').encode('utf-8')
+               'The single active task list is [agent_doc/task/TASK.md](agent_doc/task/TASK.md).\n'
+               f'Historical source is preserved at [legacy TASK](agent_doc/task/legacy/TASK.{sha}.md).\n').encode('utf-8')
     # Validate generated structure before touching the real index/pointer. Legacy
     # headings are excerpts, not new planning boundaries in the derived detail.
     generated_items = parse_requirements(files[CANONICAL_TASK].decode('utf-8'), canonical=True)
     for item in generated_items:
-        generated, _ = split_detail(files[f'doc/task/{item["detail"]}'].decode('utf-8'))
+        generated, _ = split_detail(files[f'agent_doc/task/{item["detail"]}'].decode('utf-8'))
         if (re.findall(r'^Task-ID: (.+)$', generated, re.M) != [item['id']] or
                 re.findall(r'^Date: (.+)$', generated, re.M) != [item['date']]):
             raise DocumentError('generated task detail identity mismatch; migration aborted')
@@ -530,10 +532,10 @@ def migrate(root, date):
         target = assert_ai_writable(root, name)
         if target.exists() and regular_bytes(root, name) != data:
             raise DocumentError('migration target exists with different bytes: ' + name)
-    expected_details = {name for name in files if name.startswith('doc/task/task_details/')}
-    if set(_inventory(root, 'doc/task/task_details')) - expected_details:
+    expected_details = {name for name in files if name.startswith('agent_doc/task/task_details/')}
+    if set(_inventory(root, 'agent_doc/task/task_details')) - expected_details:
         raise DocumentError('orphan task details must be reconciled before migration')
-    for directory in ('doc/guide', 'doc/advice'):
+    for directory in ('agent_doc/guide', 'agent_doc/advice'):
         target = _relative(root, directory)
         if target.exists() and not target.is_dir():
             raise DocumentError(directory + ' must be a directory')
@@ -546,8 +548,8 @@ def migrate(root, date):
         raise DocumentError('legacy TASK changed during migration; reconcile preserved copies')
     atomic_write(root, legacy, pointer)
     # Empty directory bootstrap only; never create .gitkeep/template/guide.md.
-    (root / 'doc/guide').mkdir(parents=True, exist_ok=True)
-    (root / 'doc/advice').mkdir(parents=True, exist_ok=True)
+    (root / 'agent_doc/guide').mkdir(parents=True, exist_ok=True)
+    (root / 'agent_doc/advice').mkdir(parents=True, exist_ok=True)
     return snapshot_project_docs(root)
 
 

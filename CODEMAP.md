@@ -59,14 +59,14 @@ NEURO-01–03：`knowledge/entries/neuroscience/` 与 `knowledge/neuroscience_so
 | VEX-01/02 | `workflows/visual_explanation_workflow.md`, `tests/test_visual_explanation.py`, `docs/visual_explanations/` | 知识解释 → 作图 → 解释消费/审查 | 网页轻量图解、步序对应、真实图像检查与已有交接完整性验证 |
 | VEX-03 | `scripts/sync_plugin_references.py` 与六个角色的生成引用 | 同步/主 AI → 分发技能与目标宿主 | 保持单包引用闭合；仓库发布与网页个人技能更新分开核验 |
 
-项目文档新架构：唯一活跃清单位于 `doc/task/TASK.md`，根 `TASK.md` 仅跳转；逐任务方法/进度/验收位于 `doc/task/task_details/`。人类专用 `doc/guide/` 只读，建议在 `doc/advice/` 评估后按任务采用。
+项目文档新架构：唯一活跃清单位于 `agent_doc/task/TASK.md`，根 `TASK.md` 仅跳转；逐任务方法/进度/验收位于 `agent_doc/task/task_details/`。人类专用 `agent_doc/guide/` 只读，建议在 `agent_doc/advice/` 评估后按任务采用。
 
 | TASK | 实际锚点 | 用途与边界 |
 |---|---|---|
 | DOC-01/02 | `agent_runtime/project_docs.py`, `scripts/project_docs.py` | 路径解析、可恢复迁移、稳定计划/可变进度、guide 依赖与应用内写入保护；不是 OS 沙箱 |
 | DOC-03/04 | `workflows/project_document_workflow.md`, `tests/test_project_docs_acceptance.py`, `tests/test_project_docs_workflow.py` | 主 AI/运行时/安装/独立技能接线、对照复验和统一发布 |
 | DATA-01/02/03 | `agent_runtime/result_validation.py`, `scripts/validate_experiment_result.py`, `workflows/result_validation_workflow.md`, `tests/test_result_validation.py`, `tests/test_result_gate_acceptance.py` | 每轮数据后的代码/数据版本与实际独立校验门禁；不承诺绝对无 bug 或未测性能 |
-| REUSE-01/02/03 | `agent_runtime/result_store.py`, `scripts/result_store.py`, `workflows/result_reuse_workflow.md`, `doc/results/`, `tests/test_result_reuse_acceptance.py` | 新命令先查历史结果，完整条件/时效/独立校验匹配后复用；不跳过显式复现和新主张验证 |
+| REUSE-01/02/03 | `agent_runtime/result_store.py`, `scripts/result_store.py`, `workflows/result_reuse_workflow.md`, `agent_doc/results/`, `tests/test_result_reuse_acceptance.py` | 新命令先查历史结果，完整条件/时效/独立校验匹配后复用；不跳过显式复现和新主张验证 |
 
 | EK-112454-01–03 | `knowledge/entries/neuroscience/neuro.bumblebee-social-diffusion.*`, `evals/knowledge/bee-learning-queries.json`, `docs/knowledge_learning/2026-10-07-engineering-112454/` | 主AI/真实小时维护调用 → 知识检索、研究决策与下轮维护 | 3来源、1待发布复用卡，附表模型/计数限制；两步附录候选；全仓Windows回归阻塞，未推送；本机复现与AI收益未测 |
 
@@ -87,31 +87,38 @@ AIK-01/02：`knowledge/entries/ai-algorithms/ai.speculative-*`及`docs/knowledge
 | MATH-23/24 | `knowledge/entries/math.gaussian-quadratic-energy.*`, `docs/knowledge_learning/2026-10-07-quadratic/` | model-with-knowledge / 主AI → 二阶矩目标、谱尾/依赖条件检查 | 经典ECP最终版、2近期候选；实际模型收益未知 |
 
 SELF-SYNC-01–03：scripts/run_knowledge_windows.py 的 prepare_host / sync_host_skills 在 verified pull 后、模型启动前同步并复查；模板维护持久入口，tests/test_knowledge_windows_runner.py 核对顺序、失败与阶段证据；docs/codex_adoption/pull-sync/ 为本轮记录。生产者为主 AI，消费者为 Codex 与原每小时维护桥；私有检查点 .agent-runs/codex-pull-sync/。
-| MATH-25/26 | `knowledge/entries/math.softmax-barycenter-error.*`, `doc/results/math-softmax-20261007-v2/` | 主AI producer → 独立数学验收 → 建模Skill/维护者 | 分布/剪枝/value输出误差与有限开发验证；不含生产模型收益 |
+| MATH-25/26 | `knowledge/entries/math.softmax-barycenter-error.*`, `agent_doc/results/math-softmax-20261007-v2/` | 主AI producer → 独立数学验收 → 建模Skill/维护者 | 分布/剪枝/value输出误差与有限开发验证；不含生产模型收益 |
 
-| MATH-27/28 | `knowledge/entries/math.attention-output-geometry.*`, `doc/results/math-geometry-20261007/` | 主AI producer → 独立数学/代码数据验收 → model-with-knowledge | 固定value几何/局部余项/线性margin；无生产模型或GPU收益 |
+| MATH-27/28 | `knowledge/entries/math.attention-output-geometry.*`, `agent_doc/results/math-geometry-20261007/` | 主AI producer → 独立数学/代码数据验收 → model-with-knowledge | 固定value几何/局部余项/线性margin；无生产模型或GPU收益 |
 
 | DUAL-01–03 | `agent_runtime/plan_review.py`, `prompts/planner_main.md`, `prompts/review_main.md`, `workflows/dual_main_workflow.md` | planner-main → 独立 review-main → protected Engine / publication → 原有独立结果 gate | 完整 DAG/身份/回执/有界返修；宿主适配器必须真实提供，CPU 测试不是模型质量收益 |
 
-| MATH-29/30 | `knowledge/entries/math.weighted-bilinear-low-rank.*`, `doc/results/math-weighted-bilinear-20261007/` | 数学producer → 独立验收 → 按需建模Skill | SPD乘积分布的分数目标；不含真实模型/RoPE/e2e最优 |
+| MATH-29/30 | `knowledge/entries/math.weighted-bilinear-low-rank.*`, `agent_doc/results/math-weighted-bilinear-20261007/` | 数学producer → 独立验收 → 按需建模Skill | SPD乘积分布的分数目标；不含真实模型/RoPE/e2e最优 |
 
-- `doc/results/math-allocation-20261008/`: MATH-31/32 finite discrete-budget proof, exact CPU fixtures, independent review and retrieval/cost evidence; not production solver.
+- `agent_doc/results/math-allocation-20261008/`: MATH-31/32 finite discrete-budget proof, exact CPU fixtures, independent review and retrieval/cost evidence; not production solver.
 
-| MATH-33/34 | `knowledge/entries/math.finite-menu-selection.*`, `doc/results/math-selection-20261008/` | 主AI producer → 独立统计/代码验收 → 按需建模Skill | 冻结菜单选择后风险与期望成本；无真实模型或省token收益 |
+| MATH-33/34 | `knowledge/entries/math.finite-menu-selection.*`, `agent_doc/results/math-selection-20261008/` | 主AI producer → 独立统计/代码验收 → 按需建模Skill | 冻结菜单选择后风险与期望成本；无真实模型或省token收益 |
 
-| MATH-35/36 | `knowledge/entries/math.perturbation-propagation.*`, `doc/results/math-propagation-20261008/` | 主AI producer → 独立数学/代码数据验收 → 建模Skill | 有条件复合误差传播；teacher缺陷失配与有限增益拒用，无生产e2e收益 |
+| MATH-35/36 | `knowledge/entries/math.perturbation-propagation.*`, `agent_doc/results/math-propagation-20261008/` | 主AI producer → 独立数学/代码数据验收 → 建模Skill | 有条件复合误差传播；teacher缺陷失配与有限增益拒用，无生产e2e收益 |
 
-| MATH-37/38 | `knowledge/entries/math.sequence-tv-coupling.*`, `doc/results/math-sequence-tv-20261008/` | 主AI producer → 独立概率/代码数据验收 → 建模Skill | 有限生成分布TV与seed/greedy拒用；无模型e2e测量 |
+| MATH-37/38 | `knowledge/entries/math.sequence-tv-coupling.*`, `agent_doc/results/math-sequence-tv-20261008/` | 主AI producer → 独立概率/代码数据验收 → 建模Skill | 有限生成分布TV与seed/greedy拒用；无模型e2e测量 |
 
-| MATH-39/40 | `knowledge/entries/math.softmax-kl-fisher.*`, `doc/results/math-softmax-kl-20261008/` | 主AI producer → 独立数学/代码数据验收 → model-with-knowledge | KL中心化/Fisher路径曲率与饱和拒用；无生产模型收益 |
-CONT-20261008-01–03: RL/SFT trajectory and horizon-aware testing cards → model-with-knowledge; existing engineering prompt obeys saved rotation cursor; scoped producer/verifier records in `doc/results/rl-probability-20261008/`; report in `docs/knowledge_learning/2026-10-08-rl-probability/`. Private canceled batch and machine service state remain `.agent-runs/` only.
+| MATH-39/40 | `knowledge/entries/math.softmax-kl-fisher.*`, `agent_doc/results/math-softmax-kl-20261008/` | 主AI producer → 独立数学/代码数据验收 → model-with-knowledge | KL中心化/Fisher路径曲率与饱和拒用；无生产模型收益 |
+CONT-20261008-01–03: RL/SFT trajectory and horizon-aware testing cards → model-with-knowledge; existing engineering prompt obeys saved rotation cursor; scoped producer/verifier records in `agent_doc/results/rl-probability-20261008/`; report in `docs/knowledge_learning/2026-10-08-rl-probability/`. Private canceled batch and machine service state remain `.agent-runs/` only.
 
-- `doc/results/math-rope-intertwiner-20261008/`: MATH-41/42 real planar rotation intertwiners, finite-context defects, public CPU verification and retrieval cost; no SGLang/model deployment.
+- `agent_doc/results/math-rope-intertwiner-20261008/`: MATH-41/42 real planar rotation intertwiners, finite-context defects, public CPU verification and retrieval cost; no SGLang/model deployment.
 
 ## ?????????SCOPE-01?03?
 
 - `agent_runtime/project_docs.py` / `scripts/project_docs.py`??? --root ? init??????????????????????
 - `tests/test_project_docs_init.py`??????????????????? CLI?
-- `doc/results/project-scope-20261008/`??????????????????????????????? SCOPE ?????
+- `agent_doc/results/project-scope-20261008/`??????????????????????????????? SCOPE ?????
 
-DOC-SCOPE-01：在 SCOPE-01–03 项目初始化实现之上补齐跨项目切换/恢复的文档与记忆重载规则；共享契约由15个插件角色消费，核验见 `doc/results/project-doc-scope-20261008/`。不代表目标宿主安装或模型行为已验证。
+DOC-SCOPE-01：在 SCOPE-01–03 项目初始化实现之上补齐跨项目切换/恢复的文档与记忆重载规则；共享契约由15个插件角色消费，核验见 `agent_doc/results/project-doc-scope-20261008/`。不代表目标宿主安装或模型行为已验证。
+
+## NS-01–03: workflow document namespace
+
+- `agent_doc/task/TASK.md`: canonical current project index; historical Plans preserved.
+- `agent_runtime/legacy_result_paths.py`: registered read-only historical result relocation, no write routing.
+- `tests/test_agent_doc_namespace.py`: ordinary doc preservation, three reader paths, managed binding and refusal boundaries.
+- `agent_doc/results/namespace-20261008/`: frozen plan, move inventory, raw checks and independent host review.

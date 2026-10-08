@@ -1,6 +1,8 @@
 # 项目任务、指南、建议与结果
 
-**这里是 agent 库自身作为当前项目时的文档。** 接入 Project A 时，在 `ProjectA/doc/` 建立同样的布局，你编写 `ProjectA/doc/guide/GUIDE.md`，AI 维护 Project A 的任务与结果。不要复制本目录的指南、历史任务或实验记录到 Project A。工作流源码仍从 agent 库读取。
+这是工作流专属 `agent_doc/`，与项目普通 `doc/` 分开。历史实验文件原样迁移，旧路径由本目录的 `legacy-result-paths.json` 精确只读登记；该登记不代表旧结果获得当前验收。
+
+**这里是 agent 库自身作为当前项目时的文档。** 接入 Project A 时，在 `ProjectA/agent_doc/` 建立同样的布局，你编写 `ProjectA/agent_doc/guide/GUIDE.md`，AI 维护 Project A 的任务与结果。不要复制本目录的指南、历史任务或实验记录到 Project A。工作流源码仍从 agent 库读取。
 
 - `task/TASK.md`：唯一活跃任务清单，按日期简洁列出任务与详情链接，由主 AI 串行维护。
 - `task/task_details/*.md`：AI 维护每项任务的方法、实际进度、验收、证据、阻塞和下一步。

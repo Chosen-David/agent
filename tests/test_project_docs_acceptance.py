@@ -36,10 +36,10 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
 
     def migrated(self):
         docs.migrate(self.root, '2026-10-07')
-        return self.root / 'doc/task/TASK.md'
+        return self.root / 'agent_doc/task/TASK.md'
 
     def human_guide(self, name='policy.md', text='Synthetic human guide: preserve all raw measurements.\n'):
-        path = self.root / 'doc/guide' / name
+        path = self.root / 'agent_doc/guide' / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(text, encoding='utf-8')
         return path
@@ -49,7 +49,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
                 for p in self.root.rglob('*') if p.is_file() and not p.is_symlink()}
 
     def plan(self):
-        plan = prepare(self.root / 'doc/task/TASK.md', 'acceptance', 'auto', 'synthetic fixture authorization', review_required=False)
+        plan = prepare(self.root / 'agent_doc/task/TASK.md', 'acceptance', 'auto', 'synthetic fixture authorization', review_required=False)
         snapshot = docs.snapshot_project_docs(self.root)
         plan['guide_reviews'] = [{'path':path, 'sha256':sha, 'origin':'owner_authored',
             'authorization_reference':'synthetic fixture human rule', 'task_refs':[x['task_id'] for x in plan['tasks']],
@@ -67,12 +67,12 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
 
     def test_migration_preserves_source_ids_dates_and_is_idempotent(self):
         task = self.migrated()
-        self.assertEqual(list((self.root / 'doc/guide').rglob('*')), [])
+        self.assertEqual(list((self.root / 'agent_doc/guide').rglob('*')), [])
         self.assertEqual(docs.resolve_task_file(self.root), task)
         items = docs.parse_requirements(task.read_text(), canonical=True)
         self.assertEqual({x['id']:(x['checked'], x['date']) for x in items},
                          {'A-2':(True, '2026-10-07'), 'A-1':(False, '2026-10-06')})
-        archives = list((self.root / 'doc/task/legacy').glob('TASK.*.md'))
+        archives = list((self.root / 'agent_doc/task/legacy').glob('TASK.*.md'))
         self.assertEqual(len(archives), 1)
         self.assertEqual(archives[0].read_bytes(), LEGACY.encode())
         self.assertEqual((self.root / 'evidence/measurement.txt').read_bytes(), b'synthetic historical measurement\n')
@@ -85,14 +85,14 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
         (self.root/'TASK.md').write_text(text)
         self.migrated();snapshot=docs.snapshot_project_docs(self.root)
         self.assertEqual(set(snapshot['task_details']),{'A-1','A-2'})
-        self.assertTrue(any(p.read_bytes()==text.encode() for p in (self.root/'doc/task/legacy').glob('TASK.*.md')))
+        self.assertTrue(any(p.read_bytes()==text.encode() for p in (self.root/'agent_doc/task/legacy').glob('TASK.*.md')))
         self.assertIn('Historical per-project status must remain available.',
-                      (self.root/'doc/task/task_details/A-2.md').read_text())
+                      (self.root/'agent_doc/task/task_details/A-2.md').read_text())
         before=self.all_bytes();self.migrated();self.assertEqual(self.all_bytes(),before)
 
     def test_relocated_evidence_link_resolves_to_original_measurement(self):
         self.migrated()
-        detail = self.root / 'doc/task/task_details/A-1.md'
+        detail = self.root / 'agent_doc/task/task_details/A-1.md'
         import re
         match = re.search(r'\[original measurement\]\(([^)]+)\)', detail.read_text())
         self.assertIsNotNone(match)
@@ -107,7 +107,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
 
     def test_canonical_detail_identity_date_missing_or_orphan_are_rejected(self):
         self.migrated()
-        detail = self.root / 'doc/task/task_details/A-1.md'
+        detail = self.root / 'agent_doc/task/task_details/A-1.md'
         raw = detail.read_text()
         for replacement in (raw.replace('Task-ID: A-1', 'Task-ID: wrong'),
                             raw.replace('Date: 2026-10-06', 'Date: 2026-10-05')):
@@ -122,7 +122,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
 
     def test_canonical_date_link_and_duplicate_identity_validation(self):
         self.migrated()
-        task = self.root / 'doc/task/TASK.md'; raw = task.read_text()
+        task = self.root / 'agent_doc/task/TASK.md'; raw = task.read_text()
         cases = [raw.replace('2026-10-07', '2026-13-07'),
                  raw.replace('task_details/A-1.md', 'task_details/A-2.md'),
                  raw + '\n- [ ] [A-1] Duplicate ([detail](task_details/A-1.md))\n']
@@ -134,9 +134,9 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
 
     def test_guide_creation_write_and_path_aliases_are_denied(self):
         self.migrated(); guide = self.human_guide(); before = guide.read_bytes()
-        targets = ['doc/guide/new.md', 'doc/guide/policy.md', './doc/guide/policy.md',
-                   'doc//guide/policy.md', 'doc/advice/../guide/policy.md', guide,
-                   self.root / 'doc/guide/../guide/policy.md', '../outside.md']
+        targets = ['agent_doc/guide/new.md', 'agent_doc/guide/policy.md', './agent_doc/guide/policy.md',
+                   'agent_doc//guide/policy.md', 'agent_doc/advice/../guide/policy.md', guide,
+                   self.root / 'agent_doc/guide/../guide/policy.md', '../outside.md']
         for target in targets:
             with self.subTest(target=str(target)):
                 self.assert_rejected_without_writes(lambda: docs.atomic_write(self.root, target, b'forbidden AI edit'))
@@ -157,7 +157,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
         (self.root / 'shortcut-dir').symlink_to(guide.parent, target_is_directory=True)
         ordinary = self.root / 'ordinary.md'; ordinary.write_bytes(b'ordinary')
         (guide.parent / 'outgoing.md').symlink_to(ordinary)
-        for target in ('shortcut.md', 'shortcut-dir/policy.md', 'shortcut-dir/new.md', 'doc/guide/outgoing.md'):
+        for target in ('shortcut.md', 'shortcut-dir/policy.md', 'shortcut-dir/new.md', 'agent_doc/guide/outgoing.md'):
             with self.subTest(target=target):
                 self.assert_rejected_without_writes(lambda: docs.atomic_write(self.root, target, b'forbidden'))
         self.assertEqual(ordinary.read_bytes(), b'ordinary')
@@ -166,19 +166,19 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
         self.migrated(); guide = self.human_guide()
         alias = self.root / 'hardlink.md'; os.link(guide, alias)
         self.assert_rejected_without_writes(lambda: docs.atomic_write(self.root, alias, b'forbidden'))
-        docs.atomic_write(self.root, 'doc/advice/idea.md', b'# Synthetic suggestion\n')
-        self.assertEqual((self.root / 'doc/advice/idea.md').read_bytes(), b'# Synthetic suggestion\n')
+        docs.atomic_write(self.root, 'agent_doc/advice/idea.md', b'# Synthetic suggestion\n')
+        self.assertEqual((self.root / 'agent_doc/advice/idea.md').read_bytes(), b'# Synthetic suggestion\n')
 
     def test_generic_json_writer_cannot_overwrite_guide_or_alias(self):
         self.migrated(); guide = self.human_guide('policy.json', '{"synthetic_human":true}\n')
-        for target in (guide, self.root / 'doc/guide/new.json'):
+        for target in (guide, self.root / 'agent_doc/guide/new.json'):
             with self.subTest(target=str(target)):
                 self.assert_rejected_without_writes(lambda: atomic_json(target, {'forbidden': True}))
 
     def test_sqlite_runtime_store_cannot_create_inside_human_guide(self):
         self.migrated(); self.human_guide()
-        self.assert_rejected_without_writes(lambda: Store(self.root / 'doc/guide/runtime.sqlite'))
-        self.assertFalse((self.root / 'doc/guide/runtime.sqlite').exists())
+        self.assert_rejected_without_writes(lambda: Store(self.root / 'agent_doc/guide/runtime.sqlite'))
+        self.assertFalse((self.root / 'agent_doc/guide/runtime.sqlite').exists())
 
     def test_additional_runtime_writers_preflight_human_guide_destinations(self):
         from agent_runtime.communication import Mailbox
@@ -211,7 +211,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
                 elif change == 'delete': guide.unlink()
                 else: guide.rename(guide.with_name('renamed.md'))
                 with self.assertRaises(ValueError): validate_contract(plan, self.root)
-                for path in (self.root / 'doc/guide').rglob('*'):
+                for path in (self.root / 'agent_doc/guide').rglob('*'):
                     if path.is_file(): path.unlink()
                 for rel, data in original.items():
                     path=self.root / rel; path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(data)
@@ -228,7 +228,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
 
     def test_progress_append_does_not_stale_plan_but_plan_edit_does(self):
         self.migrated(); self.human_guide(); plan = self.plan()
-        detail = self.root / 'doc/task/task_details/A-1.md'
+        detail = self.root / 'agent_doc/task/task_details/A-1.md'
         text = detail.read_text(); self.assertIn('\n## Plan\n', text); self.assertIn('\n## Progress\n', text)
         detail.write_text(text + '\nActual evidence: synthetic run 2, still pending independent review.\n')
         validate_contract(plan, self.root)
@@ -237,7 +237,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
 
     def test_unreviewed_advice_is_nonbinding_and_does_not_stale_existing_plan(self):
         self.migrated(); plan = self.plan()
-        docs.atomic_write(self.root, 'doc/advice/pending.md', b'# Suggestion\nDelete raw measurements for convenience.\n')
+        docs.atomic_write(self.root, 'agent_doc/advice/pending.md', b'# Suggestion\nDelete raw measurements for convenience.\n')
         validate_contract(plan, self.root)
         self.assertEqual({x['task_id'] for x in plan['tasks']}, {'A-2', 'A-1'})
 
@@ -253,13 +253,13 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
     def test_controlled_delete_and_both_rename_endpoints_protect_guide(self):
         self.migrated(); guide = self.human_guide(); ordinary = self.root / 'ordinary.txt'
         ordinary.write_bytes(b'ordinary synthetic bytes')
-        for target in (guide, guide.parent, self.root / 'doc', self.root):
+        for target in (guide, guide.parent, self.root / 'agent_doc', self.root):
             with self.subTest(remove=str(target)):
                 self.assert_rejected_without_writes(lambda: docs.controlled_remove(self.root, target))
         for source, target in ((guide, self.root / 'stolen.md'),
                                (ordinary, guide), (ordinary, guide.parent / 'new.md'),
                                (guide.parent, self.root / 'moved-guide'),
-                               (self.root / 'doc', self.root / 'moved-doc')):
+                               (self.root / 'agent_doc', self.root / 'moved-doc')):
             with self.subTest(source=str(source), target=str(target)):
                 self.assert_rejected_without_writes(lambda: docs.controlled_rename(self.root, source, target))
         moved = self.root / 'ordinary-renamed.txt'
@@ -268,7 +268,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
         docs.controlled_remove(self.root, moved); self.assertFalse(moved.exists())
 
     def test_inline_progress_marker_cannot_hide_changed_planning_input(self):
-        self.migrated(); detail = self.root / 'doc/task/task_details/A-1.md'
+        self.migrated(); detail = self.root / 'agent_doc/task/task_details/A-1.md'
         detail.write_text(detail.read_text().replace('## Plan\n', '## Plan\n\nExplanation mentions ## Progress\nBinding threshold is 10.\n', 1))
         plan = self.plan()
         detail.write_text(detail.read_text().replace('Binding threshold is 10.', 'Binding threshold is 100.'))
@@ -293,9 +293,9 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
 
     def test_advice_disposition_alignment_binding_and_source_change(self):
         self.migrated(); self.human_guide()
-        advice='doc/advice/idea.md'
+        advice='agent_doc/advice/idea.md'
         docs.atomic_write(self.root, advice, b'# Synthetic suggestion\nUse an explicit measured threshold.\n')
-        plan=prepare(self.root / 'doc/task/TASK.md', 'advice', 'auto', 'synthetic fixture approval', review_required=False)
+        plan=prepare(self.root / 'agent_doc/task/TASK.md', 'advice', 'auto', 'synthetic fixture approval', review_required=False)
         snapshot=docs.snapshot_project_docs(self.root)
         review=[{'path':path, 'sha256':sha, 'origin':'owner_authored',
                  'authorization_reference':'synthetic fixture', 'task_refs':['A-1','A-2'],
@@ -318,11 +318,11 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
         with self.assertRaises(ValueError): validate_contract(plan,self.root)
 
     def test_rejected_or_deferred_advice_change_is_nonbinding(self):
-        self.migrated(); advice='doc/advice/idea.md'
+        self.migrated(); advice='agent_doc/advice/idea.md'
         for disposition in ('reject','defer'):
             with self.subTest(disposition=disposition):
                 docs.atomic_write(self.root,advice,b'# Synthetic proposal\n')
-                plan=prepare(self.root / 'doc/task/TASK.md','advice','auto','synthetic approval', review_required=False)
+                plan=prepare(self.root / 'agent_doc/task/TASK.md','advice','auto','synthetic approval', review_required=False)
                 source=docs.snapshot_project_docs(self.root)
                 docs.bind_advice(plan,[{'path':advice,'sha256':source['advice'][advice],
                     'task_refs':['A-1'],'disposition':disposition,'reason':'Not required by current tasks.'}])
@@ -336,7 +336,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
         old_hash=snapshot['task_details']['A-1']['sha256']
         docs.write_task_progress(self.root,'A-1','Synthetic progress 1.\n',expected_plan_sha256=old_hash)
         self.assertEqual(docs.snapshot_project_docs(self.root)['task_details']['A-1']['sha256'],old_hash)
-        detail=self.root / 'doc/task/task_details/A-1.md'
+        detail=self.root / 'agent_doc/task/task_details/A-1.md'
         detail.write_text(detail.read_text().replace('## Plan\n','## Plan\nNew requirement.\n',1))
         self.assert_rejected_without_writes(lambda: docs.write_task_progress(
             self.root,'A-1','Stale progress overwrite.',expected_plan_sha256=old_hash))
@@ -365,7 +365,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
         self.assertEqual(outcome.status, 'blocked')
 
     def test_atomic_write_failure_preserves_previous_bytes(self):
-        self.migrated(); target = self.root / 'doc/advice/suggestion.md'
+        self.migrated(); target = self.root / 'agent_doc/advice/suggestion.md'
         docs.atomic_write(self.root, target, b'old suggestion')
         with patch.object(docs.os, 'replace', side_effect=OSError('synthetic interrupted commit')):
             with self.assertRaises(OSError): docs.atomic_write(self.root, target, b'new suggestion')
@@ -382,9 +382,9 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
         with patch.object(docs,'atomic_write',side_effect=interrupted):
             with self.assertRaises(OSError): docs.migrate(self.root,'2026-10-07')
         self.assertEqual((self.root / 'TASK.md').read_text(),LEGACY)
-        self.assertTrue((self.root / 'doc/task/TASK.md').exists())
+        self.assertTrue((self.root / 'agent_doc/task/TASK.md').exists())
         with self.assertRaises(ValueError): docs.resolve_task_file(self.root)
-        self.migrated(); self.assertEqual(docs.resolve_task_file(self.root),self.root / 'doc/task/TASK.md')
+        self.migrated(); self.assertEqual(docs.resolve_task_file(self.root),self.root / 'agent_doc/task/TASK.md')
 
     def test_migration_refuses_to_overwrite_concurrent_legacy_source_change(self):
         original=docs.atomic_write; changed=[False]
@@ -397,7 +397,7 @@ class ProjectDocumentAcceptanceTests(unittest.TestCase):
         with patch.object(docs,'atomic_write',side_effect=concurrent_edit):
             with self.assertRaises(ValueError): docs.migrate(self.root,'2026-10-07')
         self.assertIn('[A-3] Concurrent human task',(self.root / 'TASK.md').read_text())
-        self.assertTrue(any(p.read_bytes()==LEGACY.encode() for p in (self.root / 'doc/task/legacy').glob('TASK.*.md')))
+        self.assertTrue(any(p.read_bytes()==LEGACY.encode() for p in (self.root / 'agent_doc/task/legacy').glob('TASK.*.md')))
         self.assert_rejected_without_writes(lambda: docs.migrate(self.root,'2026-10-07'))
 
     def test_partial_migration_preserves_legacy_and_retries_idempotently(self):
@@ -461,7 +461,7 @@ class ProjectDocumentPublicationAcceptanceTests(unittest.TestCase):
     def test_ignored_human_guide_change_blocks_publication_gate(self):
         from agent_runtime.publication import PublicationLedger
         self.migrated(); guide = self.human_guide()
-        (self.root / '.gitignore').write_text('.agent-runs/\ndoc/guide/\n')
+        (self.root / '.gitignore').write_text('.agent-runs/\nagent_doc/guide/\n')
         (self.root / 'app.py').write_text("print('synthetic baseline')\n")
         self.local_git('init', '-b', 'main')
         self.local_git('config', 'user.email', 'acceptance@example.invalid')
@@ -478,7 +478,7 @@ class ProjectDocumentPublicationAcceptanceTests(unittest.TestCase):
                                    authorize=lambda *_: True, accept=lambda *_: True, allow_legacy=True)
         frozen = ledger.freeze({'app.py':['A-1']}, remote='origin', branch='main',
                                authorization_reference='synthetic local fixture approval')
-        self.assertNotIn('doc/guide/policy.md', frozen['candidate']['files'])
+        self.assertNotIn('agent_doc/guide/policy.md', frozen['candidate']['files'])
         evidence = self.root / '.agent-runs/acceptance.json'; evidence.write_text('{"synthetic":true}\n')
         proof = [{'path':str(evidence), 'sha256':hashlib.sha256(evidence.read_bytes()).hexdigest(),
                   'task_refs':['A-1'], 'candidate_sha256':frozen['candidate']['sha256']}]

@@ -142,11 +142,13 @@ def register_protection(plan, root=None, *, publication_task_refs=None):
 
 
 def _bound(root, ref):
+    from .legacy_result_paths import legacy_read_binding, relocated_digest_matches
     _need(isinstance(ref, dict) and set(ref) == {'path', 'sha256'} and _text(ref.get('path')),
           'review evidence requires exact path and sha256')
     raw = Path(ref['path'])
     _need(not raw.is_absolute() and '..' not in raw.parts, 'review evidence outside project')
-    path = root / raw
+    read_path, relocated_digest = legacy_read_binding(root, ref['path'])
+    path = root / read_path
     for parent in (path, *path.parents):
         if parent == root:
             break
@@ -161,6 +163,8 @@ def _bound(root, ref):
             _need(size <= 256 * 1024 * 1024, 'review evidence exceeds 256 MiB; use bounded manifest')
             digest.update(chunk)
     _need(digest.hexdigest() == ref['sha256'], 'review evidence changed: ' + ref['path'])
+    _need(relocated_digest_matches(digest.hexdigest(), relocated_digest),
+          'relocated historical review evidence changed')
 
 
 def current_inputs(root, plan, *, publication_task_refs=None):
@@ -177,7 +181,7 @@ def current_inputs(root, plan, *, publication_task_refs=None):
             if 'record_path' in hit:
                 refs[hit['record_path']] = hit['record_sha256']
         for hit in task.get('prior_result_review', {}).get('record_refs', []):
-            refs['doc/results/' + hit['run_id'] + '/record.json'] = hit['record_sha256']
+            refs['agent_doc/results/' + hit['run_id'] + '/record.json'] = hit['record_sha256']
         for contract in [task.get('experiment_result'), task.get('result_validation'),
                          *task.get('required_result_refs', [])]:
             if isinstance(contract, dict) and isinstance(contract.get('validation_plan'), dict):

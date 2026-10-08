@@ -231,7 +231,7 @@ class ProjectDocumentsTests(unittest.TestCase):
         return prepare(self.root, 'docs', 'auto', 'fixture explicit user task', review_required=False)
 
     def guide(self, data='Owner-authored fixture scope'):
-        path = self.root / 'doc/guide/guide.md'
+        path = self.root / 'agent_doc/guide/guide.md'
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(data)
         return path
@@ -244,7 +244,7 @@ class ProjectDocumentsTests(unittest.TestCase):
             for path, sha in plan['project_documents']['guides'].items()])
 
     def advice(self):
-        path = self.root / 'doc/advice/idea.md'
+        path = self.root / 'agent_doc/advice/idea.md'
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text('Try the bounded implementation')
         return path
@@ -258,10 +258,10 @@ class ProjectDocumentsTests(unittest.TestCase):
     def test_migration_preserves_ids_checks_dates_archive_links_and_has_no_guide_files(self):
         result = self.migrated()
         self.assertEqual(set(result['task_details']), {'T1', 'T2'})
-        self.assertEqual(next((self.root / 'doc/task/legacy').glob('TASK.*.md')).read_bytes(), self.legacy)
-        self.assertEqual(list((self.root / 'doc/guide').iterdir()), [])
+        self.assertEqual(next((self.root / 'agent_doc/task/legacy').glob('TASK.*.md')).read_bytes(), self.legacy)
+        self.assertEqual(list((self.root / 'agent_doc/guide').iterdir()), [])
         self.assertNotIn('- [', (self.root / 'TASK.md').read_text())
-        detail = (self.root / 'doc/task/task_details/T1.md').read_text()
+        detail = (self.root / 'agent_doc/task/task_details/T1.md').read_text()
         self.assertIn('Date: 2026-10-06', detail)
         self.assertIn('[log](../../../docs/log.md)', detail)
         self.assertEqual(self.migrated(), result)
@@ -282,14 +282,14 @@ class ProjectDocumentsTests(unittest.TestCase):
         self.assertEqual(len(self.migrated()['task_details']), 2)
 
     def test_migration_conflict_preflight_preserves_all_existing_files(self):
-        detail = self.root / 'doc/task/task_details/T1.md'
+        detail = self.root / 'agent_doc/task/task_details/T1.md'
         detail.parent.mkdir(parents=True)
         detail.write_text('Unrelated user edits')
         with self.assertRaisesRegex(ValueError, 'different bytes'):
             self.migrated()
         self.assertEqual(detail.read_text(), 'Unrelated user edits')
         self.assertEqual((self.root / 'TASK.md').read_bytes(), self.legacy)
-        self.assertFalse((self.root / 'doc/task/legacy').exists())
+        self.assertFalse((self.root / 'agent_doc/task/legacy').exists())
 
     def test_dual_active_index_and_orphan_details_fail_closed(self):
         self.migrated()
@@ -297,7 +297,7 @@ class ProjectDocumentsTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'dual active'):
             self.docs.resolve_task_file(self.root)
         (self.root / 'TASK.md').write_text('Pointer only')
-        (self.root / 'doc/task/task_details/extra.md').write_text('orphan')
+        (self.root / 'agent_doc/task/task_details/extra.md').write_text('orphan')
         with self.assertRaisesRegex(ValueError, 'orphan'):
             self.docs.snapshot_project_docs(self.root)
 
@@ -308,7 +308,7 @@ class ProjectDocumentsTests(unittest.TestCase):
         self.docs.write_task_progress(self.root, 'T1', '\nNew evidence\nTask-ID: quoted-evidence\n',
                                       expected_plan_sha256=old)
         validate_contract(plan, self.root)
-        detail = self.root / 'doc/task/task_details/T1.md'
+        detail = self.root / 'agent_doc/task/task_details/T1.md'
         detail.write_text(detail.read_text().replace('## Plan\n', '## Plan\nChanged method\n'))
         with self.assertRaisesRegex(ValueError, 'changed'):
             validate_contract(plan, self.root)
@@ -372,12 +372,12 @@ class ProjectDocumentsTests(unittest.TestCase):
     def test_controlled_write_delete_rename_reject_guide_and_ancestor_paths(self):
         self.migrated(); guide = self.guide()
         before = guide.read_bytes()
-        for path in ('doc/guide/new.md', 'doc/guide/guide.md', 'doc/guide', 'doc', '.'):
+        for path in ('agent_doc/guide/new.md', 'agent_doc/guide/guide.md', 'agent_doc/guide', 'agent_doc', '.'):
             with self.subTest(path=path), self.assertRaises(ValueError):
                 self.docs.assert_ai_writable(self.root, path)
         with self.assertRaises(ValueError): atomic_json(guide, {'overwrite': True})
         with self.assertRaises(ValueError): self.docs.controlled_remove(self.root, guide)
-        with self.assertRaises(ValueError): self.docs.controlled_rename(self.root, 'doc', 'moved')
+        with self.assertRaises(ValueError): self.docs.controlled_rename(self.root, 'agent_doc', 'moved')
         with self.assertRaises(ValueError): self.docs.controlled_rename(self.root, 'TASK.md', guide)
         self.assertEqual(guide.read_bytes(), before)
 
@@ -391,17 +391,17 @@ class ProjectDocumentsTests(unittest.TestCase):
 
     def test_runtime_store_and_state_directory_cannot_write_guide(self):
         self.migrated(); self.guide()
-        with self.assertRaises(ValueError): Store(self.root / 'doc/guide/state.sqlite')
+        with self.assertRaises(ValueError): Store(self.root / 'agent_doc/guide/state.sqlite')
         plan = self.reviewed(self.plan())
         path = self.root / 'ready.json'; atomic_json(path, plan)
         with patch('agent_runtime.task_supervisor.shutil.which', return_value='/fixture/tmux'):
             with self.assertRaisesRegex(ValueError, 'human-only'):
-                start(path, self.root, self.root / 'doc/guide', allow_legacy=True)
+                start(path, self.root, self.root / 'agent_doc/guide', allow_legacy=True)
 
 
     def test_inline_boundary_text_does_not_hide_later_planning_changes(self):
         self.migrated()
-        detail = self.root / 'doc/task/task_details/T1.md'
+        detail = self.root / 'agent_doc/task/task_details/T1.md'
         detail.write_text(detail.read_text().replace('## Plan\n',
                           '## Plan\nExplanation mentions ## Progress\nThreshold is 10.\n'))
         plan = self.plan()
@@ -491,8 +491,8 @@ class ProjectDocumentsTests(unittest.TestCase):
         (self.root / 'TASK.md').write_bytes(raw)
         snapshot = self.migrated()
         self.assertEqual(len(snapshot['task_details']), 2)
-        self.assertEqual(next((self.root / 'doc/task/legacy').glob('TASK.*.md')).read_bytes(), raw)
-        self.assertIn('### Legacy Progress', (self.root / 'doc/task/task_details/T2.md').read_text())
+        self.assertEqual(next((self.root / 'agent_doc/task/legacy').glob('TASK.*.md')).read_bytes(), raw)
+        self.assertIn('### Legacy Progress', (self.root / 'agent_doc/task/task_details/T2.md').read_text())
         self.assertEqual(self.migrated(), snapshot)
 
 
@@ -502,7 +502,7 @@ class ProjectDocumentsTests(unittest.TestCase):
         task = copy.deepcopy(plan['tasks'][0]); task['document_refs']['task_details'] = {}
         with self.assertRaisesRegex(ValueError, 'omitted'):
             self.docs.check_task_documents(self.root, task)
-        plan['tasks'][0]['report_path'] = 'doc/task/task_details/T1.md'
+        plan['tasks'][0]['report_path'] = 'agent_doc/task/task_details/T1.md'
         with self.assertRaisesRegex(ValueError, 'report paths'):
             validate_contract(plan, self.root)
 
@@ -539,7 +539,7 @@ class ProjectDocumentsTests(unittest.TestCase):
     def test_live_lookup_is_journaled_and_no_hit_does_not_create_registry(self):
         self.migrated()
         plan = self.plan()
-        self.assertFalse((self.root / 'doc/results').exists())
+        self.assertFalse((self.root / 'agent_doc/results').exists())
         for task in plan['tasks']:
             task['action'] = 'fixture'; task['done_when'] = {'fixture': True}
         class Handler:
@@ -555,4 +555,4 @@ class ProjectDocumentsTests(unittest.TestCase):
         logged = json.loads(rows[0][0])
         self.assertEqual(logged['task_id'], 'T1')
         self.assertEqual(logged['search']['status'], 'no_hits')
-        self.assertFalse((self.root / 'doc/results').exists())
+        self.assertFalse((self.root / 'agent_doc/results').exists())

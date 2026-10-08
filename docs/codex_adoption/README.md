@@ -15,7 +15,7 @@ python scripts/setup_codex.py --check
 
 目录符合 [OpenAI Docs 的本地技能机制](https://learn.chatgpt.com/docs/build-skills)，全局规则采用 [AGENTS.md 机制](https://learn.chatgpt.com/docs/agent-configuration/agents-md)。下一轮或新会话发现技能；若宿主尚未刷新则重启 Codex。安装检查表示文件和版本接线成功；模型认证、实际技能发现和调用另做真实任务核验，见本轮 `validation.json`。脚本不修改模型、登录、审批、MCP、插件或 API 配置，不启动新 Agent/定时器。
 
-工作流相对仓库解析；当前项目以 `doc/task/TASK.md` 为唯一日期索引，AI 在 `doc/task/task_details/*.md` 维护方法/进度/证据。其他项目绝不导入本仓库历史任务。每个安装角色携带 `references/project_document_workflow.md`：先核对人类指南及建议取舍，AI 不得在 `doc/guide/` 写任何文件，`doc/advice/` 须经过 adopt/adapt/reject/defer 与理由评估。知识结论检查前提和版本，不冒充本机实验。
+工作流相对仓库解析；当前项目以 `agent_doc/task/TASK.md` 为唯一日期索引，AI 在 `agent_doc/task/task_details/*.md` 维护方法/进度/证据。其他项目绝不导入本仓库历史任务。每个安装角色携带 `references/project_document_workflow.md`：先核对人类指南及建议取舍，AI 不得在 `agent_doc/guide/` 写任何文件，`agent_doc/advice/` 须经过 adopt/adapt/reject/defer 与理由评估。知识结论检查前提和版本，不冒充本机实验。
 
 ## 将工作流用于 Project A
 
@@ -25,13 +25,13 @@ python scripts/setup_codex.py --check
 python C:/Users/WI/Desktop/home_work/AI_LLM/agent/scripts/project_docs.py --root C:/work/ProjectA init
 ```
 
-你在 `C:/work/ProjectA/doc/guide/GUIDE.md` 编写 Project A 的目标、约束与验收；AI 在该项目的 `doc/task/`、`doc/advice/`、`doc/results/` 维护工作记录。初始化只建空目录和空任务索引，不编写指南、不复制 agent 的历史任务，也不启动后台服务。已有文档保留；旧根 TASK.md 需显式检查/迁移。
+你在 `C:/work/ProjectA/agent_doc/guide/GUIDE.md` 编写 Project A 的目标、约束与验收；AI 在该项目的 `agent_doc/task/`、`agent_doc/advice/`、`agent_doc/results/` 维护工作记录。初始化只建空目录和空任务索引，不编写指南、不复制 agent 的历史任务，也不启动后台服务。已有文档保留；旧根 TASK.md 需显式检查/迁移。
 
 在 Project A 目录启动 Codex，交接与运行时 CLI 显式传 `project_root` / `--root C:/work/ProjectA`。即使脚本位于 agent 库，也必须写入 Project A。缺少 Project A 的指南或任务不能回退到 agent/doc；只有升级 agent 库本身时，PROJECT_ROOT 才等于 agent 库根目录。
 
 ## 每轮迭代
 
-1. 读取当前项目人类指南、`doc/task/TASK.md`、关联详情/建议决定、运行状态及受影响输出。干净工作区先 `git pull --ff-only origin main`，或等效 fetch + fast-forward；有改动时保留检查点并整合，不用 hard reset 清理。记录本轮基线与目标。 每次成功 pull 后核对 HEAD 等于 fetched main，在模型轮次之间运行 python scripts/setup_codex.py 和 python scripts/setup_codex.py --check，再开始下一任务；本机技能冲突时保留修改并报告。
+1. 读取当前项目人类指南、`agent_doc/task/TASK.md`、关联详情/建议决定、运行状态及受影响输出。干净工作区先 `git pull --ff-only origin main`，或等效 fetch + fast-forward；有改动时保留检查点并整合，不用 hard reset 清理。记录本轮基线与目标。 每次成功 pull 后核对 HEAD 等于 fetched main，在模型轮次之间运行 python scripts/setup_codex.py 和 python scripts/setup_codex.py --check，再开始下一任务；本机技能冲突时保留修改并报告。
 2. 针对实际缺陷保留可复现基线、实现、验证和负结果。按改动运行必要检查；涉及主调度或共享契约时执行仓库规定的完整测试，不用文件安装成功代替模型行为验收。
 3. 发布前再次 fetch，整合并发提交与冲突，重验受影响范围。按现有授权普通 push main；缺少原生 Git 写凭据时可用已连接 GitHub API 创建 tree/commit，并按 expected_sha 非强制更新。独立读回远端 SHA 与内容树。
 4. 运行 `python scripts/setup_codex.py`，再 `--check`，同步已经验证的提交。只在两次任务之间同步；新启动的模型使用新版本。全局指引只放入口，专业正文按需读取。
@@ -50,6 +50,6 @@ python C:/Users/WI/Desktop/home_work/AI_LLM/agent/scripts/project_docs.py --root
 
 仓库文档迁移、插件引用同步与本机技能安装是三种不同操作。`setup_codex.py` 的既有文件快照机制会携带新增包内契约和受管入口，不创建/迁移用户项目文档，不触碰其人类指南。只有已提交且独立核验后按原同步步骤执行并读回，才可报告本机已更新；新会话是否实际发现和遵守规则仍须另验。
 
-安装器拒绝把 skills、state 或 codex-home 指向任何 `doc/guide/` 子树（含路径别名），并预检状态文件/备份目录的重定向；这属于工具入口保护，不是操作系统 ACL 或针对恶意并发改路径的事务保证。
+安装器拒绝把 skills、state 或 codex-home 指向任何 `agent_doc/guide/` 子树（含路径别名），并预检状态文件/备份目录的重定向；这属于工具入口保护，不是操作系统 ACL 或针对恶意并发改路径的事务保证。
 
-新项目指令的执行前反思先查 `doc/results/` 的既有数据/元数据和当前独立验证，规则由每个角色的 `references/result_reuse_workflow.md` 发现；完整 checkout 使用 `scripts/result_store.py`，纯 Skill 分发不谎称自带结果运行时。新数据统一入 `doc/results/<run_id>/`，历史冻结引用保留真实路径和哈希；复用仍须代码/数据验收，明确复现与新主张必做实验不可跳过。
+新项目指令的执行前反思先查 `agent_doc/results/` 的既有数据/元数据和当前独立验证，规则由每个角色的 `references/result_reuse_workflow.md` 发现；完整 checkout 使用 `scripts/result_store.py`，纯 Skill 分发不谎称自带结果运行时。新数据统一入 `agent_doc/results/<run_id>/`，历史冻结引用保留真实路径和哈希；复用仍须代码/数据验收，明确复现与新主张必做实验不可跳过。

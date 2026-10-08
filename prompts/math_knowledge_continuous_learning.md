@@ -1,8 +1,8 @@
 # 数学与基础学科知识库：持续学习任务 Prompt
 
-开始本轮前先按 `workflows/result_reuse_workflow.md` 查询 `doc/results/` 的既有数据/验证；条件匹配且当前独立核验仍有效时复用，必要修订按最小检查验证。明确必做实验/复现不跳过，登记历史引用不等于已复制所有数据。
+开始本轮前先按 `workflows/result_reuse_workflow.md` 查询 `agent_doc/results/` 的既有数据/验证；条件匹配且当前独立核验仍有效时复用，必要修订按最小检查验证。明确必做实验/复现不跳过，登记历史引用不等于已复制所有数据。
 
-项目文档入口统一按 `workflows/project_document_workflow.md`：先读已核实人类指南、`doc/task/TASK.md` 和相关 `task_details/*.md`，评估 `doc/advice/` 并记录取舍；AI 绝不在 `doc/guide/` 创建、编辑、删除或移动任何文件。当前用户取消/范围约束优先，旧记录不自动恢复已取消批次。
+项目文档入口统一按 `workflows/project_document_workflow.md`：先读已核实人类指南、`agent_doc/task/TASK.md` 和相关 `task_details/*.md`，评估 `agent_doc/advice/` 并记录取舍；AI 绝不在 `agent_doc/guide/` 创建、编辑、删除或移动任何文件。当前用户取消/范围约束优先，旧记录不自动恢复已取消批次。
 
 将下面分隔线后的内容粘贴到具备联网、仓库读写和执行能力的定时任务中。建议每周 2–3 次；频率由你在调度器中设置，本文件不创建定时任务。没有 Git 写权限的宿主只能交付候选补丁并说明阻塞。该任务维护一般知识，不调用私有项目数据做公开语料。
 
@@ -12,7 +12,7 @@
 
 ## 0. 接续与范围
 
-1. 定位 `https://github.com/Chosen-David/agent` 工作副本；读取 AGENTS.md、doc/task/TASK.md、knowledge/README.md、FORMAT.md、coverage.json、learning_state.json、upstreams.json 和已有轮次证据。先检查未提交修改并拉取最新 main；不覆盖其他工作、不 force-push、不修改 SGLang。
+1. 定位 `https://github.com/Chosen-David/agent` 工作副本；读取 AGENTS.md、agent_doc/task/TASK.md、knowledge/README.md、FORMAT.md、coverage.json、learning_state.json、upstreams.json 和已有轮次证据。先检查未提交修改并拉取最新 main；不覆盖其他工作、不 force-push、不修改 SGLang。
 2. 遵循仓库决策、监督和权限规范。此 Prompt 授权在仓库约定范围维护知识、检索、相应 Skill/测试/文档，并通过验证后直接推送 main。已有授权不足、宿主禁止写入或远程分支保护时保留补丁并报告准确阻塞；不绕过保护。不得泄露密钥、私有项目数据或未经许可的大段资料。
 3. 默认单轮最多 45 分钟，深入阅读 3–6 个来源、发布 0–3 个条目或实质修订；这是上限而非指标。优先小而可验收的增量，余项记入下一轮。不要为凑配额重复条目或假造新进展。
 
@@ -62,7 +62,7 @@ python -m unittest discover -s apps/paper-reader/tests -v
 
 遵循仓库新增要求；失败先修复本轮问题，不删除测试或放宽科学前提来“通过”。知识文件是唯一事实源；索引和 Skill 快照可重建。本轮使用已实现的 SQLite FTS5 索引、结构融合与章节导航；对文件基线保留逐查询结果。可在授权资源范围评估 QMD/其他后端，不把“工具更多”当作质量更好，不默认新增模型服务或计费资源。
 
-把轮次报告保存为 `docs/knowledge_learning/<UTC日期-唯一轮次>/report.md`，包含：本轮问题、实际查看来源及日期、变更 ID/版本、精确采用与拒绝理由、任务建模及引用、验证与反例、失败/未知、下一轮接续。使用真实输出，保留必要测试日志；不要覆写旧报告。主 AI 对照 doc/task/TASK.md 登记验收。
+把轮次报告保存为 `docs/knowledge_learning/<UTC日期-唯一轮次>/report.md`，包含：本轮问题、实际查看来源及日期、变更 ID/版本、精确采用与拒绝理由、任务建模及引用、验证与反例、失败/未知、下一轮接续。使用真实输出，保留必要测试日志；不要覆写旧报告。主 AI 对照 agent_doc/task/TASK.md 登记验收。
 
 提交前检查 diff 和状态，确保没有私密/临时文件。再次 fetch/pull main 并保留并发修改，有冲突先正确整合再重跑受影响检查。验证通过后正常 commit/push main，读回远程 SHA。推送失败就明确报告本地提交与原因，不声称完成发布。
 

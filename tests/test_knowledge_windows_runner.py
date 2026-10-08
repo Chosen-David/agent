@@ -144,7 +144,7 @@ class HostGitTests(unittest.TestCase):
     def test_published_canonical_task_and_results_reconcile(self):
         self.publish(); publisher=self.repo.parent/'publisher'
         for root in (publisher,self.repo):
-            for relative in ('doc/task/TASK.md','doc/task/task_details/K-01.md','doc/results/round/check.json'):
+            for relative in ('agent_doc/task/TASK.md','agent_doc/task/task_details/K-01.md','agent_doc/results/round/check.json'):
                 p=root/relative; p.parent.mkdir(parents=True,exist_ok=True)
                 p.write_text('published fixture',encoding='utf-8')
         self.git(publisher,'add','.'); self.git(publisher,'commit','-m','canonical outputs')
@@ -155,7 +155,7 @@ class HostGitTests(unittest.TestCase):
         self.assertEqual(self.git(self.repo,'status','--porcelain'),'')
 
     def test_human_guide_is_outside_host_reconciliation_scope(self):
-        p=self.repo/'doc/guide/guide.md'; p.parent.mkdir(parents=True)
+        p=self.repo/'agent_doc/guide/guide.md'; p.parent.mkdir(parents=True)
         p.write_text('human-only fixture',encoding='utf-8')
         with self.assertRaisesRegex(RuntimeError,'outside'):
             git_sync(self.repo,self.run,self.env,before=False)

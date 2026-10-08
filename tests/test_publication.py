@@ -379,23 +379,23 @@ class PublicationTests(unittest.TestCase):
         self.git('add', '-A')
         mapping = {name: ['T1'] for name in self.git('diff', '--cached', '--name-only').splitlines()}
         value = self.freeze(mapping)
-        self.assertEqual(value['candidate']['task_path'], 'doc/task/TASK.md')
+        self.assertEqual(value['candidate']['task_path'], 'agent_doc/task/TASK.md')
         self.assertEqual(set(value['candidate']['project_documents']['task_details']), {'T1', 'T2'})
         self.ledger.mark_tested(self.evidence(value))
 
     def test_ai_publication_cannot_include_any_guide_changes(self):
-        guide = self.root / 'doc/guide/guide.md'; guide.parent.mkdir(parents=True)
+        guide = self.root / 'agent_doc/guide/guide.md'; guide.parent.mkdir(parents=True)
         guide.write_text('Human fixture input, not AI output')
-        self.git('add', 'doc/guide/guide.md')
+        self.git('add', 'agent_doc/guide/guide.md')
         with self.assertRaisesRegex(PublicationError, 'human guide'):
-            self.freeze({'app.py': ['T1'], 'doc/guide/guide.md': ['T1']})
+            self.freeze({'app.py': ['T1'], 'agent_doc/guide/guide.md': ['T1']})
         self.assertFalse(self.state.exists())
 
     def test_ignored_human_guide_change_stales_candidate_without_git_tree_change(self):
-        guide = self.root / 'doc/guide/guide.md'; guide.parent.mkdir(parents=True)
+        guide = self.root / 'agent_doc/guide/guide.md'; guide.parent.mkdir(parents=True)
         guide.write_text('Human fixture input')
         exclude = self.root / '.git/info/exclude'
-        exclude.write_text(exclude.read_text() + '\ndoc/guide/\n')
+        exclude.write_text(exclude.read_text() + '\nagent_doc/guide/\n')
         value = self.freeze()
         guide.write_text('Changed human requirement')
         with self.assertRaisesRegex(PublicationError, 'project documents changed'):

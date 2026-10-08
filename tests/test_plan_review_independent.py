@@ -174,7 +174,7 @@ class IndependentPlanReviewTests(unittest.TestCase):
         self.plan['tasks'][0]['adapter_private_options'] = {'command': 'safe-cpu-fixture'}
         self.approve()
         changes = [lambda p: p['tasks'][0].update(action='different'),
-                   lambda p: p['tasks'][0].update(allowed_writes=['doc/guide/guide.md']),
+                   lambda p: p['tasks'][0].update(allowed_writes=['agent_doc/guide/guide.md']),
                    lambda p: p['tasks'][0].update(done_when={'accept_anything': True}),
                    lambda p: p['tasks'][0]['adapter_private_options'].update(command='changed'),
                    lambda p: p.update(authorization_reference='new authorization claim'),
@@ -200,10 +200,10 @@ class IndependentPlanReviewTests(unittest.TestCase):
             self.checked(changed)
 
     def test_adopted_advice_mutation_invalidates_without_reporting_wrapper(self):
-        advice = self.root / 'doc/advice/plan.md'
+        advice = self.root / 'agent_doc/advice/plan.md'
         advice.write_text('Use synthetic fixture acceptance.\n')
         self.plan = self.make_plan('advice-plan')
-        docs.bind_advice(self.plan, [{'path': 'doc/advice/plan.md',
+        docs.bind_advice(self.plan, [{'path': 'agent_doc/advice/plan.md',
             'sha256': hashlib.sha256(advice.read_bytes()).hexdigest(), 'task_refs': ['R1'],
             'disposition': 'adopt', 'reason': 'Matches fixture task.', 'guide_alignment': 'compatible'}])
         self.approve()
@@ -213,7 +213,7 @@ class IndependentPlanReviewTests(unittest.TestCase):
 
     def test_progress_append_remains_valid_but_stable_plan_change_invalidates(self):
         self.approve()
-        detail = self.root / 'doc/task/task_details/R1.md'
+        detail = self.root / 'agent_doc/task/task_details/R1.md'
         old = detail.read_text()
         detail.write_text(old + '\nObserved CPU fixture progress.\n')
         self.assertEqual(self.checked()['status'], 'approved')
@@ -351,7 +351,7 @@ class IndependentPlanReviewTests(unittest.TestCase):
         protocol.write_text('{"scope":"synthetic fixture only"}\n')
         task = self.plan['tasks'][0]
         contract = {'result_id': 'synthetic-result', 'producer_task_id': 'R1',
-                    'producer_actor': task['owner'], 'manifest_path': 'doc/results/fixture/manifest.json',
+                    'producer_actor': task['owner'], 'manifest_path': 'agent_doc/results/fixture/manifest.json',
                     'validation_plan': {'path': protocol.name,
                                         'sha256': hashlib.sha256(protocol.read_bytes()).hexdigest()},
                     'scope': 'Synthetic plan-review fixture; data not yet produced'}
@@ -449,7 +449,7 @@ class IndependentPlanReviewTests(unittest.TestCase):
         self.assertEqual(handler.calls, 1)
 
     def test_relative_plan_path_requires_explicit_trusted_root(self):
-        self.plan['task_source']['path'] = 'doc/task/TASK.md'
+        self.plan['task_source']['path'] = 'agent_doc/task/TASK.md'
         self.approve()
         store = Store(self.root / 'relative.sqlite')
         with self.assertRaisesRegex(PlanReviewError, 'root'):
@@ -494,9 +494,9 @@ class IndependentPlanReviewTests(unittest.TestCase):
 
 
     def scoped_fixture(self):
-        index = self.root / 'doc/task/TASK.md'
+        index = self.root / 'agent_doc/task/TASK.md'
         index.write_text(index.read_text() + '\n- [ ] [R2] Unrelated historical requirement ([detail](task_details/R2.md))\n')
-        (self.root / 'doc/task/task_details/R2.md').write_text(
+        (self.root / 'agent_doc/task/task_details/R2.md').write_text(
             '# [R2] Unrelated historical requirement\n\nTask-ID: R2\nDate: 2026-10-07\n\n## Plan\n\nPreserve historical status.\n\n## Progress\n\nStill unrelated.\n')
         full = self.make_plan('publication-scope')
         for task in full['tasks']:

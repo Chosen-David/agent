@@ -31,7 +31,7 @@ class ResultStoreTests(unittest.TestCase):
         observer = patch('subprocess.run', side_effect=observed_run)
         observer.start()
         self.addCleanup(observer.stop)
-        self.prefix = 'doc/results/cpu-run-1/'
+        self.prefix = 'agent_doc/results/cpu-run-1/'
         self.base = self.root / self.prefix
         self.contract = make_fixture(self.base)
         manifest = json.loads((self.base / 'manifest.json').read_text())
@@ -135,7 +135,7 @@ class ResultStoreTests(unittest.TestCase):
         # separate native run directories; the old registered bytes survive.
         frozen = (self.base / 'raw.json').read_bytes()
         for run_id, inputs in [('changed-input', [0, 2, 9]), ('requested-repeat', [0, 1, 2, 7, 19])]:
-            base = self.root / 'doc/results' / run_id
+            base = self.root / 'agent_doc/results' / run_id
             base.mkdir()
             (base / 'code.py').write_bytes((self.base / 'code.py').read_bytes())
             (base / 'inputs.json').write_text(json.dumps({'n': inputs}))
@@ -312,7 +312,7 @@ class ResultStoreTests(unittest.TestCase):
         self.assertEqual(result['status'], 'incomplete')
 
     def test_protected_root_symlink_and_path_traversal_rejected(self):
-        guide = self.root / 'doc/guide'
+        guide = self.root / 'agent_doc/guide'
         guide.mkdir()
         for supplied in (guide, self.root / 'alias'):
             if supplied.name == 'alias':
@@ -322,7 +322,7 @@ class ResultStoreTests(unittest.TestCase):
         self.assertEqual(list(guide.iterdir()), [])
         with self.assertRaises(ValueError):
             self.store.show('../guide')
-        (self.root / 'doc/results/link').symlink_to(guide, target_is_directory=True)
+        (self.root / 'agent_doc/results/link').symlink_to(guide, target_is_directory=True)
         with self.assertRaisesRegex(ValueError, 'symlink'):
             self.store.search('query')
 

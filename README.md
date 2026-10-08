@@ -1,8 +1,10 @@
 # Agent Workflows
 
+工作流文档统一放在当前项目的 **`agent_doc/`**，项目已有 `doc/` 和 `docs/` 保留原用途。Project A 使用 `ProjectA/agent_doc/`；升级本仓库时使用 `agent/agent_doc/`。已有旧工作流目录只在明确确认归属后迁移。
+
 本机 Codex 接入：`python scripts/setup_codex.py` 安装 15 个用户级技能与按需调度入口；`--check` 核验版本，更新保护本机修改。[Codex 接入与每轮 pull→验证→push→同步流程](docs/codex_adoption/README.md)。
 
-**工作流装在 agent 库，项目文档放在你正在使用它的项目。** 开发 Project A 时，指南是 `ProjectA/doc/guide/GUIDE.md`，任务、建议、结果也都在 `ProjectA/doc/`。只有升级本仓库自身时才维护 `agent/doc/`。
+**工作流装在 agent 库，项目文档放在你正在使用它的项目。** 开发 Project A 时，指南是 `ProjectA/agent_doc/guide/GUIDE.md`，任务、建议、结果也都在 `ProjectA/agent_doc/`。只有升级本仓库自身时才维护 `agent/agent_doc/`。
 
 一个按**场景与能力**组织的通用 Agent 仓库。主 AI 根据用户目标选择工作流，保持通用身份；科研助手是其中一个专业组合，论文伴读与知识讲解也可以独立使用。
 
@@ -10,7 +12,7 @@
 
 ## 新指令先检索已有数据
 
-当前项目新数据统一存放在 `doc/results/<run_id>/`，保留元数据和验证记录。收到新指令先检索已有结果，比较任务、代码/输入/配置/环境、指标单位与当前独立验收，能复用的先复用，条件变化只补必要检查；明确复现和新主张验收不能跳过。旧冻结文件可按原路径/哈希索引，不把未搬移的文件说成已归集。[结果检索与复用](workflows/result_reuse_workflow.md)。
+当前项目新数据统一存放在 `agent_doc/results/<run_id>/`，保留元数据和验证记录。收到新指令先检索已有结果，比较任务、代码/输入/配置/环境、指标单位与当前独立验收，能复用的先复用，条件变化只补必要检查；明确复现和新主张验收不能跳过。旧冻结文件可按原路径/哈希索引，不把未搬移的文件说成已归集。[结果检索与复用](workflows/result_reuse_workflow.md)。
 
 ## 每轮测试/实验数据的独立验证
 
@@ -24,25 +26,25 @@
 python C:/Users/WI/Desktop/home_work/AI_LLM/agent/scripts/project_docs.py --root C:/work/ProjectA init
 ```
 
-然后由你编写 `C:/work/ProjectA/doc/guide/GUIDE.md`，在 Project A 目录启动 AI。命令只建空目录和空任务索引，保留已有文件；缺少 Project A 的文档不应转而读取 agent 库自己的指南或历史任务。
+然后由你编写 `C:/work/ProjectA/agent_doc/guide/GUIDE.md`，在 Project A 目录启动 AI。命令只建空目录和空任务索引，保留已有文件；缺少 Project A 的文档不应转而读取 agent 库自己的指南或历史任务。
 
-- `doc/task/TASK.md`：按日期简洁列出任务；AI 在 `doc/task/task_details/*.md` 维护每项方法、进度、证据与下一步。
-- `doc/guide/`：人类专用，`GUIDE.md` 是已核实人类来源后的最高项目规划依据。AI 只读，绝不创建、编辑、删除或移动其中的文件，初始化仅建空目录。
-- `doc/results/<run_id>/`：新数据、元数据和独立验证共享入口；新指令规划前先查询既有结果。
-- `doc/advice/`：人类和 AI 可编辑建议与反馈；核验后记录采用、调整后采用、拒绝或暂缓及理由，不盲从其他 AI。
+- `agent_doc/task/TASK.md`：按日期简洁列出任务；AI 在 `agent_doc/task/task_details/*.md` 维护每项方法、进度、证据与下一步。
+- `agent_doc/guide/`：人类专用，`GUIDE.md` 是已核实人类来源后的最高项目规划依据。AI 只读，绝不创建、编辑、删除或移动其中的文件，初始化仅建空目录。
+- `agent_doc/results/<run_id>/`：新数据、元数据和独立验证共享入口；新指令规划前先查询既有结果。
+- `agent_doc/advice/`：人类和 AI 可编辑建议与反馈；核验后记录采用、调整后采用、拒绝或暂缓及理由，不盲从其他 AI。
 
-[目录说明与人类使用方式](doc/README.md) · [文档治理、任务绑定与恢复](workflows/project_document_workflow.md)。宿主安全/权限和用户当前明确决定继续适用；已有 `docs/` 研究证据保持原路径，根 `TASK.md` 迁移后仅作导航。
+[目录说明与人类使用方式](agent_doc/README.md) · [文档治理、任务绑定与恢复](workflows/project_document_workflow.md)。宿主安全/权限和用户当前明确决定继续适用；已有 `docs/` 研究证据保持原路径，根 `TASK.md` 迁移后仅作导航。
 
 ## Claude Code 快速接入
 
-[当前任务清单](doc/task/TASK.md) · [文件管理与跨 Agent 交接](workflows/code_organization_workflow.md)
+[当前任务清单](agent_doc/task/TASK.md) · [文件管理与跨 Agent 交接](workflows/code_organization_workflow.md)
 
 ```bash
 git clone https://github.com/Chosen-David/agent.git
 python3 agent/setup.py --target /absolute/path/to/your-project
 ```
 
-一次接入主 AI 调度、15 个 Skills 和 15 个 Claude 子 Agent；Skills 随 clone 下载，保留已有项目规则。进入目标项目启动 Claude，即可按仓库逻辑路由任务、读取 doc/task/TASK.md，并由主 AI 配置 tmux 监督。安装本身不启动模型或后台任务。[完整接入与更新说明](SETUP.md)。
+一次接入主 AI 调度、15 个 Skills 和 15 个 Claude 子 Agent；Skills 随 clone 下载，保留已有项目规则。进入目标项目启动 Claude，即可按仓库逻辑路由任务、读取 agent_doc/task/TASK.md，并由主 AI 配置 tmux 监督。安装本身不启动模型或后台任务。[完整接入与更新说明](SETUP.md)。
 
 ## 2026-10-03：源码对照与逐角色执行验证
 
@@ -75,13 +77,13 @@ python scripts/prepare_agent_eval.py --dev-eval --out /tmp/agent-eval-new-run
 - [验证记录与测试边界](docs/task_supervisor_validation.md) · [计划模板](templates/task_dag.json)
 - `python scripts/demo_task_supervisor.py`：有时间上限的本地真实 IO 演示（合成任务，无模型调用）。
 
-## 2026-10-06：tmux 监督与 doc/task/TASK.md 逐项核对
+## 2026-10-06：tmux 监督与 agent_doc/task/TASK.md 逐项核对
 
-主 AI 统一维护任务链、监督器、定时器和各 Agent。支持**自动从项目 doc/task/TASK.md 编排**与**用户手动触发编排**；两者都保留需求映射、数据/产物、独立验收和剩余事项。
+主 AI 统一维护任务链、监督器、定时器和各 Agent。支持**自动从项目 agent_doc/task/TASK.md 编排**与**用户手动触发编排**；两者都保留需求映射、数据/产物、独立验收和剩余事项。
 
 - 默认用专用 detached tmux 会话启动监督器，SSH 断开后继续运行；worker 崩溃可在会话内重启并恢复同一 SQLite 状态。
 - 每个节点结束后更新 `progress.json`；全部要求验收通过且有结果报告后才生成 `final-report.json` 并退出。失败/清单变化保留监督，交由主 AI 恢复，不能伪报完成。
-- [启动、任务文件格式、主 AI 适配器和恢复说明](workflows/task_supervision_workflow.md#tmux-与任务文档闭环) · [doc/task/TASK.md 模板](templates/TASK.md) · [验证记录](docs/tmux_supervisor_validation.md)
+- [启动、任务文件格式、主 AI 适配器和恢复说明](workflows/task_supervision_workflow.md#tmux-与任务文档闭环) · [agent_doc/task/TASK.md 模板](templates/TASK.md) · [验证记录](docs/tmux_supervisor_validation.md)
 - 需要服务器已具备 tmux、Python 和真实主 AI/工作 Agent 后端；仓库更新不会自动部署到用户服务器。tmux 不跨主机断电/重启保活，默认后端仅验证文件。
 
 ## 从你的目标开始
@@ -255,7 +257,7 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 | [workflows/](workflows/) | 按角色独立的完整规范与 Prompt |
 | [plugins/research-assistant/](plugins/research-assistant/) | 按角色注册表同步的科研与论文学习插件包 |
 | [plugins/travel-assistant/](plugins/travel-assistant/) | 旅行规划技能插件包 |
-| [doc/](doc/) | 人类指南、日期任务索引、AI 任务详情与经评估建议 |
+| [agent_doc/](agent_doc/) | 人类指南、日期任务索引、AI 任务详情与经评估建议 |
 | [templates/](templates/) | 任务/详情/建议格式与科研输入模板；不在 guide 内生成 |
 | [tests/](tests/) | 伴读生成器的边界检查 |
 | [docs/validation.md](docs/validation.md) | 本轮验证范围与限制 |
@@ -266,7 +268,7 @@ python plugins/research-assistant/skills/paper-reading-companion/scripts/build_r
 
 ## 项目记忆、纠错与结果管理
 
-稳定规则放根 `AGENTS.md`，日期任务索引放 `doc/task/TASK.md`，具体方法/验收/进度/证据放 `doc/task/task_details/*.md`；先核对人类指南与建议取舍。用户纠正意图后，主 AI 按 [项目记忆流程](workflows/project_memory_workflow.md) 撤销受影响的旧结论并重新核验，保留原始观测和无关成果。项目账本不等同于平台云端记忆。
+稳定规则放根 `AGENTS.md`，日期任务索引放 `agent_doc/task/TASK.md`，具体方法/验收/进度/证据放 `agent_doc/task/task_details/*.md`；先核对人类指南与建议取舍。用户纠正意图后，主 AI 按 [项目记忆流程](workflows/project_memory_workflow.md) 撤销受影响的旧结论并重新核验，保留原始观测和无关成果。项目账本不等同于平台云端记忆。
 
 [文件管理 Agent](workflows/code_organization_workflow.md) 协调生产者/消费者、参数化脚本和产物索引；[报告工具](scripts/publish_report.py) 保留不可变 run 快照和稳定 latest 入口。脚本与账本需实际接入，文件存在不证明模型自动遵守或服务器已部署。
 

@@ -46,7 +46,7 @@ class SetupTests(unittest.TestCase):
 
     def test_canonical_task_created_without_fabricated_work_and_never_overwritten(self):
         setup.install(self.target)
-        task_file = self.target / 'doc/task/TASK.md'
+        task_file = self.target / 'agent_doc/task/TASK.md'
         self.assertIn('尚未填写已授权任务', task_file.read_text())
         task_file.write_text('- [ ] [REAL] User task and constraints\n')
         setup.install(self.target)

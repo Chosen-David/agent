@@ -1,6 +1,6 @@
 # 建议与处理记录（模板）
 
-此模板用于 `doc/advice/<ID>-<version>.md`，不得生成在 `doc/guide/` 中。建议及其他 AI 的意见不构成授权。
+此模板用于 `agent_doc/advice/<ID>-<version>.md`，不得生成在 `agent_doc/guide/` 中。建议及其他 AI 的意见不构成授权。
 
 - 来源、作者类别与日期：
 - 原建议路径、sha256/版本与 task_refs：

@@ -117,18 +117,18 @@ python -m agent_runtime.knowledge --root knowledge decision '点更新 区间求
 
 2026-10-07 工程维护172253核查跳蛛REM样行为与条件概率方向、作者分析源码及2026终版线索；新增1candidate/0published科学卡，SI与原始分母待核。见 `docs/knowledge_learning/2026-10-07-engineering-172253/report.md`。
 
-2026-10-07 MATH-25/26：新增 `math.softmax-barycenter-error`。学科索引：linear-algebra、probability-and-optimization；问题结构索引：error-bound、normalized-weighted-output、pruning、value-geometry（CLI `search --domain/--structure` 由元数据派生过滤，无全库提示注入）。先核对支持集、非负归一化、固定value/线性W，再区别重合度、质量、输出和端到端目标。证据 `doc/results/math-softmax-20261007-v2/`；新结果按当前规范存doc/results，旧docs证据保持原位。
+2026-10-07 MATH-25/26：新增 `math.softmax-barycenter-error`。学科索引：linear-algebra、probability-and-optimization；问题结构索引：error-bound、normalized-weighted-output、pruning、value-geometry（CLI `search --domain/--structure` 由元数据派生过滤，无全库提示注入）。先核对支持集、非负归一化、固定value/线性W，再区别重合度、质量、输出和端到端目标。证据 `agent_doc/results/math-softmax-20261007-v2/`；新结果按当前规范存agent_doc/results，旧docs证据保持原位。
 
-2026-10-07 MATH-27/28：`math.attention-output-geometry` 将固定权重差映射为实际value/输出投影的Gram半范数，补充局部Jacobian余项与固定线性margin。学科入口：linear-algebra、probability-and-optimization；结构入口：value-geometry、quadratic-form、local-sensitivity、decision-margin。精确概率比较与有限logits局部近似分别核对；两个必要条目的完整按需包约6867 cl100k_base token，不是账单或节省实测。见 `doc/results/math-geometry-20261007/report.md`。
+2026-10-07 MATH-27/28：`math.attention-output-geometry` 将固定权重差映射为实际value/输出投影的Gram半范数，补充局部Jacobian余项与固定线性margin。学科入口：linear-algebra、probability-and-optimization；结构入口：value-geometry、quadratic-form、local-sensitivity、decision-margin。精确概率比较与有限logits局部近似分别核对；两个必要条目的完整按需包约6867 cl100k_base token，不是账单或节省实测。见 `agent_doc/results/math-geometry-20261007/report.md`。
 
-2026-10-07 MATH-29/30：`math.weighted-bilinear-low-rank` 补齐独立乘积分布下的双侧度量/SVD分数近似。学科：linear-algebra、probability-and-optimization；结构：bilinear-score、second-moment-weighting、sensor-response。真实q/k相关性、RoPE低维频率对应、输出/e2e与部署收益须另验。证据 `doc/results/math-weighted-bilinear-20261007/`。
+2026-10-07 MATH-29/30：`math.weighted-bilinear-low-rank` 补齐独立乘积分布下的双侧度量/SVD分数近似。学科：linear-algebra、probability-and-optimization；结构：bilinear-score、second-moment-weighting、sensor-response。真实q/k相关性、RoPE低维频率对应、输出/e2e与部署收益须另验。证据 `agent_doc/results/math-weighted-bilinear-20261007/`。
 
-2026-10-08 MATH-31/32：`math.discrete-budget-allocation` 补齐可加有限菜单的DP与弱对偶代理证书，保留λ加权和遗漏的非支配档位。学科：optimization、probability-and-optimization；结构：discrete-budget、multiple-choice、layer-allocation。成本舍入只保证原预算可行，跨层耦合/e2e和实测延迟不得套用。见 `doc/results/math-allocation-20261008/`。
+2026-10-08 MATH-31/32：`math.discrete-budget-allocation` 补齐可加有限菜单的DP与弱对偶代理证书，保留λ加权和遗漏的非支配档位。学科：optimization、probability-and-optimization；结构：discrete-budget、multiple-choice、layer-allocation。成本舍入只保证原预算可行，跨层耦合/e2e和实测延迟不得套用。见 `agent_doc/results/math-allocation-20261008/`。
 
-2026-10-08 MATH-33/34：`math.finite-menu-selection` 为校准前冻结的有限菜单建立同时Hoeffding界、近似经验选择后的风险界与期望成本安全集合。学科：probability-and-optimization、optimization；结构：finite-family、uniform-convergence、selection-bias、risk-control、expected-budget。必须核对独立样本单位、范围与菜单泄漏；层局部菜单不能冒充整个联合配置族的端到端保证。LTT v3/ReCIRC v1仅筛查有关前提，不复用实验成绩。见 `doc/results/math-selection-20261008/report.md`。
+2026-10-08 MATH-33/34：`math.finite-menu-selection` 为校准前冻结的有限菜单建立同时Hoeffding界、近似经验选择后的风险界与期望成本安全集合。学科：probability-and-optimization、optimization；结构：finite-family、uniform-convergence、selection-bias、risk-control、expected-budget。必须核对独立样本单位、范围与菜单泄漏；层局部菜单不能冒充整个联合配置族的端到端保证。LTT v3/ReCIRC v1仅筛查有关前提，不复用实验成绩。见 `agent_doc/results/math-selection-20261008/report.md`。
 
-2026-10-08 MATH-35/36：`math.perturbation-propagation`给出参考/近似两条轨迹缺陷拆分及有限乘积加权传播界；单点Jacobian、teacher局部误差、相对漂移和经验吸收均不能自动充当一致增益证书。学科numerical-analysis/optimization-and-control/linear-algebra；结构composition-error/gain-product/local-global-error/domain-invariance。只有共享认证域/增益/缺陷覆盖全部候选时，才可形成可加预算上界代理。证据 `doc/results/math-propagation-20261008/`；无模型或token节省实测。
+2026-10-08 MATH-35/36：`math.perturbation-propagation`给出参考/近似两条轨迹缺陷拆分及有限乘积加权传播界；单点Jacobian、teacher局部误差、相对漂移和经验吸收均不能自动充当一致增益证书。学科numerical-analysis/optimization-and-control/linear-algebra；结构composition-error/gain-product/local-global-error/domain-invariance。只有共享认证域/增益/缺陷覆盖全部候选时，才可形成可加预算上界代理。证据 `agent_doc/results/math-propagation-20261008/`；无模型或token节省实测。
 
-2026-10-08 MATH-37/38：`math.sequence-tv-coupling`补齐有限序列的共享前缀最大耦合界、参考前缀均值界及有界奖励/轨迹比值身份。学科probability-and-optimization/information-theory；结构conditional-kernel/sequence-distribution/maximal-coupling/bounded-reward/support-mismatch。分布保证不等于same-seed或greedy输出一致；评分须对应生成路径，经验前缀不能冒充总体。证据 `doc/results/math-sequence-tv-20261008/`；无模型或token节省实测。
+2026-10-08 MATH-37/38：`math.sequence-tv-coupling`补齐有限序列的共享前缀最大耦合界、参考前缀均值界及有界奖励/轨迹比值身份。学科probability-and-optimization/information-theory；结构conditional-kernel/sequence-distribution/maximal-coupling/bounded-reward/support-mismatch。分布保证不等于same-seed或greedy输出一致；评分须对应生成路径，经验前缀不能冒充总体。证据 `agent_doc/results/math-sequence-tv-20261008/`；无模型或token节省实测。
 
-有限softmax的KL/中心化Fisher及路径概率下限见 `math.softmax-kl-fisher`；它与已有TV/输出和序列卡按需关联，不能由局部attention KL直接推出生成质量。证据见 `doc/results/math-softmax-kl-20261008/`。
+有限softmax的KL/中心化Fisher及路径概率下限见 `math.softmax-kl-fisher`；它与已有TV/输出和序列卡按需关联，不能由局部attention KL直接推出生成质量。证据见 `agent_doc/results/math-softmax-kl-20261008/`。

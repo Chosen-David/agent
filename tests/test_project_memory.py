@@ -256,7 +256,7 @@ class DocumentMemoryTests(unittest.TestCase):
             root = Path(directory)
             (root / 'TASK.md').write_text('## 2026-10-07\n- [ ] [T1] Validate result\n')
             migrate(root, '2026-10-07')
-            guide = root / 'doc/guide/guide.md'; guide.write_text('Owner metric A')
+            guide = root / 'agent_doc/guide/guide.md'; guide.write_text('Owner metric A')
             ledger = MemoryLedger(root, create=True)
             ledger.add('raw', 'observation', 'Original measured bytes', 'fixture:measurement', evidence='verified')
             ledger.add('claim', 'claim', 'Accepted under metric A', 'fixture:independent-review',

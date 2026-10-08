@@ -1,8 +1,8 @@
 # 通信研究补充 Prompt
 
-开始本轮前先按 `workflows/result_reuse_workflow.md` 查询 `doc/results/` 的既有数据/验证；条件匹配且当前独立核验仍有效时复用，必要修订按最小检查验证。明确必做实验/复现不跳过，登记历史引用不等于已复制所有数据。
+开始本轮前先按 `workflows/result_reuse_workflow.md` 查询 `agent_doc/results/` 的既有数据/验证；条件匹配且当前独立核验仍有效时复用，必要修订按最小检查验证。明确必做实验/复现不跳过，登记历史引用不等于已复制所有数据。
 
-项目文档入口统一按 `workflows/project_document_workflow.md`：先读已核实人类指南、`doc/task/TASK.md` 和相关 `task_details/*.md`，评估 `doc/advice/` 并记录取舍；AI 绝不在 `doc/guide/` 创建、编辑、删除或移动任何文件。当前用户取消/范围约束优先，旧记录不自动恢复已取消批次。
+项目文档入口统一按 `workflows/project_document_workflow.md`：先读已核实人类指南、`agent_doc/task/TASK.md` 和相关 `task_details/*.md`，评估 `agent_doc/advice/` 并记录取舍；AI 绝不在 `agent_doc/guide/` 创建、编辑、删除或移动任何文件。当前用户取消/范围约束优先，旧记录不自动恢复已取消批次。
 
 此段已追加到用户原每1小时持续优化任务；不是第二个调度器。执行时保留原任务的完整批次、读论文、真实角色验收与发布门禁。
 
