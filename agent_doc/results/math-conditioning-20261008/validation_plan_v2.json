@@ -1,0 +1,89 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "Finite discrete conditioning identities, exact arithmetic checks, bounded file-based retrieval; no model/GPU performance claims",
+  "budget": "One bounded topic; CPU only; at most two recent primary papers; preserve other cursors",
+  "criteria": {
+    "implementation": {
+      "procedure": "Read standalone validator and compare independent arithmetic",
+      "acceptance": "Actual standalone CPU code and all imports read independently; independent reference agrees; no production runtime change",
+      "allow_not_applicable": false
+    },
+    "reference_boundary": {
+      "procedure": "Check support, KL direction, event mass and empty-event refusal; original primary sources",
+      "acceptance": "All grid/extras in case_config pass; invalid inputs raise ValueError; infinite forward KL recognized; equations explicitly proved in card",
+      "allow_not_applicable": false
+    },
+    "data_integrity": {
+      "procedure": "Record SHA256 of validator and outputs; public cases are development checks",
+      "acceptance": "Manifest binds code, frozen inputs/config, complete raw case JSON, summary, environment and plan hashes; counts match case records; prior data not silently reaccepted",
+      "allow_not_applicable": false
+    },
+    "numerical_sanity": {
+      "procedure": "Exact rational conditioning-TV enumeration; float KL and stable normalizers with boundaries",
+      "acceptance": "Zero exact rational violations; max finite float KL/normalizer error <=1e-12; no unexplained NaN/Inf; extreme sigmoid tested without requiring relative accuracy of underflowed mass",
+      "allow_not_applicable": false
+    },
+    "measurement_validity": {
+      "procedure": "Report elapsed seconds, case counts and retrieval bytes/token estimates; no model tokens measured",
+      "acceptance": "perf_counter around CPU cases, elapsed metadata only; retrieval byte length and ceil(UTF8 bytes/4) labeled estimate, not model tokens; public cases development only",
+      "allow_not_applicable": false
+    },
+    "reproducibility": {
+      "procedure": "Reexecute standalone CPU validator; knowledge validation and refs checks",
+      "acceptance": "Independent deterministic rerun to separate output; code/config hashes match; primary URLs/versions/locators read and adopt/defer decisions recorded; not formal proof",
+      "allow_not_applicable": false
+    }
+  },
+  "outputs": [
+    "verify_conditioning_by_gpt.py",
+    "validation_results.json",
+    "research_by_gpt.md",
+    "report_by_gpt.md"
+  ],
+  "limitations": [
+    "No Lean proof",
+    "No model A/B",
+    "No held-out model tests consumed",
+    "Direct host task graph, not authenticated Engine deployment"
+  ],
+  "revision": 2,
+  "case_config": {
+    "n": 3,
+    "integer_weight_sum": 4,
+    "enumerate_all_nonnegative_weight_vectors": true,
+    "events": "all 7 nonempty subsets; zero-event pairs counted as refusal",
+    "exact_acceptance": "Fraction equality/inequality, zero violations",
+    "kl_grid": "strictly positive P from sum4 grid, Q all sum4 simplex vectors restricted S",
+    "float_absolute_tolerance": 1e-12,
+    "tolerance_basis": "binary64 roundoff in sums of at most3 logarithmic terms with bounded positive rational probabilities; not a kernel enclosure",
+    "extra_cases": [
+      "all-support identity",
+      "asymmetric event masses",
+      "zero atoms",
+      "tiny event masses with exact rationals",
+      "sharp conditional-TV amplification",
+      "empty and zero mass refusal",
+      "negative or unnormalized distributions refusal",
+      "duplicate/out-of-range event positions refusal",
+      "support-mismatch infinite KL",
+      "logits20/0 near-far counterexample",
+      "log-normalizer +/-1000 stability",
+      "sensor acceptance conditional/global mass mismatch"
+    ]
+  },
+  "execution": {
+    "command": [
+      "python agent_doc/results/math-conditioning-20261008/verify_conditioning_by_gpt.py --output agent_doc/results/math-conditioning-20261008/validation_results.json"
+    ],
+    "seeds": [],
+    "repeats": 1,
+    "raw_data": "raw_cases.json",
+    "environment": "environment.json"
+  },
+  "primary_sources": [
+    "MIT6.441 Spring2016 Chapter2 Theorem2.2(2) printed21\u201322",
+    "CMU Shalizi Lecture9 2020-02-11 Backup divergence positivity",
+    "MOIRA arXiv2610.04313v1 2026-10-03 sections3.1\u20133.2,5.5.2",
+    "MassAlloc arXiv2609.32712v1 2026-09-26 section2.2,AppendixB,C.2"
+  ]
+}

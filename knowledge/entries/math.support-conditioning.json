@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "id": "math.support-conditioning",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "有限支持条件化：逆向KL投影、稳定性与质量不可识别",
+  "summary": "候选内归一化不识别全局保留质量；以逆向KL分解、条件TV放大界和分区分母恢复核查hard mask与near/far统计前提。",
+  "aliases": [
+    "候选 筛选 归一化 分母 质量",
+    "接收 过滤 告警 全体 概率",
+    "candidate far fraction retained global mass",
+    "sensor acceptance alarm fraction"
+  ],
+  "domains": [
+    "probability-and-optimization",
+    "information-theory"
+  ],
+  "structures": [
+    "support-conditioning",
+    "normalizer-identifiability",
+    "conditional-error-amplification",
+    "support-mismatch",
+    "候选质量分母",
+    "过滤样本全体占比"
+  ],
+  "assumptions": [
+    "同一非空有限合法集合上的非负归一化概率；事件索引唯一合法且质量正",
+    "条件TV须两分布事件质量均正；逆向KL有限式须q支持事件且q绝对连续于P",
+    "候选比例恢复全局质量需独立事件质量/完整分母；logit温度与因果全集一致",
+    "精确算术推导；浮点样例非认证包络，未证明模型/e2e收益"
+  ],
+  "sources": [
+    {
+      "url": "https://ocw.mit.edu/courses/6-441-information-theory-spring-2016/184197ca5d5418da2415d37e929860b9_MIT6_441S16_chapter_2.pdf",
+      "locator": "Spring2016 Theorem2.2(2) finite chain-rule proof, printed21–22/PDF2–3; conditional TV derived in card",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://www.stat.cmu.edu/~cshalizi/dm/20/lectures/09/lecture-09.html",
+      "locator": "2020-02-11 Lecture9 Backup divergence nonnegativity/equality; source uses log2",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://arxiv.org/abs/2610.04313v1",
+      "locator": "MOIRA v1 Oct3,2026 preprint; sections3.1–3.2,5.5.2 screening only; no reproduction",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://arxiv.org/abs/2609.32712v1",
+      "locator": "MassAlloc v1 Sep26,2026 preprint; section2.2,AppendixB,C.2 screening only; no reproduction",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "agent_doc/results/math-conditioning-20261008/independent_review_v2.md: finite proof/code/data review; not formal",
+      "agent_doc/results/math-conditioning-20261008/validation_results_v2.json: public CPU development cases"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.softmax-barycenter-error"
+    },
+    {
+      "type": "related",
+      "id": "math.softmax-kl-fisher"
+    },
+    {
+      "type": "related",
+      "id": "math.data-processing-task-sufficiency"
+    },
+    {
+      "type": "related",
+      "id": "math.residual-interval-screening"
+    }
+  ]
+}

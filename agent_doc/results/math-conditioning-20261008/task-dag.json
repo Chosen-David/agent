@@ -1,0 +1,82 @@
+{
+  "revision": 3,
+  "nodes": [
+    {
+      "id": "plan",
+      "owner": "/root"
+    },
+    {
+      "id": "review_plan",
+      "owner": "/root/conditioning_plan_verifier",
+      "requires": [
+        "plan"
+      ]
+    },
+    {
+      "id": "produce",
+      "owner": "/root",
+      "requires": [
+        "review_plan"
+      ],
+      "task_type": "experiment",
+      "produces_data": true,
+      "experiment_result": {
+        "result_id": "math-conditioning-cpu-20261008-v2",
+        "producer_task_id": "produce",
+        "producer_actor": "/root",
+        "manifest_path": "agent_doc/results/math-conditioning-20261008/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-conditioning-20261008/validation_plan.json",
+          "sha256": "c6acb5c22856bdc92cd63ab4df25a51244ba7a9dfa0cb0d69c75085182a41c1a"
+        },
+        "scope": "Finite discrete conditioning identities, exact arithmetic checks, bounded file-based retrieval; no model/GPU performance claims"
+      }
+    },
+    {
+      "id": "verify_experiment_result",
+      "owner": "/root/conditioning_result_verifier",
+      "action": "verify_experiment_result",
+      "requires": [
+        "produce"
+      ],
+      "result_validation": {
+        "result_id": "math-conditioning-cpu-20261008-v2",
+        "producer_task_id": "produce",
+        "producer_actor": "/root",
+        "manifest_path": "agent_doc/results/math-conditioning-20261008/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-conditioning-20261008/validation_plan.json",
+          "sha256": "c6acb5c22856bdc92cd63ab4df25a51244ba7a9dfa0cb0d69c75085182a41c1a"
+        },
+        "scope": "Finite discrete conditioning identities, exact arithmetic checks, bounded file-based retrieval; no model/GPU performance claims"
+      }
+    },
+    {
+      "id": "publish_knowledge",
+      "owner": "/root",
+      "requires": [
+        "verify_experiment_result"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-conditioning-cpu-20261008-v2",
+          "producer_task_id": "produce",
+          "producer_actor": "/root",
+          "manifest_path": "agent_doc/results/math-conditioning-20261008/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/math-conditioning-20261008/validation_plan.json",
+            "sha256": "c6acb5c22856bdc92cd63ab4df25a51244ba7a9dfa0cb0d69c75085182a41c1a"
+          },
+          "scope": "Finite discrete conditioning identities, exact arithmetic checks, bounded file-based retrieval; no model/GPU performance claims"
+        }
+      ]
+    }
+  ],
+  "scope": "Finite discrete conditioning identities, exact arithmetic checks, bounded file-based retrieval; no model/GPU performance claims",
+  "limitations": [
+    "No Lean proof",
+    "No model A/B",
+    "No held-out model tests consumed",
+    "Direct host task graph, not authenticated Engine deployment"
+  ]
+}

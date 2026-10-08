@@ -2,7 +2,7 @@
 
 这里保存跨项目可复用的数学、物理、AI Infra、AI 算法、数据结构算法与跨物种神经科学知识；Skill 保存使用知识的方法。项目观测、用户偏好和执行状态仍由项目记忆、TASK.md 与运行目录负责。
 
-当前包含 93 个已发布条目，另有3个待核验candidate：50 个数学/物理基础条目（包括18个本轮高等代数主题）、22 张工程复用卡、2条AI算法推导知识，以及 8 张 2026 年 RL / 概率论研究卡（ICLR、ICML、COLT、ALT），以及11张神经科学/NeuroAI卡（10篇正式论文、1篇明确绑定的2024预印本）。近五年检索窗口为2021-10-07至2026-10-07，本轮所选来源为2023–2026；最新核查论文发表于2026-09-29。机构/作者博客单列来源，生物发现、意识理论与AI设计假设分开记录。新增卡核查原论文的相关实验、定理前提与反例，未执行本机论文复现，不代表完整学科覆盖或 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
+当前包含 94 个已发布条目，另有3个待核验candidate：51 个数学/物理基础条目（包括18个本轮高等代数主题）、22 张工程复用卡、2条AI算法推导知识，以及 8 张 2026 年 RL / 概率论研究卡（ICLR、ICML、COLT、ALT），以及11张神经科学/NeuroAI卡（10篇正式论文、1篇明确绑定的2024预印本）。近五年检索窗口为2021-10-07至2026-10-07，本轮所选来源为2023–2026；神经科学最新核查论文发表于2026-09-29。机构/作者博客单列来源，生物发现、意识理论与AI设计假设分开记录。新增卡核查原论文的相关实验、定理前提与反例，未执行本机论文复现，不代表完整学科覆盖或 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
 
 ## 实际使用
 
@@ -132,3 +132,5 @@ python -m agent_runtime.knowledge --root knowledge decision '点更新 区间求
 2026-10-08 MATH-37/38：`math.sequence-tv-coupling`补齐有限序列的共享前缀最大耦合界、参考前缀均值界及有界奖励/轨迹比值身份。学科probability-and-optimization/information-theory；结构conditional-kernel/sequence-distribution/maximal-coupling/bounded-reward/support-mismatch。分布保证不等于same-seed或greedy输出一致；评分须对应生成路径，经验前缀不能冒充总体。证据 `agent_doc/results/math-sequence-tv-20261008/`；无模型或token节省实测。
 
 有限softmax的KL/中心化Fisher及路径概率下限见 `math.softmax-kl-fisher`；它与已有TV/输出和序列卡按需关联，不能由局部attention KL直接推出生成质量。证据见 `agent_doc/results/math-softmax-kl-20261008/`。
+
+2026-10-08 MATH-45/46：`math.support-conditioning` 补齐逆向KL固定支持投影、条件TV稳定界与候选分母不可识别构造。学科入口：probability-and-optimization/information-theory；问题结构：support-conditioning/normalizer-identifiability/conditional-error-amplification。只加载所需卡，核对合法全集、事件质量、KL方向及分母来源；候选far占比不自动等于全局far质量。MOIRA v1（2026-10-03）与MassAlloc v1（2026-09-26）为原文筛选，无论文代码复现。见 `agent_doc/results/math-conditioning-20261008/report_by_gpt.md`；无模型/GPU/e2e或token节省实测。

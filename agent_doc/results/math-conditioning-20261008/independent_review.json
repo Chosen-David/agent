@@ -1,0 +1,149 @@
+{
+  "schema_version": "experiment-validation/v1",
+  "status": "invalid",
+  "result_id": "math-conditioning-cpu-20261008-v1",
+  "manifest_sha256": "91b883134ff1852fd7af3699749ee7fdd663200638fb0d7ae550154f80453237",
+  "artifact_hashes": {
+    "agent_doc/results/math-conditioning-20261008/verify_conditioning_by_gpt.py": "0b99029213366e87e3db9888038949a1f0c180f3819bc31c0c9114f5afc9eed5",
+    "agent_doc/results/math-conditioning-20261008/inputs.json": "65fb872b0cdb5587fa030b0c6fe2e86cf2b3ef41e70ff4240791e07b58a592b5",
+    "agent_doc/results/math-conditioning-20261008/validation_plan.json": "c6acb5c22856bdc92cd63ab4df25a51244ba7a9dfa0cb0d69c75085182a41c1a",
+    "agent_doc/results/math-conditioning-20261008/raw_cases.json.gz": "2cdb342dc9a9eaf193da7f1c360a008afaea4f8301af91f6257d6a877bc6e4da",
+    "agent_doc/results/math-conditioning-20261008/validation_results.json": "57b28212733eb6e8f3ac625ede515ec08ddc3706e22a59b127afd6aac447f9fd",
+    "knowledge/entries/math.support-conditioning.md": "a8e0fc9bb6ef66afaa7572aac211c91cb6fbba7878648af92f55a6536a2e654d",
+    "agent_doc/results/math-conditioning-20261008/research_by_gpt.md": "37e209adcad82d716c7ed2ba4c0db7eeddad8e9f3fa9f02acec7a068a013f23c",
+    "agent_doc/results/math-conditioning-20261008/research.json": "cf13491c6f6408013d5e3e0bf92c9ee7897f2175cef25a24b0ec325b8cb80fcc",
+    "agent_doc/results/math-conditioning-20261008/environment.json": "31651e6817c45a73508fb39082a9338abb383beef01b9a4db3333690f816485c"
+  },
+  "validation_plan_sha256": "a9a29eda11d1b80562e7f7ac31cf51fe21e5a81c262f44dfe7e0fefe83f2a87f",
+  "scope": "Finite discrete conditioning identities, exact arithmetic checks, bounded file-based retrieval; no model/GPU performance claims",
+  "verifier": {
+    "actor": "/root/conditioning_result_verifier",
+    "independent": true,
+    "source": "host-dispatched independent subagent review; direct read/execution evidence, not authenticated Engine receipt",
+    "run_id": "math-conditioning-independent-20261008-v1",
+    "method": "Independent code/import/proof review; complete raw-record hashes/replay; separate CPU rerun; alternate exact overlap-TV and Decimal80 KL/normalizer; primary-source screening"
+  },
+  "limitations": [
+    "Independent finite proof review, no Lean/formal proof or universal bug-free certification",
+    "All cases are public development checks; no model quality improvement, held-out model tests, model A/B, GPU/production performance claim",
+    "Binary64 absolute tolerance and Decimal80 sample reference are not certified floating-point enclosures; extreme underflow is accepted only in absolute error",
+    "Direct host independent review; no authenticated Engine runtime deployment/receipt",
+    "Knowledge card remains candidate at review; canonical show/hash verified, published retrieval/context/cost and check-refs acceptance require later independent integration validation",
+    "Elapsed is one CPU arithmetic repeat metadata; retrieval cost protocol labels ceil(UTF8 bytes/4) as estimate only; no model tokens measured"
+  ],
+  "checks": {
+    "implementation": {
+      "verdict": "pass",
+      "reason": "Read all standalone code/imports (Python standard library); execution reads frozen case_config. Independent overlap-TV/Decimal80 formulas agree. Helpers are bounded harness code, not generic production APIs.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_results_reference.json",
+          "sha256": "edcc7c541be399dee8284ab719e906a34b5bcf2524104a351d915bf3f1812e85"
+        },
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_check_by_gpt.py",
+          "sha256": "bfdb0c9e55c86c37376f529ab7bb0b1c01319395cdce4a44d2c0c1103c466f85"
+        }
+      ]
+    },
+    "reference_boundary": {
+      "verdict": "pass",
+      "reason": "1113 exact TV records independently checked via 1-sum(min); all 1575 pair/event IDs complete and unique including462 zero refusals. 120 KL minimum/decomposition records plus18 forward infinity records, zero atoms, bad events, epsilon sharpness, logit20/0 and sensor nonidentifiability verified. 4294 additional sum-six valid-event pairs passed.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_results_reference.json",
+          "sha256": "edcc7c541be399dee8284ab719e906a34b5bcf2524104a351d915bf3f1812e85"
+        },
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_check_by_gpt.py",
+          "sha256": "bfdb0c9e55c86c37376f529ab7bb0b1c01319395cdce4a44d2c0c1103c466f85"
+        },
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_results_sources.json",
+          "sha256": "1ccbc6b85b32d4a03768ad2a44993f6d81c639b54eae5a4db73b35e15f660081"
+        }
+      ]
+    },
+    "data_integrity": {
+      "verdict": "fail",
+      "reason": "v1 rejected: execution.seeds=[] violates current runtime nonempty-seeds contract; active validation_plan changed to approved revision3, so old active-path hash is stale. Original v1 manifest and revision2 plan bytes preserved; science records still match separate rerun.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_results_reference.json",
+          "sha256": "edcc7c541be399dee8284ab719e906a34b5bcf2524104a351d915bf3f1812e85"
+        },
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_check_by_gpt.py",
+          "sha256": "bfdb0c9e55c86c37376f529ab7bb0b1c01319395cdce4a44d2c0c1103c466f85"
+        }
+      ]
+    },
+    "numerical_sanity": {
+      "verdict": "pass",
+      "reason": "Zero exact rational violations; maximum recorded finite binary64 error2.220446049250313e-16 <=1e-12; independent Decimal80 reference max float error5.551115123125783e-17. No unexplained NaN/Inf; positive-over-zero KL is intentional infinity; extreme sigmoid underflow judged by absolute error.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_results_reference.json",
+          "sha256": "edcc7c541be399dee8284ab719e906a34b5bcf2524104a351d915bf3f1812e85"
+        },
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_check_by_gpt.py",
+          "sha256": "bfdb0c9e55c86c37376f529ab7bb0b1c01319395cdce4a44d2c0c1103c466f85"
+        }
+      ]
+    },
+    "measurement_validity": {
+      "verdict": "pass",
+      "reason": "perf_counter covers CPU arithmetic loop only; single-repeat seconds metadata, no speed comparison. Cases development only. Retrieval protocol labels UTF8-byte/4 ceiling as estimate, not model tokens; published retrieval measurement is not claimed accepted here.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_results_reference.json",
+          "sha256": "edcc7c541be399dee8284ab719e906a34b5bcf2524104a351d915bf3f1812e85"
+        },
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_check_by_gpt.py",
+          "sha256": "bfdb0c9e55c86c37376f529ab7bb0b1c01319395cdce4a44d2c0c1103c466f85"
+        }
+      ]
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "Fresh standalone rerun to distinct output/raw paths reproduces every case record and deterministic summary excluding elapsed/path; actual Python/platform match environment. Candidate corpus validates, canonical pinned show resolves matching proof text; original sources/versions/locators independently read and adopt/defer decisions recorded.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_results_reference.json",
+          "sha256": "edcc7c541be399dee8284ab719e906a34b5bcf2524104a351d915bf3f1812e85"
+        },
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_check_by_gpt.py",
+          "sha256": "bfdb0c9e55c86c37376f529ab7bb0b1c01319395cdce4a44d2c0c1103c466f85"
+        },
+        {
+          "path": "agent_doc/results/math-conditioning-20261008/independent_results_sources.json",
+          "sha256": "1ccbc6b85b32d4a03768ad2a44993f6d81c639b54eae5a4db73b35e15f660081"
+        }
+      ]
+    }
+  },
+  "archived_plan": {
+    "path": "agent_doc/results/math-conditioning-20261008/validation_plan_v2.json",
+    "sha256": "a9a29eda11d1b80562e7f7ac31cf51fe21e5a81c262f44dfe7e0fefe83f2a87f"
+  },
+  "source_evidence": {
+    "path": "agent_doc/results/math-conditioning-20261008/independent_results_sources.json",
+    "sha256": "1ccbc6b85b32d4a03768ad2a44993f6d81c639b54eae5a4db73b35e15f660081"
+  },
+  "knowledge_refs": [
+    {
+      "id": "math.support-conditioning",
+      "version": 1,
+      "sha256": "27af65b133210357e6c9c44b2773841bead60b4c45bf5c31e9fff53f8ef3df04"
+    }
+  ],
+  "rejection_details": {
+    "original_bound_plan_sha256": "a9a29eda11d1b80562e7f7ac31cf51fe21e5a81c262f44dfe7e0fefe83f2a87f",
+    "actual_active_plan_sha256": "c6acb5c22856bdc92cd63ab4df25a51244ba7a9dfa0cb0d69c75085182a41c1a",
+    "original_manifest_path": "agent_doc/results/math-conditioning-20261008/manifest_v1.json",
+    "seeds": []
+  }
+}
