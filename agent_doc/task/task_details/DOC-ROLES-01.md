@@ -16,3 +16,5 @@ Date: 2026-10-08
 文案初案额外创建 task_details/README.md。只读追踪 agent_runtime/project_docs.py 的 snapshot_project_docs 发现，该目录所有文件必须与已登记任务一一匹配，因此发布前撤回这个新建说明文件，将内容与链接并入 task/README.md，Plan 升为 v2；无运行时、初始化器或守卫变更。
 
 已人工复核五个 README 的文字、相对链接与责任归属，并核对 git diff --check。GUIDE.md 仍为空文件，SHA256 为 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855，未改原文。没有生成测试/实验数据或声称新的回归通过；普通发布与远端验证待完成。
+
+已普通非强制发布 main：b60f9b365235bcad80d8fe02edbf640a8ce27418。独立 GitHub ref/commit 读回和原生 fetch 确认完整树 657d032e14442f1a022a6bcfcec67d254d4ecb4a 一致；工作文件保留。setup_codex 和 --check 通过，15技能444文件，无技能文件更新。唯一任务索引现登记完成；本收尾记录单独提交，随后再次核对远端并同步。
