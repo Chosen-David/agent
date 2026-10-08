@@ -1,5 +1,9 @@
 # Project tasks
 
+## 2026-10-08 代码 Agent 编译反馈
+
+- [ ] [KERNEL-FEEDBACK-01] 提取编译资源诊断、接通条件化优化参考与独立验收，核验 main 发布状态。 ([detail](task_details/KERNEL-FEEDBACK-01.md))
+
 AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-08

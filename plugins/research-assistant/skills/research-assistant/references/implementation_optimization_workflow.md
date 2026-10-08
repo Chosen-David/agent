@@ -76,6 +76,8 @@ rg --files --hidden .implementation-skill-sources -g 'SKILL.md' -g 'README.md' -
 
 记录实际编译器、框架、驱动、设备、profiler 版本和可访问资源。没有 GPU 不称 GPU 正确性/性能已验证；没有性能计数器权限也不虚构 profile 结论，可以继续做其他可运行的验证。
 
+编译资源诊断与性能归因按需加载 [编译与性能反馈](kernel_optimization_feedback.md)，复用本地 PTXAS 提取工具、现有 GPU 资源与计时证据检查。只把寄存器/spill/共享内存作为可检验假设，不直接据此宣布加速；优化技巧必须匹配当前工具链和硬件。
+
 CPU 候选下载地址分别为 `https://github.com/intel/intel-performance-skills.git` 与 `https://github.com/jc1122/perf-benchmark-skill.git`。按上述方式克隆到独立目录，读 README 与实际入口后安装选中的能力。AKO4ALL 即使以单个 Skill 入口提供协议，也要保留其实际依赖的脚本与文件；不要只下载 `SKILL.md`。不得为了自动迭代绕过平台权限或采用跳过权限检查的启动参数。
 
 数据结构候选可从 `https://github.com/karanb192/algo-sensei.git` 下载，保留其模式与引用文件；只启用适合实现任务的能力。GPU 知识候选可从 `https://github.com/slowlyC/agent-gpu-skills.git` 下载，按当前 README 安装所需单个 Skill；其安装可能依赖上游源码和软链接，不能仅复制入口或移动源目录后假设链接仍然可用。科学计算库选型从 K-Dense 仓库的 `skills/optimize-for-gpu` 获取完整目录。所有下载仍服从第一步选型，不把新增候选全部安装。

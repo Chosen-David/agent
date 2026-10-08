@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "snapshot": "b3b032e319c7a05cd781b2affdad9e7f086596e0b9127de29eb6b69b331ece32",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "impl.flashattention-library",
+      "version": 1,
+      "sha256": "8e7488a7d266860ab3e5987723de3a71ec87fdd1bb36a2ee09c2edca9bc56fa9",
+      "title": "复用 FlashAttention 公共接口",
+      "summary": "已有 supported attention 语义时先评估作者库公共接口；按 README/固定接口核对设备、dtype、mask 和版本，减少自写 kernel。",
+      "status": "published",
+      "assumptions": [
+        "operation: supported dense attention variant",
+        "device: supported NVIDIA GPU",
+        "semantic: exact attention within floating-point tolerance"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#impl.flashattention-library"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "cuda"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "cuda"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "cuda"
+          ]
+        }
+      ],
+      "score": 10
+    },
+    {
+      "id": "infra.flashinfer-scheduling",
+      "version": 1,
+      "sha256": "b2c5115a588c93b3bce8e56986069415fe37569aa887e25ee6cd2a8f425d5770",
+      "title": "FlashInfer：不规则 KV 与负载平衡",
+      "summary": "MLSys 2025 以可组合 KV 格式、JIT 与调度支持不同推理形状；库选择必须匹配 KV 布局、decode/prefill 和计划成本。",
+      "status": "published",
+      "assumptions": [
+        "hardware: A100 40GB SXM or H100 80GB SXM",
+        "workload: ragged/batched LLM inference",
+        "metric: attention latency and end-to-end serving"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#infra.flashinfer-scheduling"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "cuda",
+            "h100"
+          ]
+        }
+      ],
+      "score": 2
+    },
+    {
+      "id": "ai.speculative-decoding-cost-bound",
+      "version": 1,
+      "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f",
+      "title": "推测解码：接受前缀尾和与成本盈亏条件",
+      "summary": "单提议接受率为1−TV；一轮输出长度由连续接受事件的尾和决定。只有附加恒定条件接受率和固定验证成本假设才得到几何加速式；树、MTP、batch变化必须重建事件与成本。",
+      "status": "published",
+      "assumptions": [
+        "单提议1−TV恒等式沿用残差校正条目的真实p/q与正确前缀；不能直接套整棵树",
+        "固定正整数horizon γ，一轮L=N+1包含补偿或bonus，公式暂不包含EOS/最大长度截断",
+        "一般尾和无需独立性；几何式额外要求每个到达深度的条件接受概率为同一α",
+        "基线T、draft比率c、验证比率v及额外成本o按同一硬件/模型/采样/负载口径定义；γc假设串行每步draft成本相同",
+        "速度比公式对应长序列稳定成本模型；随机轮成本须满足长期均值比率成立条件，不能使用平均逐轮速度比",
+        "α>c的存在性阈值只适用于v=1,o=0的理想模型；真实v/o、树形及并发负载须另测"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "h100"
+          ]
+        }
+      ],
+      "score": 1
+    }
+  ]
+}

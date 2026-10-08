@@ -1,0 +1,47 @@
+# 编译与性能反馈驱动的代码优化
+
+只在 CPU/GPU 性能任务、编译失败或资源压力诊断时加载。先固定当前项目、输入/形状/dtype、语义/容差、基线、硬件/软件、预算和停止条件。此参考补充 [实现流程](implementation_optimization_workflow.md)，复用 [测量证据契约](measurement_evidence_contract.md)；不启动新 runtime，不新增付费/GPU 权限。
+
+## 最小闭环
+
+1. **定位**：先看端到端时间线，分清主机开销、搬运、同步、通信与 kernel；只 profile 影响关键路径的部分。编译失败、权限不足、OOM、测量污染分别记录，不能全记作算法失败。
+2. **绑定**：为每个候选保存代码/输入/配置 hash、编译命令和退出码、工具链/目标架构、原日志及 profiler 原始导出。多候选的日志分开，固定单位和指标定义。日志中出现名称不证明它来自当前源码。
+3. **归因**：给出观察→假设→反例→最小实验。例如 spill 增加只支持“资源压力值得检查”，不能推出 kernel 受 spill 主导。静态 spill 字节不是动态访存量，stack frame 不等于 spill，编译报告缺项不等于 0。结合实际访问/停顿/时长与启动参数验证。
+4. **实验**：每次少量候选、每个候选一个主要机制；相关参数如 tile 与 stages 有交互时明确做小型联合比较。不为追逐 occupancy、SOL 或峰值吞吐而牺牲实际延迟和正确性。
+5. **验收**：先独立正确性，再同条件计时；保留全部尝试、噪声/失败和无收益。复用代码 Skill 的 `gpu_adapter.py` 资源排他与 `measurement_review.py` 证据检查，缺可靠独占时不报精确收益。profile 的插桩开销不混入正常计时。
+6. **交接**：只传最小失败样例、具体诊断/行号、候选差异、已排除解释和下一项可证伪实验；完整日志保留可取回引用。固定开发子集可缩短迭代，但不能替代完整必需验证或未见测试。以预定预算/阈值停止，不无限尝试后挑最优一次。
+
+独立候选的实现或编译可按已授权资源并行；同卡 benchmark 串行隔离。同项目既有 Engine/租约/取消机制拥有状态；合作锁不证明机器上没有外部负载，不能另造第二套 done。
+
+## 可执行的 PTXAS 反馈
+
+在已安装代码 Skill 中定位 [compiler_feedback.py](../plugins/research-assistant/skills/research-implement-optimize/scripts/compiler_feedback.py)，运行：
+
+```bash
+python /actual/skill/scripts/compiler_feedback.py /absolute/project/run/compile.log
+```
+
+脚本只读一个 UTF-8、最多 8 MiB、**单次且不交错**的 PTXAS verbose 日志，向 stdout 输出 JSON，不编译、不写文件。由当前项目的受控结果写入入口保存 stdout，不能重定向覆盖指南/旧产物。对于 `nvcc -Xptxas=-v` 的常见资源行，按函数/架构分别提取寄存器、静态 shared memory、stack frame 和 spill loads/stores；保留原日志 SHA256 和行号，重复编译不按名称合并，矛盾字段置 unknown 并保留观察。不同进程交错无法可靠自动恢复，必须先按 invocation 分流；其他日志格式直接查看原件，不强套解析结果。
+
+`parsed` 仅代表支持的字段齐全，`partial`/`no_records` 要回看原日志。`compile_success=null`、`performance_verdict=not_measured` 始终保留：即使解析命令 exit 0 也不是编译、正确性或性能通过。显式缺项为 null，包括未打印的 smem；不推测为零。目标架构未知的独立 device function 不沿用上一个 kernel 的架构。
+
+CPU 路线优先编译器原生诊断：Clang 的 `-fsave-optimization-record` 和 `-Rpass`/`-Rpass-missed`/`-Rpass-analysis` 保留 Passed/Missed/Analysis、pass、源码位置及参数。该脚本不解析 LLVM YAML，避免混淆格式。提示 aliasing 时先证实真实调用的非别名契约，再考虑 restrict；不能为向量化引入未定义行为。[LLVM Remarks](https://llvm.org/docs/Remarks.html)（核查 2026-10-08）。
+
+## 条件化 trick，而非默认开关
+
+| 观察与候选 | 必须先核对 | 最小判别实验与拒用条件 |
+| --- | --- | --- |
+| 寄存器/本地 spill 压力：缩短 live range、改变 tile/stages/展开 | 静态报告、实际热点、形状尾块；寄存器减少不必然更快 | 固定算法比较正确性和延迟；检查新增访存、并行度与资源峰值；无改善即不采用 |
+| CUDA 13+ shared-memory spilling | whole-program 模式；不用于动态 shared memory、跨 warp 动态寄存器重分配或 per-function/debug 编译 | 先评估 smem 配额/occupancy，再做开关对照；launch bounds 是建议，不伪写为一律强制。spill 降低但时长无益则拒绝 |
+| persistent / grouped tiles | 工作分配、L2 局部性、负载不均、实际 GPU 与尾块 | 与非 persistent 同条件比较，检查 tile 顺序和缓存；persistent 也可能更慢，不由名称判优 |
+| warp specialization / 异步流水 | 实际 ISA、寄存器/smem 配额、阶段同步与边界正确性 | 区分 Hopper 可用能力与 Blackwell 专属 tcgen05；少量配置对照，资源不足或同步复杂度无收益则拒绝 |
+| 融合/减少 launch | 真实时间线表明 launch 或中间读写占比高，语义及同步可保留 | 计入前后处理、重排/分配与新增 spill；kernel 局部变快而端到端退化不能采用 |
+
+下列为方法来源和迁移判断，未计为本库 GPU 实测或十篇全文论文阅读：
+
+- [PyTorch KernelAgent](https://pytorch.org/blog/kernelagent-hardware-guided-gpu-kernel-optimization-via-multi-agent-orchestration/)，2026-03-06：采用硬件观察驱动的小实验与质量/成本分离；不照搬完整多 Agent 编排或作者加速数字。
+- [NVIDIA shared-memory register spilling](https://developer.nvidia.com/blog/how-to-improve-cuda-kernel-performance-with-shared-memory-register-spilling/)，2025-08-27：采用正文的工具链/资源限制，不能只信页面 AI 摘要；没有目标硬件测量时仍是候选。
+- [Triton Persistent Kernels](https://triton-lang.org/main/getting-started/tutorials/gluon/persistence.html) 与 [Warp Specialization](https://triton-lang.org/main/getting-started/tutorials/gluon/warp-specialization.html)，核查 2026-10-08：动态 main 文档应随实际安装版本复核；不把教程硬件表现当其他架构保证。
+- [Anthropic compiler engineering](https://www.anthropic.com/engineering/building-c-compiler)，2026-02-05：采用短诊断与可复核测试反馈，拒绝无限迭代/权限绕过。[Infrastructure noise](https://www.anthropic.com/engineering/infrastructure-noise)，同日：区分资源环境与方法失败；不从其结果推导通用资源倍数。
+
+在报告中分列程序测试、真实角色任务、跨角色交接、公平 A/B、外部集成。没有匹配的基线/模型条件就记 A/B inconclusive；资源解析正确不证明 Agent 能力提升。项目优化建议与证据留在目标项目 `agent_doc/`，通用方法参考留在工作流库。

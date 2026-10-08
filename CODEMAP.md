@@ -129,3 +129,5 @@ DOC-SCOPE-01：在 SCOPE-01–03 项目初始化实现之上补齐跨项目切�
 - `agent_doc/task/task_details/DOC-ROLES-01.md`：本轮范围、检索取舍、文案复核和发布进度。
 
 ORCH-PAR-01：`workflows/causal_task_orchestration_workflow.md` → 通用/科研/planner/review主控、任务监督与实现角色；现有sync脚本生成插件引用。`agent_doc/results/causal-orchestration-20261008/` 保存本轮规划使用与独立核验，程序/规划证据不代表多GPU实测。
+
+KERNEL-FEEDBACK-01：`workflows/kernel_optimization_feedback.md` 是编译/性能反馈的按需参考；`research-implement-optimize/scripts/compiler_feedback.py` 只读 PTXAS 日志输出带行号/哈希的资源 JSON。`scripts/sync_plugin_references.py` 向代码/主控 Skill 同步离线副本；`tests/test_compiler_feedback.py` 覆盖字段和失败边界。主 AI 生产、独立代码审查与真实技能使用者验证，证据入口 `agent_doc/results/kernel-feedback-20261008/report_by_gpt.md`。无 GPU 编译/加速声明，不改旧 HOST 批次状态。

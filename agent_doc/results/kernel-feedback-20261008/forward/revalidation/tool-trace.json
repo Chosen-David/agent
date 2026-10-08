@@ -1,0 +1,46 @@
+[
+  {
+    "name": "compiler-feedback",
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-B",
+      "/workspace/scratch/c12f3d9f92bd/agent/plugins/research-assistant/skills/research-implement-optimize/scripts/compiler_feedback.py",
+      "/workspace/scratch/c12f3d9f92bd/agent/agent_doc/results/kernel-feedback-20261008/forward-input.log"
+    ],
+    "argv_json_sha256": "b3c6973dc86fb49234a387e9fc1efbbf6b34eceeb28cb58a36b3bcef967ad308",
+    "cwd": "/workspace/scratch/c12f3d9f92bd/agent",
+    "returncode": 0,
+    "stdout": "{\n  \"schema_version\": \"ptxas-feedback/v1\",\n  \"log_sha256\": \"5c5bef39ca452c7ea6380cad6c57167fb175cb18bd74a47fbe4419467dfa0ef0\",\n  \"log_bytes\": 354,\n  \"parse_status\": \"partial\",\n  \"compile_success\": null,\n  \"performance_verdict\": \"not_measured\",\n  \"records\": [\n    {\n      \"ordinal\": 1,\n      \"function\": \"case_forward\",\n      \"target\": \"sm_90\",\n      \"header_line\": 1,\n      \"metrics\": {\n        \"registers_per_thread\": 128,\n        \"static_shared_bytes\": 32768,\n        \"stack_frame_bytes\": 64,\n        \"spill_store_bytes\": 32,\n        \"spill_load_bytes\": 16\n      },\n      \"observations\": [\n        {\n          \"metric\": \"stack_frame_bytes\",\n          \"value\": 64,\n          \"line\": 3\n        },\n        {\n          \"metric\": \"spill_store_bytes\",\n          \"value\": 32,\n          \"line\": 3\n        },\n        {\n          \"metric\": \"spill_load_bytes\",\n          \"value\": 16,\n          \"line\": 3\n        },\n        {\n          \"metric\": \"registers_per_thread\",\n          \"value\": 128,\n          \"line\": 4\n        },\n        {\n          \"metric\": \"static_shared_bytes\",\n          \"value\": 32768,\n          \"line\": 4\n        }\n      ],\n      \"conflicts\": []\n    },\n    {\n      \"ordinal\": 2,\n      \"function\": \"helper_unknown\",\n      \"target\": null,\n      \"header_line\": 5,\n      \"metrics\": {\n        \"registers_per_thread\": null,\n        \"static_shared_bytes\": null,\n        \"stack_frame_bytes\": 0,\n        \"spill_store_bytes\": 0,\n        \"spill_load_bytes\": 0\n      },\n      \"observations\": [\n        {\n          \"metric\": \"stack_frame_bytes\",\n          \"value\": 0,\n          \"line\": 6\n        },\n        {\n          \"metric\": \"spill_store_bytes\",\n          \"value\": 0,\n          \"line\": 6\n        },\n        {\n          \"metric\": \"spill_load_bytes\",\n          \"value\": 0,\n          \"line\": 6\n        }\n      ],\n      \"conflicts\": []\n    }\n  ],\n  \"issues\": [],\n  \"diagnostics\": [],\n  \"scope\": \"Static compiler report only; absent fields are unknown, not zero. Input must be one non-interleaved compiler invocation. No execution frequency, dynamic shared memory, occupancy or latency inferred.\"\n}\n",
+    "stdout_sha256": "de92718c859eee694fb5ee51c1077a935c28506efeadd1799b850183a68dd662",
+    "stderr": ""
+  },
+  {
+    "name": "revision",
+    "argv": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "argv_json_sha256": "23f3904a755e3e030eb84a084d27539110fa0ad5b806ccc473711d1c56b6ea48",
+    "cwd": "/workspace/scratch/c12f3d9f92bd/agent",
+    "returncode": 0,
+    "stdout": "9d0d05bfca88faf5c8fc57420bad4d5abf3b01a4\n",
+    "stdout_sha256": "bda823244c67a46eaf1aa7243c4fa11f30153786dea61188f940a74b98c63b7c",
+    "stderr": ""
+  },
+  {
+    "name": "task-check",
+    "argv": [
+      "rg",
+      "-n",
+      "KERNEL-FEEDBACK",
+      "agent_doc/task/TASK.md"
+    ],
+    "argv_json_sha256": "2eb899ba0d969405c176ab53d5cb8b7e36d75b4770e844d468f076064dba898e",
+    "cwd": "/workspace/scratch/c12f3d9f92bd/agent",
+    "returncode": 0,
+    "stdout": "5:- [ ] [KERNEL-FEEDBACK-01] 提取编译资源诊断、接通条件化优化参考与独立验收，核验 main 发布状态。 ([detail](task_details/KERNEL-FEEDBACK-01.md))\n",
+    "stdout_sha256": "5260808c2c70724cdbf33a9be4c14e165eb707ba7b3b49baae47fe19c7b9ef7a",
+    "stderr": ""
+  }
+]

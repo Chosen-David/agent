@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "snapshot": "b3b032e319c7a05cd781b2affdad9e7f086596e0b9127de29eb6b69b331ece32",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "infra.flashattention4-blackwell",
+      "version": 1,
+      "sha256": "936c5e8e279057b42036fe1cccdd5a2337060aed1173f33b9666f24da9dd6c50",
+      "title": "FlashAttention-4：Blackwell 非矩阵瓶颈与过时基线",
+      "summary": "2026-03 预印本在 B200 上报告性能，但图注明确较新 cuDNN 已吸收部分技术、达到相近性能；复用时必须重新核对版本。",
+      "status": "published",
+      "assumptions": [
+        "hardware: B200",
+        "dtype: BF16",
+        "operator: attention forward",
+        "baseline: cuDNN 9.13 and Triton in paper"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#infra.flashattention4-blackwell"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "memory",
+            "shared"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "memory",
+            "shared"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "memory",
+            "shared"
+          ]
+        }
+      ],
+      "score": 20
+    },
+    {
+      "id": "impl.flashattention-library",
+      "version": 1,
+      "sha256": "8e7488a7d266860ab3e5987723de3a71ec87fdd1bb36a2ee09c2edca9bc56fa9",
+      "title": "复用 FlashAttention 公共接口",
+      "summary": "已有 supported attention 语义时先评估作者库公共接口；按 README/固定接口核对设备、dtype、mask 和版本，减少自写 kernel。",
+      "status": "published",
+      "assumptions": [
+        "operation: supported dense attention variant",
+        "device: supported NVIDIA GPU",
+        "semantic: exact attention within floating-point tolerance"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#impl.flashattention-library"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "kernel"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "kernel"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "kernel"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "kernel"
+          ]
+        }
+      ],
+      "score": 13
+    },
+    {
+      "id": "infra.pagedattention-kv",
+      "version": 1,
+      "sha256": "c722bfee22d00e0e8d2469cca633a9bb6735001381ae129f1c1958d4a9803c1f",
+      "title": "PagedAttention：KV 分页与服务吞吐",
+      "summary": "SOSP 2023 的 vLLM 实验支持用按需分页和共享 KV 减少服务内存浪费；收益来自内存管理与调度的组合。",
+      "status": "published",
+      "assumptions": [
+        "hardware: A100",
+        "models: OPT and LLaMA-13B",
+        "workload: ShareGPT/Alpaca length traces with Poisson arrivals",
+        "metric: normalized end-to-end latency versus request rate"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#infra.pagedattention-kv"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "memory"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "memory"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "kernel",
+            "memory"
+          ]
+        }
+      ],
+      "score": 11
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "checked_at": "2026-10-08",
+  "tool": "mcp__codex_apps__search_service_web_run",
+  "execution": "Read-only public official documentation lookup; no compilation or GPU access",
+  "calls": [
+    {"open": ["https://developer.nvidia.com/blog/how-to-improve-cuda-kernel-performance-with-shared-memory-register-spilling/", "https://docs.nvidia.com/cuda/parallel-thread-execution/"], "result_refs": ["turn272view0", "turn272view1"], "isError": false},
+    {"find": [{"ref_id": "turn272view1", "pattern": "tcgen05.mma"}, {"ref_id": "turn272view1", "pattern": "sm_100a, sm_101a"}], "result_refs": ["turn273view0", "turn273view1"], "isError": false, "assessment": "Broad matches did not yet isolate target notes."},
+    {"open": [{"ref_id": "turn272view1", "lineno": 25080}], "result_refs": ["turn274view0"], "isError": false, "assessment": "Sparse variant syntax; needed preceding dense MMA target notes."},
+    {"open": [{"ref_id": "turn272view1", "lineno": 24925}], "result_refs": ["turn275view0"], "isError": false, "assessment": "Verified dense tcgen05.mma PTX introduction and target notes; sm_90 absent."}
+  ],
+  "facts": [
+    {"source_ref": "turn272view0", "location": "body lines 35-40, 183-190", "summary": "Feature introduced in CUDA 13.0; whole-program compilation required; dynamic shared memory and dynamic register reallocation excluded. Explicit launch bounds recommended, not universally mandatory."},
+    {"source_ref": "turn275view0", "location": "PTX ISA 9.4 tcgen05.mma, lines 24938-24994", "summary": "PTX 8.6 introduction and architecture/family-specific target support exclude sm_90."}
+  ],
+  "limitations": ["Public documentation supports feasibility filtering, not performance prediction.", "No supplied private data was searched or uploaded.", "No web source's performance example was adopted as local measurement."]
+}
