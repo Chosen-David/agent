@@ -17,4 +17,4 @@ Date: 2026-10-08
 
 ## Progress
 
-实际独立计划审批和结果复核通过；36个精确开发案例、6次结构检索、52项知识回归及插件同步通过。新卡math.paired-bilinear-risk@1和强前提4条加载13279字符，非token。补全递归证据绑定，保留原不完整清单；结果usable-with-scope仅限数学/结构。无模型、GPU、Lean或e2e收益声明；main发布待远端SHA/tree核对。证据见agent_doc/results/math-paired-risk-20261008/。
+独立计划及六域结果验收usable-with-scope；36个精确开发算例、6次结构检索、52项定向测试、插件同步通过。递归证据补全，旧不完整清单保留；4条强前提闭包13279字符，token未计量。无模型/GPU/Lean/e2e收益，未改生产或SGLang。科学提交 bbee2b2245cc28649ee705313da0ca77464b5197，远端SHA及tree已由fetch/独立ls-remote核对；发布回执见本轮publication_receipt.json。保留既有GPU残差证书与其他学科游标。

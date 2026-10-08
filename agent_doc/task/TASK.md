@@ -252,4 +252,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-08 成对风险与低秩代理
 
-- [ ] [MATH-49] 核验成对双线性四阶风险、独立代理适用证书和反例；独立验收后main发布。 ([detail](task_details/MATH-49.md))
+- [x] [MATH-49] 核验成对双线性四阶风险、独立代理适用证书和反例；独立验收后main发布。 ([detail](task_details/MATH-49.md))
