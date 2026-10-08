@@ -13,4 +13,6 @@ Date: 2026-10-08
 
 ## Progress
 
-已完成经典PSD支持推导、IO-SVD v1来源核对、72精确/48浮点(17正尾)/15拒绝检查、双后端6次检索与9422字符强前提加载。独立发现原型有限输入Inf/NaN与浮点覆盖缺口，保留v1失败；计划v3批准第二尝试，v2独立验收usable-with-scope，实际manifest60602b59与receipt670a229d。52相关/851全套(8跳过)/3reader历史检查通过，修复后52相关与同步重跑；全套/reader复用经独立审计。无模型/GPU/Lean/e2e/token收益，不改生产行为或SGLang。等待main发布与远端核对；人工指南与原轮转保留。证据agent_doc/results/math-singular-bilinear-20261008-v2/report_by_gpt.md。
+已完成经典PSD支持推导、IO-SVD v1来源核对、72精确/48浮点(17正尾)/15拒绝检查、双后端6次检索与9422字符强前提加载。独立发现原型有限输入Inf/NaN与浮点覆盖缺口，保留v1失败；计划v3批准第二尝试，v2独立验收usable-with-scope，实际manifest60602b59与receipt670a229d。52相关/851全套(8跳过)/3reader历史检查通过，修复后52相关与同步重跑；全套/reader复用经独立审计。无模型/GPU/Lean/e2e/token收益，不改生产行为或SGLang。科学成果已直接main发布958c4718并由独立fetch/ls-remote核对提交及完整树accbc0a；本次续接元数据按同流程提交核对；人工指南与原轮转保留。证据agent_doc/results/math-singular-bilinear-20261008-v2/report_by_gpt.md。
+
+发布回执：agent_doc/results/math-singular-bilinear-20261008-v2/publication_receipt.json。下一步：真实paired四阶目标、支持漂移/数值证书与同缓存预算模型对照；保留原下一学科/GPU轮转。没有可采用的生产性能改进。
