@@ -1,0 +1,124 @@
+{
+  "scope": "workflow and static contract verification only; not visual quality or runtime deployment",
+  "base": "17d7bd8a799b7acf3bbf9f839b8b70d34d0a0373",
+  "files": {
+    "plugins/research-assistant/skills/research-assistant/references/diagram_workflow.md": "bf7a0232a921fc7bf596ac01e6347174da9572af467b813073e1d2ecfbc7f60c",
+    "plugins/research-assistant/skills/research-assistant/references/figure_shared.md": "032e4f56bb3ae4d6c4d7b2caed4f14ce6d54fc0d9c30f9bebc0360b73c5cf760",
+    "plugins/research-assistant/skills/research-data-visualization/references/figure_shared.md": "032e4f56bb3ae4d6c4d7b2caed4f14ce6d54fc0d9c30f9bebc0360b73c5cf760",
+    "plugins/research-assistant/skills/research-diagrams/references/figure_shared.md": "032e4f56bb3ae4d6c4d7b2caed4f14ce6d54fc0d9c30f9bebc0360b73c5cf760",
+    "plugins/research-assistant/skills/research-diagrams/references/workflow.md": "bf7a0232a921fc7bf596ac01e6347174da9572af467b813073e1d2ecfbc7f60c",
+    "plugins/research-assistant/skills/research-figures/references/diagram_workflow.md": "bf7a0232a921fc7bf596ac01e6347174da9572af467b813073e1d2ecfbc7f60c",
+    "plugins/research-assistant/skills/research-figures/references/figure_shared.md": "032e4f56bb3ae4d6c4d7b2caed4f14ce6d54fc0d9c30f9bebc0360b73c5cf760",
+    "tests/test_figure_contract.py": "7d199e7b0e5f54498b3b9ef9affc444f255d266e25e32513b901d3ca89eece6d",
+    "workflows/diagram_workflow.md": "bf7a0232a921fc7bf596ac01e6347174da9572af467b813073e1d2ecfbc7f60c",
+    "workflows/figure_shared.md": "032e4f56bb3ae4d6c4d7b2caed4f14ce6d54fc0d9c30f9bebc0360b73c5cf760"
+  },
+  "checks": {
+    "full-regression": {
+      "summary": "full-regression.txt",
+      "summary_sha256": "285727108fee97a35e21e97e785c6eaf541fdcb5e7ffc3b6d6cfd571c8362133",
+      "raw_log_sha256": "981c49c4572bcdb1ff36b9f140bdae1200c81b2790d1fd34a27774d982d77ee3",
+      "raw_log_retention": "ephemeral; only privacy-reviewed outcome summary retained here",
+      "command": "python -m unittest discover -s tests -v",
+      "total": 851,
+      "passed": 850,
+      "skipped": 1,
+      "exit_code": 0,
+      "source_scope": "Implementation worktree before two final wording corrections: unconditional paper-size review changed to purpose-specific carrier review in both canonical workflows and seven copies. Test code unchanged; final source hashes below apply to targeted recheck, not this earlier full run."
+    },
+    "reader-regression": {
+      "summary": "reader-regression.txt",
+      "summary_sha256": "121a9d1bfd0eefcd69c055da712fac7262cbe375ccd65a887e3d94a01fcd2b9d",
+      "raw_log_sha256": "5cd8769b34cf8d73181ca2f26de4b7d4a1cf982c797b7ccd84e9f5cac5295b9f",
+      "raw_log_retention": "ephemeral; only privacy-reviewed outcome summary retained here",
+      "command": "python -m unittest discover -s apps/paper-reader/tests -v",
+      "total": 3,
+      "passed": 3,
+      "skipped": 0,
+      "exit_code": 0
+    },
+    "final-contract": {
+      "summary": "final-contract.txt",
+      "summary_sha256": "9ef3c41021a8c9231080f30027dc489206ffcb8ba5af5b95538d144acccc932f",
+      "raw_log_sha256": "b83696e39c1100045df185fa8747842d6ee4903cbe7a5d851998ebfaab0a7d16",
+      "raw_log_retention": "ephemeral; only privacy-reviewed outcome summary retained here",
+      "command": "python -m unittest discover -s tests -p 'test_figure_contract.py' -v",
+      "total": 16,
+      "passed": 16,
+      "skipped": 0,
+      "exit_code": 0,
+      "source_scope": "Implementation commit and file hashes in this manifest"
+    }
+  },
+  "implementation_commit": "0711fe78d1a2a8d724357d8dc0be5ef0faf16fb2",
+  "task_refs": [
+    "FIG-QA-01"
+  ],
+  "date": "2026-10-08",
+  "other_checks": {
+    "python scripts/sync_plugin_references.py --check": 0,
+    "git diff --check": 0
+  },
+  "not_run": [
+    "new figure generation or model-quality A/B",
+    "runtime visual acceptance engine",
+    "real tmux opt-in test",
+    "automatic deployment of installed skills"
+  ],
+  "review": {
+    "plan": {
+      "actor": "/root/plan_review",
+      "kind": "separate fresh host context",
+      "verdict": "approve",
+      "checks": [
+        "intent",
+        "guide",
+        "assumptions",
+        "prior_results",
+        "acceptance",
+        "risk",
+        "resources"
+      ]
+    },
+    "result": {
+      "actor": "/root/result_review",
+      "kind": "separate fresh host context; actual diff and independent targeted rerun",
+      "verdict": "usable-with-scope",
+      "finding": "Two unconditional paper-size clauses conflicted with purpose-specific review. Both corrected; reviewer read back and independently reran 16 tests successfully.",
+      "remaining_blockers": []
+    },
+    "boundary": "Privacy-reviewed summary of actual host reviews; not a signed runtime ReviewSession receipt or a visual-quality review."
+  },
+  "publication": {
+    "remote": "https://github.com/Chosen-David/agent.git",
+    "branch": "main",
+    "force": false,
+    "before": "17d7bd8a799b7acf3bbf9f839b8b70d34d0a0373",
+    "pushed": "0711fe78d1a2a8d724357d8dc0be5ef0faf16fb2",
+    "git_ls_remote_readback": "0711fe78d1a2a8d724357d8dc0be5ef0faf16fb2",
+    "parent_github_readback": "0711fe78d1a2a8d724357d8dc0be5ef0faf16fb2",
+    "checks_from_parent": {
+      "check_runs": 0,
+      "statuses": [],
+      "rulesets": [],
+      "combined_state": "pending",
+      "interpretation": "No CI run observed; pending does not demonstrate running CI."
+    },
+    "classic_branch_protection": "unverified; local gh API returned Forbidden; parent connector returned 403 Resource not accessible by integration. Does not establish absence of protection; no permission expansion or bypass requested.",
+    "closure_commit": "This documentation-only follow-up is identified by git history of this file; its remote readback is reported separately after push."
+  },
+  "documentation_closure_review": {
+    "actor": "/root/result_review",
+    "verdict": "usable-with-scope",
+    "checks": [
+      "10 source hashes match implementation commit and worktree",
+      "three summary and raw log hashes verified",
+      "TASK append-only and stable ID unique",
+      "relative links resolve",
+      "six documentation-only files privacy reviewed",
+      "test timing and CI uncertainty preserved"
+    ],
+    "full_regression_rerun": "not needed; documentation-only follow-up",
+    "remaining_blockers": []
+  }
+}

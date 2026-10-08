@@ -233,3 +233,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-08 多机多卡任务编排
 
 - [x] [CLUSTER-01] 多机异构 GPU 放置、数据交接与主 AI 入口升级，独立验证后发布。 ([detail](task_details/CLUSTER-01.md))
+
+## 2026-10-08 绘图验收绑定
+
+- [x] [FIG-QA-01] 绑定图资产、用途与最终载体，补充分项验收及负例契约；独立复核、回归并普通发布 main。仅规范与分发验证，非视觉质量提升实测。 ([detail](task_details/FIG-QA-01.md))
