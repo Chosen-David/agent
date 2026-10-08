@@ -1,0 +1,89 @@
+{
+  "schema_version": "task-dag/v1",
+  "run_id": "math-paired-risk-20261008",
+  "user_goal": "Joint paired finite bilinear risk, exact synthetic witnesses and product-proxy relative metric bound; structural retrieval only, no global solver/model/GPU/e2e claim",
+  "authorization_reference": "current user continuous math task/directmain permission",
+  "tasks": [
+    {
+      "task_id": "produce",
+      "owner": "root-math-producer",
+      "action": "local_math_validation",
+      "task_type": "experiment",
+      "depends_on": [],
+      "experiment_result": {
+        "result_id": "math-paired-risk-20261008",
+        "producer_task_id": "produce",
+        "producer_actor": "root-math-producer",
+        "manifest_path": "agent_doc/results/math-paired-risk-20261008/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-paired-risk-20261008/validation_plan.json",
+          "sha256": "d7a0c9c1e3f4f6b28b100df34b06639c5f750666c309eb28a8e4d5d059fb2a1e"
+        },
+        "scope": "Joint paired finite bilinear risk, exact synthetic witnesses and product-proxy relative metric bound; structural retrieval only, no global solver/model/GPU/e2e claim"
+      },
+      "task_refs": [
+        "MATH-49"
+      ],
+      "max_attempts": 2,
+      "done_when": "Actual scoped raw/code frozen, pending manifest; no acceptance claimed"
+    },
+    {
+      "task_id": "verify",
+      "owner": "independent-paired-review",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "produce"
+      ],
+      "result_validation": {
+        "result_id": "math-paired-risk-20261008",
+        "producer_task_id": "produce",
+        "producer_actor": "root-math-producer",
+        "manifest_path": "agent_doc/results/math-paired-risk-20261008/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-paired-risk-20261008/validation_plan.json",
+          "sha256": "d7a0c9c1e3f4f6b28b100df34b06639c5f750666c309eb28a8e4d5d059fb2a1e"
+        },
+        "scope": "Joint paired finite bilinear risk, exact synthetic witnesses and product-proxy relative metric bound; structural retrieval only, no global solver/model/GPU/e2e claim"
+      },
+      "task_refs": [
+        "MATH-49"
+      ],
+      "max_attempts": 2,
+      "done_when": "Actual separate six-domain result receipt usable-with-scope"
+    },
+    {
+      "task_id": "publish",
+      "owner": "root-publication",
+      "action": "publish_main",
+      "depends_on": [
+        "verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-paired-risk-20261008",
+          "producer_task_id": "produce",
+          "producer_actor": "root-math-producer",
+          "manifest_path": "agent_doc/results/math-paired-risk-20261008/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/math-paired-risk-20261008/validation_plan.json",
+            "sha256": "d7a0c9c1e3f4f6b28b100df34b06639c5f750666c309eb28a8e4d5d059fb2a1e"
+          },
+          "scope": "Joint paired finite bilinear risk, exact synthetic witnesses and product-proxy relative metric bound; structural retrieval only, no global solver/model/GPU/e2e claim"
+        }
+      ],
+      "task_refs": [
+        "MATH-49"
+      ],
+      "max_attempts": 2,
+      "done_when": "Refresh main, nonforce expected parent publication, separate remote SHA/tree verification"
+    }
+  ],
+  "task_refs": [
+    "MATH-49"
+  ],
+  "supervision": {
+    "min_seconds": 10,
+    "max_seconds": 60,
+    "rationale": "direct local host, no deployment claim"
+  }
+}

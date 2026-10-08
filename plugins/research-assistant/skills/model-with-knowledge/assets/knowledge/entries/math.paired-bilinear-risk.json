@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "id": "math.paired-bilinear-risk",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "成对双线性四阶风险与独立低秩代理证书",
+  "summary": "允许相关q/k时用联合外积四阶矩描述分数MSE；已知SPD相对度量η<1才有代理近似因子。去相关或两侧二阶矩不足，一般白化不保矩阵秩。",
+  "aliases": [
+    "成对 查询 键 联合 四阶 分数 风险",
+    "传感器 共状态 相关 电流 分数 风险",
+    "二阶矩 去相关 不独立 白化 秩 误用",
+    "paired bilinear joint fourth moment Kronecker proxy dependence certificate"
+  ],
+  "domains": [
+    "linear-algebra",
+    "probability-and-optimization"
+  ],
+  "structures": [
+    "bilinear-score",
+    "joint-fourth-moment",
+    "correlated-risk",
+    "low-rank",
+    "proxy-error-certificate",
+    "sensor-response"
+  ],
+  "assumptions": [
+    "q∈R^m,k∈R^n允许相关；E[||q||²||k||²]<∞，H/M固定，vec按列；rank(M)≤r且r为0到min(m,n)整数",
+    "独立代理另需非中心Sq/Sk有限；相对因子要求Sq,Sk SPD且真实D的η=||D0^{-1/2}DD0^{-1/2}−I||₂<1",
+    "只针对固定原始双线性scoreMSE；不是mask/topk/softmax/output/e2e精度或样本泛化证书"
+  ],
+  "sources": [
+    {
+      "url": "https://nhigham.com/2020/08/25/what-is-the-kronecker-product/",
+      "locator": "2020-08-25作者文章Vec Operator/Kronecker乘法；paired风险/代理因子为本项目推导",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://proceedings.mlr.press/v306/wong26b.html",
+      "locator": "ICML2026正式PMLR306:135401–135422最终PDF §3.1 Eq9–12及官方README；只筛选矩阵目标与架构前提，不是任意paired风险依据",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "条件式自推证明，非Lean形式化验证",
+      "agent_doc/results/math-paired-risk-20261008/validate.py/raw.json与独立回执；公开精确/结构检查，无模型/e2e收益"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.tensor-kronecker-calculus",
+      "version": 1
+    },
+    {
+      "id": "math.weighted-bilinear-low-rank",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.singular-support-bilinear-low-rank"
+    },
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    },
+    {
+      "type": "related",
+      "id": "math.support-conditioning"
+    }
+  ]
+}
