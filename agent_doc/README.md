@@ -4,6 +4,18 @@
 
 **这里是 agent 库自身作为当前项目时的文档。** 接入 Project A 时，在 `ProjectA/agent_doc/` 建立同样的布局，你编写 `ProjectA/agent_doc/guide/GUIDE.md`，AI 维护 Project A 的任务与结果。不要复制本目录的指南、历史任务或实验记录到 Project A。工作流源码仍从 agent 库读取。
 
+各目录的 README 说明维护者与处理职责：
+
+| 目录 | 主要内容 | 谁维护、AI 如何处理 |
+| --- | --- | --- |
+| [guide](guide/README.md) | 人类目标、优先级、硬约束与验收要求 | 人类发布；AI 优先据此编排，并对适用要求逐项回应 |
+| [advice](advice/README.md) | 人类、其他 AI、当前 AI 的建议与反馈 | 人类或 AI 记录；主 AI 核验证据，说明采用、调整、拒绝或暂缓的理由 |
+| [task](task/README.md) | AI 整合后的唯一任务清单与计划 | 主 AI 串行维护 TASK.md，分配负责人并跟踪实际完成情况 |
+| [task_details](task/README.md) | 每项任务的方法、进度、证据和阻塞 | 分配的 AI 作者维护，稳定 Plan 与追加 Progress 分开；职责说明在 task README |
+| [results](results/README.md) | 数据、运行元数据、产物与独立验证 | 生产者记录，独立验证者核验，消费者按有效范围复用 |
+
+处理顺序：当前用户决定与权限 → 已核实人工指南 → 建议核验与取舍、已有结果适用性检查 → AI 整合任务 → 执行与独立验收 → 按要求逐项汇报。README 解释职责，不代替具体人工需求、任务或验收记录。
+
 - `task/TASK.md`：唯一活跃任务清单，按日期简洁列出任务与详情链接，由主 AI 串行维护。
 - `task/task_details/*.md`：AI 维护每项任务的方法、实际进度、验收、证据、阻塞和下一步。
 - `guide/`：人类专用。人类自行创建和发布 `GUIDE.md`，它在当前用户决定和宿主安全/权限边界内具有最高项目规划优先级。AI 只读，绝不创建、编辑、删除或移动其中的文件；这里不放 AI 生成模板或 `.gitkeep`。Git 不保存空目录，目标项目初始化可只创建空目录。
@@ -11,6 +23,8 @@
 - `advice/`：人类和 AI 都可编辑的方案、反馈和建议。先核验证据和适用条件，记录采用、调整后采用、拒绝或暂缓及理由，不盲从其他 AI。
 
 既有 `docs/` 保存研究材料和验证历史，继续保持原路径。高频运行状态位于私有 `.agent-runs/`，不塞进总清单。
+
+用户于 2026-10-08 明确要求创建本库 `guide/README.md` 的目录说明，这是一次性写入例外；没有修改 `GUIDE.md`，没有改变日常保护规则，也不自动向接入项目生成指南文件。
 
 开始工作请读 [文档治理与执行闭环](../workflows/project_document_workflow.md)。任务格式见 [索引模板](../templates/TASK.md)、[详情模板](../templates/task_detail.md)，建议记录见 [处理模板](../templates/advice_assessment.md)。模板不代表实际任务、验证结果或授权。
 

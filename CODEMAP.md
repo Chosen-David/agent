@@ -122,3 +122,8 @@ DOC-SCOPE-01：在 SCOPE-01–03 项目初始化实现之上补齐跨项目切�
 - `agent_runtime/legacy_result_paths.py`: registered read-only historical result relocation, no write routing.
 - `tests/test_agent_doc_namespace.py`: ordinary doc preservation, three reader paths, managed binding and refusal boundaries.
 - `agent_doc/results/namespace-20261008/`: frozen plan, move inventory, raw checks and independent host review.
+
+## DOC-ROLES-01：文档目录分工
+
+- `agent_doc/README.md` 与 `advice/README.md`、`guide/README.md`、`task/README.md`、`results/README.md`：用户要求的职责、维护者、逐项回应与证据入口；任务详情职责合并在 task README，指南说明为本次明确授权，未修改 GUIDE.md 或通用守卫。
+- `agent_doc/task/task_details/DOC-ROLES-01.md`：本轮范围、检索取舍、文案复核和发布进度。
