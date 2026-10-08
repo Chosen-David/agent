@@ -188,4 +188,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-08 softmax KL几何
 
 - [x] [MATH-39] 补齐有限softmax的KL/Fisher与饱和反例，筛选近期原文。 ([detail](task_details/MATH-39.md))
-- [ ] [MATH-40] 独立代码/数据验收、检索成本、回归与main发布核对。 ([detail](task_details/MATH-40.md))
+- [x] [MATH-40] 独立代码/数据验收、检索成本、回归与main发布核对。 ([detail](task_details/MATH-40.md))

@@ -31,3 +31,5 @@ Producer64组、905断言，另10组边界与4个饱和配置；实际支持范�
 并发同步：origin/main新增0e26c87/0347d0e两RL卡；普通merge保留其TASK/工程rotation/state/证据。旧184语料manifest与检索文件保存pre-sync/，旧独立记录只适用旧快照，不能认证当前文件；当前188语料重做检索/绑定，数学原始代码/config/raw不变。从origin/main比较自身增量，不改其他轮次冻结CRLF字节。
 
 最终独立validation-v2六项及实际host inspect_result均usable-with-scope。64组+10边界+4饱和高精度参考通过，最大直接KL误差2.88e−16；raw/summary重跑一致，188文件全部核对。当前manifest6c74f665f6c480648a6ba96bbaa020344ff73436013f694512de09adc127b019，validation-v2 SHA c6ef5da41f29effe12d32c1e2f24930cae9439e6ef107e01e3457db963537694。合并后74回归通过（12.398s）；上述支持范围仍无真实模型/GPU、形式化或节省主张。
+
+普通main实现提交`730bfb344c1636285e9cea87c0f51dda31fa149e`已fetch读回，树7104c1b28c6cd29ed49196436c37aa06cf1b34b5与本地一致；未force，并发修改保留。后续模型/真实trace留出仍未完成。
