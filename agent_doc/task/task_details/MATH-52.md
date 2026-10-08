@@ -22,3 +22,5 @@ Frozen executable acceptance: all tests in `tests.test_knowledge`, `tests.test_k
 main同步2b50c99，旧工作干净，本主题无活动状态。旧结果与知识实际查询已保存；等待独立计划审查，原始论文v1之后发现v2已另取回，不沿用旧版本当最新。
 
 计划v1审查revise后v2批准；实际独立结果上下文六域usable-with-scope已观察并pin。8个Fraction公开例、6/6双后端结构查询、53回归与镜像check通过；首轮镜像未同步失败与manifest metrics schema失败日志保留。等待main非强制发布/远端核验；GPU游标不变。
+
+已非强制发布science commit `2404c3cfcaf98863ce599b79eccb745349655948`；fresh fetch与独立ls-remote核对远端SHA和tree一致。TASK闭环、learning_state历史追加，原next_topic/GPU/其他学科游标保持；无新生产行为，持续任务不终止。

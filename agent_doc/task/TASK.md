@@ -266,4 +266,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-09 凸输出表示
 
-- [ ] [MATH-52] 核验固定加权输出的有限支持约简、重赋权与全query边界。 ([detail](task_details/MATH-52.md))
+- [x] [MATH-52] 核验固定加权输出的有限支持约简、重赋权与全query边界。 ([detail](task_details/MATH-52.md))
