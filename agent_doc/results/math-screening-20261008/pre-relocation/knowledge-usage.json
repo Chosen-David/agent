@@ -1,0 +1,970 @@
+{
+  "knowledge_root": "knowledge",
+  "knowledge_refs": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c"
+    },
+    {
+      "id": "math.orthogonal-projection-qr",
+      "version": 1,
+      "sha256": "3eff040b2613cd46350e9605cfa5c7b748e5a3bdb6bb0c173724f722d00225e8"
+    },
+    {
+      "id": "math.residual-interval-screening",
+      "version": 1,
+      "sha256": "61e9032490f659125a024e5bc7c41c212d6fad09459c06e9efd093e22e280e0a"
+    }
+  ],
+  "loaded_ids": [
+    "math.residual-interval-screening",
+    "math.cauchy-schwarz",
+    "math.orthogonal-projection-qr"
+  ],
+  "retrieval": [
+    {
+      "input": {
+        "prompt": "压缩后的向量搜索如何确保候选不漏掉真正最高的几个？",
+        "query": "残差 区间 候选 筛除",
+        "premise": "same orthogonal P and per-key valid envelopes"
+      },
+      "backend": "files",
+      "wall_seconds": 0.06543545299791731,
+      "retrieved_ids": [
+        "math.residual-interval-screening",
+        "math.linear-solve-backward-error",
+        "math.linear-system-stability"
+      ],
+      "result": {
+        "schema_version": 1,
+        "snapshot": "76f19cbc45df3913e306d3ec4a04f9ccbeb4bd04ba74832f2acd91d634110f4c",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.residual-interval-screening",
+            "version": 1,
+            "sha256": "61e9032490f659125a024e5bc7c41c212d6fad09459c06e9efd093e22e280e0a",
+            "title": "正交残差包络与安全候选筛除",
+            "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+              "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+              "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+              "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+                "doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "候选",
+                  "残差",
+                  "筛除"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "候选",
+                  "区间",
+                  "残差",
+                  "筛除"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "候选",
+                  "区间",
+                  "残差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "候选",
+                  "区间",
+                  "残差",
+                  "筛除"
+                ]
+              }
+            ],
+            "score": 48
+          },
+          {
+            "id": "math.linear-solve-backward-error",
+            "version": 1,
+            "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+            "title": "线性求解的后向误差、条件性与下游误差证书",
+            "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+            "status": "published",
+            "assumptions": [
+              "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+              "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+              "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+              "下游排序须真实线性评分映射和严格逐对误差间隔"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+                "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "候选",
+                  "残差"
+                ]
+              }
+            ],
+            "score": 10
+          },
+          {
+            "id": "math.linear-system-stability",
+            "version": 1,
+            "sha256": "caacac2221436b3cd671b9a307f8598e8481af537400839a430f5558bd04b4a4",
+            "title": "条件数、残差与有限扰动误差界",
+            "summary": "小残差不保证小解误差；用条件数与显式扰动条件评估线性求解可靠性。",
+            "status": "published",
+            "assumptions": [
+              "A 为可逆实方阵，b 非零，使用相容诱导矩阵范数",
+              "有限扰动公式要求 κ(A)‖E‖/‖A‖<1；不能把一阶近似当任意扰动保证"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "同名 Markdown 的明确推导与反例；非形式化证明",
+                "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "残差"
+                ]
+              }
+            ],
+            "score": 9
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "压缩后的向量搜索如何确保候选不漏掉真正最高的几个？",
+        "query": "残差 区间 候选 筛除",
+        "premise": "same orthogonal P and per-key valid envelopes"
+      },
+      "backend": "sqlite",
+      "wall_seconds": 0.06119097099872306,
+      "retrieved_ids": [
+        "math.residual-interval-screening",
+        "math.linear-solve-backward-error",
+        "math.linear-system-stability"
+      ],
+      "result": {
+        "schema_version": 1,
+        "snapshot": "76f19cbc45df3913e306d3ec4a04f9ccbeb4bd04ba74832f2acd91d634110f4c",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.residual-interval-screening",
+            "version": 1,
+            "sha256": "61e9032490f659125a024e5bc7c41c212d6fad09459c06e9efd093e22e280e0a",
+            "title": "正交残差包络与安全候选筛除",
+            "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+              "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+              "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+              "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+                "doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s1",
+                "title": "正交残差包络与安全候选筛除",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 正交残差包络与安全候选筛除\n\n稳定ID：math.residual-interval-screening；版本1；核查日期2026-10-08。经典基础为正交分解/Cauchy–Schwarz；下面筛除规则为项目自行推导，不宣称首次提出。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "假设、结论与证明",
+                "start_line": 8,
+                "end_line": 16,
+                "excerpt": "## 假设、结论与证明\n1≤k≤N；有效分数有限，mask后只在合法token上做秩统计。精确实数下，r_q=(I−P)q、r_i=(I−P)k_i，因P正交，s_i−h_i=r_qᵀr_i。由Cauchy–Schwarz，|s_i−h_i|≤e_i=||r_q||₂||r_i||₂。若分数有正缩放c（如1/√d），h与e都乘c。\n\n设L_i=h_i−e_i，U_i=h_i+e_i；更一般也可用任何已证明的逐项外包区间。tau为L的第k大值，C={i:U_i≥tau}。至少k个下界≥tau，故对应的真实分数≥tau，且这些token全在C。任何删项满足s_j≤U_j<tau；它严格低于至少k个真实分数，因此不可能是Top-k必需成员。在C内按真实s精确重排取k个，即是全集的一个Top-k解。候选数至少k、至多N，不能保证严格缩小。严格筛除U<tau，不得把U=tau也删掉。\n\n不保证某个固定tie-break标签集合；要求稳定token ID排序时需另加入二元顺序协议。所谓“精确重排”是原目标分数，换模型分数、换温度、换有效长度或低精度proxy均不继承结论。\n\n若希望直接输出proxy所选S（|S|=k），可检查min_{i∈S}L_i>max_{j∉S}U_j；满足才证唯一分界，不满足只是未知，不是错误的证明。不同token的e无需用同一全局ε，故比统一margin条件更灵活；它不声称所有情况下更紧。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.linear-solve-backward-error",
+            "version": 1,
+            "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+            "title": "线性求解的后向误差、条件性与下游误差证书",
+            "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+            "status": "published",
+            "assumptions": [
+              "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+              "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+              "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+              "下游排序须真实线性评分映射和严格逐对误差间隔"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+                "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04788306451612903,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "迁移：决策与电路",
+                "start_line": 38,
+                "end_line": 43,
+                "excerpt": "## 迁移：决策与电路\n\nAgent 科研/工程任务中的有限线性响应求解对应 Ax=b，候选的线性效用对应 ci；这是真实代数映射。文本概率、消息压缩的语义损失及自适应工具策略没有天然对应，不直接迁移。可证伪预测为：已核验 H、R 且逐对间隔成立时，精确求解不会翻转集合；verify.py 检查正例和拒用反例。\n\n接地导纳矩阵 L=[[2,−1],[−1,2]] S，电流 b=(1,0) A，电压 x=(2/3,1/3) V。y=x+(0.01,−0.01) V 时残差为 (−0.03,0.03) A，H=1 Ω，E=0.03 V；量纲 Ω·A=V，电压大小关系可认证。接地移除了常数零模态；未接地 [[1,−1],[−1,1]] 的解可以任意加常数，即使零残差也无唯一绝对电压，必须拒绝本条可逆前提。非线性器件、频率依赖参数和实测导纳误差未覆盖。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "触发结构",
+                "start_line": 5,
+                "end_line": 8,
+                "excerpt": "## 触发结构\n\n方阵线性方程的近似解、很小的残差却错误的排名、接地电路的电压误差。先确定对象 A、右端 b、近似解 y、范数、数据精度及下游查询 c；只在存在可核验逆算子界时把残差转换为解误差。动态系统稳定性、迭代收缩性与线性方程条件性是不同问题。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.linear-system-stability",
+            "version": 1,
+            "sha256": "caacac2221436b3cd671b9a307f8598e8481af537400839a430f5558bd04b4a4",
+            "title": "条件数、残差与有限扰动误差界",
+            "summary": "小残差不保证小解误差；用条件数与显式扰动条件评估线性求解可靠性。",
+            "status": "published",
+            "assumptions": [
+              "A 为可逆实方阵，b 非零，使用相容诱导矩阵范数",
+              "有限扰动公式要求 κ(A)‖E‖/‖A‖<1；不能把一阶近似当任意扰动保证"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "同名 Markdown 的明确推导与反例；非形式化证明",
+                "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 5
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.04713064713064713,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "触发与结论",
+                "start_line": 3,
+                "end_line": 8,
+                "excerpt": "## 触发与结论\n求解 Ax=b，即使残差很小，也先检查问题本身的敏感性。令 κ(A)=‖A‖‖A⁻¹‖、r=A x_hat−b，则\n‖x_hat−x‖/‖x‖ ≤ κ(A) ‖r‖/‖b‖。\n若 (A+E)(x+Δx)=b+e，令 a=‖E‖/‖A‖、β=‖e‖/‖b‖，在 κ(A)a<1 时，\n‖Δx‖/‖x‖ ≤ κ(A)(a+β)/(1−κ(A)a)。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "推导",
+                "start_line": 9,
+                "end_line": 13,
+                "excerpt": "## 推导\n残差式由 x_hat−x=A⁻¹r 与 ‖b‖≤‖A‖‖x‖ 得到。有限扰动用\n(I+A⁻¹E)Δx=A⁻¹(e−Ex)。当 ‖A⁻¹E‖≤κa<1 时，Neumann 级数使逆的范数至多 1/(1−κa)，再取范数。\n这补全来源省略的有限扰动代数；不是形式化证明。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "传感器模板点积检索能否省去明显不匹配模板的精算？",
+        "query": "compressed search dot product bound certificate",
+        "premise": "synthetic inner-product strict mapping, not real sensor trace"
+      },
+      "backend": "files",
+      "wall_seconds": 0.07051526800205465,
+      "retrieved_ids": [
+        "math.residual-interval-screening",
+        "math.cauchy-schwarz",
+        "math.eigenspace-gap-perturbation"
+      ],
+      "result": {
+        "schema_version": 1,
+        "snapshot": "76f19cbc45df3913e306d3ec4a04f9ccbeb4bd04ba74832f2acd91d634110f4c",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.residual-interval-screening",
+            "version": 1,
+            "sha256": "61e9032490f659125a024e5bc7c41c212d6fad09459c06e9efd093e22e280e0a",
+            "title": "正交残差包络与安全候选筛除",
+            "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+              "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+              "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+              "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+                "doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "bound",
+                  "certificate",
+                  "compressed",
+                  "dot",
+                  "product",
+                  "search"
+                ]
+              }
+            ],
+            "score": 30
+          },
+          {
+            "id": "math.cauchy-schwarz",
+            "version": 1,
+            "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c",
+            "title": "Cauchy–Schwarz 与内积分数误差",
+            "summary": "由向量误差界推出查询与键的内积分数误差界。",
+            "status": "published",
+            "assumptions": [
+              "实向量 q、k、k_hat 维数相同，使用欧氏内积和二范数",
+              "已知键向量误差界；查询变化时必须另外计入误差"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "同名 Markdown 中的命题、推导与边界；非形式化证明",
+                "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "bound",
+                  "dot",
+                  "product"
+                ]
+              }
+            ],
+            "score": 15
+          },
+          {
+            "id": "math.eigenspace-gap-perturbation",
+            "version": 1,
+            "sha256": "9737b6e1fb288bf682e23f1910f32aadc43421bd42821550a82e419303a7e292",
+            "title": "谱隙、子空间扰动与投影打分证书",
+            "summary": "实对称矩阵的隔离特征值簇可用边界谱隙控制子空间误差；主方向稳定取决于误差与谱隙的比值。投影比较消除符号和簇内旋转歧义，可传播到有范数约束的打分。",
+            "status": "published",
+            "assumptions": [
+              "A与Ahat=A+E是同维实对称矩阵，使用一致坐标及欧氏算子/Frobenius范数",
+              "特征值降序，目标为同一索引区间r..s；d=s-r+1，外侧边界谱隙g=min(lambda_(r-1)-lambda_r,lambda_s-lambda_(s+1))>0，端点取无穷",
+              "U与Uhat列正交；比较投影或主角度，不能直接比较未对齐的基",
+              "本文自推较紧rank-one界另需目标最大特征值、g=lambda_1-lambda_2>0、认证epsilon>=||E||op且epsilon<g；epsilon<g/2额外认证扰动后最大特征值简单",
+              "打分迁移需q,k位于同一欧氏坐标系、目标确为q^T P k；只控制换基误差，不控制舍弃补空间或完整注意力输出"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-subspace/verify.py",
+                "docs/knowledge_learning/2026-10-07-subspace/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "bound"
+                ]
+              }
+            ],
+            "score": 5
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "传感器模板点积检索能否省去明显不匹配模板的精算？",
+        "query": "compressed search dot product bound certificate",
+        "premise": "synthetic inner-product strict mapping, not real sensor trace"
+      },
+      "backend": "sqlite",
+      "wall_seconds": 0.061375270001008175,
+      "retrieved_ids": [
+        "math.linear-solve-backward-error",
+        "math.residual-interval-screening",
+        "math.cauchy-schwarz"
+      ],
+      "result": {
+        "schema_version": 1,
+        "snapshot": "76f19cbc45df3913e306d3ec4a04f9ccbeb4bd04ba74832f2acd91d634110f4c",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.linear-solve-backward-error",
+            "version": 1,
+            "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+            "title": "线性求解的后向误差、条件性与下游误差证书",
+            "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+            "status": "published",
+            "assumptions": [
+              "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+              "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+              "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+              "下游排序须真实线性评分映射和严格逐对误差间隔"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+                "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 4
+              }
+            ],
+            "score": 0.047891458495966696,
+            "sections": []
+          },
+          {
+            "id": "math.residual-interval-screening",
+            "version": 1,
+            "sha256": "61e9032490f659125a024e5bc7c41c212d6fad09459c06e9efd093e22e280e0a",
+            "title": "正交残差包络与安全候选筛除",
+            "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+              "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+              "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+              "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+                "doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.03278688524590164,
+            "sections": []
+          },
+          {
+            "id": "math.cauchy-schwarz",
+            "version": 1,
+            "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c",
+            "title": "Cauchy–Schwarz 与内积分数误差",
+            "summary": "由向量误差界推出查询与键的内积分数误差界。",
+            "status": "published",
+            "assumptions": [
+              "实向量 q、k、k_hat 维数相同，使用欧氏内积和二范数",
+              "已知键向量误差界；查询变化时必须另外计入误差"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "同名 Markdown 中的命题、推导与边界；非形式化证明",
+                "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.03225806451612903,
+            "sections": []
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "平均重建误差很小，是否能直接删掉低代理分数的文档？",
+        "query": "均值 残差 区间 筛除",
+        "premise": "reject average radius as per-item enclosure"
+      },
+      "backend": "files",
+      "wall_seconds": 0.06569547699473333,
+      "retrieved_ids": [
+        "math.residual-interval-screening",
+        "math.centered-covariance-merge",
+        "math.linear-solve-backward-error"
+      ],
+      "result": {
+        "schema_version": 1,
+        "snapshot": "76f19cbc45df3913e306d3ec4a04f9ccbeb4bd04ba74832f2acd91d634110f4c",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.residual-interval-screening",
+            "version": 1,
+            "sha256": "61e9032490f659125a024e5bc7c41c212d6fad09459c06e9efd093e22e280e0a",
+            "title": "正交残差包络与安全候选筛除",
+            "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+              "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+              "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+              "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+                "doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "残差",
+                  "筛除"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "区间",
+                  "残差",
+                  "筛除"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "区间",
+                  "残差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "区间",
+                  "均值",
+                  "残差",
+                  "筛除"
+                ]
+              }
+            ],
+            "score": 35
+          },
+          {
+            "id": "math.centered-covariance-merge",
+            "version": 1,
+            "sha256": "f9ebd428b6fd9f78ac667a6a2419e277c5d8ca1731d3e5357b25a9a62f7a9b28",
+            "title": "中心化协方差、可合并散布统计量与误差桥",
+            "summary": "区分二阶矩与中心协方差；按计数/均值/散布精确合并，避免遗漏组间项；统计保证与浮点稳定性分别审查。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量，同维度/坐标/单位和相同预处理；精确恒等式不要求iid",
+              "A、B为不重复不遗漏的数据分区，计数为非负整数；空分区用单位元，不定义空均值",
+              "C_n=S/n对n≥1；S/(n−1)只对n≥2，称总体协方差无偏还需iid及有限二阶矩",
+              "概率误差桥需已证明的均值和二阶矩误差事件；合并公式不赋予独立性或覆盖保证",
+              "浮点不具有严格结合律；需单独检查输入精度、溢出、抵消及舍入误差"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-centering/verify.py",
+                "docs/knowledge_learning/2026-10-07-centering/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "均值"
+                ]
+              },
+              {
+                "field": "structures",
+                "terms": [
+                  "均值"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "均值"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "均值"
+                ]
+              }
+            ],
+            "score": 13
+          },
+          {
+            "id": "math.linear-solve-backward-error",
+            "version": 1,
+            "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+            "title": "线性求解的后向误差、条件性与下游误差证书",
+            "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+            "status": "published",
+            "assumptions": [
+              "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+              "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+              "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+              "下游排序须真实线性评分映射和严格逐对误差间隔"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+                "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "残差"
+                ]
+              }
+            ],
+            "score": 9
+          }
+        ]
+      }
+    },
+    {
+      "input": {
+        "prompt": "平均重建误差很小，是否能直接删掉低代理分数的文档？",
+        "query": "均值 残差 区间 筛除",
+        "premise": "reject average radius as per-item enclosure"
+      },
+      "backend": "sqlite",
+      "wall_seconds": 0.06189228099538013,
+      "retrieved_ids": [
+        "math.residual-interval-screening",
+        "math.linear-system-stability",
+        "math.linear-solve-backward-error"
+      ],
+      "result": {
+        "schema_version": 1,
+        "snapshot": "76f19cbc45df3913e306d3ec4a04f9ccbeb4bd04ba74832f2acd91d634110f4c",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.residual-interval-screening",
+            "version": 1,
+            "sha256": "61e9032490f659125a024e5bc7c41c212d6fad09459c06e9efd093e22e280e0a",
+            "title": "正交残差包络与安全候选筛除",
+            "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+              "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+              "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+              "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+                "doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界与误用反例",
+                "start_line": 17,
+                "end_line": 25,
+                "excerpt": "## 正例、边界与误用反例\nP=diag(1,0)，q=(1,1)，键(10,0),(8,1),(0,0)。h=(10,8,0)，e=(0,1,0)，k=1时tau=10，C仅首键，正确。若q属于投影子空间，全部e=0，即可精确按h选；k=N保留全部。零投影往往过宽，仍安全但可能毫无筛除收益。\n\n均值残差反例：q=(1,1)，一键(0,100)，其余999键(1,0)，P=diag(1,0)。残差平均0.1；若错误地把e=0.1赋给每项，就会删掉真实分数100的键。这不是逐项证书。\n\n非正交反例：P=[[1,1],[0,0]]虽P²=P，但Pᵀ≠P；q=(1,0),k=(0,1)有s=0,h=1，而||(I−P)q||=0，错误产品界给0。一般AᵀB低秩映射不等于正交P；可另用||q|| ||(I−AᵀB)k_i||，不能偷换成本和误差。\n\nTop-k正确不代表full-softmax输出正确：两个相同logit而不同v，只取一个即会改变加权输出。应结合math.attention-output-geometry，核对value、重归一化和跨层影响。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "正交残差包络与安全候选筛除",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 正交残差包络与安全候选筛除\n\n稳定ID：math.residual-interval-screening；版本1；核查日期2026-10-08。经典基础为正交分解/Cauchy–Schwarz；下面筛除规则为项目自行推导，不宣称首次提出。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.linear-system-stability",
+            "version": 1,
+            "sha256": "caacac2221436b3cd671b9a307f8598e8481af537400839a430f5558bd04b4a4",
+            "title": "条件数、残差与有限扰动误差界",
+            "summary": "小残差不保证小解误差；用条件数与显式扰动条件评估线性求解可靠性。",
+            "status": "published",
+            "assumptions": [
+              "A 为可逆实方阵，b 非零，使用相容诱导矩阵范数",
+              "有限扰动公式要求 κ(A)‖E‖/‖A‖<1；不能把一阶近似当任意扰动保证"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "同名 Markdown 的明确推导与反例；非形式化证明",
+                "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 5
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 4
+              }
+            ],
+            "score": 0.0471386476426799,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "触发与结论",
+                "start_line": 3,
+                "end_line": 8,
+                "excerpt": "## 触发与结论\n求解 Ax=b，即使残差很小，也先检查问题本身的敏感性。令 κ(A)=‖A‖‖A⁻¹‖、r=A x_hat−b，则\n‖x_hat−x‖/‖x‖ ≤ κ(A) ‖r‖/‖b‖。\n若 (A+E)(x+Δx)=b+e，令 a=‖E‖/‖A‖、β=‖e‖/‖b‖，在 κ(A)a<1 时，\n‖Δx‖/‖x‖ ≤ κ(A)(a+β)/(1−κ(A)a)。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "推导",
+                "start_line": 9,
+                "end_line": 13,
+                "excerpt": "## 推导\n残差式由 x_hat−x=A⁻¹r 与 ‖b‖≤‖A‖‖x‖ 得到。有限扰动用\n(I+A⁻¹E)Δx=A⁻¹(e−Ex)。当 ‖A⁻¹E‖≤κa<1 时，Neumann 级数使逆的范数至多 1/(1−κa)，再取范数。\n这补全来源省略的有限扰动代数；不是形式化证明。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.linear-solve-backward-error",
+            "version": 1,
+            "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+            "title": "线性求解的后向误差、条件性与下游误差证书",
+            "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+            "status": "published",
+            "assumptions": [
+              "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+              "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+              "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+              "下游排序须真实线性评分映射和严格逐对误差间隔"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+                "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 6
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.046649531024531024,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "触发结构",
+                "start_line": 5,
+                "end_line": 8,
+                "excerpt": "## 触发结构\n\n方阵线性方程的近似解、很小的残差却错误的排名、接地电路的电压误差。先确定对象 A、右端 b、近似解 y、范数、数据精度及下游查询 c；只在存在可核验逆算子界时把残差转换为解误差。动态系统稳定性、迭代收缩性与线性方程条件性是不同问题。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "对象与准确结论",
+                "start_line": 9,
+                "end_line": 24,
+                "excerpt": "## 对象与准确结论\n\n实方阵 A 可逆，Ax=b，r=b−Ay；向量采用无穷范数，矩阵采用诱导行和范数，κ=‖A‖∞‖A⁻¹‖∞。以下残差首先指精确输入数据的精确残差。\n\n**经典联合非结构化后向误差**：使 (A+ΔA)y=b+Δb，且 ‖ΔA‖∞≤η‖A‖∞、‖Δb‖∞≤η‖b‖∞ 的最小 η 为\n\nη=‖r‖∞/(‖A‖∞‖y‖∞+‖b‖∞)。\n\n分母为零时 y=b=0，定义 η=0。该允许扰动的集合不要求保留对称性、稀疏性、电路守恒或数据单位；结构化后向误差不能直接用此公式代替。\n\n**前向误差**：若 H≥‖A⁻¹‖∞、R≥‖r‖∞ 已被核验，则 E=HR 满足 ‖x−y‖∞≤E。b≠0 时另有相对误差 ≤κ‖r‖∞/‖b‖∞；若 κη<1，还有 ≤2κη/(1−κη)。κ很大可以放大小残差；条件不满足只说明这个界不能保证，不能据此断言实际失败。\n\n**本条自推导的可计算逆界**：给定方阵 B，证明 q=‖I−BA‖∞<1，则 A 可逆且 H=‖B‖∞/(1−q) 是有效上界。浮点估计值必须加上计算误差上界再检查 q<1；无保证的条件数估计不能冒充证书。\n\n**本条自推导的下游查询界**：si=ciᵀx，ŝi=ciᵀy，则 |si−ŝi|≤‖ci‖₁E。对近似排序中选中的 i 和未选中的 j，若 ŝi−ŝj>(‖ci‖₁+‖cj‖₁)E，则真值也有 si>sj。逐对满足才能保证集合；相等边界不保证唯一排序。只有线性评分映射被保留时可用，不能推出注意力输出、工具成功率或 Agent 质量提升。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "scope": "human structure queries/assumption reviews, not model semantic retrieval/refusal benchmark"
+}

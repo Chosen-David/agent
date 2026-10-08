@@ -1,0 +1,137 @@
+{
+  "schema": "direct-independent-review/v1",
+  "phase": "phase1-frozen-math-and-development-data",
+  "status": "usable-with-scope",
+  "actor": "/root/screening_verifier",
+  "identity_scope": "Host-delegated independent agent /root/screening_verifier; no claim of managed ReviewSession or authenticated runtime callback",
+  "scope": "Exact-real orthogonal residual interval derivation; 65 public producer fixtures (45 Fraction-exact and 20 float64 diagnostics), six refusal witnesses; independent exact finite CPU checks. Not strict floating certificate, model, GPU, unseen holdout, e2e, performance, or novelty.",
+  "manifest_sha256": "258e8fb4fb83ff1545b2bccc18f916a27a415344fe00ad573742d97d2e8f8037",
+  "validation_plan_sha256": "5d0d4cd1022a168e1a7705e3bf9592f9d4f76f7f4386e2556636049b2f06e6f0",
+  "artifact_hashes": {
+    "doc/results/math-screening-20261008/verify.py": "8c823ef18530ea4bb006a726322258e6f7e15cc2954ba80738b950ed71b7c14e",
+    "doc/results/math-screening-20261008/raw.json": "64f4296c9926c268e6defda8efa56eac0452589ea5f8ee4bfaf98c24078ea02b",
+    "doc/results/math-screening-20261008/config.json": "769541ef7f41b12034829b554b2a3157447cb076a12012e00d3571c3922b5bf4",
+    "doc/results/math-screening-20261008/environment.json": "c0800afbec3886c9bfaf823010bb70a72b5e1492960e26db4785351de84e86d8",
+    "doc/results/math-screening-20261008/research.json": "a3b617fe6d257e74ab32ec6b4d25f520502833d99b96056fd5b28f5332c9f200",
+    "doc/results/math-screening-20261008/task-dag.json": "ea7cafbd389dcd5b0ff20d75cc5b64e701685b960992802e9707326f80e77cfa",
+    "doc/results/math-screening-20261008/prior-results.json": "426f703868ad1e2a278a4873a8797326ac962732923a2d8c2abb2ca9d2e10f68",
+    "doc/results/math-screening-20261008/baseline-retrieval.json": "9abb63fde74f58ba0c8877efa031a64358e21660bf59e34adf1bca00d0c11ae3",
+    "knowledge/entries/math.residual-interval-screening.md": "f1157cba7071eff318864d959f3ef8ea52c4a4e6340d27cdbcd6f58b9f6bfb68"
+  },
+  "independent_evidence": {
+    "doc/results/math-screening-20261008/independent_verify.py": "dad813e1c8bd2a0549a9d75fbb8d69b373dfe418856e925042e3b11864a7305c",
+    "doc/results/math-screening-20261008/independent_raw.json": "3a193c22d2545fde70813813cacb859ee27c30dc2cc37d0c5a96c209ab40d66d",
+    "doc/results/math-screening-20261008/independent_check.py": "c8eb47561257d584864c3cf5646a7a6f3a6f575ae6337be44952e1a32977ac80",
+    "doc/results/math-screening-20261008/independent_check_outputs.json": "7d0c3e9dc30f216649ba1b5566bb6796df9664c4a3bac22d146943a8d088fb74"
+  },
+  "checks": {
+    "implementation": {
+      "verdict": "pass",
+      "reason": "Read complete producer code. Matched Fraction vs NumPy branches, kth largest lower-bound threshold, inclusive candidate retention, stable exact-score reranking and diagnostic tolerance. No production verify.py execution or frozen-output rewrite.",
+      "evidence": [
+        "verify.py",
+        "independent_check.py",
+        "independent_check_outputs.json"
+      ]
+    },
+    "reference_boundary": {
+      "verdict": "pass",
+      "reason": "Independent Fraction residual construction without producer import: 59049 cases in R2 with rank-one rational orthogonal projections and 3000 generic effective interval cases. Includes zero query, rank-one projection directions, all k=1..N, repeated/tied scores; actual producer ties k=1/2/3 and zero/full QR ranks inspected. Additional invalid substitutions recorded.",
+      "evidence": [
+        "independent_verify.py",
+        "independent_raw.json",
+        "independent_check_outputs.json"
+      ]
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "All nine manifest artifact hashes matched before/after the independent check. 65 unique case names; 45 exact,20 floating,6 refusal witnesses,198 assertions reconstructed. Seed742 and full generation specification are in frozen code/config; raw input q/keys absent but deterministic input regeneration was checked. Claims of zero model/GPU and no holdout agree with complete executed path.",
+      "evidence": [
+        "manifest.json",
+        "config.json",
+        "independent_check_outputs.json"
+      ]
+    },
+    "numerical_sanity": {
+      "verdict": "pass-with-scope",
+      "reason": "All exact envelopes and topk selections pass with no tolerance; floating numbers finite, radii nonnegative, raw candidate and selected IDs recomputed exactly from stored floats. Scalar alternate references differ <=3.552713678800501e-15. Four diagnostic cases have positive strict envelope violations (max2.2204460492503115e-15), consistent with explicit non-certification. The arbitrary 1e-10 tolerance supports these finite diagnostics only.",
+      "evidence": [
+        "raw.json",
+        "independent_check_outputs.json"
+      ]
+    },
+    "measurement_validity": {
+      "verdict": "not_applicable",
+      "reason": "No speedup, runtime comparison, measured model accuracy or sensor benchmark is accepted. elapsed_seconds is an uncalibrated single development-script duration, not performance evidence. Sensor fixture is a synthetic algebraic inner-product mapping.",
+      "evidence": [
+        "verify.py",
+        "config.json",
+        "environment.json"
+      ]
+    },
+    "reproducibility": {
+      "verdict": "pass-with-scope",
+      "reason": "Independently regenerated producer seeded inputs, compared exact s/h/e and diagnostic alternate references, recomputed tau/candidates/selected ids, and executed independent exhaustive arithmetic checks on current Python3.12.14/NumPy2.3.5 Linux. No mutation of frozen production artifacts.",
+      "evidence": [
+        "independent_check.py",
+        "independent_check_outputs.json",
+        "independent_verify.py",
+        "independent_raw.json"
+      ]
+    }
+  },
+  "proof_review": {
+    "verdict": "pass",
+    "premises": [
+      "N>=1 and integer1<=k<=N",
+      "finite real scores",
+      "same exact orthogonal P for query and every key",
+      "each interval encloses original score",
+      "reranking evaluates original scores exactly"
+    ],
+    "reason": "Orthogonal P gives s-h=q^T(I-P)k=((I-P)q)^T((I-P)k); Cauchy-Schwarz encloses each score. At least k indices have L>=tau, hence s>=tau and U>=tau. Any removed index has s<=U<tau, so strictly trails at least k indices. Consequently every index at or above the true kth score remains and reranking produces a full-set topk solution.",
+    "tie_clarification": "Arbitrary-tie statement does not prescribe IDs. All boundary ties survive; using the same explicit deterministic tie protocol in reference and reranking recovers the same labels.",
+    "additional_refusals": [
+      "Using kth hat instead of kth L can discard true champion: P=diag(1,0),q=(1,1),keys=(50,-50),(1,0),k=1.",
+      "Deleting U=tau can delete all candidates even at P=I and scores(1,1).",
+      "Different orthogonal Pq/Pk do not justify same product radius: q=k=(1,0),Pq=diag(1,0),Pk=diag(0,1),dual-projection proxy0,true1,radius0.",
+      "Average radius4/5 for keys(0,4),(2,0),three zero keys with q=(1,1),P=diag(1,0) excludes true champion4.",
+      "Nonorthogonal idempotent P=[[1,1],[0,0]],q=(1,0),key=(0,1): score0,hat1,product radius0.",
+      "Softmax support changes even at P=I with scores(1,0),k=1: discarded mass1/(1+exp(1))>0.",
+      "Mask/NaN/Inf,k outside1..N,stale cache changed query/key/projection,non-original rerank or inconsistent scaling lie outside theorem."
+    ]
+  },
+  "knowledge_usage": {
+    "query": "python -m agent_runtime.knowledge --root knowledge search 查询/投影/残差/分数/区间/topk --limit3",
+    "snapshot": "3b288893a5da86731786e14aff60687e80d578e88a16c41decc383b8ad53ceb3",
+    "read": [
+      "math.cauchy-schwarz@1",
+      "math.orthogonal-projection-qr@1",
+      "math.score-difference-bound@1"
+    ],
+    "application": "Independently verified current theorem rather than using related knowledge status as proof."
+  },
+  "source_spotcheck": {
+    "read": "Direct web open of Wisconsin Notes3 and arXiv2609.08450v1; paper title/date/abstract/operator contract retrieved independently.",
+    "outcome": "Research distinction of materialized indexer row selection vs original dense scores is supported; no paper speedup is accepted as this task measurement.",
+    "urls": [
+      "https://people.math.wisc.edu/~gemeyer/math340/Notes3.html",
+      "https://arxiv.org/html/2609.08450v1"
+    ]
+  },
+  "prior_result_review": {
+    "query": "python scripts/result_store.py --root PROJECT_ROOT search residual interval screening --limit5 --max-scan200",
+    "scanned": 26,
+    "decision": "no direct reuse",
+    "reason": "Four lexical corpus-maintenance candidates do not match the mathematical screening experiment; nine missing-record errors mean archive completeness is not established."
+  },
+  "limitations": [
+    "Floating-point envelopes actually violate exact bounds in listed cases and are accepted only as explicitly non-certified diagnostics.",
+    "Sensor fixture is an algebraic inner-product example, not measured sensor retrieval data.",
+    "No timing comparison, holdout, model, GPU, formal prover, or managed ReviewSession/provider authentication.",
+    "Finite tests do not replace proof or formal verification.",
+    "Validation-plan/manifest are direct host records, not standard runtime experiment-contract schemas; this record does not claim ResultValidationHandler admission.",
+    "Any frozen artifact/knowledge正文 change invalidates these hashes and requires phase2 readback/rebinding; later metadata publication status is not itself new mathematical evidence."
+  ],
+  "next_owner": "root may publish the checked mathematical knowledge with these limitations, then request phase2 consumer/retrieval/interface/hash verification."
+}

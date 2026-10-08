@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "id": "math.residual-interval-screening",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "正交残差包络与安全候选筛除",
+  "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+  "aliases": [
+    "残差 区间 筛除 证书 候选 边界",
+    "residual interval safe screening candidate certificate",
+    "compressed search dot product bound"
+  ],
+  "domains": [
+    "linear-algebra",
+    "optimization"
+  ],
+  "structures": [
+    "inner-product",
+    "orthogonal-projection",
+    "ranking",
+    "interval-screening",
+    "error-bound"
+  ],
+  "assumptions": [
+    "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+    "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+    "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+    "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+  ],
+  "sources": [
+    {
+      "url": "https://people.math.wisc.edu/~gemeyer/math340/Notes3.html",
+      "locator": "Theorem5.3(Cauchy-Schwarz),5.10(orthogonal decomposition); safe-screening theorem is explicit project derivation",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+      "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1
+    },
+    {
+      "id": "math.orthogonal-projection-qr",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.topk-margin"
+    },
+    {
+      "type": "related",
+      "id": "math.weighted-bilinear-low-rank"
+    },
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    },
+    {
+      "type": "related",
+      "id": "math.rotation-intertwiner"
+    }
+  ],
+  "content": "# 正交残差包络与安全候选筛除\n\n稳定ID：math.residual-interval-screening；版本1；核查日期2026-10-08。经典基础为正交分解/Cauchy–Schwarz；下面筛除规则为项目自行推导，不宣称首次提出。\n\n## 问题触发与对象\n已压缩向量用于检索或attention候选筛选，但平均重建误差小仍可能漏掉关键token。目标是在有限有效集合里保留原分数Top-k的一个解。q,k_i∈R^d，P=UUᵀ，UᵀU=I，s_i=qᵀk_i，h_i=qᵀPk_i。无概率/独立性假设；P可以来自数据，但该次查询和全部键必须用同一投影。\n\n## 假设、结论与证明\n1≤k≤N；有效分数有限，mask后只在合法token上做秩统计。精确实数下，r_q=(I−P)q、r_i=(I−P)k_i，因P正交，s_i−h_i=r_qᵀr_i。由Cauchy–Schwarz，|s_i−h_i|≤e_i=||r_q||₂||r_i||₂。若分数有正缩放c（如1/√d），h与e都乘c。\n\n设L_i=h_i−e_i，U_i=h_i+e_i；更一般也可用任何已证明的逐项外包区间。tau为L的第k大值，C={i:U_i≥tau}。至少k个下界≥tau，故对应的真实分数≥tau，且这些token全在C。任何删项满足s_j≤U_j<tau；它严格低于至少k个真实分数，因此不可能是Top-k必需成员。在C内按真实s精确重排取k个，即是全集的一个Top-k解。候选数至少k、至多N，不能保证严格缩小。严格筛除U<tau，不得把U=tau也删掉。\n\n不保证某个固定tie-break标签集合；要求稳定token ID排序时需另加入二元顺序协议。所谓“精确重排”是原目标分数，换模型分数、换温度、换有效长度或低精度proxy均不继承结论。\n\n若希望直接输出proxy所选S（|S|=k），可检查min_{i∈S}L_i>max_{j∉S}U_j；满足才证唯一分界，不满足只是未知，不是错误的证明。不同token的e无需用同一全局ε，故比统一margin条件更灵活；它不声称所有情况下更紧。\n\n## 正例、边界与误用反例\nP=diag(1,0)，q=(1,1)，键(10,0),(8,1),(0,0)。h=(10,8,0)，e=(0,1,0)，k=1时tau=10，C仅首键，正确。若q属于投影子空间，全部e=0，即可精确按h选；k=N保留全部。零投影往往过宽，仍安全但可能毫无筛除收益。\n\n均值残差反例：q=(1,1)，一键(0,100)，其余999键(1,0)，P=diag(1,0)。残差平均0.1；若错误地把e=0.1赋给每项，就会删掉真实分数100的键。这不是逐项证书。\n\n非正交反例：P=[[1,1],[0,0]]虽P²=P，但Pᵀ≠P；q=(1,0),k=(0,1)有s=0,h=1，而||(I−P)q||=0，错误产品界给0。一般AᵀB低秩映射不等于正交P；可另用||q|| ||(I−AᵀB)k_i||，不能偷换成本和误差。\n\nTop-k正确不代表full-softmax输出正确：两个相同logit而不同v，只取一个即会改变加权输出。应结合math.attention-output-geometry，核对value、重归一化和跨层影响。\n\n## 实际迁移与不适用条件\n严格映射：检索候选/attention token映射到键，原始点积分数到s，子空间代理到h，缓存逐键残差范数到e，边界不确定者到C。仅NoPE可在内容向量上核对；仅RoPE须在实际位置旋转后的q/k上统一投影；混合路径可直接投影全部实际向量，或对不相交子块的误差界求和。不能以pre-RoPE残差范数替代post-RoPE跨频率残差；旋转完整范数不变不代表对固定P的残差不变。\n\n原FC准确保留加遗漏部分正交压缩时，可对遗漏子块应用本规则。残差范数缓存增加存储，查询残差计算和全候选包络扫描也有成本。最坏C=N，需完整回退；near/far分别用固定quota，只能保证各区域quota目标，不自动保证全局Top-k。论文可以记录C/N、精算键数、误筛数、总索引/校准/缓存成本与e2e，不能仅报告重合度或理论FLOPs。\n\n跨域：传感器/文档最大内积检索使用同一向量内积结构，是严格数学映射；语义压缩token数与向量维数只是不同对象，不能据此宣称Agent省token。\n\n## 计算验证与限制\n公开开发例、Fraction精确二维投影、NumPy QR有限诊断及反例见agent_doc/results/math-screening-20261008/。浮点诊断用容差检查，未实现外包区间；P≈UUᵀ的数值正交性误差须计入，直接sqrt(||x||²−||Uᵀx||²)可能因相消低估残差。量化须外包膨胀。没有Lean形式化证明、真实模型/trace/GPU/e2e或未见模型测试。候选规则仅作为已核查知识；生产消费者尚未接入。\n\n## 来源与关系\nG. Meyer, Wisconsin Math340 Notes3，Theorem5.3、5.10（访问2026-10-08；原网页部分关系符号编码缺失，只采用对应基础事实并显式推导）。强依赖math.cauchy-schwarz@1、math.orthogonal-projection-qr@1；math.topk-margin为相关统一误差规则。近期HPC-Ops论文的精确选择对象是已经物化的indexer分数行，与本条原点积包络区分，详见本轮research.json。\n",
+  "path": "entries/math.residual-interval-screening.json",
+  "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+  "knowledge_refs": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1,
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c"
+    },
+    {
+      "id": "math.orthogonal-projection-qr",
+      "version": 1,
+      "sha256": "3eff040b2613cd46350e9605cfa5c7b748e5a3bdb6bb0c173724f722d00225e8"
+    },
+    {
+      "id": "math.residual-interval-screening",
+      "version": 1,
+      "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129"
+    }
+  ]
+}

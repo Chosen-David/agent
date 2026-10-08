@@ -210,3 +210,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [NS-01] 迁移工作流专属文档目录及根和路径契约 ([detail](task_details/NS-01.md))
 - [x] [NS-02] 验证普通 doc 保留、历史映射、指南保护与回归 ([detail](task_details/NS-02.md))
 - [x] [NS-03] 整合 main 后直接发布并同步本机技能 ([detail](task_details/NS-03.md))
+## 2026-10-08 正交残差安全筛除
+
+- [x] [MATH-43] 补齐逐项残差包络与候选安全筛除，核查近期选择研究。 ([detail](task_details/MATH-43.md))
+- [ ] [MATH-44] 独立代码/数据验证、有限检索和回归，main发布读回。 ([detail](task_details/MATH-44.md))

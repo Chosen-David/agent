@@ -1,0 +1,953 @@
+{
+  "压缩 点积 排名 间隔": {
+    "schema_version": 1,
+    "snapshot": "3b288893a5da86731786e14aff60687e80d578e88a16c41decc383b8ad53ceb3",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "results": [
+      {
+        "id": "math.score-difference-bound",
+        "version": 1,
+        "sha256": "32f15976d97e494614c2ccef88a7d832f107bdce0747c8373969964435856209",
+        "title": "利用整体二范数误差收紧排序间隔条件",
+        "summary": "整体误差约束可把逐项保守的 2ε 条件收紧为 √2η，避免遗漏相关误差结构。",
+        "status": "published",
+        "assumptions": [
+          "分数向量误差满足整体二范数界 ‖s−s_hat‖₂≤η，k 在1到n−1间",
+          "矩阵形式为固定实查询 s=Kᵀq，已知 ‖q‖₂≤Q、‖K−K_hat‖₂≤δ",
+          "若只知道逐分数误差≤ε而无整体界，不可用 √2ε 替代2ε"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "同名 Markdown 的明确推导与反例；非形式化证明",
+            "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "间隔"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "间隔"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "排名",
+              "间隔"
+            ]
+          }
+        ],
+        "score": 12
+      },
+      {
+        "id": "math.data-processing-task-sufficiency",
+        "version": 1,
+        "sha256": "641a0326aa9b82681619e2f6d82e77ba2b7076def3d4f086ac3037144e54e6c4",
+        "title": "数据处理不等式、支撑条件与任务充分压缩",
+        "summary": "有限字母的同一随机通道不会增加KL可区分性；目标→原始数据→摘要的Markov关系给互信息上界。保持任务后验才是充分性，摘要短、重建损失小或样本正确都不等于充分。",
+        "status": "published",
+        "assumptions": [
+          "本条结论限有限字母概率分布，使用同一对数底数；bit用log2",
+          "KL处理前后必须对P,Q应用同一行随机核K；p>0,q=0的项为正无穷",
+          "KL差值/后验等号公式要求P绝对连续于Q（有限字母下即支撑包含），避免无穷减无穷",
+          "任务Y、原数据X、摘要T满足Y→X→T；摘要随机性给定X不依赖Y",
+          "固定联合分布的任务充分性不能推广为所有任务/所有先验的统计充分性；引入外部R须扩展输入对象"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-information/verify.py",
+            "docs/knowledge_learning/2026-10-07-information/checks.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "压缩"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "压缩"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "压缩"
+            ]
+          }
+        ],
+        "score": 11
+      },
+      {
+        "id": "math.topk-margin",
+        "version": 1,
+        "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792",
+        "title": "有界分数误差下的 Top-k 稳定性",
+        "summary": "用边界分数间隔判断近似排序能否保留 Top-k 集合。",
+        "status": "published",
+        "assumptions": [
+          "有限 n 个实分数，1≤k<n，原分数降序排列",
+          "每个分数均满足绝对误差≤ε，而不是仅平均误差",
+          "边界间隔 Δ=s_(k)−s_(k+1) 严格大于 2ε"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "同名 Markdown 中的命题、推导与边界；非形式化证明",
+            "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+          ]
+        },
+        "matches": [
+          {
+            "field": "aliases",
+            "terms": [
+              "间隔"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "间隔"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "间隔"
+            ]
+          }
+        ],
+        "score": 9
+      }
+    ]
+  },
+  "旋转 同频 交织": {
+    "schema_version": 1,
+    "snapshot": "3b288893a5da86731786e14aff60687e80d578e88a16c41decc383b8ad53ceb3",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "results": [
+      {
+        "id": "math.rotation-intertwiner",
+        "version": 1,
+        "sha256": "e7f20395508e5e0772b1fe0abaa690e7443df62e0d451e743c25ce1b5a6bc408",
+        "title": "实旋转交织映射与RoPE跨频率融合",
+        "summary": "固定频率潜表示需要交织条件；区分整数频率别名、同频复线性融合、低秩点积限制与有限长度近似缺陷。",
+        "status": "published",
+        "assumptions": [
+          "有限实线性映射；R(theta)为正交二维旋转；位置为整数",
+          "频率按2pi取模；0和pi需独立处理；连续位置不允许整数别名",
+          "近似长度界只在指定整数位置范围内；受限精确保真须明确数据支撑子空间"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "Self-contained real planar proof; no Lean/formal verification",
+            "32 public CPU structural cases; independent result acceptance required"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "交织",
+              "旋转"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "旋转"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "交织",
+              "同频"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "交织",
+              "同频",
+              "旋转"
+            ]
+          }
+        ],
+        "score": 24
+      },
+      {
+        "id": "math.eigenspace-gap-perturbation",
+        "version": 1,
+        "sha256": "9737b6e1fb288bf682e23f1910f32aadc43421bd42821550a82e419303a7e292",
+        "title": "谱隙、子空间扰动与投影打分证书",
+        "summary": "实对称矩阵的隔离特征值簇可用边界谱隙控制子空间误差；主方向稳定取决于误差与谱隙的比值。投影比较消除符号和簇内旋转歧义，可传播到有范数约束的打分。",
+        "status": "published",
+        "assumptions": [
+          "A与Ahat=A+E是同维实对称矩阵，使用一致坐标及欧氏算子/Frobenius范数",
+          "特征值降序，目标为同一索引区间r..s；d=s-r+1，外侧边界谱隙g=min(lambda_(r-1)-lambda_r,lambda_s-lambda_(s+1))>0，端点取无穷",
+          "U与Uhat列正交；比较投影或主角度，不能直接比较未对齐的基",
+          "本文自推较紧rank-one界另需目标最大特征值、g=lambda_1-lambda_2>0、认证epsilon>=||E||op且epsilon<g；epsilon<g/2额外认证扰动后最大特征值简单",
+          "打分迁移需q,k位于同一欧氏坐标系、目标确为q^T P k；只控制换基误差，不控制舍弃补空间或完整注意力输出"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-subspace/verify.py",
+            "docs/knowledge_learning/2026-10-07-subspace/checks.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "aliases",
+            "terms": [
+              "旋转"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "旋转"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "旋转"
+            ]
+          }
+        ],
+        "score": 9
+      },
+      {
+        "id": "math.descent-lyapunov-certificate",
+        "version": 1,
+        "sha256": "bc544371ae176fca157dcb900c31780de1f47cbab1d128210e14dc578855691c",
+        "title": "下降证书、驻点与不变集的收敛边界",
+        "summary": "可量化下降加下界控制耗散总量；光滑梯度步可保证梯度趋零，却不自动给全序列或全局最优。连续物理能量须检查最大不变零耗散集，动量方法须扩展状态。",
+        "status": "published",
+        "assumptions": [
+          "离散下降：V(x_(k+1))≤V(x_k)−W(x_k)，W≥0，轨迹上V有有限下界",
+          "GD具体界：f:R^n→R可微、欧氏梯度全局L-Lipschitz（L>0），f有有限下界；精确梯度、固定0<alpha<2/L",
+          "离散聚点结论另外需要紧致正不变域、连续更新和连续W；不保证全序列收敛",
+          "连续LaSalle：开放域中局部Lipschitz自治向量场，紧致正不变集合，V为C1且沿轨迹导数非正；结论为到最大不变零导数集的距离趋零",
+          "不能将连续能量导数直接当数值离散每步下降，不能将模型质量分数当已证明V"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-descent/verify.py",
+            "docs/knowledge_learning/2026-10-07-descent/checks.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "content",
+            "terms": [
+              "旋转"
+            ]
+          }
+        ],
+        "score": 1
+      }
+    ]
+  },
+  "低秩 双侧 独立 二阶矩": {
+    "schema_version": 1,
+    "snapshot": "3b288893a5da86731786e14aff60687e80d578e88a16c41decc383b8ad53ceb3",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "results": [
+      {
+        "id": "math.weighted-bilinear-low-rank",
+        "version": 1,
+        "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+        "title": "二阶矩加权的双线性低秩分数近似",
+        "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+        "status": "published",
+        "assumptions": [
+          "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+          "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+          "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "本条目显示的独立推导；非形式化证明",
+            "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "二阶",
+              "低秩",
+              "阶矩"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "双侧"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "二阶",
+              "双侧",
+              "独立",
+              "阶矩"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "二阶",
+              "低秩",
+              "双侧",
+              "独立",
+              "阶矩"
+            ]
+          }
+        ],
+        "score": 37
+      },
+      {
+        "id": "math.matrix-bernstein-covariance",
+        "version": 1,
+        "sha256": "a19353e007cec5fe3973b23bb156448d7ecc123aa596540a9c17eec835c6c4a9",
+        "title": "有界向量二阶矩的矩阵集中与校准可信度",
+        "summary": "独立有界向量的固定样本二阶矩可得谱误差概率界，核对均值、选样和谱隙后才传播到主子空间；不认证相关token或数据依赖子集。",
+        "status": "published",
+        "assumptions": [
+          "n≥1观察前固定；x_i∈R^d独立同分布，目标M=E[xx^T]",
+          "确定几乎处处||x||₂≤L；不能用观测最大值替代；L=0单独精确处理",
+          "Mhat=(1/n)Σxx^T，算子二范数；非零均值下M不等于中心化协方差",
+          "δ∈(0,1)，B≥||M||确定有效，可用B=L²；未知常数不替换为观测谱范数",
+          "下游主方向需要同一坐标和观测谱隙条件，并另外覆盖截断、量化、级联损失"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-matrix-concentration/verify.py",
+            "docs/knowledge_learning/2026-10-07-matrix-concentration/checks.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "二阶",
+              "阶矩"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "独立"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "二阶",
+              "独立",
+              "阶矩"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "二阶",
+              "独立",
+              "阶矩"
+            ]
+          }
+        ],
+        "score": 27
+      },
+      {
+        "id": "math.gaussian-quadratic-energy",
+        "version": 1,
+        "sha256": "3580b149aab06433446fe8734f10b71e7e50455df4dec80b8b0bfa68e4ba9b3f",
+        "title": "高斯二次能量的谱尾界与相关样本二阶矩",
+        "summary": "联合高斯、固定PSD能量的误差同时依赖谱平方和及最大特征值；在已知可分离依赖模型下转换为保守协方差谱界，不以均值ESS或边缘正态代替前提。",
+        "status": "published",
+        "assumptions": [
+          "x联合零均值高斯、真实确定C=Cov(x)≥0；A为固定实对称PSD，随机但独立A仅允许条件化后另核查",
+          "t>0；B=C^(1/2)AC^(1/2)，范数为欧氏算子范数；B=0单独处理；非PSD/非零均值另证",
+          "矩阵迁移限定X=T^(1/2)GΣ^(1/2)，G的元素独立标准正态，T≥0且diag(T)=1，Σ≥0；n,d及抽样协议固定",
+          "谱界用真实确定tr(T²)、||T||和有效BΣ≥||Σ||；经验估计无误差认证不能代入",
+          "均值未知/样本中心化、同数据选投影、自适应停止、非可分离外积相关和真实token模型不由本条认证"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-quadratic/verify.py",
+            "docs/knowledge_learning/2026-10-07-quadratic/checks.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "二阶",
+              "阶矩"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "二阶",
+              "阶矩"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "二阶",
+              "独立",
+              "阶矩"
+            ]
+          }
+        ],
+        "score": 21
+      }
+    ]
+  },
+  "softmax Fisher KL": {
+    "schema_version": 1,
+    "snapshot": "3b288893a5da86731786e14aff60687e80d578e88a16c41decc383b8ad53ceb3",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "results": [
+      {
+        "id": "math.softmax-kl-fisher",
+        "version": 1,
+        "sha256": "e8b5926cdfdd48d44a5b6c6e03ae4ee71ba1aade837c3d2f96beed5a36c9d7f9",
+        "title": "有限softmax的KL与中心化Fisher曲率",
+        "summary": "分数误差在共同平移商空间中决定概率KL；用路径方差给全局上界与条件下界，饱和时不能由低秩分数MSE推出概率有效秩。",
+        "status": "published",
+        "assumptions": [
+          "共同非空有限支持集、有限实logits；温度正且已计入，KL自然对数",
+          "概率下界须覆盖整个连接路径；Fisher近似需振幅R小；没有统一全局正下界",
+          "硬mask/greedy/不同支持集另处理；attention概率轴不等于输出词表生成轴"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "Self-contained finite derivations; no formal proof",
+            "doc/results/math-softmax-kl-20261008 public CPU cases; publication subject to independent acceptance"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "fisher",
+              "kl",
+              "softmax"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "fisher",
+              "kl",
+              "softmax"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "kl"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "fisher",
+              "kl",
+              "softmax"
+            ]
+          }
+        ],
+        "score": 36
+      },
+      {
+        "id": "math.softmax-barycenter-error",
+        "version": 1,
+        "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+        "title": "有限 softmax 与归一化加权输出误差",
+        "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+        "status": "published",
+        "assumptions": [
+          "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+          "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+          "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+            "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "softmax"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "softmax"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "softmax"
+            ]
+          }
+        ],
+        "score": 11
+      },
+      {
+        "id": "algo.dpo-offline-preferences",
+        "version": 1,
+        "sha256": "5edf0ba6d8dd82be84009ad7d2ae0c9ea7056203525dca1a29b13236e66980e8",
+        "title": "DPO：离线偏好优化的适用前提",
+        "summary": "NeurIPS 2023 在偏好数据任务上支持直接优化 policy 的路线，可避免显式训练 reward model 和训练时在线生成；不保证所有 RLHF 任务更优。",
+        "status": "published",
+        "assumptions": [
+          "data: paired chosen/rejected offline preferences",
+          "objective: KL-regularized preference learning",
+          "metric: preference quality versus KL"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "not-applicable",
+          "checks": [
+            "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.dpo-offline-preferences"
+          ]
+        },
+        "matches": [
+          {
+            "field": "aliases",
+            "terms": [
+              "kl"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "kl"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "kl"
+            ]
+          }
+        ],
+        "score": 10
+      }
+    ]
+  },
+  "有限 菜单 校准": {
+    "schema_version": 1,
+    "snapshot": "3b288893a5da86731786e14aff60687e80d578e88a16c41decc383b8ad53ceb3",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "results": [
+      {
+        "id": "math.discrete-budget-allocation",
+        "version": 1,
+        "sha256": "71cd29618df4439297c7b0d42f96e89230afeb5724aef660bfde2528d871e2dc",
+        "title": "有限菜单离散预算分配与代理最优性证书",
+        "summary": "可加整数成本/损失下用DP求有限菜单精确解；λ加权和可漏掉未支配最优，弱对偶只认证代理而非端到端精度。",
+        "status": "published",
+        "assumptions": [
+          "每组非空有限菜单，恰选一项；成本为非负整数，预算B为非负整数；允许空组序列边界",
+          "目标损失和资源成本均可加且固定；损失为有限实数；实测浮点最优性和硬延迟另需误差认证",
+          "对偶λ≥0且有限菜单min为真实值或认证下界；只认证已定义代理目标"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "同名Markdown一般归纳/弱对偶推导；非形式化",
+            "doc/results/math-allocation-20261008/：公开CPU整数/Fraction验证及独立审查；不含模型/GPU"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "有限",
+              "菜单"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "有限",
+              "菜单"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "有限",
+              "菜单"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "有限",
+              "校准",
+              "菜单"
+            ]
+          }
+        ],
+        "score": 29
+      },
+      {
+        "id": "math.finite-menu-selection",
+        "version": 1,
+        "sha256": "12a6934e379b7392d9272dcec55abdbc148464d435ed4ae437955b0f5dfa85b8",
+        "title": "有限冻结候选的同时校准与选择后风险",
+        "summary": "用有界均值与联合界校准整个冻结菜单；选择后均值风险≤最优+两份误差+求解误差，期望成本认证不等于单次硬预算。",
+        "status": "published",
+        "assumptions": [
+          "菜单及每个损失/成本可测函数、已知范围在校准前固定，或由独立学习集产生；M≥1有限",
+          "n≥1预先固定，独立同分布校准对象来自与声明目标相同P；候选之间可相关，重复同文档不算新iid对象",
+          "δ∈(0,1)，损失/成本有已知确定有限范围；比较对象须在所选可行集内；均值非单次保证"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "同名Markdown的联合/选择/期望成本推导和泄漏反例；非形式化",
+            "doc/results/math-selection-20261008/：公开CPU结构/精确概率与独立检查，不含模型/GPU"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "有限",
+              "校准"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "校准"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "校准",
+              "菜单"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "有限",
+              "校准",
+              "菜单"
+            ]
+          }
+        ],
+        "score": 24
+      },
+      {
+        "id": "prob.conformal-policy-control",
+        "version": 1,
+        "sha256": "c80d9008b17bdac2f9c77995c4c490c476f7d72aba816e513ce395b41cdfb304",
+        "title": "Conformal Policy Control：非单调风险校准与近似权重的保证边界",
+        "summary": "ICML 2026 将校准作用于策略偏离程度；风险保证是带稳定性余项的边际期望界，精确多轮权重与实用近似须区分。",
+        "status": "published",
+        "assumptions": [
+          "loss: bounded loss in [0,B]; known acceptable-risk reference policy",
+          "policy: mutually absolutely continuous policies; computable likelihoods; stable context distribution",
+          "calibration: gCRC exchangeability plus Lipschitz/replace-one stability; CPC exact weighted calibration plus relative replace-one stability",
+          "guarantee: marginal expected risk, not per-context or high-probability safety"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "not-checked",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.conformal-policy-control"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "校准"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "校准"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "校准"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "校准"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "有限",
+              "校准"
+            ]
+          }
+        ],
+        "score": 19
+      }
+    ]
+  },
+  "协方差 合并 中心化": {
+    "schema_version": 1,
+    "snapshot": "3b288893a5da86731786e14aff60687e80d578e88a16c41decc383b8ad53ceb3",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "results": [
+      {
+        "id": "math.centered-covariance-merge",
+        "version": 1,
+        "sha256": "f9ebd428b6fd9f78ac667a6a2419e277c5d8ca1731d3e5357b25a9a62f7a9b28",
+        "title": "中心化协方差、可合并散布统计量与误差桥",
+        "summary": "区分二阶矩与中心协方差；按计数/均值/散布精确合并，避免遗漏组间项；统计保证与浮点稳定性分别审查。",
+        "status": "published",
+        "assumptions": [
+          "有限实向量，同维度/坐标/单位和相同预处理；精确恒等式不要求iid",
+          "A、B为不重复不遗漏的数据分区，计数为非负整数；空分区用单位元，不定义空均值",
+          "C_n=S/n对n≥1；S/(n−1)只对n≥2，称总体协方差无偏还需iid及有限二阶矩",
+          "概率误差桥需已证明的均值和二阶矩误差事件；合并公式不赋予独立性或覆盖保证",
+          "浮点不具有严格结合律；需单独检查输入精度、溢出、抵消及舍入误差"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-centering/verify.py",
+            "docs/knowledge_learning/2026-10-07-centering/checks.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "中心",
+              "协方",
+              "合并",
+              "心化",
+              "方差"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "中心",
+              "协方",
+              "合并",
+              "心化",
+              "方差"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "中心",
+              "协方",
+              "合并",
+              "心化",
+              "方差"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "中心",
+              "协方",
+              "合并",
+              "方差"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "中心",
+              "协方",
+              "合并",
+              "心化",
+              "方差"
+            ]
+          }
+        ],
+        "score": 87
+      },
+      {
+        "id": "math.dependent-mean-variance",
+        "version": 1,
+        "sha256": "03813de91ef8891cba4b6bcf95b9cb878ed4475533d5c430e582376c51ff4302",
+        "title": "依赖样本均值方差与目标专属有效样本量",
+        "summary": "从完整协方差计算固定n的均值方差；有效样本量只匹配该目标的方差，不证明独立性、高斯尾或二阶矩/子空间可靠性。",
+        "status": "published",
+        "assumptions": [
+          "n≥1事先固定；实标量过程有共同均值µ与有限二阶矩，协方差指真实模型量",
+          "平稳简式还要求γ_h=Cov(X_t,X_(t+h))不依赖t；γ0>0，负相关允许",
+          "AR(1)特例要求因果平稳初始化、|phi|<1及独立同分布零均值有限方差创新；不是从lag1估计直接得整个模型",
+          "高斯尾和平方相关公式额外要求联合高斯；平方例还要求µ=0，不能仅凭高斯边缘",
+          "样本ACF/phi/方差估计无本条误差认证；均值漂移、自适应抽样和停止时间需要另证"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-dependence/verify.py",
+            "docs/knowledge_learning/2026-10-07-dependence/checks.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "协方",
+              "方差"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "中心",
+              "协方",
+              "心化",
+              "方差"
+            ]
+          }
+        ],
+        "score": 24
+      },
+      {
+        "id": "prob.vector-variance-aware-concentration",
+        "version": 1,
+        "sha256": "a39d6f473786b20228fd60342b0f364b39b7e396b45cb8a537e9e776054ff974",
+        "title": "向量自归一化：轻尾、方差自适应与序贯置信界的收益和代价",
+        "summary": "ALT 2026 在可分Hilbert空间构造超鞅，给出 Bernstein/Bennett 和混合序贯界；低方差合成bandit受益，高方差下并不总胜次高斯界。",
+        "status": "published",
+        "assumptions": [
+          "process: predictable X_t; conditional mean-zero epsilon_t; fixed rho>0; separable Hilbert space",
+          "tails: conditional Bernstein moment condition, or bounded noise and predictable variance bounds",
+          "horizon: Theorems 9/10 deterministic horizon n and variance envelope Cn; Theorems 11/12 fully sequential mixtures",
+          "empirical_variance: Theorem 12 requires bounded noise with constant conditional variance and a valid variance confidence sequence"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "not-checked",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.vector-variance-aware-concentration"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "方差"
+            ]
+          }
+        ],
+        "score": 18
+      }
+    ]
+  }
+}

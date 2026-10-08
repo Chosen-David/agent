@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "id": "math.residual-interval-screening",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "正交残差包络与安全候选筛除",
+  "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+  "aliases": [
+    "残差 区间 筛除 证书 候选 边界",
+    "residual interval safe screening candidate certificate",
+    "compressed search dot product bound"
+  ],
+  "domains": [
+    "linear-algebra",
+    "optimization"
+  ],
+  "structures": [
+    "inner-product",
+    "orthogonal-projection",
+    "ranking",
+    "interval-screening",
+    "error-bound"
+  ],
+  "assumptions": [
+    "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+    "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+    "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+    "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+  ],
+  "sources": [
+    {
+      "url": "https://people.math.wisc.edu/~gemeyer/math340/Notes3.html",
+      "locator": "Theorem5.3(Cauchy-Schwarz),5.10(orthogonal decomposition); safe-screening theorem is explicit project derivation",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+      "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.cauchy-schwarz",
+      "version": 1
+    },
+    {
+      "id": "math.orthogonal-projection-qr",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.topk-margin"
+    },
+    {
+      "type": "related",
+      "id": "math.weighted-bilinear-low-rank"
+    },
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    },
+    {
+      "type": "related",
+      "id": "math.rotation-intertwiner"
+    }
+  ]
+}

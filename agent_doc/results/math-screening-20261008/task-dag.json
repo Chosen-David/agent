@@ -1,0 +1,26 @@
+{
+  "nodes": [
+    {
+      "id": "produce",
+      "owner": "root"
+    },
+    {
+      "id": "verify_experiment_result",
+      "owner": "/root/screening_verifier",
+      "depends_on": [
+        "produce"
+      ]
+    },
+    {
+      "id": "publish_knowledge",
+      "owner": "root",
+      "depends_on": [
+        "verify_experiment_result"
+      ]
+    }
+  ],
+  "limitations": [
+    "Direct host task graph, not Engine/ReviewSession authenticated deployment.",
+    "No same-task running record discovered; previous mathematical cursor completed."
+  ]
+}
