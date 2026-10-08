@@ -11,7 +11,7 @@
 python /absolute/agent/scripts/plan_ep.py plan --input /absolute/agent/examples/ep_packing.json --now 1001
 ```
 
-放置规则：**LPT（估时降序）+ 最小投影负载优先**；独占 job 只进未动过的卡，共享 job 只进 `shared_ok` 且显存和不超的卡。`est_seconds` 是独占执行估计，**共置降速不建模**——共置档位的真实吞吐必须由执行端实测校准（先 2/3/4 路各测一臂，再定档位）。
+放置规则：**LPT（估时降序）+ 最小投影负载优先**；独占 job 只进未动过的卡，共享 job 只进 `shared_ok` 且显存和不超的卡。三个执行端校准门（均有默认值、不设则不生效）：`max_shared_utilization`（实测利用率 ≥ 阈值的卡拒绝共享投放）、`max_share_per_gpu`（每卡共置上限，0=仅显存约束）、`contention_factor`（共置降速系数，1.0=不建模；`gpu_serial_seconds` 按 `est × factor^(共置序号)` 膨胀参与排序与报告）。`est_seconds` 是独占执行估计，**未校准时共置降速不建模**——共置档位的真实吞吐与 factor 必须由执行端实测校准（先 2/3/4 路各测一臂，再定档位）。
 
 ## 何时用哪个规划器
 
@@ -50,7 +50,7 @@ python /absolute/agent/scripts/plan_ep.py plan --input /absolute/agent/examples/
 
 - 控制面：SQLite/Mailbox 只本机，不放共享 FS 充当跨机服务；跨机只有"启动 worker / 应急 kill"两类 ssh 动作。
 - 文件面：暂存 → 大小/hash → 原子不可变发布；hash 不替代身份/权限。
-- 快照：worker 启动前重新探测本机 GPU 实际占用（`nvidia-smi`），快照不是租约；两个 dispatcher 建议同一槽位时，mkdir claim 即原子准入裁决。
+- 快照：worker 启动前重新探测本机 GPU 实际占用（`nvidia-smi`），快照不是租约；两个 dispatcher 建议同一槽位时，mkdir claim 即原子准入裁决。**快照应带 `utilization_percent`**：显存只判能不能塞，利用率才判该不该塞（实测教训：85% util 的卡按显存仍可塞 3 个 job）。
 - 灰度：单卡单 job → 单卡多 job → 单机多卡 → 多机 → 注入 worker 死亡（验证 lease 回收）→ 注入长尾（验证投机）。
 - 报告：吞吐与单 job 延迟分开记；共置档位、剪枝门、投机命中数全部入 manifest；不以合成清单宣传加速。
 

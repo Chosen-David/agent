@@ -101,6 +101,39 @@ class EpPackingTests(unittest.TestCase):
         self.assertEqual(len(out['placements']), 2)
         self.assertTrue(any(b['reason'] == 'wave-limit' for b in out['blocked']))
 
+    def test_utilization_gate_blocks_busy_gpu(self):
+        # b0(util=62) 被门槛 50 拦截 → 共享 job 无处可去（a 卡被独占 job 先占）
+        out = self.run_plan(max_shared_utilization=50)
+        shared_placed = {p['job_id'] for p in out['placements'] if not p['exclusive']}
+        self.assertEqual(shared_placed, set())
+        reasons = {b['job_id']: b['reason'] for b in out['blocked']}
+        self.assertEqual(reasons.get('repo-arm3'), 'no-feasible-gpu')
+        # 门槛 70 放行 b0 → 恢复 fixture 基线
+        out2 = self.run_plan(max_shared_utilization=70)
+        self.assertIn('repo-arm3', {p['job_id'] for p in out2['placements']})
+
+    def test_invalid_utilization_rejected(self):
+        data = deepcopy(self.data)
+        data['inventory']['hosts'][0]['gpus'][0]['utilization_percent'] = 120
+        with self.assertRaises(PlanningError):
+            plan_packing(**data, now=1001)
+
+    def test_share_cap_per_gpu(self):
+        out = self.run_plan(max_share_per_gpu=1)
+        from collections import Counter
+        shared_per_gpu = Counter(p['gpu_uuid'] for p in out['placements'] if not p['exclusive'])
+        self.assertTrue(all(n <= 1 for n in shared_per_gpu.values()))
+        # b0 只能再吃 1 个共享 job，其余共享 job 无处可去
+        self.assertIn('no-feasible-gpu', {b['reason'] for b in out['blocked']})
+
+    def test_contention_factor_inflates_load(self):
+        plain = self.run_plan()
+        infl = self.run_plan(contention_factor=2.0)
+        self.assertIn('contention_factor', infl['placements'][-1])
+        b0_plain = max(p['gpu_serial_seconds'] for p in plain['placements'] if p['gpu_uuid'] == 'GPU-b0')
+        b0_infl = max(p['gpu_serial_seconds'] for p in infl['placements'] if p['gpu_uuid'] == 'GPU-b0')
+        self.assertGreater(b0_infl, b0_plain)
+
 
 if __name__ == '__main__':
     unittest.main()

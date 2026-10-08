@@ -67,7 +67,7 @@ def validate_inventory(inventory, now):
         _need(isinstance(host['gpus'], list) and 1 <= len(host['gpus']) <= 64, 'GPU bound')
         for gpu in host['gpus']:
             _fields(gpu, ('uuid', 'model', 'usable_memory_bytes', 'in_use_memory_bytes',
-                          'available', 'shared_ok'))
+                          'available', 'shared_ok'), ('utilization_percent',))
             _need(_text(gpu['uuid']) and gpu['uuid'] not in uuids, 'duplicate/invalid GPU UUID')
             _need(not gpu['uuid'].startswith('MIG-'), 'MIG not supported')
             uuids.add(gpu['uuid'])
@@ -76,6 +76,8 @@ def validate_inventory(inventory, now):
                   and gpu['in_use_memory_bytes'] <= gpu['usable_memory_bytes']
                   and type(gpu['available']) is bool and type(gpu['shared_ok']) is bool,
                   'invalid GPU properties')
+            util = gpu.get('utilization_percent')
+            _need(util is None or _real(util, 0, 100), 'invalid utilization_percent')
     return ids
 
 
@@ -101,21 +103,29 @@ def validate_jobs(jobs):
     return ids
 
 
-def plan_packing(inventory, jobs, *, verified_job_ids, now, max_placements=4096):
+def plan_packing(inventory, jobs, *, verified_job_ids, now, max_placements=4096,
+                 max_shared_utilization=100.0, max_share_per_gpu=0, contention_factor=1.0):
     """Pack one ready set of independent single-GPU jobs onto fractional slots.
 
     LPT order (long est_seconds first, then priority, then id); each job goes
     to the feasible GPU with the smallest projected serial load
     (in_use_seconds is not observable here, so load counts this wave only).
     Exclusive jobs require an untouched GPU; shared jobs require shared_ok and
-    summed memory within usable. Estimates assume the caller's per-job
-    exclusive-execution seconds; co-location slowdown is NOT modeled and must
-    be calibrated by the executor.
+    summed memory within usable. Optional gates (executor-calibrated):
+    max_shared_utilization blocks shared placement on GPUs at/above the given
+    live utilization; max_share_per_gpu caps co-location count (0=memory-only);
+    contention_factor (>1) inflates each additional co-located job's load
+    contribution when ranking and reporting (1.0 = no contention claim).
+    Estimates assume the caller's per-job exclusive-execution seconds; without a
+    calibrated contention_factor, co-location slowdown is NOT modeled.
     """
     validate_inventory(inventory, now)
     job_ids = validate_jobs(jobs)
     _need(_strings(verified_job_ids), 'verified ID list required')
     _need(_integer(max_placements, 1, 4096), 'invalid placement bound')
+    _need(_real(max_shared_utilization, 0, 100), 'invalid max_shared_utilization')
+    _need(_integer(max_share_per_gpu, 0, 64), 'invalid max_share_per_gpu')
+    _need(_real(contention_factor, 1.0, 10.0), 'invalid contention_factor')
     verified = set(verified_job_ids)
     gpus = []  # (host_id, gpu dict)
     for host in sorted(inventory['hosts'], key=lambda h: h['host_id']):
@@ -147,6 +157,11 @@ def plan_packing(inventory, jobs, *, verified_job_ids, now, max_placements=4096)
             else:
                 if not gpu['shared_ok'] or uid in exclusive_taken:
                     continue
+                util = gpu.get('utilization_percent')
+                if util is not None and util >= max_shared_utilization:
+                    continue
+                if max_share_per_gpu and share[uid] >= max_share_per_gpu:
+                    continue
                 projected = mem[uid] + job['memory_bytes']
                 if projected > gpu['usable_memory_bytes']:
                     continue
@@ -165,12 +180,15 @@ def plan_packing(inventory, jobs, *, verified_job_ids, now, max_placements=4096)
         if job['exclusive']:
             exclusive_taken.add(uid)
         mem[uid] = projected
-        load[uid] += job['est_seconds']
+        load[uid] += job['est_seconds'] * (contention_factor ** share[uid])
         share[uid] += 1
-        placements.append({'job_id': jid, 'host_id': host_id, 'gpu_uuid': uid,
-                           'share_group_size': share[uid], 'exclusive': job['exclusive'],
-                           'gpu_serial_seconds': round(load[uid], 3),
-                           'gpu_memory_bytes': mem[uid]})
+        entry = {'job_id': jid, 'host_id': host_id, 'gpu_uuid': uid,
+                 'share_group_size': share[uid], 'exclusive': job['exclusive'],
+                 'gpu_serial_seconds': round(load[uid], 3),
+                 'gpu_memory_bytes': mem[uid]}
+        if contention_factor > 1.0:
+            entry['contention_factor'] = contention_factor
+        placements.append(entry)
     return {'schema_version': 'ep-placement/v1', 'status': 'advisory-only',
             'inventory_sha256': digest(inventory), 'jobs_sha256': digest(jobs),
             'verified_job_ids_sha256': digest(sorted(verified_job_ids)),
@@ -179,5 +197,6 @@ def plan_packing(inventory, jobs, *, verified_job_ids, now, max_placements=4096)
             'placements': placements, 'blocked': blocked,
             'limitations': ['No reservations, remote jobs or transfers executed; atomic slot admission is the executor\'s duty.',
                             'LPT heuristic over one ready wave; not a makespan guarantee.',
-                            'est_seconds are exclusive-execution estimates; co-location slowdown is NOT modeled.',
+                            'est_seconds are exclusive-execution estimates; with contention_factor=1.0 co-location slowdown is NOT modeled.',
+                            'GPUs without utilization_percent are treated as util-eligible; executor should probe util to enable the gate.',
                             'Idle-looking GPUs may serve jobs outside this wave; executor must re-probe before submit.']}
