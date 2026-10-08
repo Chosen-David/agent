@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "id": "math.linear-prediction-residual",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "保留分量线性预测、Schur残差与分数融合边界",
+  "summary": "非中心二阶矩给无截距最佳线性预测和残差Schur补；折入query精确分解score，但paired目标、条件方差及RoPE跨频不能混同。",
+  "aliases": [
+    "保留 坐标 预测 遗漏 残差",
+    "传感器 通道 预测 电压 残差",
+    "内容 重建 分数 旋转 误用",
+    "linear predictor retained omitted components Schur residual covariance score regression"
+  ],
+  "domains": [
+    "linear-algebra",
+    "probability-and-optimization"
+  ],
+  "structures": [
+    "linear-prediction",
+    "block-residual",
+    "score-compression",
+    "rotary-intertwining",
+    "paired-risk"
+  ],
+  "assumptions": [
+    "a∈R^s,b∈R^h，s,h≥1，有限非中心二阶矩，Caa SPD；固定无截距线性重建目标和分布",
+    "score二阶矩分离另需query独立于key；paired必须核对联合混合四阶可积及真实目标",
+    "pre-RoPE预测沿频率使用需逐块Rh(n)B=B Rs(n)；post-RoPE预测不宣称固定频率"
+  ],
+  "sources": [
+    {
+      "url": "https://nhigham.com/2023/06/01/what-is-the-schur-complement-of-a-matrix/",
+      "locator": "2023-06-01/update06-06 Schur definition/PSD; statistical prediction and score identities project derivation",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.06927v1",
+      "locator": "arXiv2610.06927v1 2026-10-03 preprint §3.2/Appendix B query metric/ridge contrast only; no reproduction",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "agent_doc/results/math-linear-residual-20261008-v2: exact public development fixtures, actual independent scope receipt; not Lean/model/GPU"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.schur-complement-block-elimination",
+      "version": 1
+    },
+    {
+      "id": "math.rotation-intertwiner",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.paired-bilinear-risk"
+    },
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    },
+    {
+      "type": "related",
+      "id": "math.weighted-bilinear-low-rank"
+    }
+  ]
+}

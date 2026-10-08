@@ -1,0 +1,84 @@
+{
+  "schema_version": "task-dag/v1",
+  "run_id": "math-linear-residual-20261008",
+  "user_goal": "Finite exact best homogeneous linear predictor/Schur residual, score-risk counterexample and rotation condition; structural retrieval only, no model/GPU/e2e gain",
+  "authorization_reference": "current user bounded continuous math/directmain",
+  "task_refs": [
+    "MATH-50"
+  ],
+  "tasks": [
+    {
+      "task_id": "produce",
+      "owner": "root-linear-residual-producer",
+      "action": "local_math_validation",
+      "task_type": "experiment",
+      "depends_on": [],
+      "experiment_result": {
+        "result_id": "math-linear-residual-20261008",
+        "producer_task_id": "produce",
+        "producer_actor": "root-linear-residual-producer",
+        "manifest_path": "agent_doc/results/math-linear-residual-20261008/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-linear-residual-20261008/validation_plan.json",
+          "sha256": "d1ebc72b20bcd693f7237911fcc3746c0d595a9f8710461cff967fea62b4ec13"
+        },
+        "scope": "Finite exact best homogeneous linear predictor/Schur residual, score-risk counterexample and rotation condition; structural retrieval only, no model/GPU/e2e gain"
+      },
+      "task_refs": [
+        "MATH-50"
+      ],
+      "max_attempts": 2,
+      "done_when": "pending frozen exact data"
+    },
+    {
+      "task_id": "verify",
+      "owner": "independent-linear-residual-review",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "produce"
+      ],
+      "result_validation": {
+        "result_id": "math-linear-residual-20261008",
+        "producer_task_id": "produce",
+        "producer_actor": "root-linear-residual-producer",
+        "manifest_path": "agent_doc/results/math-linear-residual-20261008/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-linear-residual-20261008/validation_plan.json",
+          "sha256": "d1ebc72b20bcd693f7237911fcc3746c0d595a9f8710461cff967fea62b4ec13"
+        },
+        "scope": "Finite exact best homogeneous linear predictor/Schur residual, score-risk counterexample and rotation condition; structural retrieval only, no model/GPU/e2e gain"
+      },
+      "task_refs": [
+        "MATH-50"
+      ],
+      "max_attempts": 2,
+      "done_when": "actual six-domain receipt usable-with-scope"
+    },
+    {
+      "task_id": "publish",
+      "owner": "root-publication",
+      "action": "publish_main",
+      "depends_on": [
+        "verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-linear-residual-20261008",
+          "producer_task_id": "produce",
+          "producer_actor": "root-linear-residual-producer",
+          "manifest_path": "agent_doc/results/math-linear-residual-20261008/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/math-linear-residual-20261008/validation_plan.json",
+            "sha256": "d1ebc72b20bcd693f7237911fcc3746c0d595a9f8710461cff967fea62b4ec13"
+          },
+          "scope": "Finite exact best homogeneous linear predictor/Schur residual, score-risk counterexample and rotation condition; structural retrieval only, no model/GPU/e2e gain"
+        }
+      ],
+      "task_refs": [
+        "MATH-50"
+      ],
+      "max_attempts": 2,
+      "done_when": "refresh main nonforce publication remote SHA/tree"
+    }
+  ]
+}

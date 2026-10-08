@@ -1,0 +1,1299 @@
+{
+  "scope": "Public structural checks only",
+  "snapshot": "756293535c9b36cfe9ff06775273e76e810b78808f93065a9c5847d8b26a2a00",
+  "protocol_sha256": "87dd6fc739e1c6d5c7291021609087b3297f11325b521c3838408eda1eef092f",
+  "load_seconds": 0.030033733000891516,
+  "index_build_seconds": 0.1495861879993754,
+  "records": [
+    {
+      "backend": "files-lexical-v1",
+      "case": "R1",
+      "query": "保留 坐标 预测 遗漏 残差",
+      "actual": [
+        "math.linear-prediction-residual",
+        "math.residual-interval-screening",
+        "math.linear-solve-backward-error"
+      ],
+      "hit": true,
+      "seconds": 0.017356922002363717,
+      "chars": 2875,
+      "bytes": 3953,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "756293535c9b36cfe9ff06775273e76e810b78808f93065a9c5847d8b26a2a00",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.linear-prediction-residual",
+            "version": 1,
+            "sha256": "ed058b14d3567f5b3b16fad32aefdcd894c58efca292079bceb238d9270e9e17",
+            "title": "保留分量线性预测、Schur残差与分数融合边界",
+            "summary": "非中心二阶矩给无截距最佳线性预测和残差Schur补；折入query精确分解score，但paired目标、条件方差及RoPE跨频不能混同。",
+            "status": "published",
+            "assumptions": [
+              "a∈R^s,b∈R^h，s,h≥1，有限非中心二阶矩，Caa SPD；固定无截距线性重建目标和分布",
+              "score二阶矩分离另需query独立于key；paired必须核对联合混合四阶可积及真实目标",
+              "pre-RoPE预测沿频率使用需逐块Rh(n)B=B Rs(n)；post-RoPE预测不宣称固定频率"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-linear-residual-20261008: exact public development fixtures, actual independent scope receipt; not Lean/model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "保留",
+                  "残差",
+                  "预测"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "保留",
+                  "坐标",
+                  "残差",
+                  "遗漏",
+                  "预测"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "残差",
+                  "预测"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "保留",
+                  "坐标",
+                  "残差",
+                  "遗漏",
+                  "预测"
+                ]
+              }
+            ],
+            "score": 51
+          },
+          {
+            "id": "math.residual-interval-screening",
+            "version": 1,
+            "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+            "title": "正交残差包络与安全候选筛除",
+            "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+              "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+              "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+              "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+                "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "保留",
+                  "残差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "保留",
+                  "残差",
+                  "遗漏"
+                ]
+              }
+            ],
+            "score": 19
+          },
+          {
+            "id": "math.linear-solve-backward-error",
+            "version": 1,
+            "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+            "title": "线性求解的后向误差、条件性与下游误差证书",
+            "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+            "status": "published",
+            "assumptions": [
+              "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+              "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+              "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+              "下游排序须真实线性评分映射和严格逐对误差间隔"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+                "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "保留",
+                  "残差",
+                  "预测"
+                ]
+              }
+            ],
+            "score": 11
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R2",
+      "query": "传感器 通道 预测 电压 残差",
+      "actual": [
+        "math.linear-prediction-residual",
+        "math.linear-solve-backward-error",
+        "math.residual-interval-screening"
+      ],
+      "hit": true,
+      "seconds": 0.020971820998965995,
+      "chars": 2875,
+      "bytes": 3953,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "756293535c9b36cfe9ff06775273e76e810b78808f93065a9c5847d8b26a2a00",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.linear-prediction-residual",
+            "version": 1,
+            "sha256": "ed058b14d3567f5b3b16fad32aefdcd894c58efca292079bceb238d9270e9e17",
+            "title": "保留分量线性预测、Schur残差与分数融合边界",
+            "summary": "非中心二阶矩给无截距最佳线性预测和残差Schur补；折入query精确分解score，但paired目标、条件方差及RoPE跨频不能混同。",
+            "status": "published",
+            "assumptions": [
+              "a∈R^s,b∈R^h，s,h≥1，有限非中心二阶矩，Caa SPD；固定无截距线性重建目标和分布",
+              "score二阶矩分离另需query独立于key；paired必须核对联合混合四阶可积及真实目标",
+              "pre-RoPE预测沿频率使用需逐块Rh(n)B=B Rs(n)；post-RoPE预测不宣称固定频率"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-linear-residual-20261008: exact public development fixtures, actual independent scope receipt; not Lean/model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "残差",
+                  "预测"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "传感",
+                  "感器",
+                  "残差",
+                  "电压",
+                  "通道",
+                  "预测"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "残差",
+                  "预测"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传感",
+                  "感器",
+                  "残差",
+                  "电压",
+                  "预测"
+                ]
+              }
+            ],
+            "score": 51
+          },
+          {
+            "id": "math.linear-solve-backward-error",
+            "version": 1,
+            "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+            "title": "线性求解的后向误差、条件性与下游误差证书",
+            "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+            "status": "published",
+            "assumptions": [
+              "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+              "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+              "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+              "下游排序须真实线性评分映射和严格逐对误差间隔"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+                "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "残差",
+                  "电压"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "残差",
+                  "电压",
+                  "预测"
+                ]
+              }
+            ],
+            "score": 16
+          },
+          {
+            "id": "math.residual-interval-screening",
+            "version": 1,
+            "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+            "title": "正交残差包络与安全候选筛除",
+            "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+              "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+              "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+              "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+                "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传感",
+                  "感器",
+                  "残差"
+                ]
+              }
+            ],
+            "score": 16
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R3",
+      "query": "内容 重建 分数 旋转 误用",
+      "actual": [
+        "math.linear-prediction-residual",
+        "math.singular-support-bilinear-low-rank",
+        "math.weighted-bilinear-low-rank"
+      ],
+      "hit": true,
+      "seconds": 0.020961635000276146,
+      "chars": 2690,
+      "bytes": 3795,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "756293535c9b36cfe9ff06775273e76e810b78808f93065a9c5847d8b26a2a00",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.linear-prediction-residual",
+            "version": 1,
+            "sha256": "ed058b14d3567f5b3b16fad32aefdcd894c58efca292079bceb238d9270e9e17",
+            "title": "保留分量线性预测、Schur残差与分数融合边界",
+            "summary": "非中心二阶矩给无截距最佳线性预测和残差Schur补；折入query精确分解score，但paired目标、条件方差及RoPE跨频不能混同。",
+            "status": "published",
+            "assumptions": [
+              "a∈R^s,b∈R^h，s,h≥1，有限非中心二阶矩，Caa SPD；固定无截距线性重建目标和分布",
+              "score二阶矩分离另需query独立于key；paired必须核对联合混合四阶可积及真实目标",
+              "pre-RoPE预测沿频率使用需逐块Rh(n)B=B Rs(n)；post-RoPE预测不宣称固定频率"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-linear-residual-20261008: exact public development fixtures, actual independent scope receipt; not Lean/model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "分数"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "内容",
+                  "分数",
+                  "旋转",
+                  "误用",
+                  "重建"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "内容",
+                  "分数",
+                  "旋转",
+                  "误用",
+                  "重建"
+                ]
+              }
+            ],
+            "score": 35
+          },
+          {
+            "id": "math.singular-support-bilinear-low-rank",
+            "version": 1,
+            "sha256": "60301c861c559bba11a030e7fe98e8a789ede04777b62cadad8cdfa5b5b79cd2",
+            "title": "奇异支持下的双线性低秩分数近似",
+            "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+              "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+              "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文条件式推导；非Lean形式化证明",
+                "agent_doc/results/math-singular-bilinear-20261008-v2/validate.py、raw.json：公开有限CPU检查；旧数值范围失败保存，v2独立回执另存；有限输出不保证任意病态尺度精度"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "分数"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "分数",
+                  "误用"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "内容",
+                  "分数",
+                  "旋转",
+                  "误用"
+                ]
+              }
+            ],
+            "score": 19
+          },
+          {
+            "id": "math.weighted-bilinear-low-rank",
+            "version": 1,
+            "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+            "title": "二阶矩加权的双线性低秩分数近似",
+            "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+              "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+              "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "本条目显示的独立推导；非形式化证明",
+                "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "分数"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "分数"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "分数"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "分数",
+                  "误用",
+                  "重建"
+                ]
+              }
+            ],
+            "score": 16
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R1",
+      "query": "保留 坐标 预测 遗漏 残差",
+      "actual": [
+        "math.linear-prediction-residual",
+        "math.residual-interval-screening",
+        "math.linear-solve-backward-error"
+      ],
+      "hit": true,
+      "seconds": 0.007666200999665307,
+      "chars": 6330,
+      "bytes": 11002,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "756293535c9b36cfe9ff06775273e76e810b78808f93065a9c5847d8b26a2a00",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.linear-prediction-residual",
+            "version": 1,
+            "sha256": "ed058b14d3567f5b3b16fad32aefdcd894c58efca292079bceb238d9270e9e17",
+            "title": "保留分量线性预测、Schur残差与分数融合边界",
+            "summary": "非中心二阶矩给无截距最佳线性预测和残差Schur补；折入query精确分解score，但paired目标、条件方差及RoPE跨频不能混同。",
+            "status": "published",
+            "assumptions": [
+              "a∈R^s,b∈R^h，s,h≥1，有限非中心二阶矩，Caa SPD；固定无截距线性重建目标和分布",
+              "score二阶矩分离另需query独立于key；paired必须核对联合混合四阶可积及真实目标",
+              "pre-RoPE预测沿频率使用需逐块Rh(n)B=B Rs(n)；post-RoPE预测不宣称固定频率"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-linear-residual-20261008: exact public development fixtures, actual independent scope receipt; not Lean/model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "NoPE、RoPE与混合模型的迁移",
+                "start_line": 45,
+                "end_line": 56,
+                "excerpt": "## NoPE、RoPE与混合模型的迁移\n\nNoPE：固定坐标/学习基分割后，可缓存a并折入Bᵀv；可选额外残差码z=Uᵀe，再增加(Uᵀv)ᵀz。此时误差vᵀ(I−UUᵀ)e，U列正交；未给残差维数/学习方法的最佳选择保证。新增残差码占额外缓存，不自动降低总KV。\n\n仅RoPE：若a,b已经在各自真实位置旋转，可对post-RoPE分布拟合B，折入实际旋转后的query，潜变量不再叫某个固定频率FC。若想在旋转前拟合并沿原频率使用，必须检查Rh(n)B=B Rs(n)对所需位置n成立，才能把Rh(n)Ba替换为B Rs(n)a；同频复线性块允许，异频一般不允许。强前提math.rotation-intertwiner给准确整数位置/反频/退化分类。内容可预测不代表整个旋转轨道可预测。\n\nNoPE+RoPE：NoPE为平凡旋转，pre-RoPE非零跨块B一般不满足交织；可保留结构分块预测或学习post-RoPE联合分布。两者都仅为明确条件的索引候选，需固定位置范围、长度、头、层、prefill/decode与合法query/key配对；不修改模型原RoPE或生产注意力。\n\n最小可证伪实验：固定保留坐标数s、总索引字节和候选token预算，对比直接删除遗漏块、折入预测、折入预测加残差码、同预算直接更多FC；记录留出真实paired score、排序margin/候选、V/W输出与e2e，校准/solve/query变换/写缓存/读取开销都计入。方法选择与最终验证文档分开。若仅重建下降而score/output不改善，则不采用；未经实测不声称优于FASA或节省token。\n\n跨域：a为保留电压传感器V，b为另一电压V，B无量纲，q的u/v为电导S，分数为电流A。b=2a+ε模型中v=3S时遗漏误差45A²，折入后9A²；这里只保留线性响应、同工况分布和单位，未测硬件；换工况反例仍有效。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "保留坐标的线性预测与Schur残差",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 保留坐标的线性预测与Schur残差\n\n稳定ID：math.linear-prediction-residual；版本1；核查2026-10-08。背景为经典Schur补；下面统计预测和索引分数公式为本项目自足推导，不标为新论文定理。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.residual-interval-screening",
+            "version": 1,
+            "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+            "title": "正交残差包络与安全候选筛除",
+            "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+              "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+              "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+              "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+                "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 6
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 5
+              }
+            ],
+            "score": 0.04640914640914641,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "实际迁移与不适用条件",
+                "start_line": 26,
+                "end_line": 32,
+                "excerpt": "## 实际迁移与不适用条件\n严格映射：检索候选/attention token映射到键，原始点积分数到s，子空间代理到h，缓存逐键残差范数到e，边界不确定者到C。仅NoPE可在内容向量上核对；仅RoPE须在实际位置旋转后的q/k上统一投影；混合路径可直接投影全部实际向量，或对不相交子块的误差界求和。不能以pre-RoPE残差范数替代post-RoPE跨频率残差；旋转完整范数不变不代表对固定P的残差不变。\n\n原FC准确保留加遗漏部分正交压缩时，可对遗漏子块应用本规则。残差范数缓存增加存储，查询残差计算和全候选包络扫描也有成本。最坏C=N，需完整回退；near/far分别用固定quota，只能保证各区域quota目标，不自动保证全局Top-k。论文可以记录C/N、精算键数、误筛数、总索引/校准/缓存成本与e2e，不能仅报告重合度或理论FLOPs。\n\n跨域：传感器/文档最大内积检索使用同一向量内积结构，是严格数学映射；语义压缩token数与向量维数只是不同对象，不能据此宣称Agent省token。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界与误用反例",
+                "start_line": 17,
+                "end_line": 25,
+                "excerpt": "## 正例、边界与误用反例\nP=diag(1,0)，q=(1,1)，键(10,0),(8,1),(0,0)。h=(10,8,0)，e=(0,1,0)，k=1时tau=10，C仅首键，正确。若q属于投影子空间，全部e=0，即可精确按h选；k=N保留全部。零投影往往过宽，仍安全但可能毫无筛除收益。\n\n均值残差反例：q=(1,1)，一键(0,100)，其余999键(1,0)，P=diag(1,0)。残差平均0.1；若错误地把e=0.1赋给每项，就会删掉真实分数100的键。这不是逐项证书。\n\n非正交反例：P=[[1,1],[0,0]]虽P²=P，但Pᵀ≠P；q=(1,0),k=(0,1)有s=0,h=1，而||(I−P)q||=0，错误产品界给0。一般AᵀB低秩映射不等于正交P；可另用||q|| ||(I−AᵀB)k_i||，不能偷换成本和误差。\n\nTop-k正确不代表full-softmax输出正确：两个相同logit而不同v，只取一个即会改变加权输出。应结合math.attention-output-geometry，核对value、重归一化和跨层影响。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.linear-solve-backward-error",
+            "version": 1,
+            "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+            "title": "线性求解的后向误差、条件性与下游误差证书",
+            "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+            "status": "published",
+            "assumptions": [
+              "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+              "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+              "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+              "下游排序须真实线性评分映射和严格逐对误差间隔"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+                "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 7
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 9
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.045547159015581276,
+            "sections": [
+              {
+                "node": "s3",
+                "title": "对象与准确结论",
+                "start_line": 9,
+                "end_line": 24,
+                "excerpt": "## 对象与准确结论\n\n实方阵 A 可逆，Ax=b，r=b−Ay；向量采用无穷范数，矩阵采用诱导行和范数，κ=‖A‖∞‖A⁻¹‖∞。以下残差首先指精确输入数据的精确残差。\n\n**经典联合非结构化后向误差**：使 (A+ΔA)y=b+Δb，且 ‖ΔA‖∞≤η‖A‖∞、‖Δb‖∞≤η‖b‖∞ 的最小 η 为\n\nη=‖r‖∞/(‖A‖∞‖y‖∞+‖b‖∞)。\n\n分母为零时 y=b=0，定义 η=0。该允许扰动的集合不要求保留对称性、稀疏性、电路守恒或数据单位；结构化后向误差不能直接用此公式代替。\n\n**前向误差**：若 H≥‖A⁻¹‖∞、R≥‖r‖∞ 已被核验，则 E=HR 满足 ‖x−y‖∞≤E。b≠0 时另有相对误差 ≤κ‖r‖∞/‖b‖∞；若 κη<1，还有 ≤2κη/(1−κη)。κ很大可以放大小残差；条件不满足只说明这个界不能保证，不能据此断言实际失败。\n\n**本条自推导的可计算逆界**：给定方阵 B，证明 q=‖I−BA‖∞<1，则 A 可逆且 H=‖B‖∞/(1−q) 是有效上界。浮点估计值必须加上计算误差上界再检查 q<1；无保证的条件数估计不能冒充证书。\n\n**本条自推导的下游查询界**：si=ciᵀx，ŝi=ciᵀy，则 |si−ŝi|≤‖ci‖₁E。对近似排序中选中的 i 和未选中的 j，若 ŝi−ŝj>(‖ci‖₁+‖cj‖₁)E，则真值也有 si>sj。逐对满足才能保证集合；相等边界不保证唯一排序。只有线性评分映射被保留时可用，不能推出注意力输出、工具成功率或 Agent 质量提升。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "正例、边界与误用反例",
+                "start_line": 31,
+                "end_line": 37,
+                "excerpt": "## 正例、边界与误用反例\n\n- A=diag(2,1)，x=(1,2)，y=(1.01,1.99)：R=0.02、H=1、E=0.02，观测分量间隔 0.98>2E，排名被认证。\n- A=[[1,1],[1,1+ε]]，ε=10⁻⁸，x=(1,2)，y=(3,0)：残差仅 (0,2ε)，η约2.22×10⁻⁹，排名却翻转，实际误差为2。合法 H=(2+ε)/ε 给 E=4+2ε，拒绝保证排名。小后向误差不等于小前向误差。\n- b=0 时唯一解为0，绝对界可用，相对解误差无定义。矩形最小二乘、奇异方程、非线性系统需其他理论。共同缩放 (A,b)→(cA,cb) 保留 κ、η、HR，却改变残差数值。\n- 浮点残差 r̃ 必须使用 R≥‖r̃‖∞+ρ，ρ覆盖计算误差；输入舍入与模型误差另计。仅打印零残差不能核验精确系统。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R2",
+      "query": "传感器 通道 预测 电压 残差",
+      "actual": [
+        "math.linear-prediction-residual",
+        "math.linear-solve-backward-error",
+        "math.floating-dot-enclosure"
+      ],
+      "hit": true,
+      "seconds": 0.007331708002311643,
+      "chars": 6076,
+      "bytes": 10422,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "756293535c9b36cfe9ff06775273e76e810b78808f93065a9c5847d8b26a2a00",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.linear-prediction-residual",
+            "version": 1,
+            "sha256": "ed058b14d3567f5b3b16fad32aefdcd894c58efca292079bceb238d9270e9e17",
+            "title": "保留分量线性预测、Schur残差与分数融合边界",
+            "summary": "非中心二阶矩给无截距最佳线性预测和残差Schur补；折入query精确分解score，但paired目标、条件方差及RoPE跨频不能混同。",
+            "status": "published",
+            "assumptions": [
+              "a∈R^s,b∈R^h，s,h≥1，有限非中心二阶矩，Caa SPD；固定无截距线性重建目标和分布",
+              "score二阶矩分离另需query独立于key；paired必须核对联合混合四阶可积及真实目标",
+              "pre-RoPE预测沿频率使用需逐块Rh(n)B=B Rs(n)；post-RoPE预测不宣称固定频率"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-linear-residual-20261008: exact public development fixtures, actual independent scope receipt; not Lean/model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "NoPE、RoPE与混合模型的迁移",
+                "start_line": 45,
+                "end_line": 56,
+                "excerpt": "## NoPE、RoPE与混合模型的迁移\n\nNoPE：固定坐标/学习基分割后，可缓存a并折入Bᵀv；可选额外残差码z=Uᵀe，再增加(Uᵀv)ᵀz。此时误差vᵀ(I−UUᵀ)e，U列正交；未给残差维数/学习方法的最佳选择保证。新增残差码占额外缓存，不自动降低总KV。\n\n仅RoPE：若a,b已经在各自真实位置旋转，可对post-RoPE分布拟合B，折入实际旋转后的query，潜变量不再叫某个固定频率FC。若想在旋转前拟合并沿原频率使用，必须检查Rh(n)B=B Rs(n)对所需位置n成立，才能把Rh(n)Ba替换为B Rs(n)a；同频复线性块允许，异频一般不允许。强前提math.rotation-intertwiner给准确整数位置/反频/退化分类。内容可预测不代表整个旋转轨道可预测。\n\nNoPE+RoPE：NoPE为平凡旋转，pre-RoPE非零跨块B一般不满足交织；可保留结构分块预测或学习post-RoPE联合分布。两者都仅为明确条件的索引候选，需固定位置范围、长度、头、层、prefill/decode与合法query/key配对；不修改模型原RoPE或生产注意力。\n\n最小可证伪实验：固定保留坐标数s、总索引字节和候选token预算，对比直接删除遗漏块、折入预测、折入预测加残差码、同预算直接更多FC；记录留出真实paired score、排序margin/候选、V/W输出与e2e，校准/solve/query变换/写缓存/读取开销都计入。方法选择与最终验证文档分开。若仅重建下降而score/output不改善，则不采用；未经实测不声称优于FASA或节省token。\n\n跨域：a为保留电压传感器V，b为另一电压V，B无量纲，q的u/v为电导S，分数为电流A。b=2a+ε模型中v=3S时遗漏误差45A²，折入后9A²；这里只保留线性响应、同工况分布和单位，未测硬件；换工况反例仍有效。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "保留坐标的线性预测与Schur残差",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 保留坐标的线性预测与Schur残差\n\n稳定ID：math.linear-prediction-residual；版本1；核查2026-10-08。背景为经典Schur补；下面统计预测和索引分数公式为本项目自足推导，不标为新论文定理。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.linear-solve-backward-error",
+            "version": 1,
+            "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+            "title": "线性求解的后向误差、条件性与下游误差证书",
+            "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+            "status": "published",
+            "assumptions": [
+              "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+              "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+              "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+              "下游排序须真实线性评分映射和严格逐对误差间隔"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+                "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.047619047619047616,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "迁移：决策与电路",
+                "start_line": 38,
+                "end_line": 43,
+                "excerpt": "## 迁移：决策与电路\n\nAgent 科研/工程任务中的有限线性响应求解对应 Ax=b，候选的线性效用对应 ci；这是真实代数映射。文本概率、消息压缩的语义损失及自适应工具策略没有天然对应，不直接迁移。可证伪预测为：已核验 H、R 且逐对间隔成立时，精确求解不会翻转集合；verify.py 检查正例和拒用反例。\n\n接地导纳矩阵 L=[[2,−1],[−1,2]] S，电流 b=(1,0) A，电压 x=(2/3,1/3) V。y=x+(0.01,−0.01) V 时残差为 (−0.03,0.03) A，H=1 Ω，E=0.03 V；量纲 Ω·A=V，电压大小关系可认证。接地移除了常数零模态；未接地 [[1,−1],[−1,1]] 的解可以任意加常数，即使零残差也无唯一绝对电压，必须拒绝本条可逆前提。非线性器件、频率依赖参数和实测导纳误差未覆盖。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "触发结构",
+                "start_line": 5,
+                "end_line": 8,
+                "excerpt": "## 触发结构\n\n方阵线性方程的近似解、很小的残差却错误的排名、接地电路的电压误差。先确定对象 A、右端 b、近似解 y、范数、数据精度及下游查询 c；只在存在可核验逆算子界时把残差转换为解误差。动态系统稳定性、迭代收缩性与线性方程条件性是不同问题。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.floating-dot-enclosure",
+            "version": 1,
+            "sha256": "e800ad6e5dbd1be9aa2de66da0e06933cccb84c41419668ae0550f4407db1bbb",
+            "title": "浮点点积外包与严格安全筛除",
+            "summary": "对存储binary64点积逐运算向外扩展，核对正确舍入/渐进下溢；累计丢失小项、量化原始输入及GPU排序目标需区分，未知前提拒用。",
+            "status": "published",
+            "assumptions": [
+              "输入为有限存储binary64数，目标为其精确实数点积；量化前输入和实际GPU结果是其他目标",
+              "每个标量加乘正确RN舍入到同一binary64格式、邻接nextafter正确、渐进下溢，无FTZ/未知重排或低精度路径",
+              "每步结果及外包邻接端点有限；无法满足则无法认证并保留/回退，不按失败值剪枝",
+              "安全筛除有全部逐项包络，tau取第k大下界，删除仅限U_i<tau，重排目标/tie规则一致",
+              "坐标投影误差界仅适用显式选坐标；学习投影、理想RoPE、输入误差与GPUkernel偏差须另行认证"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Conditional induction proof and exact-rational public CPU data at agent_doc/results/math-rounding-20261008/; independent actual code/math/data acceptance required before publication",
+                "No Lean/formal proof, platform-wide arithmetic certification, GPU/model/quality/token performance experiment"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 8
+              }
+            ],
+            "score": 0.04696394686907021,
+            "sections": [
+              {
+                "node": "s7",
+                "title": "跨领域迁移：传感器网络电流",
+                "start_line": 86,
+                "end_line": 89,
+                "excerpt": "## 跨领域迁移：传感器网络电流\n\n测量电导G_j（siemens）与电压V_j（volts），线性电流 `I=sum G_j V_j`（amperes）保留了同一双线性结构。存储数据 `G=(1/8,1/4,1/2), V=(3,-2,1)` 给出精确 `I=3/8 A`，逐步区间应包含它。这是算术迁移的可证伪预测，不是物理传感器的真实误差保证；测量校准、温漂、非线性接触电阻和相关误差需额外证据/输入盒。不把单位一致当成模型已实测。\n\n"
+              },
+              {
+                "node": "s6",
+                "title": "严格迁移：坐标粗筛＋遗漏项界",
+                "start_line": 64,
+                "end_line": 85,
+                "excerpt": "## 严格迁移：坐标粗筛＋遗漏项界\n\n沿用 `math.residual-interval-screening@1` 的有效逐项包络要求，不更改其版本/历史引用。为避免未知学习投影误差，演示只选固定坐标S，其余坐标H；P为精确坐标投影。\n\n对q与第i个键k_i，粗分数 `a_i=sum_{j∈S} q_j k_ij` 用逐运算包络。遗漏项满足直接三角界\n\\[\n\\left|\\sum_{j\\in H}q_j k_{ij}\\right|\n\\le \\max_{j\\in H}|q_j|\\,\\sum_{j\\in H}|k_{ij}|.\n\\]\n空H令右边0。对键的非负绝对和逐步外包取得上界，对查询max取精确存储值最大绝对值，再向外乘法；得到认证的ρ_i。用外包加法组合 `[a_i^- -ρ_i,a_i^+ +ρ_i]`。本轮demo重算键和，未实测预缓存性能。\n\n令τ为第k大下界，仅删除 `U_i<τ`；**相等必须保留**。被删项至少有k个别的下界高于其上界，因此不可能属于实数目标Top-k；对保留项用同一精确目标及tie规则重排，恢复一个原Top-k解。候选可退化为全量，这是合法负结果。\n\n| 输入形式 | 可严格映射的目标 | 仍须另查 |\n|---|---|---|\n| 仅NoPE | 相同存储q/k的实数点积 | 输入量化、实际GPU累加器目标 |\n| 仅RoPE | 已在正确位置旋转并存储后的q/k点积 | 理想旋转、sin/cos、位置/频率布局和旋转舍入误差 |\n| NoPE+RoPE | 各分量包络再外包相加、已知标量外包相乘 | 缩放目标、两个路径精度及mask是否一致 |\n| 学习U或低秩表示 | 仅其存储压缩坐标的点积 | 原空间投影缺陷、非正交性、逐项真实残差；未知则不证原分数 |\n\n本证书指向存储输入的精确实数目标。若要保护实际dense kernel的浮点Top-k，还需另有每项kernel结果距该实数目标的认证界ζ_i，再向外扩展区间。否则真实数学排序与dense浮点排序可能不同。它也不提供注意力质量、质量总量或e2e精度保证。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R3",
+      "query": "内容 重建 分数 旋转 误用",
+      "actual": [
+        "math.linear-prediction-residual",
+        "math.rotation-intertwiner",
+        "math.eigenspace-gap-perturbation"
+      ],
+      "hit": true,
+      "seconds": 0.006795344001147896,
+      "chars": 6231,
+      "bytes": 10571,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "756293535c9b36cfe9ff06775273e76e810b78808f93065a9c5847d8b26a2a00",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.linear-prediction-residual",
+            "version": 1,
+            "sha256": "ed058b14d3567f5b3b16fad32aefdcd894c58efca292079bceb238d9270e9e17",
+            "title": "保留分量线性预测、Schur残差与分数融合边界",
+            "summary": "非中心二阶矩给无截距最佳线性预测和残差Schur补；折入query精确分解score，但paired目标、条件方差及RoPE跨频不能混同。",
+            "status": "published",
+            "assumptions": [
+              "a∈R^s,b∈R^h，s,h≥1，有限非中心二阶矩，Caa SPD；固定无截距线性重建目标和分布",
+              "score二阶矩分离另需query独立于key；paired必须核对联合混合四阶可积及真实目标",
+              "pre-RoPE预测沿频率使用需逐块Rh(n)B=B Rs(n)；post-RoPE预测不宣称固定频率"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-linear-residual-20261008: exact public development fixtures, actual independent scope receipt; not Lean/model/GPU"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "NoPE、RoPE与混合模型的迁移",
+                "start_line": 45,
+                "end_line": 56,
+                "excerpt": "## NoPE、RoPE与混合模型的迁移\n\nNoPE：固定坐标/学习基分割后，可缓存a并折入Bᵀv；可选额外残差码z=Uᵀe，再增加(Uᵀv)ᵀz。此时误差vᵀ(I−UUᵀ)e，U列正交；未给残差维数/学习方法的最佳选择保证。新增残差码占额外缓存，不自动降低总KV。\n\n仅RoPE：若a,b已经在各自真实位置旋转，可对post-RoPE分布拟合B，折入实际旋转后的query，潜变量不再叫某个固定频率FC。若想在旋转前拟合并沿原频率使用，必须检查Rh(n)B=B Rs(n)对所需位置n成立，才能把Rh(n)Ba替换为B Rs(n)a；同频复线性块允许，异频一般不允许。强前提math.rotation-intertwiner给准确整数位置/反频/退化分类。内容可预测不代表整个旋转轨道可预测。\n\nNoPE+RoPE：NoPE为平凡旋转，pre-RoPE非零跨块B一般不满足交织；可保留结构分块预测或学习post-RoPE联合分布。两者都仅为明确条件的索引候选，需固定位置范围、长度、头、层、prefill/decode与合法query/key配对；不修改模型原RoPE或生产注意力。\n\n最小可证伪实验：固定保留坐标数s、总索引字节和候选token预算，对比直接删除遗漏块、折入预测、折入预测加残差码、同预算直接更多FC；记录留出真实paired score、排序margin/候选、V/W输出与e2e，校准/solve/query变换/写缓存/读取开销都计入。方法选择与最终验证文档分开。若仅重建下降而score/output不改善，则不采用；未经实测不声称优于FASA或节省token。\n\n跨域：a为保留电压传感器V，b为另一电压V，B无量纲，q的u/v为电导S，分数为电流A。b=2a+ε模型中v=3S时遗漏误差45A²，折入后9A²；这里只保留线性响应、同工况分布和单位，未测硬件；换工况反例仍有效。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "非中心、条件期望及score区别",
+                "start_line": 21,
+                "end_line": 32,
+                "excerpt": "## 非中心、条件期望及score区别\n\n均值非零仍用上述非中心矩。若要仿射预测，先中心化并加回Eb：Eb+Cov(b,a)Cov(a,a)^(-1)(a−Ea)，需另核对该协方差可逆。或者把常数1加入a，用非中心正规方程；此时增广矩仍需可逆。不能只换中心协方差又漏掉截距。\n\nE[eaᵀ]=0是线性正交，**不推出e与a独立、E[e|a]=0或S为条件协方差**。只有另加适用模型（如非退化联合高斯、正确仿射形式）才能作相应条件分布解释；本条未使用该模型。\n\n设实际query q=(u,v)，分数s=uᵀa+vᵀb。恒等式\n\ns=(u+Bᵀv)ᵀa+vᵀe。\n\n因此只缓存a时，可使用折入查询u+Bᵀv；这是在所拟合分布下补入可预测遗漏内容，不要求把不同FC直接相加。误差为vᵀe。若q独立于x且E||q||²有限，则E(vᵀe)²=tr(E[vvᵀ]S)，B亦使任意固定PSD查询权重下的线性重建风险最小；不保证唯一score最优（query可能有零方向）。证明：独立将E[vvᵀeeᵀ]分离，前述PSD差取查询加权迹非负。真实paired q/x通常不独立，需另核对联合混合四阶矩可积并直接计算E[vᵀ(b−Ta)]²；重建最优可能不是score最优。未给一般paired最优求解器。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.rotation-intertwiner",
+            "version": 1,
+            "sha256": "e7f20395508e5e0772b1fe0abaa690e7443df62e0d451e743c25ce1b5a6bc408",
+            "title": "实旋转交织映射与RoPE跨频率融合",
+            "summary": "固定频率潜表示需要交织条件；区分整数频率别名、同频复线性融合、低秩点积限制与有限长度近似缺陷。",
+            "status": "published",
+            "assumptions": [
+              "有限实线性映射；R(theta)为正交二维旋转；位置为整数",
+              "频率按2pi取模；0和pi需独立处理；连续位置不允许整数别名",
+              "近似长度界只在指定整数位置范围内；受限精确保真须明确数据支撑子空间"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Self-contained real planar proof; no Lean/formal verification",
+                "32 public CPU structural cases; independent result acceptance required"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 7
+              }
+            ],
+            "score": 0.046679405392392875,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界与误用反例",
+                "start_line": 29,
+                "end_line": 36,
+                "excerpt": "## 正例、边界与误用反例\n\n同频S=I+2J精确交织；反频S=diag(1,-1)精确交织。θ=0时任意剪切精确交织。整数θ与θ+2π别名，但半整数位置不别名。\n\n同内容的两个异频旋转对产生cos(mθ1)+cos(mθ2)，一般不是单固定频率；内容低秩不代表旋转轨道低秩。直接相加q1+q2、k1+k2还引入交叉项。\n\n即使A满足交织且r<d，若要求所有q,k在m=0保持点积，则AᵀB=Id，与rank(AᵀB)≤r矛盾。同频两个块可融合重数，但不因此无损。若数据严格支撑在已知不变子空间W，A在W等距且B匹配，才可能在W精确保真；例如两个同频块的对角子空间(x,x)，用(x+x)/sqrt(2)保点积。该支撑条件须验证，不能只凭经验相关性。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "实旋转交织映射与RoPE跨频率融合",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 实旋转交织映射与RoPE跨频率融合\n\n稳定ID：`math.rotation-intertwiner`；版本1；2026-10-08。经典表示论背景：Etingof等《Introduction to Representation Theory》§2.3，命题2.3.9、推论2.3.10及备注2.3.11；§3.1备注3.1.5。下面二维分类与误差界是本项目自足推导，不声称新定理或论文结论。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.eigenspace-gap-perturbation",
+            "version": 1,
+            "sha256": "9737b6e1fb288bf682e23f1910f32aadc43421bd42821550a82e419303a7e292",
+            "title": "谱隙、子空间扰动与投影打分证书",
+            "summary": "实对称矩阵的隔离特征值簇可用边界谱隙控制子空间误差；主方向稳定取决于误差与谱隙的比值。投影比较消除符号和簇内旋转歧义，可传播到有范数约束的打分。",
+            "status": "published",
+            "assumptions": [
+              "A与Ahat=A+E是同维实对称矩阵，使用一致坐标及欧氏算子/Frobenius范数",
+              "特征值降序，目标为同一索引区间r..s；d=s-r+1，外侧边界谱隙g=min(lambda_(r-1)-lambda_r,lambda_s-lambda_(s+1))>0，端点取无穷",
+              "U与Uhat列正交；比较投影或主角度，不能直接比较未对齐的基",
+              "本文自推较紧rank-one界另需目标最大特征值、g=lambda_1-lambda_2>0、认证epsilon>=||E||op且epsilon<g；epsilon<g/2额外认证扰动后最大特征值简单",
+              "打分迁移需q,k位于同一欧氏坐标系、目标确为q^T P k；只控制换基误差，不控制舍弃补空间或完整注意力输出"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-subspace/verify.py",
+                "docs/knowledge_learning/2026-10-07-subspace/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 6
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 6
+              }
+            ],
+            "score": 0.046176046176046176,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界和误用反例",
+                "start_line": 39,
+                "end_line": 46,
+                "excerpt": "## 正例、边界和误用反例\n\nA=diag(2,1)，E的两非对角元为0.1；epsilon=0.1、g=1。theta=atan(0.2)/2，实际sin(theta)≈0.09854，小于证书1/9。验证脚本检查闭式特征方程、投影幂等性、范数和误差界。\n\nA=diag(1+delta,1)，E=diag(-delta,delta)，delta>0可任意小；主方向翻转90度，特征值变化≤delta。epsilon/g=1，故不能宣称“绝对矩阵误差小就稳定”。A=I、任意小diag(t,-t)与diag(-t,t)选择相反主方向，未扰动单方向不存在唯一目标。\n\nA=diag(3,3,1)的前两列可旋转90度，基差Frobenius范数2，但P完全相同；第一单向量的簇外边界为零，而完整二维簇的边界为2。这不是理论冲突。非对称矩阵不得沿用以上公式；应另核验奇异子空间、Hermitian变换或非正规条件数。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "对象、触发与准确结论",
+                "start_line": 5,
+                "end_line": 19,
+                "excerpt": "## 对象、触发与准确结论\n\n问题往往是“矩阵变化很小，方向为什么变很多？”或“重复特征值的基转了，是否需要重建投影？”先确定对象、排序、范数及目标簇。\n\n设A、Ahat=A+E对称，特征值降序，U、Uhat分别由r..s列正交特征向量组成。d=s-r+1，外侧谱隙g>0按元数据定义；P=UU^T、Phat=Uhat Uhat^T。全空间d=n时投影恒I，单独处理。\n\n**已有定理：** Yu–Wang–Samworth Theorem2给出\n\n\\[\n\\|\\sin\\Theta\\|_F\\le {2\\min(\\sqrt d\\|E\\|_{op},\\|E\\|_F)\\over g},\\qquad\n\\min_{O^TO=I}\\|\\widehat UO-U\\|_F\\le {2^{3/2}\\min(\\sqrt d\\|E\\|_{op},\\|E\\|_F)\\over g}.\n\\]\n\n此式不要求E小，但大右端可能没有信息；簇内重根允许，簇外边界不能为零。Frobenius界不能直接改称无维数因子的算子界。不要将“不满足充分条件”解释为“必然不稳定”。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "context": {
+    "schema_version": 1,
+    "snapshot": "756293535c9b36cfe9ff06775273e76e810b78808f93065a9c5847d8b26a2a00",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "status": "ready",
+    "budget": {
+      "max_entries": 3,
+      "max_chars": 14000,
+      "used_chars": 11713,
+      "scope": "serialized entry payload characters, not model tokens or outer envelope"
+    },
+    "retrieved_ids": [
+      "math.linear-prediction-residual"
+    ],
+    "entries": [
+      {
+        "schema_version": 1,
+        "id": "math.linear-prediction-residual",
+        "version": 1,
+        "status": "published",
+        "kind": "modeling-pattern",
+        "title": "保留分量线性预测、Schur残差与分数融合边界",
+        "summary": "非中心二阶矩给无截距最佳线性预测和残差Schur补；折入query精确分解score，但paired目标、条件方差及RoPE跨频不能混同。",
+        "aliases": [
+          "保留 坐标 预测 遗漏 残差",
+          "传感器 通道 预测 电压 残差",
+          "内容 重建 分数 旋转 误用",
+          "linear predictor retained omitted components Schur residual covariance score regression"
+        ],
+        "domains": [
+          "linear-algebra",
+          "probability-and-optimization"
+        ],
+        "structures": [
+          "linear-prediction",
+          "block-residual",
+          "score-compression",
+          "rotary-intertwining",
+          "paired-risk"
+        ],
+        "assumptions": [
+          "a∈R^s,b∈R^h，s,h≥1，有限非中心二阶矩，Caa SPD；固定无截距线性重建目标和分布",
+          "score二阶矩分离另需query独立于key；paired必须核对联合混合四阶可积及真实目标",
+          "pre-RoPE预测沿频率使用需逐块Rh(n)B=B Rs(n)；post-RoPE预测不宣称固定频率"
+        ],
+        "sources": [
+          {
+            "url": "https://nhigham.com/2023/06/01/what-is-the-schur-complement-of-a-matrix/",
+            "locator": "2023-06-01/update06-06 Schur definition/PSD; statistical prediction and score identities project derivation",
+            "accessed": "2026-10-08"
+          },
+          {
+            "url": "https://arxiv.org/html/2610.06927v1",
+            "locator": "arXiv2610.06927v1 2026-10-03 preprint §3.2/Appendix B query metric/ridge contrast only; no reproduction",
+            "accessed": "2026-10-08"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "agent_doc/results/math-linear-residual-20261008: exact public development fixtures, actual independent scope receipt; not Lean/model/GPU"
+          ]
+        },
+        "requires": [
+          {
+            "id": "math.schur-complement-block-elimination",
+            "version": 1
+          },
+          {
+            "id": "math.rotation-intertwiner",
+            "version": 1
+          }
+        ],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.paired-bilinear-risk"
+          },
+          {
+            "type": "related",
+            "id": "math.attention-output-geometry"
+          },
+          {
+            "type": "related",
+            "id": "math.weighted-bilinear-low-rank"
+          }
+        ],
+        "content": "# 保留坐标的线性预测与Schur残差\n\n稳定ID：math.linear-prediction-residual；版本1；核查2026-10-08。背景为经典Schur补；下面统计预测和索引分数公式为本项目自足推导，不标为新论文定理。\n\n## 问题触发与数学对象\n\n保留向量的一部分a，能否用它预测被遗漏的b，并将可预测信息折入查询？令x=(a,b)，a∈R^s、b∈R^h，s,h≥1，E||x||²有限。使用非中心矩Caa=E[aaᵀ]、Cba=E[baᵀ]、Cbb=E[bbᵀ]，Cab=Cbaᵀ；要求Caa正定。固定预测T∈R^(h×s)，目标min_T E||b−Ta||²，是**无截距的线性重建**，不等于所有函数的最优预测，也不默认均值零。固定坐标分割/分布/矩；拟合与留出工况不同须重新检查。\n\n## 准确结论和证明\n\nB=Cba Caa^(-1)，e=b−Ba，S=E[eeᵀ]=Cbb−Cba Caa^(-1)Cab。\n\nE[eaᵀ]=Cba−B Caa=0。展开残差二阶矩，利用B Caa=Cba，得到S。对任意T，b−Ta=e+(B−T)a，交叉期望为零，故\n\nE[(b−Ta)(b−Ta)ᵀ]=S+(T−B)Caa(T−B)ᵀ。\n\n后项为PSD，因为对任意w，其二次型为E[(wᵀ(T−B)a)²]≥0。取迹得损失差tr((T−B)Caa(T−B)ᵀ)≥0；Caa SPD使其仅在T=B时为零，因此B为唯一线性重建最优。S≥0直接由残差外积得到，与整体非中心块矩的Schur补一致；整体块矩可奇异，不要求S SPD。\n\nS=0当且仅当b=Ba几乎处处：E||e||²=trS=0，非负变量期望零给e=0 a.s.。低误差不是零误差；a.s.只限当前支持，不保证任意输入。数值实现解B Caa=Cba，不显式形成逆。奇异Caa、病态误差/regularization或support伪逆不由本SPD接口自动解决；加ridge改变拟合目标，不能称同一最优。\n\n## 非中心、条件期望及score区别\n\n均值非零仍用上述非中心矩。若要仿射预测，先中心化并加回Eb：Eb+Cov(b,a)Cov(a,a)^(-1)(a−Ea)，需另核对该协方差可逆。或者把常数1加入a，用非中心正规方程；此时增广矩仍需可逆。不能只换中心协方差又漏掉截距。\n\nE[eaᵀ]=0是线性正交，**不推出e与a独立、E[e|a]=0或S为条件协方差**。只有另加适用模型（如非退化联合高斯、正确仿射形式）才能作相应条件分布解释；本条未使用该模型。\n\n设实际query q=(u,v)，分数s=uᵀa+vᵀb。恒等式\n\ns=(u+Bᵀv)ᵀa+vᵀe。\n\n因此只缓存a时，可使用折入查询u+Bᵀv；这是在所拟合分布下补入可预测遗漏内容，不要求把不同FC直接相加。误差为vᵀe。若q独立于x且E||q||²有限，则E(vᵀe)²=tr(E[vvᵀ]S)，B亦使任意固定PSD查询权重下的线性重建风险最小；不保证唯一score最优（query可能有零方向）。证明：独立将E[vvᵀeeᵀ]分离，前述PSD差取查询加权迹非负。真实paired q/x通常不独立，需另核对联合混合四阶矩可积并直接计算E[vᵀ(b−Ta)]²；重建最优可能不是score最优。未给一般paired最优求解器。\n\n## 正例、边界与误用反例\n\n独立a,ε均匀±1，b=2a+ε：B=2，S=1；直接删除b重建MSE=5，线性预测MSE=1。若ε=0则S=0、预测精确，但只在b=2a支持上。改变工况为b=−2a则原B预测MSE=16。\n\n非零均值a≡1,b≡3：非中心B=3,S=0；中心协方差Caa=0不可逆，省略截距更不能得到此结论。\n\n非线性a均匀取−2,−1,1,2，b=a²：Caa=5/2,Cba=0，B=0,S=17/2；b完全由a决定，真实条件协方差为零。E[b|a]=a²不是Ba，最优无截距线性MSE=17/2而非线性MSE=0。这也反驳把S称一般条件方差。\n\npaired score反例：a≡1,b均匀±1，u=0，v=1_{b=1}。B=0为重建最优，MSE=1；T=1重建MSE=2。但真实scoreMSE分别1/2与0；折入查询可改变最优目标，不能由重建改善推出排序/softmax/output/e2e改善。普通E[ea]=0并未消除查询选择偏差。\n\nCaa奇异例a=(z,z)，z均匀±1：不能直接求逆；本接口拒绝，而不是证明没有任何预测器。预测/重建的不同目标和拒用须一并记录。\n\n## NoPE、RoPE与混合模型的迁移\n\nNoPE：固定坐标/学习基分割后，可缓存a并折入Bᵀv；可选额外残差码z=Uᵀe，再增加(Uᵀv)ᵀz。此时误差vᵀ(I−UUᵀ)e，U列正交；未给残差维数/学习方法的最佳选择保证。新增残差码占额外缓存，不自动降低总KV。\n\n仅RoPE：若a,b已经在各自真实位置旋转，可对post-RoPE分布拟合B，折入实际旋转后的query，潜变量不再叫某个固定频率FC。若想在旋转前拟合并沿原频率使用，必须检查Rh(n)B=B Rs(n)对所需位置n成立，才能把Rh(n)Ba替换为B Rs(n)a；同频复线性块允许，异频一般不允许。强前提math.rotation-intertwiner给准确整数位置/反频/退化分类。内容可预测不代表整个旋转轨道可预测。\n\nNoPE+RoPE：NoPE为平凡旋转，pre-RoPE非零跨块B一般不满足交织；可保留结构分块预测或学习post-RoPE联合分布。两者都仅为明确条件的索引候选，需固定位置范围、长度、头、层、prefill/decode与合法query/key配对；不修改模型原RoPE或生产注意力。\n\n最小可证伪实验：固定保留坐标数s、总索引字节和候选token预算，对比直接删除遗漏块、折入预测、折入预测加残差码、同预算直接更多FC；记录留出真实paired score、排序margin/候选、V/W输出与e2e，校准/solve/query变换/写缓存/读取开销都计入。方法选择与最终验证文档分开。若仅重建下降而score/output不改善，则不采用；未经实测不声称优于FASA或节省token。\n\n跨域：a为保留电压传感器V，b为另一电压V，B无量纲，q的u/v为电导S，分数为电流A。b=2a+ε模型中v=3S时遗漏误差45A²，折入后9A²；这里只保留线性响应、同工况分布和单位，未测硬件；换工况反例仍有效。\n\n## 来源、近期筛选与关系\n\n强前提math.schur-complement-block-elimination@1（块矩基础）、math.rotation-intertwiner@1（pre-RoPE交织分类）。math.paired-bilinear-risk、math.attention-output-geometry、math.weighted-bilinear-low-rank是目标差异与后续导航，不能将其独立/固定score前提静默忽略。\n\n[Higham作者文](https://nhigham.com/2023/06/01/what-is-the-schur-complement-of-a-matrix/)，2023-06-01（页面显示更新2023-06-06），块定义/因子化及PSD段落；检索2026-10-08。它支撑Schur基础，统计预测/score式为上述项目推导。\n\n[AttSVD](https://arxiv.org/html/2610.06927v1)，arXiv2610.06927v1，2026-10-03预印本，2026-10-08核查相关方法/App B：post-RoPE查询度量的SVD是固定完整分数矩阵目标；加入ridge改变度量。仅作目标/前提筛选，不把作者方案或实验当本条预测公式的证明，不宣称已发表/复现或最新研究穷尽。读取范围/原始HTML哈希在本轮sources.json。\n\n## 实际验证状态\n\n本轮agent_doc/results/math-linear-residual-20261008保存Fraction有限矩分布、SPD正规方程、残差外积、PSD差、分数恒等式、paired/非线性/非中心/旋转及单位反例，独立六域回执限定范围。公开三类无定理名查询的文件/SQLite检索和完整强前提闭包，是结构验证；人工判断拒用不等于模型拒用实测。未使用旧封存题内容。无Lean、真实模型/GPU、token计量或e2e收益；一般证明依赖上述推导而非有限数值样例。\n",
+        "path": "entries/math.linear-prediction-residual.json",
+        "sha256": "ed058b14d3567f5b3b16fad32aefdcd894c58efca292079bceb238d9270e9e17",
+        "selection_reason": "retrieved"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.rotation-intertwiner",
+        "version": 1,
+        "status": "published",
+        "kind": "modeling-pattern",
+        "title": "实旋转交织映射与RoPE跨频率融合",
+        "summary": "固定频率潜表示需要交织条件；区分整数频率别名、同频复线性融合、低秩点积限制与有限长度近似缺陷。",
+        "aliases": [
+          "旋转 融合 固定 频率",
+          "振子 对称 映射",
+          "位置 整数 频率 别名"
+        ],
+        "domains": [
+          "group-theory",
+          "linear-algebra"
+        ],
+        "structures": [
+          "intertwiner",
+          "equivariance",
+          "frequency-aliasing",
+          "rank-obstruction"
+        ],
+        "assumptions": [
+          "有限实线性映射；R(theta)为正交二维旋转；位置为整数",
+          "频率按2pi取模；0和pi需独立处理；连续位置不允许整数别名",
+          "近似长度界只在指定整数位置范围内；受限精确保真须明确数据支撑子空间"
+        ],
+        "sources": [
+          {
+            "url": "https://math.mit.edu/~etingof/reprbook.pdf",
+            "locator": "§2.3 Proposition2.3.9, Corollary2.3.10, Remark2.3.11; §3.1 Remark3.1.5; planar classification derived here",
+            "accessed": "2026-10-08"
+          },
+          {
+            "url": "https://proceedings.mlr.press/v306/berndt26a.html",
+            "locator": "ICML2026 final PMLR306:7766–7790; PDF §2 and §3.1 read; not a RoPE compression result",
+            "accessed": "2026-10-08"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "Self-contained real planar proof; no Lean/formal verification",
+            "32 public CPU structural cases; independent result acceptance required"
+          ]
+        },
+        "requires": [],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.weighted-bilinear-low-rank"
+          },
+          {
+            "type": "related",
+            "id": "math.reynolds-projection"
+          }
+        ],
+        "content": "# 实旋转交织映射与RoPE跨频率融合\n\n稳定ID：`math.rotation-intertwiner`；版本1；2026-10-08。经典表示论背景：Etingof等《Introduction to Representation Theory》§2.3，命题2.3.9、推论2.3.10及备注2.3.11；§3.1备注3.1.5。下面二维分类与误差界是本项目自足推导，不声称新定理或论文结论。\n\n## 对象、假设与准确结论\n\n令 Rθ=[[cosθ,-sinθ],[sinθ,cosθ]]，位置m∈Z。实2×2线性映射S将z=x+iy映成az+b共轭(z)，a,b∈C。每个实映射唯一这样分解。S Rθ=Rφ S当且仅当\n\na(exp(iθ)-exp(iφ))=0，b(exp(-iθ)-exp(iφ))=0。\n\n单步交织等价所有整数步交织，因为旋转可逆。频率按2π取模，符号相反的实旋转表示等价；不能只比较原始频率标签。\n\n若0<θ,φ<π，同频时b=0，S=uI+vJ，J=Rπ/2；异频时S=0。实数域的交换子是C，不是仅实标量。φ=-θ(mod2π)时允许反线性映射；θ=φ=0或π时所有实S允许，两个不同退化块之间仅零映射。连续位置t∈R要求对所有t成立，不能使用整数位置的2π别名。\n\n多旋转对的A按2×2块逐块满足以上方程。同频非退化重数块可用任意复矩阵混合并降低重数；NoPE对应频率0的平凡表示，可内部任意实混合，与非平凡RoPE块不能精确混合。\n\n## 可复核证明与近似界\n\n写S=[[p,q],[r,s]]时a=(p+s+i(r-q))/2，b=(p-s+i(r+q))/2。分别比较z、共轭(z)的系数即得分类，不依赖把复数域Schur引理错误套到实域。\n\n令E=S Rθ-Rφ S，δ+=|exp(iθ)-exp(iφ)|，δ-=|exp(-iθ)-exp(iφ)|。实线性映射az+b共轭(z)的Frobenius范数平方为2(|a|²+|b|²)，故\n\n||E||F²=2|a|²δ+²+2|b|²δ-²。\n\n当min(δ+,δ-)>0，||S||F≤||E||F/min(δ+,δ-)。靠近同频或反频时分母很小，不能由小缺陷推出小S。\n\n望远镜展开及旋转正交性给所有整数m：||S Rθ^m-Rφ^m S||F≤|m| ||E||F。负m用逆矩阵恒等式，m=0两边零。单次频率替换的谱范数为2|sin(m(θ-φ)/2)|≤|m||θ-φ|。小单步缺陷不保证无限上下文；融合频带必须结合最大距离L控制L|θ-φ|。\n\n## 正例、边界与误用反例\n\n同频S=I+2J精确交织；反频S=diag(1,-1)精确交织。θ=0时任意剪切精确交织。整数θ与θ+2π别名，但半整数位置不别名。\n\n同内容的两个异频旋转对产生cos(mθ1)+cos(mθ2)，一般不是单固定频率；内容低秩不代表旋转轨道低秩。直接相加q1+q2、k1+k2还引入交叉项。\n\n即使A满足交织且r<d，若要求所有q,k在m=0保持点积，则AᵀB=Id，与rank(AᵀB)≤r矛盾。同频两个块可融合重数，但不因此无损。若数据严格支撑在已知不变子空间W，A在W等距且B匹配，才可能在W精确保真；例如两个同频块的对角子空间(x,x)，用(x+x)/sqrt(2)保点积。该支撑条件须验证，不能只凭经验相关性。\n\n## 问题结构检索与迁移\n\n先抽取：原/目标频率、位置域、映射是否实线性、目标是等变还是点积/排名保真、数据支撑、长度预算。命中本ID后逐块核对；若跨频精确条件失败，拒绝固定频率无损主张，改为明确近似或post-RoPE投影。\n\nIndexer候选：同频结构投影；近频分组配长度预算；关键FC加post-RoPE残余低秩。第三者保留真实旋转后再投影，潜维度不再称固定单频FC。应在相同索引维度、缓存字节、候选预算比较排序、注意力输出误差和e2e；低维索引可增加缓存，不自动省token或提升速度。NoPE、RoPE、混合模型分别遵循平凡、非平凡及直和结构。\n\n跨领域最小迁移：两个离散平面振子的状态映射能否保持一步动力学？矩阵与交织方程完全对应，正例同频和反频；不同频率拒绝精确状态融合。实际物理还需单位、阻尼、时间步一致，本文不验证物理系统。\n\n## 近期研究与验证状态\n\nBerndt、Stühmer，Approximate Equivariance via Projection-Based Regularisation，ICML2026，PMLR306:7766–7790，正式版本；2026-10-08检索。阅读最终PDF§2及§3.1。紧群、归一化Haar测度、酉表示下投影到等变子空间的结构提供正则化候选；作者经验收益不是本项目复现。整数Z本身不是紧群，不能直接使用归一化Haar积分；可讨论旋转像的紧闭包，但有限长度目标仍不等于全群目标。没有把正则化接入生产。\n\n公开32例CPU浮点/有理旋转检查仅验证有限样例和实现；一般结论依靠上述证明，不冒充形式化验证。六个人工结构检索检验文件/SQLite入口，不是模型识别或拒绝能力实测。开发公开题不算未见题；未来holdout须独立封存并在开发后才解封。实际模型/GPU/端到端及token节省均未测。\n",
+        "path": "entries/math.rotation-intertwiner.json",
+        "sha256": "e7f20395508e5e0772b1fe0abaa690e7443df62e0d451e743c25ce1b5a6bc408",
+        "selection_reason": "prerequisite"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.schur-complement-block-elimination",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "Schur 补、块消元与边界等效",
+        "summary": "M=[[I,0],[CA⁻¹,I]] diag(A,S) [[I,A⁻¹B],[0,I]]；detM=detA detS。",
+        "aliases": [
+          "分块 消元 边界 等效 内部 变量 正定",
+          "Schur complement block elimination boundary Kron reduction"
+        ],
+        "domains": [
+          "algebra",
+          "linear-algebra"
+        ],
+        "structures": [
+          "linear-algebra",
+          "block-elimination",
+          "reduced-system"
+        ],
+        "assumptions": [
+          "M=[[A,B],[C,D]]，A 方阵可逆，S=D−CA⁻¹B；Hermitian正定判据另要求C=B*。"
+        ],
+        "sources": [
+          {
+            "url": "https://nhigham.com/2023/06/01/what-is-the-schur-complement-of-a-matrix/",
+            "locator": "2023-06-01 block factorization、positive-definite property；边界映射为本项目推导",
+            "accessed": "2026-10-07"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "正文逐项来源/证明核查；非 Lean 形式化证明",
+            "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+          ]
+        },
+        "requires": [],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.bilinear-quadratic-inertia"
+          }
+        ],
+        "content": "# Schur 补、块消元与边界等效\n\n稳定 ID：math.schur-complement-block-elimination；语义版本1；核查日期2026-10-07。\n\n## 对象、符号与前提\nM=[[A,B],[C,D]]，A 方阵可逆，S=D−CA⁻¹B；Hermitian正定判据另要求C=B*。\n\n## 经典结论\nM=[[I,0],[CA⁻¹,I]] diag(A,S) [[I,A⁻¹B],[0,I]]；detM=detA detS。Mx=(f,g) 化为 Sx₂=g−CA⁻¹f，x₁=A⁻¹(f−Bx₂)。Hermitian情况下 inertia(M)=inertia(A)+inertia(S)；M>0 iff A>0且S>0。\n\n## 证明思路与可复核推导\n逐块相乘验证因子化。Hermitian情况下因子为 L diag(A,S)L*，可逆合同保持惯性；SPD若成立其A主块SPD，逆向两块正给整体正。消元需同时变换rhs，不只替换D。\n\n## 正例与边界\n[[2,−1],[−1,2]] 消去首变量得到S=3/2。对接地电阻网络消内部节点，边界电压与电流响应完全保持，此为线性方程严格迁移。\n\n## 误用反例与拒用条件\n[[0,1],[1,0]] 整体可逆但A=0不可逆，需换枢轴。简单删除内部节点用D代替S改变响应；奇异未接地拉普拉斯不能直接求A逆（可能内部块可逆，但必须检查）。\n\n## 问题结构与迁移\n保持边界消费者观测的精确消元；实际实现用solve A而非显式逆，误差与 fill-in 成本单独评估。\n\n## 前置关系与来源版本\n基础前置：有限维空间、基、矩阵乘法和域算术；涉及内积的条目另需共轭转置/正定范数。本条在正文重述使用的基础结论，导航关联不要求一次加载整条课程。准确出处：[2023-06-01 block factorization、positive-definite property；边界映射为本项目推导](https://nhigham.com/2023/06/01/what-is-the-schur-complement-of-a-matrix/)。Axler 使用第四版、作者2026-08-16 PDF修订；Saad 使用第二版2003；Conrad未标日期的讲义以本轮PDF哈希固定；网页按标题日期与检索日期固定。PDF哈希/近期论文筛选见本轮 sources.json/research.md。\n\n## 验证状态与限制\n已核对所列来源的相关段落，并人工检查上面的证明思路/自推公式。verify.py 对该主题给公开正例、边界或反例；Fraction精确运算与float64数值检查分别标注。数学证明核查不是 Lean 形式化证明；计算实例不证明一般结论。未做同模型Agent A/B或真实GPU系统测试；没有性能收益声明。\n",
+        "path": "entries/math.schur-complement-block-elimination.json",
+        "sha256": "c5ba8bd8f24ad71922d6b9c90cb7e8d1f525ca6dfa209d73edffc323e98cfaca",
+        "selection_reason": "prerequisite"
+      }
+    ],
+    "knowledge_refs": [
+      {
+        "id": "math.linear-prediction-residual",
+        "version": 1,
+        "sha256": "ed058b14d3567f5b3b16fad32aefdcd894c58efca292079bceb238d9270e9e17"
+      },
+      {
+        "id": "math.rotation-intertwiner",
+        "version": 1,
+        "sha256": "e7f20395508e5e0772b1fe0abaa690e7443df62e0d451e743c25ce1b5a6bc408"
+      },
+      {
+        "id": "math.schur-complement-block-elimination",
+        "version": 1,
+        "sha256": "c5ba8bd8f24ad71922d6b9c90cb7e8d1f525ca6dfa209d73edffc323e98cfaca"
+      }
+    ],
+    "skipped": []
+  },
+  "token_cost": "unmeasured; chars/bytes not tokens",
+  "holdouts_metadata_sha256": "5a0572863e75526de915f22108fc90b5e8ce58de14292e7159054af3ba9fe48a"
+}

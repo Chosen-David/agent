@@ -253,3 +253,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-08 成对风险与低秩代理
 
 - [x] [MATH-49] 核验成对双线性四阶风险、独立代理适用证书和反例；独立验收后main发布。 ([detail](task_details/MATH-49.md))
+
+## 2026-10-08 保留分量与预测残差
+
+- [ ] [MATH-50] 核验保留坐标线性预测、残差分数风险及旋转边界；独立验收后main发布。 ([detail](task_details/MATH-50.md))
