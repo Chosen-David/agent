@@ -17,4 +17,4 @@ Date: 2026-10-08
 
 独立验收usable-with-scope，canonical receipt SHA256 96c47a0daa3cc8608a1ecdd4baadc2797b514beb700683f030d6d76872ced78a；root依据实际独立调用完成事件核对所有绑定，host_validation_gate.json与record.json保存限定范围。直接本地宿主审核，不冒充已部署Engine认证。稳定Plan与人类guide未改；完成后更新Progress使早期全文件TASK证据成为历史，当前结果代码/数据绑定不变。
 
-当前发布待远端main SHA核对。仅本地CPU合成资源规划与文件校验；未访问用户机器、占用真实GPU、启动远端作业，也未修改SGLang。没有吞吐、模型质量或token节省实测。后续需可信宿主整组原子预留、环境/链路校准、submit/poll/reconcile/cancel与独立数据验收，执行真实单卡/同机/跨机/故障实验和同预算A/B。下轮知识建设先检索已覆盖主题，保留新的未用于开发验收；不得把本轮结构/回归通过当作数学推理模型能力提升。
+已直接发布main 76914d32195128a764868f59ddcb4355eac3b9d9，并fetch/ls-remote核对远端SHA与本地树da67790186dcc55a1a28c4a0f7270b14d6931250一致；publication_receipt.json记录实际观测。后续提交仅登记此回执与任务关闭。仅本地CPU合成资源规划与文件校验；未访问用户机器、占用真实GPU、启动远端作业，也未修改SGLang。没有吞吐、模型质量或token节省实测。后续需可信宿主整组原子预留、环境/链路校准、submit/poll/reconcile/cancel与独立数据验收，执行真实单卡/同机/跨机/故障实验和同预算A/B。下轮知识建设先检索已覆盖主题，保留新的未用于开发验收；不得把本轮结构/回归通过当作数学推理模型能力提升。

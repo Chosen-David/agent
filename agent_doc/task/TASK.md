@@ -232,4 +232,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-08 多机多卡任务编排
 
-- [ ] [CLUSTER-01] 多机异构 GPU 放置、数据交接与主 AI 入口升级，独立验证后发布。 ([detail](task_details/CLUSTER-01.md))
+- [x] [CLUSTER-01] 多机异构 GPU 放置、数据交接与主 AI 入口升级，独立验证后发布。 ([detail](task_details/CLUSTER-01.md))
