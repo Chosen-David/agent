@@ -84,50 +84,6 @@ class Mailbox:
             row = db.execute('SELECT body,root FROM communication_plans WHERE run_id=?', (self.run_id,)).fetchone()
             if tuple(row) != (canonical(self.plan), str(self.root)):
                 raise ValueError('plan/root changed: create a new run and reconcile outstanding messages')
-            self._init_usage(db)
-            db.execute('INSERT OR IGNORE INTO communication_usage_v1 VALUES (?,0,0,0,0)',
-                       (self.run_id,))
-
-    @staticmethod
-    def _init_usage(db):
-        """Backfill once under the caller's IMMEDIATE transaction.
-
-        The table is the migration marker: creation, backfill and triggers commit
-        together. Do not use executescript here (it commits pending transactions).
-        Triggers also account for append-only writes by older Mailbox processes.
-        Direct SQL edits/deletes/replaces of historical events are unsupported.
-        """
-        if db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='communication_usage_v1'").fetchone():
-            return
-        db.execute('''CREATE TABLE communication_usage_v1 (
-            run_id TEXT PRIMARY KEY, events INTEGER NOT NULL,
-            envelope_bytes INTEGER NOT NULL, deliveries INTEGER NOT NULL,
-            delivery_bytes INTEGER NOT NULL)''')
-        db.execute('''INSERT INTO communication_usage_v1
-            SELECT run_id,COUNT(*),SUM(length(CAST(body AS BLOB))),0,0
-            FROM communication_events GROUP BY run_id''')
-        db.execute('''UPDATE communication_usage_v1 SET
-            deliveries=(SELECT COUNT(*) FROM communication_events e
-                JOIN communication_deliveries d ON e.seq=d.seq
-                WHERE e.run_id=communication_usage_v1.run_id),
-            delivery_bytes=(SELECT COALESCE(SUM(length(CAST(e.body AS BLOB))),0)
-                FROM communication_events e JOIN communication_deliveries d ON e.seq=d.seq
-                WHERE e.run_id=communication_usage_v1.run_id)''')
-        db.execute('''CREATE TRIGGER communication_usage_event_v1
-            AFTER INSERT ON communication_events BEGIN
-                INSERT INTO communication_usage_v1 VALUES (
-                    NEW.run_id,1,length(CAST(NEW.body AS BLOB)),0,0)
-                ON CONFLICT(run_id) DO UPDATE SET
-                    events=events+1,
-                    envelope_bytes=envelope_bytes+length(CAST(NEW.body AS BLOB));
-            END''')
-        db.execute('''CREATE TRIGGER communication_usage_delivery_v1
-            AFTER INSERT ON communication_deliveries BEGIN
-                UPDATE communication_usage_v1 SET deliveries=deliveries+1,
-                    delivery_bytes=delivery_bytes+(
-                        SELECT length(CAST(body AS BLOB)) FROM communication_events WHERE seq=NEW.seq)
-                WHERE run_id=(SELECT run_id FROM communication_events WHERE seq=NEW.seq);
-            END''')
 
     @contextmanager
     def connect(self):
@@ -174,12 +130,13 @@ class Mailbox:
                 if old['body'] != body:
                     raise ValueError('event_id reused with different content')
                 return {'seq': old['seq'], 'recipients': recipients, 'duplicate': True}
-            usage = db.execute('SELECT events,delivery_bytes FROM communication_usage_v1 WHERE run_id=?',
-                               (self.run_id,)).fetchone()
-            if usage['events'] >= self.plan.get('max_events', 1000):
+            count = db.execute('SELECT COUNT(*) FROM communication_events WHERE run_id=?', (self.run_id,)).fetchone()[0]
+            if count >= self.plan.get('max_events', 1000):
                 raise ValueError('run event budget exhausted; reconcile before extending the plan')
             if 'max_delivery_bytes' in self.plan:
-                spent = usage['delivery_bytes']
+                spent = db.execute('''SELECT COALESCE(SUM(length(CAST(e.body AS BLOB))),0)
+                    FROM communication_events e JOIN communication_deliveries d ON e.seq=d.seq
+                    WHERE e.run_id=?''', (self.run_id,)).fetchone()[0]
                 if spent + len(body.encode('utf-8')) * len(recipients) > self.plan['max_delivery_bytes']:
                     raise ValueError('run delivery byte budget exhausted; no partial fan-out')
             seq = db.execute('INSERT INTO communication_events(run_id,event_id,body) VALUES (?,?,?)',
@@ -311,10 +268,13 @@ class Mailbox:
     def usage(self):
         """Exact envelope bytes including fan-out; deliberately no token estimate."""
         with self.connect() as db:
-            row = db.execute('SELECT * FROM communication_usage_v1 WHERE run_id=?',
-                             (self.run_id,)).fetchone()
-        return {'events': row['events'], 'envelope_bytes': row['envelope_bytes'],
-                'deliveries': row['deliveries'], 'delivery_bytes': row['delivery_bytes'], 'tokens': None,
+            events = db.execute('''SELECT COUNT(*),COALESCE(SUM(length(CAST(body AS BLOB))),0)
+                FROM communication_events WHERE run_id=?''', (self.run_id,)).fetchone()
+            deliveries = db.execute('''SELECT COUNT(*),COALESCE(SUM(length(CAST(e.body AS BLOB))),0)
+                FROM communication_events e JOIN communication_deliveries d ON e.seq=d.seq
+                WHERE e.run_id=?''', (self.run_id,)).fetchone()
+        return {'events': events[0], 'envelope_bytes': events[1], 'deliveries': deliveries[0],
+                'delivery_bytes': deliveries[1], 'tokens': None,
                 'scope': 'stored envelopes only; excludes artifacts, model input/output and reasoning'}
 
 

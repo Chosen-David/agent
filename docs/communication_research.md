@@ -66,3 +66,7 @@ flowchart TD
 2026-10-06 22:26 用户已明确批准本次直接main发布并要求定时持续跟进；此前审批等待已解除。发布前同步到 `3dedbb9b0a7f83b6d9a1e015aeb8598a117e4408`，其新增内容仅知识库发布文档，保留并解决TASK追加冲突；通信14/14复验和插件同步通过。
 
 发布完成：main `b9325c5dc609e9a32ae3186e041485a4efa9de9a`，tree `34250047a9be45ac628ad741a023d191ee3c7c5a`，远端及本地Git核对一致；采用非强制、expected_sha保护更新。原每3小时任务启用状态和更新Prompt已回读。真实多模型质量/成本A/B仍列后续验证。
+
+## 2026-10-09：近期筛选与无损计账落地
+
+[GOSC、上游消息替代效应、OpenMAS-GCom、RADAR及工程来源的本轮筛选](../agent_doc/results/communication-ledger-20261009/research.md) 区分全文章节、摘要、源码片段和未能访问的内容。本轮应用为通信预算的事务增量维护，不宣称复现语义调度/学习拓扑。比较原始扫描、覆盖索引扫描和增量账本；[测量与限制](../agent_doc/results/communication-ledger-20261009/report.md) 单独列出小负载退化、迁移成本及没有模型质量A/B的边界。

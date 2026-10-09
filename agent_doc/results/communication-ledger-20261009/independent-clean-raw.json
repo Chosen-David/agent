@@ -1,0 +1,2118 @@
+{
+  "scope": "Local durable Mailbox CPU/file/SQLite performance and exact communication budget accounting; no LLM quality, token, network or fleet completion claims",
+  "command": [
+    "scripts/benchmark_communication_usage.py",
+    "--plan",
+    "agent_doc/results/communication-ledger-20261009/plan.json",
+    "--baseline",
+    "agent_doc/results/communication-ledger-20261009/baseline_communication.py",
+    "--backlogs",
+    "1000",
+    "10000",
+    "--out",
+    "agent_doc/results/communication-ledger-20261009/independent-clean-raw.json"
+  ],
+  "config": {
+    "backlog": [
+      1000,
+      10000
+    ],
+    "fanout": [
+      1,
+      8
+    ],
+    "byte_budget": [
+      false,
+      true
+    ],
+    "repeats": 9,
+    "warmups": 2,
+    "summary_chars": 2048,
+    "arms": [
+      "baseline",
+      "indexed_scan",
+      "candidate"
+    ],
+    "seed": 91026
+  },
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "sqlite": "3.53.1",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "cpu_count": 9,
+    "clock": {
+      "implementation": "clock_gettime(CLOCK_MONOTONIC)",
+      "monotonic": true,
+      "adjustable": false,
+      "resolution": 1e-09
+    },
+    "cpu_model": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "temp_filesystem": "/tmp"
+  },
+  "code_hashes": {
+    "agent_runtime/communication.py": "eecfe2b16a40d6118db8d7c99f9a89311eaaf491a55a51b6ac65c924d2ae115e",
+    "scripts/validate_handoff.py": "d182adfa0d118d6245f0a58623114d8fbeb70dd6ab8fa3ea4c1d93754bcedf9d",
+    "agent_runtime/project_docs.py": "d34556ecd2fd7822d4808c1e882f8ef559c750ed8dafdc22b5687e33699594b7",
+    "scripts/benchmark_communication_usage.py": "e4295ca8d637820c53442d24f82a8dd61324e876c353cc1edb75e551197f6c5d"
+  },
+  "baseline_sha256": "2df62b823606ca4d0ff1059c632dc567180ba816dd126f2ecd6ed84168963a7c",
+  "plan_sha256": "2fc7909788a969c9c5bd8248a27c84680f6cf02aaa195548742f4770f67e86fb",
+  "cases": [
+    {
+      "case": "n1000-f1-budget0",
+      "backlog": 1000,
+      "fanout": 1,
+      "byte_budget": false,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            1.038637,
+            2.868546,
+            2.085229,
+            0.639012,
+            1.271874,
+            0.696557,
+            0.547827,
+            0.714697,
+            0.809227
+          ],
+          "usage_ms": [
+            2.444516,
+            2.947094,
+            2.203568,
+            2.093436,
+            5.487116,
+            2.702938,
+            2.295207,
+            2.640009,
+            2.491381
+          ],
+          "reopen_ms": [
+            0.552308,
+            0.707506,
+            0.79344,
+            0.686853,
+            0.627945,
+            1.411293,
+            1.502245,
+            0.608649,
+            0.553337
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            0.799471,
+            0.61222,
+            0.668427,
+            2.096245,
+            0.783778,
+            0.957376,
+            1.249204,
+            1.961364,
+            0.659108
+          ],
+          "usage_ms": [
+            5.641994,
+            3.062741,
+            3.164075,
+            3.345013,
+            6.071006,
+            3.174601,
+            3.572389,
+            3.864757,
+            4.318908
+          ],
+          "reopen_ms": [
+            1.006385,
+            0.558081,
+            0.61428,
+            2.390489,
+            0.791976,
+            0.63195,
+            0.608807,
+            0.702169,
+            0.619718
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            0.76211,
+            0.628742,
+            1.136659,
+            0.684635,
+            0.627246,
+            0.615654,
+            0.635891,
+            0.593176,
+            0.901485
+          ],
+          "usage_ms": [
+            0.4263,
+            1.572101,
+            0.51922,
+            0.402968,
+            1.449773,
+            0.419092,
+            0.780073,
+            0.490365,
+            0.313318
+          ],
+          "reopen_ms": [
+            0.524591,
+            1.101149,
+            2.489413,
+            1.099239,
+            0.916327,
+            0.524099,
+            0.595199,
+            0.611521,
+            1.262279
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.633486,
+        "indexed_scan_index_build_ms": 11.205083,
+        "indexed_scan_initial_open_ms": 0.837524,
+        "candidate_initial_open_ms": 5.17497
+      },
+      "database_bytes_after_init": {
+        "baseline": 4239360,
+        "indexed_scan": 8859648,
+        "candidate": 4247552
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 1011,
+          "delivery_bytes": 2384993
+        },
+        "indexed_scan": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 1011,
+          "delivery_bytes": 2384993
+        },
+        "candidate": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 1011,
+          "delivery_bytes": 2384993
+        }
+      }
+    },
+    {
+      "case": "n1000-f1-budget1",
+      "backlog": 1000,
+      "fanout": 1,
+      "byte_budget": true,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            27.612295,
+            6.077227,
+            15.912166,
+            12.073576,
+            8.84643,
+            13.391604,
+            7.790905,
+            53.777727,
+            3.454889
+          ],
+          "usage_ms": [
+            4.624992,
+            31.32472,
+            22.603069,
+            19.433919,
+            19.81491,
+            220.12732,
+            199.385458,
+            17.251138,
+            10.943212
+          ],
+          "reopen_ms": [
+            1.838626,
+            8.152494,
+            0.976624,
+            1.333739,
+            0.932807,
+            16.683318,
+            18.80318,
+            5.182474,
+            0.754785
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            17.153297,
+            38.56927,
+            172.850826,
+            37.851728,
+            13.726092,
+            30.464211,
+            118.017377,
+            9.456793,
+            4.794369
+          ],
+          "usage_ms": [
+            24.558475,
+            14.225108,
+            22.485874,
+            30.718885,
+            16.669118,
+            17.51701,
+            148.117432,
+            301.181189,
+            11.905882
+          ],
+          "reopen_ms": [
+            13.445896,
+            2.28993,
+            7.447032,
+            0.985855,
+            4.09756,
+            2.093997,
+            1.097377,
+            2.261981,
+            2.92868
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            0.744727,
+            1.10057,
+            5.15393,
+            0.982692,
+            9.278179,
+            1.1596,
+            7.099715,
+            2.468322,
+            0.874595
+          ],
+          "usage_ms": [
+            9.87598,
+            11.263805,
+            2.087484,
+            0.578324,
+            0.676051,
+            16.729193,
+            11.190167,
+            2.258029,
+            58.662517
+          ],
+          "reopen_ms": [
+            0.633976,
+            3.509496,
+            3.281628,
+            5.138474,
+            1.295101,
+            1.505532,
+            2.910153,
+            15.962992,
+            1.646033
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 4.059757,
+        "indexed_scan_index_build_ms": 27.418606,
+        "indexed_scan_initial_open_ms": 7.863303,
+        "candidate_initial_open_ms": 16.807547
+      },
+      "database_bytes_after_init": {
+        "baseline": 4239360,
+        "indexed_scan": 8859648,
+        "candidate": 4247552
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 1011,
+          "delivery_bytes": 2384993
+        },
+        "indexed_scan": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 1011,
+          "delivery_bytes": 2384993
+        },
+        "candidate": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 1011,
+          "delivery_bytes": 2384993
+        }
+      }
+    },
+    {
+      "case": "n1000-f8-budget0",
+      "backlog": 1000,
+      "fanout": 8,
+      "byte_budget": false,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            4.122882,
+            1.111839,
+            0.757635,
+            164.122678,
+            0.679129,
+            0.752238,
+            1.222248,
+            0.623383,
+            0.592762
+          ],
+          "usage_ms": [
+            147.677873,
+            3.414329,
+            8.312635,
+            11.594155,
+            7.105369,
+            5.221014,
+            3.27687,
+            3.013208,
+            161.279128
+          ],
+          "reopen_ms": [
+            1.049652,
+            0.781227,
+            1.507843,
+            1.098568,
+            0.861626,
+            0.695819,
+            0.642609,
+            0.650111,
+            1.12306
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            1.041239,
+            3.997045,
+            1.472929,
+            0.697844,
+            1.53992,
+            0.657323,
+            0.645845,
+            0.769021,
+            0.830133
+          ],
+          "usage_ms": [
+            9.831479,
+            8.445314,
+            14.474391,
+            21.413017,
+            14.220085,
+            9.437579,
+            9.475148,
+            6.585462,
+            7.369399
+          ],
+          "reopen_ms": [
+            1.01933,
+            2.003008,
+            1.326752,
+            2.152336,
+            2.181074,
+            0.740066,
+            0.65299,
+            1.155208,
+            1.466585
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            1.718866,
+            0.896054,
+            1.340563,
+            1.05052,
+            2.446633,
+            0.880558,
+            0.863212,
+            0.651476,
+            0.652309
+          ],
+          "usage_ms": [
+            1.276108,
+            0.559335,
+            0.334285,
+            1.427864,
+            0.427037,
+            1.153516,
+            0.368144,
+            0.50597,
+            0.363313
+          ],
+          "reopen_ms": [
+            1.186366,
+            0.593871,
+            0.630702,
+            4.226079,
+            0.613285,
+            1.195982,
+            1.524213,
+            0.584387,
+            0.580976
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 2.585784,
+        "indexed_scan_index_build_ms": 215.363857,
+        "indexed_scan_initial_open_ms": 2.545677,
+        "candidate_initial_open_ms": 8.793313
+      },
+      "database_bytes_after_init": {
+        "baseline": 4550656,
+        "indexed_scan": 9170944,
+        "candidate": 4558848
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 8088,
+          "delivery_bytes": 19079944
+        },
+        "indexed_scan": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 8088,
+          "delivery_bytes": 19079944
+        },
+        "candidate": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 8088,
+          "delivery_bytes": 19079944
+        }
+      }
+    },
+    {
+      "case": "n1000-f8-budget1",
+      "backlog": 1000,
+      "fanout": 8,
+      "byte_budget": true,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            3.228301,
+            3.200544,
+            3.532987,
+            3.053758,
+            5.737356,
+            3.482845,
+            3.456679,
+            3.195721,
+            4.008443
+          ],
+          "usage_ms": [
+            3.974512,
+            4.551686,
+            3.218933,
+            3.350427,
+            4.948018,
+            3.316832,
+            3.634873,
+            3.990461,
+            4.706465
+          ],
+          "reopen_ms": [
+            1.476415,
+            0.646175,
+            0.646579,
+            0.749112,
+            0.637427,
+            0.748984,
+            0.814943,
+            0.759974,
+            1.034849
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            7.98756,
+            5.845538,
+            9.139373,
+            6.473711,
+            7.491727,
+            5.123506,
+            7.504587,
+            5.437629,
+            6.45949
+          ],
+          "usage_ms": [
+            7.812295,
+            6.568433,
+            14.350396,
+            6.53888,
+            6.784832,
+            7.275484,
+            6.071636,
+            6.379209,
+            6.290324
+          ],
+          "reopen_ms": [
+            0.752907,
+            1.141688,
+            0.941139,
+            0.602298,
+            0.752676,
+            0.842392,
+            0.672923,
+            0.607551,
+            0.681223
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            0.705997,
+            1.199705,
+            1.208593,
+            1.519319,
+            2.54371,
+            1.043529,
+            1.127079,
+            1.341795,
+            1.173918
+          ],
+          "usage_ms": [
+            0.359115,
+            0.324701,
+            0.469462,
+            0.562148,
+            0.543261,
+            0.323207,
+            0.327655,
+            0.456676,
+            0.317285
+          ],
+          "reopen_ms": [
+            0.58458,
+            0.795336,
+            0.827202,
+            1.519453,
+            1.324066,
+            0.696578,
+            1.074593,
+            0.777376,
+            0.649927
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.959905,
+        "indexed_scan_index_build_ms": 7.957496,
+        "indexed_scan_initial_open_ms": 0.67823,
+        "candidate_initial_open_ms": 6.775847
+      },
+      "database_bytes_after_init": {
+        "baseline": 4550656,
+        "indexed_scan": 9170944,
+        "candidate": 4558848
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 8088,
+          "delivery_bytes": 19079944
+        },
+        "indexed_scan": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 8088,
+          "delivery_bytes": 19079944
+        },
+        "candidate": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 8088,
+          "delivery_bytes": 19079944
+        }
+      }
+    },
+    {
+      "case": "n10000-f1-budget0",
+      "backlog": 10000,
+      "fanout": 1,
+      "byte_budget": false,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            2.220903,
+            1.493222,
+            1.963939,
+            2.12018,
+            1.539137,
+            1.427243,
+            1.552974,
+            1.522036,
+            1.786078
+          ],
+          "usage_ms": [
+            27.081826,
+            29.211731,
+            36.880315,
+            24.918628,
+            21.849853,
+            23.55055,
+            25.974311,
+            27.21537,
+            22.003602
+          ],
+          "reopen_ms": [
+            2.649354,
+            1.182324,
+            0.692705,
+            0.846385,
+            0.643649,
+            0.77649,
+            1.411269,
+            0.64137,
+            0.944431
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            2.560264,
+            1.458593,
+            3.291792,
+            1.559988,
+            1.400105,
+            1.664478,
+            1.567995,
+            1.488223,
+            1.313689
+          ],
+          "usage_ms": [
+            48.226859,
+            37.116418,
+            52.973975,
+            35.776763,
+            33.888216,
+            36.23494,
+            43.040561,
+            37.935812,
+            33.229853
+          ],
+          "reopen_ms": [
+            0.911294,
+            0.619092,
+            0.662699,
+            0.667198,
+            0.680904,
+            0.676101,
+            1.074846,
+            0.683581,
+            0.760968
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            2.89196,
+            8.120605,
+            2.807222,
+            3.980276,
+            1.487645,
+            1.15886,
+            1.233191,
+            1.098824,
+            1.523434
+          ],
+          "usage_ms": [
+            1.021451,
+            0.49574,
+            0.392175,
+            1.00601,
+            0.548193,
+            0.417796,
+            0.360203,
+            0.351351,
+            0.461023
+          ],
+          "reopen_ms": [
+            1.063655,
+            0.569618,
+            0.63244,
+            1.153655,
+            0.55575,
+            0.55322,
+            0.609635,
+            0.597514,
+            0.623684
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 1.09829,
+        "indexed_scan_index_build_ms": 77.385783,
+        "indexed_scan_initial_open_ms": 2.737008,
+        "candidate_initial_open_ms": 30.16376
+      },
+      "database_bytes_after_init": {
+        "baseline": 41996288,
+        "indexed_scan": 88088576,
+        "candidate": 42004480
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 10011,
+          "delivery_bytes": 23626004
+        },
+        "indexed_scan": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 10011,
+          "delivery_bytes": 23626004
+        },
+        "candidate": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 10011,
+          "delivery_bytes": 23626004
+        }
+      }
+    },
+    {
+      "case": "n10000-f1-budget1",
+      "backlog": 10000,
+      "fanout": 1,
+      "byte_budget": true,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            18.511929,
+            26.743394,
+            14.784651,
+            16.284342,
+            18.61477,
+            13.493987,
+            16.407298,
+            14.454113,
+            19.877139
+          ],
+          "usage_ms": [
+            168.276338,
+            27.488388,
+            20.617849,
+            22.303959,
+            25.638032,
+            47.036412,
+            26.50085,
+            21.579321,
+            26.93375
+          ],
+          "reopen_ms": [
+            0.860061,
+            0.716575,
+            0.680201,
+            0.818732,
+            1.422144,
+            0.895212,
+            0.854582,
+            0.631045,
+            0.840865
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            25.250483,
+            24.531264,
+            25.029682,
+            22.139047,
+            162.461638,
+            22.662363,
+            21.816156,
+            19.55695,
+            20.298239
+          ],
+          "usage_ms": [
+            55.097538,
+            43.641351,
+            34.173595,
+            65.579837,
+            41.761089,
+            44.336633,
+            40.341245,
+            34.758911,
+            39.39561
+          ],
+          "reopen_ms": [
+            1.057572,
+            0.757287,
+            0.876378,
+            0.716631,
+            1.174228,
+            0.64633,
+            1.146786,
+            0.776449,
+            0.780502
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            1.082938,
+            1.223644,
+            1.101949,
+            0.944702,
+            2.477357,
+            1.11276,
+            1.231349,
+            0.919099,
+            2.217319
+          ],
+          "usage_ms": [
+            0.328996,
+            0.404979,
+            0.393466,
+            0.34992,
+            0.405324,
+            0.359673,
+            0.683856,
+            0.312392,
+            0.646665
+          ],
+          "reopen_ms": [
+            0.656842,
+            0.671638,
+            1.058416,
+            0.883412,
+            0.763384,
+            1.274769,
+            0.568201,
+            0.593149,
+            1.015408
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 10.564026,
+        "indexed_scan_index_build_ms": 129.108471,
+        "indexed_scan_initial_open_ms": 0.705953,
+        "candidate_initial_open_ms": 26.27185
+      },
+      "database_bytes_after_init": {
+        "baseline": 41996288,
+        "indexed_scan": 88088576,
+        "candidate": 42004480
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 10011,
+          "delivery_bytes": 23626004
+        },
+        "indexed_scan": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 10011,
+          "delivery_bytes": 23626004
+        },
+        "candidate": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 10011,
+          "delivery_bytes": 23626004
+        }
+      }
+    },
+    {
+      "case": "n10000-f8-budget0",
+      "backlog": 10000,
+      "fanout": 8,
+      "byte_budget": false,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            1.636594,
+            5.011407,
+            1.740081,
+            1.393944,
+            1.657205,
+            1.60773,
+            1.431453,
+            1.371016,
+            1.782212
+          ],
+          "usage_ms": [
+            31.975382,
+            38.104196,
+            42.822622,
+            38.313629,
+            34.434236,
+            30.508659,
+            31.876694,
+            30.376417,
+            41.579547
+          ],
+          "reopen_ms": [
+            0.76528,
+            1.015474,
+            4.717197,
+            3.190117,
+            0.750855,
+            0.729353,
+            0.720074,
+            0.772739,
+            0.945138
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            1.43028,
+            1.470911,
+            1.999214,
+            2.359017,
+            1.876296,
+            1.461083,
+            2.110038,
+            1.472053,
+            1.802564
+          ],
+          "usage_ms": [
+            75.323649,
+            64.537629,
+            62.488899,
+            61.860725,
+            81.129585,
+            64.537926,
+            73.020519,
+            62.971761,
+            80.900497
+          ],
+          "reopen_ms": [
+            0.732315,
+            0.830157,
+            0.731646,
+            0.96728,
+            0.877835,
+            1.728073,
+            0.748583,
+            0.750836,
+            0.756918
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            1.041631,
+            1.368797,
+            1.521283,
+            2.406311,
+            1.396078,
+            0.950009,
+            0.941047,
+            1.363135,
+            1.419336
+          ],
+          "usage_ms": [
+            0.390319,
+            0.762167,
+            0.600094,
+            0.720218,
+            0.367567,
+            0.319083,
+            0.324628,
+            0.335224,
+            0.362786
+          ],
+          "reopen_ms": [
+            0.701556,
+            0.837702,
+            0.723509,
+            1.552946,
+            0.851851,
+            2.780229,
+            0.736716,
+            0.652102,
+            0.673729
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 1.039483,
+        "indexed_scan_index_build_ms": 79.356961,
+        "indexed_scan_initial_open_ms": 0.796543,
+        "candidate_initial_open_ms": 37.894614
+      },
+      "database_bytes_after_init": {
+        "baseline": 45285376,
+        "indexed_scan": 91377664,
+        "candidate": 45293568
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 80088,
+          "delivery_bytes": 189008032
+        },
+        "indexed_scan": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 80088,
+          "delivery_bytes": 189008032
+        },
+        "candidate": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 80088,
+          "delivery_bytes": 189008032
+        }
+      }
+    },
+    {
+      "case": "n10000-f8-budget1",
+      "backlog": 10000,
+      "fanout": 8,
+      "byte_budget": true,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            23.213596,
+            23.745772,
+            23.969339,
+            25.246514,
+            23.000007,
+            27.356971,
+            24.26733,
+            34.675379,
+            42.588201
+          ],
+          "usage_ms": [
+            40.280435,
+            36.675244,
+            33.884569,
+            32.809187,
+            34.630756,
+            33.682829,
+            61.761032,
+            51.437108,
+            107.23789
+          ],
+          "reopen_ms": [
+            0.697961,
+            0.805966,
+            1.586365,
+            0.819989,
+            0.985894,
+            0.743592,
+            1.091643,
+            1.013311,
+            3.512885
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            52.896737,
+            55.026019,
+            57.459593,
+            60.04154,
+            65.425788,
+            89.27679,
+            78.144788,
+            102.977221,
+            119.116321
+          ],
+          "usage_ms": [
+            71.254626,
+            92.79749,
+            69.115601,
+            73.972106,
+            74.993169,
+            101.846233,
+            127.194051,
+            151.74225,
+            113.432613
+          ],
+          "reopen_ms": [
+            0.764359,
+            0.785662,
+            0.770106,
+            1.881585,
+            0.816206,
+            1.319489,
+            1.009759,
+            1.154923,
+            1.276561
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            1.039915,
+            0.969066,
+            0.763809,
+            1.11151,
+            0.88579,
+            1.190846,
+            0.720923,
+            1.437758,
+            1.903505
+          ],
+          "usage_ms": [
+            0.394444,
+            0.329189,
+            0.326429,
+            0.740758,
+            0.313776,
+            0.536172,
+            0.349482,
+            0.655748,
+            0.557742
+          ],
+          "reopen_ms": [
+            0.580275,
+            0.986582,
+            0.649343,
+            1.04075,
+            0.84203,
+            0.663774,
+            0.946712,
+            1.837031,
+            1.165418
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 1.055945,
+        "indexed_scan_index_build_ms": 123.380245,
+        "indexed_scan_initial_open_ms": 1.307165,
+        "candidate_initial_open_ms": 73.149316
+      },
+      "database_bytes_after_init": {
+        "baseline": 45285376,
+        "indexed_scan": 91377664,
+        "candidate": 45293568
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 80088,
+          "delivery_bytes": 189008032
+        },
+        "indexed_scan": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 80088,
+          "delivery_bytes": 189008032
+        },
+        "candidate": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 80088,
+          "delivery_bytes": 189008032
+        }
+      }
+    }
+  ]
+}

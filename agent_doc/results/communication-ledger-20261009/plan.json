@@ -1,0 +1,18 @@
+{
+  "run_id": "communication-ledger-20261009",
+  "baseline_sha": "bb5bf5b8edaebd8910f9a7af28830c668113d339",
+  "task_id": "COMM-PERF-20261009-01",
+  "decision": "EXECUTE",
+  "scope": "Local durable Mailbox CPU/file/SQLite performance and exact communication budget accounting; no LLM quality, token, network or fleet completion claims",
+  "dag": ["research_and_prior_results", "independent_plan_review", "implementation_and_raw_measurement", "verify_experiment_result", "report_and_publish_main"],
+  "ownership": {"implementation_and_measurement": "/root", "independent_review": "/root/communication_review", "task_index": "/root"},
+  "invariants": ["same envelope and consumer routing", "no pruning", "same reference checks", "atomic fanout", "exact UTF-8 byte accounting including ACKed deliveries", "idempotent retries", "rollback", "run isolation", "legacy append writers maintained by triggers"],
+  "implementation": "One-time transactional backfill and per-run usage ledger with INSERT triggers, immutable event/delivery fields under supported Mailbox API. No change to PRAGMA durability. No update/delete/replace external SQL support; preserve legacy Mailbox INSERT and receipt UPDATE behavior.",
+  "matrix": {"backlog": [0, 100, 1000, 10000], "fanout": [1, 8], "byte_budget": [false, true], "repeats": 9, "warmups": 2, "summary_chars": 2048, "arms": ["baseline", "indexed_scan", "candidate"], "seed": 91026},
+  "timing": "Full publish API including unchanged validation, DB connection, transaction and commit. Full usage API. Per-case copies of identical populated legacy DBs; seed SQL excluded from steady-state timing and explicitly synthetic. Record initial open/migration separately and reopen. Randomized interleaved arm order; retain every sample; no durability downgrade.",
+  "acceptance": {"primary": "backlog=10000,fanout=8,byte_budget=true: baseline/candidate median publish >=1.25 and indexed_scan/candidate >=1.25", "supporting": "backlog=1000,fanout=8,byte_budget=true: candidate median publish <=1.10*baseline", "correctness": "all independent SQL reconstructions equal counters; all targeted semantic regressions pass", "small_cases": "report all regressions explicitly, do not claim universal speedup", "noise": "report median/p95 plus all samples; independent representative rerun must reproduce direction"},
+  "budget": "One bounded implementation candidate, at most one correction cycle after review; CPU only, no model/provider spend or GPU. Preserve failed evidence; if primary fails, keep baseline and continue research in a later bounded wake.",
+  "supervision": "Existing hourly communication automation observed enabled. This is direct host-orchestrated work; tmux is unavailable, no new managed server supervisor or runtime review adapter is claimed. Independent review uses actual collaboration context.",
+  "prior_results": [{"path": "docs/communication_efficiency/2026-10-07-selective/report.md", "decision": "reuse as context only; payload/token measurements are not publish accounting latency"}, {"path": "docs/continuous_optimization/rounds/2026-10-06-eval-coherence/evidence/communication-latency-diagnosis.json", "decision": "reuse as limitation: old short model traces were not CPU-bound; this optimization targets accumulated history, not those model timings"}],
+  "knowledge": [{"id": "math.packetized-completion@1", "decision": "reject direct latency theorem transfer: fanout, retries and independent consumers violate single FIFO no-drop assumptions. Use exact additive byte conservation and transaction invariants instead."}]
+}

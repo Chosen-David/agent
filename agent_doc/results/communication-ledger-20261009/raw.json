@@ -1,0 +1,4173 @@
+{
+  "scope": "Local durable Mailbox CPU/file/SQLite performance and exact communication budget accounting; no LLM quality, token, network or fleet completion claims",
+  "command": [
+    "scripts/benchmark_communication_usage.py",
+    "--plan",
+    "agent_doc/results/communication-ledger-20261009/plan.json",
+    "--baseline",
+    "agent_doc/results/communication-ledger-20261009/baseline_communication.py",
+    "--out",
+    "agent_doc/results/communication-ledger-20261009/raw.json"
+  ],
+  "config": {
+    "backlog": [
+      0,
+      100,
+      1000,
+      10000
+    ],
+    "fanout": [
+      1,
+      8
+    ],
+    "byte_budget": [
+      false,
+      true
+    ],
+    "repeats": 9,
+    "warmups": 2,
+    "summary_chars": 2048,
+    "arms": [
+      "baseline",
+      "indexed_scan",
+      "candidate"
+    ],
+    "seed": 91026
+  },
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "sqlite": "3.53.1",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "cpu_count": 9,
+    "clock": {
+      "implementation": "clock_gettime(CLOCK_MONOTONIC)",
+      "monotonic": true,
+      "adjustable": false,
+      "resolution": 1e-09
+    },
+    "cpu_model": "INTEL(R) XEON(R) PLATINUM 8573C",
+    "temp_filesystem": "/tmp"
+  },
+  "code_hashes": {
+    "agent_runtime/communication.py": "eecfe2b16a40d6118db8d7c99f9a89311eaaf491a55a51b6ac65c924d2ae115e",
+    "scripts/validate_handoff.py": "d182adfa0d118d6245f0a58623114d8fbeb70dd6ab8fa3ea4c1d93754bcedf9d",
+    "agent_runtime/project_docs.py": "d34556ecd2fd7822d4808c1e882f8ef559c750ed8dafdc22b5687e33699594b7",
+    "scripts/benchmark_communication_usage.py": "e4295ca8d637820c53442d24f82a8dd61324e876c353cc1edb75e551197f6c5d"
+  },
+  "baseline_sha256": "2df62b823606ca4d0ff1059c632dc567180ba816dd126f2ecd6ed84168963a7c",
+  "plan_sha256": "2fc7909788a969c9c5bd8248a27c84680f6cf02aaa195548742f4770f67e86fb",
+  "cases": [
+    {
+      "case": "n0-f1-budget0",
+      "backlog": 0,
+      "fanout": 1,
+      "byte_budget": false,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            1.024918,
+            1.317556,
+            2.925742,
+            0.937936,
+            2.977101,
+            0.998266,
+            1.096658,
+            0.872238,
+            1.122031
+          ],
+          "usage_ms": [
+            0.332883,
+            0.33201,
+            0.367572,
+            0.338915,
+            1.244357,
+            0.318403,
+            0.680781,
+            0.870596,
+            0.334169
+          ],
+          "reopen_ms": [
+            0.532825,
+            0.889767,
+            0.558036,
+            0.460636,
+            0.529589,
+            1.891699,
+            0.531922,
+            0.544066,
+            0.606891
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            0.92039,
+            0.740287,
+            2.747483,
+            0.752695,
+            2.231433,
+            0.92753,
+            1.236285,
+            1.234989,
+            1.126505
+          ],
+          "usage_ms": [
+            0.336267,
+            4.093344,
+            0.471407,
+            2.673193,
+            3.168022,
+            0.338258,
+            0.378324,
+            0.367498,
+            0.363137
+          ],
+          "reopen_ms": [
+            0.551125,
+            0.709921,
+            0.540473,
+            0.560093,
+            0.868019,
+            2.64384,
+            0.64132,
+            0.646472,
+            1.489476
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            0.963087,
+            1.06175,
+            1.160701,
+            0.977837,
+            1.402952,
+            0.950819,
+            0.975357,
+            1.486079,
+            1.531974
+          ],
+          "usage_ms": [
+            0.308989,
+            0.574557,
+            0.318413,
+            0.314657,
+            0.547532,
+            0.306952,
+            0.549756,
+            0.396078,
+            0.461599
+          ],
+          "reopen_ms": [
+            0.584576,
+            0.543961,
+            0.608987,
+            0.587389,
+            1.760028,
+            2.695128,
+            0.565995,
+            0.780263,
+            0.618016
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.722354,
+        "indexed_scan_index_build_ms": 2.574845,
+        "indexed_scan_initial_open_ms": 1.283895,
+        "candidate_initial_open_ms": 1.634709
+      },
+      "database_bytes_after_init": {
+        "baseline": 40960,
+        "indexed_scan": 45056,
+        "candidate": 49152
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 11,
+          "envelope_bytes": 25960,
+          "deliveries": 11,
+          "delivery_bytes": 25960
+        },
+        "indexed_scan": {
+          "events": 11,
+          "envelope_bytes": 25960,
+          "deliveries": 11,
+          "delivery_bytes": 25960
+        },
+        "candidate": {
+          "events": 11,
+          "envelope_bytes": 25960,
+          "deliveries": 11,
+          "delivery_bytes": 25960
+        }
+      }
+    },
+    {
+      "case": "n0-f1-budget1",
+      "backlog": 0,
+      "fanout": 1,
+      "byte_budget": true,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            1.809072,
+            0.981233,
+            1.035723,
+            0.943371,
+            0.774584,
+            0.971787,
+            6.033924,
+            3.300164,
+            1.718372
+          ],
+          "usage_ms": [
+            1.071823,
+            0.466719,
+            0.298653,
+            0.313511,
+            0.420206,
+            0.64137,
+            3.505103,
+            0.434002,
+            0.342074
+          ],
+          "reopen_ms": [
+            4.077077,
+            0.470986,
+            0.770602,
+            0.573988,
+            0.517264,
+            0.532713,
+            0.501475,
+            0.494946,
+            1.088488
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            0.787201,
+            0.907934,
+            0.848037,
+            0.942642,
+            0.774883,
+            1.761996,
+            0.787291,
+            1.445878,
+            1.763485
+          ],
+          "usage_ms": [
+            0.571793,
+            0.500271,
+            0.31434,
+            0.447105,
+            0.380026,
+            0.381978,
+            0.420656,
+            0.352877,
+            0.448637
+          ],
+          "reopen_ms": [
+            0.533738,
+            0.478551,
+            0.682311,
+            0.550775,
+            0.472799,
+            2.991796,
+            0.61568,
+            0.473349,
+            0.505132
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            1.13714,
+            0.844057,
+            1.023589,
+            0.973423,
+            0.77531,
+            1.048075,
+            2.038653,
+            0.890771,
+            0.815293
+          ],
+          "usage_ms": [
+            0.533822,
+            0.379566,
+            0.344288,
+            0.315345,
+            0.378214,
+            0.435114,
+            0.427091,
+            0.353642,
+            0.342147
+          ],
+          "reopen_ms": [
+            0.57226,
+            0.542862,
+            0.71332,
+            0.686976,
+            0.749495,
+            0.527113,
+            0.54999,
+            3.938071,
+            1.683543
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.674283,
+        "indexed_scan_index_build_ms": 0.542426,
+        "indexed_scan_initial_open_ms": 0.678849,
+        "candidate_initial_open_ms": 1.849228
+      },
+      "database_bytes_after_init": {
+        "baseline": 40960,
+        "indexed_scan": 45056,
+        "candidate": 49152
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 11,
+          "envelope_bytes": 25960,
+          "deliveries": 11,
+          "delivery_bytes": 25960
+        },
+        "indexed_scan": {
+          "events": 11,
+          "envelope_bytes": 25960,
+          "deliveries": 11,
+          "delivery_bytes": 25960
+        },
+        "candidate": {
+          "events": 11,
+          "envelope_bytes": 25960,
+          "deliveries": 11,
+          "delivery_bytes": 25960
+        }
+      }
+    },
+    {
+      "case": "n0-f8-budget0",
+      "backlog": 0,
+      "fanout": 8,
+      "byte_budget": false,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            1.210888,
+            1.315347,
+            0.835692,
+            2.970074,
+            0.941179,
+            0.977528,
+            3.78855,
+            1.540031,
+            1.063561
+          ],
+          "usage_ms": [
+            2.236144,
+            0.340294,
+            0.331861,
+            1.028956,
+            0.338508,
+            0.333039,
+            0.363166,
+            0.529958,
+            0.880025
+          ],
+          "reopen_ms": [
+            0.645384,
+            0.868357,
+            1.417223,
+            0.929433,
+            0.738842,
+            0.920585,
+            0.609331,
+            0.538277,
+            1.484829
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            1.181565,
+            0.801984,
+            1.0464,
+            0.900835,
+            1.009495,
+            1.639092,
+            0.930708,
+            1.134284,
+            1.328598
+          ],
+          "usage_ms": [
+            0.626291,
+            0.343961,
+            0.348661,
+            0.447216,
+            0.53314,
+            0.381559,
+            12.308788,
+            0.406615,
+            0.400713
+          ],
+          "reopen_ms": [
+            0.940036,
+            0.768485,
+            0.640273,
+            0.536238,
+            0.717915,
+            0.732042,
+            4.072706,
+            0.686467,
+            1.677826
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            1.258752,
+            1.098702,
+            2.469033,
+            0.858449,
+            1.168304,
+            7.624909,
+            12.024603,
+            1.279032,
+            1.114356
+          ],
+          "usage_ms": [
+            2.172852,
+            0.39409,
+            0.417613,
+            0.530153,
+            0.487163,
+            1.136588,
+            0.415974,
+            0.487623,
+            0.312323
+          ],
+          "reopen_ms": [
+            1.510771,
+            0.582561,
+            0.574535,
+            0.718445,
+            0.630603,
+            6.030805,
+            0.603646,
+            0.710175,
+            0.948021
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.653318,
+        "indexed_scan_index_build_ms": 0.50682,
+        "indexed_scan_initial_open_ms": 0.862322,
+        "candidate_initial_open_ms": 1.154956
+      },
+      "database_bytes_after_init": {
+        "baseline": 40960,
+        "indexed_scan": 45056,
+        "candidate": 49152
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 11,
+          "envelope_bytes": 25960,
+          "deliveries": 88,
+          "delivery_bytes": 207680
+        },
+        "indexed_scan": {
+          "events": 11,
+          "envelope_bytes": 25960,
+          "deliveries": 88,
+          "delivery_bytes": 207680
+        },
+        "candidate": {
+          "events": 11,
+          "envelope_bytes": 25960,
+          "deliveries": 88,
+          "delivery_bytes": 207680
+        }
+      }
+    },
+    {
+      "case": "n0-f8-budget1",
+      "backlog": 0,
+      "fanout": 8,
+      "byte_budget": true,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            1.294432,
+            1.385069,
+            4.994945,
+            1.026841,
+            4.169201,
+            1.215339,
+            1.54702,
+            11.2515,
+            1.381
+          ],
+          "usage_ms": [
+            0.483382,
+            0.325121,
+            0.418524,
+            0.365314,
+            2.572548,
+            0.441766,
+            0.385763,
+            1.025943,
+            0.534327
+          ],
+          "reopen_ms": [
+            1.719723,
+            1.059618,
+            0.919471,
+            0.518606,
+            0.584142,
+            0.673896,
+            0.529899,
+            1.417879,
+            0.727707
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            0.956165,
+            1.746875,
+            0.84699,
+            1.054596,
+            13.337119,
+            1.108975,
+            0.988342,
+            5.795652,
+            1.174846
+          ],
+          "usage_ms": [
+            0.587936,
+            0.723967,
+            0.330314,
+            0.510741,
+            0.832448,
+            0.359466,
+            0.563599,
+            2.844901,
+            0.380334
+          ],
+          "reopen_ms": [
+            0.791339,
+            0.65249,
+            2.658492,
+            0.527398,
+            0.738535,
+            1.648513,
+            0.926651,
+            2.470359,
+            1.017565
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            3.571825,
+            0.943511,
+            0.85385,
+            0.955331,
+            8.660105,
+            1.154324,
+            1.441855,
+            2.323933,
+            1.00609
+          ],
+          "usage_ms": [
+            0.485147,
+            0.448013,
+            0.289411,
+            1.877877,
+            0.363444,
+            0.365316,
+            0.514009,
+            0.957966,
+            0.316273
+          ],
+          "reopen_ms": [
+            1.094053,
+            0.623457,
+            0.732856,
+            1.919686,
+            0.702727,
+            0.854082,
+            0.673927,
+            4.053851,
+            0.638151
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.577977,
+        "indexed_scan_index_build_ms": 0.520782,
+        "indexed_scan_initial_open_ms": 0.977403,
+        "candidate_initial_open_ms": 1.197241
+      },
+      "database_bytes_after_init": {
+        "baseline": 40960,
+        "indexed_scan": 45056,
+        "candidate": 49152
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 11,
+          "envelope_bytes": 25960,
+          "deliveries": 88,
+          "delivery_bytes": 207680
+        },
+        "indexed_scan": {
+          "events": 11,
+          "envelope_bytes": 25960,
+          "deliveries": 88,
+          "delivery_bytes": 207680
+        },
+        "candidate": {
+          "events": 11,
+          "envelope_bytes": 25960,
+          "deliveries": 88,
+          "delivery_bytes": 207680
+        }
+      }
+    },
+    {
+      "case": "n100-f1-budget0",
+      "backlog": 100,
+      "fanout": 1,
+      "byte_budget": false,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            1.494499,
+            0.717989,
+            0.929567,
+            1.013856,
+            0.78554,
+            1.525447,
+            0.960405,
+            0.947988,
+            1.161011
+          ],
+          "usage_ms": [
+            0.448887,
+            0.541711,
+            0.723438,
+            0.440084,
+            0.40594,
+            0.467736,
+            0.509993,
+            0.443681,
+            0.529829
+          ],
+          "reopen_ms": [
+            0.543456,
+            0.491548,
+            0.51794,
+            0.672782,
+            0.692123,
+            0.848125,
+            0.609269,
+            0.685431,
+            0.522519
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            0.901979,
+            0.784651,
+            1.323807,
+            0.817774,
+            0.832473,
+            1.322847,
+            1.276556,
+            0.846961,
+            1.413761
+          ],
+          "usage_ms": [
+            2.848822,
+            0.598951,
+            0.635436,
+            0.869713,
+            1.757784,
+            1.889332,
+            0.631101,
+            0.574712,
+            0.948564
+          ],
+          "reopen_ms": [
+            1.057607,
+            0.467727,
+            1.138999,
+            0.563517,
+            0.660962,
+            0.998564,
+            0.905437,
+            0.546387,
+            0.828461
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            0.879989,
+            0.886491,
+            1.008915,
+            1.071909,
+            1.060398,
+            0.863358,
+            1.015349,
+            0.944068,
+            0.872072
+          ],
+          "usage_ms": [
+            0.464971,
+            0.375342,
+            0.395944,
+            0.313134,
+            0.464814,
+            0.306946,
+            0.366131,
+            0.307782,
+            0.296157
+          ],
+          "reopen_ms": [
+            0.542039,
+            0.539763,
+            0.575741,
+            0.736266,
+            0.658615,
+            0.701436,
+            0.555229,
+            0.587823,
+            0.662784
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.755249,
+        "indexed_scan_index_build_ms": 1.080802,
+        "indexed_scan_initial_open_ms": 0.548282,
+        "candidate_initial_open_ms": 1.620988
+      },
+      "database_bytes_after_init": {
+        "baseline": 450560,
+        "indexed_scan": 921600,
+        "candidate": 458752
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 111,
+          "envelope_bytes": 261782,
+          "deliveries": 111,
+          "delivery_bytes": 261782
+        },
+        "indexed_scan": {
+          "events": 111,
+          "envelope_bytes": 261782,
+          "deliveries": 111,
+          "delivery_bytes": 261782
+        },
+        "candidate": {
+          "events": 111,
+          "envelope_bytes": 261782,
+          "deliveries": 111,
+          "delivery_bytes": 261782
+        }
+      }
+    },
+    {
+      "case": "n100-f1-budget1",
+      "backlog": 100,
+      "fanout": 1,
+      "byte_budget": true,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            1.78698,
+            1.07301,
+            0.943953,
+            1.85717,
+            0.893404,
+            0.980784,
+            0.911689,
+            2.16735,
+            0.939105
+          ],
+          "usage_ms": [
+            0.506555,
+            0.460476,
+            1.352798,
+            0.469919,
+            0.520503,
+            0.43152,
+            0.590135,
+            0.453493,
+            0.707269
+          ],
+          "reopen_ms": [
+            0.503442,
+            0.576646,
+            0.580852,
+            0.945236,
+            0.505198,
+            0.588313,
+            0.683191,
+            1.002562,
+            0.745381
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            1.31072,
+            0.993346,
+            3.001906,
+            22.265008,
+            1.022447,
+            1.33533,
+            0.992142,
+            1.12277,
+            1.09364
+          ],
+          "usage_ms": [
+            0.644858,
+            0.694868,
+            0.898768,
+            1.047546,
+            0.758508,
+            0.639289,
+            0.751035,
+            0.847798,
+            1.051806
+          ],
+          "reopen_ms": [
+            0.501834,
+            0.81061,
+            2.745133,
+            6.799317,
+            0.585922,
+            0.904499,
+            1.039697,
+            0.967884,
+            0.637142
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            0.923001,
+            1.160126,
+            1.10658,
+            1.007865,
+            0.989544,
+            0.881412,
+            0.871374,
+            2.262348,
+            0.969091
+          ],
+          "usage_ms": [
+            0.619551,
+            0.52504,
+            0.4323,
+            0.332459,
+            0.428833,
+            0.48627,
+            0.30888,
+            0.714555,
+            0.339529
+          ],
+          "reopen_ms": [
+            0.763304,
+            1.609308,
+            0.552048,
+            1.567826,
+            0.542373,
+            1.076518,
+            0.68384,
+            0.818359,
+            0.702659
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.637998,
+        "indexed_scan_index_build_ms": 1.822673,
+        "indexed_scan_initial_open_ms": 0.592739,
+        "candidate_initial_open_ms": 2.087018
+      },
+      "database_bytes_after_init": {
+        "baseline": 450560,
+        "indexed_scan": 921600,
+        "candidate": 458752
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 111,
+          "envelope_bytes": 261782,
+          "deliveries": 111,
+          "delivery_bytes": 261782
+        },
+        "indexed_scan": {
+          "events": 111,
+          "envelope_bytes": 261782,
+          "deliveries": 111,
+          "delivery_bytes": 261782
+        },
+        "candidate": {
+          "events": 111,
+          "envelope_bytes": 261782,
+          "deliveries": 111,
+          "delivery_bytes": 261782
+        }
+      }
+    },
+    {
+      "case": "n100-f8-budget0",
+      "backlog": 100,
+      "fanout": 8,
+      "byte_budget": false,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            1.673547,
+            1.017415,
+            1.384263,
+            0.785598,
+            0.798646,
+            0.780524,
+            0.799507,
+            0.790297,
+            0.773317
+          ],
+          "usage_ms": [
+            0.547334,
+            0.580207,
+            0.878737,
+            0.605818,
+            0.489036,
+            0.905859,
+            0.539803,
+            0.673749,
+            0.668986
+          ],
+          "reopen_ms": [
+            0.621151,
+            0.56828,
+            0.564465,
+            0.555572,
+            0.611687,
+            0.556023,
+            0.755113,
+            0.563107,
+            1.443186
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            1.057633,
+            0.846766,
+            0.950366,
+            1.059133,
+            0.802457,
+            0.819098,
+            1.002055,
+            0.948285,
+            1.154538
+          ],
+          "usage_ms": [
+            1.774198,
+            1.312626,
+            0.993903,
+            0.967058,
+            1.004973,
+            0.970017,
+            0.886797,
+            0.942863,
+            1.03086
+          ],
+          "reopen_ms": [
+            0.586565,
+            0.618881,
+            0.591709,
+            0.695627,
+            0.533133,
+            0.577224,
+            0.991338,
+            0.547124,
+            0.574959
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            1.320965,
+            1.175605,
+            1.005679,
+            1.058541,
+            0.88573,
+            0.88357,
+            0.926768,
+            1.064857,
+            1.23863
+          ],
+          "usage_ms": [
+            0.709736,
+            0.404777,
+            0.439061,
+            0.426102,
+            0.319422,
+            0.297544,
+            0.313179,
+            0.388955,
+            0.479612
+          ],
+          "reopen_ms": [
+            1.080964,
+            0.751523,
+            0.612284,
+            0.753567,
+            0.759431,
+            0.607959,
+            0.88783,
+            0.585437,
+            0.584356
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 1.229182,
+        "indexed_scan_index_build_ms": 1.305969,
+        "indexed_scan_initial_open_ms": 0.779493,
+        "candidate_initial_open_ms": 1.447066
+      },
+      "database_bytes_after_init": {
+        "baseline": 483328,
+        "indexed_scan": 954368,
+        "candidate": 491520
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 111,
+          "envelope_bytes": 261782,
+          "deliveries": 888,
+          "delivery_bytes": 2094256
+        },
+        "indexed_scan": {
+          "events": 111,
+          "envelope_bytes": 261782,
+          "deliveries": 888,
+          "delivery_bytes": 2094256
+        },
+        "candidate": {
+          "events": 111,
+          "envelope_bytes": 261782,
+          "deliveries": 888,
+          "delivery_bytes": 2094256
+        }
+      }
+    },
+    {
+      "case": "n100-f8-budget1",
+      "backlog": 100,
+      "fanout": 8,
+      "byte_budget": true,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            1.148925,
+            1.024918,
+            1.05494,
+            1.040148,
+            1.002914,
+            0.983213,
+            1.159717,
+            1.105378,
+            1.003542
+          ],
+          "usage_ms": [
+            0.913373,
+            0.743416,
+            0.674849,
+            0.494326,
+            0.494538,
+            0.57423,
+            0.603502,
+            0.660716,
+            0.505092
+          ],
+          "reopen_ms": [
+            0.842085,
+            0.780889,
+            0.604401,
+            0.606794,
+            0.626353,
+            0.554465,
+            1.001261,
+            0.593674,
+            0.618398
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            2.375456,
+            1.590175,
+            1.44832,
+            1.322766,
+            1.298685,
+            1.374285,
+            1.313,
+            1.341423,
+            1.466939
+          ],
+          "usage_ms": [
+            1.556605,
+            0.879114,
+            0.990772,
+            0.882814,
+            0.876631,
+            0.890615,
+            1.062681,
+            1.083772,
+            1.537072
+          ],
+          "reopen_ms": [
+            0.838999,
+            0.536872,
+            0.545003,
+            0.692947,
+            0.521799,
+            0.715659,
+            0.624936,
+            1.069291,
+            0.623934
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            1.346442,
+            0.907526,
+            0.962025,
+            0.861817,
+            0.909061,
+            0.866065,
+            0.909573,
+            0.892116,
+            1.634465
+          ],
+          "usage_ms": [
+            0.414754,
+            0.488913,
+            0.358482,
+            0.364849,
+            0.302521,
+            0.354205,
+            0.352292,
+            0.353641,
+            0.807428
+          ],
+          "reopen_ms": [
+            0.592047,
+            0.95658,
+            0.622678,
+            0.904993,
+            0.58256,
+            0.548192,
+            0.55733,
+            0.70893,
+            0.669766
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.648009,
+        "indexed_scan_index_build_ms": 1.042991,
+        "indexed_scan_initial_open_ms": 0.598079,
+        "candidate_initial_open_ms": 1.435969
+      },
+      "database_bytes_after_init": {
+        "baseline": 483328,
+        "indexed_scan": 954368,
+        "candidate": 491520
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 111,
+          "envelope_bytes": 261782,
+          "deliveries": 888,
+          "delivery_bytes": 2094256
+        },
+        "indexed_scan": {
+          "events": 111,
+          "envelope_bytes": 261782,
+          "deliveries": 888,
+          "delivery_bytes": 2094256
+        },
+        "candidate": {
+          "events": 111,
+          "envelope_bytes": 261782,
+          "deliveries": 888,
+          "delivery_bytes": 2094256
+        }
+      }
+    },
+    {
+      "case": "n1000-f1-budget0",
+      "backlog": 1000,
+      "fanout": 1,
+      "byte_budget": false,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            0.914562,
+            0.950982,
+            0.830022,
+            0.958352,
+            0.836766,
+            1.120272,
+            1.138432,
+            0.983789,
+            0.979096
+          ],
+          "usage_ms": [
+            3.074625,
+            2.407027,
+            2.744447,
+            2.806246,
+            2.03076,
+            2.251894,
+            2.282208,
+            2.302792,
+            2.039686
+          ],
+          "reopen_ms": [
+            0.703909,
+            0.743255,
+            0.716011,
+            0.633116,
+            0.520236,
+            0.648428,
+            0.735207,
+            0.697571,
+            0.551635
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            0.914271,
+            1.078017,
+            1.322075,
+            2.137347,
+            1.523458,
+            3.004148,
+            0.996245,
+            0.889106,
+            0.900091
+          ],
+          "usage_ms": [
+            3.205201,
+            3.355706,
+            3.541007,
+            4.311163,
+            3.187861,
+            2.950363,
+            3.631093,
+            3.102435,
+            3.521136
+          ],
+          "reopen_ms": [
+            0.671956,
+            0.998948,
+            0.572374,
+            0.986281,
+            0.731678,
+            0.602906,
+            0.743173,
+            0.845791,
+            0.579443
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            1.169575,
+            1.00304,
+            1.232437,
+            0.896731,
+            0.894566,
+            0.893622,
+            0.86282,
+            0.903997,
+            1.087274
+          ],
+          "usage_ms": [
+            0.745066,
+            0.337809,
+            0.819134,
+            0.462964,
+            0.470015,
+            0.344956,
+            0.31371,
+            0.338914,
+            0.357274
+          ],
+          "reopen_ms": [
+            0.551966,
+            0.590594,
+            0.816944,
+            0.522457,
+            0.838586,
+            0.639055,
+            0.519325,
+            0.586714,
+            0.512475
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.786776,
+        "indexed_scan_index_build_ms": 8.63551,
+        "indexed_scan_initial_open_ms": 0.657944,
+        "candidate_initial_open_ms": 7.517803
+      },
+      "database_bytes_after_init": {
+        "baseline": 4239360,
+        "indexed_scan": 8859648,
+        "candidate": 4247552
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 1011,
+          "delivery_bytes": 2384993
+        },
+        "indexed_scan": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 1011,
+          "delivery_bytes": 2384993
+        },
+        "candidate": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 1011,
+          "delivery_bytes": 2384993
+        }
+      }
+    },
+    {
+      "case": "n1000-f1-budget1",
+      "backlog": 1000,
+      "fanout": 1,
+      "byte_budget": true,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            1.873406,
+            3.766586,
+            2.203174,
+            2.183057,
+            2.110296,
+            1.925106,
+            2.036511,
+            2.003302,
+            2.076198
+          ],
+          "usage_ms": [
+            2.396804,
+            4.529122,
+            2.345507,
+            2.225897,
+            2.177636,
+            2.145757,
+            3.905844,
+            2.100562,
+            2.175298
+          ],
+          "reopen_ms": [
+            0.638373,
+            0.621492,
+            0.606208,
+            0.617938,
+            0.626955,
+            1.124612,
+            0.850806,
+            0.596148,
+            0.904378
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            2.51972,
+            2.841526,
+            3.065493,
+            2.667622,
+            2.796316,
+            2.911818,
+            3.54776,
+            2.639188,
+            3.337122
+          ],
+          "usage_ms": [
+            3.896967,
+            2.925988,
+            3.115719,
+            3.139319,
+            3.421025,
+            3.820534,
+            3.198384,
+            4.022602,
+            4.130388
+          ],
+          "reopen_ms": [
+            1.530871,
+            1.397158,
+            0.633175,
+            0.546784,
+            0.744197,
+            0.757161,
+            0.623758,
+            0.862767,
+            0.698275
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            1.479378,
+            1.278165,
+            0.874059,
+            1.007793,
+            0.879246,
+            1.103193,
+            0.922011,
+            1.192055,
+            0.895571
+          ],
+          "usage_ms": [
+            0.414374,
+            0.462466,
+            0.334456,
+            0.315577,
+            0.338466,
+            0.322486,
+            0.354669,
+            0.469023,
+            0.336922
+          ],
+          "reopen_ms": [
+            0.567627,
+            0.589354,
+            0.716466,
+            0.5897,
+            0.595975,
+            0.549366,
+            0.821563,
+            1.07327,
+            0.69934
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 1.024544,
+        "indexed_scan_index_build_ms": 12.417241,
+        "indexed_scan_initial_open_ms": 1.901205,
+        "candidate_initial_open_ms": 4.163876
+      },
+      "database_bytes_after_init": {
+        "baseline": 4239360,
+        "indexed_scan": 8859648,
+        "candidate": 4247552
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 1011,
+          "delivery_bytes": 2384993
+        },
+        "indexed_scan": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 1011,
+          "delivery_bytes": 2384993
+        },
+        "candidate": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 1011,
+          "delivery_bytes": 2384993
+        }
+      }
+    },
+    {
+      "case": "n1000-f8-budget0",
+      "backlog": 1000,
+      "fanout": 8,
+      "byte_budget": false,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            1.379477,
+            0.867877,
+            0.839405,
+            1.018726,
+            0.798362,
+            1.086518,
+            0.865717,
+            1.20612,
+            0.885176
+          ],
+          "usage_ms": [
+            9.90434,
+            3.033758,
+            5.647387,
+            6.277258,
+            9.073351,
+            2.759629,
+            3.597316,
+            3.588347,
+            3.017976
+          ],
+          "reopen_ms": [
+            3.185784,
+            0.645358,
+            0.78604,
+            0.719166,
+            1.604857,
+            0.575609,
+            0.748328,
+            0.597108,
+            3.397442
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            1.560785,
+            0.915779,
+            0.882317,
+            1.477563,
+            1.555087,
+            0.907372,
+            0.943331,
+            0.846601,
+            0.826924
+          ],
+          "usage_ms": [
+            6.023883,
+            6.571171,
+            6.320446,
+            8.620162,
+            6.460846,
+            6.406925,
+            6.625731,
+            6.454694,
+            7.473522
+          ],
+          "reopen_ms": [
+            0.880874,
+            0.713568,
+            0.696194,
+            0.979502,
+            0.648265,
+            0.810129,
+            0.79895,
+            0.60083,
+            0.62458
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            5.041032,
+            0.989589,
+            0.915183,
+            1.259222,
+            0.933973,
+            1.030775,
+            0.967733,
+            1.211969,
+            0.908372
+          ],
+          "usage_ms": [
+            0.392061,
+            0.325539,
+            0.786412,
+            0.418057,
+            0.46826,
+            0.360882,
+            0.488645,
+            0.331539,
+            0.357488
+          ],
+          "reopen_ms": [
+            2.938076,
+            1.162769,
+            0.687223,
+            0.601272,
+            0.69674,
+            0.577725,
+            0.717835,
+            0.600157,
+            0.90032
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.975942,
+        "indexed_scan_index_build_ms": 7.123208,
+        "indexed_scan_initial_open_ms": 0.984896,
+        "candidate_initial_open_ms": 11.02622
+      },
+      "database_bytes_after_init": {
+        "baseline": 4550656,
+        "indexed_scan": 9170944,
+        "candidate": 4558848
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 8088,
+          "delivery_bytes": 19079944
+        },
+        "indexed_scan": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 8088,
+          "delivery_bytes": 19079944
+        },
+        "candidate": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 8088,
+          "delivery_bytes": 19079944
+        }
+      }
+    },
+    {
+      "case": "n1000-f8-budget1",
+      "backlog": 1000,
+      "fanout": 8,
+      "byte_budget": true,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            2.770115,
+            2.747642,
+            4.027154,
+            2.735238,
+            2.505632,
+            2.89403,
+            3.608918,
+            3.682819,
+            3.528557
+          ],
+          "usage_ms": [
+            3.441207,
+            2.999622,
+            3.062998,
+            3.064779,
+            2.660608,
+            2.956092,
+            3.51694,
+            2.938769,
+            3.345502
+          ],
+          "reopen_ms": [
+            0.6404,
+            0.581464,
+            0.89553,
+            0.703251,
+            0.667725,
+            0.6329,
+            0.875877,
+            0.632112,
+            0.761852
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            7.792705,
+            6.406872,
+            5.353808,
+            5.263585,
+            5.895654,
+            6.258932,
+            8.603796,
+            5.827644,
+            6.23708
+          ],
+          "usage_ms": [
+            6.402681,
+            6.212742,
+            5.97006,
+            5.806246,
+            6.226781,
+            7.955859,
+            8.36171,
+            7.734107,
+            6.220364
+          ],
+          "reopen_ms": [
+            0.641113,
+            0.73796,
+            0.645063,
+            0.636537,
+            0.951114,
+            0.716886,
+            0.621314,
+            0.646011,
+            0.709774
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            1.174255,
+            1.044867,
+            0.910081,
+            1.007838,
+            1.062879,
+            1.345896,
+            1.03998,
+            0.943158,
+            1.033108
+          ],
+          "usage_ms": [
+            0.711362,
+            0.717731,
+            0.310109,
+            0.395939,
+            0.313851,
+            0.327146,
+            0.486031,
+            0.316242,
+            1.294659
+          ],
+          "reopen_ms": [
+            0.620656,
+            0.615324,
+            0.605053,
+            0.581483,
+            0.706877,
+            4.340655,
+            0.602182,
+            0.850402,
+            0.813233
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.819516,
+        "indexed_scan_index_build_ms": 8.13282,
+        "indexed_scan_initial_open_ms": 1.013023,
+        "candidate_initial_open_ms": 5.600847
+      },
+      "database_bytes_after_init": {
+        "baseline": 4550656,
+        "indexed_scan": 9170944,
+        "candidate": 4558848
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 8088,
+          "delivery_bytes": 19079944
+        },
+        "indexed_scan": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 8088,
+          "delivery_bytes": 19079944
+        },
+        "candidate": {
+          "events": 1011,
+          "envelope_bytes": 2384993,
+          "deliveries": 8088,
+          "delivery_bytes": 19079944
+        }
+      }
+    },
+    {
+      "case": "n10000-f1-budget0",
+      "backlog": 10000,
+      "fanout": 1,
+      "byte_budget": false,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            1.457108,
+            1.328462,
+            1.913092,
+            1.517055,
+            1.263633,
+            1.809856,
+            1.915266,
+            1.484445,
+            1.552814
+          ],
+          "usage_ms": [
+            20.242951,
+            25.927557,
+            21.944244,
+            21.698889,
+            35.401878,
+            31.598041,
+            34.340625,
+            41.365097,
+            36.731327
+          ],
+          "reopen_ms": [
+            0.833611,
+            0.760331,
+            0.821356,
+            0.700268,
+            1.398164,
+            0.714665,
+            0.968893,
+            0.783399,
+            1.341586
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            1.233444,
+            1.227815,
+            1.509098,
+            1.660799,
+            3.91552,
+            1.899175,
+            1.807702,
+            3.002501,
+            1.51276
+          ],
+          "usage_ms": [
+            37.758956,
+            33.469057,
+            36.826272,
+            34.917186,
+            49.403359,
+            44.26304,
+            99.620258,
+            44.730768,
+            35.123482
+          ],
+          "reopen_ms": [
+            1.005926,
+            0.699515,
+            0.647191,
+            0.638319,
+            0.728994,
+            0.954123,
+            0.723529,
+            1.179015,
+            0.646059
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            0.934283,
+            0.961558,
+            1.112945,
+            0.912306,
+            0.913908,
+            1.551257,
+            1.416683,
+            2.867663,
+            1.338123
+          ],
+          "usage_ms": [
+            0.317581,
+            0.326779,
+            0.386148,
+            0.314937,
+            0.318332,
+            0.629894,
+            0.518294,
+            0.547687,
+            0.612641
+          ],
+          "reopen_ms": [
+            0.603318,
+            0.759972,
+            0.559868,
+            0.593058,
+            1.146643,
+            0.770015,
+            1.056162,
+            1.571063,
+            0.638448
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.850541,
+        "indexed_scan_index_build_ms": 88.004492,
+        "indexed_scan_initial_open_ms": 0.941195,
+        "candidate_initial_open_ms": 29.301373
+      },
+      "database_bytes_after_init": {
+        "baseline": 41996288,
+        "indexed_scan": 88088576,
+        "candidate": 42004480
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 10011,
+          "delivery_bytes": 23626004
+        },
+        "indexed_scan": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 10011,
+          "delivery_bytes": 23626004
+        },
+        "candidate": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 10011,
+          "delivery_bytes": 23626004
+        }
+      }
+    },
+    {
+      "case": "n10000-f1-budget1",
+      "backlog": 10000,
+      "fanout": 1,
+      "byte_budget": true,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            20.382722,
+            23.717164,
+            18.99134,
+            14.058883,
+            16.512041,
+            21.792116,
+            16.181598,
+            12.925431,
+            16.059007
+          ],
+          "usage_ms": [
+            33.923202,
+            29.534693,
+            33.536625,
+            26.22943,
+            30.375883,
+            35.174723,
+            23.038288,
+            22.22541,
+            27.494735
+          ],
+          "reopen_ms": [
+            1.281809,
+            1.953472,
+            0.601323,
+            0.870436,
+            1.057376,
+            0.977278,
+            0.606825,
+            0.750064,
+            0.678184
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            22.83997,
+            24.869465,
+            22.132655,
+            21.685356,
+            28.822872,
+            22.5439,
+            29.515125,
+            26.526952,
+            21.127252
+          ],
+          "usage_ms": [
+            37.206189,
+            35.410985,
+            40.513095,
+            35.548063,
+            39.692186,
+            37.055038,
+            43.766601,
+            35.388078,
+            37.839081
+          ],
+          "reopen_ms": [
+            0.779214,
+            3.774234,
+            1.022347,
+            0.681857,
+            0.633912,
+            1.293737,
+            2.065345,
+            0.892814,
+            0.691062
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            1.474394,
+            1.435403,
+            1.111233,
+            1.541869,
+            2.135224,
+            1.627207,
+            1.495183,
+            1.031473,
+            1.104462
+          ],
+          "usage_ms": [
+            0.403816,
+            0.698239,
+            0.490422,
+            0.470971,
+            0.411595,
+            0.582925,
+            0.549445,
+            0.340934,
+            0.389719
+          ],
+          "reopen_ms": [
+            0.980535,
+            0.870341,
+            0.563408,
+            0.844584,
+            0.557888,
+            0.86912,
+            1.587625,
+            0.724568,
+            0.550588
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 1.257229,
+        "indexed_scan_index_build_ms": 128.964119,
+        "indexed_scan_initial_open_ms": 1.184737,
+        "candidate_initial_open_ms": 35.915027
+      },
+      "database_bytes_after_init": {
+        "baseline": 41996288,
+        "indexed_scan": 88088576,
+        "candidate": 42004480
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 10011,
+          "delivery_bytes": 23626004
+        },
+        "indexed_scan": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 10011,
+          "delivery_bytes": 23626004
+        },
+        "candidate": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 10011,
+          "delivery_bytes": 23626004
+        }
+      }
+    },
+    {
+      "case": "n10000-f8-budget0",
+      "backlog": 10000,
+      "fanout": 8,
+      "byte_budget": false,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            2.084866,
+            2.078147,
+            1.98611,
+            1.375409,
+            1.732681,
+            1.849719,
+            1.302207,
+            1.471828,
+            2.537794
+          ],
+          "usage_ms": [
+            48.249404,
+            51.702519,
+            43.394619,
+            166.59883,
+            49.12228,
+            29.220156,
+            31.816055,
+            39.756169,
+            36.405552
+          ],
+          "reopen_ms": [
+            1.286065,
+            1.018844,
+            0.89922,
+            0.874274,
+            0.816438,
+            0.769902,
+            0.864022,
+            0.731286,
+            0.711653
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            1.968888,
+            2.440058,
+            2.08614,
+            1.730185,
+            1.884523,
+            1.738654,
+            1.607479,
+            2.351698,
+            1.523995
+          ],
+          "usage_ms": [
+            110.328013,
+            128.592562,
+            109.751248,
+            130.346029,
+            68.25326,
+            65.197303,
+            67.348799,
+            87.093394,
+            72.406715
+          ],
+          "reopen_ms": [
+            1.216128,
+            1.304775,
+            1.065595,
+            0.760809,
+            0.927148,
+            0.72355,
+            1.296789,
+            0.836866,
+            0.928449
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            1.521248,
+            1.538835,
+            1.622937,
+            1.692194,
+            1.331079,
+            1.213546,
+            1.793905,
+            1.279431,
+            1.674267
+          ],
+          "usage_ms": [
+            0.578584,
+            0.540256,
+            0.532236,
+            0.440408,
+            0.337039,
+            0.456163,
+            0.480445,
+            0.379027,
+            0.359534
+          ],
+          "reopen_ms": [
+            1.255234,
+            0.950717,
+            0.93285,
+            0.641041,
+            1.184877,
+            0.864512,
+            1.081014,
+            1.012939,
+            0.73112
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 1.219037,
+        "indexed_scan_index_build_ms": 114.571857,
+        "indexed_scan_initial_open_ms": 0.829074,
+        "candidate_initial_open_ms": 45.963047
+      },
+      "database_bytes_after_init": {
+        "baseline": 45285376,
+        "indexed_scan": 91377664,
+        "candidate": 45293568
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "baseline",
+          "candidate"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 80088,
+          "delivery_bytes": 189008032
+        },
+        "indexed_scan": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 80088,
+          "delivery_bytes": 189008032
+        },
+        "candidate": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 80088,
+          "delivery_bytes": 189008032
+        }
+      }
+    },
+    {
+      "case": "n10000-f8-budget1",
+      "backlog": 10000,
+      "fanout": 8,
+      "byte_budget": true,
+      "samples": {
+        "baseline": {
+          "publish_ms": [
+            27.294933,
+            25.641279,
+            25.355956,
+            29.659623,
+            24.877521,
+            24.969339,
+            20.710882,
+            21.135622,
+            23.441604
+          ],
+          "usage_ms": [
+            37.913049,
+            39.050397,
+            31.158008,
+            46.971155,
+            36.825032,
+            68.561239,
+            31.605522,
+            28.291605,
+            36.618523
+          ],
+          "reopen_ms": [
+            1.096876,
+            0.863096,
+            1.027386,
+            1.027512,
+            1.179676,
+            1.762403,
+            1.140466,
+            0.802417,
+            1.084419
+          ]
+        },
+        "indexed_scan": {
+          "publish_ms": [
+            54.525333,
+            69.929552,
+            71.134868,
+            99.541632,
+            103.861042,
+            77.157296,
+            88.030221,
+            56.364813,
+            52.636194
+          ],
+          "usage_ms": [
+            80.980376,
+            77.366979,
+            108.033019,
+            135.938412,
+            110.631585,
+            78.433019,
+            69.766697,
+            62.38836,
+            113.422588
+          ],
+          "reopen_ms": [
+            0.735194,
+            0.970071,
+            1.432066,
+            1.361537,
+            1.058874,
+            1.307848,
+            0.765152,
+            0.742204,
+            1.366194
+          ]
+        },
+        "candidate": {
+          "publish_ms": [
+            0.853599,
+            1.637279,
+            1.85708,
+            1.366794,
+            1.322068,
+            1.779604,
+            1.245327,
+            1.24213,
+            1.941441
+          ],
+          "usage_ms": [
+            0.413368,
+            0.587678,
+            0.535926,
+            0.483487,
+            0.466039,
+            0.666456,
+            0.35452,
+            0.383127,
+            0.600806
+          ],
+          "reopen_ms": [
+            0.653489,
+            0.85028,
+            1.198995,
+            0.927772,
+            0.983481,
+            1.25662,
+            0.722188,
+            1.309198,
+            0.932107
+          ]
+        }
+      },
+      "initializations": {
+        "baseline_initial_open_ms": 0.820184,
+        "indexed_scan_index_build_ms": 165.040101,
+        "indexed_scan_initial_open_ms": 1.071616,
+        "candidate_initial_open_ms": 119.817285
+      },
+      "database_bytes_after_init": {
+        "baseline": 45285376,
+        "indexed_scan": 91377664,
+        "candidate": 45293568
+      },
+      "sqlite": {
+        "baseline": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "indexed_scan": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              4,
+              0,
+              56,
+              "SEARCH e USING COVERING INDEX communication_covering (run_id=?)"
+            ],
+            [
+              10,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        },
+        "candidate": {
+          "journal_mode": "delete",
+          "synchronous": 2,
+          "scan_query_plan": [
+            [
+              5,
+              0,
+              62,
+              "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+            ],
+            [
+              12,
+              0,
+              55,
+              "SEARCH d USING COVERING INDEX sqlite_autoindex_communication_deliveries_1 (seq=?)"
+            ]
+          ]
+        }
+      },
+      "order_including_warmups": [
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "candidate",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "candidate",
+          "indexed_scan",
+          "baseline"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "indexed_scan",
+          "candidate",
+          "baseline"
+        ],
+        [
+          "candidate",
+          "baseline",
+          "indexed_scan"
+        ],
+        [
+          "baseline",
+          "indexed_scan",
+          "candidate"
+        ]
+      ],
+      "final_accounting": {
+        "baseline": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 80088,
+          "delivery_bytes": 189008032
+        },
+        "indexed_scan": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 80088,
+          "delivery_bytes": 189008032
+        },
+        "candidate": {
+          "events": 10011,
+          "envelope_bytes": 23626004,
+          "deliveries": 80088,
+          "delivery_bytes": 189008032
+        }
+      }
+    }
+  ]
+}

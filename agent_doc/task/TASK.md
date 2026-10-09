@@ -305,3 +305,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-60] FIFO完成量知识入口与前提边界 ([详情](task_details/MATH-60.md))
 
 - [x] [MATH-61] 离散二次稳定性证书与非正规瞬态；独立核验并已推送main ([详情](task_details/MATH-61.md))
+
+## 2026-10-09 通信运行时性能
+
+- [x] [COMM-PERF-20261009-01] 通信增量计账、旧库兼容、对照测量及独立核验通过，直接main发布。 ([详情](task_details/COMM-PERF-20261009-01.md))

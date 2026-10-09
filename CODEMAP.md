@@ -19,6 +19,7 @@ ADOPT-01–04：`scripts/setup_codex.py` 从已提交快照安装/同步 Codex �
 | T21 | `docs/knowledge_validation/`, `tests/test_knowledge*.py` | 主 AI/独立测试 Agent → 用户/维护者 | 程序、检索与真实使用证据；不混为部署证明 |
 | T22 | `TASK.md` | 主 AI → 用户/后续维护者 | 本轮授权、验收与 main 发布读回 |
 | COMM-02 | `agent_runtime/communication.py` | 可信 host adapter → 按任务订阅的消费者 | 事务投递、幂等事件、版本隔离、回执与现有 handoff 消费 |
+| COMM-PERF-20261009-01 | `agent_runtime/communication.py`, `tests/test_communication_usage.py`, `scripts/benchmark_communication_usage.py` | Mailbox publish/usage → 每run事务账本 | 无损累计预算计账、旧库原子回填、旧append写者兼容；原始对照与独立验证在 `agent_doc/results/communication-ledger-20261009/` |
 | COMM-01/03 | `workflows/agent_communication_workflow.md`, `docs/communication_research.md` | 主 AI → 科研角色/持续优化任务 | 有证据的通信设计、定向反馈、研究候选与验收边界 |
 
 `.knowledge-cache/` 是可重建索引；`.agent-runs/knowledge-v1/` 是当前运行临时状态，均不提交。未移动历史目录或活跃作业路径。

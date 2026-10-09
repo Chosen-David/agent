@@ -18,3 +18,5 @@ python scripts/source_evidence.py --repo /path/to/repo --commit FULL_SHA --path 
 复杂报告可用 [覆盖核查卡](code_reading_coverage.md) 和 [最小契约示例](code_reading_coverage.example.json)，运行 `python scripts/check_coverage.py report.json`。检查器只读报告，检查当前commit、证据/覆盖行引用、未决范围和执行记录，不读取或执行目标，也不证明证据内容及日志真实。`contract_valid` 不等于结论正确或覆盖完整；用 `source_evidence.py` 另核源码，独立审阅检查语义。已确认的跨模型/多入口结论不得覆盖 unresolved 行。
 
 知识需求与交接按 [知识接入契约](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/code-reading/references/knowledge_access_workflow.md) 执行；保留实际查询/前提核对证据及完整 knowledge_refs，无需求时注明原因。
+
+审查轮次的性能探测实测另按以下验收：基准与候选同编译器/标志/硬件/输入，多次运行记录原始数据与噪声范围，写明 GPU 争用状态（他人进程占用时如实记录，不得在噪声区间内宣布改进）；改进超出噪声且必要非退化指标不回退才可写入 advice，实测数据按 [结果独立验证](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/code-reading/references/result_validation_workflow.md) 经独立 verify_experiment_result。无 bug 且无可实测确认的优化时零输出：不写 advice、不提交文件，如实报告"本轮无发现"。

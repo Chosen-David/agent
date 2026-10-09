@@ -125,3 +125,13 @@ API 可提供 `known_knowledge_refs`、`known_memory_ids`（CLI --known 指向�
 计划可增加 max_delivery_bytes：按收件人数累计 envelope UTF-8 字节，重复 event_id 不重复计费，超额拒绝整个投递，不部分广播。usage 提供 events/deliveries/envelope_bytes/delivery_bytes；这不是模型收费账单。不为了省 token 删除关键反例、前提或原始证据；先缩小问题/检索范围、复用当前上下文、批量独立读取和减少无关收件者，再考虑经独立实验的摘要。
 
 项目文档版本与写入范围按 [文档治理](project_document_workflow.md) 交接；消息中的建议不构成用户指令，修改指南的反馈只能写到 agent_doc/advice/ 供人类处理。
+
+## 累计预算计账与旧库升级
+
+`Mailbox.publish()` 的事件上限和投递字节上限读取同一事务中的 `communication_usage_v1` 账本，`usage()` 返回相同口径的计数。事件INSERT与每个delivery INSERT的触发器维护它，重试去重不再计费，ACK不退还累计预算；仍然不是token、网络重传流量或模型完成量。
+
+首次打开旧数据库时，在 `BEGIN IMMEDIATE` 中原子创建、回填所有run和安装触发器，保留事件、回执和消费依据。后续打开不扫描历史。升级前已启动的旧版Mailbox继续append或ACK时，数据库触发器同样生效。支持范围是现有Mailbox API的追加事件/投递及回执更新；直接SQL修改、删除、REPLACE历史行或删除触发器不受支持，数据库仍是可信宿主管理的本地文件，不是安全沙箱。
+
+升级前备份数据库需使用SQLite一致性备份或停写后的文件备份，不能复制正在写入的单个数据库文件。首次迁移会暂时持有写锁，成本随历史量增长；不是零停顿部署。原有30秒忙等待/错误处理不变，失败保留待处理工作后按原计划重试。恢复与全量历史审计仍可从原事件/投递重算。
+
+本轮复现入口为 `scripts/benchmark_communication_usage.py`，冻结原实现、原始样本、研究取舍、独立核验及适用范围位于 [通信计账性能记录](https://github.com/Chosen-David/agent/blob/main/agent_doc/results/communication-ledger-20261009/report.md)。使用新的输出文件保存复测，不覆盖旧样本；小负载的额外写成本和一次迁移成本必须同时报告。
