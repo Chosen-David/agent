@@ -1,6 +1,6 @@
 # 单卡独立任务扫描的多机多卡编排（embarrassingly parallel sweep）
 
-适用：大量互相独立、每个只需一张 GPU 一部分资源的实验臂/job（超参扫描、基准评测、消融），跨多台授权主机运行。先读 [多机多卡编排](cluster_orchestration_workflow.md)——本文是其**场景补集**：那里解决 gang job（多机同构整组 + RDMA），这里解决单卡分数槽打包。身份、授权、独立验收仍由既有任务链控制，不增加后台调度服务。
+适用：大量互相独立、每个只需一张 GPU 一部分资源的实验臂/job（超参扫描、基准评测、消融），跨多台授权主机运行。先读 [多机多卡编排](cluster_orchestration_workflow.md)——本文是其**场景补集**：那里解决 gang job（多机同构整组 + RDMA），这里解决单卡分数槽打包。建议落地后的接机、派单、回传与收口见 [GPU 资源池运维 playbook](gpu_pool_operations_playbook.md)。身份、授权、独立验收仍由既有任务链控制，不增加后台调度服务。
 
 ## 已实现入口
 

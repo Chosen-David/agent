@@ -1,6 +1,6 @@
 # 主 AI 的多机多卡编排
 
-适用：多个实验/算法/工程任务在多台授权机器的异构GPU上运行。先读 [因果编排](causal_task_orchestration_workflow.md)、[任务监督](task_supervision_workflow.md)、[通信](agent_communication_workflow.md) 和当前项目指南。身份、授权、独立验收仍由既有任务链控制，不增加后台调度服务。**单卡独立任务大群（扫描/评测/消融，允许同卡分数槽复用）见 [单卡独立任务扫描编排](single_gpu_sweep_workflow.md)**；本文覆盖 gang job（多机同构整组 + RDMA）。
+适用：多个实验/算法/工程任务在多台授权机器的异构GPU上运行。先读 [因果编排](causal_task_orchestration_workflow.md)、[任务监督](task_supervision_workflow.md)、[通信](agent_communication_workflow.md) 和当前项目指南。身份、授权、独立验收仍由既有任务链控制，不增加后台调度服务。**单卡独立任务大群（扫描/评测/消融，允许同卡分数槽复用）见 [单卡独立任务扫描编排](single_gpu_sweep_workflow.md)**；无后端环境的接机、派单、回传与收口运维规程见 [GPU 资源池运维 playbook](gpu_pool_operations_playbook.md)。本文覆盖 gang job（多机同构整组 + RDMA）。
 
 ## 已实现入口
 
