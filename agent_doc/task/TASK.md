@@ -348,3 +348,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [COMM-BATCH-01] 有界原子批量发布：保留逐条校验，仅经强基线、收益和安全验收后采用。 ([详情](task_details/COMM-BATCH-01.md))
 
 - [ ] [MATH-65] 近似耦合的边际修正与保守证书；T6纠错已审，复测待可信宿主恢复 ([详情](task_details/MATH-65.md))
+
+- [ ] [TOK-008] Dependency-complete child dispatch: prototype/6 boundary checks; short native inherited-history control and independent acceptance pending. ([detail](task_details/TOK-008.md))

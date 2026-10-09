@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-008-probe",
+      "owner": "native-child8-probe",
+      "action": "short_model_probe",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-008-dispatch-20261010",
+        "producer_task_id": "TOK-008-probe",
+        "producer_actor": "native-child8-probe",
+        "manifest_path": "agent_doc/results/token-008-dispatch-20261010/manifest.json",
+        "scope": "one dependency-complete short synthetic child; inherited one-turn parent versus fresh thread; observable native history/settings controls, provider internal assembly unobservable",
+        "validation_plan": {
+          "path": "agent_doc/results/token-008-dispatch-20261010/validation-plan.json",
+          "sha256": "cb7c97dfd2f654aa582cd791489646c73b4d84b74aacd270861b8b7a2796f64a"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-008-verify",
+      "owner": "host-child8-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-008-probe"
+      ],
+      "result_validation": {
+        "result_id": "token-008-dispatch-20261010",
+        "producer_task_id": "TOK-008-probe",
+        "producer_actor": "native-child8-probe",
+        "manifest_path": "agent_doc/results/token-008-dispatch-20261010/manifest.json",
+        "scope": "one dependency-complete short synthetic child; inherited one-turn parent versus fresh thread; observable native history/settings controls, provider internal assembly unobservable",
+        "validation_plan": {
+          "path": "agent_doc/results/token-008-dispatch-20261010/validation-plan.json",
+          "sha256": "cb7c97dfd2f654aa582cd791489646c73b4d84b74aacd270861b8b7a2796f64a"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-008-publish",
+      "owner": "main-ai",
+      "action": "publish_verified_improvement",
+      "depends_on": [
+        "TOK-008-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-008-dispatch-20261010",
+          "producer_task_id": "TOK-008-probe",
+          "producer_actor": "native-child8-probe",
+          "manifest_path": "agent_doc/results/token-008-dispatch-20261010/manifest.json",
+          "scope": "one dependency-complete short synthetic child; inherited one-turn parent versus fresh thread; observable native history/settings controls, provider internal assembly unobservable",
+          "validation_plan": {
+            "path": "agent_doc/results/token-008-dispatch-20261010/validation-plan.json",
+            "sha256": "cb7c97dfd2f654aa582cd791489646c73b4d84b74aacd270861b8b7a2796f64a"
+          }
+        }
+      ]
+    }
+  ]
+}
