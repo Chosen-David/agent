@@ -29,6 +29,16 @@ python /actual/skill/scripts/compiler_feedback.py /absolute/project/run/compile.
 
 CPU 路线优先编译器原生诊断：Clang 的 `-fsave-optimization-record` 和 `-Rpass`/`-Rpass-missed`/`-Rpass-analysis` 保留 Passed/Missed/Analysis、pass、源码位置及参数。该脚本不解析 LLVM YAML，避免混淆格式。提示 aliasing 时先证实真实调用的非别名契约，再考虑 restrict；不能为向量化引入未定义行为。[LLVM Remarks](https://llvm.org/docs/Remarks.html)（核查 2026-10-08）。
 
+## 带宽受限算子的 roofline 前置（新算子先算账再写码）
+
+写或优化归约型/流式算子（GEMV、逐元素、解码阶段 per-token 投影、量化点积）前，先做三步纯纸面工作，避免盲写变体：
+
+1. **算术强度判定**：FLOPs / 必读字节数。每元素仅用一次的输入（如 GEMV 的 B）算子强度 ≈ 0.5 FLOP/byte（half），远低于机器平衡点 → 纯带宽受限，优化排序是"减少必读字节 → 提高访存并发与隐藏 → 保护 L2 复用数据"，不先卷算术。跨行复用的输入（GEMM 的 B）结论不迁移。
+2. **字节计数与时间下界**：必读字节 / 实测可达带宽（STREAM/triad 校准，不用标称值或总线宽×时钟下界冒充）。例：M=4096×K=16384 half = 128 MiB → @2.46 TB/s 下界 ≈ 54.6 µs。实测显著高于下界提示冗余流量或并发不足，而非算力瓶颈。
+3. **占用率缺口检查**：并行度 = 行数/warp 时对照 SM 数 × 每 SM warp 上限；不足（如 M=2048 < 78×64）时 split-K/多 warp 分摊 K 才是正确杠杆，盲目调 tile 无效。
+
+硬件包络用 `cudaGetDeviceProperties` 本地探测（SM 数、L2、smem/SM、L2 persisting 上限）并留探测程序与日志；知识卡样例见 `knowledge/entries/ai-infra/infra.h20-gemv-bandwidth-envelope.*`。注意 `memoryClockRate` 在 CUDA 12.9 已标 Deprecated。
+
 ## 条件化 trick，而非默认开关
 
 | 观察与候选 | 必须先核对 | 最小判别实验与拒用条件 |
