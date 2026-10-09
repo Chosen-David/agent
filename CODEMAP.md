@@ -158,3 +158,5 @@ COMM-ORDER-01: `agent_runtime/communication.py::inbox` 使用等价join key排�
 COMM20-01: `agent_runtime/communication.py::usage` 明确列投影；`scripts/benchmark_communication_candidates.py` 与版本化 `_v2.py` 提供单候选冻结评测，独立验收决定采用。20轮证据/负例见 `agent_doc/results/comm20-20261009/report.md`，新增边界回归在 `tests/test_communication_regressions.py`。仅第16轮采用，其他候选源码是实验记录，不是部署代码。
 
 COMM-CONFIRM-01: `agent_runtime/communication.py::inbox` 在同一读取快照中按精确账本选择空run、低基数run或原pending查询；固定31组生产/独立配对确认见 `agent_doc/results/comm-confirm-20261009/report.md`，`tests/test_communication_adaptive.py` 覆盖WAL/DELETE并发发布。旧COMM20第17轮仍是当时的负结果，新的独立确认不改写历史。
+
+COMM-ACK-CONFIRM-01: `agent_doc/results/comm-ack-confirm-20261009/report.md` 记录当前main上ACK免重复UPDATE候选的31+31组单次确认；独立数据可用但采用门槛失败，运行时保留基线。候选源码和失败诊断仅为实验记录。

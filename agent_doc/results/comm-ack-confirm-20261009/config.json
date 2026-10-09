@@ -1,0 +1,26 @@
+{
+  "baseline_main": "f044ef39413f2adb47cf720d3a8f58ed6666f861",
+  "operation": "ack",
+  "candidate": "Exact historical r10 transformation on current runtime",
+  "repeats": 31,
+  "independent_repeats": 31,
+  "warmups": 3,
+  "harness": "scripts/benchmark_communication_candidates_v2.py",
+  "cpu_seconds_budget": 600,
+  "primary_shapes": [
+    [
+      100,
+      "single",
+      1
+    ],
+    [
+      20000,
+      "single",
+      1
+    ]
+  ],
+  "latency_nonregression": "candidate median <= baseline median in both primary shapes and both cohorts",
+  "write_reduction_min": 0.2,
+  "guard": "<=1.25x OR delta<.2ms",
+  "retry_budget": 0
+}

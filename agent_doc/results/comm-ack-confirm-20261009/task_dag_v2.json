@@ -1,0 +1,270 @@
+{
+  "task_id": "COMM-ACK-CONFIRM-01",
+  "nodes": [
+    {
+      "id": "prepare",
+      "depends_on": [],
+      "owner": "root",
+      "done_when": "prepare evidence matches frozen plan"
+    },
+    {
+      "id": "plan_review",
+      "depends_on": [
+        "prepare"
+      ],
+      "owner": "independent_plan",
+      "done_when": "plan_review evidence matches frozen plan"
+    },
+    {
+      "id": "produce",
+      "depends_on": [
+        "plan_review"
+      ],
+      "owner": "root",
+      "done_when": "produce evidence matches frozen plan",
+      "produces_data": true,
+      "experiment_result": {
+        "result_id": "comm-ack-confirm-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-ack-producer",
+        "manifest_path": "agent_doc/results/comm-ack-confirm-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-ack-confirm-20261009/validation_plan.json",
+          "sha256": "ff7b6b39e75aa53188c1dba8a0705a4b676e700cb60ce0ff29ef4a6037d325dd"
+        },
+        "scope": "Local immutable ACK retry;31paired public methods in3synthetic SQLite shapes and independent31pair replay; noLLM/network/token claims"
+      }
+    },
+    {
+      "id": "verify_experiment_result",
+      "depends_on": [
+        "produce"
+      ],
+      "owner": "independent_result",
+      "done_when": "verify_experiment_result evidence matches frozen plan",
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "comm-ack-confirm-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-ack-producer",
+        "manifest_path": "agent_doc/results/comm-ack-confirm-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-ack-confirm-20261009/validation_plan.json",
+          "sha256": "ff7b6b39e75aa53188c1dba8a0705a4b676e700cb60ce0ff29ef4a6037d325dd"
+        },
+        "scope": "Local immutable ACK retry;31paired public methods in3synthetic SQLite shapes and independent31pair replay; noLLM/network/token claims"
+      }
+    },
+    {
+      "id": "adopt_or_revert",
+      "depends_on": [
+        "verify_experiment_result"
+      ],
+      "owner": "root",
+      "done_when": "adopt_or_revert evidence matches frozen plan",
+      "required_result_refs": [
+        {
+          "result_id": "comm-ack-confirm-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-ack-producer",
+          "manifest_path": "agent_doc/results/comm-ack-confirm-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-ack-confirm-20261009/validation_plan.json",
+            "sha256": "ff7b6b39e75aa53188c1dba8a0705a4b676e700cb60ce0ff29ef4a6037d325dd"
+          },
+          "scope": "Local immutable ACK retry;31paired public methods in3synthetic SQLite shapes and independent31pair replay; noLLM/network/token claims"
+        }
+      ]
+    },
+    {
+      "id": "regression",
+      "depends_on": [
+        "adopt_or_revert"
+      ],
+      "owner": "root",
+      "done_when": "regression evidence matches frozen plan",
+      "required_result_refs": [
+        {
+          "result_id": "comm-ack-confirm-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-ack-producer",
+          "manifest_path": "agent_doc/results/comm-ack-confirm-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-ack-confirm-20261009/validation_plan.json",
+            "sha256": "ff7b6b39e75aa53188c1dba8a0705a4b676e700cb60ce0ff29ef4a6037d325dd"
+          },
+          "scope": "Local immutable ACK retry;31paired public methods in3synthetic SQLite shapes and independent31pair replay; noLLM/network/token claims"
+        }
+      ]
+    },
+    {
+      "id": "integration_review",
+      "depends_on": [
+        "regression"
+      ],
+      "owner": "independent_result",
+      "done_when": "integration_review evidence matches frozen plan",
+      "required_result_refs": [
+        {
+          "result_id": "comm-ack-confirm-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-ack-producer",
+          "manifest_path": "agent_doc/results/comm-ack-confirm-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-ack-confirm-20261009/validation_plan.json",
+            "sha256": "ff7b6b39e75aa53188c1dba8a0705a4b676e700cb60ce0ff29ef4a6037d325dd"
+          },
+          "scope": "Local immutable ACK retry;31paired public methods in3synthetic SQLite shapes and independent31pair replay; noLLM/network/token claims"
+        }
+      ]
+    },
+    {
+      "id": "publish",
+      "depends_on": [
+        "integration_review"
+      ],
+      "owner": "root",
+      "done_when": "publish evidence matches frozen plan",
+      "required_result_refs": [
+        {
+          "result_id": "comm-ack-confirm-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-ack-producer",
+          "manifest_path": "agent_doc/results/comm-ack-confirm-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-ack-confirm-20261009/validation_plan.json",
+            "sha256": "ff7b6b39e75aa53188c1dba8a0705a4b676e700cb60ce0ff29ef4a6037d325dd"
+          },
+          "scope": "Local immutable ACK retry;31paired public methods in3synthetic SQLite shapes and independent31pair replay; noLLM/network/token claims"
+        }
+      ]
+    },
+    {
+      "id": "readback",
+      "depends_on": [
+        "publish"
+      ],
+      "owner": "root",
+      "done_when": "readback evidence matches frozen plan",
+      "required_result_refs": [
+        {
+          "result_id": "comm-ack-confirm-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-ack-producer",
+          "manifest_path": "agent_doc/results/comm-ack-confirm-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-ack-confirm-20261009/validation_plan.json",
+            "sha256": "ff7b6b39e75aa53188c1dba8a0705a4b676e700cb60ce0ff29ef4a6037d325dd"
+          },
+          "scope": "Local immutable ACK retry;31paired public methods in3synthetic SQLite shapes and independent31pair replay; noLLM/network/token claims"
+        }
+      ]
+    }
+  ],
+  "input_refs": [
+    {
+      "path": "agent_doc/results/comm-ack-confirm-20261009/plan_snapshot.md",
+      "sha256": "93525dade6af8cf29ab15c4d933dcea2ae984549fd70e8bba99b2540871c8cb8"
+    },
+    {
+      "path": "agent_doc/results/comm-ack-confirm-20261009/approved_task_detail.md",
+      "sha256": "230bf0c4340ae4adee5ed4b60a1786c2d372444a91eec09f9fa53a73860ec392"
+    },
+    {
+      "path": "agent_doc/results/comm-ack-confirm-20261009/approved_task_index.md",
+      "sha256": "1b248b9d560b9f82689767d0a1f6d5020950e31a0ea85417c400a8e20ac64991"
+    },
+    {
+      "path": "agent_doc/results/comm-ack-confirm-20261009/config_v2.json",
+      "sha256": "5bc16e4ff842d745a448771f956b05b0c94dc84b26c9eabeffc61571ed1c66b6"
+    },
+    {
+      "path": "agent_doc/results/comm-ack-confirm-20261009/prior_search.json",
+      "sha256": "45026a2481f281ffcb17600c8cb0c0d69e2195de958745cd0249426a386007a2"
+    },
+    {
+      "path": "agent_doc/results/comm-ack-confirm-20261009/prior_decisions.json",
+      "sha256": "f7ff20ccacb4c406a43b7815fbbe3bc3c80ea175560b7cd80e66133326348f97"
+    },
+    {
+      "path": "agent_doc/results/comm-ack-confirm-20261009/knowledge_search.json",
+      "sha256": "5326f4489ae1101d5bed89f8ae87680a62098f49d378912ef9db70af6ceee930"
+    },
+    {
+      "path": "agent_doc/results/comm-ack-confirm-20261009/baseline.py",
+      "sha256": "758347d97ce93ebea4b46bfc6a7ac17cab7d5e1a0e7171533c8c9ed26fe02b1f"
+    },
+    {
+      "path": "agent_doc/results/comm-ack-confirm-20261009/candidate.py",
+      "sha256": "338b1bc3948833747d88319d30a2f48949883521b125305823dce8c268c544da"
+    },
+    {
+      "path": "agent_doc/results/comm-ack-confirm-20261009/validation_plan.json",
+      "sha256": "ff7b6b39e75aa53188c1dba8a0705a4b676e700cb60ce0ff29ef4a6037d325dd"
+    },
+    {
+      "path": "agent_doc/results/comm-ack-confirm-20261009/research.md",
+      "sha256": "107c3506cca84a3bc2c054c860b31cfd4b90586614e1264f1a9e406d64fb47cc"
+    },
+    {
+      "path": "agent_doc/results/comm-ack-confirm-20261009/candidate_matrix.md",
+      "sha256": "2468f0a30aba60cc17c11009b277d1e2c0944fa3cb345b2ead8ca8097e6e4a27"
+    },
+    {
+      "path": "scripts/benchmark_communication_candidates_v2.py",
+      "sha256": "773706bef179857d3bc6de55eeecfa69cd733371d8bf10dc2f1b62fb83a11183"
+    },
+    {
+      "path": "agent_doc/results/comm20-20261009/independent_properties.py",
+      "sha256": "915a6f00ef3938c94b074edd51aa8f6578199fe839e8a9f8a2510c505f3af6ab"
+    },
+    {
+      "path": "tests/test_communication_regressions.py",
+      "sha256": "5c82624bc8e60a3ea5058314ffeae7631967cb424be4bda3ba68492d935e8456"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    }
+  ],
+  "host": "Actual fresh collaboration context review; no deployed Engine/supervisor protection claimed",
+  "authorization": "User continuous communication optimization,20 prior rounds completed; direct main on verified gains",
+  "risk": "Same immutable receipt API; fail closed to baseline",
+  "resources": {
+    "candidate_count": 1,
+    "repeats_per_cohort": 31,
+    "cpu_seconds": 600,
+    "paid_calls": 0,
+    "plan_review_cycles": 2
+  },
+  "version": 2,
+  "prior_feedback": {
+    "path": "agent_doc/results/comm-ack-confirm-20261009/plan_review.json",
+    "sha256": "85038fc6220728d52c80cc1ba200fad166d66e8e6e7a1e04584aa28060b16589"
+  },
+  "document_binding": {
+    "canonical_index": "agent_doc/task/TASK.md",
+    "canonical_detail": "agent_doc/task/task_details/COMM-ACK-CONFIRM-01.md",
+    "stable_detail_snapshot": {
+      "path": "agent_doc/results/comm-ack-confirm-20261009/plan_snapshot.md",
+      "sha256": "93525dade6af8cf29ab15c4d933dcea2ae984549fd70e8bba99b2540871c8cb8"
+    },
+    "approved_full_snapshots": [
+      {
+        "path": "agent_doc/results/comm-ack-confirm-20261009/approved_task_detail.md",
+        "sha256": "230bf0c4340ae4adee5ed4b60a1786c2d372444a91eec09f9fa53a73860ec392"
+      },
+      {
+        "path": "agent_doc/results/comm-ack-confirm-20261009/approved_task_index.md",
+        "sha256": "1b248b9d560b9f82689767d0a1f6d5020950e31a0ea85417c400a8e20ac64991"
+      }
+    ],
+    "progress_only_append": "Does not change stable Plan; completion index is separate publication binding after actual readback",
+    "adopted_advice": [],
+    "guide_status": "GUIDE empty;README initialization provenance does not authorize AI edits"
+  }
+}

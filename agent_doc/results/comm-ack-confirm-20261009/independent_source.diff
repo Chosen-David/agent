@@ -1,0 +1,11 @@
+--- baseline
++++ candidate
+@@ -233,6 +233,8 @@
+                 raise ValueError('delivery not found in this run')
+             if row['receipt'] is not None and row['receipt'] != body:
+                 raise ValueError('receipt is immutable; publish a correction event')
++            if row['receipt'] == body:
++                return
+             db.execute('UPDATE communication_deliveries SET receipt=? WHERE seq=? AND recipient=?',
+                        (body, seq, recipient))
+ 

@@ -1,0 +1,7 @@
+# Post-negative research — 2026-10-09
+
+After independent keep=false, opened primary abstract and HTML of Protocol Compression Changes Which Party Pays: Bilateral Cost in Cross-Organization LLM Agent Communication https://arxiv.org/abs/2609.06129 (submitted2026-09-05), https://arxiv.org/html/2609.06129v1 . Read abstract/introduction/claim-status summary, not entire PDF/artifact replication.
+
+Mechanism relevance: evaluate two endpoints separately, including tokenizer/cache-state differences, negotiation/repair overhead and task settlement; aggregate shortened-message cost is insufficient. This study's uncontrolled cross-organization channel differs from this trusted local SQLite host adapter. No vendor prices, dollar/token numbers or author performance is transplanted. A future benchmark must distinguish success/failure/unanswered tasks, transmitted bytes, true tokenizer units, prompt/output/API billable usage and repair calls; optimizing bytes alone cannot certify bilateral savings. Needs actual configured endpoints/pricing/cache evidence; absent those, implement deterministic transport fixtures and mark model/billing unmeasured.
+
+The paper explicitly preserves failed preregistration and separates unmeasured direction-specific compression from measured claims. This supports preserving this run's rejection; it does not change current gates or justify rerunning until pass. Both research ideas and benchmark candidates remain hypotheses.
