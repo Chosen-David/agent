@@ -2,6 +2,8 @@
 
 ## 2026-10-10
 
+- [x] [MATH-67] Structured perturbations and subspace reuse: independently review document candidate, no runtime adoption. ([detail](task_details/MATH-67.md))
+
 - [x] [MATH-66] Fixed-mask divisible allocation feasibility: document candidate and independent proof review; no runtime adoption. ([detail](task_details/MATH-66.md))
 
 - [x] [TOK-007] Explicit skill exclusions passed exact native catalog/quality/usage and ordinary main verification; short pair -927 total tokens, upgrade7/100. ([detail](task_details/TOK-007.md))
