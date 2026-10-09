@@ -19,6 +19,7 @@ def main():
     parser.add_argument('--root', required=True)
     parser.add_argument('--contract', required=True, help='controller-owned result contract JSON')
     parser.add_argument('--verifier-adapter', help='explicitly trusted host Python file exporting verify(root, manifest, plan)')
+    parser.add_argument('--context-dir', help='opt-in recoverable display; project-relative agent_doc/results/<run_id>/ directory')
     args = parser.parse_args()
     verifier = None
     if args.verifier_adapter:
@@ -27,7 +28,11 @@ def main():
         spec.loader.exec_module(module)
         verifier = module.verify
     result = inspect_result(args.root, json.loads(Path(args.contract).read_text()), verifier)
-    print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
+    display = result
+    if args.context_dir:
+        from agent_runtime.validation_context import write_validation_context
+        display = write_validation_context(args.root, result, args.context_dir)
+    print(json.dumps(display, ensure_ascii=False, indent=2, allow_nan=False))
     return 0 if result['status'] == 'usable-with-scope' else 2
 
 

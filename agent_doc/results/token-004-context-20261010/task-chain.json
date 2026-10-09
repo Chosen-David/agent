@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-004-probe",
+      "owner": "native-context-probe",
+      "action": "short_model_probe",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-004-context-20261010",
+        "producer_task_id": "TOK-004-probe",
+        "producer_actor": "native-context-probe",
+        "manifest_path": "agent_doc/results/token-004-context-20261010/manifest.json",
+        "scope": "one short reading of an actual pending validation observation; only recoverable display representation changes",
+        "validation_plan": {
+          "path": "agent_doc/results/token-004-context-20261010/validation-plan.json",
+          "sha256": "ee2f17b67bdc3204fc778f79dd0fe8a87c01f8f821c7d5e14aafc4cd2bafdf5f"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-004-verify",
+      "owner": "host-context-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-004-probe"
+      ],
+      "result_validation": {
+        "result_id": "token-004-context-20261010",
+        "producer_task_id": "TOK-004-probe",
+        "producer_actor": "native-context-probe",
+        "manifest_path": "agent_doc/results/token-004-context-20261010/manifest.json",
+        "scope": "one short reading of an actual pending validation observation; only recoverable display representation changes",
+        "validation_plan": {
+          "path": "agent_doc/results/token-004-context-20261010/validation-plan.json",
+          "sha256": "ee2f17b67bdc3204fc778f79dd0fe8a87c01f8f821c7d5e14aafc4cd2bafdf5f"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-004-publish",
+      "owner": "main-ai",
+      "action": "publish_verified_improvement",
+      "depends_on": [
+        "TOK-004-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-004-context-20261010",
+          "producer_task_id": "TOK-004-probe",
+          "producer_actor": "native-context-probe",
+          "manifest_path": "agent_doc/results/token-004-context-20261010/manifest.json",
+          "scope": "one short reading of an actual pending validation observation; only recoverable display representation changes",
+          "validation_plan": {
+            "path": "agent_doc/results/token-004-context-20261010/validation-plan.json",
+            "sha256": "ee2f17b67bdc3204fc778f79dd0fe8a87c01f8f821c7d5e14aafc4cd2bafdf5f"
+          }
+        }
+      ]
+    }
+  ]
+}

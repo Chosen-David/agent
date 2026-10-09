@@ -68,6 +68,8 @@ python -m unittest tests.test_result_validation -v
 
 第二条命令显式加载宿主已审查的 Python 文件，导出 `verify(root, manifest, plan)`；不能使用生产者建议的路径自动加载。第一条命令没有可信 verifier，正常输出 pending 并返回退出码 2；只有 usable-with-scope 返回 0。CLI 是本地已获授权的检查工具，不授予执行任意代码的新权限。
 
+仅为编排读取验收状态、当前不需逐项证据哈希时，兼容宿主可显式追加 `--context-dir agent_doc/results/RUN_ID/validation_context`：完整观察外置并按项目/SHA恢复，所有状态、错误、范围、限制及原退出码保留；默认输出不变。详情由 WORKFLOW_ROOT 的 `scripts/validation_context.py --root ABSOLUTE_PROJECT_ROOT --path RECORD_REF_PATH --sha256 RECORD_REF_SHA256` 恢复。显示和恢复都不授信，科学消费仍重新走本节可信独立门禁；需要明细时计入恢复/后续调用成本，不能默认隐藏必需信息。
+
 当前文件核验限定项目内普通无符号链接文件、每文件 16 MiB，拒绝路径逃逸/FIFO/设备；大数据需真实有界分片及完整覆盖或明确的项目适配实现，不能用几行摘要冒充全量验收。只验证被声明并独立审查完整性的依赖；不构成 OS 沙箱，不控制绕过入口的其他写入，也不安装 CI、GPU runner 或后台服务。
 
 ## 失败、修复、复测和结论

@@ -1,5 +1,9 @@
 # Project tasks
 
+## 2026-10-10
+
+- [ ] [TOK-004] Reversible validation display: archive complete observations and preserve all blocking information; short matched provider test and independent gate before count/publication. ([detail](task_details/TOK-004.md))
+
 ## 2026-10-09
 
 - [x] [COMM-CONFIRM-01] 自适应收件箱固定31组配对复验，保留旧负结果与原阈值。 ([detail](task_details/COMM-CONFIRM-01.md))

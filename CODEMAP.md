@@ -1,5 +1,7 @@
 # 本轮增量代码与产物地图
 
+TOK-004：`scripts/validate_experiment_result.py --context-dir` → `agent_runtime/validation_context.py`；可信宿主先运行既有独立门禁，再生成只供显示的可恢复回执。`scripts/validation_context.py` 按项目和SHA恢复完整历史，不授信；`tests/test_validation_context.py` 覆盖Guide保护、跨项目、完整回放、失败和默认CLI兼容。`docs/token_optimization/validation_context.md` 为显式消费入口；`agent_doc/results/token-004-context-20261010/` 仅证明一次真实pending协调短测总token21635→19695，另有6 Windows与18 WSL验收测试，不外推复取/长文成本。
+
 TOK-003：`Mailbox.prepare_context` → `agent_runtime/handoff_basis.py` → `agent_runtime/handoff_encoding.py`；兼容消费者显式选择无损 claim 表格，缺省 JSON 不变，依赖/候选/拒用/前提/引用哈希保留。两份相关测试覆盖格式、不可变消费绑定、新鲜度和预算；`docs/token_optimization/handoff_encoding.md` 为消费入口。`agent_doc/results/token-003-claims-20261010/` 独立验收仅接受六节点短测总 token 19720→19643，不外推长文或现金成本。
 
 TOK-002：`scripts/codex_tool_scope.py` → `agent_runtime/codex_tool_scope.py` → 显式宿主的 `thread/start.config`；仅完整空外部需求收窄目录，未知工具/分页/错误阻止派发；`tests/test_codex_tool_scope.py` 覆盖边界。`agent_doc/results/token-002-scope-20261009/` 是WSL tmux下两个真实fresh短轮的服务端计量和独立验收。一次短任务总token20851→19632，不是全会话/长文质量或现金成本证明。
