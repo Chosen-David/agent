@@ -1,0 +1,779 @@
+{
+  "status": "pass",
+  "bindings": {
+    "agent_doc/results/comm-order-20261009/validation_plan.json": "a35695115563d13f60a4b6d786ff4f05c099c9cd6379c01f752b465dbeb88a92",
+    "agent_runtime/communication.py": "0318450ea7a414934d2f61e28d8e693eadfbfaa335cf2f7917c5fe14a8814a2b",
+    "agent_runtime/project_docs.py": "dd47ed2af3e2630ea06c9f44215b2f93ef5c585d79bcbc91b9844a0084d891d4",
+    "scripts/validate_handoff.py": "d182adfa0d118d6245f0a58623114d8fbeb70dd6ab8fa3ea4c1d93754bcedf9d",
+    "scripts/benchmark_communication_order.py": "6cea9a4bb8f8560406fd8a8f93839014364197a449869163987f50d2746f1440",
+    "scripts/benchmark_communication_inbox.py": "4208cc9d64b23f835ec71ab39aed1ea1d8aff853cbe9d0663f88bac7e1c19931",
+    "tests/test_communication.py": "232f4bad46429e8408c902ff486bb8023fde7b0715f9b233cb3a522b1293f442",
+    "agent_doc/results/comm-order-20261009/baseline_communication.py": "c322cdb7d61dbc98bb8e6139bb817b1825742aa3aca9285b35609556384dd975",
+    "agent_doc/results/comm-order-20261009/summarize.py": "6c2b6f3184d15fe1c6b37c1572100dbe4008db14d6a5a9e42a910a12be1fa241",
+    "agent_doc/results/comm-order-20261009/plan_snapshot.md": "e7c45d97a3a9bb5dffd14228d9f76b469ddda882aabf187e0c8e525de6ed2293",
+    "agent_doc/results/comm-order-20261009/raw.json": "b6b688388a214b39e375d407f68c076ad814951fd86fd4d970208d871498b1ce",
+    "agent_doc/results/comm-order-20261009/summary.json": "edc86cb8f865d97126bd00f64450f65ac0daa3591a3911192806b62d3741f968",
+    "agent_doc/results/comm-order-20261009/environment.json": "6d0c83ddedaa25599ac73f8e644f60d3be0f8c00b88cd1bf762ada6a59beec58"
+  },
+  "baseline_exact_revision": "ffe7f9def00ca9275a023c55ad55d916deb5301e",
+  "runtime_diff": "only ORDER BY e.seq -> d.seq",
+  "property_checks": 1208,
+  "metrics": [
+    {
+      "file": "raw.json",
+      "summary": [
+        {
+          "total": 100,
+          "layout": "single",
+          "vm": {
+            "baseline": 1444,
+            "candidate": 363
+          },
+          "median_ms": {
+            "baseline": 0.391898,
+            "candidate": 0.359926
+          },
+          "range_ms": {
+            "baseline": [
+              0.322787,
+              0.884737
+            ],
+            "candidate": [
+              0.310932,
+              1.161115
+            ]
+          },
+          "vm_ratio": 3.9779614325068873,
+          "latency_ratio": 1.08882937048171,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 0.816262,
+              "ack_ms": 0.502029
+            },
+            "candidate": {
+              "publish_ms": 0.73905,
+              "ack_ms": 0.467759
+            }
+          }
+        },
+        {
+          "total": 100,
+          "layout": "interleaved",
+          "vm": {
+            "baseline": 1069,
+            "candidate": 783
+          },
+          "median_ms": {
+            "baseline": 0.413598,
+            "candidate": 0.379631
+          },
+          "range_ms": {
+            "baseline": [
+              0.320466,
+              0.689636
+            ],
+            "candidate": [
+              0.318987,
+              0.935403
+            ]
+          },
+          "vm_ratio": 1.3652618135376755,
+          "latency_ratio": 1.0894737258021605,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 0.798735,
+              "ack_ms": 0.516152
+            },
+            "candidate": {
+              "publish_ms": 0.814695,
+              "ack_ms": 0.559887
+            }
+          }
+        },
+        {
+          "total": 100,
+          "layout": "last",
+          "vm": {
+            "baseline": 894,
+            "candidate": 865
+          },
+          "median_ms": {
+            "baseline": 0.47591,
+            "candidate": 0.429179
+          },
+          "range_ms": {
+            "baseline": [
+              0.307125,
+              2.313845
+            ],
+            "candidate": [
+              0.301011,
+              1.005465
+            ]
+          },
+          "vm_ratio": 1.0335260115606937,
+          "latency_ratio": 1.1088846378783679,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 0.74414,
+              "ack_ms": 0.476561
+            },
+            "candidate": {
+              "publish_ms": 0.725747,
+              "ack_ms": 0.505957
+            }
+          }
+        },
+        {
+          "total": 100,
+          "layout": "absent",
+          "vm": {
+            "baseline": 844,
+            "candidate": 845
+          },
+          "median_ms": {
+            "baseline": 0.317765,
+            "candidate": 0.337664
+          },
+          "range_ms": {
+            "baseline": [
+              0.267301,
+              1.457124
+            ],
+            "candidate": [
+              0.2695,
+              2.439827
+            ]
+          },
+          "vm_ratio": 0.9988165680473373,
+          "latency_ratio": 0.9410686362774829,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 0.665147,
+              "ack_ms": 0.487992
+            },
+            "candidate": {
+              "publish_ms": 0.700108,
+              "ack_ms": 0.55868
+            }
+          }
+        },
+        {
+          "total": 1000,
+          "layout": "single",
+          "vm": {
+            "baseline": 12244,
+            "candidate": 363
+          },
+          "median_ms": {
+            "baseline": 0.589113,
+            "candidate": 0.372611
+          },
+          "range_ms": {
+            "baseline": [
+              0.453339,
+              1.297929
+            ],
+            "candidate": [
+              0.297248,
+              0.893773
+            ]
+          },
+          "vm_ratio": 33.730027548209364,
+          "latency_ratio": 1.581040280614367
+        },
+        {
+          "total": 1000,
+          "layout": "interleaved",
+          "vm": {
+            "baseline": 8494,
+            "candidate": 783
+          },
+          "median_ms": {
+            "baseline": 0.503898,
+            "candidate": 0.370067
+          },
+          "range_ms": {
+            "baseline": [
+              0.436963,
+              0.932697
+            ],
+            "candidate": [
+              0.32603,
+              0.576573
+            ]
+          },
+          "vm_ratio": 10.848020434227331,
+          "latency_ratio": 1.361639919257864
+        },
+        {
+          "total": 1000,
+          "layout": "last",
+          "vm": {
+            "baseline": 7194,
+            "candidate": 7165
+          },
+          "median_ms": {
+            "baseline": 0.525302,
+            "candidate": 0.521577
+          },
+          "range_ms": {
+            "baseline": [
+              0.41976,
+              1.348871
+            ],
+            "candidate": [
+              0.397311,
+              1.025514
+            ]
+          },
+          "vm_ratio": 1.0040474528960224,
+          "latency_ratio": 1.0071418026485066
+        },
+        {
+          "total": 1000,
+          "layout": "absent",
+          "vm": {
+            "baseline": 7144,
+            "candidate": 7145
+          },
+          "median_ms": {
+            "baseline": 0.48343,
+            "candidate": 0.479786
+          },
+          "range_ms": {
+            "baseline": [
+              0.378593,
+              1.488625
+            ],
+            "candidate": [
+              0.376874,
+              1.377871
+            ]
+          },
+          "vm_ratio": 0.9998600419874037,
+          "latency_ratio": 1.007595052794371
+        },
+        {
+          "total": 20000,
+          "layout": "single",
+          "vm": {
+            "baseline": 240244,
+            "candidate": 363
+          },
+          "median_ms": {
+            "baseline": 5.771345,
+            "candidate": 0.781026
+          },
+          "range_ms": {
+            "baseline": [
+              4.994468,
+              8.078119
+            ],
+            "candidate": [
+              0.622059,
+              1.233652
+            ]
+          },
+          "vm_ratio": 661.8292011019283,
+          "latency_ratio": 7.389440300322909,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 1.142694,
+              "ack_ms": 0.745121
+            },
+            "candidate": {
+              "publish_ms": 1.210114,
+              "ack_ms": 0.761962
+            }
+          }
+        },
+        {
+          "total": 20000,
+          "layout": "interleaved",
+          "vm": {
+            "baseline": 165244,
+            "candidate": 783
+          },
+          "median_ms": {
+            "baseline": 5.092026,
+            "candidate": 0.652403
+          },
+          "range_ms": {
+            "baseline": [
+              3.371872,
+              6.187235
+            ],
+            "candidate": [
+              0.372679,
+              1.061503
+            ]
+          },
+          "vm_ratio": 211.03959131545338,
+          "latency_ratio": 7.805031552583296,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 0.973287,
+              "ack_ms": 0.668173
+            },
+            "candidate": {
+              "publish_ms": 1.028676,
+              "ack_ms": 0.729315
+            }
+          }
+        },
+        {
+          "total": 20000,
+          "layout": "last",
+          "vm": {
+            "baseline": 140194,
+            "candidate": 140165
+          },
+          "median_ms": {
+            "baseline": 3.559456,
+            "candidate": 3.304274
+          },
+          "range_ms": {
+            "baseline": [
+              2.920185,
+              6.001395
+            ],
+            "candidate": [
+              2.891194,
+              6.90833
+            ]
+          },
+          "vm_ratio": 1.0002068990118789,
+          "latency_ratio": 1.077227857011858,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 0.912583,
+              "ack_ms": 0.687582
+            },
+            "candidate": {
+              "publish_ms": 0.982949,
+              "ack_ms": 0.693537
+            }
+          }
+        },
+        {
+          "total": 20000,
+          "layout": "absent",
+          "vm": {
+            "baseline": 140144,
+            "candidate": 140145
+          },
+          "median_ms": {
+            "baseline": 3.81869,
+            "candidate": 3.652409
+          },
+          "range_ms": {
+            "baseline": [
+              2.918633,
+              5.583031
+            ],
+            "candidate": [
+              3.016313,
+              5.941461
+            ]
+          },
+          "vm_ratio": 0.999992864533162,
+          "latency_ratio": 1.0455263909381451,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 0.907396,
+              "ack_ms": 0.633971
+            },
+            "candidate": {
+              "publish_ms": 0.868239,
+              "ack_ms": 0.645683
+            }
+          }
+        }
+      ]
+    },
+    {
+      "file": "independent_raw.json",
+      "summary": [
+        {
+          "total": 100,
+          "layout": "single",
+          "vm": {
+            "baseline": 1444,
+            "candidate": 363
+          },
+          "median_ms": {
+            "baseline": 0.476783,
+            "candidate": 1.072092
+          },
+          "range_ms": {
+            "baseline": [
+              0.41773,
+              0.812089
+            ],
+            "candidate": [
+              0.422066,
+              1.52545
+            ]
+          },
+          "vm_ratio": 3.9779614325068873,
+          "latency_ratio": 0.4447220947456002,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 1.128437,
+              "ack_ms": 1.035341
+            },
+            "candidate": {
+              "publish_ms": 1.081287,
+              "ack_ms": 1.09982
+            }
+          }
+        },
+        {
+          "total": 100,
+          "layout": "interleaved",
+          "vm": {
+            "baseline": 1069,
+            "candidate": 783
+          },
+          "median_ms": {
+            "baseline": 0.520172,
+            "candidate": 0.399445
+          },
+          "range_ms": {
+            "baseline": [
+              0.34656,
+              0.575647
+            ],
+            "candidate": [
+              0.368971,
+              0.781616
+            ]
+          },
+          "vm_ratio": 1.3652618135376755,
+          "latency_ratio": 1.3022368536344178,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 1.258755,
+              "ack_ms": 0.841982
+            },
+            "candidate": {
+              "publish_ms": 0.97847,
+              "ack_ms": 1.046654
+            }
+          }
+        },
+        {
+          "total": 100,
+          "layout": "last",
+          "vm": {
+            "baseline": 894,
+            "candidate": 865
+          },
+          "median_ms": {
+            "baseline": 0.354053,
+            "candidate": 0.304845
+          },
+          "range_ms": {
+            "baseline": [
+              0.306534,
+              0.428354
+            ],
+            "candidate": [
+              0.290858,
+              0.438351
+            ]
+          },
+          "vm_ratio": 1.0335260115606937,
+          "latency_ratio": 1.1614197378995885,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 1.118016,
+              "ack_ms": 0.818954
+            },
+            "candidate": {
+              "publish_ms": 1.1803,
+              "ack_ms": 0.948524
+            }
+          }
+        },
+        {
+          "total": 100,
+          "layout": "absent",
+          "vm": {
+            "baseline": 844,
+            "candidate": 845
+          },
+          "median_ms": {
+            "baseline": 0.641947,
+            "candidate": 0.560441
+          },
+          "range_ms": {
+            "baseline": [
+              0.377627,
+              1.112627
+            ],
+            "candidate": [
+              0.32239,
+              0.899531
+            ]
+          },
+          "vm_ratio": 0.9988165680473373,
+          "latency_ratio": 1.1454319009494311,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 1.080233,
+              "ack_ms": 0.969821
+            },
+            "candidate": {
+              "publish_ms": 1.174301,
+              "ack_ms": 0.996319
+            }
+          }
+        },
+        {
+          "total": 1000,
+          "layout": "single",
+          "vm": {
+            "baseline": 12244,
+            "candidate": 363
+          },
+          "median_ms": {
+            "baseline": 0.551568,
+            "candidate": 0.345301
+          },
+          "range_ms": {
+            "baseline": [
+              0.445221,
+              0.674457
+            ],
+            "candidate": [
+              0.3231,
+              0.578783
+            ]
+          },
+          "vm_ratio": 33.730027548209364,
+          "latency_ratio": 1.5973541924292136
+        },
+        {
+          "total": 1000,
+          "layout": "interleaved",
+          "vm": {
+            "baseline": 8494,
+            "candidate": 783
+          },
+          "median_ms": {
+            "baseline": 0.698034,
+            "candidate": 0.495639
+          },
+          "range_ms": {
+            "baseline": [
+              0.495272,
+              1.105927
+            ],
+            "candidate": [
+              0.353836,
+              0.616448
+            ]
+          },
+          "vm_ratio": 10.848020434227331,
+          "latency_ratio": 1.4083516430305123
+        },
+        {
+          "total": 1000,
+          "layout": "last",
+          "vm": {
+            "baseline": 7194,
+            "candidate": 7165
+          },
+          "median_ms": {
+            "baseline": 0.626499,
+            "candidate": 0.94801
+          },
+          "range_ms": {
+            "baseline": [
+              0.420311,
+              1.250325
+            ],
+            "candidate": [
+              0.512066,
+              1.393761
+            ]
+          },
+          "vm_ratio": 1.0040474528960224,
+          "latency_ratio": 0.660856952985728
+        },
+        {
+          "total": 1000,
+          "layout": "absent",
+          "vm": {
+            "baseline": 7144,
+            "candidate": 7145
+          },
+          "median_ms": {
+            "baseline": 0.483308,
+            "candidate": 0.639101
+          },
+          "range_ms": {
+            "baseline": [
+              0.397445,
+              0.924878
+            ],
+            "candidate": [
+              0.437482,
+              0.848195
+            ]
+          },
+          "vm_ratio": 0.9998600419874037,
+          "latency_ratio": 0.75623101825846
+        },
+        {
+          "total": 20000,
+          "layout": "single",
+          "vm": {
+            "baseline": 240244,
+            "candidate": 363
+          },
+          "median_ms": {
+            "baseline": 3.947531,
+            "candidate": 0.461014
+          },
+          "range_ms": {
+            "baseline": [
+              3.329354,
+              4.346743
+            ],
+            "candidate": [
+              0.418126,
+              1.102868
+            ]
+          },
+          "vm_ratio": 661.8292011019283,
+          "latency_ratio": 8.562713930596468,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 1.916745,
+              "ack_ms": 1.537081
+            },
+            "candidate": {
+              "publish_ms": 2.409865,
+              "ack_ms": 1.592545
+            }
+          }
+        },
+        {
+          "total": 20000,
+          "layout": "interleaved",
+          "vm": {
+            "baseline": 165244,
+            "candidate": 783
+          },
+          "median_ms": {
+            "baseline": 3.481567,
+            "candidate": 0.427237
+          },
+          "range_ms": {
+            "baseline": [
+              3.282216,
+              5.610773
+            ],
+            "candidate": [
+              0.381296,
+              0.51141
+            ]
+          },
+          "vm_ratio": 211.03959131545338,
+          "latency_ratio": 8.14902969546177,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 1.07214,
+              "ack_ms": 0.97772
+            },
+            "candidate": {
+              "publish_ms": 1.063592,
+              "ack_ms": 0.859212
+            }
+          }
+        },
+        {
+          "total": 20000,
+          "layout": "last",
+          "vm": {
+            "baseline": 140194,
+            "candidate": 140165
+          },
+          "median_ms": {
+            "baseline": 3.749338,
+            "candidate": 3.634123
+          },
+          "range_ms": {
+            "baseline": [
+              3.062264,
+              6.207357
+            ],
+            "candidate": [
+              3.286675,
+              8.111717
+            ]
+          },
+          "vm_ratio": 1.0002068990118789,
+          "latency_ratio": 1.031703660002702,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 1.837274,
+              "ack_ms": 1.005688
+            },
+            "candidate": {
+              "publish_ms": 1.866024,
+              "ack_ms": 1.107116
+            }
+          }
+        },
+        {
+          "total": 20000,
+          "layout": "absent",
+          "vm": {
+            "baseline": 140144,
+            "candidate": 140145
+          },
+          "median_ms": {
+            "baseline": 3.261711,
+            "candidate": 3.771388
+          },
+          "range_ms": {
+            "baseline": [
+              2.893619,
+              5.027568
+            ],
+            "candidate": [
+              2.846287,
+              4.721396
+            ]
+          },
+          "vm_ratio": 0.999992864533162,
+          "latency_ratio": 0.864856917400172,
+          "overhead_median_ms": {
+            "baseline": {
+              "publish_ms": 1.035189,
+              "ack_ms": 0.933763
+            },
+            "candidate": {
+              "publish_ms": 1.363262,
+              "ack_ms": 0.962347
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "knowledge": {
+    "query": "SQLite inbox ordering equality index",
+    "rejected": [
+      "ds.faiss-exact-vector",
+      "ds.hnsw-recall-budget",
+      "math.convex-projection-certificate"
+    ],
+    "reason": "weak lexical hits lack SQLite ordered equality-join applicability",
+    "adopted_refs": []
+  }
+}

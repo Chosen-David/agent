@@ -1,0 +1,17 @@
+# COMM-ORDER-01 — bounded ordered pending delivery
+
+## Plan
+
+User goal/authorization: improve communication with verified benefit, ordinary direct-main publication. PROJECT_ROOT=WORKFLOW_ROOT=this repository. Current human guide is empty and untouched; existing task outcomes/cancellations remain. Source baseline ffe7f9d, includes pending index and transactional usage ledger. Scope only inbox ORDER BY equivalent join key, public API/order/ACK/isolated run/limits/budget/refs unchanged. No new schema, service, model protocol, SGLang edits or scheduler.
+
+DAG: prior-result/source review → independent bounded plan review → producer patch/paired measurements → independent verify_experiment_result → scoped report/regressions → refresh/integrate main → non-force protected publication/readback. Actual host collaboration independent contexts; no runtime ReviewSession/ManagedEngine or tmux deployment claimed.
+
+Budget: one query variant, <=20000 events per fixture, 21 alternating paired repeats,3warmups, <=10minutes CPU benchmark and10minutes regressions. No GPU/model/paid service. Acceptance frozen before candidate: independent expected first20 seq/event outputs exactly match baseline/candidate at every case; >=10x VM reduction at20k all-pending single-run and4run interleaved; candidate same-workload20k median public inbox <=0.5x baseline median in both cases. All timings retain min/max/raw samples; shared CPU noise means local scope only. Tiny100event median regression must be <=2x OR<1ms added. Crossrun-late/absent cases must preserve correct scanning and be reported even if no latency win; do not claim universal O(limit). Producer overhead publish/ACK <=2x OR<1ms added median on tested100/20k cases. No schema migration/new storage so independent byte/schema equality and reopen behavior checked rather than new migration-time claim. Full repository and reader regressions, property tests for nonconsecutive seq,2recipients,ACK/restart/limits1,20,100 and absent run; independent replay5repeats plus all-sample aggregate checks required.
+
+Matrix: total events100,1000,20000 × layouts single/all-target, interleaved4runs, target-last5, target-absent (12cases). All reader deliveries pending; unrelated recipient pending too. Same fixtures and baseline/candidate, full inbox/connect/JSON timing; VM separate. Seed SQL inserts automatically hit usage ledger triggers, verified by direct byte/count scans. No data compression/suppression and no model/task-quality/token claims.
+
+Prior reuse: actual result_store lexical search recorded; partial64records with errors, not exhaustive. Read comm-inbox-integration and comm-pending-index-integration manifest/report/raw query plans. Prior data has only0/5pending in first matrix and diagnostic crossrun regression in second, so exact new busy workload requires measurements. Prior contract/source hashes differ from new query; historical records preserved, not counted as accepted current data. Sources/choices in new research.md. No existing current-task advice adopted; other tasks' advice is not authorization. Local corpus has no verified SQL query-planning proof; primary SQLite docs and exact same-output property establish this narrow choice.
+
+## Progress
+
+Main fetched and isolated clean checkout at ffe7f9d; existing snapshots retained. Diagnostic only: e.seq sorts all20000pending vs d.seq uses same join equality/order and index iteration; not accepted performance evidence until fixed matrix and independent validation. Plan review pending.

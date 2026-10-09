@@ -1,0 +1,96 @@
+{
+  "schema_version": 1,
+  "snapshot": "451ca92210e1d1b4d6dc95ac097bd37f30ee1c832669d9688596787f52a2a239",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "ds.faiss-exact-vector",
+      "version": 1,
+      "sha256": "2ca159a814b69cd3984d49e5e71f494ac145b129ada2c6f0e5ae702064c35eb4",
+      "title": "Faiss IndexFlat：精确向量搜索强基线",
+      "summary": "需要精确召回或评估 ANN 时，先用 Faiss IndexFlat 建立强基线；精确扫描每 query 约 O(nd)，并考虑 batched BLAS 路径。",
+      "status": "published",
+      "assumptions": [
+        "operation: dense vector nearest-neighbor search",
+        "metric: L2 or inner product",
+        "quality: exact"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.faiss-exact-vector"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "index"
+          ]
+        }
+      ],
+      "score": 1
+    },
+    {
+      "id": "ds.hnsw-recall-budget",
+      "version": 1,
+      "sha256": "8f736520925598cd563890785a162bc50b45891506c859ab1685434dbd10d11c",
+      "title": "HNSW：ef、召回与内存预算",
+      "summary": "HNSW 的 ef/M/ef_construction 是召回、查询/构建成本和内存的折中；参数不能只按教程默认值宣称最优。",
+      "status": "published",
+      "assumptions": [
+        "operation: approximate vector nearest-neighbor search",
+        "metric: l2 ip or cosine",
+        "quality: approximate"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.hnsw-recall-budget"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "index"
+          ]
+        }
+      ],
+      "score": 1
+    },
+    {
+      "id": "math.convex-projection-certificate",
+      "version": 1,
+      "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c",
+      "title": "选定凸输出的投影、误差下界与残差间隙证书",
+      "summary": "有限value凸包的平方误差投影以可行性和全顶点残差max认证；P−2g≤最优误差≤P，g=0 iff投影。",
+      "status": "published",
+      "assumptions": [
+        "非空有限v_i∈R^p和固定已知z；Euclidean平方误差；C=conv{v_i}，允许改变权重但β≥0且Σβ=1。",
+        "候选y必须属于C；h_C(r)=max_i r·v_i遍历C的全部给定点；只对明确选定value集合给界。",
+        "固定线性W可对Wv和Wz使用结论；只保真W输出，不保证raw输出、全部query或模型e2e。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "精确展开/凸性证明人工审核，不是Lean或浮点数值证书。",
+          "agent_doc/results/math-convex-projection-20261009：12公开Fraction例、6结构检索、定向回归及独立六域验收；无模型/GPU实测。"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "sqlite"
+          ]
+        }
+      ],
+      "score": 1
+    }
+  ]
+}

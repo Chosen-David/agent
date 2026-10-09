@@ -2,6 +2,8 @@
 
 ## 2026-10-09
 
+- [x] [COMM-ORDER-01] 保持通信顺序的有界待办查询，测量/独立验收后直接main。 ([detail](task_details/COMM-ORDER-01.md))
+
 - [x] [TOK-001] Verified short token reduction and main publication; continuous target now 1/100. ([detail](task_details/TOK-001.md))
 - [x] [TOK-002] Explicit external-tool scope passed independent short usage/quality checks and verified main publication; success target 2/100. ([detail](task_details/TOK-002.md))
 - [x] [COMM-PERF-01] 独立通信索引研究与六场景复验完成；复用并发发布的等价索引实现，合入补充证据。 ([detail](task_details/COMM-PERF-01.md))

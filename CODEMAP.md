@@ -152,3 +152,5 @@ KERNEL-FEEDBACK-01：`workflows/kernel_optimization_feedback.md` 是编译/性�
 COMM-INBOX-01: `agent_runtime/communication.py` → SQLite待处理收件箱；`scripts/benchmark_communication_inbox.py` 配对查询/迁移/写入基准，`tests/test_communication.py` 旧库升级与语义保护，证据位于 `agent_doc/results/comm-inbox-20261009/`。只验本地CPU/SQLite，不代表模型或token收益。
 
 COMM-PERF-01：`agent_doc/results/comm-pending-index-20261009/` 和 `comm-pending-index-integration-20261009/` 保存独立复测和研究补充。并发main `ab6cc59` 已发布等价partial index，保留其源码/测试/benchmark，不增加重复索引。验收针对明确历史源快照，当前采用说明见整合目录publication_reconciliation.md。
+
+COMM-ORDER-01: `agent_runtime/communication.py::inbox` 使用等价join key排序以利用现有pending索引；`scripts/benchmark_communication_order.py` 复用已有基准辅助，覆盖繁忙/跨run/末尾/空任务，`tests/test_communication.py` 保持分页与回执语义。证据 `agent_doc/results/comm-order-20261009/`；只验本地SQL，不代表模型/Token收益。

@@ -200,7 +200,7 @@ class Mailbox:
             rows = db.execute('''SELECT e.seq,e.body FROM communication_events e
                 JOIN communication_deliveries d ON e.seq=d.seq
                 WHERE e.run_id=? AND d.recipient=? AND d.receipt IS NULL
-                ORDER BY d.seq LIMIT ?''', (self.run_id, recipient, limit)).fetchall()
+                ORDER BY e.seq LIMIT ?''', (self.run_id, recipient, limit)).fetchall()
         return [{'seq': r['seq'], 'event': json.loads(r['body'])} for r in rows]
 
     def acknowledge(self, recipient, seq, receipt):

@@ -187,6 +187,29 @@ class CommunicationTests(unittest.TestCase):
         self.assertEqual([r['seq'] for r in reopened.inbox('writer')], seqs[2:])
         self.assertEqual(Mailbox(self.db, self.plan, self.root).status(), reopened.status())
 
+    def test_pending_pages_with_interleaved_runs_and_receipts(self):
+        boxes = [Mailbox(self.db, dict(self.plan, run_id=f'page:{i}', max_events=1000), self.root)
+                 for i in range(4)]
+        expected = {i: [] for i in range(4)}
+        for i in range(520):
+            owner = i % 4
+            box = boxes[owner]
+            event = dict(self.event, run_id=box.run_id, event_id=f'page-event:{i}')
+            seq = box.publish(event)['seq']
+            if (i // 4) % 7 == 0:
+                box.acknowledge('writer', seq, {'status': 'consumed', 'reason': 'read page fixture'})
+            else:
+                expected[owner].append({'seq': seq, 'event': event})
+        for owner, box in enumerate(boxes):
+            for limit in (1, 20, 100):
+                self.assertEqual(box.inbox('writer', limit=limit), expected[owner][:limit])
+            # Writer receipts do not remove the reviewer's independent delivery.
+            self.assertEqual(len(box.inbox('reviewer', limit=100)), 100)
+            reopened = Mailbox(self.db, box.plan, self.root)
+            self.assertEqual(reopened.inbox('writer'), expected[owner][:20])
+        absent = Mailbox(self.db, dict(self.plan, run_id='absent-page'), self.root)
+        self.assertEqual(absent.inbox('writer'), [])
+
 
 if __name__ == '__main__':
     unittest.main()
