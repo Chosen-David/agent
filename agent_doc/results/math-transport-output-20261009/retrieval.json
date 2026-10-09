@@ -1,0 +1,1283 @@
+{
+  "scope": "Public structural checks only",
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "protocol_sha256": "bf5bc5af7377fd0c52f1aea41555cddc61324136714669fa88caa0755aed3eac",
+  "load_seconds": 0.05431374500039965,
+  "index_build_seconds": 0.21271107000211487,
+  "records": [
+    {
+      "backend": "files-lexical-v1",
+      "case": "R1",
+      "query": "不同 token 同值 输出 运输 误差",
+      "actual": [
+        "math.transport-output-certificate",
+        "math.softmax-barycenter-error",
+        "math.attention-output-geometry"
+      ],
+      "hit": true,
+      "seconds": 0.011594103998504579,
+      "chars": 3000,
+      "bytes": 3953,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.transport-output-certificate",
+            "version": 1,
+            "sha256": "1dc9f61ffab81211a5bdf24539cbf75692cbe32652b3ec0520f5bc9cf6a98f5f",
+            "title": "value 运输耦合与加权输出误差证书",
+            "summary": "以实际value距离搬移概率质量，给线性加权输出误差界；可行耦合和对偶势认证运输成本，区别token重合、feature距离和实际输出。",
+            "status": "published",
+            "assumptions": [
+              "有限values、αβ非负归一化，允许零质量和不同token支持；比较实际同一固定value集合，或并集",
+              "W固定线性；成本Cij为同一范数下||W(vi−vj)||，不是任意key/feature相似度",
+              "π非负且完整行/列边际αβ；任意对偶势满足所有f_i+g_j≤Cij",
+              "用其他feature距离时须核验||W(vi−vj)||≤L d(xi,xj)；近似value需额外项"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-transport-output-20261009/verify.py",
+                "agent_doc/results/math-transport-output-20261009/raw.json",
+                "agent_doc/results/math-transport-output-20261009/retrieval.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "误差",
+                  "输出",
+                  "运输"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "token",
+                  "不同",
+                  "同值",
+                  "误差",
+                  "输出",
+                  "运输"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "token",
+                  "误差",
+                  "输出",
+                  "运输"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "token",
+                  "不同",
+                  "误差",
+                  "输出",
+                  "运输"
+                ]
+              }
+            ],
+            "score": 62
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "误差",
+                  "输出"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "token",
+                  "误差",
+                  "输出"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "误差",
+                  "输出"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "token",
+                  "不同",
+                  "误差",
+                  "输出"
+                ]
+              }
+            ],
+            "score": 35
+          },
+          {
+            "id": "math.attention-output-geometry",
+            "version": 1,
+            "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+            "title": "固定value的Gram输出几何与局部敏感度",
+            "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+            "status": "published",
+            "assumptions": [
+              "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+              "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+              "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+                "CPU finite development checks; no Lean/model/GPU/e2e verification"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "输出"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "误差",
+                  "输出"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "误差",
+                  "输出"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "token",
+                  "不同",
+                  "误差",
+                  "输出"
+                ]
+              }
+            ],
+            "score": 25
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R2",
+      "query": "力 混合 质量 转移 输出 界",
+      "actual": [
+        "math.transport-output-certificate",
+        "math.softmax-barycenter-error",
+        "math.support-conditioning"
+      ],
+      "hit": true,
+      "seconds": 0.010100002997205593,
+      "chars": 3027,
+      "bytes": 4074,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.transport-output-certificate",
+            "version": 1,
+            "sha256": "1dc9f61ffab81211a5bdf24539cbf75692cbe32652b3ec0520f5bc9cf6a98f5f",
+            "title": "value 运输耦合与加权输出误差证书",
+            "summary": "以实际value距离搬移概率质量，给线性加权输出误差界；可行耦合和对偶势认证运输成本，区别token重合、feature距离和实际输出。",
+            "status": "published",
+            "assumptions": [
+              "有限values、αβ非负归一化，允许零质量和不同token支持；比较实际同一固定value集合，或并集",
+              "W固定线性；成本Cij为同一范数下||W(vi−vj)||，不是任意key/feature相似度",
+              "π非负且完整行/列边际αβ；任意对偶势满足所有f_i+g_j≤Cij",
+              "用其他feature距离时须核验||W(vi−vj)||≤L d(xi,xj)；近似value需额外项"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-transport-output-20261009/verify.py",
+                "agent_doc/results/math-transport-output-20261009/raw.json",
+                "agent_doc/results/math-transport-output-20261009/retrieval.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "输出"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "力",
+                  "混合",
+                  "界",
+                  "质量",
+                  "转移",
+                  "输出"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "质量",
+                  "输出"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "混合",
+                  "界",
+                  "质量",
+                  "转移",
+                  "输出"
+                ]
+              }
+            ],
+            "score": 46
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "输出"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "质量",
+                  "输出"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "质量",
+                  "输出"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "混合",
+                  "界",
+                  "质量",
+                  "输出"
+                ]
+              }
+            ],
+            "score": 25
+          },
+          {
+            "id": "math.support-conditioning",
+            "version": 1,
+            "sha256": "4358cbb6785d8b709037d448a5738354be5134ce8f64127931430f3d39f186fd",
+            "title": "有限支持条件化：逆向KL投影、稳定性与质量不可识别",
+            "summary": "候选内归一化不识别全局保留质量；以逆向KL分解、条件TV放大界和分区分母恢复核查hard mask与near/far统计前提。",
+            "status": "published",
+            "assumptions": [
+              "同一非空有限合法集合上的非负归一化概率；事件索引唯一合法且质量正",
+              "条件TV须两分布事件质量均正；逆向KL有限式须q支持事件且q绝对连续于P",
+              "候选比例恢复全局质量需独立事件质量/完整分母；logit温度与因果全集一致",
+              "精确算术推导；浮点样例非认证包络，未证明模型/e2e收益"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-conditioning-20261008/independent_review_v2.md: finite proof/code/data review; not formal",
+                "agent_doc/results/math-conditioning-20261008/validation_results_v2.json: public CPU development cases"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "质量"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "质量"
+                ]
+              },
+              {
+                "field": "structures",
+                "terms": [
+                  "质量"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "质量"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "质量",
+                  "输出"
+                ]
+              }
+            ],
+            "score": 19
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R3",
+      "query": "特征 相近 value 不同 拒绝",
+      "actual": [
+        "math.transport-output-certificate",
+        "math.attention-output-geometry",
+        "math.softmax-barycenter-error"
+      ],
+      "hit": true,
+      "seconds": 0.01068301600025734,
+      "chars": 2840,
+      "bytes": 3705,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.transport-output-certificate",
+            "version": 1,
+            "sha256": "1dc9f61ffab81211a5bdf24539cbf75692cbe32652b3ec0520f5bc9cf6a98f5f",
+            "title": "value 运输耦合与加权输出误差证书",
+            "summary": "以实际value距离搬移概率质量，给线性加权输出误差界；可行耦合和对偶势认证运输成本，区别token重合、feature距离和实际输出。",
+            "status": "published",
+            "assumptions": [
+              "有限values、αβ非负归一化，允许零质量和不同token支持；比较实际同一固定value集合，或并集",
+              "W固定线性；成本Cij为同一范数下||W(vi−vj)||，不是任意key/feature相似度",
+              "π非负且完整行/列边际αβ；任意对偶势满足所有f_i+g_j≤Cij",
+              "用其他feature距离时须核验||W(vi−vj)||≤L d(xi,xj)；近似value需额外项"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-transport-output-20261009/verify.py",
+                "agent_doc/results/math-transport-output-20261009/raw.json",
+                "agent_doc/results/math-transport-output-20261009/retrieval.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "value"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "value",
+                  "不同",
+                  "拒绝",
+                  "特征",
+                  "相近"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "value"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "value",
+                  "不同",
+                  "拒绝",
+                  "相近"
+                ]
+              }
+            ],
+            "score": 37
+          },
+          {
+            "id": "math.attention-output-geometry",
+            "version": 1,
+            "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+            "title": "固定value的Gram输出几何与局部敏感度",
+            "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+            "status": "published",
+            "assumptions": [
+              "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+              "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+              "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+                "CPU finite development checks; no Lean/model/GPU/e2e verification"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "value"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "value"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "value",
+                  "不同",
+                  "拒绝"
+                ]
+              }
+            ],
+            "score": 11
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "value"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "value"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "value",
+                  "不同"
+                ]
+              }
+            ],
+            "score": 10
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R1",
+      "query": "不同 token 同值 输出 运输 误差",
+      "actual": [
+        "math.transport-output-certificate",
+        "math.softmax-barycenter-error",
+        "math.attention-output-geometry"
+      ],
+      "hit": true,
+      "seconds": 0.007135740997910034,
+      "chars": 6019,
+      "bytes": 9518,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.transport-output-certificate",
+            "version": 1,
+            "sha256": "1dc9f61ffab81211a5bdf24539cbf75692cbe32652b3ec0520f5bc9cf6a98f5f",
+            "title": "value 运输耦合与加权输出误差证书",
+            "summary": "以实际value距离搬移概率质量，给线性加权输出误差界；可行耦合和对偶势认证运输成本，区别token重合、feature距离和实际输出。",
+            "status": "published",
+            "assumptions": [
+              "有限values、αβ非负归一化，允许零质量和不同token支持；比较实际同一固定value集合，或并集",
+              "W固定线性；成本Cij为同一范数下||W(vi−vj)||，不是任意key/feature相似度",
+              "π非负且完整行/列边际αβ；任意对偶势满足所有f_i+g_j≤Cij",
+              "用其他feature距离时须核验||W(vi−vj)||≤L d(xi,xj)；近似value需额外项"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-transport-output-20261009/verify.py",
+                "agent_doc/results/math-transport-output-20261009/raw.json",
+                "agent_doc/results/math-transport-output-20261009/retrieval.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "对象、前提、准确结论",
+                "start_line": 5,
+                "end_line": 14,
+                "excerpt": "## 对象、前提、准确结论\n\n有限v_i∈R^p，α_i,β_i≥0，Σα=Σβ=1，允许零权重/不同token支持；先取统一并集并给缺失坐标赋0。y=Σα_i v_i，ŷ=Σβ_i v_i，W固定线性，范数固定。C_ij=||W(v_i−v_j)||，D=max C_ij，TV=½Σ|α_i−β_i|。\n\nU(α,β)={π≥0:Σ_jπ_ij=α_i,Σ_iπ_ij=β_j}，L_C=min_{π∈U}Σπ_ij C_ij。非空（αβᵀ可行），有限紧集故最小值存在。成本由value差定义，在重复value的不同token之间可为0；这是value推前概率测度上的W₁，不能称作token身份的严格度量。\n\n**输出证书：** ||W(y−ŷ)||≤L_C≤D·TV。任意可行π给可计算的上界ΣπC，即使π未最优也成立。可行对偶势f,g满足所有f_i+g_j≤C_ij，则α·f+β·g≤L_C≤ΣπC；上下界相同即认证该运输最优。对偶下界是运输成本的下界，**不是输出误差下界**。输出可能抵消而误差0，但L_C>0。\n\n经典有限Kantorovich问题和对偶：Peyré–Cuturi v4 §2.3式2.10–2.11及§2.5命题2.4式2.20–2.21、印刷p23。下面线性输出、TV和扰动扩展是此处明确展示的推导，不声称研究新颖性。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界与误用反例",
+                "start_line": 27,
+                "end_line": 36,
+                "excerpt": "## 正例、边界与误用反例\n\n1. v=(0,0,10)，α=(1,0,0)，β=(0,1,0)：token支持完全不重合、TV=1，却L_C=输出误差=0。运输视角利用实际等值冗余；不证明模型e2e相同。\n2. v=(0,2)，两概率分别全落两端：输出误差=L_C=2，界可取等号。\n3. v=(−1,0,1)，α=(½,0,½)，β=(0,1,0)：L_C=1，输出均为0。拒绝把运输成本当实际误差或必要质量条件。\n4. v=(0,1,100)，α=(½,½,0)，β=(0,1,0)：L_C=½而DTV=50，局部value距离能给更紧界；并非每次都改进。\n5. 两feature完全相同而values为0与100：feature运输=0但输出差100。没有有限L，拒绝“视觉feature相近即真实attention输出接近”。\n6. α全在0，β全在原value2，压缩后value3：运输项2还需value误差1，总界3。漏算重建误差会给错误上界。\n7. 负概率、质量不等、错误边际的计划、变化的W及非线性聚合不满足本条。空集/全部mask无法定义非空归一化概率，不能照搬。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04838709677419355,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "正例、边界和误用反例",
+                "start_line": 55,
+                "end_line": 62,
+                "excerpt": "## 正例、边界和误用反例\n\n- 两 token 尖锐例 w=2、D=3：输出差=3 tanh(½)≈1.38635。共同 logits 平移或共同 value 平移均不改变界。\n- α=(.45,.30,.20,.05)，v=(0,1,0,−6)，完整 y=0。质量最大的两项 S={0,1}，p=.75，y_S=.4；S'={0,2}，p=.65，y_S'=0。S' 对 full top‑2 的重合率只有½，输出反而精确。这不是端到端模型实验。\n- 保留 .999 质量仍不保证小绝对误差：α=(.999,.001)，v=(0,10000)，只留第一项误差10。需要 D 或实际几何，不能只报质量。\n- 同一排序/选集也不能保证相同输出：s=(0,1)、t=(0,2)、v=(0,1)，全支持集重合100%，概率和输出不同。\n- 空 S、负权重、不同温度却未缩放、变化的 value/支持集、非线性聚合均不符合对应前提。高 value 均值本身不重要，直径才平移不变；相对误差在 y≈0 时不可靠。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "对象、前提和结论",
+                "start_line": 5,
+                "end_line": 17,
+                "excerpt": "## 对象、前提和结论\n\n固定非空有限集合 J，同一支持集上的有限实数 logits s,t；α=softmax(s)，β=softmax(t)。温度和 1/√d 已计入 logits。固定 value v_j∈R^p，固定线性映射 W:R^p→R^h，输出用任意范数。设 y=Σα_jv_j，ŷ=Σβ_jv_j，D=max_ij‖W(v_i−v_j)‖，e=t−s，w=max e−min e。\n\n经典 TV 恒等式（来源1，§4.1 Proposition 4.2，印刷页48）是 TV(α,β)=½Σ|α_j−β_j|。本卡以下是独立给出的有限推导，不声称研究新颖性，不是形式化证明：\n\n\\[\n\\|W(y-\\hat y)\\|\\le D\\,\\mathrm{TV}(\\alpha,\\beta)\n\\le D\\tanh\\!\\left(\\frac{\\operatorname{osc}(t-s)}4\\right).\n\\]\n\n此界对两个 token 可以取等号。误差的共同平移不起作用；若 ‖e‖∞≤ε，则输出≤D tanh(ε/2)。若已知整体 ‖e‖₂≤η，则 w≤√2η（最大最小坐标差与柯西不等式），得到 D tanh(η/(2√2))。不能把逐坐标 ε 当整体 η。D=0 时，无论排序/概率如何变，输出都相同。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.attention-output-geometry",
+            "version": 1,
+            "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+            "title": "固定value的Gram输出几何与局部敏感度",
+            "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+            "status": "published",
+            "assumptions": [
+              "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+              "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+              "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+                "CPU finite development checks; no Lean/model/GPU/e2e verification"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 5
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.04713064713064713,
+            "sections": [
+              {
+                "node": "s1",
+                "title": "固定 value 的输出几何与局部 logits 敏感度",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 固定 value 的输出几何与局部 logits 敏感度\n\nID: `math.attention-output-geometry`；版本1。触发问题：两套权重或分数的误差大小相同，实际输出为何不同？先提取固定支持集、value、输出投影和实际下游映射；不加载整个知识库。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界、误用反例",
+                "start_line": 44,
+                "end_line": 51,
+                "excerpt": "## 正例、边界、误用反例\n\nα=(1/3,1/3,1/3)、v=(0,1,100)、W=1。同为‖δ‖₂=√2·0.01，δ_A=(−.01,.01,0)使输出改变.01，δ_B=(−.01,0,.01)使输出改变1。相同概率误差不能确定输出质量。\n\n所有value相同，或W把差异全部投影到零，C/G敏感度为零，概率MSE仍可非零。n=1时J=0。固定大共同value偏移不影响差；浮点大偏移仍可能导致消减误差，实数平移恒等式不免除数值审查。\n\n对大扰动不能把G的局部二次损失当精确有限误差。模型后续非线性、不同query、不同生成轨迹改变α/V/W，旧G不能自动复用。负权重不满足凸组合余项证明；非归一化权重不满足共同value平移不变性。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R2",
+      "query": "力 混合 质量 转移 输出 界",
+      "actual": [
+        "math.transport-output-certificate",
+        "math.softmax-barycenter-error",
+        "math.attention-output-geometry"
+      ],
+      "hit": true,
+      "seconds": 0.005790593000710942,
+      "chars": 5790,
+      "bytes": 9743,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.transport-output-certificate",
+            "version": 1,
+            "sha256": "1dc9f61ffab81211a5bdf24539cbf75692cbe32652b3ec0520f5bc9cf6a98f5f",
+            "title": "value 运输耦合与加权输出误差证书",
+            "summary": "以实际value距离搬移概率质量，给线性加权输出误差界；可行耦合和对偶势认证运输成本，区别token重合、feature距离和实际输出。",
+            "status": "published",
+            "assumptions": [
+              "有限values、αβ非负归一化，允许零质量和不同token支持；比较实际同一固定value集合，或并集",
+              "W固定线性；成本Cij为同一范数下||W(vi−vj)||，不是任意key/feature相似度",
+              "π非负且完整行/列边际αβ；任意对偶势满足所有f_i+g_j≤Cij",
+              "用其他feature距离时须核验||W(vi−vj)||≤L d(xi,xj)；近似value需额外项"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-transport-output-20261009/verify.py",
+                "agent_doc/results/math-transport-output-20261009/raw.json",
+                "agent_doc/results/math-transport-output-20261009/retrieval.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "具体迁移与按需加载",
+                "start_line": 43,
+                "end_line": 50,
+                "excerpt": "## 具体迁移与按需加载\n\nIndexer：固定一条query的完整权重α、压缩支持上实际归一化β、当前头V、输出投影块W，位置编码应先完成分数计算。比较近/远方案时，token重合率、保留质量、运输上界、真实输出误差及最终任务指标分开。NoPE/RoPE/混合均可用于此输出层分析；不授权跨频率无损融合、将局部证书当自回归多层证书或在线oracle。\n\n跨域force mixture：v是同量纲力N，非负权重无量纲，W固定坐标映射，运输/输出界单位均为N。二点0N→2N混合转移给2N界；若执行器非线性或含非归一化增益，应重建对象，拒绝套用。\n\n主AI先抽取αβ、values、线性W、实际范数和可行边际，再检索本条+softmax前置。实际通信文本没有这一线性平均对象，不能直接用本条删消息。候选为离线真实attention trace的value-aware诊断，只有同模型/工具/缓存与可比预算测收益后才接生产。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "可复核证明",
+                "start_line": 15,
+                "end_line": 26,
+                "excerpt": "## 可复核证明\n\n由两个边际，W(y−ŷ)=Σ_ij π_ij W(v_i−v_j)。三角不等式给任意π的输出界，取min得第一式。令m_i=min(α_i,β_i)，a=α−m,b=β−m，其总质量同为t=TV。t=0取对角耦合；否则π=diag(m)+abᵀ/t。它有正确边际，非对角总质量t，成本≤Dt，得第二式。此证明逐输入成立，选集自适应并不破坏它，但必须用实际αβ而非未校准代理冒充。\n\n弱对偶：ΣπC≥Σπ(f_i+g_j)=α·f+β·g。由此可行的π与势相等已足够证明最优，无需把未核验solver的“success”当证书。有限强对偶可用经典LP定理，非形式化数学证明不等于Lean。\n\n若实际压缩value为v̂_j，则\n\n||W(Σα_i v_i−Σβ_j v̂_j)||≤L_C+Σβ_j||W(v_j−v̂_j)||。\n\n若采用feature点x_i及距离d，只有核验所有相关点对||W(v_i−v_j)||≤L d(x_i,x_j)，才能推出输出≤L W₁(featureα,featureβ)。不同feature对应的输出映射若无有限L，就拒绝替换。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04838709677419355,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "迁移及不适用范围",
+                "start_line": 63,
+                "end_line": 70,
+                "excerpt": "## 迁移及不适用范围\n\nAttention/indexer：qᵀk/√d 对应 s，FC/低秩预测决定 S，V 对应 v，输出投影块对应 W。NoPE/RoPE/混合均可在位置变换已完成后使用本界；本界不授权跨频率无损融合。应同时测 p_S、重合度、输出绝对误差和实际任务精度；最大质量降低最坏情况界，但不最小化具体 values 的实际误差。多头可逐头用 W_h 后把界相加，不能拿单头误差充当整个模型证书。\n\n物理线性混合：v 是同量纲 actuator force，权重是非负归一化混合，W 是固定坐标/测量映射；D 和误差单位均为 N，logits/TV 无量纲。真实非线性执行器不适用。Agent 文本通信的“消息重要性”不是此线性平均；没有实际对应对象只能保留类比，不据此删消息或修改生产路由。\n\n端到端：后续残差、非线性、多层及自回归状态未纳入。只有另行证明相应 Lipschitz 界/决策间隔和传播预算，才可能形成局部决策证书。不能由本卡或较小输出误差直接宣称 FASA 精度/省 token/速度改善。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "有限 softmax 与归一化加权输出误差",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 有限 softmax 与归一化加权输出误差\n\nID: `math.softmax-barycenter-error`；版本 1。问题触发：分数误差已知，如何控制加权输出？选出的集合重合度能否替代输出质量？先抽取支持集、归一化方式、value、输出度量；只需本卡，整体二范数误差转排序时另读 `math.score-difference-bound`。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.attention-output-geometry",
+            "version": 1,
+            "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+            "title": "固定value的Gram输出几何与局部敏感度",
+            "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+            "status": "published",
+            "assumptions": [
+              "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+              "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+              "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+                "CPU finite development checks; no Lean/model/GPU/e2e verification"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.047619047619047616,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "迁移与可证伪设计",
+                "start_line": 52,
+                "end_line": 59,
+                "excerpt": "## 迁移与可证伪设计\n\nIndexer固定trace：完整与稀疏注意力权重对应α/β（剪枝项补零），value对应V，当前头输出投影对应W。NoPE、RoPE和混合模型均在位置变换完成后适用；不授权跨频率精确融合。固定索引字节预算、最终KV预算和trace，比较输出误差与eᵀGe、重合度/质量的关联，再用未参与选择的文档测试。G是离线诊断/训练目标候选；完整C有n²成本，不能默认部署。计算精确误差直接用Zᵀδ，O(nh)，无需形成C。\n\n固定线性分类器ℓ_j=a_jᵀz+b_j，dense赢家c、真实margin γ_j=ℓ_c−ℓ_j>0。若已认证输出误差E，且每个j≠c满足‖a_c−a_j‖₂E<γ_j，则赢家保持；由柯西不等式逐对证明。只保证这个固定分类器/输入，不保证LLM生成序列或LongBench精度。\n\n跨域：非负归一化配料质量分数α/β、组分浓度V、固定线性传感器W，同样的Gram几何精确给浓度差平方，单位为浓度²；非线性化学反应、体积收缩、未归一化质量直接拒用。Agent文本消息不是固定线性混合，不将此式作为通信省token保证。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界、误用反例",
+                "start_line": 44,
+                "end_line": 51,
+                "excerpt": "## 正例、边界、误用反例\n\nα=(1/3,1/3,1/3)、v=(0,1,100)、W=1。同为‖δ‖₂=√2·0.01，δ_A=(−.01,.01,0)使输出改变.01，δ_B=(−.01,0,.01)使输出改变1。相同概率误差不能确定输出质量。\n\n所有value相同，或W把差异全部投影到零，C/G敏感度为零，概率MSE仍可非零。n=1时J=0。固定大共同value偏移不影响差；浮点大偏移仍可能导致消减误差，实数平移恒等式不免除数值审查。\n\n对大扰动不能把G的局部二次损失当精确有限误差。模型后续非线性、不同query、不同生成轨迹改变α/V/W，旧G不能自动复用。负权重不满足凸组合余项证明；非归一化权重不满足共同value平移不变性。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R3",
+      "query": "特征 相近 value 不同 拒绝",
+      "actual": [
+        "math.transport-output-certificate",
+        "math.attention-output-geometry",
+        "math.softmax-barycenter-error"
+      ],
+      "hit": true,
+      "seconds": 0.006350706004013773,
+      "chars": 5536,
+      "bytes": 8687,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.transport-output-certificate",
+            "version": 1,
+            "sha256": "1dc9f61ffab81211a5bdf24539cbf75692cbe32652b3ec0520f5bc9cf6a98f5f",
+            "title": "value 运输耦合与加权输出误差证书",
+            "summary": "以实际value距离搬移概率质量，给线性加权输出误差界；可行耦合和对偶势认证运输成本，区别token重合、feature距离和实际输出。",
+            "status": "published",
+            "assumptions": [
+              "有限values、αβ非负归一化，允许零质量和不同token支持；比较实际同一固定value集合，或并集",
+              "W固定线性；成本Cij为同一范数下||W(vi−vj)||，不是任意key/feature相似度",
+              "π非负且完整行/列边际αβ；任意对偶势满足所有f_i+g_j≤Cij",
+              "用其他feature距离时须核验||W(vi−vj)||≤L d(xi,xj)；近似value需额外项"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-transport-output-20261009/verify.py",
+                "agent_doc/results/math-transport-output-20261009/raw.json",
+                "agent_doc/results/math-transport-output-20261009/retrieval.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s3",
+                "title": "可复核证明",
+                "start_line": 15,
+                "end_line": 26,
+                "excerpt": "## 可复核证明\n\n由两个边际，W(y−ŷ)=Σ_ij π_ij W(v_i−v_j)。三角不等式给任意π的输出界，取min得第一式。令m_i=min(α_i,β_i)，a=α−m,b=β−m，其总质量同为t=TV。t=0取对角耦合；否则π=diag(m)+abᵀ/t。它有正确边际，非对角总质量t，成本≤Dt，得第二式。此证明逐输入成立，选集自适应并不破坏它，但必须用实际αβ而非未校准代理冒充。\n\n弱对偶：ΣπC≥Σπ(f_i+g_j)=α·f+β·g。由此可行的π与势相等已足够证明最优，无需把未核验solver的“success”当证书。有限强对偶可用经典LP定理，非形式化数学证明不等于Lean。\n\n若实际压缩value为v̂_j，则\n\n||W(Σα_i v_i−Σβ_j v̂_j)||≤L_C+Σβ_j||W(v_j−v̂_j)||。\n\n若采用feature点x_i及距离d，只有核验所有相关点对||W(v_i−v_j)||≤L d(x_i,x_j)，才能推出输出≤L W₁(featureα,featureβ)。不同feature对应的输出映射若无有限L，就拒绝替换。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界与误用反例",
+                "start_line": 27,
+                "end_line": 36,
+                "excerpt": "## 正例、边界与误用反例\n\n1. v=(0,0,10)，α=(1,0,0)，β=(0,1,0)：token支持完全不重合、TV=1，却L_C=输出误差=0。运输视角利用实际等值冗余；不证明模型e2e相同。\n2. v=(0,2)，两概率分别全落两端：输出误差=L_C=2，界可取等号。\n3. v=(−1,0,1)，α=(½,0,½)，β=(0,1,0)：L_C=1，输出均为0。拒绝把运输成本当实际误差或必要质量条件。\n4. v=(0,1,100)，α=(½,½,0)，β=(0,1,0)：L_C=½而DTV=50，局部value距离能给更紧界；并非每次都改进。\n5. 两feature完全相同而values为0与100：feature运输=0但输出差100。没有有限L，拒绝“视觉feature相近即真实attention输出接近”。\n6. α全在0，β全在原value2，压缩后value3：运输项2还需value误差1，总界3。漏算重建误差会给错误上界。\n7. 负概率、质量不等、错误边际的计划、变化的W及非线性聚合不满足本条。空集/全部mask无法定义非空归一化概率，不能照搬。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.attention-output-geometry",
+            "version": 1,
+            "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+            "title": "固定value的Gram输出几何与局部敏感度",
+            "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+            "status": "published",
+            "assumptions": [
+              "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+              "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+              "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+                "CPU finite development checks; no Lean/model/GPU/e2e verification"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04838709677419355,
+            "sections": [
+              {
+                "node": "s1",
+                "title": "固定 value 的输出几何与局部 logits 敏感度",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 固定 value 的输出几何与局部 logits 敏感度\n\nID: `math.attention-output-geometry`；版本1。触发问题：两套权重或分数的误差大小相同，实际输出为何不同？先提取固定支持集、value、输出投影和实际下游映射；不加载整个知识库。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界、误用反例",
+                "start_line": 44,
+                "end_line": 51,
+                "excerpt": "## 正例、边界、误用反例\n\nα=(1/3,1/3,1/3)、v=(0,1,100)、W=1。同为‖δ‖₂=√2·0.01，δ_A=(−.01,.01,0)使输出改变.01，δ_B=(−.01,0,.01)使输出改变1。相同概率误差不能确定输出质量。\n\n所有value相同，或W把差异全部投影到零，C/G敏感度为零，概率MSE仍可非零。n=1时J=0。固定大共同value偏移不影响差；浮点大偏移仍可能导致消减误差，实数平移恒等式不免除数值审查。\n\n对大扰动不能把G的局部二次损失当精确有限误差。模型后续非线性、不同query、不同生成轨迹改变α/V/W，旧G不能自动复用。负权重不满足凸组合余项证明；非归一化权重不满足共同value平移不变性。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1,
+            "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+            "title": "有限 softmax 与归一化加权输出误差",
+            "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+            "status": "published",
+            "assumptions": [
+              "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+              "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+              "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+                "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 4
+              }
+            ],
+            "score": 0.04712301587301587,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "正例、边界和误用反例",
+                "start_line": 55,
+                "end_line": 62,
+                "excerpt": "## 正例、边界和误用反例\n\n- 两 token 尖锐例 w=2、D=3：输出差=3 tanh(½)≈1.38635。共同 logits 平移或共同 value 平移均不改变界。\n- α=(.45,.30,.20,.05)，v=(0,1,0,−6)，完整 y=0。质量最大的两项 S={0,1}，p=.75，y_S=.4；S'={0,2}，p=.65，y_S'=0。S' 对 full top‑2 的重合率只有½，输出反而精确。这不是端到端模型实验。\n- 保留 .999 质量仍不保证小绝对误差：α=(.999,.001)，v=(0,10000)，只留第一项误差10。需要 D 或实际几何，不能只报质量。\n- 同一排序/选集也不能保证相同输出：s=(0,1)、t=(0,2)、v=(0,1)，全支持集重合100%，概率和输出不同。\n- 空 S、负权重、不同温度却未缩放、变化的 value/支持集、非线性聚合均不符合对应前提。高 value 均值本身不重要，直径才平移不变；相对误差在 y≈0 时不可靠。\n\n"
+              },
+              {
+                "node": "s1",
+                "title": "有限 softmax 与归一化加权输出误差",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 有限 softmax 与归一化加权输出误差\n\nID: `math.softmax-barycenter-error`；版本 1。问题触发：分数误差已知，如何控制加权输出？选出的集合重合度能否替代输出质量？先抽取支持集、归一化方式、value、输出度量；只需本卡，整体二范数误差转排序时另读 `math.score-difference-bound`。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "context": {
+    "schema_version": 1,
+    "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "status": "ready",
+    "budget": {
+      "max_entries": 2,
+      "max_chars": 16000,
+      "used_chars": 11270,
+      "scope": "serialized entry payload characters, not model tokens or outer envelope"
+    },
+    "retrieved_ids": [
+      "math.transport-output-certificate"
+    ],
+    "entries": [
+      {
+        "schema_version": 1,
+        "id": "math.softmax-barycenter-error",
+        "version": 1,
+        "status": "published",
+        "kind": "modeling-pattern",
+        "title": "有限 softmax 与归一化加权输出误差",
+        "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+        "aliases": [
+          "softmax barycenter",
+          "attention output value",
+          "加权 输出 误差",
+          "token 重合度 质量",
+          "force mixing"
+        ],
+        "domains": [
+          "linear-algebra",
+          "probability-and-optimization"
+        ],
+        "structures": [
+          "error-bound",
+          "normalized-weighted-output",
+          "pruning",
+          "value-geometry"
+        ],
+        "assumptions": [
+          "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+          "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+          "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+        ],
+        "sources": [
+          {
+            "url": "https://darkwing.uoregon.edu/~dlevin/MARKOV/mcmt2e.pdf",
+            "locator": "Second edition, §4.1 Proposition 4.2 and Remark 4.3, pp.48–49: TV identity only; finite softmax/output proof independently shown",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://arxiv.org/html/2610.06686v1",
+            "locator": "OVAL v1 submitted 2026-10-05; Appendix A.2 Lemma A.2, Propositions A.3–A.5; preprint, no local model reproduction",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://arxiv.org/html/2610.06801v1",
+            "locator": "MC-Sparse v1 submitted 2026-10-05; §4.2 Eq.(1), §4.3, Algorithm 1, §5; preprint, no local model reproduction",
+            "accessed": "2026-10-07"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+            "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+          ]
+        },
+        "requires": [],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.score-difference-bound"
+          },
+          {
+            "type": "related",
+            "id": "math.cauchy-schwarz"
+          }
+        ],
+        "content": "# 有限 softmax 与归一化加权输出误差\n\nID: `math.softmax-barycenter-error`；版本 1。问题触发：分数误差已知，如何控制加权输出？选出的集合重合度能否替代输出质量？先抽取支持集、归一化方式、value、输出度量；只需本卡，整体二范数误差转排序时另读 `math.score-difference-bound`。\n\n## 对象、前提和结论\n\n固定非空有限集合 J，同一支持集上的有限实数 logits s,t；α=softmax(s)，β=softmax(t)。温度和 1/√d 已计入 logits。固定 value v_j∈R^p，固定线性映射 W:R^p→R^h，输出用任意范数。设 y=Σα_jv_j，ŷ=Σβ_jv_j，D=max_ij‖W(v_i−v_j)‖，e=t−s，w=max e−min e。\n\n经典 TV 恒等式（来源1，§4.1 Proposition 4.2，印刷页48）是 TV(α,β)=½Σ|α_j−β_j|。本卡以下是独立给出的有限推导，不声称研究新颖性，不是形式化证明：\n\n\\[\n\\|W(y-\\hat y)\\|\\le D\\,\\mathrm{TV}(\\alpha,\\beta)\n\\le D\\tanh\\!\\left(\\frac{\\operatorname{osc}(t-s)}4\\right).\n\\]\n\n此界对两个 token 可以取等号。误差的共同平移不起作用；若 ‖e‖∞≤ε，则输出≤D tanh(ε/2)。若已知整体 ‖e‖₂≤η，则 w≤√2η（最大最小坐标差与柯西不等式），得到 D tanh(η/(2√2))。不能把逐坐标 ε 当整体 η。D=0 时，无论排序/概率如何变，输出都相同。\n\n## 可复核证明\n\n令 δ=α−β，其正、负部分总质量均为 T=TV。T=0 时结论显然；否则 WΣδv=T(a−b)，a,b 分别是正、负部分归一化后的 Wv 的凸组合。展开这两个组合的乘积权重，以三角不等式得到 ‖a−b‖≤D。\n\n令 X_j=exp(e_j)，m=min X>0，M=max X，μ=Σα_jX_j。β_j=α_jX_j/μ，所以 TV=E_α|X−μ|/(2μ)。m=M 时 TV=0。否则凸函数 |x−μ| 不超过区间端点的弦，取期望后\n\n\\[\n\\mathrm{TV}\\le\\frac{(M-\\mu)(\\mu-m)}{(M-m)\\mu}\n=\\frac{M+m-\\mu-mM/\\mu}{M-m}\n\\le\\frac{\\sqrt M-\\sqrt m}{\\sqrt M+\\sqrt m}\n=\\tanh(w/4).\n\\]\n\n最后一步用 μ+mM/μ≥2√(mM)。这是实数数学证明；计算时不应直接 exp 大误差，使用稳定 softmax 和 osc/tanh，避免溢出。尖锐例：w≥0，α=(1/(1+exp(w/2)),exp(w/2)/(1+exp(w/2)))，e=(w,0)，β 恰交换概率。v=(0,D)、W=I 时两界同时取等号。\n\n## 改变支持集：必须单独处理剪枝\n\n非空 S⊆J，p_S=Σ_{j∈S}α_j>0，y_S=Σ_{j∈S}α_jv_j/p_S。若 p_S<1，令 y_barS 为补集的同样归一化输出，则\n\n\\[\ny-y_S=(1-p_S)(y_{\\bar S}-y_S),\\quad\n\\mathrm{TV}(\\alpha,\\alpha^S)=1-p_S,\\quad\n\\|W(y-y_S)\\|\\le D(1-p_S).\n\\]\n\np_S=1 时误差0，不定义补集均值。硬 mask 的 −∞ 不满足有限 logits 前提，不能直接塞入有限 w 的公式。\n\n若在 S 上使用代理 logits t、近似 values vhat，β^S=softmax(t|S)，ŷ_S=Σβ^S_j vhat_j，以三角不等式分三段：\n\n\\[\n\\|W(y-\\hat y_S)\\|\\le\nD(1-p_S)+D_S\\tanh(\\operatorname{osc}_S(t-s)/4)\n+\\sum_{j\\in S}\\beta^S_j\\|W(v_j-\\hat v_j)\\|.\n\\]\n\nD_S 是原始 values 在 S 上的直径。S 可由代理自适应选择；上述界对每个实际 S 逐点成立，无独立性要求。但 p_S 必须来自完整 α，不能用代理概率冒充。若粗筛只决定 S，最终计算用原 logits 和原 values，后二项为0；代理误差影响选集，不能重复计为最终归一化误差。\n\n## 正例、边界和误用反例\n\n- 两 token 尖锐例 w=2、D=3：输出差=3 tanh(½)≈1.38635。共同 logits 平移或共同 value 平移均不改变界。\n- α=(.45,.30,.20,.05)，v=(0,1,0,−6)，完整 y=0。质量最大的两项 S={0,1}，p=.75，y_S=.4；S'={0,2}，p=.65，y_S'=0。S' 对 full top‑2 的重合率只有½，输出反而精确。这不是端到端模型实验。\n- 保留 .999 质量仍不保证小绝对误差：α=(.999,.001)，v=(0,10000)，只留第一项误差10。需要 D 或实际几何，不能只报质量。\n- 同一排序/选集也不能保证相同输出：s=(0,1)、t=(0,2)、v=(0,1)，全支持集重合100%，概率和输出不同。\n- 空 S、负权重、不同温度却未缩放、变化的 value/支持集、非线性聚合均不符合对应前提。高 value 均值本身不重要，直径才平移不变；相对误差在 y≈0 时不可靠。\n\n## 迁移及不适用范围\n\nAttention/indexer：qᵀk/√d 对应 s，FC/低秩预测决定 S，V 对应 v，输出投影块对应 W。NoPE/RoPE/混合均可在位置变换已完成后使用本界；本界不授权跨频率无损融合。应同时测 p_S、重合度、输出绝对误差和实际任务精度；最大质量降低最坏情况界，但不最小化具体 values 的实际误差。多头可逐头用 W_h 后把界相加，不能拿单头误差充当整个模型证书。\n\n物理线性混合：v 是同量纲 actuator force，权重是非负归一化混合，W 是固定坐标/测量映射；D 和误差单位均为 N，logits/TV 无量纲。真实非线性执行器不适用。Agent 文本通信的“消息重要性”不是此线性平均；没有实际对应对象只能保留类比，不据此删消息或修改生产路由。\n\n端到端：后续残差、非线性、多层及自回归状态未纳入。只有另行证明相应 Lipschitz 界/决策间隔和传播预算，才可能形成局部决策证书。不能由本卡或较小输出误差直接宣称 FASA 精度/省 token/速度改善。\n\n## 来源与验证等级\n\n1. Levin–Peres（Wilmer contributions），*Markov Chains and Mixing Times*, second edition，作者 PDF https://darkwing.uoregon.edu/~dlevin/MARKOV/mcmt2e.pdf ，§4.1 Proposition 4.2/Remark 4.3，pp.48–49；检索2026-10-07。引用的是 TV 事实；attention 及 tanh 推导由本卡独立展示。\n2. OVAL arXiv:2610.06686v1，2026-10-05提交，https://arxiv.org/html/2610.06686v1 ，A.2 Lemma A.2/Propositions A.3–A.5；其 A.4 是直径乘∞范数路径界，不把本卡 tanh 界归因于作者。局部谱目标的均匀参考/isotropic query 条件另见 A.3/A.5。本轮只筛选，不复现模型。\n3. MC‑Sparse arXiv:2610.06801v1，2026-10-05提交，https://arxiv.org/html/2610.06801v1 ，§4.2式(1)、§4.3、Algorithm 1、§5：oracle 最大保留质量仍可能遗漏尾部贡献，扩散步间 residual 复用依赖其场景，不直接迁移到自回归 KV。\n\n来源2/3截至检索2026-10-07只有v1，arXiv预印本，所见记录未提供正式接收信息。数值/结构开发验收及独立审查见 `doc/results/math-softmax-20261007-v2/`。无 Lean、无模型同预算 A/B、无真实 GPU/indexer 运行；数值例不替代上述证明。公开验收题均为开发题，不再作为未见测试；原有未见题保持未使用。\n",
+        "path": "entries/math.softmax-barycenter-error.json",
+        "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+        "selection_reason": "prerequisite"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.transport-output-certificate",
+        "version": 1,
+        "status": "published",
+        "kind": "modeling-pattern",
+        "title": "value 运输耦合与加权输出误差证书",
+        "summary": "以实际value距离搬移概率质量，给线性加权输出误差界；可行耦合和对偶势认证运输成本，区别token重合、feature距离和实际输出。",
+        "aliases": [
+          "不同 token 同值 输出 运输 误差",
+          "力 混合 质量 转移 输出 界",
+          "特征 相近 value 不同 拒绝",
+          "finite transport coupling primal dual output certificate"
+        ],
+        "domains": [
+          "probability-and-optimization",
+          "linear-algebra",
+          "attention-modeling"
+        ],
+        "structures": [
+          "transport-coupling",
+          "normalized-weighted-output",
+          "value-geometry",
+          "primal-dual-certificate",
+          "metric-mismatch"
+        ],
+        "assumptions": [
+          "有限values、αβ非负归一化，允许零质量和不同token支持；比较实际同一固定value集合，或并集",
+          "W固定线性；成本Cij为同一范数下||W(vi−vj)||，不是任意key/feature相似度",
+          "π非负且完整行/列边际αβ；任意对偶势满足所有f_i+g_j≤Cij",
+          "用其他feature距离时须核验||W(vi−vj)||≤L d(xi,xj)；近似value需额外项"
+        ],
+        "sources": [
+          {
+            "url": "https://arxiv.org/abs/1803.00567v4",
+            "locator": "Peyré and Cuturi, Computational Optimal Transport, v4 2020-03-18; Foundations and Trends in Machine Learning 11(5–6):355–607,2019; §2.3 eq2.10–2.11, §2.5 Proposition2.4 eq2.20–2.21 printedp23, weak-duality discussion pp25–26",
+            "accessed": "2026-10-09"
+          },
+          {
+            "url": "https://arxiv.org/html/2602.20205v3",
+            "locator": "OTPrune, Chen et al.; v1 2026-02-22, currentv3 2026-04-01 14:09:30UTC; abstract comments Accepted by CVPR2026 (author record, formal proceedings not independently located); selective §3 and A.2",
+            "accessed": "2026-10-09"
+          },
+          {
+            "url": "https://arxiv.org/html/2610.06927v1",
+            "locator": "Abdali, Ko, Cameron, AttSVD; v1 2026-10-03 00:33:53UTC, arXiv preprint no formal acceptance inferred; selective §3.2, AppendixB norm equivalence/value diagonal metric and Algorithm2",
+            "accessed": "2026-10-09"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "agent_doc/results/math-transport-output-20261009/verify.py",
+            "agent_doc/results/math-transport-output-20261009/raw.json",
+            "agent_doc/results/math-transport-output-20261009/retrieval.json"
+          ]
+        },
+        "requires": [
+          {
+            "id": "math.softmax-barycenter-error",
+            "version": 1
+          }
+        ],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.convex-projection-certificate"
+          },
+          {
+            "type": "related",
+            "id": "math.low-rank-svd"
+          }
+        ],
+        "content": "# value 运输耦合与加权输出误差证书\n\n稳定ID `math.transport-output-certificate@1`。前置 `math.softmax-barycenter-error@1`：非负归一化权重、固定线性输出、TV与直径界。本条补充实际value间的运输结构，不重复softmax/tanh推导。`math.convex-projection-certificate` 认证固定目标在选定凸包内的误差；这里认证两个给定概率分布的运输成本，不替代凸包投影。\n\n## 对象、前提、准确结论\n\n有限v_i∈R^p，α_i,β_i≥0，Σα=Σβ=1，允许零权重/不同token支持；先取统一并集并给缺失坐标赋0。y=Σα_i v_i，ŷ=Σβ_i v_i，W固定线性，范数固定。C_ij=||W(v_i−v_j)||，D=max C_ij，TV=½Σ|α_i−β_i|。\n\nU(α,β)={π≥0:Σ_jπ_ij=α_i,Σ_iπ_ij=β_j}，L_C=min_{π∈U}Σπ_ij C_ij。非空（αβᵀ可行），有限紧集故最小值存在。成本由value差定义，在重复value的不同token之间可为0；这是value推前概率测度上的W₁，不能称作token身份的严格度量。\n\n**输出证书：** ||W(y−ŷ)||≤L_C≤D·TV。任意可行π给可计算的上界ΣπC，即使π未最优也成立。可行对偶势f,g满足所有f_i+g_j≤C_ij，则α·f+β·g≤L_C≤ΣπC；上下界相同即认证该运输最优。对偶下界是运输成本的下界，**不是输出误差下界**。输出可能抵消而误差0，但L_C>0。\n\n经典有限Kantorovich问题和对偶：Peyré–Cuturi v4 §2.3式2.10–2.11及§2.5命题2.4式2.20–2.21、印刷p23。下面线性输出、TV和扰动扩展是此处明确展示的推导，不声称研究新颖性。\n\n## 可复核证明\n\n由两个边际，W(y−ŷ)=Σ_ij π_ij W(v_i−v_j)。三角不等式给任意π的输出界，取min得第一式。令m_i=min(α_i,β_i)，a=α−m,b=β−m，其总质量同为t=TV。t=0取对角耦合；否则π=diag(m)+abᵀ/t。它有正确边际，非对角总质量t，成本≤Dt，得第二式。此证明逐输入成立，选集自适应并不破坏它，但必须用实际αβ而非未校准代理冒充。\n\n弱对偶：ΣπC≥Σπ(f_i+g_j)=α·f+β·g。由此可行的π与势相等已足够证明最优，无需把未核验solver的“success”当证书。有限强对偶可用经典LP定理，非形式化数学证明不等于Lean。\n\n若实际压缩value为v̂_j，则\n\n||W(Σα_i v_i−Σβ_j v̂_j)||≤L_C+Σβ_j||W(v_j−v̂_j)||。\n\n若采用feature点x_i及距离d，只有核验所有相关点对||W(v_i−v_j)||≤L d(x_i,x_j)，才能推出输出≤L W₁(featureα,featureβ)。不同feature对应的输出映射若无有限L，就拒绝替换。\n\n## 正例、边界与误用反例\n\n1. v=(0,0,10)，α=(1,0,0)，β=(0,1,0)：token支持完全不重合、TV=1，却L_C=输出误差=0。运输视角利用实际等值冗余；不证明模型e2e相同。\n2. v=(0,2)，两概率分别全落两端：输出误差=L_C=2，界可取等号。\n3. v=(−1,0,1)，α=(½,0,½)，β=(0,1,0)：L_C=1，输出均为0。拒绝把运输成本当实际误差或必要质量条件。\n4. v=(0,1,100)，α=(½,½,0)，β=(0,1,0)：L_C=½而DTV=50，局部value距离能给更紧界；并非每次都改进。\n5. 两feature完全相同而values为0与100：feature运输=0但输出差100。没有有限L，拒绝“视觉feature相近即真实attention输出接近”。\n6. α全在0，β全在原value2，压缩后value3：运输项2还需value误差1，总界3。漏算重建误差会给错误上界。\n7. 负概率、质量不等、错误边际的计划、变化的W及非线性聚合不满足本条。空集/全部mask无法定义非空归一化概率，不能照搬。\n\n## 数值方法及实际验证等级\n\n离散OT可用LP/network-simplex；本轮仅一维有理数开发例，构造可行计划并检查边际、所有对偶不等式和精确primal-dual相等。高维可行计划仍给证书，无须先求最优。浮点边际残差、成本误差、对偶违反要修复或另给严谨裕度；这里没有实现该浮点认证。\n\nSinkhorn正则化目标或减熵后的值不是ΣπC，不能直接拿作输出界；其近似π若边际错误也不满足证书。若算W₂，概率质量1下经Cauchy才有W₁≤W₂（两者成本分别是距离和距离平方）；不能将平方成本、surrogate或负正则目标当W₁。完整pairwise代价/LP可能很贵，因此优先离线诊断，不宣称在线提速。\n\n## 具体迁移与按需加载\n\nIndexer：固定一条query的完整权重α、压缩支持上实际归一化β、当前头V、输出投影块W，位置编码应先完成分数计算。比较近/远方案时，token重合率、保留质量、运输上界、真实输出误差及最终任务指标分开。NoPE/RoPE/混合均可用于此输出层分析；不授权跨频率无损融合、将局部证书当自回归多层证书或在线oracle。\n\n跨域force mixture：v是同量纲力N，非负权重无量纲，W固定坐标映射，运输/输出界单位均为N。二点0N→2N混合转移给2N界；若执行器非线性或含非归一化增益，应重建对象，拒绝套用。\n\n主AI先抽取αβ、values、线性W、实际范数和可行边际，再检索本条+softmax前置。实际通信文本没有这一线性平均对象，不能直接用本条删消息。候选为离线真实attention trace的value-aware诊断，只有同模型/工具/缓存与可比预算测收益后才接生产。\n\n## 近期研究与数学筛查\n\n检索2026-10-09。OTPrune 2602.20205v3，2026-04-01修订（v1 2026-02-22）；arXiv作者记录标注Accepted by CVPR2026，正式proceedings未独立定位。它对视觉feature的W₂作二阶近似并用logdet surrogate，§3/A.2的子模保证针对该代理目标。本文拒绝无真实V映射就迁移成attention输出证书；未复现作者实验。\n\nAttSVD 2610.06927v1，2026-10-03提交，arXiv预印本，未推定接收。§3.2/AppendixB关注post-RoPE query加权K与按attention mass加权V，作者明确diag(a)替代PᵀP。对CQ=QᵀQ+λI的ridge形式，自己的代数核查为||E CQ^(1/2)||F²=||QEᵀ||F²+λ||E||F²；非零λ时不能把两目标写成严格相等。Q=E=1、λ=1/1000给1与1001/1000的精确反例。此边界针对恒等式及目标解释，不宣称作者经验结果失效，也不把定向章节阅读当整篇审核。\n\n## 来源和续接\n\nJSON绑定经典/论文版本、原始URL及访问日；证据在 `agent_doc/results/math-transport-output-20261009/`。8公开案例、6条公开查询后端组合、两条目上下文和34回归必须经另一位独立验收者核查。检索精确aliases只是结构检查，不是未见模型检索/拒绝表现；既有holdout仅哈希，不读取。没有Lean、真实GPU/模型、生产部署或token节省证据。\n",
+        "path": "entries/math.transport-output-certificate.json",
+        "sha256": "1dc9f61ffab81211a5bdf24539cbf75692cbe32652b3ec0520f5bc9cf6a98f5f",
+        "selection_reason": "retrieved"
+      }
+    ],
+    "knowledge_refs": [
+      {
+        "id": "math.softmax-barycenter-error",
+        "version": 1,
+        "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160"
+      },
+      {
+        "id": "math.transport-output-certificate",
+        "version": 1,
+        "sha256": "1dc9f61ffab81211a5bdf24539cbf75692cbe32652b3ec0520f5bc9cf6a98f5f"
+      }
+    ],
+    "skipped": []
+  },
+  "token_cost": "unmeasured; chars/bytes not tokens",
+  "holdouts_metadata_sha256": "5a0572863e75526de915f22108fc90b5e8ce58de14292e7159054af3ba9fe48a"
+}

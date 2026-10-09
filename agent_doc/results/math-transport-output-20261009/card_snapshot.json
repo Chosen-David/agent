@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "id": "math.transport-output-certificate",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "value 运输耦合与加权输出误差证书",
+  "summary": "以实际value距离搬移概率质量，给线性加权输出误差界；可行耦合和对偶势认证运输成本，区别token重合、feature距离和实际输出。",
+  "aliases": [
+    "不同 token 同值 输出 运输 误差",
+    "力 混合 质量 转移 输出 界",
+    "特征 相近 value 不同 拒绝",
+    "finite transport coupling primal dual output certificate"
+  ],
+  "domains": [
+    "probability-and-optimization",
+    "linear-algebra",
+    "attention-modeling"
+  ],
+  "structures": [
+    "transport-coupling",
+    "normalized-weighted-output",
+    "value-geometry",
+    "primal-dual-certificate",
+    "metric-mismatch"
+  ],
+  "assumptions": [
+    "有限values、αβ非负归一化，允许零质量和不同token支持；比较实际同一固定value集合，或并集",
+    "W固定线性；成本Cij为同一范数下||W(vi−vj)||，不是任意key/feature相似度",
+    "π非负且完整行/列边际αβ；任意对偶势满足所有f_i+g_j≤Cij",
+    "用其他feature距离时须核验||W(vi−vj)||≤L d(xi,xj)；近似value需额外项"
+  ],
+  "sources": [
+    {
+      "url": "https://arxiv.org/abs/1803.00567v4",
+      "locator": "Peyré and Cuturi, Computational Optimal Transport, v4 2020-03-18; Foundations and Trends in Machine Learning 11(5–6):355–607,2019; §2.3 eq2.10–2.11, §2.5 Proposition2.4 eq2.20–2.21 printedp23, weak-duality discussion pp25–26",
+      "accessed": "2026-10-09"
+    },
+    {
+      "url": "https://arxiv.org/html/2602.20205v3",
+      "locator": "OTPrune, Chen et al.; v1 2026-02-22, currentv3 2026-04-01 14:09:30UTC; abstract comments Accepted by CVPR2026 (author record, formal proceedings not independently located); selective §3 and A.2",
+      "accessed": "2026-10-09"
+    },
+    {
+      "url": "https://arxiv.org/html/2610.06927v1",
+      "locator": "Abdali, Ko, Cameron, AttSVD; v1 2026-10-03 00:33:53UTC, arXiv preprint no formal acceptance inferred; selective §3.2, AppendixB norm equivalence/value diagonal metric and Algorithm2",
+      "accessed": "2026-10-09"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "agent_doc/results/math-transport-output-20261009/verify.py",
+      "agent_doc/results/math-transport-output-20261009/raw.json",
+      "agent_doc/results/math-transport-output-20261009/retrieval.json"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.softmax-barycenter-error",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.convex-projection-certificate"
+    },
+    {
+      "type": "related",
+      "id": "math.low-rank-svd"
+    }
+  ]
+}

@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "snapshot": "fc38cced840a60b4ed2472c67ec01e4ae9fa615968220434e8c72e8e0fa069bf",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "infra.flashattention-io",
+      "version": 1,
+      "sha256": "5699ccfeb1b8bc75fb1ad5f859efda45297ed41553b2332895df07b5334b70d9",
+      "title": "FlashAttention：用 IO 分析选择精确注意力实现",
+      "summary": "NeurIPS 2022 的实验支持分块与重计算减少注意力中间矩阵的 HBM 流量；不是把精确注意力算术复杂度改成线性。",
+      "status": "published",
+      "assumptions": [
+        "operator: dense exact attention",
+        "hardware: NVIDIA GPU",
+        "metric: attention IO and end-to-end training"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#infra.flashattention-io"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "意力",
+            "注意"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "意力",
+            "注意"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "意力",
+            "注意"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "意力",
+            "注意"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "意力",
+            "注意"
+          ]
+        }
+      ],
+      "score": 36
+    },
+    {
+      "id": "math.attention-output-geometry",
+      "version": 1,
+      "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+      "title": "固定value的Gram输出几何与局部敏感度",
+      "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+      "status": "published",
+      "assumptions": [
+        "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+        "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+        "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+          "CPU finite development checks; no Lean/model/GPU/e2e verification"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "value"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "value"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "value",
+            "意力",
+            "注意"
+          ]
+        }
+      ],
+      "score": 11
+    },
+    {
+      "id": "math.convex-projection-certificate",
+      "version": 1,
+      "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c",
+      "title": "选定凸输出的投影、误差下界与残差间隙证书",
+      "summary": "有限value凸包的平方误差投影以可行性和全顶点残差max认证；P−2g≤最优误差≤P，g=0 iff投影。",
+      "status": "published",
+      "assumptions": [
+        "非空有限v_i∈R^p和固定已知z；Euclidean平方误差；C=conv{v_i}，允许改变权重但β≥0且Σβ=1。",
+        "候选y必须属于C；h_C(r)=max_i r·v_i遍历C的全部给定点；只对明确选定value集合给界。",
+        "固定线性W可对Wv和Wz使用结论；只保真W输出，不保证raw输出、全部query或模型e2e。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "精确展开/凸性证明人工审核，不是Lean或浮点数值证书。",
+          "agent_doc/results/math-convex-projection-20261009：12公开Fraction例、6结构检索、定向回归及独立六域验收；无模型/GPU实测。"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "value"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "value"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "value",
+            "意力",
+            "注意"
+          ]
+        }
+      ],
+      "score": 11
+    }
+  ]
+}

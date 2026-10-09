@@ -1,0 +1,164 @@
+{
+  "visibility": "public development only; no unused-test performance claim",
+  "cases": [
+    {
+      "id": "T1",
+      "values": [
+        0,
+        0,
+        10
+      ],
+      "alpha": [
+        "1",
+        "0",
+        "0"
+      ],
+      "beta": [
+        "0",
+        "1",
+        "0"
+      ],
+      "expected_cost": "0",
+      "expected_error": "0"
+    },
+    {
+      "id": "T2",
+      "values": [
+        0,
+        2
+      ],
+      "alpha": [
+        "1",
+        "0"
+      ],
+      "beta": [
+        "0",
+        "1"
+      ],
+      "expected_cost": "2",
+      "expected_error": "2"
+    },
+    {
+      "id": "T3",
+      "values": [
+        -1,
+        0,
+        1
+      ],
+      "alpha": [
+        "1/2",
+        "0",
+        "1/2"
+      ],
+      "beta": [
+        "0",
+        "1",
+        "0"
+      ],
+      "expected_cost": "1",
+      "expected_error": "0"
+    },
+    {
+      "id": "T4",
+      "values": [
+        0,
+        1,
+        100
+      ],
+      "alpha": [
+        "1/2",
+        "1/2",
+        "0"
+      ],
+      "beta": [
+        "0",
+        "1",
+        "0"
+      ],
+      "expected_cost": "1/2",
+      "expected_error": "1/2",
+      "expected_DTV": "50"
+    },
+    {
+      "id": "T5",
+      "values": [
+        0,
+        100
+      ],
+      "features": [
+        0,
+        0
+      ],
+      "alpha": [
+        "1",
+        "0"
+      ],
+      "beta": [
+        "0",
+        "1"
+      ],
+      "feature_cost": "0",
+      "expected_error": "100",
+      "decision": "reject unverified feature-to-value Lipschitz"
+    },
+    {
+      "id": "T6",
+      "values": [
+        0,
+        2
+      ],
+      "values_hat": [
+        0,
+        3
+      ],
+      "alpha": [
+        "1",
+        "0"
+      ],
+      "beta": [
+        "0",
+        "1"
+      ],
+      "expected_cost": "2",
+      "expected_error": "3",
+      "expected_combined_bound": "3"
+    },
+    {
+      "id": "T7",
+      "decision": "reject negative or unnormalized probabilities and incorrect coupling marginals",
+      "invalid_alpha": [
+        [
+          "-1",
+          "2"
+        ],
+        [
+          "1",
+          "1"
+        ]
+      ],
+      "beta": [
+        "1/2",
+        "1/2"
+      ],
+      "invalid_pi": [
+        [
+          "1",
+          "0"
+        ],
+        [
+          "0",
+          "0"
+        ]
+      ]
+    },
+    {
+      "id": "T8",
+      "Q": "1",
+      "E": "1",
+      "ridge": "1/1000",
+      "expected_true_logit_squared": "1",
+      "expected_ridge_metric_squared": "1001/1000",
+      "decision": "reject exact norm equivalence after nonzero ridge unless extra penalty included"
+    }
+  ]
+}

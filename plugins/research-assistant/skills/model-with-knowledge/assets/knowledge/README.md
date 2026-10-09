@@ -2,7 +2,7 @@
 
 这里保存跨项目可复用的数学、物理、AI Infra、AI 算法、数据结构算法与跨物种神经科学知识；Skill 保存使用知识的方法。项目观测、用户偏好和执行状态仍由项目记忆、TASK.md 与运行目录负责。
 
-当前包含 109 个已发布条目，另有5个待核验candidate：66 个数学/物理基础条目（包括18个本轮高等代数主题）、22 张工程复用卡、2条AI算法推导知识，以及 8 张 2026 年 RL / 概率论研究卡（ICLR、ICML、COLT、ALT），以及11张神经科学/NeuroAI卡（10篇正式论文、1篇明确绑定的2024预印本）。近五年检索窗口为2021-10-07至2026-10-07，本轮所选来源为2023–2026；神经科学最新核查论文发表于2026-09-29。机构/作者博客单列来源，生物发现、意识理论与AI设计假设分开记录。新增卡核查原论文的相关实验、定理前提与反例，未执行本机论文复现，不代表完整学科覆盖或 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
+当前包含 110 个已发布条目，另有5个待核验candidate：67 个数学/物理基础条目（包括18个本轮高等代数主题）、22 张工程复用卡、2条AI算法推导知识，以及 8 张 2026 年 RL / 概率论研究卡（ICLR、ICML、COLT、ALT），以及11张神经科学/NeuroAI卡（10篇正式论文、1篇明确绑定的2024预印本）。近五年检索窗口为2021-10-07至2026-10-07，本轮所选来源为2023–2026；神经科学最新核查论文发表于2026-09-29。机构/作者博客单列来源，生物发现、意识理论与AI设计假设分开记录。新增卡核查原论文的相关实验、定理前提与反例，未执行本机论文复现，不代表完整学科覆盖或 Agent 整体性能提升。条目是本项目撰写的知识摘要与应用推导，不镜像第三方教材或 mathlib。上游来源与采用理由见 `upstreams.json` 和仓库 `docs/knowledge_upstreams.md`。
 
 ## 实际使用
 
@@ -144,3 +144,5 @@ python -m agent_runtime.knowledge --root knowledge decision '点更新 区间求
 2026-10-09 MATH-62：`math.switched-quadratic-metrics@1`；学科linear-algebra/optimization-and-control/numerical-analysis，结构switched-linear-dynamics/common-metric-contraction/mode-metric-switch-cost/average-dwell-boundary。按需加载共同参考/模式/边/计数前提；不同平衡点或逐层谱半径不能认证切换。一般证明独立审核，公开精确/结构检查，不是LLM/GPU收益。证据`agent_doc/results/math-switched-metrics-20261009/`。
 
 2026-10-09 MATH-63：新增 `math.fano-message-budget@1`。学科：information-theory/statistics/agent-memory；问题结构：finite-message-alphabet、classification-converse、side-information、enumeration-preservation。条件 Fano、top-C后验容量与变长/检索旁信息反例；FOCUS v1选择性来源筛选。只通过公开数学/检索结构验收，未证实Agent效果或token节省。既有GPU和其他域游标保留。
+
+2026-10-09 MATH-64：`math.transport-output-certificate@1`；学科linear-algebra/probability-and-optimization，结构transport-coupling/value-geometry/primal-dual-certificate/metric-mismatch。可行运输给输出上界，对偶只下界运输；重复value、抵消、错误feature及ridge反例，OTPrune v3/AttSVD v1原文筛选，无模型/GPU/e2e/token收益。证据 `agent_doc/results/math-transport-output-20261009/`。
