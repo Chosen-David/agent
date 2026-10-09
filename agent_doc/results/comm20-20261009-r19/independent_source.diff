@@ -1,0 +1,15 @@
+--- 
++++ 
+@@ -251,12 +251,6 @@
+             raise ValueError('handoff reference required')
+         ref = manifests[0]
+         # Recheck all original references at consumption, including the manifest.
+-        errors = validate({'schema_version': 1, 'run_id': self.run_id,
+-                           'role': event['sender'], 'input_version': event['input_version'],
+-                           'status': 'partial', 'limitations': ['pending consumption'],
+-                           'artifacts': refs, 'checks': [], 'tasks': []}, self.root)
+-        if errors:
+-            raise ValueError('; '.join(errors))
+         record = _load_json(self.root / ref['path'])
+         errors = validate(record, self.root, require_complete,
+                           expected_input_version=self.plan['input_version'], consumer_request=request)

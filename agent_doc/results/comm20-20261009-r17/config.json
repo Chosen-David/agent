@@ -1,0 +1,24 @@
+{
+  "round": 17,
+  "name": "exact-ledger empty/low-cardinality query routing",
+  "operation": "inbox",
+  "primary_case": "20k foreign pending with last5target and absent target; zero-event guard; single/interleaved/history guards",
+  "hypothesis": "Reuse exact transactionally maintained event ledger. Zero target events safely return empty; <=limit targetevents bound indexed run-local EXISTS sorting, otherwise preserve strongest ordered recipient pending scan. No indexes/migration/storage changes. Ledger and rows share explicit BEGIN read snapshot; WAL concurrent writer after count cannot expand current result/sort, next poll observes commit.",
+  "acceptance": "Original thresholds unchanged; both20klast/absent primary, allpublicsemantic andlatency/write/reopen/storage guards, independent5pair replay. Ledgerappend-only assumption existing documented supported behavior; no directSQLdeletion/rewriting supported.",
+  "rationale": "r03/r04 accepted negative data shows run-first pruning benefit and index-migration cost; new no-index conditional hypothesis, not relaxation of thresholds or reuse of rejected speedup as current results.",
+  "harness": "scripts/benchmark_communication_candidates_v2.py",
+  "required_concurrency_check": "Independent own connection proxy publishesafterledgerfetchone under WAL; current inbox observes old snapshot and next poll newevent; rollback journal concurrent writer completes afterread release. Sourceappendonly triggers retained.",
+  "baseline_sha256": "33348113ab604834fa7c156a1afeb7a5e4ae1f77c5a1666947bd6950469fbd73",
+  "remote_main": "0e1760ae8ad8234de99f7cf7ce85c484e252f177",
+  "predecessor": "comm20-20261009-r16",
+  "scope": "Local public Mailbox API; synthetic SQLite/filesystem scenarios, no model-quality/token/network claim",
+  "frozen_acceptance": {
+    "correctness": "exact reference outputs/rejection, all affected communication/usage tests; migration/reopen/fanout/cross-run no partial budget behavior",
+    "improvement": "For performance candidates >=1.25x primary median latency AND >=0.05ms absolute improvement, OR >=20% deterministic VM/instrumented operation reduction with non-regression latency; confirmation independent replay required",
+    "guard": "other scenarios candidate<=1.25x baseline OR<0.2ms added median; index candidates include initialization/storage/publish/ACK guard and history/late/absent workload",
+    "safety": "Never keep weakened hashing/root/identity/receipt/budget checks; adversarial cases demonstrate rejection",
+    "negative": "keep raw negative evidence; revert/defer/noise results count as evaluated rounds, not successful improvements",
+    "index_guard": "Initialization first-open latency recorded, reopen paired; database growth<=1.5x, migration existing DB/public roundtrip/restart; all timing guards same <=1.25x OR<0.2ms added, first-open guard<=2x OR<1ms added"
+  },
+  "created_at": "2026-10-09T12:30:41.926217+00:00"
+}

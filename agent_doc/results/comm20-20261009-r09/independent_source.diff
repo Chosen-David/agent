@@ -1,0 +1,11 @@
+--- baseline
++++ candidate
+@@ -284,7 +284,7 @@
+         from .handoff_basis import basis_impact
+         with self.connect() as db:
+             rows = db.execute('''SELECT b.*,e.event_id,e.body FROM communication_basis b
+-                JOIN communication_events e ON b.seq=e.seq WHERE e.run_id=? ORDER BY b.seq,b.recipient''',
++                JOIN communication_events e ON b.seq=e.seq WHERE e.run_id=? ORDER BY e.seq,b.recipient''',
+                               (self.run_id,)).fetchall()
+         result = []
+         for row in rows:

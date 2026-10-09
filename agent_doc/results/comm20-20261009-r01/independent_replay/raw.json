@@ -1,0 +1,1012 @@
+{
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "sqlite": "3.53.1",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39"
+  },
+  "warmups": 3,
+  "repeats": 5,
+  "cases": [
+    {
+      "total": 100,
+      "layout": "single",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 363,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 356,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 0.490581,
+          "baseline": 0.440683
+        },
+        {
+          "baseline": 0.922836,
+          "candidate": 0.557436
+        },
+        {
+          "candidate": 0.579678,
+          "baseline": 0.541128
+        },
+        {
+          "baseline": 0.493293,
+          "candidate": 0.631312
+        },
+        {
+          "candidate": 1.356364,
+          "baseline": 0.550451
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 2.867747,
+        "candidate": 1.907289
+      },
+      "median_ms": {
+        "baseline": 0.541128,
+        "candidate": 0.579678
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 0.688655,
+            "ack_ms": 0.500728
+          },
+          "candidate": {
+            "publish_ms": 1.193984,
+            "ack_ms": 0.685294
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.739188,
+            "ack_ms": 0.441348
+          },
+          "baseline": {
+            "publish_ms": 0.750577,
+            "ack_ms": 0.610134
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.654438,
+            "ack_ms": 0.429151
+          },
+          "candidate": {
+            "publish_ms": 0.651665,
+            "ack_ms": 0.484725
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.935004,
+            "ack_ms": 0.613271
+          },
+          "baseline": {
+            "publish_ms": 0.887185,
+            "ack_ms": 0.508971
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.635993,
+            "ack_ms": 0.483034
+          },
+          "candidate": {
+            "publish_ms": 0.666821,
+            "ack_ms": 0.410525
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 0.610234,
+          "candidate": 0.818861
+        },
+        {
+          "candidate": 1.082425,
+          "baseline": 0.695618
+        },
+        {
+          "baseline": 0.666407,
+          "candidate": 0.759572
+        },
+        {
+          "candidate": 0.765776,
+          "baseline": 0.818508
+        },
+        {
+          "baseline": 0.705123,
+          "candidate": 0.618778
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 0.855147,
+          "candidate": 1.163733
+        },
+        {
+          "candidate": 0.836116,
+          "baseline": 0.852624
+        },
+        {
+          "baseline": 0.704371,
+          "candidate": 1.486249
+        }
+      ],
+      "storage": {
+        "baseline": 102400,
+        "candidate": 106496
+      }
+    },
+    {
+      "total": 20000,
+      "layout": "single",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 363,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 356,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 0.613548,
+          "baseline": 0.938121
+        },
+        {
+          "baseline": 0.870134,
+          "candidate": 0.694744
+        },
+        {
+          "candidate": 0.682022,
+          "baseline": 0.389389
+        },
+        {
+          "baseline": 0.352633,
+          "candidate": 0.499218
+        },
+        {
+          "candidate": 1.341332,
+          "baseline": 0.510345
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 1.813796,
+        "candidate": 2.055015
+      },
+      "median_ms": {
+        "baseline": 0.510345,
+        "candidate": 0.682022
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 1.070835,
+            "ack_ms": 0.461616
+          },
+          "candidate": {
+            "publish_ms": 0.963416,
+            "ack_ms": 0.486561
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.929817,
+            "ack_ms": 0.778956
+          },
+          "baseline": {
+            "publish_ms": 1.03573,
+            "ack_ms": 1.174251
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.008106,
+            "ack_ms": 0.449845
+          },
+          "candidate": {
+            "publish_ms": 0.886056,
+            "ack_ms": 1.32017
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.329076,
+            "ack_ms": 0.646366
+          },
+          "baseline": {
+            "publish_ms": 0.746175,
+            "ack_ms": 0.454783
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.666457,
+            "ack_ms": 0.495496
+          },
+          "candidate": {
+            "publish_ms": 1.194778,
+            "ack_ms": 0.808746
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 0.709993,
+          "candidate": 0.859338
+        },
+        {
+          "candidate": 2.266048,
+          "baseline": 1.072379
+        },
+        {
+          "baseline": 0.999703,
+          "candidate": 1.326969
+        },
+        {
+          "candidate": 0.666189,
+          "baseline": 1.238287
+        },
+        {
+          "baseline": 1.138218,
+          "candidate": 0.646455
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 0.808743,
+          "candidate": 15.702557
+        },
+        {
+          "candidate": 14.680881,
+          "baseline": 0.927913
+        },
+        {
+          "baseline": 1.111101,
+          "candidate": 14.137482
+        }
+      ],
+      "storage": {
+        "baseline": 6455296,
+        "candidate": 7364608
+      }
+    },
+    {
+      "total": 20000,
+      "layout": "interleaved",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 783,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 716,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 0.36327,
+          "baseline": 0.568681
+        },
+        {
+          "baseline": 0.384627,
+          "candidate": 0.351219
+        },
+        {
+          "candidate": 0.375582,
+          "baseline": 0.471435
+        },
+        {
+          "baseline": 0.463445,
+          "candidate": 0.801829
+        },
+        {
+          "candidate": 0.815332,
+          "baseline": 0.535413
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 1.595489,
+        "candidate": 2.574378
+      },
+      "median_ms": {
+        "baseline": 0.471435,
+        "candidate": 0.375582
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 0.901342,
+            "ack_ms": 0.471309
+          },
+          "candidate": {
+            "publish_ms": 0.78468,
+            "ack_ms": 0.448036
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.770564,
+            "ack_ms": 2.505888
+          },
+          "baseline": {
+            "publish_ms": 0.750816,
+            "ack_ms": 1.821075
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.907314,
+            "ack_ms": 1.130955
+          },
+          "candidate": {
+            "publish_ms": 1.303655,
+            "ack_ms": 0.767197
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.712592,
+            "ack_ms": 1.4184
+          },
+          "baseline": {
+            "publish_ms": 1.027039,
+            "ack_ms": 0.804049
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.854941,
+            "ack_ms": 0.427374
+          },
+          "candidate": {
+            "publish_ms": 0.782418,
+            "ack_ms": 1.95688
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 0.644398,
+          "candidate": 0.756146
+        },
+        {
+          "candidate": 0.784175,
+          "baseline": 1.049209
+        },
+        {
+          "baseline": 0.676653,
+          "candidate": 2.543516
+        },
+        {
+          "candidate": 1.122851,
+          "baseline": 0.953549
+        },
+        {
+          "baseline": 0.678563,
+          "candidate": 1.366873
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 3.359568,
+          "candidate": 17.01563
+        },
+        {
+          "candidate": 12.930551,
+          "baseline": 1.313946
+        },
+        {
+          "baseline": 0.86168,
+          "candidate": 16.408749
+        }
+      ],
+      "storage": {
+        "baseline": 6406144,
+        "candidate": 7315456
+      }
+    },
+    {
+      "total": 20000,
+      "layout": "last",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 140165,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 120178,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 3.042856,
+          "baseline": 3.269958
+        },
+        {
+          "baseline": 2.93289,
+          "candidate": 2.862989
+        },
+        {
+          "candidate": 4.330382,
+          "baseline": 6.547435
+        },
+        {
+          "baseline": 3.547179,
+          "candidate": 3.755917
+        },
+        {
+          "candidate": 3.094456,
+          "baseline": 3.218356
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 2.451729,
+        "candidate": 2.119554
+      },
+      "median_ms": {
+        "baseline": 3.269958,
+        "candidate": 3.094456
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 0.975986,
+            "ack_ms": 0.509744
+          },
+          "candidate": {
+            "publish_ms": 0.992235,
+            "ack_ms": 0.701068
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.268839,
+            "ack_ms": 0.587966
+          },
+          "baseline": {
+            "publish_ms": 1.298246,
+            "ack_ms": 0.674878
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 5.333074,
+            "ack_ms": 0.756213
+          },
+          "candidate": {
+            "publish_ms": 1.742378,
+            "ack_ms": 1.68034
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.957692,
+            "ack_ms": 1.577063
+          },
+          "baseline": {
+            "publish_ms": 1.025277,
+            "ack_ms": 1.425268
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.18894,
+            "ack_ms": 0.464217
+          },
+          "candidate": {
+            "publish_ms": 0.820589,
+            "ack_ms": 0.873439
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 0.824264,
+          "candidate": 0.719085
+        },
+        {
+          "candidate": 0.66877,
+          "baseline": 0.788583
+        },
+        {
+          "baseline": 2.654762,
+          "candidate": 1.156698
+        },
+        {
+          "candidate": 0.870165,
+          "baseline": 0.707385
+        },
+        {
+          "baseline": 0.779725,
+          "candidate": 0.727073
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 1.179442,
+          "candidate": 13.378593
+        },
+        {
+          "candidate": 13.107391,
+          "baseline": 1.947597
+        },
+        {
+          "baseline": 1.96463,
+          "candidate": 15.874417
+        }
+      ],
+      "storage": {
+        "baseline": 6406144,
+        "candidate": 7315456
+      }
+    },
+    {
+      "total": 20000,
+      "layout": "absent",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 140145,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 120158,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 4.079734,
+          "baseline": 4.102823
+        },
+        {
+          "baseline": 3.5963,
+          "candidate": 3.347391
+        },
+        {
+          "candidate": 3.599562,
+          "baseline": 5.679913
+        },
+        {
+          "baseline": 3.517043,
+          "candidate": 3.050706
+        },
+        {
+          "candidate": 4.827887,
+          "baseline": 3.110646
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 17.685517,
+        "candidate": 7.973096
+      },
+      "median_ms": {
+        "baseline": 3.5963,
+        "candidate": 3.599562
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 1.974595,
+            "ack_ms": 0.499126
+          },
+          "candidate": {
+            "publish_ms": 1.013966,
+            "ack_ms": 0.54944
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.562317,
+            "ack_ms": 1.020346
+          },
+          "baseline": {
+            "publish_ms": 0.886118,
+            "ack_ms": 0.433956
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.782704,
+            "ack_ms": 0.454226
+          },
+          "candidate": {
+            "publish_ms": 0.74617,
+            "ack_ms": 0.529814
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.843204,
+            "ack_ms": 0.47913
+          },
+          "baseline": {
+            "publish_ms": 0.798668,
+            "ack_ms": 0.567633
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 3.296166,
+            "ack_ms": 1.106995
+          },
+          "candidate": {
+            "publish_ms": 2.076457,
+            "ack_ms": 0.997065
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 1.627909,
+          "candidate": 0.894264
+        },
+        {
+          "candidate": 0.835869,
+          "baseline": 0.916604
+        },
+        {
+          "baseline": 0.634708,
+          "candidate": 0.833675
+        },
+        {
+          "candidate": 0.69162,
+          "baseline": 1.020824
+        },
+        {
+          "baseline": 2.107341,
+          "candidate": 0.879329
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 1.060743,
+          "candidate": 13.332656
+        },
+        {
+          "candidate": 21.942644,
+          "baseline": 0.793875
+        },
+        {
+          "baseline": 1.058952,
+          "candidate": 16.67088
+        }
+      ],
+      "storage": {
+        "baseline": 6406144,
+        "candidate": 7315456
+      }
+    },
+    {
+      "total": 20000,
+      "layout": "history",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 200,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 208,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 7.32008,
+          "baseline": 0.38778
+        },
+        {
+          "baseline": 1.14639,
+          "candidate": 1.934761
+        },
+        {
+          "candidate": 1.575957,
+          "baseline": 0.877882
+        },
+        {
+          "baseline": 8.349848,
+          "candidate": 1.376699
+        },
+        {
+          "candidate": 0.428002,
+          "baseline": 0.343251
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 1.536683,
+        "candidate": 2.100985
+      },
+      "median_ms": {
+        "baseline": 0.877882,
+        "candidate": 1.575957
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 7.645803,
+            "ack_ms": 1.280134
+          },
+          "candidate": {
+            "publish_ms": 0.875133,
+            "ack_ms": 2.246762
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.165768,
+            "ack_ms": 3.548955
+          },
+          "baseline": {
+            "publish_ms": 2.160766,
+            "ack_ms": 0.770663
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 2.028208,
+            "ack_ms": 6.918736
+          },
+          "candidate": {
+            "publish_ms": 0.884104,
+            "ack_ms": 0.67202
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 2.324183,
+            "ack_ms": 0.487502
+          },
+          "baseline": {
+            "publish_ms": 0.72814,
+            "ack_ms": 2.086312
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.697418,
+            "ack_ms": 0.431798
+          },
+          "candidate": {
+            "publish_ms": 0.907771,
+            "ack_ms": 0.532842
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 1.027828,
+          "candidate": 0.766088
+        },
+        {
+          "candidate": 3.654172,
+          "baseline": 1.469999
+        },
+        {
+          "baseline": 0.853276,
+          "candidate": 0.79996
+        },
+        {
+          "candidate": 0.718887,
+          "baseline": 0.69612
+        },
+        {
+          "baseline": 0.826031,
+          "candidate": 2.882981
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 0.984042,
+          "candidate": 28.151443
+        },
+        {
+          "candidate": 28.682632,
+          "baseline": 1.00916
+        },
+        {
+          "baseline": 1.252853,
+          "candidate": 42.470555
+        }
+      ],
+      "storage": {
+        "baseline": 6799360,
+        "candidate": 8556544
+      }
+    },
+    {
+      "total": 0,
+      "layout": "absent",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 145,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 158,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 0.52156,
+          "baseline": 0.697069
+        },
+        {
+          "baseline": 0.373255,
+          "candidate": 0.486707
+        },
+        {
+          "candidate": 0.488549,
+          "baseline": 0.302284
+        },
+        {
+          "baseline": 0.30671,
+          "candidate": 0.285172
+        },
+        {
+          "candidate": 0.269758,
+          "baseline": 0.281375
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 1.549695,
+        "candidate": 1.749181
+      },
+      "median_ms": {
+        "baseline": 0.30671,
+        "candidate": 0.486707
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 1.026223,
+            "ack_ms": 0.500062
+          },
+          "candidate": {
+            "publish_ms": 1.91372,
+            "ack_ms": 0.545842
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.729841,
+            "ack_ms": 0.461115
+          },
+          "baseline": {
+            "publish_ms": 0.663129,
+            "ack_ms": 0.554174
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.265194,
+            "ack_ms": 0.539673
+          },
+          "candidate": {
+            "publish_ms": 0.812248,
+            "ack_ms": 0.661427
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 2.37467,
+            "ack_ms": 0.679735
+          },
+          "baseline": {
+            "publish_ms": 1.11954,
+            "ack_ms": 1.104458
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.815464,
+            "ack_ms": 0.653668
+          },
+          "candidate": {
+            "publish_ms": 1.232743,
+            "ack_ms": 0.605681
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 0.705053,
+          "candidate": 0.596668
+        },
+        {
+          "candidate": 0.727118,
+          "baseline": 6.374503
+        },
+        {
+          "baseline": 0.57665,
+          "candidate": 0.616426
+        },
+        {
+          "candidate": 1.832946,
+          "baseline": 1.422375
+        },
+        {
+          "baseline": 0.597576,
+          "candidate": 0.645528
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 1.012667,
+          "candidate": 1.603738
+        },
+        {
+          "candidate": 2.349566,
+          "baseline": 0.643697
+        },
+        {
+          "baseline": 3.019082,
+          "candidate": 0.816845
+        }
+      ],
+      "storage": {
+        "baseline": 86016,
+        "candidate": 90112
+      }
+    }
+  ]
+}

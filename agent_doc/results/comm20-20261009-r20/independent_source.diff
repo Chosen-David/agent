@@ -1,0 +1,20 @@
+--- 
++++ 
+@@ -135,13 +135,15 @@
+     @contextmanager
+     def connect(self):
+         guard_write_path(self.path)
+-        db = sqlite3.connect(self.path, timeout=30)
++        if not hasattr(self, '_shared_db'):
++            self._shared_db = sqlite3.connect(self.path, timeout=30)
++        db = self._shared_db
+         db.row_factory = sqlite3.Row
+         try:
+             with db:
+                 yield db
+         finally:
+-            db.close()
++            pass
+ 
+     def publish(self, event):
+         if not isinstance(event, dict):

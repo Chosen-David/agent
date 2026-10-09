@@ -1,0 +1,21 @@
+# COMM20-01 independent plan review v1
+
+Decision: **revise**. No empirical claims accepted.
+
+- intent: pass — Twenty ordered evaluated rounds match current user-triggered scope; failures/reverts count as evaluated rounds, never twenty forced improvements. Direct-main authorization is supplied by host parent.
+- guide: pass — GUIDE.md is zero bytes and read-only; no new guide authority invented. Sole task-index owner remains root.
+- assumptions: fail — No explicit actual task DAG/result contracts/hash bindings yet. Safety candidate boundaries need explicit isolation. No persistent tmux/backend claim is correctly made.
+- prior_results: fail — prior_search.json returns eight candidates, partial=true, errors; Plan incorrectly says prior search no_hits. Existing results remain diagnosis only; old latency not reused as current measurements.
+- acceptance: fail — Frozen numeric thresholds are sensible but public-API primary scenario and deterministic operation metric must be predeclared for each round; six independent result-validation criteria and consumers must be bound before execution.
+- risk: fail — Rounds18/19 inherently propose removal of currently required reference revalidation. Round20 changes per-operation connection lifecycle. Mark18–20 isolated negative/control experiments with unconditional non-adoption if checks/isolation weakened; do not publish these semantics.
+- resources: pass — 3600 CPU-second,20000-event,11 paired-repeat,3-warmup and5-independent-repeat limits are explicit; no model/GPU/paid/service work. Stop/report incomplete on budget exhaustion; unavailable durable backend remains blocked.
+
+Blocking findings:
+
+B1: `task_details/COMM20-01.md Plan; plan_snapshot.md`. prior-result search falsely described as no_hits. Required change: Version stable plan and snapshot to state eight lexical candidates, partial search/missing records, examined applicable reports and reasons for nonreuse; knowledge query alone is no_hits. Verification: Match wording against actual prior_search.json and knowledge_search.json.
+
+B2: `config.json dag and immutable review object`. Single prose DAG string is not the actual complete dependency/acceptance graph required by repository instructions. Required change: Create a versioned explicit chain with20 producer,20 independent verify_experiment_result,20 keep/revert consumers plus final regression/publication nodes; concrete owners, inputs/outputs/done_when/resources/task_refs and same frozen result contracts per round. Hash-bind current source, stable task plan, guide inventory and search evidence. Candidates may be frozen just in time only if dispatch explicitly requires reviewed contract/source hash first. Verification: Check all20 producers have separate verifier owners, no consumer bypasses verifier, and all hashes match actual current files; host authentication remains distinct from a JSON assertion.
+
+B3: `config.json rounds18–20 and per-round validation`. Unsafe optimization proposals lack explicit negative-test isolation; guard instruction cannot make weakened semantics acceptable. Required change: Explicitly classify18–20 as isolated safety hypothesis falsification with immutable baseline, adversarial tests, no runtime adoption when hashing/revalidation/path guards/identity/receipt/isolation weaken. Freeze public-API primary case, units/timing region, paired ordering, operation-count definition, fixtures and six validation procedures before each experiment. Verification: Independent reviewer checks modified candidate path never contaminates runtime; file mutation after duplicate publish and after consume rejects, DB path revalidation/operation lifecycle preserved. Confirm no threshold changed after samples.
+
+The numerical performance and guard thresholds, scope limits, retained negative evidence and synchronous host limitation are reasonable. The blockers are plan accuracy and concrete immutable execution/validation bindings. They are routine plan revisions within the authorized goal; no user permission request is needed. The full evidence hashes and seven-domain verdict are in plan_review_v1.json. This is a real independent host-context review artifact, not a claim that a ManagedEngine authentication adapter or durable monitor exists.

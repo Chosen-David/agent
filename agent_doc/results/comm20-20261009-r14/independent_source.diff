@@ -1,0 +1,21 @@
+--- baseline
++++ candidate
+@@ -157,7 +157,8 @@
+         if not recipients:
+             raise ValueError('no approved consumer route')
+         body = canonical(event)
+-        if len(body.encode('utf-8')) > self.plan.get('max_message_bytes', 8192):
++        body_bytes = len(body.encode('utf-8'))
++        if body_bytes > self.plan.get('max_message_bytes', 8192):
+             raise ValueError('message budget exceeded: put detail in referenced artifacts')
+         refs = event['refs']
+         if not isinstance(refs, list) or not refs:
+@@ -183,7 +184,7 @@
+                 raise ValueError('run event budget exhausted; reconcile before extending the plan')
+             if 'max_delivery_bytes' in self.plan:
+                 spent = usage['delivery_bytes']
+-                if spent + len(body.encode('utf-8')) * len(recipients) > self.plan['max_delivery_bytes']:
++                if spent + body_bytes * len(recipients) > self.plan['max_delivery_bytes']:
+                     raise ValueError('run delivery byte budget exhausted; no partial fan-out')
+             seq = db.execute('INSERT INTO communication_events(run_id,event_id,body) VALUES (?,?,?)',
+                              (self.run_id, event['event_id'], body)).lastrowid

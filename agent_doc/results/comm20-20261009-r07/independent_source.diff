@@ -1,0 +1,11 @@
+--- baseline
++++ candidate
+@@ -228,7 +228,7 @@
+         with self.connect() as db:
+             rows = db.execute('''SELECT e.seq,d.recipient,d.receipt FROM communication_events e
+                 JOIN communication_deliveries d ON e.seq=d.seq WHERE e.run_id=?
+-                ORDER BY e.seq,d.recipient''', (self.run_id,)).fetchall()
++                ORDER BY d.seq,d.recipient''', (self.run_id,)).fetchall()
+         return [{'seq': r['seq'], 'recipient': r['recipient'],
+                  'receipt': json.loads(r['receipt']) if r['receipt'] else None} for r in rows]
+ 

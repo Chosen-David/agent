@@ -1,0 +1,11 @@
+--- baseline
++++ candidate
+@@ -314,7 +314,7 @@
+     def usage(self):
+         """Exact envelope bytes including fan-out; deliberately no token estimate."""
+         with self.connect() as db:
+-            row = db.execute('SELECT * FROM communication_usage_v1 WHERE run_id=?',
++            row = db.execute('SELECT events,envelope_bytes,deliveries,delivery_bytes FROM communication_usage_v1 WHERE run_id=?',
+                              (self.run_id,)).fetchone()
+         return {'events': row['events'], 'envelope_bytes': row['envelope_bytes'],
+                 'deliveries': row['deliveries'], 'delivery_bytes': row['delivery_bytes'], 'tokens': None,

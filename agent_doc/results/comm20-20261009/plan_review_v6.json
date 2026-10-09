@@ -1,0 +1,57 @@
+{
+  "schema_version": "independent-plan-review/v1",
+  "task_id": "COMM20-01",
+  "review_version": 6,
+  "decision": "revise",
+  "reviewer": "host collaboration context /root/comm20_plan_review",
+  "domains": {
+    "intent": {
+      "verdict": "pass",
+      "reason": "Only previously unexecuted17 refined within original20round local API scope."
+    },
+    "guide": {
+      "verdict": "pass",
+      "reason": "Guide inventory hashes match and human directory remains untouched."
+    },
+    "prior_results": {
+      "verdict": "pass",
+      "reason": "Old rounds01\u201304 raw data/negative decisions and old harness/config remain frozen; new hypothesis does not consume rejected speedup as proof."
+    },
+    "acceptance": {
+      "verdict": "pass",
+      "reason": "Original thresholds/budget/public primary20klast/absent and all guards retained; genuine independent replay remains mandatory."
+    },
+    "risk": {
+      "verdict": "pass",
+      "reason": "No schema/index/API/trust check removal proposed; low-count query output retains ordered pending semantics, subject to snapshot correction below."
+    },
+    "resources": {
+      "verdict": "pass",
+      "reason": "Original budget and round count unchanged; no model/GPU/service or SGLang work."
+    },
+    "assumptions": {
+      "verdict": "fail",
+      "reason": "Event count and following EXISTS read do not share an explicit SQLite read transaction; concurrent publisher can invalidate <=limit sort bound."
+    }
+  },
+  "blocking_findings": [
+    {
+      "id": "V6-B1",
+      "target": "scripts/benchmark_communication_candidates_v2.py variant17 replacement count/EXISTS reads",
+      "issue": "connect() wraps with db but SELECT-only sqlite3 does not implicitly BEGIN; event ledger trigger/count is exact at count read, but a later SELECT can observe committed events inserted afterwards. Count<=limit therefore does not guarantee sort<=limit under concurrent publish.",
+      "change": "If retaining exact bounded query claim, explicitly BEGIN a read transaction before count and query; frozen adversarial producer/reader check must show same snapshot. Alternatively version claim to routing hint without concurrent cardinality bound and independently validate linearizable at-least-once output semantics. Rehash new candidate generator/plan before running17.",
+      "verification": "Source checks explicit read transaction or narrowed claim; independent concurrent commit between count and query verifies intended behavior. Guard overhead remains original thresholds, not relaxed."
+    }
+  ],
+  "reviewed_plan": {
+    "path": "agent_doc/results/comm20-20261009/task_dag_v6.json",
+    "sha256": "e45b5981d880c21f04221b0b06fae7a236b9a58da8daae57377a7d910aab5b9d"
+  },
+  "harness_sha256": "fe4a78631873ad49b47bb6c5720d49a0ecf207a6e79684265674c3e308c2d29d",
+  "source_findings": "Communication usage ledger table creation/backfill/triggers commit together under constructor BEGIN IMMEDIATE; event+fanout triggers inside publish BEGIN IMMEDIATE. Supported append-only API preserves ledger; direct historic delete/replace unsupported. Two inbox SELECTs still require own shared snapshot for bound.",
+  "limitations": [
+    "No new candidate experiment run or performance accepted.",
+    "All V6 current supplied evidence/guide/runtime hashes matched.",
+    "Old raw measurements and review versions untouched."
+  ]
+}

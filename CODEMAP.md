@@ -154,3 +154,5 @@ COMM-INBOX-01: `agent_runtime/communication.py` → SQLite待处理收件箱；`
 COMM-PERF-01：`agent_doc/results/comm-pending-index-20261009/` 和 `comm-pending-index-integration-20261009/` 保存独立复测和研究补充。并发main `ab6cc59` 已发布等价partial index，保留其源码/测试/benchmark，不增加重复索引。验收针对明确历史源快照，当前采用说明见整合目录publication_reconciliation.md。
 
 COMM-ORDER-01: `agent_runtime/communication.py::inbox` 使用等价join key排序以利用现有pending索引；`scripts/benchmark_communication_order.py` 复用已有基准辅助，覆盖繁忙/跨run/末尾/空任务，`tests/test_communication.py` 保持分页与回执语义。证据 `agent_doc/results/comm-order-20261009/`；只验本地SQL，不代表模型/Token收益。
+
+COMM20-01: `agent_runtime/communication.py::usage` 明确列投影；`scripts/benchmark_communication_candidates.py` 与版本化 `_v2.py` 提供单候选冻结评测，独立验收决定采用。20轮证据/负例见 `agent_doc/results/comm20-20261009/report.md`，新增边界回归在 `tests/test_communication_regressions.py`。仅第16轮采用，其他候选源码是实验记录，不是部署代码。

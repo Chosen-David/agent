@@ -2,6 +2,8 @@
 
 ## 2026-10-09
 
+- [ ] [COMM20-01] 用户触发连续20轮通信优化，逐轮独立验收、有收益才采用。 ([detail](task_details/COMM20-01.md))
+
 - [x] [COMM-ORDER-01] 保持通信顺序的有界待办查询，测量/独立验收后直接main。 ([detail](task_details/COMM-ORDER-01.md))
 
 - [x] [TOK-001] Verified short token reduction and main publication; continuous target now 1/100. ([detail](task_details/TOK-001.md))

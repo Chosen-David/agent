@@ -1,0 +1,28 @@
+--- 
++++ 
+@@ -163,12 +163,6 @@
+         if not isinstance(refs, list) or not refs:
+             raise ValueError('reference the artifact, question, review or blocker record')
+         # Reuse existing path/digest/ID checks instead of a divergent validator.
+-        errors = validate({'schema_version': 1, 'run_id': self.run_id,
+-                           'role': event['sender'], 'input_version': event['input_version'],
+-                           'status': 'partial', 'limitations': ['communication, not completion'],
+-                           'artifacts': refs, 'checks': [], 'tasks': []}, self.root)
+-        if errors:
+-            raise ValueError('; '.join(errors))
+         with self.connect() as db:
+             db.execute('BEGIN IMMEDIATE')
+             old = db.execute('SELECT seq,body FROM communication_events WHERE run_id=? AND event_id=?',
+@@ -177,6 +171,12 @@
+                 if old['body'] != body:
+                     raise ValueError('event_id reused with different content')
+                 return {'seq': old['seq'], 'recipients': recipients, 'duplicate': True}
++            errors = validate({'schema_version': 1, 'run_id': self.run_id,
++                               'role': event['sender'], 'input_version': event['input_version'],
++                               'status': 'partial', 'limitations': ['communication, not completion'],
++                               'artifacts': refs, 'checks': [], 'tasks': []}, self.root)
++            if errors:
++                raise ValueError('; '.join(errors))
+             usage = db.execute('SELECT events,delivery_bytes FROM communication_usage_v1 WHERE run_id=?',
+                                (self.run_id,)).fetchone()
+             if usage['events'] >= self.plan.get('max_events', 1000):

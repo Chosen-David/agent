@@ -1,0 +1,24 @@
+--- baseline
++++ candidate
+@@ -57,7 +57,8 @@
+     def __init__(self, db_path, plan, artifact_root):
+         check_plan(plan)
+         # Freeze caller data as well as the persisted plan.
+-        self.plan = json.loads(canonical(plan))
++        plan_body = canonical(plan)
++        self.plan = json.loads(plan_body)
+         self.run_id = self.plan['run_id']
+         self.root = Path(artifact_root).resolve()
+         self.path = guard_write_path(db_path)
+@@ -83,9 +84,9 @@
+             ''')
+             db.execute('BEGIN IMMEDIATE')
+             db.execute('INSERT OR IGNORE INTO communication_plans VALUES (?,?,?)',
+-                       (self.run_id, canonical(self.plan), str(self.root)))
++                       (self.run_id, plan_body, str(self.root)))
+             row = db.execute('SELECT body,root FROM communication_plans WHERE run_id=?', (self.run_id,)).fetchone()
+-            if tuple(row) != (canonical(self.plan), str(self.root)):
++            if tuple(row) != (plan_body, str(self.root)):
+                 raise ValueError('plan/root changed: create a new run and reconcile outstanding messages')
+             self._init_usage(db)
+             db.execute('INSERT OR IGNORE INTO communication_usage_v1 VALUES (?,0,0,0,0)',

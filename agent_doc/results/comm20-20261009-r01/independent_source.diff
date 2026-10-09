@@ -1,0 +1,10 @@
+--- baseline
++++ candidate
+@@ -77,6 +77,7 @@
+                     seq INTEGER NOT NULL, recipient TEXT NOT NULL,
+                     record TEXT NOT NULL, request TEXT NOT NULL,
+                     PRIMARY KEY(seq,recipient));
++                CREATE INDEX IF NOT EXISTS comm20_delivery_cover ON communication_deliveries(recipient,receipt,seq);
+                 CREATE INDEX IF NOT EXISTS communication_pending_recipient
+                     ON communication_deliveries(recipient,seq)
+                     WHERE receipt IS NULL;

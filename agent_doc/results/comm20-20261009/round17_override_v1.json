@@ -1,0 +1,10 @@
+{
+  "round": 17,
+  "name": "exact-ledger empty/low-cardinality query routing",
+  "operation": "inbox",
+  "primary_case": "20k foreign pending with last5target and absent target; zero-event guard; single/interleaved/history guards",
+  "hypothesis": "Reuse exact transactionally maintained event ledger. Zero target events safely return empty; <=limit targetevents bound indexed run-local EXISTS sorting, otherwise preserve strongest ordered recipient pending scan. No indexes/migration/storage changes.",
+  "acceptance": "Original thresholds unchanged; both20klast/absent primary, allpublicsemantic andlatency/write/reopen/storage guards, independent5pair replay. Ledgerappend-only assumption existing documented supported behavior; no directSQLdeletion/rewriting supported.",
+  "rationale": "r03/r04 accepted negative data shows run-first pruning benefit and index-migration cost; new no-index conditional hypothesis, not relaxation of thresholds or reuse of rejected speedup as current results.",
+  "harness": "scripts/benchmark_communication_candidates_v2.py"
+}

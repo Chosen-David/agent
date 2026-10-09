@@ -1,0 +1,1768 @@
+{
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "sqlite": "3.53.1",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39"
+  },
+  "warmups": 3,
+  "repeats": 11,
+  "cases": [
+    {
+      "total": 100,
+      "layout": "single",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 363,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 1911,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                WHERE e.run_id='target' AND EXISTS (SELECT 1 FROM communication_deliveries d\n                    WHERE d.seq=e.seq AND d.recipient='reader' AND d.receipt IS NULL)\n                ORDER BY e.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 0.608339,
+          "baseline": 0.483998
+        },
+        {
+          "baseline": 0.367264,
+          "candidate": 0.838369
+        },
+        {
+          "candidate": 0.51639,
+          "baseline": 0.813823
+        },
+        {
+          "baseline": 0.407658,
+          "candidate": 0.450718
+        },
+        {
+          "candidate": 0.429601,
+          "baseline": 0.875048
+        },
+        {
+          "baseline": 0.926235,
+          "candidate": 0.784064
+        },
+        {
+          "candidate": 0.732822,
+          "baseline": 0.472412
+        },
+        {
+          "baseline": 0.499729,
+          "candidate": 0.677174
+        },
+        {
+          "candidate": 0.883653,
+          "baseline": 0.420263
+        },
+        {
+          "baseline": 0.845069,
+          "candidate": 0.685844
+        },
+        {
+          "candidate": 0.713032,
+          "baseline": 0.401285
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 2.294103,
+        "candidate": 2.217446
+      },
+      "median_ms": {
+        "baseline": 0.483998,
+        "candidate": 0.685844
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 0.933655,
+            "ack_ms": 0.608224
+          },
+          "candidate": {
+            "publish_ms": 0.742323,
+            "ack_ms": 0.477488
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.912216,
+            "ack_ms": 0.484327
+          },
+          "baseline": {
+            "publish_ms": 1.005318,
+            "ack_ms": 0.461707
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.044532,
+            "ack_ms": 0.799996
+          },
+          "candidate": {
+            "publish_ms": 0.830561,
+            "ack_ms": 0.439526
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.616944,
+            "ack_ms": 0.452657
+          },
+          "baseline": {
+            "publish_ms": 0.853809,
+            "ack_ms": 0.44928
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.575082,
+            "ack_ms": 0.481093
+          },
+          "candidate": {
+            "publish_ms": 0.645379,
+            "ack_ms": 0.384239
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.664447,
+            "ack_ms": 0.439921
+          },
+          "baseline": {
+            "publish_ms": 0.964035,
+            "ack_ms": 0.450391
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.647955,
+            "ack_ms": 0.457264
+          },
+          "candidate": {
+            "publish_ms": 0.864735,
+            "ack_ms": 0.435253
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.776999,
+            "ack_ms": 0.41017
+          },
+          "baseline": {
+            "publish_ms": 1.464257,
+            "ack_ms": 0.583169
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.856151,
+            "ack_ms": 0.84817
+          },
+          "candidate": {
+            "publish_ms": 0.868893,
+            "ack_ms": 0.465744
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.446289,
+            "ack_ms": 0.807803
+          },
+          "baseline": {
+            "publish_ms": 0.829252,
+            "ack_ms": 0.635223
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.032052,
+            "ack_ms": 0.598938
+          },
+          "candidate": {
+            "publish_ms": 1.140528,
+            "ack_ms": 0.878925
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 0.73265,
+          "candidate": 0.855041
+        },
+        {
+          "candidate": 0.718974,
+          "baseline": 0.64271
+        },
+        {
+          "baseline": 0.7399,
+          "candidate": 0.659884
+        },
+        {
+          "candidate": 0.557657,
+          "baseline": 0.662269
+        },
+        {
+          "baseline": 0.791903,
+          "candidate": 0.611611
+        },
+        {
+          "candidate": 0.748433,
+          "baseline": 0.776423
+        },
+        {
+          "baseline": 0.577505,
+          "candidate": 0.618462
+        },
+        {
+          "candidate": 3.604521,
+          "baseline": 0.823575
+        },
+        {
+          "baseline": 0.891917,
+          "candidate": 0.979225
+        },
+        {
+          "candidate": 0.939155,
+          "baseline": 0.638385
+        },
+        {
+          "baseline": 0.774671,
+          "candidate": 1.112458
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 0.72966,
+          "candidate": 0.793978
+        },
+        {
+          "candidate": 0.846645,
+          "baseline": 0.786308
+        },
+        {
+          "baseline": 0.900068,
+          "candidate": 1.562829
+        }
+      ],
+      "storage": {
+        "baseline": 139264,
+        "candidate": 139264
+      }
+    },
+    {
+      "total": 20000,
+      "layout": "single",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 363,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 320546,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                WHERE e.run_id='target' AND EXISTS (SELECT 1 FROM communication_deliveries d\n                    WHERE d.seq=e.seq AND d.recipient='reader' AND d.receipt IS NULL)\n                ORDER BY e.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 11.894456,
+          "baseline": 0.548475
+        },
+        {
+          "baseline": 0.667687,
+          "candidate": 16.964686
+        },
+        {
+          "candidate": 21.746214,
+          "baseline": 1.434676
+        },
+        {
+          "baseline": 0.923355,
+          "candidate": 12.007389
+        },
+        {
+          "candidate": 13.510677,
+          "baseline": 1.014394
+        },
+        {
+          "baseline": 0.408262,
+          "candidate": 10.912881
+        },
+        {
+          "candidate": 10.864193,
+          "baseline": 0.707609
+        },
+        {
+          "baseline": 0.550497,
+          "candidate": 23.059627
+        },
+        {
+          "candidate": 19.533453,
+          "baseline": 0.990243
+        },
+        {
+          "baseline": 0.668933,
+          "candidate": 9.834844
+        },
+        {
+          "candidate": 13.983411,
+          "baseline": 1.5653
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 1.570394,
+        "candidate": 1.952911
+      },
+      "median_ms": {
+        "baseline": 0.707609,
+        "candidate": 13.510677
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 5.996987,
+            "ack_ms": 1.318664
+          },
+          "candidate": {
+            "publish_ms": 0.757721,
+            "ack_ms": 0.429263
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.164303,
+            "ack_ms": 0.882534
+          },
+          "baseline": {
+            "publish_ms": 1.15968,
+            "ack_ms": 0.540854
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.674847,
+            "ack_ms": 0.658261
+          },
+          "candidate": {
+            "publish_ms": 0.637645,
+            "ack_ms": 0.480592
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.877285,
+            "ack_ms": 0.828147
+          },
+          "baseline": {
+            "publish_ms": 0.781832,
+            "ack_ms": 0.48426
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.284799,
+            "ack_ms": 0.441204
+          },
+          "candidate": {
+            "publish_ms": 0.947869,
+            "ack_ms": 0.622085
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 2.941974,
+            "ack_ms": 0.527782
+          },
+          "baseline": {
+            "publish_ms": 0.865542,
+            "ack_ms": 0.509725
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.660219,
+            "ack_ms": 0.442294
+          },
+          "candidate": {
+            "publish_ms": 0.819056,
+            "ack_ms": 0.437556
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.722162,
+            "ack_ms": 0.780159
+          },
+          "baseline": {
+            "publish_ms": 0.772786,
+            "ack_ms": 0.434362
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.01246,
+            "ack_ms": 0.631149
+          },
+          "candidate": {
+            "publish_ms": 0.828904,
+            "ack_ms": 0.723719
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.761123,
+            "ack_ms": 1.094564
+          },
+          "baseline": {
+            "publish_ms": 0.922679,
+            "ack_ms": 0.837416
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 2.201132,
+            "ack_ms": 1.730373
+          },
+          "candidate": {
+            "publish_ms": 1.108323,
+            "ack_ms": 0.868925
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 1.030398,
+          "candidate": 0.759116
+        },
+        {
+          "candidate": 0.882675,
+          "baseline": 0.763387
+        },
+        {
+          "baseline": 0.652355,
+          "candidate": 0.569834
+        },
+        {
+          "candidate": 0.767364,
+          "baseline": 1.057987
+        },
+        {
+          "baseline": 1.146558,
+          "candidate": 0.731244
+        },
+        {
+          "candidate": 2.61976,
+          "baseline": 0.590852
+        },
+        {
+          "baseline": 0.956986,
+          "candidate": 0.633968
+        },
+        {
+          "candidate": 0.644391,
+          "baseline": 1.500715
+        },
+        {
+          "baseline": 0.606552,
+          "candidate": 0.809918
+        },
+        {
+          "candidate": 0.955355,
+          "baseline": 1.204529
+        },
+        {
+          "baseline": 1.255334,
+          "candidate": 0.685042
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 0.928399,
+          "candidate": 1.256282
+        },
+        {
+          "candidate": 0.909966,
+          "baseline": 0.9431
+        },
+        {
+          "baseline": 1.014392,
+          "candidate": 1.151025
+        }
+      ],
+      "storage": {
+        "baseline": 6492160,
+        "candidate": 6492160
+      }
+    },
+    {
+      "total": 20000,
+      "layout": "interleaved",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 783,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 80536,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                WHERE e.run_id='target' AND EXISTS (SELECT 1 FROM communication_deliveries d\n                    WHERE d.seq=e.seq AND d.recipient='reader' AND d.receipt IS NULL)\n                ORDER BY e.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 5.489221,
+          "baseline": 0.898421
+        },
+        {
+          "baseline": 0.921382,
+          "candidate": 4.897938
+        },
+        {
+          "candidate": 4.276074,
+          "baseline": 0.699259
+        },
+        {
+          "baseline": 0.422558,
+          "candidate": 5.078465
+        },
+        {
+          "candidate": 4.642198,
+          "baseline": 0.649528
+        },
+        {
+          "baseline": 0.443822,
+          "candidate": 3.945508
+        },
+        {
+          "candidate": 3.395422,
+          "baseline": 0.978724
+        },
+        {
+          "baseline": 0.476021,
+          "candidate": 3.822286
+        },
+        {
+          "candidate": 4.587629,
+          "baseline": 0.623134
+        },
+        {
+          "baseline": 0.389581,
+          "candidate": 4.144851
+        },
+        {
+          "candidate": 3.680476,
+          "baseline": 0.526522
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 1.684655,
+        "candidate": 1.687243
+      },
+      "median_ms": {
+        "baseline": 0.623134,
+        "candidate": 4.276074
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 1.556174,
+            "ack_ms": 1.160704
+          },
+          "candidate": {
+            "publish_ms": 0.835333,
+            "ack_ms": 1.161334
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.873632,
+            "ack_ms": 0.465597
+          },
+          "baseline": {
+            "publish_ms": 0.910957,
+            "ack_ms": 0.435545
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.964325,
+            "ack_ms": 0.521837
+          },
+          "candidate": {
+            "publish_ms": 0.649022,
+            "ack_ms": 0.831424
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.536123,
+            "ack_ms": 1.162898
+          },
+          "baseline": {
+            "publish_ms": 1.164276,
+            "ack_ms": 0.974291
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.108518,
+            "ack_ms": 0.536763
+          },
+          "candidate": {
+            "publish_ms": 0.645406,
+            "ack_ms": 0.49307
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.710105,
+            "ack_ms": 0.498294
+          },
+          "baseline": {
+            "publish_ms": 1.172031,
+            "ack_ms": 0.671369
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.009279,
+            "ack_ms": 1.0947
+          },
+          "candidate": {
+            "publish_ms": 0.886341,
+            "ack_ms": 0.686279
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.560349,
+            "ack_ms": 1.536486
+          },
+          "baseline": {
+            "publish_ms": 0.894336,
+            "ack_ms": 0.653115
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.727804,
+            "ack_ms": 0.510657
+          },
+          "candidate": {
+            "publish_ms": 0.706059,
+            "ack_ms": 0.958517
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.135607,
+            "ack_ms": 0.442902
+          },
+          "baseline": {
+            "publish_ms": 1.42345,
+            "ack_ms": 1.331026
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 2.17865,
+            "ack_ms": 1.864844
+          },
+          "candidate": {
+            "publish_ms": 0.995872,
+            "ack_ms": 0.81196
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 1.610631,
+          "candidate": 2.251988
+        },
+        {
+          "candidate": 0.615256,
+          "baseline": 1.706768
+        },
+        {
+          "baseline": 0.933856,
+          "candidate": 1.095894
+        },
+        {
+          "candidate": 2.258914,
+          "baseline": 0.677793
+        },
+        {
+          "baseline": 0.681406,
+          "candidate": 0.571358
+        },
+        {
+          "candidate": 0.662605,
+          "baseline": 0.663434
+        },
+        {
+          "baseline": 0.684484,
+          "candidate": 0.847567
+        },
+        {
+          "candidate": 1.192637,
+          "baseline": 0.722604
+        },
+        {
+          "baseline": 0.899073,
+          "candidate": 0.878848
+        },
+        {
+          "candidate": 1.200169,
+          "baseline": 1.622947
+        },
+        {
+          "baseline": 1.0093,
+          "candidate": 1.05865
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 0.855155,
+          "candidate": 0.766141
+        },
+        {
+          "candidate": 1.005264,
+          "baseline": 2.040696
+        },
+        {
+          "baseline": 0.937602,
+          "candidate": 0.941771
+        }
+      ],
+      "storage": {
+        "baseline": 6443008,
+        "candidate": 6443008
+      }
+    },
+    {
+      "total": 20000,
+      "layout": "last",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 140165,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 261,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                WHERE e.run_id='target' AND EXISTS (SELECT 1 FROM communication_deliveries d\n                    WHERE d.seq=e.seq AND d.recipient='reader' AND d.receipt IS NULL)\n                ORDER BY e.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 0.427957,
+          "baseline": 4.569191
+        },
+        {
+          "baseline": 4.482922,
+          "candidate": 0.462437
+        },
+        {
+          "candidate": 0.41104,
+          "baseline": 3.045675
+        },
+        {
+          "baseline": 3.493593,
+          "candidate": 0.492097
+        },
+        {
+          "candidate": 0.356932,
+          "baseline": 2.918358
+        },
+        {
+          "baseline": 4.070328,
+          "candidate": 0.671923
+        },
+        {
+          "candidate": 0.66654,
+          "baseline": 3.84638
+        },
+        {
+          "baseline": 3.116686,
+          "candidate": 0.443697
+        },
+        {
+          "candidate": 0.353232,
+          "baseline": 3.652807
+        },
+        {
+          "baseline": 3.119157,
+          "candidate": 0.464817
+        },
+        {
+          "candidate": 0.843279,
+          "baseline": 3.627291
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 1.277513,
+        "candidate": 1.767272
+      },
+      "median_ms": {
+        "baseline": 3.627291,
+        "candidate": 0.462437
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 1.257261,
+            "ack_ms": 0.997439
+          },
+          "candidate": {
+            "publish_ms": 1.078628,
+            "ack_ms": 0.546281
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.733626,
+            "ack_ms": 0.431499
+          },
+          "baseline": {
+            "publish_ms": 1.171751,
+            "ack_ms": 0.531081
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.759295,
+            "ack_ms": 0.462969
+          },
+          "candidate": {
+            "publish_ms": 0.838443,
+            "ack_ms": 0.430386
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.035433,
+            "ack_ms": 0.637952
+          },
+          "baseline": {
+            "publish_ms": 1.28914,
+            "ack_ms": 0.631819
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.798574,
+            "ack_ms": 1.248464
+          },
+          "candidate": {
+            "publish_ms": 1.089506,
+            "ack_ms": 0.811426
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.906925,
+            "ack_ms": 0.568448
+          },
+          "baseline": {
+            "publish_ms": 0.631712,
+            "ack_ms": 0.482039
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.864517,
+            "ack_ms": 0.597227
+          },
+          "candidate": {
+            "publish_ms": 0.953107,
+            "ack_ms": 0.471871
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.645328,
+            "ack_ms": 0.508026
+          },
+          "baseline": {
+            "publish_ms": 0.951606,
+            "ack_ms": 0.726438
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.716342,
+            "ack_ms": 0.784744
+          },
+          "candidate": {
+            "publish_ms": 0.794193,
+            "ack_ms": 0.484629
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.769501,
+            "ack_ms": 0.452387
+          },
+          "baseline": {
+            "publish_ms": 0.945734,
+            "ack_ms": 0.588528
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.729225,
+            "ack_ms": 0.48447
+          },
+          "candidate": {
+            "publish_ms": 0.718252,
+            "ack_ms": 0.473421
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 0.675588,
+          "candidate": 2.01726
+        },
+        {
+          "candidate": 0.882734,
+          "baseline": 0.809022
+        },
+        {
+          "baseline": 0.580517,
+          "candidate": 0.617228
+        },
+        {
+          "candidate": 0.625889,
+          "baseline": 0.626176
+        },
+        {
+          "baseline": 0.822116,
+          "candidate": 1.170195
+        },
+        {
+          "candidate": 1.400375,
+          "baseline": 0.572506
+        },
+        {
+          "baseline": 1.037198,
+          "candidate": 0.63362
+        },
+        {
+          "candidate": 0.544488,
+          "baseline": 1.256353
+        },
+        {
+          "baseline": 0.655849,
+          "candidate": 0.773842
+        },
+        {
+          "candidate": 0.706972,
+          "baseline": 0.582847
+        },
+        {
+          "baseline": 0.652211,
+          "candidate": 0.589835
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 0.720311,
+          "candidate": 2.157866
+        },
+        {
+          "candidate": 1.678431,
+          "baseline": 0.91222
+        },
+        {
+          "baseline": 1.022445,
+          "candidate": 0.743678
+        }
+      ],
+      "storage": {
+        "baseline": 6447104,
+        "candidate": 6447104
+      }
+    },
+    {
+      "total": 20000,
+      "layout": "absent",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 140145,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 152,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                WHERE e.run_id='target' AND EXISTS (SELECT 1 FROM communication_deliveries d\n                    WHERE d.seq=e.seq AND d.recipient='reader' AND d.receipt IS NULL)\n                ORDER BY e.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 0.317067,
+          "baseline": 2.807406
+        },
+        {
+          "baseline": 3.250467,
+          "candidate": 0.406422
+        },
+        {
+          "candidate": 0.674814,
+          "baseline": 2.699022
+        },
+        {
+          "baseline": 4.124829,
+          "candidate": 0.41474
+        },
+        {
+          "candidate": 0.362693,
+          "baseline": 4.47021
+        },
+        {
+          "baseline": 3.409915,
+          "candidate": 0.436559
+        },
+        {
+          "candidate": 0.320913,
+          "baseline": 3.963689
+        },
+        {
+          "baseline": 4.000591,
+          "candidate": 1.749257
+        },
+        {
+          "candidate": 0.749015,
+          "baseline": 3.169473
+        },
+        {
+          "baseline": 3.986331,
+          "candidate": 0.45215
+        },
+        {
+          "candidate": 0.419814,
+          "baseline": 3.44947
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 1.502526,
+        "candidate": 3.215321
+      },
+      "median_ms": {
+        "baseline": 3.44947,
+        "candidate": 0.419814
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 1.287171,
+            "ack_ms": 0.985242
+          },
+          "candidate": {
+            "publish_ms": 1.452859,
+            "ack_ms": 0.598972
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.772368,
+            "ack_ms": 0.789118
+          },
+          "baseline": {
+            "publish_ms": 0.769499,
+            "ack_ms": 0.753165
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.026278,
+            "ack_ms": 0.441985
+          },
+          "candidate": {
+            "publish_ms": 0.837068,
+            "ack_ms": 0.582736
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.7057,
+            "ack_ms": 0.425501
+          },
+          "baseline": {
+            "publish_ms": 0.72974,
+            "ack_ms": 0.534932
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.769217,
+            "ack_ms": 0.660665
+          },
+          "candidate": {
+            "publish_ms": 0.797683,
+            "ack_ms": 0.435087
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.653067,
+            "ack_ms": 0.529219
+          },
+          "baseline": {
+            "publish_ms": 0.81544,
+            "ack_ms": 0.5468
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.797485,
+            "ack_ms": 0.67981
+          },
+          "candidate": {
+            "publish_ms": 0.830596,
+            "ack_ms": 1.151532
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.023554,
+            "ack_ms": 0.48659
+          },
+          "baseline": {
+            "publish_ms": 2.45547,
+            "ack_ms": 0.905941
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.986912,
+            "ack_ms": 0.449835
+          },
+          "candidate": {
+            "publish_ms": 2.235387,
+            "ack_ms": 0.518094
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.953384,
+            "ack_ms": 0.506968
+          },
+          "baseline": {
+            "publish_ms": 1.093616,
+            "ack_ms": 0.57244
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.789101,
+            "ack_ms": 0.735418
+          },
+          "candidate": {
+            "publish_ms": 0.870712,
+            "ack_ms": 0.451876
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 0.771113,
+          "candidate": 0.888808
+        },
+        {
+          "candidate": 0.739565,
+          "baseline": 0.672247
+        },
+        {
+          "baseline": 0.897775,
+          "candidate": 0.683886
+        },
+        {
+          "candidate": 0.654667,
+          "baseline": 0.569122
+        },
+        {
+          "baseline": 0.719282,
+          "candidate": 0.626034
+        },
+        {
+          "candidate": 0.760798,
+          "baseline": 0.599864
+        },
+        {
+          "baseline": 0.976926,
+          "candidate": 2.068479
+        },
+        {
+          "candidate": 0.671666,
+          "baseline": 0.757006
+        },
+        {
+          "baseline": 2.053343,
+          "candidate": 1.129806
+        },
+        {
+          "candidate": 0.709167,
+          "baseline": 0.90923
+        },
+        {
+          "baseline": 1.067468,
+          "candidate": 0.621671
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 0.70508,
+          "candidate": 0.999819
+        },
+        {
+          "candidate": 0.955256,
+          "baseline": 1.265273
+        },
+        {
+          "baseline": 0.753746,
+          "candidate": 0.801756
+        }
+      ],
+      "storage": {
+        "baseline": 6443008,
+        "candidate": 6443008
+      }
+    },
+    {
+      "total": 20000,
+      "layout": "history",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 200,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 220206,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                WHERE e.run_id='target' AND EXISTS (SELECT 1 FROM communication_deliveries d\n                    WHERE d.seq=e.seq AND d.recipient='reader' AND d.receipt IS NULL)\n                ORDER BY e.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 11.166083,
+          "baseline": 0.500383
+        },
+        {
+          "baseline": 0.452606,
+          "candidate": 12.38532
+        },
+        {
+          "candidate": 10.256616,
+          "baseline": 0.451834
+        },
+        {
+          "baseline": 0.512425,
+          "candidate": 10.5061
+        },
+        {
+          "candidate": 9.506549,
+          "baseline": 0.532397
+        },
+        {
+          "baseline": 0.382251,
+          "candidate": 9.395752
+        },
+        {
+          "candidate": 9.967089,
+          "baseline": 0.498467
+        },
+        {
+          "baseline": 0.350169,
+          "candidate": 9.207666
+        },
+        {
+          "candidate": 9.958451,
+          "baseline": 0.493911
+        },
+        {
+          "baseline": 0.341202,
+          "candidate": 10.686539
+        },
+        {
+          "candidate": 12.75084,
+          "baseline": 0.447271
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 1.628206,
+        "candidate": 1.888178
+      },
+      "median_ms": {
+        "baseline": 0.452606,
+        "candidate": 10.256616
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 1.360553,
+            "ack_ms": 1.154587
+          },
+          "candidate": {
+            "publish_ms": 1.392771,
+            "ack_ms": 0.555129
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.249709,
+            "ack_ms": 0.655731
+          },
+          "baseline": {
+            "publish_ms": 1.166577,
+            "ack_ms": 1.045505
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.989257,
+            "ack_ms": 0.852524
+          },
+          "candidate": {
+            "publish_ms": 0.843179,
+            "ack_ms": 0.708478
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.307586,
+            "ack_ms": 0.576581
+          },
+          "baseline": {
+            "publish_ms": 1.068935,
+            "ack_ms": 0.840582
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.854213,
+            "ack_ms": 0.681889
+          },
+          "candidate": {
+            "publish_ms": 0.669199,
+            "ack_ms": 0.456036
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.137883,
+            "ack_ms": 0.8242
+          },
+          "baseline": {
+            "publish_ms": 1.041294,
+            "ack_ms": 0.699814
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.648891,
+            "ack_ms": 3.051189
+          },
+          "candidate": {
+            "publish_ms": 0.741182,
+            "ack_ms": 0.879044
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 2.160084,
+            "ack_ms": 0.864887
+          },
+          "baseline": {
+            "publish_ms": 1.035157,
+            "ack_ms": 1.054676
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.63696,
+            "ack_ms": 0.462898
+          },
+          "candidate": {
+            "publish_ms": 0.641759,
+            "ack_ms": 0.480567
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.987447,
+            "ack_ms": 0.476492
+          },
+          "baseline": {
+            "publish_ms": 1.136828,
+            "ack_ms": 0.896697
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.079475,
+            "ack_ms": 1.022334
+          },
+          "candidate": {
+            "publish_ms": 1.085936,
+            "ack_ms": 0.548698
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 1.07993,
+          "candidate": 0.72138
+        },
+        {
+          "candidate": 1.205088,
+          "baseline": 1.560107
+        },
+        {
+          "baseline": 0.662869,
+          "candidate": 0.657422
+        },
+        {
+          "candidate": 0.68256,
+          "baseline": 1.531213
+        },
+        {
+          "baseline": 0.612235,
+          "candidate": 0.739279
+        },
+        {
+          "candidate": 0.782723,
+          "baseline": 0.776996
+        },
+        {
+          "baseline": 2.095267,
+          "candidate": 1.901334
+        },
+        {
+          "candidate": 0.677783,
+          "baseline": 0.711335
+        },
+        {
+          "baseline": 1.058192,
+          "candidate": 0.65978
+        },
+        {
+          "candidate": 0.990137,
+          "baseline": 1.78804
+        },
+        {
+          "baseline": 1.3162,
+          "candidate": 0.62509
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 1.043261,
+          "candidate": 0.860256
+        },
+        {
+          "candidate": 1.092955,
+          "baseline": 0.742887
+        },
+        {
+          "baseline": 0.850041,
+          "candidate": 0.718546
+        }
+      ],
+      "storage": {
+        "baseline": 6836224,
+        "candidate": 6836224
+      }
+    },
+    {
+      "total": 0,
+      "layout": "absent",
+      "routes": 1,
+      "observed": {
+        "baseline": {
+          "vm": 145,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                JOIN communication_deliveries d ON e.seq=d.seq\n                WHERE e.run_id='target' AND d.recipient='reader' AND d.receipt IS NULL\n                ORDER BY d.seq LIMIT 20"
+          ]
+        },
+        "candidate": {
+          "vm": 152,
+          "changes": 0,
+          "sql": [
+            "SELECT e.seq,e.body FROM communication_events e\n                WHERE e.run_id='target' AND EXISTS (SELECT 1 FROM communication_deliveries d\n                    WHERE d.seq=e.seq AND d.recipient='reader' AND d.receipt IS NULL)\n                ORDER BY e.seq LIMIT 20"
+          ]
+        }
+      },
+      "raw": [
+        {
+          "candidate": 0.320732,
+          "baseline": 0.429715
+        },
+        {
+          "baseline": 0.51759,
+          "candidate": 0.329266
+        },
+        {
+          "candidate": 0.710293,
+          "baseline": 0.328564
+        },
+        {
+          "baseline": 0.284199,
+          "candidate": 0.339783
+        },
+        {
+          "candidate": 0.299908,
+          "baseline": 0.295701
+        },
+        {
+          "baseline": 0.275425,
+          "candidate": 0.411358
+        },
+        {
+          "candidate": 0.323429,
+          "baseline": 0.32273
+        },
+        {
+          "baseline": 0.306632,
+          "candidate": 0.274823
+        },
+        {
+          "candidate": 0.272883,
+          "baseline": 0.940454
+        },
+        {
+          "baseline": 0.504603,
+          "candidate": 0.366446
+        },
+        {
+          "candidate": 1.111723,
+          "baseline": 0.420857
+        }
+      ],
+      "first_open_ms": {
+        "baseline": 1.60561,
+        "candidate": 1.509898
+      },
+      "median_ms": {
+        "baseline": 0.328564,
+        "candidate": 0.329266
+      },
+      "writes": [
+        {
+          "baseline": {
+            "publish_ms": 1.220669,
+            "ack_ms": 0.965739
+          },
+          "candidate": {
+            "publish_ms": 0.901539,
+            "ack_ms": 0.469371
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 2.056909,
+            "ack_ms": 2.205522
+          },
+          "baseline": {
+            "publish_ms": 0.852626,
+            "ack_ms": 0.803259
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.498942,
+            "ack_ms": 0.782086
+          },
+          "candidate": {
+            "publish_ms": 1.316742,
+            "ack_ms": 0.804622
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 1.22939,
+            "ack_ms": 0.498352
+          },
+          "baseline": {
+            "publish_ms": 0.74663,
+            "ack_ms": 0.463911
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.780546,
+            "ack_ms": 0.499299
+          },
+          "candidate": {
+            "publish_ms": 0.706969,
+            "ack_ms": 0.806166
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.675492,
+            "ack_ms": 1.219198
+          },
+          "baseline": {
+            "publish_ms": 1.086478,
+            "ack_ms": 0.467676
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.096822,
+            "ack_ms": 3.624785
+          },
+          "candidate": {
+            "publish_ms": 0.843551,
+            "ack_ms": 0.456274
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.955821,
+            "ack_ms": 0.802669
+          },
+          "baseline": {
+            "publish_ms": 0.783761,
+            "ack_ms": 0.839419
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 1.436785,
+            "ack_ms": 0.68331
+          },
+          "candidate": {
+            "publish_ms": 0.787834,
+            "ack_ms": 1.242716
+          }
+        },
+        {
+          "candidate": {
+            "publish_ms": 0.69261,
+            "ack_ms": 0.512471
+          },
+          "baseline": {
+            "publish_ms": 0.983051,
+            "ack_ms": 0.496528
+          }
+        },
+        {
+          "baseline": {
+            "publish_ms": 0.952931,
+            "ack_ms": 0.775786
+          },
+          "candidate": {
+            "publish_ms": 0.787141,
+            "ack_ms": 0.440524
+          }
+        }
+      ],
+      "reopen": [
+        {
+          "baseline": 0.734665,
+          "candidate": 1.742899
+        },
+        {
+          "candidate": 0.961685,
+          "baseline": 0.855246
+        },
+        {
+          "baseline": 1.060356,
+          "candidate": 1.233012
+        },
+        {
+          "candidate": 0.628323,
+          "baseline": 0.822544
+        },
+        {
+          "baseline": 1.031527,
+          "candidate": 0.865342
+        },
+        {
+          "candidate": 1.030332,
+          "baseline": 0.790326
+        },
+        {
+          "baseline": 0.663303,
+          "candidate": 2.527031
+        },
+        {
+          "candidate": 0.981203,
+          "baseline": 0.849517
+        },
+        {
+          "baseline": 0.943375,
+          "candidate": 1.070917
+        },
+        {
+          "candidate": 0.601021,
+          "baseline": 0.72703
+        },
+        {
+          "baseline": 0.644197,
+          "candidate": 1.144929
+        }
+      ],
+      "migration": [
+        {
+          "baseline": 0.650777,
+          "candidate": 0.805617
+        },
+        {
+          "candidate": 1.041868,
+          "baseline": 0.665957
+        },
+        {
+          "baseline": 0.912682,
+          "candidate": 2.041395
+        }
+      ],
+      "storage": {
+        "baseline": 122880,
+        "candidate": 122880
+      }
+    }
+  ]
+}

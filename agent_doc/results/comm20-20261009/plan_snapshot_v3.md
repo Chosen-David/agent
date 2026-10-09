@@ -1,0 +1,6 @@
+# COMM20-01 — user-triggered20 communication optimization rounds
+
+## Plan
+
+User explicitly triggered20 continuous rounds; existing direct-main authorization persists. PROJECT_ROOT=WORKFLOW_ROOT=this checkout. Empty human guide untouched; other tasks preserved. Rounds18–20 isolated negative safety challenges, never runtime candidates. Single task-index author root, producer root, independent plan/reviewer host collaboration contexts. Twenty ordered candidate hypotheses/budget/acceptance in agent_doc/results/comm20-20261009/config.json frozen before experiments. Each round sequential produce -> independent verify -> keep/revert -> next; no reinterpretation as20 successful releases. Improve full public local Mailbox functions, preserve reference/root/budget/identity/order/durability; latest papers inspire selection but model results remain unmeasured. No network protocol/service, GPU, model credentials or SGLang changes. Actual prior search8partial candidates with missing-record errors and knowledge no_hits retained; prior20k evidence gives diagnosis only. Ordinary reversible implementation trials authorized, only independently demonstrated safe improvements enter runtime. No tmux/backend found, no durable monitor claimed; host active session owns progress. Final fresh main integration and complete regression, expected-head non-force publication/readback.
+
