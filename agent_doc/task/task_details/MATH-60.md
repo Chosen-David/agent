@@ -22,3 +22,5 @@ root唯一TASK作者；独立fresh plan approve→produce→不同fresh verify_e
 - clean main fast-forward到da67ace275c66038eb0dda5d5ea4a9430dd385d7；读取AGENTS/TASK/角色/知识/状态。未见相同active任务。本地没有真实模型/GPU/服务器监督适配器，均不宣称部署。
 
 - 独立计划cycle2 approve；不同fresh结果审核usable-with-scope。首次ResultStore登记失败（card正式路径在outputs），保留attempt1，复制字节相同结果目录快照后，经原独立审核第二次实际FINAL重绑；父级观察两次FINAL后inject可信本地回调，最终验收/登记成功。10精确case、6结构检索/context4811chars、53回归、230镜像及5candidate保留。无模型/GPU/Lean/token/e2e/未见题测试；global既有code-reading stale未修；准备main发布。
+
+- 已直接main发布d5d3453b67413042b274a1e6507ab51e05b7f9d9；fresh fetch后CAS无force，推送后fetch/ls-remote/tree47d56cc24b87a24016dd09e3d2204b655a8ef3df匹配。本轮增加按需检索/完整前提知识入口，不报告Agent性能提升。state保留原next_topic、原候选状态，收尾仅登记verified提交与续接。
