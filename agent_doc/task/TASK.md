@@ -303,3 +303,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-59] 完成量、packetizer 与分块安全边界（文档限定） ([详情](task_details/MATH-59.md))
 
 - [x] [MATH-60] FIFO完成量知识入口与前提边界 ([详情](task_details/MATH-60.md))
+
+- [ ] [MATH-61] 离散二次稳定性证书与非正规瞬态；待独立审核 ([详情](task_details/MATH-61.md))

@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "id": "math.discrete-lyapunov",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "离散二次稳定性证书与非正规瞬态",
+  "summary": "固定有限实矩阵的Schur稳定等价唯一正定离散Lyapunov解；构造P范数收缩并保留欧氏条件数前因子，拒绝逐层谱半径认证切换系统。",
+  "aliases": [
+    "线性 迭代 特征值 单位圆 误差 先增大 能量",
+    "模型 每层 特征值 小于一 切换 发散",
+    "控制 数值 更新 噪声 稳定 误差 范围",
+    "discrete Lyapunov quadratic norm nonnormal transient"
+  ],
+  "domains": [
+    "linear-algebra",
+    "optimization-and-control",
+    "numerical-analysis"
+  ],
+  "structures": [
+    "discrete-linear-dynamics",
+    "quadratic-energy-certificate",
+    "nonnormal-transient",
+    "switched-system-boundary"
+  ],
+  "assumptions": [
+    "固定有限维实A，整数时间完整状态x_next=Ax；Schur稳定要求ρ(A)<1",
+    "实对称Q≻0和P≻0；半正定情形须另证，不能套严格稳定等价",
+    "扰动界必须与同一P范数相容；时变层或非线性域需另证统一增益/度量转换"
+  ],
+  "sources": [
+    {
+      "url": "https://ee363.stanford.edu/archive/lectures/lq-lyap.pdf",
+      "locator": "EE363 Winter2008-09 Lecture13 slides13-21–13-25;project examples/error recurrence are own derivations",
+      "accessed": "2026-10-09"
+    },
+    {
+      "url": "https://arxiv.org/html/2508.01410v2",
+      "locator": "v2 2026-03-13 §III–IV eq12–25;§V grid/cost discussion;research context only,no reproduction",
+      "accessed": "2026-10-09"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "agent_doc/results/math-discrete-lyapunov-20261009/verify.py",
+      "agent_doc/results/math-discrete-lyapunov-20261009/raw.json",
+      "agent_doc/results/math-discrete-lyapunov-20261009/independent_review_by_gpt.md"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.jordan-generalized-eigenspaces",
+      "version": 1
+    },
+    {
+      "id": "math.hermitian-spectral-schur",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.contraction-residual-certificate"
+    },
+    {
+      "type": "related",
+      "id": "math.descent-lyapunov-certificate"
+    },
+    {
+      "type": "related",
+      "id": "math.perturbation-propagation"
+    },
+    {
+      "type": "related",
+      "id": "math.linear-system-stability"
+    }
+  ]
+}

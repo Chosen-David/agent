@@ -1,0 +1,101 @@
+{
+  "schema_version": 1,
+  "snapshot": "f4bffb7f532e02129334cc8cbeb23938b497882acbf942d4883baf3b36a869a8",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.descent-lyapunov-certificate",
+      "version": 1,
+      "sha256": "bc544371ae176fca157dcb900c31780de1f47cbab1d128210e14dc578855691c",
+      "title": "下降证书、驻点与不变集的收敛边界",
+      "summary": "可量化下降加下界控制耗散总量；光滑梯度步可保证梯度趋零，却不自动给全序列或全局最优。连续物理能量须检查最大不变零耗散集，动量方法须扩展状态。",
+      "status": "published",
+      "assumptions": [
+        "离散下降：V(x_(k+1))≤V(x_k)−W(x_k)，W≥0，轨迹上V有有限下界",
+        "GD具体界：f:R^n→R可微、欧氏梯度全局L-Lipschitz（L>0），f有有限下界；精确梯度、固定0<alpha<2/L",
+        "离散聚点结论另外需要紧致正不变域、连续更新和连续W；不保证全序列收敛",
+        "连续LaSalle：开放域中局部Lipschitz自治向量场，紧致正不变集合，V为C1且沿轨迹导数非正；结论为到最大不变零导数集的距离趋零",
+        "不能将连续能量导数直接当数值离散每步下降，不能将模型质量分数当已证明V"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-descent/verify.py",
+          "docs/knowledge_learning/2026-10-07-descent/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "discrete",
+            "lyapunov"
+          ]
+        }
+      ],
+      "score": 10
+    },
+    {
+      "id": "math.contraction-residual-certificate",
+      "version": 1,
+      "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+      "title": "收缩迭代的残差误差证书与不精确求解边界",
+      "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+      "status": "published",
+      "assumptions": [
+        "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+        "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+        "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+          "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "nonnormal"
+          ]
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "math.discrete-budget-allocation",
+      "version": 1,
+      "sha256": "71cd29618df4439297c7b0d42f96e89230afeb5724aef660bfde2528d871e2dc",
+      "title": "有限菜单离散预算分配与代理最优性证书",
+      "summary": "可加整数成本/损失下用DP求有限菜单精确解；λ加权和可漏掉未支配最优，弱对偶只认证代理而非端到端精度。",
+      "status": "published",
+      "assumptions": [
+        "每组非空有限菜单，恰选一项；成本为非负整数，预算B为非负整数；允许空组序列边界",
+        "目标损失和资源成本均可加且固定；损失为有限实数；实测浮点最优性和硬延迟另需误差认证",
+        "对偶λ≥0且有限菜单min为真实值或认证下界；只认证已定义代理目标"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名Markdown一般归纳/弱对偶推导；非形式化",
+          "doc/results/math-allocation-20261008/：公开CPU整数/Fraction验证及独立审查；不含模型/GPU"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "discrete"
+          ]
+        }
+      ],
+      "score": 1
+    }
+  ]
+}
