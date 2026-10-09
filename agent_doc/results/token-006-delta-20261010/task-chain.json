@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-006-probe",
+      "owner": "native-delta-probe",
+      "action": "short_model_probe",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-006-delta-20261010",
+        "producer_task_id": "TOK-006-probe",
+        "producer_actor": "native-delta-probe",
+        "manifest_path": "agent_doc/results/token-006-delta-20261010/manifest.json",
+        "scope": "one short self-contained two-version artifact comparison; actual CLI observations, synthetic cancellation/unchanged-constraint semantics",
+        "validation_plan": {
+          "path": "agent_doc/results/token-006-delta-20261010/validation-plan.json",
+          "sha256": "8866b9c680ec9ec500c9fa81110e82af34336d25fc8ffe83b1eff9e8c712d8ae"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-006-verify",
+      "owner": "host-delta-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-006-probe"
+      ],
+      "result_validation": {
+        "result_id": "token-006-delta-20261010",
+        "producer_task_id": "TOK-006-probe",
+        "producer_actor": "native-delta-probe",
+        "manifest_path": "agent_doc/results/token-006-delta-20261010/manifest.json",
+        "scope": "one short self-contained two-version artifact comparison; actual CLI observations, synthetic cancellation/unchanged-constraint semantics",
+        "validation_plan": {
+          "path": "agent_doc/results/token-006-delta-20261010/validation-plan.json",
+          "sha256": "8866b9c680ec9ec500c9fa81110e82af34336d25fc8ffe83b1eff9e8c712d8ae"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-006-publish",
+      "owner": "main-ai",
+      "action": "publish_verified_improvement",
+      "depends_on": [
+        "TOK-006-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-006-delta-20261010",
+          "producer_task_id": "TOK-006-probe",
+          "producer_actor": "native-delta-probe",
+          "manifest_path": "agent_doc/results/token-006-delta-20261010/manifest.json",
+          "scope": "one short self-contained two-version artifact comparison; actual CLI observations, synthetic cancellation/unchanged-constraint semantics",
+          "validation_plan": {
+            "path": "agent_doc/results/token-006-delta-20261010/validation-plan.json",
+            "sha256": "8866b9c680ec9ec500c9fa81110e82af34336d25fc8ffe83b1eff9e8c712d8ae"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -2,6 +2,8 @@
 
 ## 2026-10-10
 
+- [x] [TOK-006] Character-splice short trial costs 246 more total tokens; negative preserved, not counted; line variant follows. ([detail](task_details/TOK-006.md))
+- [ ] [TOK-006-L] Same upgrade slot, complete-line version comparison; freeze a new short control and preserve character-splice negative. ([detail](task_details/TOK-006-L.md))
 - [x] [TOK-005] Explicit task-local inbox passed short real provider/quality checks and verified main; success target 5/100. ([detail](task_details/TOK-005.md))
 - [x] [TOK-004] Recoverable validation display passed scoped provider/quality checks and verified main publication; success target 4/100. ([detail](task_details/TOK-004.md))
 

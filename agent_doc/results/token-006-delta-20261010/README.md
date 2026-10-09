@@ -1,0 +1,7 @@
+# Character-offset comparison: failed gain acceptance
+
+Plan, inputs, source archives and two paid native turns are immutable. This first TOK-006 variant always includes the full base but uses character offsets for the new version. Both exact cancellation/new input/action/three-blocker answers pass and actual non-task text/tools match. Provider input -181, output +427 (candidate reasoning425), total19,990→20,236 (+246), spend40,226.
+
+Independent host verifies source/CLI exact restoration/raw accounting/quality controls and six boundary tests; **numerical_sanity explicitly fails** the original gain criterion. Registration is invalid for upgrade acceptance. We neither change the frozen plan nor reclassify this as a saving. `negative-acceptance.json` exports the immutable invalid history; `independent-review.json` identifies the failing domain even though the generic result-gate error says independent check failed. A later complete-line variant uses its own new run, sources/plan and provider data, and counts at most one upgrade for this family.
+
+Code snapshot is the measured v1 character codec, not current v2. Private originals retain actual rollout/RPC evidence; public export removes only confidential account notifications, leaving usage intact. Current-source checks after a codec change cannot authorize this old result. `task-format-repair.json` records uncounted metadata-only fixes, all original prose preserved. No guide writes, Claude, scheduler, or general long-text/cash/performance claim.

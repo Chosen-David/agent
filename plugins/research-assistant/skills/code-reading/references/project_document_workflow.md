@@ -1,5 +1,7 @@
 # 项目文档治理与任务闭环
 
+对比两个已固定版本的任务说明或文本产物时，完整 checkout 可用 `scripts/artifact_context.py --root ABSOLUTE_PROJECT_ROOT --before BEFORE_REF_JSON --after AFTER_REF_JSON`；两个引用 JSON 均为项目相对路径的 path/sha256 绑定。输出始终带完整旧版，新版只有在完整 JSON 更小时才用可恢复的单 splice，否则保留全文；`--full` 可显式查看两版全文。旧版在同一输出内，不依赖磁盘“已读”提示或模型历史仍在。`agent_runtime.artifact_context.restore_comparison` 按独立宿主项目/两个引用核对并恢复；这只是比较显示，不替代当前指南优先级、Plan/Progress 边界、取消/授权或结果验收。当前新版的取消和约束必须保留；输出超预算拒绝，不截断。
+
 工作流专属目录统一为 `agent_doc/`，项目自己的 `doc/` 与 `docs/` 保留原用途。新项目初始化只创建 `agent_doc/`；不因接入而自动改名、覆盖或导入已有 `doc/`。已有旧工作流目录须由用户明确选择后迁移，不能凭目录名判定归属。
 
 本库的旧 `doc/` 已按用户本次明确授权整体更名；已有指南字节原样保留。这是一次性目录迁移，不授予后续编辑指南或通用发布绕过权限。日常写入守卫继续保护新 `agent_doc/guide/` 及遗留 `doc/guide/`。

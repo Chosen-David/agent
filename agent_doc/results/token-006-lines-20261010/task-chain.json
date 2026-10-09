@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-006-L-probe",
+      "owner": "native-lines-probe",
+      "action": "short_model_probe",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-006-lines-20261010",
+        "producer_task_id": "TOK-006-L-probe",
+        "producer_actor": "native-lines-probe",
+        "manifest_path": "agent_doc/results/token-006-lines-20261010/manifest.json",
+        "scope": "one short self-contained two-version artifact comparison; actual CLI observations, synthetic cancellation/unchanged-constraint semantics",
+        "validation_plan": {
+          "path": "agent_doc/results/token-006-lines-20261010/validation-plan.json",
+          "sha256": "ff19338de63bf99fba1d99eb0d6ba750286eb8891797b006874f16723d73934b"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-006-L-verify",
+      "owner": "host-lines-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-006-L-probe"
+      ],
+      "result_validation": {
+        "result_id": "token-006-lines-20261010",
+        "producer_task_id": "TOK-006-L-probe",
+        "producer_actor": "native-lines-probe",
+        "manifest_path": "agent_doc/results/token-006-lines-20261010/manifest.json",
+        "scope": "one short self-contained two-version artifact comparison; actual CLI observations, synthetic cancellation/unchanged-constraint semantics",
+        "validation_plan": {
+          "path": "agent_doc/results/token-006-lines-20261010/validation-plan.json",
+          "sha256": "ff19338de63bf99fba1d99eb0d6ba750286eb8891797b006874f16723d73934b"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-006-L-publish",
+      "owner": "main-ai",
+      "action": "publish_verified_improvement",
+      "depends_on": [
+        "TOK-006-L-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-006-lines-20261010",
+          "producer_task_id": "TOK-006-L-probe",
+          "producer_actor": "native-lines-probe",
+          "manifest_path": "agent_doc/results/token-006-lines-20261010/manifest.json",
+          "scope": "one short self-contained two-version artifact comparison; actual CLI observations, synthetic cancellation/unchanged-constraint semantics",
+          "validation_plan": {
+            "path": "agent_doc/results/token-006-lines-20261010/validation-plan.json",
+            "sha256": "ff19338de63bf99fba1d99eb0d6ba750286eb8891797b006874f16723d73934b"
+          }
+        }
+      ]
+    }
+  ]
+}

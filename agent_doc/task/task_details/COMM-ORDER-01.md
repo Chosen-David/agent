@@ -1,5 +1,8 @@
 # COMM-ORDER-01 — bounded ordered pending delivery
 
+Task-ID: COMM-ORDER-01
+Date: 2026-10-09
+
 ## Plan
 
 User goal/authorization: improve communication with verified benefit, ordinary direct-main publication. PROJECT_ROOT=WORKFLOW_ROOT=this repository. Current human guide is empty and untouched; existing task outcomes/cancellations remain. Source baseline ffe7f9d, includes pending index and transactional usage ledger. Scope only inbox ORDER BY equivalent join key, public API/order/ACK/isolated run/limits/budget/refs unchanged. No new schema, service, model protocol, SGLang edits or scheduler.
