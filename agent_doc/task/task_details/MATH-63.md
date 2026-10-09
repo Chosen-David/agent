@@ -30,3 +30,5 @@ Date: 2026-10-09
 - 严格保留所有旧知识/候选和holdout字节、原GPU及其他领域游标，未读holdout内容；未做模型/GPU/e2e/实际token测量或生产升级。
 - 全局project metadata检查仍被现有COMM20-01身份/日期不一致阻塞；不替本轮知识证据背书为全库通过。下一步是实测任务ID与旁信息协议，比较完整调用成本下的覆盖/错误。
 - 发布：验证后重新fetch，直接main并核对远端；具体提交与读取结果见publication.json。
+
+- 内容已直接main：`573e59edeb267115bc75dc0e2e06b4f8ac6ee99f`，远端ref、父提交和tree均读回一致；并发通信代码及发布记录已保留。此条与publication.json作为元数据后续提交，同样CAS非force并再次核对远端。
