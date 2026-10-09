@@ -327,4 +327,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [MATH-63] 有限消息容量与条件分类错误下界 ([详情](task_details/MATH-63.md))
 
-- [ ] [COMM-ACK-CONFIRM-01] ACK重试免写候选单次确认；未达冻结性能门槛不采用。 ([详情](task_details/COMM-ACK-CONFIRM-01.md))
+- [x] [COMM-ACK-CONFIRM-01] ACK重试免写单次确认已独立验收并发布负结果；未达门槛，运行时保留基线。 ([详情](task_details/COMM-ACK-CONFIRM-01.md))
