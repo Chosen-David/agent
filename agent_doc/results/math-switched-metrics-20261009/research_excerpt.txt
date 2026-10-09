@@ -1,0 +1,110 @@
+                                                                                                                                                                                           1
+
+
+
+
+                                             Practical Stabilization of Switched Affine Systems
+                                               under Dwell Time: From Polytopic to p-Norm
+                                                             Lyapunov Functions
+                                                                      Felipe Cinto, Alexis J. Vallarella, Hernan Haimovich, Paulo C. Pellanda
+
+
+
+                                              Abstract—This paper addresses the stabilization of switched                  [4]–[7]. By contrast, for switched affine systems, the origin
+arXiv:2609.37840v1 [math.OC] 29 Sep 2026
+
+
+
+
+                                           affine systems under dwell-time constraints around a desired                    need not be an equilibrium point of any subsystem, and asymp-
+                                           operating point that is not a common equilibrium of the sub-                    totic stabilization can be achieved only through arbitrarily
+                                           systems. Since asymptotic stabilization is generally unattainable
+                                           in this setting, the objective is to ensure that trajectories converge          fast switching. In many practical applications, however, dwell-
+                                           to and remain within a prescribed region containing the desired                 time constraints limit the switching frequency [8], [9]. In
+                                           operating point. The main contribution is the development of                    such cases, only practical stabilization is achievable, in the
+                                           Lyapunov-based tools that accommodate target regions more                       sense that the state converges to and remains within a desired
+                                           general than those induced by quadratic Lyapunov functions. In                  neighborhood of the desired point.
+                                           particular, we establish a constructive Lyapunov characterization
+                                           for a broad family of weighted p-norm functions, which general-                    Switched systems subject to dwell-time constraints have
+                                           izes the classical quadratic Lyapunov equivalence and underpins                 attracted substantial research attention because they capture
+                                           the proposed hybrid-control and dwell-time developments. Fo-                    practical switching limitations. For example, [3] provides con-
+                                           cusing on the case in which the desired region is a polytope,                   vex conditions for robust stabilization of uncertain switched
+                                           and building on existing Lyapunov-based methods, we develop                     systems under mode-dependent dwell-time; [10] presents
+                                           a constructive two-step method that starts from a polytopic
+                                           Lyapunov certificate for the average system and yields a smooth                 closed-form dwell-time formulas that confine oscillations to
+                                           weighted p-norm Lyapunov function for all sufficiently large p.                 prescribed neighborhoods of equilibria in planar switched
+                                           We prove that this extension guarantees practical asymptotic                    affine systems, with direct applications to non-spiking neuron
+                                           stability of the desired operating point and yields a Lyapunov-                 models; and [11] uses space or time regularization within a
+                                           certified invariant region under minimum dwell-time switching.                  hybrid systems framework to achieve practical stabilization
+                                           Numerical examples illustrate the effectiveness of the proposed
+                                           method.                                                                         of operating points in switched affine systems while guaran-
+                                                                                                                           teeing minimum dwell-times. More recently, [12] investigates
+                                              Index Terms—Switched systems, Dwell-time switching, Stabil-                  set convergence and practical stability for switched systems
+decomposition. On the practical side, starting from a polytopic           A. Problem Statement
+Lyapunov certificate for the average system, we develop a                   Consider the switched affine system
+constructive two-step procedure to obtain a smooth weighted
+p-norm Lyapunov function that can be used directly in the                                ẋ(t) = Aσ(t) x(t) + bσ(t) =: fσ(t) (x),                (2)
+proposed hybrid switching strategies under unconstrained and
+dwell-time switching. This generalization offers practical ad-            where x ∈ Rn is the state, σ : R≥0 → NN is the switching
+vantages, such as allowing a larger minimum dwell time for                signal, and Ai ∈ Rn×n , bi ∈ Rn characterize subsystem i ∈
+a given target region or yielding a smaller practical stability           NN . We focus on the stability of the origin, since the analysis
+region for a prescribed minimum dwell-time.                               for an arbitrary operating point follows by a suitable change
+   The remainder of this paper is organized as follows. Sec-              of variables.
+tion II introduces the weighted p-norm Lyapunov functions,                   Define the simplex
+establishes a generalized Lyapunov equivalence, and devel-
+                                                                                Λ := λ ∈ RN : λi ∈ [0, 1] ∀i ∈ NN , λ⊤ 1 = 1 , (3)
+                                                                                      
+ops the hybrid switching strategy, proving uniform global
+asymptotic stability (UGAS) of the origin under arbitrarily fast
+switching. Section III adapts the space and time regularization           and, for each λ ∈ Λ, define the convex combinations
+techniques of [11] to this setting, establishing practical UGAS                                     N                        N
+under minimum dwell-time constraints. Given a polytopic
+                                                                                                    X                        X
+                                                                                           Aλ :=          λ i Ai ,   bλ :=         λi bi .       (4)
+function that characterizes the desired target region, Section IV                                   i=1                      i=1
+provides a procedure to certify that this function is a Lyapunov
+function, and then to approximate it by a p-norm Lyapunov                 We rely on the following standard assumption for the stabi-
+function for a sufficiently large p. Numerical examples are               lization of switched affine systems [2], [11], [18].
+presented in Section V, illustrating that increasing p beyond
+the quadratic case yields practical advantages, such as larger            Assumption 1. There exists λ∗ ∈ Λ such that Aλ∗ is Hurwitz
+minimum dwell times for a given target region, or smaller                 and bλ∗ = 0.
+practical stability regions for a prescribed minimum dwell
+time. Section VI concludes.                                                 Under Assumption 1, the average system
+   Notation. Let R, R≥0 , and N denote the sets of real, nonnegative
+real, and natural numbers, respectively, and let NN := {1, . . . , N }
+                                                                                                                                      3
+
+
+
+B. Weighted p-norm Lyapunov Functions                                  VR̂,p (z) = p1 ∥R̂z∥pp satisfies ⟨∇VR̂,p (z), Jz⟩ ≤ −βVR̂,p (z),
+  Given a full column rank matrix R ∈ Rr×n and p ∈ (1, ∞),             β := mink∈Nq+ℓ βk > 0.
+consider the weighted p-norm function                                    Define R := R̂T −1 . Since R̂ has full column rank and
+                                                                       T is nonsingular, R also has full column rank. Moreover,
+                       1     p    1 X          p
+           VR,p (x) := ∥Rx∥p =          |Ri: x| .      (6)             VR,p (x) = VR̂,p (z), and therefore
+                       p          p
+              Dε := D ∩ {(x, σ) : VR,p (x) ≥ ε}.           (22b)    chosen small enough so that the Lyapunov derivative remains
+                                                                    negative over the entire forced-flow interval following every
+This modification forces the system to flow in a neighborhood       jump. Consequently, the only phase in which VR,p may grow
+of the origin. The following theorem summarizes the proper-         is the initial forced-flow interval preceding the first jump. The
+ties of this regularization; the proof is given in Appendix C.      following theorem summarizes the resulting properties of HT ;
+                                                                    the proof is given in Appendix C.
+Theorem III.1. Suppose Assumption 1 holds. Let p ∈ (1, ∞),
+and let R ∈ Rr×n and S ∈ Rs×n be full column rank matrices          Theorem III.4. Assume Assumption 1 holds. Let p ∈ (1, ∞),
+such that (8) holds with A = Aλ∗ . Then, for any ε > 0, the         and let R ∈ Rr×n and S ∈ Rs×n be full column rank matrices
+following statements hold:                                          such that (8) holds with A = Aλ∗ . Then there exist TM > 0,
+a) there exists a constant T (ε) > 0 such that all solutions ϕ      a strictly increasing function ε : (0, TM ) → R>0 satisfying
+    to Hε satisfy t ≥ (j − 1)T (ε) for all (t, j) ∈ dom ϕ,          limT →0+ ε(T ) = 0, a function β ∈ KL, and a function α ∈
+b) the set Aε := {(x, σ) ∈ Rn × NN : VR,p (x) ≤ ε} is UGAS          K∞ such that for every T ∈ (0, TM ) and every solution ϕ to
+    for Hε .                                                        HT with initial condition ϕ(0, 0) = (x0 , σ0 , τ0 ), the following
+                                                                    statements hold for all (t, j) ∈ dom ϕ:
+                                                                                                                          
+                                                                    a) ∥ϕ(t, j)∥AT ≤ β ∥ϕ(0, 0)∥AT + α(∆0 ), t + j ,
+Remark III.2. Item a) guarantees a minimum dwell-time T (ε)
+between consecutive switches, while still allowing an initial       b) t ≥ (j − 1)T ,
+jump at some t ∈ [0, T (ε)).                                        where AT :={(x, σ, τ )∈Rn ×NN ×[0, 2T ] : VR,p (x) ≤ ε(T )},
+                                                                    and ∆0 := max{0, T − τ0 }.
+Remark III.3. Since Cε1 ⊆ Cε2 for any ε1 ≤ ε2 (see (22a)),
+increasing ε enlarges the flow set and, consequently, increases
+the minimum dwell-time T (ε), at the expense of enlarging the       Remark III.5. When τ0 < T , the system is forced to flow
+convergence set Aε .                                                for up to ∆0 time units under the initial subsystem σ0 , which

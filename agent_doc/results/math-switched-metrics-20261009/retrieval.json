@@ -1,0 +1,1353 @@
+{
+  "scope": "Public structural checks only",
+  "snapshot": "0aac23a440e24b631e1177db6b761f9ef3137210898e5484402b8325b2a8684e",
+  "protocol_sha256": "8596d9ccc1e39ca912b580d78dddf57c4e90d9af3cf8639c64c67bae9ab258dc",
+  "load_seconds": 0.04344863599908422,
+  "index_build_seconds": 0.21165812500112224,
+  "records": [
+    {
+      "backend": "files-lexical-v1",
+      "case": "R1",
+      "query": "更新 模式 交替 误差 爆炸 每个 特征值 小于一",
+      "actual": [
+        "math.switched-quadratic-metrics",
+        "math.discrete-lyapunov",
+        "math.eigenspace-gap-perturbation"
+      ],
+      "hit": true,
+      "seconds": 0.025506660000246484,
+      "chars": 2955,
+      "bytes": 4128,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "0aac23a440e24b631e1177db6b761f9ef3137210898e5484402b8325b2a8684e",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.switched-quadratic-metrics",
+            "version": 1,
+            "sha256": "a57da1333252b7b5d30b2cb7575df4d499cd9298af6f1fd24df2e72c9aed512f",
+            "title": "切换线性更新的共同度量与驻留边界",
+            "summary": "共同SPD二次度量认证任意切换；逐模式度量需计转换代价与全窗口切换频率，逐模式谱稳定不足。",
+            "status": "published",
+            "assumptions": [
+              "有限同维实齐次更新、共享零点、无reset/扰动",
+              "SPD共同P或每模式P_i且0<a<1全模式收缩",
+              "模式转换全部允许边P_j≤muP_i；驻留结论需全部整数窗口计数约束"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-switched-metrics-20261009/verify.py",
+                "agent_doc/results/math-switched-metrics-20261009/raw.json",
+                "agent_doc/results/math-switched-metrics-20261009/independent_review_by_gpt.md"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "更新"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "于一",
+                  "交替",
+                  "小于",
+                  "征值",
+                  "更新",
+                  "模式",
+                  "每个",
+                  "爆炸",
+                  "特征",
+                  "误差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "模式"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "于一",
+                  "交替",
+                  "小于",
+                  "征值",
+                  "更新",
+                  "模式",
+                  "每个",
+                  "特征",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 67
+          },
+          {
+            "id": "math.discrete-lyapunov",
+            "version": 1,
+            "sha256": "008bae30d58fde0bd552a6fcda931e8e71a8ca9d9aeaa6dfa7d1e25dc4e2a7b5",
+            "title": "离散二次稳定性证书与非正规瞬态",
+            "summary": "固定有限实矩阵的Schur稳定等价唯一正定离散Lyapunov解；构造P范数收缩并保留欧氏条件数前因子，拒绝逐层谱半径认证切换系统。",
+            "status": "published",
+            "assumptions": [
+              "固定有限维实A，整数时间完整状态x_next=Ax；Schur稳定要求ρ(A)<1",
+              "实对称Q≻0和P≻0；半正定情形须另证，不能套严格稳定等价",
+              "扰动界必须与同一P范数相容；时变层或非线性域需另证统一增益/度量转换"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-discrete-lyapunov-20261009/verify.py",
+                "agent_doc/results/math-discrete-lyapunov-20261009/raw.json",
+                "agent_doc/results/math-discrete-lyapunov-20261009/independent_review_by_gpt.md"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "于一",
+                  "小于",
+                  "征值",
+                  "更新",
+                  "特征",
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "交替",
+                  "征值",
+                  "更新",
+                  "每个",
+                  "特征",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 36
+          },
+          {
+            "id": "math.eigenspace-gap-perturbation",
+            "version": 1,
+            "sha256": "9737b6e1fb288bf682e23f1910f32aadc43421bd42821550a82e419303a7e292",
+            "title": "谱隙、子空间扰动与投影打分证书",
+            "summary": "实对称矩阵的隔离特征值簇可用边界谱隙控制子空间误差；主方向稳定取决于误差与谱隙的比值。投影比较消除符号和簇内旋转歧义，可传播到有范数约束的打分。",
+            "status": "published",
+            "assumptions": [
+              "A与Ahat=A+E是同维实对称矩阵，使用一致坐标及欧氏算子/Frobenius范数",
+              "特征值降序，目标为同一索引区间r..s；d=s-r+1，外侧边界谱隙g=min(lambda_(r-1)-lambda_r,lambda_s-lambda_(s+1))>0，端点取无穷",
+              "U与Uhat列正交；比较投影或主角度，不能直接比较未对齐的基",
+              "本文自推较紧rank-one界另需目标最大特征值、g=lambda_1-lambda_2>0、认证epsilon>=||E||op且epsilon<g；epsilon<g/2额外认证扰动后最大特征值简单",
+              "打分迁移需q,k位于同一欧氏坐标系、目标确为q^T P k；只控制换基误差，不控制舍弃补空间或完整注意力输出"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-subspace/verify.py",
+                "docs/knowledge_learning/2026-10-07-subspace/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "征值",
+                  "特征"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "征值",
+                  "特征",
+                  "误差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "小于",
+                  "征值",
+                  "特征",
+                  "误差"
+                ]
+              }
+            ],
+            "score": 23
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R2",
+      "query": "算法 切换 能量 度量 驻留 时间 共同 参考",
+      "actual": [
+        "math.switched-quadratic-metrics",
+        "math.discrete-lyapunov",
+        "math.generalized-hermitian-eigenproblem"
+      ],
+      "hit": true,
+      "seconds": 0.028764071998011786,
+      "chars": 2623,
+      "bytes": 3433,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "0aac23a440e24b631e1177db6b761f9ef3137210898e5484402b8325b2a8684e",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.switched-quadratic-metrics",
+            "version": 1,
+            "sha256": "a57da1333252b7b5d30b2cb7575df4d499cd9298af6f1fd24df2e72c9aed512f",
+            "title": "切换线性更新的共同度量与驻留边界",
+            "summary": "共同SPD二次度量认证任意切换；逐模式度量需计转换代价与全窗口切换频率，逐模式谱稳定不足。",
+            "status": "published",
+            "assumptions": [
+              "有限同维实齐次更新、共享零点、无reset/扰动",
+              "SPD共同P或每模式P_i且0<a<1全模式收缩",
+              "模式转换全部允许边P_j≤muP_i；驻留结论需全部整数窗口计数约束"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-switched-metrics-20261009/verify.py",
+                "agent_doc/results/math-switched-metrics-20261009/raw.json",
+                "agent_doc/results/math-switched-metrics-20261009/independent_review_by_gpt.md"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "共同",
+                  "切换",
+                  "度量",
+                  "驻留"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "共同",
+                  "切换",
+                  "参考",
+                  "度量",
+                  "时间",
+                  "算法",
+                  "能量",
+                  "驻留"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "共同",
+                  "切换",
+                  "度量"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "共同",
+                  "切换",
+                  "参考",
+                  "度量",
+                  "时间",
+                  "算法",
+                  "能量",
+                  "驻留"
+                ]
+              }
+            ],
+            "score": 77
+          },
+          {
+            "id": "math.discrete-lyapunov",
+            "version": 1,
+            "sha256": "008bae30d58fde0bd552a6fcda931e8e71a8ca9d9aeaa6dfa7d1e25dc4e2a7b5",
+            "title": "离散二次稳定性证书与非正规瞬态",
+            "summary": "固定有限实矩阵的Schur稳定等价唯一正定离散Lyapunov解；构造P范数收缩并保留欧氏条件数前因子，拒绝逐层谱半径认证切换系统。",
+            "status": "published",
+            "assumptions": [
+              "固定有限维实A，整数时间完整状态x_next=Ax；Schur稳定要求ρ(A)<1",
+              "实对称Q≻0和P≻0；半正定情形须另证，不能套严格稳定等价",
+              "扰动界必须与同一P范数相容；时变层或非线性域需另证统一增益/度量转换"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-discrete-lyapunov-20261009/verify.py",
+                "agent_doc/results/math-discrete-lyapunov-20261009/raw.json",
+                "agent_doc/results/math-discrete-lyapunov-20261009/independent_review_by_gpt.md"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "切换",
+                  "能量"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "切换"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "共同",
+                  "切换",
+                  "度量",
+                  "时间",
+                  "能量"
+                ]
+              }
+            ],
+            "score": 18
+          },
+          {
+            "id": "math.generalized-hermitian-eigenproblem",
+            "version": 1,
+            "sha256": "cc93bd1de8feef3ce79b514f4f8989e453eb904c1b6e479770fdf2ff10869881",
+            "title": "广义自伴特征问题与质量度量",
+            "summary": "B=LL* 后 C=L⁻¹AL⁻* 为 Hermitian；Cu=λu 对应 z=L⁻*u。",
+            "status": "published",
+            "assumptions": [
+              "A=A*，B=B*>0，Az=λBz；B 的正定性必须成立，不能仅可逆。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文逐项来源/证明核查；非 Lean 形式化证明",
+                "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "度量"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "度量"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "度量",
+                  "能量"
+                ]
+              }
+            ],
+            "score": 12
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R3",
+      "query": "多种 迭代 平衡点 不同 轮换 收敛",
+      "actual": [
+        "math.switched-quadratic-metrics",
+        "math.frank-wolfe-output-solver",
+        "math.discrete-lyapunov"
+      ],
+      "hit": true,
+      "seconds": 0.022460272997705033,
+      "chars": 2562,
+      "bytes": 3479,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "0aac23a440e24b631e1177db6b761f9ef3137210898e5484402b8325b2a8684e",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.switched-quadratic-metrics",
+            "version": 1,
+            "sha256": "a57da1333252b7b5d30b2cb7575df4d499cd9298af6f1fd24df2e72c9aed512f",
+            "title": "切换线性更新的共同度量与驻留边界",
+            "summary": "共同SPD二次度量认证任意切换；逐模式度量需计转换代价与全窗口切换频率，逐模式谱稳定不足。",
+            "status": "published",
+            "assumptions": [
+              "有限同维实齐次更新、共享零点、无reset/扰动",
+              "SPD共同P或每模式P_i且0<a<1全模式收缩",
+              "模式转换全部允许边P_j≤muP_i；驻留结论需全部整数窗口计数约束"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-switched-metrics-20261009/verify.py",
+                "agent_doc/results/math-switched-metrics-20261009/raw.json",
+                "agent_doc/results/math-switched-metrics-20261009/independent_review_by_gpt.md"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "不同",
+                  "多种",
+                  "平衡",
+                  "收敛",
+                  "衡点",
+                  "轮换",
+                  "迭代"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "不同",
+                  "平衡",
+                  "收敛",
+                  "衡点"
+                ]
+              }
+            ],
+            "score": 39
+          },
+          {
+            "id": "math.frank-wolfe-output-solver",
+            "version": 1,
+            "sha256": "90ccb92febf95e295600b4c33841f746e67541016cf440606642da83e5205ff5",
+            "title": "固定凸输出的逐步非负重赋权、迭代界与停止证书",
+            "summary": "完整残差oracle与可行simplex更新给固定平方输出FW递推、O(1/t)目标误差及gap停止；schedule不保证单调，部分max不认证。",
+            "status": "published",
+            "assumptions": [
+              "非空有限固定v_i、已知固定z，f=1/2||y−z||²，C=conv(v)，β≥0且Σβ=1。",
+              "精确oracle遍历全部定义C的点；近似oracle须认证加性缺口η，未控η不套无误差rate。",
+              "schedule gamma=2/(t+2),t从0；或精确[0,1]线搜索；gap停止只界距最优，非绝对输出误差。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-frank-wolfe-20261009：公开Fraction轨迹、检索与独立验收；非形式化/非模型GPU。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "迭代"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "收敛",
+                  "迭代"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "不同",
+                  "收敛",
+                  "迭代"
+                ]
+              }
+            ],
+            "score": 18
+          },
+          {
+            "id": "math.discrete-lyapunov",
+            "version": 1,
+            "sha256": "008bae30d58fde0bd552a6fcda931e8e71a8ca9d9aeaa6dfa7d1e25dc4e2a7b5",
+            "title": "离散二次稳定性证书与非正规瞬态",
+            "summary": "固定有限实矩阵的Schur稳定等价唯一正定离散Lyapunov解；构造P范数收缩并保留欧氏条件数前因子，拒绝逐层谱半径认证切换系统。",
+            "status": "published",
+            "assumptions": [
+              "固定有限维实A，整数时间完整状态x_next=Ax；Schur稳定要求ρ(A)<1",
+              "实对称Q≻0和P≻0；半正定情形须另证，不能套严格稳定等价",
+              "扰动界必须与同一P范数相容；时变层或非线性域需另证统一增益/度量转换"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-discrete-lyapunov-20261009/verify.py",
+                "agent_doc/results/math-discrete-lyapunov-20261009/raw.json",
+                "agent_doc/results/math-discrete-lyapunov-20261009/independent_review_by_gpt.md"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "迭代"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "不同",
+                  "收敛",
+                  "迭代"
+                ]
+              }
+            ],
+            "score": 8
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R1",
+      "query": "更新 模式 交替 误差 爆炸 每个 特征值 小于一",
+      "actual": [
+        "math.switched-quadratic-metrics",
+        "math.discrete-lyapunov",
+        "math.eigenspace-gap-perturbation"
+      ],
+      "hit": true,
+      "seconds": 0.007695849999436177,
+      "chars": 6221,
+      "bytes": 9991,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "0aac23a440e24b631e1177db6b761f9ef3137210898e5484402b8325b2a8684e",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.switched-quadratic-metrics",
+            "version": 1,
+            "sha256": "a57da1333252b7b5d30b2cb7575df4d499cd9298af6f1fd24df2e72c9aed512f",
+            "title": "切换线性更新的共同度量与驻留边界",
+            "summary": "共同SPD二次度量认证任意切换；逐模式度量需计转换代价与全窗口切换频率，逐模式谱稳定不足。",
+            "status": "published",
+            "assumptions": [
+              "有限同维实齐次更新、共享零点、无reset/扰动",
+              "SPD共同P或每模式P_i且0<a<1全模式收缩",
+              "模式转换全部允许边P_j≤muP_i；驻留结论需全部整数窗口计数约束"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-switched-metrics-20261009/verify.py",
+                "agent_doc/results/math-switched-metrics-20261009/raw.json",
+                "agent_doc/results/math-switched-metrics-20261009/independent_review_by_gpt.md"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "跨领域迁移：线性算法更新模式",
+                "start_line": 46,
+                "end_line": 51,
+                "excerpt": "## 跨领域迁移：线性算法更新模式\n\n原问题：求固定My=b，选择不同固定预条件更新y_{t+1}=y_t+C_i(b-My_t)。对应A_i=I-C_i M，若共同解y*存在则误差e_t=y_t-y*精确满足上述齐次式。对象、乘积、共同零点及度量比较均保留，不只是类比。预测：若全部模式满足同一P证书，任意选择衰减；仅个别谱半径小于一可失效；模式度量证书加全窗口驻留限制可恢复有条件保证。最小验证可令M=I、C_i=I-A_i，用上述两个矩阵，检查交替/10步策略。尚未证明它比既有固定算法快；增加驻留可能牺牲速度。\n\n拒绝迁移：f1(x)=x/2、f2(x)=x/2+1各自收缩，却平衡点不同。交替极限为2/3与4/3的二周期，不能套共同零点收敛。神经网络逐层状态维度、归一化、残差、非线性Jacobian域与目标不一致时，同样不能用层内特征值宣称e2e稳定；需要真实映射、统一域和扰动证书。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "发散反例与可修复调度",
+                "start_line": 40,
+                "end_line": 45,
+                "excerpt": "## 发散反例与可修复调度\n\nA_1=[[1/2,1],[0,1/2]]，A_2=A_1^T；均谱半径1/2。交替两步积B=A_2 A_1=[[1/4,1/2],[1/2,5/4]]，对称且det(I-B)=-7/16<0，因此一个特征值>1。交替轨迹沿该特征向量发散；不可能存在严格共同二次收缩证书。\n\n但P_1=diag(1,16)、P_2=diag(16,1)给出a=3/4的模式内收缩，允许双向转换mu=16。每模式至少保持10步的调度满足全窗口N≤1+(t-s)/10，而且16(3/4)^10<1；上述界认证收缩，尽管保守且存在瞬态前因子。有限样例只验证算术，实现保证来自一般不等式和被强制的驻留策略，不来自对曲线的观察。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.discrete-lyapunov",
+            "version": 1,
+            "sha256": "008bae30d58fde0bd552a6fcda931e8e71a8ca9d9aeaa6dfa7d1e25dc4e2a7b5",
+            "title": "离散二次稳定性证书与非正规瞬态",
+            "summary": "固定有限实矩阵的Schur稳定等价唯一正定离散Lyapunov解；构造P范数收缩并保留欧氏条件数前因子，拒绝逐层谱半径认证切换系统。",
+            "status": "published",
+            "assumptions": [
+              "固定有限维实A，整数时间完整状态x_next=Ax；Schur稳定要求ρ(A)<1",
+              "实对称Q≻0和P≻0；半正定情形须另证，不能套严格稳定等价",
+              "扰动界必须与同一P范数相容；时变层或非线性域需另证统一增益/度量转换"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-discrete-lyapunov-20261009/verify.py",
+                "agent_doc/results/math-discrete-lyapunov-20261009/raw.json",
+                "agent_doc/results/math-discrete-lyapunov-20261009/independent_review_by_gpt.md"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04838709677419355,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "误用反例与拒用",
+                "start_line": 40,
+                "end_line": 47,
+                "excerpt": "## 误用反例与拒用\n\n- Q仅半正定：A=diag(1/2,1)，P=diag(4/3,1)，Q=diag(1,0)。方程成立，但第二坐标不衰减。需要另有可观测性等条件；本卡不提供该扩展的认证。\n- P仅半正定：A=diag(1/2,2)，P=diag(1,0)，Q=diag(3/4,0)。V看不到第二坐标的发散，不能当全状态范数。\n- 切换：令B=Aᵀ。A/B均有谱半径1/2，但BA=[[1/4,1],[1,17/4]]。对正坐标向量BA每个坐标至少放大5/4倍；交替使用从(1,1)开始发散。分别求P_A、P_B不产生共同证书。\n- 各层Jacobian特征值或几个观测步长，既不确定统一A，也不证明非线性域内增益。LLM token状态、工具输出和策略切换不能通过局部谱半径直接证明收敛。\n- 浮点解方程残差很小、有限轨迹下降，不自动证明P≻0或严格矩阵不等式。边界附近误差容限尤其重要。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "触发、对象与准确结论",
+                "start_line": 5,
+                "end_line": 21,
+                "excerpt": "## 触发、对象与准确结论\n\n问题：线性迭代的所有特征值在单位圆内，误差为何先增大？能否构造一个可核对的能量并给出误差界？\n\n经典定理（Boyd，出处见末）：固定有限维实矩阵 A，系统 x_(t+1)=Ax_t，整数t≥0。A为Schur稳定（ρ(A)<1）等价于：对每个实对称Q≻0，存在唯一实对称P≻0满足\n\n$$P-A^\\top PA=Q,\\qquad P=\\sum_{j=0}^{\\infty}(A^j)^\\top Q A^j.$$\n\n存在一组P,Q≻0也足以推出Schur稳定。唯一性指方程的整个矩阵空间解，不是仅正定候选中唯一。x为完整状态（动量、历史需扩展）；A不随时间、样本或状态改变。\n\n项目推导：V(x)=xᵀPx，||x||_P=√V(x)。令μ=λ_min(P^(−1/2)QP^(−1/2))，则0<μ≤1、γ=√(1−μ)∈[0,1)，并且\n\n$$\\|Ax\\|_P\\le\\gamma\\|x\\|_P,\\quad\n\\|A^tx\\|_2\\le\\sqrt{\\kappa_2(P)}\\gamma^t\\|x\\|_2.$$\n\n更易计算但较松：μ≥λ_min(Q)/λ_max(P)。原范数的前因子不能删除。γ=0表示A=0；t=0解释A⁰=I，不以0⁰数值表达式认证。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.eigenspace-gap-perturbation",
+            "version": 1,
+            "sha256": "9737b6e1fb288bf682e23f1910f32aadc43421bd42821550a82e419303a7e292",
+            "title": "谱隙、子空间扰动与投影打分证书",
+            "summary": "实对称矩阵的隔离特征值簇可用边界谱隙控制子空间误差；主方向稳定取决于误差与谱隙的比值。投影比较消除符号和簇内旋转歧义，可传播到有范数约束的打分。",
+            "status": "published",
+            "assumptions": [
+              "A与Ahat=A+E是同维实对称矩阵，使用一致坐标及欧氏算子/Frobenius范数",
+              "特征值降序，目标为同一索引区间r..s；d=s-r+1，外侧边界谱隙g=min(lambda_(r-1)-lambda_r,lambda_s-lambda_(s+1))>0，端点取无穷",
+              "U与Uhat列正交；比较投影或主角度，不能直接比较未对齐的基",
+              "本文自推较紧rank-one界另需目标最大特征值、g=lambda_1-lambda_2>0、认证epsilon>=||E||op且epsilon<g；epsilon<g/2额外认证扰动后最大特征值简单",
+              "打分迁移需q,k位于同一欧氏坐标系、目标确为q^T P k；只控制换基误差，不控制舍弃补空间或完整注意力输出"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-subspace/verify.py",
+                "docs/knowledge_learning/2026-10-07-subspace/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.047619047619047616,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "正例、边界和误用反例",
+                "start_line": 39,
+                "end_line": 46,
+                "excerpt": "## 正例、边界和误用反例\n\nA=diag(2,1)，E的两非对角元为0.1；epsilon=0.1、g=1。theta=atan(0.2)/2，实际sin(theta)≈0.09854，小于证书1/9。验证脚本检查闭式特征方程、投影幂等性、范数和误差界。\n\nA=diag(1+delta,1)，E=diag(-delta,delta)，delta>0可任意小；主方向翻转90度，特征值变化≤delta。epsilon/g=1，故不能宣称“绝对矩阵误差小就稳定”。A=I、任意小diag(t,-t)与diag(-t,t)选择相反主方向，未扰动单方向不存在唯一目标。\n\nA=diag(3,3,1)的前两列可旋转90度，基差Frobenius范数2，但P完全相同；第一单向量的簇外边界为零，而完整二维簇的边界为2。这不是理论冲突。非对称矩阵不得沿用以上公式；应另核验奇异子空间、Hermitian变换或非正规条件数。\n\n"
+              },
+              {
+                "node": "s3",
+                "title": "可复核的自推rank-one界",
+                "start_line": 20,
+                "end_line": 38,
+                "excerpt": "## 可复核的自推rank-one界\n\n以下是本项目独立写出的推导，不是新研究贡献。目标为最大特征值，单位向量u、uhat，g=lambda1-lambda2>0；已知||E||op≤epsilon<g。Rayleigh商给出lambdahat1≥lambda1-epsilon。分解uhat=a u+w，w垂直u，投影特征方程得\n\n\\[\n(\\widehat\\lambda_1 I-A_{u^\\perp})w=(I-uu^T)E\\widehat u.\n\\]\n\n左侧算子的特征值均≥g-epsilon>0，因此\n\n\\[\n\\sin\\theta=\\|w\\|\\le {\\epsilon\\over g-\\epsilon},\\quad\n\\|\\widehat P-P\\|_{op}=\\sin\\theta.\n\\]\n\n最后的等式可在span(u,uhat)中写2×2矩阵核对；符号改变不影响投影。若epsilon<g/2，用Rayleigh极值/Weyl界，lambdahat1-lambdahat2≥g-2epsilon>0，主方向唯一至符号。没有认证epsilon时不能把经验RMSE或平均元素误差代入。\n\n一般簇可保守用||Phat-P||op=||sinTheta||op≤min(1,||sinTheta||F)；投影Frobenius范数为sqrt(2)||sinTheta||F。存在簇内任意正交旋转时逐列向量比较失效。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R2",
+      "query": "算法 切换 能量 度量 驻留 时间 共同 参考",
+      "actual": [
+        "math.switched-quadratic-metrics",
+        "math.discrete-lyapunov",
+        "math.generalized-hermitian-eigenproblem"
+      ],
+      "hit": true,
+      "seconds": 0.0063521849988319445,
+      "chars": 5459,
+      "bytes": 8384,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "0aac23a440e24b631e1177db6b761f9ef3137210898e5484402b8325b2a8684e",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.switched-quadratic-metrics",
+            "version": 1,
+            "sha256": "a57da1333252b7b5d30b2cb7575df4d499cd9298af6f1fd24df2e72c9aed512f",
+            "title": "切换线性更新的共同度量与驻留边界",
+            "summary": "共同SPD二次度量认证任意切换；逐模式度量需计转换代价与全窗口切换频率，逐模式谱稳定不足。",
+            "status": "published",
+            "assumptions": [
+              "有限同维实齐次更新、共享零点、无reset/扰动",
+              "SPD共同P或每模式P_i且0<a<1全模式收缩",
+              "模式转换全部允许边P_j≤muP_i；驻留结论需全部整数窗口计数约束"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-switched-metrics-20261009/verify.py",
+                "agent_doc/results/math-switched-metrics-20261009/raw.json",
+                "agent_doc/results/math-switched-metrics-20261009/independent_review_by_gpt.md"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s1",
+                "title": "切换线性更新：共同度量、模式转换与驻留条件",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 切换线性更新：共同度量、模式转换与驻留条件\n\n稳定 ID：`math.switched-quadratic-metrics@1`。数学对象：有限个实 d×d 矩阵 A_i；整数时间 x_{t+1}=A_{sigma_t}x_t，所有模式共享原点，状态无重置、无外部扰动。P 或 P_i 实对称正定；X≤Y 表示 Y-X 半正定。本条是经典共同/多Lyapunov方法的离散推导，充分证书，不是稳定性必要条件或最优调度定理。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "来源与认识状态",
+                "start_line": 5,
+                "end_line": 10,
+                "excerpt": "## 来源与认识状态\n\n经典出处：[Hespanha–Morse, CDC1999, pp2655–2660](https://web.ece.ucsb.edu/~hespanha/published/avedwell.pdf)，§1平均驻留定义、§3 Theorem2及式(6)–(8)。原文研究连续时间、紧矩阵族和统一衰减；此处有限离散式与例子是自己的可复核推导，不冒充原文离散定理。前置`math.discrete-lyapunov@1`（固定模式正定证书），其Jordan/Hermitian前置给出幂与SPD谱比较。与`math.perturbation-propagation`相关但本条不包含扰动界。\n\n近期筛选（检索2026-10-09）：Cinto/Vallarella/Haimovich/Pellanda，[arXiv2609.37840v1](https://arxiv.org/abs/2609.37840)，提交2026-09-29 15:39:43 UTC，预印本，未核实期刊接受。选择性阅读原始PDF摘要、II-A/B、III.1/III.4；不是全篇视觉审读或复现。作者研究连续仿射系统，假定存在Hurwitz平均矩阵及平均偏置为零，使用规定的混合反馈；III讨论带驻留约束的实用目标区域。启发是选择适合目标几何的加权p范数；它不认证任意离散切换、模型层路由或本项目收益。p范数算法留作候选。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.discrete-lyapunov",
+            "version": 1,
+            "sha256": "008bae30d58fde0bd552a6fcda931e8e71a8ca9d9aeaa6dfa7d1e25dc4e2a7b5",
+            "title": "离散二次稳定性证书与非正规瞬态",
+            "summary": "固定有限实矩阵的Schur稳定等价唯一正定离散Lyapunov解；构造P范数收缩并保留欧氏条件数前因子，拒绝逐层谱半径认证切换系统。",
+            "status": "published",
+            "assumptions": [
+              "固定有限维实A，整数时间完整状态x_next=Ax；Schur稳定要求ρ(A)<1",
+              "实对称Q≻0和P≻0；半正定情形须另证，不能套严格稳定等价",
+              "扰动界必须与同一P范数相容；时变层或非线性域需另证统一增益/度量转换"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-discrete-lyapunov-20261009/verify.py",
+                "agent_doc/results/math-discrete-lyapunov-20261009/raw.json",
+                "agent_doc/results/math-discrete-lyapunov-20261009/independent_review_by_gpt.md"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04838709677419355,
+            "sections": [
+              {
+                "node": "s7",
+                "title": "来源、近期筛选和实际验证",
+                "start_line": 62,
+                "end_line": 68,
+                "excerpt": "## 来源、近期筛选和实际验证\n\n经典：[Boyd EE363 Winter2008-09 Lecture13](https://ee363.stanford.edu/archive/lectures/lq-lyap.pdf)，slides13–21至13–25（PDF索引20–24）：方程/级数/反向/坐标收缩。以上特定矩阵、扰动与切换例为项目推导。\n\n近期：[Wei/Zhao/Liu arXiv2508.01410v2](https://arxiv.org/abs/2508.01410v2)，v2修订2026-03-13，检索2026-10-09；读取§III–IV及§V相关网格/成本讨论，arXiv页面未列journal reference，不推定已正式发表。作者在连续时变系统中使用可微P(t)及导数项约束能量上界，实际求解采用时间网格近似。本轮只采用“必须核对时间/度量变化”的研究启发，未复现流体结果；网格检查需另证插值误差，不能直接认证连续区间。另检索2603.08191v2(2026-06-13)仅版本/摘要，非正规混沌主张暂缓，未读其全部证明。\n\n8公开精确CPU结构算例、3公开无定理名问题×2检索后端、53知识回归及独立结果审核见`agent_doc/results/math-discrete-lyapunov-20261009/`。公开开发问题不当作未见测试；前提拒用是人工数学检查，非LLM实测。无Lean/真实模型/GPU/端到端/真实token成本/未用holdout验收。字符、字节和秒仅诊断，不能报告token节省。现有按需Skill消费者可检索此卡，安装端需另同步；本轮不改生产行为。\n"
+              },
+              {
+                "node": "s2",
+                "title": "触发、对象与准确结论",
+                "start_line": 5,
+                "end_line": 21,
+                "excerpt": "## 触发、对象与准确结论\n\n问题：线性迭代的所有特征值在单位圆内，误差为何先增大？能否构造一个可核对的能量并给出误差界？\n\n经典定理（Boyd，出处见末）：固定有限维实矩阵 A，系统 x_(t+1)=Ax_t，整数t≥0。A为Schur稳定（ρ(A)<1）等价于：对每个实对称Q≻0，存在唯一实对称P≻0满足\n\n$$P-A^\\top PA=Q,\\qquad P=\\sum_{j=0}^{\\infty}(A^j)^\\top Q A^j.$$\n\n存在一组P,Q≻0也足以推出Schur稳定。唯一性指方程的整个矩阵空间解，不是仅正定候选中唯一。x为完整状态（动量、历史需扩展）；A不随时间、样本或状态改变。\n\n项目推导：V(x)=xᵀPx，||x||_P=√V(x)。令μ=λ_min(P^(−1/2)QP^(−1/2))，则0<μ≤1、γ=√(1−μ)∈[0,1)，并且\n\n$$\\|Ax\\|_P\\le\\gamma\\|x\\|_P,\\quad\n\\|A^tx\\|_2\\le\\sqrt{\\kappa_2(P)}\\gamma^t\\|x\\|_2.$$\n\n更易计算但较松：μ≥λ_min(Q)/λ_max(P)。原范数的前因子不能删除。γ=0表示A=0；t=0解释A⁰=I，不以0⁰数值表达式认证。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.generalized-hermitian-eigenproblem",
+            "version": 1,
+            "sha256": "cc93bd1de8feef3ce79b514f4f8989e453eb904c1b6e479770fdf2ff10869881",
+            "title": "广义自伴特征问题与质量度量",
+            "summary": "B=LL* 后 C=L⁻¹AL⁻* 为 Hermitian；Cu=λu 对应 z=L⁻*u。",
+            "status": "published",
+            "assumptions": [
+              "A=A*，B=B*>0，Az=λBz；B 的正定性必须成立，不能仅可逆。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文逐项来源/证明核查；非 Lean 形式化证明",
+                "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 6
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 4
+              }
+            ],
+            "score": 0.046649531024531024,
+            "sections": [
+              {
+                "node": "s1",
+                "title": "广义自伴特征问题与质量度量",
+                "start_line": 1,
+                "end_line": 4,
+                "excerpt": "# 广义自伴特征问题与质量度量\n\n稳定 ID：math.generalized-hermitian-eigenproblem；语义版本1；核查日期2026-10-07。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "证明思路与可复核推导",
+                "start_line": 11,
+                "end_line": 13,
+                "excerpt": "## 证明思路与可复核推导\n将 z=L⁻*u 代入广义方程并左乘 L⁻¹，直接得到 C；C*相等，使用自伴谱分解得到正交 u。回代度量 z_i*Bz_j=u_i*u_j，保留质量内积而非默认 Euclidean。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R3",
+      "query": "多种 迭代 平衡点 不同 轮换 收敛",
+      "actual": [
+        "math.switched-quadratic-metrics",
+        "math.frank-wolfe-output-solver",
+        "math.discrete-lyapunov"
+      ],
+      "hit": true,
+      "seconds": 0.00594284399994649,
+      "chars": 5907,
+      "bytes": 9809,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "0aac23a440e24b631e1177db6b761f9ef3137210898e5484402b8325b2a8684e",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.switched-quadratic-metrics",
+            "version": 1,
+            "sha256": "a57da1333252b7b5d30b2cb7575df4d499cd9298af6f1fd24df2e72c9aed512f",
+            "title": "切换线性更新的共同度量与驻留边界",
+            "summary": "共同SPD二次度量认证任意切换；逐模式度量需计转换代价与全窗口切换频率，逐模式谱稳定不足。",
+            "status": "published",
+            "assumptions": [
+              "有限同维实齐次更新、共享零点、无reset/扰动",
+              "SPD共同P或每模式P_i且0<a<1全模式收缩",
+              "模式转换全部允许边P_j≤muP_i；驻留结论需全部整数窗口计数约束"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-switched-metrics-20261009/verify.py",
+                "agent_doc/results/math-switched-metrics-20261009/raw.json",
+                "agent_doc/results/math-switched-metrics-20261009/independent_review_by_gpt.md"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "跨领域迁移：线性算法更新模式",
+                "start_line": 46,
+                "end_line": 51,
+                "excerpt": "## 跨领域迁移：线性算法更新模式\n\n原问题：求固定My=b，选择不同固定预条件更新y_{t+1}=y_t+C_i(b-My_t)。对应A_i=I-C_i M，若共同解y*存在则误差e_t=y_t-y*精确满足上述齐次式。对象、乘积、共同零点及度量比较均保留，不只是类比。预测：若全部模式满足同一P证书，任意选择衰减；仅个别谱半径小于一可失效；模式度量证书加全窗口驻留限制可恢复有条件保证。最小验证可令M=I、C_i=I-A_i，用上述两个矩阵，检查交替/10步策略。尚未证明它比既有固定算法快；增加驻留可能牺牲速度。\n\n拒绝迁移：f1(x)=x/2、f2(x)=x/2+1各自收缩，却平衡点不同。交替极限为2/3与4/3的二周期，不能套共同零点收敛。神经网络逐层状态维度、归一化、残差、非线性Jacobian域与目标不一致时，同样不能用层内特征值宣称e2e稳定；需要真实映射、统一域和扰动证书。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.frank-wolfe-output-solver",
+            "version": 1,
+            "sha256": "90ccb92febf95e295600b4c33841f746e67541016cf440606642da83e5205ff5",
+            "title": "固定凸输出的逐步非负重赋权、迭代界与停止证书",
+            "summary": "完整残差oracle与可行simplex更新给固定平方输出FW递推、O(1/t)目标误差及gap停止；schedule不保证单调，部分max不认证。",
+            "status": "published",
+            "assumptions": [
+              "非空有限固定v_i、已知固定z，f=1/2||y−z||²，C=conv(v)，β≥0且Σβ=1。",
+              "精确oracle遍历全部定义C的点；近似oracle须认证加性缺口η，未控η不套无误差rate。",
+              "schedule gamma=2/(t+2),t从0；或精确[0,1]线搜索；gap停止只界距最优，非绝对输出误差。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-frank-wolfe-20261009：公开Fraction轨迹、检索与独立验收；非形式化/非模型GPU。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04838709677419355,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "正例、边界与误用",
+                "start_line": 31,
+                "end_line": 38,
+                "excerpt": "## 正例、边界与误用\n\n- 配方v=(0,3),z=5/6，y0=0：完整oracle=3。线搜索γ=5/18，一步到目标；schedule γ0=1跳到3，f由25/72上升至169/72，随后满足一般界。这个上升不是实现bug。\n- v=(0,1),z=2：最优y=1，f*=1/2；gap0认证最优而非零输出误差。负权(−1,2)不得作为可行输出。\n- C三角形(0,0),(1,0),(0,1)，z=(1,1)：最优y=(1/2,1/2),f*=1/4，有限迭代不需精确达到才能界误差。\n- C=conv{0,2,4},z=4,y=2：只查0,2得g_hat=0却h=2，full gap=4。合法η=4恢复上界，禁止假收敛。\n- 重复点/单点允许，不要求独立坐标或可逆Gram；空C、负权、变动z/改变可行点都需拒用或重建问题。固定policy没有统一线性收敛保证。\n\n"
+              },
+              {
+                "node": "s6",
+                "title": "检索、迁移与成本",
+                "start_line": 39,
+                "end_line": 48,
+                "excerpt": "## 检索、迁移与成本\n\n结构触发：非负权重迭代拟合固定输出、混合配方逐步添加成分、候选部分最大残差假收敛。先核对固定对象/目标/单位、simplex可行性及全oracle，再使用ID和强前置`math.convex-projection-certificate@1`（包含`math.dual-certificates@1`）。\n\nIndexer严格映射：对固定query，z是dense teacher输出，v_i为固定选中原values，β是允许新权重。可离线比较初始softmax子集重归一化与迭代结果；达到gap≤ε才认证与此子集的最优误差相差≤2ε。保持value和非负归一结构，丢失跨query共享、softmax参数化、跨层非线性与运行开销；不是线上选择速度或e2e改善。若原权重不可改变，本求解器只给诊断基准。\n\n每步穷举oracle约O(np)点积，加O(p)输出更新；若显式更新全部权重需O(n)，稀疏支持可按其大小处理。取得z与n个value已经有成本；投影-free不等于读数据-free、token-free或GPU更快。完整支持太大时只能研究可认证近似oracle，不能靠漏点省成本并称gap已认证。配方/传感器平均是同一数学问题；协方差、负权回归等不是。\n\n最小可证伪检查：固定C/z下每步β合法；展开等式成立；全gap上界误差；与独立解析最优比较。实际模型实验需要同模型权限/预算、matched index维度和完整e2e输出对照，未测不接生产。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.discrete-lyapunov",
+            "version": 1,
+            "sha256": "008bae30d58fde0bd552a6fcda931e8e71a8ca9d9aeaa6dfa7d1e25dc4e2a7b5",
+            "title": "离散二次稳定性证书与非正规瞬态",
+            "summary": "固定有限实矩阵的Schur稳定等价唯一正定离散Lyapunov解；构造P范数收缩并保留欧氏条件数前因子，拒绝逐层谱半径认证切换系统。",
+            "status": "published",
+            "assumptions": [
+              "固定有限维实A，整数时间完整状态x_next=Ax；Schur稳定要求ρ(A)<1",
+              "实对称Q≻0和P≻0；半正定情形须另证，不能套严格稳定等价",
+              "扰动界必须与同一P范数相容；时变层或非线性域需另证统一增益/度量转换"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-discrete-lyapunov-20261009/verify.py",
+                "agent_doc/results/math-discrete-lyapunov-20261009/raw.json",
+                "agent_doc/results/math-discrete-lyapunov-20261009/independent_review_by_gpt.md"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 5
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.04713064713064713,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "计算、误差与迁移",
+                "start_line": 48,
+                "end_line": 61,
+                "excerpt": "## 计算、误差与迁移\n\n计算P宜用Schur型离散矩阵方程求解器；本文精确2维Fraction仅作可复核算例，不作为大模型求解实现。量纲：状态坐标单位不同先做无量纲缩放或赋P/Q相应单位；辅助V不一定是物理守恒能量。\n\n项目推导的可检查数值门槛：给实对称P_hat，必须认证P_hat≻0，并认证D=P_hat−AᵀP_hat A的λ_min(D)>0。若已知Q≻0、残差E=D−Q且有严格验证的||E||₂<λ_min(Q)，则D≻0；仅打印float eigenvalue/residual没有舍入包络，不是严格认证。\n\n具体迁移：固定线性求解迭代y_next=Ay+b，已知不动点y*、e=y−y*，允许更新误差w_t，则e_next=Ae+w_t。若同一P证书且||w_t||_P≤η，则三角不等式给\n\n$$\\|e_t\\|_P\\le\\gamma^t\\|e_0\\|_P+\\eta\\frac{1-\\gamma^t}{1-\\gamma}.$$\n\n该映射保留完整线性更新和扰动范数，不是类比。公开例固定上面的A、e₀、w=(±1/100,0)，可用初值上界4、η=1/50、γ=31/32逐步核对有理上界平方；没有真实工程/Agent加速主张。η=0恢复严格收缩；η>0只能给误差管，不保证到零。残差到解误差另检索`math.contraction-residual-certificate`。\n\n时变离散系统只有另证A_tᵀP_(t+1)A_t≼γ_t²P_t、统一mI≼P_t≼MI及合适乘积衰减条件才可推广；独立P_t的证书遗漏相邻度量转换。这是自行推导的迁移边界；不声称已有轻量逐层求解器或模型质量证书。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "触发、对象与准确结论",
+                "start_line": 5,
+                "end_line": 21,
+                "excerpt": "## 触发、对象与准确结论\n\n问题：线性迭代的所有特征值在单位圆内，误差为何先增大？能否构造一个可核对的能量并给出误差界？\n\n经典定理（Boyd，出处见末）：固定有限维实矩阵 A，系统 x_(t+1)=Ax_t，整数t≥0。A为Schur稳定（ρ(A)<1）等价于：对每个实对称Q≻0，存在唯一实对称P≻0满足\n\n$$P-A^\\top PA=Q,\\qquad P=\\sum_{j=0}^{\\infty}(A^j)^\\top Q A^j.$$\n\n存在一组P,Q≻0也足以推出Schur稳定。唯一性指方程的整个矩阵空间解，不是仅正定候选中唯一。x为完整状态（动量、历史需扩展）；A不随时间、样本或状态改变。\n\n项目推导：V(x)=xᵀPx，||x||_P=√V(x)。令μ=λ_min(P^(−1/2)QP^(−1/2))，则0<μ≤1、γ=√(1−μ)∈[0,1)，并且\n\n$$\\|Ax\\|_P\\le\\gamma\\|x\\|_P,\\quad\n\\|A^tx\\|_2\\le\\sqrt{\\kappa_2(P)}\\gamma^t\\|x\\|_2.$$\n\n更易计算但较松：μ≥λ_min(Q)/λ_max(P)。原范数的前因子不能删除。γ=0表示A=0；t=0解释A⁰=I，不以0⁰数值表达式认证。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "context": {
+    "schema_version": 1,
+    "snapshot": "0aac23a440e24b631e1177db6b761f9ef3137210898e5484402b8325b2a8684e",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "status": "ready",
+    "budget": {
+      "max_entries": 4,
+      "max_chars": 18000,
+      "used_chars": 14961,
+      "scope": "serialized entry payload characters, not model tokens or outer envelope"
+    },
+    "retrieved_ids": [
+      "math.switched-quadratic-metrics"
+    ],
+    "entries": [
+      {
+        "schema_version": 1,
+        "id": "math.discrete-lyapunov",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "离散二次稳定性证书与非正规瞬态",
+        "summary": "固定有限实矩阵的Schur稳定等价唯一正定离散Lyapunov解；构造P范数收缩并保留欧氏条件数前因子，拒绝逐层谱半径认证切换系统。",
+        "aliases": [
+          "线性 迭代 特征值 单位圆 误差 先增大 能量",
+          "模型 每层 特征值 小于一 切换 发散",
+          "控制 数值 更新 噪声 稳定 误差 范围",
+          "discrete Lyapunov quadratic norm nonnormal transient"
+        ],
+        "domains": [
+          "linear-algebra",
+          "optimization-and-control",
+          "numerical-analysis"
+        ],
+        "structures": [
+          "discrete-linear-dynamics",
+          "quadratic-energy-certificate",
+          "nonnormal-transient",
+          "switched-system-boundary"
+        ],
+        "assumptions": [
+          "固定有限维实A，整数时间完整状态x_next=Ax；Schur稳定要求ρ(A)<1",
+          "实对称Q≻0和P≻0；半正定情形须另证，不能套严格稳定等价",
+          "扰动界必须与同一P范数相容；时变层或非线性域需另证统一增益/度量转换"
+        ],
+        "sources": [
+          {
+            "url": "https://ee363.stanford.edu/archive/lectures/lq-lyap.pdf",
+            "locator": "EE363 Winter2008-09 Lecture13 slides13-21–13-25;project examples/error recurrence are own derivations",
+            "accessed": "2026-10-09"
+          },
+          {
+            "url": "https://arxiv.org/html/2508.01410v2",
+            "locator": "v2 2026-03-13 §III–IV eq12–25;§V grid/cost discussion;research context only,no reproduction",
+            "accessed": "2026-10-09"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "agent_doc/results/math-discrete-lyapunov-20261009/verify.py",
+            "agent_doc/results/math-discrete-lyapunov-20261009/raw.json",
+            "agent_doc/results/math-discrete-lyapunov-20261009/independent_review_by_gpt.md"
+          ]
+        },
+        "requires": [
+          {
+            "id": "math.jordan-generalized-eigenspaces",
+            "version": 1
+          },
+          {
+            "id": "math.hermitian-spectral-schur",
+            "version": 1
+          }
+        ],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.contraction-residual-certificate"
+          },
+          {
+            "type": "related",
+            "id": "math.descent-lyapunov-certificate"
+          },
+          {
+            "type": "related",
+            "id": "math.perturbation-propagation"
+          },
+          {
+            "type": "related",
+            "id": "math.linear-system-stability"
+          }
+        ],
+        "content": "# 离散 Lyapunov 方程、加权收缩与非正规瞬态\n\n稳定 ID：`math.discrete-lyapunov`，版本1，核查2026-10-09。\n\n## 触发、对象与准确结论\n\n问题：线性迭代的所有特征值在单位圆内，误差为何先增大？能否构造一个可核对的能量并给出误差界？\n\n经典定理（Boyd，出处见末）：固定有限维实矩阵 A，系统 x_(t+1)=Ax_t，整数t≥0。A为Schur稳定（ρ(A)<1）等价于：对每个实对称Q≻0，存在唯一实对称P≻0满足\n\n$$P-A^\\top PA=Q,\\qquad P=\\sum_{j=0}^{\\infty}(A^j)^\\top Q A^j.$$\n\n存在一组P,Q≻0也足以推出Schur稳定。唯一性指方程的整个矩阵空间解，不是仅正定候选中唯一。x为完整状态（动量、历史需扩展）；A不随时间、样本或状态改变。\n\n项目推导：V(x)=xᵀPx，||x||_P=√V(x)。令μ=λ_min(P^(−1/2)QP^(−1/2))，则0<μ≤1、γ=√(1−μ)∈[0,1)，并且\n\n$$\\|Ax\\|_P\\le\\gamma\\|x\\|_P,\\quad\n\\|A^tx\\|_2\\le\\sqrt{\\kappa_2(P)}\\gamma^t\\|x\\|_2.$$\n\n更易计算但较松：μ≥λ_min(Q)/λ_max(P)。原范数的前因子不能删除。γ=0表示A=0；t=0解释A⁰=I，不以0⁰数值表达式认证。\n\n## 一般证明及强依赖\n\n用`math.jordan-generalized-eigenspaces@1`：复化后的每个Jordan块J=λI+N满足J^t=Σ_(j=0)^(m−1) binom(t,j)λ^(t−j)N^j（j>t的项为0，λ=0块最终为0）。ρ<1使幂次被多项式乘几何衰减控制，因此Σ||A^t||₂²有限。级数绝对收敛，首项Q正定，P正定；移位相减得方程。若H=AᵀHA，则H=(A^t)ᵀHA^t→0，故H=0，证明唯一。\n\n反向：任一复特征向量Av=λv，实对称正定P/Q复化后仍正定；v*Qv=(1−|λ|²)v*Pv>0，故|λ|<1。不需要A正规或可对角化。\n\n用`math.hermitian-spectral-schur@1`给正定平方根和Rayleigh界：P−Q=AᵀPA≽0，故0≺P^(−1/2)QP^(−1/2)≼I。V(Ax)=V(x)−xᵀQx≤(1−μ)V(x)。反复应用，再用λ_min(P)||x||₂²≤V(x)≤λ_max(P)||x||₂²得欧氏界。数学推导审查不等于Lean形式化证明；有限算例不证明级数的一般收敛。\n\n## 可复核正例与边界\n\n自推导A=[[1/2,2],[0,1/2]],Q=I时，逐项解方程：\n\n$$P=\\begin{bmatrix}4/3&16/9\\\\16/9&356/27\\end{bmatrix},\\qquad\\det P=1168/81>0.$$\n\ne₀=(0,1)→e₁=(2,1/2)，欧氏平方误差1→17/4，但V由356/27减为329/27。A^t的右上角为2t(1/2)^(t−1)，最终仍趋0。不能把ρ=1/2当作欧氏每步收缩因子。\n\ntr(P)=392/27，故λ_max(P)≤392/27，γ²≤365/392；可选更松的有理γ=31/32（其平方更大），直接检验γ²P−AᵀPA≽0。A=0时P=Q，状态一步清零；A=1、Q>0时方程左边0，严格稳定结论不成立。标量A=11/10、Q=1有唯一P=−100/21，解存在不代表正定或稳定。\n\n## 误用反例与拒用\n\n- Q仅半正定：A=diag(1/2,1)，P=diag(4/3,1)，Q=diag(1,0)。方程成立，但第二坐标不衰减。需要另有可观测性等条件；本卡不提供该扩展的认证。\n- P仅半正定：A=diag(1/2,2)，P=diag(1,0)，Q=diag(3/4,0)。V看不到第二坐标的发散，不能当全状态范数。\n- 切换：令B=Aᵀ。A/B均有谱半径1/2，但BA=[[1/4,1],[1,17/4]]。对正坐标向量BA每个坐标至少放大5/4倍；交替使用从(1,1)开始发散。分别求P_A、P_B不产生共同证书。\n- 各层Jacobian特征值或几个观测步长，既不确定统一A，也不证明非线性域内增益。LLM token状态、工具输出和策略切换不能通过局部谱半径直接证明收敛。\n- 浮点解方程残差很小、有限轨迹下降，不自动证明P≻0或严格矩阵不等式。边界附近误差容限尤其重要。\n\n## 计算、误差与迁移\n\n计算P宜用Schur型离散矩阵方程求解器；本文精确2维Fraction仅作可复核算例，不作为大模型求解实现。量纲：状态坐标单位不同先做无量纲缩放或赋P/Q相应单位；辅助V不一定是物理守恒能量。\n\n项目推导的可检查数值门槛：给实对称P_hat，必须认证P_hat≻0，并认证D=P_hat−AᵀP_hat A的λ_min(D)>0。若已知Q≻0、残差E=D−Q且有严格验证的||E||₂<λ_min(Q)，则D≻0；仅打印float eigenvalue/residual没有舍入包络，不是严格认证。\n\n具体迁移：固定线性求解迭代y_next=Ay+b，已知不动点y*、e=y−y*，允许更新误差w_t，则e_next=Ae+w_t。若同一P证书且||w_t||_P≤η，则三角不等式给\n\n$$\\|e_t\\|_P\\le\\gamma^t\\|e_0\\|_P+\\eta\\frac{1-\\gamma^t}{1-\\gamma}.$$\n\n该映射保留完整线性更新和扰动范数，不是类比。公开例固定上面的A、e₀、w=(±1/100,0)，可用初值上界4、η=1/50、γ=31/32逐步核对有理上界平方；没有真实工程/Agent加速主张。η=0恢复严格收缩；η>0只能给误差管，不保证到零。残差到解误差另检索`math.contraction-residual-certificate`。\n\n时变离散系统只有另证A_tᵀP_(t+1)A_t≼γ_t²P_t、统一mI≼P_t≼MI及合适乘积衰减条件才可推广；独立P_t的证书遗漏相邻度量转换。这是自行推导的迁移边界；不声称已有轻量逐层求解器或模型质量证书。\n\n## 来源、近期筛选和实际验证\n\n经典：[Boyd EE363 Winter2008-09 Lecture13](https://ee363.stanford.edu/archive/lectures/lq-lyap.pdf)，slides13–21至13–25（PDF索引20–24）：方程/级数/反向/坐标收缩。以上特定矩阵、扰动与切换例为项目推导。\n\n近期：[Wei/Zhao/Liu arXiv2508.01410v2](https://arxiv.org/abs/2508.01410v2)，v2修订2026-03-13，检索2026-10-09；读取§III–IV及§V相关网格/成本讨论，arXiv页面未列journal reference，不推定已正式发表。作者在连续时变系统中使用可微P(t)及导数项约束能量上界，实际求解采用时间网格近似。本轮只采用“必须核对时间/度量变化”的研究启发，未复现流体结果；网格检查需另证插值误差，不能直接认证连续区间。另检索2603.08191v2(2026-06-13)仅版本/摘要，非正规混沌主张暂缓，未读其全部证明。\n\n8公开精确CPU结构算例、3公开无定理名问题×2检索后端、53知识回归及独立结果审核见`agent_doc/results/math-discrete-lyapunov-20261009/`。公开开发问题不当作未见测试；前提拒用是人工数学检查，非LLM实测。无Lean/真实模型/GPU/端到端/真实token成本/未用holdout验收。字符、字节和秒仅诊断，不能报告token节省。现有按需Skill消费者可检索此卡，安装端需另同步；本轮不改生产行为。\n",
+        "path": "entries/math.discrete-lyapunov.json",
+        "sha256": "008bae30d58fde0bd552a6fcda931e8e71a8ca9d9aeaa6dfa7d1e25dc4e2a7b5",
+        "selection_reason": "prerequisite"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.hermitian-spectral-schur",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "自伴、正规谱定理与酉 Schur 分解",
+        "summary": "任何复方阵存在酉 U 使 U*AU 上三角。",
+        "aliases": [
+          "对称 正规 复数 酉 三角 谱 正交 特征 基",
+          "Hermitian normal unitary Schur spectral theorem"
+        ],
+        "domains": [
+          "algebra",
+          "linear-algebra"
+        ],
+        "structures": [
+          "linear-algebra",
+          "spectral-decomposition",
+          "normality"
+        ],
+        "assumptions": [
+          "A∈C^{n×n}；* 表示共轭转置。实对称情况可取实正交基。"
+        ],
+        "sources": [
+          {
+            "url": "https://linear.axler.net/LADR4e.pdf",
+            "locator": "6.38、7.29、7.31；谱范数结论与瞬态拒用为本项目推导",
+            "accessed": "2026-10-07"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "正文逐项来源/证明核查；非 Lean 形式化证明",
+            "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+          ]
+        },
+        "requires": [],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.eigenspace-gap-perturbation"
+          }
+        ],
+        "content": "# 自伴、正规谱定理与酉 Schur 分解\n\n稳定 ID：math.hermitian-spectral-schur；语义版本1；核查日期2026-10-07。\n\n## 对象、符号与前提\nA∈C^{n×n}；* 表示共轭转置。实对称情况可取实正交基。\n\n## 内积算子基础\n有限维正定内积使每个线性泛函有唯一表示 q*x；在正交基中取系数即可证明（复数共轭约定写成 q*x）。adjoint A* 满足 <Ax,y>=<x,A*y>；ker A*=(im A)⊥。酉算子 U*U=I 保内积和范数；自伴 A=A* 与正规 AA*=A*A 是不同条件。实对称谱还给 Rayleigh 商最小/最大值为最小/最大特征值：在特征基下是以 |x_i|²/||x||² 为权重的凸组合。更精细 min–max 原理此卡不作未证补充。\n\n## 经典结论\n任何复方阵存在酉 U 使 U*AU 上三角。A 正规 AA*=A*A iff 可酉对角化；Hermitian A=A* 的特征值实、特征向量可正交化。正规 A 的 ||A||₂=max|λ|。\n\n## 证明思路与可复核推导\n选一个归一特征向量并扩为正交基，得到首列下方0，对余块归纳构造酉三角。正规三角矩阵比较首行与首列平方和，迫使第一行非对角元零，再递归成对角。Hermitian 的 q*Aq 实，故特征值实；对角酉变换保范数。\n\n## 正例与边界\n[[2,1],[1,2]] 特征值3,1，特征向量(1,1)/√2,(1,−1)/√2。实90度旋转正规，可在 C 上酉对角化但不能在 R 上实对角化。\n\n## 误用反例与拒用条件\n可对角化不等于正规；[[1,100],[0,2]] 可对角化但欧氏算子范数远超最大特征值。ρ≤1 不保证严格渐近稳定，nonnormal matrix 还可出现大瞬态。\n\n## 问题结构与迁移\n选择度量正确的子空间谱方法；若非正规，不能从 eigenvalue gap 给奇异值/误差保证。\n\n## 前置关系与来源版本\n基础前置：有限维空间、基、矩阵乘法和域算术；涉及内积的条目另需共轭转置/正定范数。本条在正文重述使用的基础结论，导航关联不要求一次加载整条课程。准确出处：[6.38、7.29、7.31；谱范数结论与瞬态拒用为本项目推导](https://linear.axler.net/LADR4e.pdf)。Axler 使用第四版、作者2026-08-16 PDF修订；Saad 使用第二版2003；Conrad未标日期的讲义以本轮PDF哈希固定；网页按标题日期与检索日期固定。PDF哈希/近期论文筛选见本轮 sources.json/research.md。\n\n## 验证状态与限制\n已核对所列来源的相关段落，并人工检查上面的证明思路/自推公式。verify.py 对该主题给公开正例、边界或反例；Fraction精确运算与float64数值检查分别标注。数学证明核查不是 Lean 形式化证明；计算实例不证明一般结论。未做同模型Agent A/B或真实GPU系统测试；没有性能收益声明。\n",
+        "path": "entries/math.hermitian-spectral-schur.json",
+        "sha256": "d9b71b5d13923136c8fec1a36a6eaff3fc0be781c6f1ba5cd46aa7166fe363c1",
+        "selection_reason": "prerequisite"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.jordan-generalized-eigenspaces",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "广义特征空间、Jordan 链与块恢复",
+        "summary": "V 为广义特征空间直和，并存在 Jordan 基。",
+        "aliases": [
+          "重特征值 广义 特征 空间 链 核 维数 块",
+          "Jordan generalized eigenspace nilpotent chains"
+        ],
+        "domains": [
+          "algebra",
+          "linear-algebra"
+        ],
+        "structures": [
+          "linear-algebra",
+          "canonical-form",
+          "defective-spectrum"
+        ],
+        "assumptions": [
+          "χ_A 在域 F 上分裂（例如 C），有限维精确算术；每个 λ 的 d_k=dim ker(A−λI)^k，d₀=0。"
+        ],
+        "sources": [
+          {
+            "url": "https://linear.axler.net/LADR4e.pdf",
+            "locator": "8.22、8.46；块计数公式为本项目逐块推导",
+            "accessed": "2026-10-07"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "正文逐项来源/证明核查；非 Lean 形式化证明",
+            "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+          ]
+        },
+        "requires": [],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.minimal-polynomial-primary-decomposition"
+          }
+        ],
+        "content": "# 广义特征空间、Jordan 链与块恢复\n\n稳定 ID：math.jordan-generalized-eigenspaces；语义版本1；核查日期2026-10-07。\n\n## 对象、符号与前提\nχ_A 在域 F 上分裂（例如 C），有限维精确算术；每个 λ 的 d_k=dim ker(A−λI)^k，d₀=0。\n\n## 经典结论\nV 为广义特征空间直和，并存在 Jordan 基。λ 的大小至少 k 的块数=d_k−d_{k−1}，大小恰 k 的块数=2d_k−d_{k−1}−d_{k+1}。最大块大小是对应最小多项式指数。\n\n## 证明思路与可复核推导\n在 λ 主分量上 N=A−λI 幂零；利用 ker N^k 的嵌套基选择链顶并逐次施加 N 得链基（存在性采用来源8C）。一个大小 m 的块对 d_k 贡献 min(k,m)，一阶差是 m≥k 的指示，二阶差恢复精确块数；其它 λ 分量上的 A−λI 可逆贡献0。\n\n## 正例与边界\nN=J₃(0)⊕J₁(0)，d=(0,2,3,4,4)，块数为一个3块、一个1块。全部 d₁=n 时只有1块，算子为 λI。\n\n## 误用反例与拒用条件\n实旋转未分裂，不能给实 Jordan 对角块。J₂(0) 加极小非对角扰动可产生互异特征值，精确块结构不连续；自然语言核对和浮点样例不是形式化分类证明。\n\n## 问题结构与迁移\n判断线性系统重复根导致的多项式瞬态；精确符号推导可用链，数值生产算法优先 Schur/SVD 而非逼近 Jordan。\n\n## 前置关系与来源版本\n基础前置：有限维空间、基、矩阵乘法和域算术；涉及内积的条目另需共轭转置/正定范数。本条在正文重述使用的基础结论，导航关联不要求一次加载整条课程。准确出处：[8.22、8.46；块计数公式为本项目逐块推导](https://linear.axler.net/LADR4e.pdf)。Axler 使用第四版、作者2026-08-16 PDF修订；Saad 使用第二版2003；Conrad未标日期的讲义以本轮PDF哈希固定；网页按标题日期与检索日期固定。PDF哈希/近期论文筛选见本轮 sources.json/research.md。\n\n## 验证状态与限制\n已核对所列来源的相关段落，并人工检查上面的证明思路/自推公式。verify.py 对该主题给公开正例、边界或反例；Fraction精确运算与float64数值检查分别标注。数学证明核查不是 Lean 形式化证明；计算实例不证明一般结论。未做同模型Agent A/B或真实GPU系统测试；没有性能收益声明。\n",
+        "path": "entries/math.jordan-generalized-eigenspaces.json",
+        "sha256": "76c80e786705bf5133ff8fdcd25f1f7e0cda48a3a6829b847e3292423864892b",
+        "selection_reason": "prerequisite"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.switched-quadratic-metrics",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "切换线性更新的共同度量与驻留边界",
+        "summary": "共同SPD二次度量认证任意切换；逐模式度量需计转换代价与全窗口切换频率，逐模式谱稳定不足。",
+        "aliases": [
+          "更新 模式 交替 误差 爆炸 每个 特征值 小于一",
+          "算法 切换 能量 度量 驻留 时间 共同 参考",
+          "多种 迭代 平衡点 不同 轮换 收敛",
+          "switched common metric dwell time"
+        ],
+        "domains": [
+          "linear-algebra",
+          "optimization-and-control",
+          "numerical-analysis"
+        ],
+        "structures": [
+          "switched-linear-dynamics",
+          "common-metric-contraction",
+          "mode-metric-switch-cost",
+          "average-dwell-boundary"
+        ],
+        "assumptions": [
+          "有限同维实齐次更新、共享零点、无reset/扰动",
+          "SPD共同P或每模式P_i且0<a<1全模式收缩",
+          "模式转换全部允许边P_j≤muP_i；驻留结论需全部整数窗口计数约束"
+        ],
+        "sources": [
+          {
+            "url": "https://web.ece.ucsb.edu/~hespanha/published/avedwell.pdf",
+            "locator": "§1 definition and §3; continuous-time source, discrete argument derived here",
+            "accessed": "2026-10-09"
+          },
+          {
+            "url": "https://arxiv.org/abs/2609.37840",
+            "locator": "PDF abstract,II-A assumption1,II-B weighted p-norm,III theoremsIII.1/III.4; selective text extraction,not entire visual review",
+            "accessed": "2026-10-09"
+          }
+        ],
+        "requires": [
+          {
+            "id": "math.discrete-lyapunov",
+            "version": 1
+          }
+        ],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.perturbation-propagation"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "agent_doc/results/math-switched-metrics-20261009/verify.py",
+            "agent_doc/results/math-switched-metrics-20261009/raw.json",
+            "agent_doc/results/math-switched-metrics-20261009/independent_review_by_gpt.md"
+          ]
+        },
+        "content": "# 切换线性更新：共同度量、模式转换与驻留条件\n\n稳定 ID：`math.switched-quadratic-metrics@1`。数学对象：有限个实 d×d 矩阵 A_i；整数时间 x_{t+1}=A_{sigma_t}x_t，所有模式共享原点，状态无重置、无外部扰动。P 或 P_i 实对称正定；X≤Y 表示 Y-X 半正定。本条是经典共同/多Lyapunov方法的离散推导，充分证书，不是稳定性必要条件或最优调度定理。\n\n## 来源与认识状态\n\n经典出处：[Hespanha–Morse, CDC1999, pp2655–2660](https://web.ece.ucsb.edu/~hespanha/published/avedwell.pdf)，§1平均驻留定义、§3 Theorem2及式(6)–(8)。原文研究连续时间、紧矩阵族和统一衰减；此处有限离散式与例子是自己的可复核推导，不冒充原文离散定理。前置`math.discrete-lyapunov@1`（固定模式正定证书），其Jordan/Hermitian前置给出幂与SPD谱比较。与`math.perturbation-propagation`相关但本条不包含扰动界。\n\n近期筛选（检索2026-10-09）：Cinto/Vallarella/Haimovich/Pellanda，[arXiv2609.37840v1](https://arxiv.org/abs/2609.37840)，提交2026-09-29 15:39:43 UTC，预印本，未核实期刊接受。选择性阅读原始PDF摘要、II-A/B、III.1/III.4；不是全篇视觉审读或复现。作者研究连续仿射系统，假定存在Hurwitz平均矩阵及平均偏置为零，使用规定的混合反馈；III讨论带驻留约束的实用目标区域。启发是选择适合目标几何的加权p范数；它不认证任意离散切换、模型层路由或本项目收益。p范数算法留作候选。\n\n## 共同能量证书与证明\n\n若存在同一个 P≻0 和 0<a<1，所有允许模式满足 A_i^T P A_i≤aP，则任意切换都有\n\nV_t=x_t^T P x_t≤a^{t-s}V_s，\n\n||x_t||_2≤sqrt(lambda_max(P)/lambda_min(P)) a^{(t-s)/2}||x_s||_2。\n\n证明：逐步代入 V_{t+1}=x_t^T A_i^T P A_i x_t≤aV_t，归纳，再用SPD谱比较。a是能量因子，范数因子是sqrt(a)，不能混用。不依赖模式选择是否适应状态。统一证书必须全模式成立；各自的谱半径或某几个样例不提供这个证书。\n\n例：A_1=[[1/2,1/8],[0,1/2]]，A_2=A_1^T，P=I，a=1/2，两个矩阵的aI-A_i^T A_i均SPD。零输入保持零。边界A=I、a=1仅保证不增长，不给严格衰减。未找到某P不等于没有任何共同证书；二次证书不是全部稳定切换系统的必要条件。\n\n## 模式度量与切换代价\n\n设每个模式有P_i≻0，A_i^T P_i A_i≤aP_i，0<a<1；每条允许切换i→j都有P_j≤mu P_i，mu≥1。有限模式集的统一上下谱界记为m=min_i lambda_min(P_i)>0、M=max_i lambda_max(P_i)。\n\n为避免差一步：V_t=x_t^T P_{sigma_t}x_t，N(s,t)=#{u∈{s,...,t-1}:sigma_{u+1}≠sigma_u}。包含最后状态处的度量转换，不计初始模式选择。于是\n\nV_{t+1}≤mu^{1[sigma_{t+1}≠sigma_t]}aV_t，\nV_t≤mu^{N(s,t)}a^{t-s}V_s。\n\n证明先在模式i更新至x_{t+1}，再把度量P_i换成P_j，分别使用收缩和度量比较；乘积归纳。坐标变化/状态reset不能冒充纯度量变化。\n\n若**每个整数窗口**满足N(s,t)≤N0+(t-s)/tau，N0≥0、tau>0，则\n\n||x_t||_2≤sqrt(M/m) mu^{N0/2} [a mu^{1/tau}]^{(t-s)/2}||x_s||_2。\n\n当a mu^{1/tau}<1时此界给指数衰减；mu>1时等价tau>log(mu)/(-log(a))。mu=1时只需a<1。等号不认证严格衰减。这个阈值只对给定证书是充分门槛，并非实际系统必要/最优驻留时间。仅从零点到终点的平均切换率不能给所有子窗口的统一保证；一次有限轨迹也不证明未来调度满足约束。\n\n## 发散反例与可修复调度\n\nA_1=[[1/2,1],[0,1/2]]，A_2=A_1^T；均谱半径1/2。交替两步积B=A_2 A_1=[[1/4,1/2],[1/2,5/4]]，对称且det(I-B)=-7/16<0，因此一个特征值>1。交替轨迹沿该特征向量发散；不可能存在严格共同二次收缩证书。\n\n但P_1=diag(1,16)、P_2=diag(16,1)给出a=3/4的模式内收缩，允许双向转换mu=16。每模式至少保持10步的调度满足全窗口N≤1+(t-s)/10，而且16(3/4)^10<1；上述界认证收缩，尽管保守且存在瞬态前因子。有限样例只验证算术，实现保证来自一般不等式和被强制的驻留策略，不来自对曲线的观察。\n\n## 跨领域迁移：线性算法更新模式\n\n原问题：求固定My=b，选择不同固定预条件更新y_{t+1}=y_t+C_i(b-My_t)。对应A_i=I-C_i M，若共同解y*存在则误差e_t=y_t-y*精确满足上述齐次式。对象、乘积、共同零点及度量比较均保留，不只是类比。预测：若全部模式满足同一P证书，任意选择衰减；仅个别谱半径小于一可失效；模式度量证书加全窗口驻留限制可恢复有条件保证。最小验证可令M=I、C_i=I-A_i，用上述两个矩阵，检查交替/10步策略。尚未证明它比既有固定算法快；增加驻留可能牺牲速度。\n\n拒绝迁移：f1(x)=x/2、f2(x)=x/2+1各自收缩，却平衡点不同。交替极限为2/3与4/3的二周期，不能套共同零点收敛。神经网络逐层状态维度、归一化、残差、非线性Jacobian域与目标不一致时，同样不能用层内特征值宣称e2e稳定；需要真实映射、统一域和扰动证书。\n\n## 检索与验证等级\n\n先抽取对象/约束/目标/结构：同维更新、共同参考、模式内证书、允许边、窗口计数；少量加载本条及前置，然后逐项应用/补假设/拒绝。按学科linear-algebra、optimization-and-control、numerical-analysis与结构switched-linear-dynamics、common-metric-contraction、mode-metric-switch-cost、average-dwell-boundary检索。\n\n可验证：SPD/PSD可用精确主子式或带外向舍入的Cholesky/谱界；一般维不能只检查顺序主子式证明PSD。a固定时共同P是LMI可行性，需尺度约束如P≥I；同时优化a和P非直接线性SDP。浮点求解返回近似P必须再认证余量，不能以solver success替代数学证书。逐模式证书和mu可以保守谱界/广义特征值求取，检查全部允许边。\n\n本轮：一般证明为自然语言数学推导/独立审核，不是Lean形式化；8公开CPU精确有理样例和两后端结构检索，只是实现/结构检查，不是未见模型测试或token收益。保留holdout未读；公开样例不可再称未见。证据见`agent_doc/results/math-switched-metrics-20261009/`。真实GPU、模型任务质量及其他域游标保留，不修改生产或SGLang。\n\n",
+        "path": "entries/math.switched-quadratic-metrics.json",
+        "sha256": "a57da1333252b7b5d30b2cb7575df4d499cd9298af6f1fd24df2e72c9aed512f",
+        "selection_reason": "retrieved"
+      }
+    ],
+    "knowledge_refs": [
+      {
+        "id": "math.discrete-lyapunov",
+        "version": 1,
+        "sha256": "008bae30d58fde0bd552a6fcda931e8e71a8ca9d9aeaa6dfa7d1e25dc4e2a7b5"
+      },
+      {
+        "id": "math.hermitian-spectral-schur",
+        "version": 1,
+        "sha256": "d9b71b5d13923136c8fec1a36a6eaff3fc0be781c6f1ba5cd46aa7166fe363c1"
+      },
+      {
+        "id": "math.jordan-generalized-eigenspaces",
+        "version": 1,
+        "sha256": "76c80e786705bf5133ff8fdcd25f1f7e0cda48a3a6829b847e3292423864892b"
+      },
+      {
+        "id": "math.switched-quadratic-metrics",
+        "version": 1,
+        "sha256": "a57da1333252b7b5d30b2cb7575df4d499cd9298af6f1fd24df2e72c9aed512f"
+      }
+    ],
+    "skipped": []
+  },
+  "token_cost": "unmeasured; chars/bytes not tokens",
+  "holdouts_metadata_sha256": "5a0572863e75526de915f22108fc90b5e8ce58de14292e7159054af3ba9fe48a"
+}

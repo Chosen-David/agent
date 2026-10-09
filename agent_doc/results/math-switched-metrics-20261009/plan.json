@@ -1,0 +1,133 @@
+{
+  "task_refs": [
+    "MATH-62"
+  ],
+  "scope": "Discrete switched homogeneous finite linear maps: common SPD metric and mode-metric switch cost; public exact CPU and retrieval checks only, no GPU/model/performance claims",
+  "budget_seconds": 1800,
+  "max_cycles": 2,
+  "decision": "EXECUTE",
+  "started_unix": 1791543800.2149708,
+  "tasks": [
+    {
+      "id": "plan-review",
+      "owner": "fresh-reviewer"
+    },
+    {
+      "id": "produce",
+      "owner": "root-switched-producer",
+      "depends_on": [
+        "plan-review"
+      ],
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "math-switched-metrics-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-switched-producer",
+        "manifest_path": "agent_doc/results/math-switched-metrics-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-switched-metrics-20261009/validation_plan.json",
+          "sha256": "23203fbbc9e61f24c828bec0eb444732f30d4adcfd081d994092d697880e400f"
+        },
+        "scope": "Discrete switched homogeneous finite linear maps: common SPD metric and mode-metric switch cost; public exact CPU and retrieval checks only, no GPU/model/performance claims"
+      }
+    },
+    {
+      "id": "verify",
+      "owner": "distinct-fresh-result-reviewer",
+      "depends_on": [
+        "produce"
+      ],
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "math-switched-metrics-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-switched-producer",
+        "manifest_path": "agent_doc/results/math-switched-metrics-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-switched-metrics-20261009/validation_plan.json",
+          "sha256": "23203fbbc9e61f24c828bec0eb444732f30d4adcfd081d994092d697880e400f"
+        },
+        "scope": "Discrete switched homogeneous finite linear maps: common SPD metric and mode-metric switch cost; public exact CPU and retrieval checks only, no GPU/model/performance claims"
+      }
+    },
+    {
+      "id": "publish",
+      "owner": "root",
+      "depends_on": [
+        "verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-switched-metrics-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-switched-producer",
+          "manifest_path": "agent_doc/results/math-switched-metrics-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/math-switched-metrics-20261009/validation_plan.json",
+            "sha256": "23203fbbc9e61f24c828bec0eb444732f30d4adcfd081d994092d697880e400f"
+          },
+          "scope": "Discrete switched homogeneous finite linear maps: common SPD metric and mode-metric switch cost; public exact CPU and retrieval checks only, no GPU/model/performance claims"
+        }
+      ]
+    }
+  ],
+  "evidence_refs": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "ff97d09aeb35cff3a973d1423f325ef6274f33b4c68830e8c899821e989bd63a"
+    },
+    {
+      "path": "prompts/decision_review.md",
+      "sha256": "55b793450ff0e3d29696dae7626afab7f15d1ab843baa396dcc1d564e532c849"
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "a52907eaf3a9af394767fb68a00b1330e7c35b83744566afca98affcafe962f5"
+    },
+    {
+      "path": "agent_doc/task/task_details/MATH-62.md",
+      "sha256": "37b8f681fe9ec50603e35242b9de029e5aa6618c21e520c35253a2e8e42b93ee"
+    },
+    {
+      "path": "knowledge/coverage.json",
+      "sha256": "d8aff97b17dd00f644f3ef1564b2b3183cce2d24f51c76c67aa44e16d93548e7"
+    },
+    {
+      "path": "knowledge/learning_state.json",
+      "sha256": "6c08fc99f1440fac49f6d154f631a0c20132aa66cfd7ee81b88cd1e7cd208dad"
+    },
+    {
+      "path": "agent_doc/results/math-switched-metrics-20261009/prior_search.json",
+      "sha256": "501c14e78d0428904f1624bc366255ad4cc1274a9ea188cb45382c1c890dce6a"
+    },
+    {
+      "path": "agent_doc/results/math-switched-metrics-20261009/prior_knowledge.json",
+      "sha256": "d6a432fa072f7873bf34e1b22e69289eb90e02b04561a0012c7d1b4aa1ff3369"
+    }
+  ],
+  "cycle": 2,
+  "mathematics": {
+    "objects": "Finite real dxd A_i, common zero/reference, x[t+1]=A_sigma[t]x[t], finite mode set, no reset/disturbance",
+    "common": "P symmetric SPD and A_i^T P A_i <= aP for every allowed mode,0<a<1",
+    "mode": "Every P_i symmetric SPD, A_i^T P_i A_i <= aP_i, all allowed edge pairs P_j<=mu P_i,mu>=1",
+    "count": "V[t]=x[t]^T P_sigma[t]x[t]; N(s,t)=#{u in {s,...,t-1}: sigma[u+1]!=sigma[u]}, includes switch after last transition; no initial switch",
+    "bound": "V[t]<=mu^N(s,t)*a^(t-s)*V[s]; all-window N(s,t)<=N0+(t-s)/tau gives decay iff a*mu^(1/tau)<1; equality no strict guarantee; sufficient only"
+  },
+  "acceptance": {
+    "exact_cases": [
+      "common SPD contraction",
+      "per-mode metric PSD",
+      "mu comparison",
+      "alternating unstable product",
+      "10-step dwell contraction bound",
+      "boundary a=1 no decay",
+      "zero input",
+      "affine different reference refusal"
+    ],
+    "retrieval": "3 public theorem-name-free structure queries each in file/SQLite Top3 includes new ID; full prerequisite closure <=18000characters; manual applicability not model accuracy",
+    "regression": "tests.test_knowledge and tests.test_knowledge_index pass",
+    "preservation": "All initial candidate card hashes and evaluation_holdouts hash unchanged; no holdout contents read",
+    "source": "Classic continuous result attributed accurately; discrete proof own elementary derivation; recent originalv1 prereprint read selective only",
+    "limits": "No Lean,LLM,GPU,e2e,token benefit or optimality/necessity claims"
+  }
+}
