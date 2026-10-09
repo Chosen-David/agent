@@ -287,3 +287,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-09 低秩逆更新
 
 - [x] [MATH-56] 核验低秩逆更新、正定删除边界与浮点相消，筛选最新数值稳定性研究；独立验收后main发布。 ([detail](task_details/MATH-56.md))
+
+## 2026-10-09 全局质量区间
+
+- [ ] [MATH-57] 推导分数盒上的保留质量极值与逐层near/far证书接口；筛选近期softmax验证研究，独立文档审核后发布。 ([detail](task_details/MATH-57.md))

@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "snapshot": "f7025f3817e6fdc2899d373021b1625dada56725c3f4f960360b7d2dd1c5fa3e",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.support-conditioning",
+      "version": 1,
+      "sha256": "4358cbb6785d8b709037d448a5738354be5134ce8f64127931430f3d39f186fd",
+      "title": "有限支持条件化：逆向KL投影、稳定性与质量不可识别",
+      "summary": "候选内归一化不识别全局保留质量；以逆向KL分解、条件TV放大界和分区分母恢复核查hard mask与near/far统计前提。",
+      "status": "published",
+      "assumptions": [
+        "同一非空有限合法集合上的非负归一化概率；事件索引唯一合法且质量正",
+        "条件TV须两分布事件质量均正；逆向KL有限式须q支持事件且q绝对连续于P",
+        "候选比例恢复全局质量需独立事件质量/完整分母；logit温度与因果全集一致",
+        "精确算术推导；浮点样例非认证包络，未证明模型/e2e收益"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-conditioning-20261008/independent_review_v2.md: finite proof/code/data review; not formal",
+          "agent_doc/results/math-conditioning-20261008/validation_results_v2.json: public CPU development cases"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "件化",
+            "支持",
+            "条件",
+            "质量"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "分母",
+            "质量"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "分母",
+            "质量"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "分母",
+            "条件",
+            "质量"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "件化",
+            "分母",
+            "支持",
+            "条件",
+            "质量"
+          ]
+        }
+      ],
+      "score": 52
+    },
+    {
+      "id": "ai.speculative-sampling-residual-exactness",
+      "version": 1,
+      "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331",
+      "title": "推测采样：剩余质量校正与分布不变条件",
+      "summary": "固定共同token空间、正确前缀和真实提议分布，以min(1,p/q)接受并在拒绝后抽取正部残差，恢复目标分布；greedy、树候选和MTP名称本身不保证随机采样无损。",
+      "status": "published",
+      "assumptions": [
+        "p与q为同一有限输出空间上的归一化分布，包含实际采样变换；p固定为所比较的目标生成策略",
+        "候选从实际q生成；接受检验随机数符合条件独立性，不能把argmax生成的点质量伪装成soft q",
+        "只对q(X)>0计算比值；Z=0意味着不会进入残差归一化分支，不要求目标支撑包含于提议支撑",
+        "链式验证的p/q、位置及缓存对应同一前缀；第一次拒绝后丢弃不再对应正确前缀的后续草稿",
+        "确定性候选消元的顺序不偷看本次接受随机数，拒绝后更新剩余分布；此特例不认证任意树实现",
+        "理论使用精确概率运算，有限精度/缓存/终止/随机数实现须另验；分布相同不等于same-seed逐字相同"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "条件",
+            "质量"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "条件",
+            "质量"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "分母",
+            "条件",
+            "质量"
+          ]
+        }
+      ],
+      "score": 21
+    },
+    {
+      "id": "math.betting-test-martingale",
+      "version": 1,
+      "sha256": "a082de859efe25ad7cef832d8c8433aaf0f72cd92399d6601c24eebe37cb5ca9",
+      "title": "可预测下注、条件均值与序贯检验有效性",
+      "summary": "有界观测在零假设下具有固定条件均值时，合法且只使用过去信息的乘积证据构成非负鞅；由Ville界控制任意停止误报。边际均值相同不够。",
+      "status": "published",
+      "assumptions": [
+        "过滤族 F_t 包含当前全部可用历史；X_t∈[0,1] 几乎处处",
+        "零假设下 E[X_t|F_(t-1)]=m，固定 m∈(0,1)，不能仅有边际均值m",
+        "lambda_t 是 F_(t-1) 可测，并满足 -1/(1-m)≤lambda_t≤1/m",
+        "初始财富 W_0=1；错误预算 alpha∈(0,1) 在检验前规定"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-betting/verify.py",
+          "docs/knowledge_learning/2026-10-07-betting/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "条件"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "条件"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "条件"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "条件"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "条件"
+          ]
+        }
+      ],
+      "score": 18
+    }
+  ]
+}

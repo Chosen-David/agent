@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "id": "math.floating-dot-enclosure",
+  "version": 1,
+  "status": "published",
+  "kind": "method",
+  "title": "浮点点积外包与严格安全筛除",
+  "summary": "对存储binary64点积逐运算向外扩展，核对正确舍入/渐进下溢；累计丢失小项、量化原始输入及GPU排序目标需区分，未知前提拒用。",
+  "aliases": [
+    "outward rounding interval dot product",
+    "乘加 累计 丢失 小项 认证 比较大小",
+    "电导 电压 线性组合 舍入 区间",
+    "低精度 量化 原始输入 未知误差 证书",
+    "浮点 抵消 FTZ 次正规 点积 外包"
+  ],
+  "domains": [
+    "numerical-analysis",
+    "linear-algebra"
+  ],
+  "structures": [
+    "floating-point-enclosure",
+    "interval-arithmetic",
+    "inner-product",
+    "interval-screening",
+    "error-bound"
+  ],
+  "assumptions": [
+    "输入为有限存储binary64数，目标为其精确实数点积；量化前输入和实际GPU结果是其他目标",
+    "每个标量加乘正确RN舍入到同一binary64格式、邻接nextafter正确、渐进下溢，无FTZ/未知重排或低精度路径",
+    "每步结果及外包邻接端点有限；无法满足则无法认证并保留/回退，不按失败值剪枝",
+    "安全筛除有全部逐项包络，tau取第k大下界，删除仅限U_i<tau，重排目标/tie规则一致",
+    "坐标投影误差界仅适用显式选坐标；学习投影、理想RoPE、输入误差与GPUkernel偏差须另行认证"
+  ],
+  "sources": [
+    {
+      "url": "https://nhigham.com/2022/09/13/what-is-fast-matrix-multiplication/",
+      "locator": "equation(1) componentwise gamma_n bound; conservative gamma_2d and interval induction are explicit project derivations",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://docs.python.org/3/library/math.html",
+      "locator": "math.nextafter/math.ulp; semantics only, not hardware premise certification",
+      "accessed": "2026-10-08"
+    },
+    {
+      "url": "https://arxiv.org/html/2604.06258v2",
+      "locator": "v2 2026-09-01; Sections2/3.1–3.3 residue versus rounding errors/absorption/range limits; not adopted as enclosure theorem",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "Conditional induction proof and exact-rational public CPU data at agent_doc/results/math-rounding-20261008/; independent actual code/math/data acceptance required before publication",
+      "No Lean/formal proof, platform-wide arithmetic certification, GPU/model/quality/token performance experiment"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.residual-interval-screening"
+    },
+    {
+      "type": "related",
+      "id": "math.linear-solve-backward-error"
+    },
+    {
+      "type": "related",
+      "id": "math.rotation-intertwiner"
+    },
+    {
+      "type": "related",
+      "id": "math.support-conditioning"
+    }
+  ],
+  "content": "# 浮点点积外包：从算术前提到安全筛除\n\nID: `math.floating-dot-enclosure`，version 1。类型为条件数值方法与项目推导；不是新提出的经典定理，也不是已实现的GPU kernel。\n\n## 对象、目标和前提\n\n当乘加累计丢失小项、抵消后仍需认证比较大小时，先写清楚目标：\n\\[\ns=\\sum_{j=1}^{d}x_j y_j,\n\\]\n其中输入是**已存储的有限binary64数，按其精确实数值解释**。目标不是量化前原始输入，也不是某个GPU累加器产生的浮点值。\n\n本方法假设每个标量 `+`、`*` 都按相同binary64格式正确舍入到最近数；`nextafter` 返回该格式邻接数；采用渐进下溢，禁止FTZ、隐式低精度、未知重排或扩大中间格式。每步舍入结果及向外一邻接端点均有限。空点积定义0。算法无法确认前提或碰到非有限端点时，返回无法认证/回退；不能当作分数小而删除。\n\n运行时的radix/mantissa和几个次正规探针只是诊断，不能证明编译器、动态舍入模式和全部硬件路径符合前提。\n\n## 经典事实：绝对误差与相对误差区别\n\nHigham作者文章的公式(1)记录常规矩阵乘法的分量误差界\n\\[\n|C-\\widehat C|\\le\\gamma_d |A||B|,\\qquad\n\\gamma_d=du/(1-du).\n\\]\n标准相对误差模型还需相应舍入方式、`du<1`和没有破坏模型的范围错误。这不是仅凭dtype名字可迁移到tensor core的结论。\n\n本项目给出较松、便于逐步复核的推导：顺序乘加且每步满足 `fl(a op b)=(a op b)(1+δ)`、`|δ|≤u`，每个项的误差系数至多含 `2d` 个因子。若 `2du<1`，则\n\\[\n|\\widehat s-s|\\le\\gamma_{2d}\\sum_j |x_jy_j|.\n\\]\n证明：任意最多m个因子乘积，利用Bernoulli下界 `(1-u)^m≥1-mu` 和几何级数上界 `(1+u)^m≤1/(1-mu)`，得系数偏差不超过 `γ_m`；把分数按各项系数展开后应用三角不等式。此处是项目的保守推导，不声称比经典`γ_d`更紧。上述相对模型不涵盖任意下溢。\n\n`sum |x_j y_j| / |s|`可能很大，甚至`s=0`时无定义；不能换成 `γ*|widehat s|` 作为证书。计算γ、绝对值和以及最终界时若又向内舍入，理论上界也可能变成不合法的数值上界。本轮γ示例用Fraction精确常数，未实现GPU误差公式。\n\n## 项目推导：邻接数逐运算外包\n\n定义 `down(r)=nextafter(r,-∞)`、`up(r)=nextafter(r,+∞)`。对精确有限实数值t，若r是t在规定格式的正确RN舍入，则\n\\[\n\\operatorname{down}(r)\\le t\\le\\operatorname{up}(r).\n\\]\n这是“邻接浮点数＋正确舍入”前提的直接推论：被舍入的实数在相邻浮点数之间。渐进下溢下，舍入成0也适用；不是给最终整段计算结果补一ULP。\n\n对包含真实值的区间A=[a,b]、B=[c,d]，设置\n\\[\nA\\oplus B=[\\operatorname{down}(\\mathrm{RN}(a+c)),\n             \\operatorname{up}(\\mathrm{RN}(b+d))],\n\\]\n\\[\nA\\otimes B=[\\min_{v\\in V}\\operatorname{down}(\\mathrm{RN}(v)),\n             \\max_{v\\in V}\\operatorname{up}(\\mathrm{RN}(v))],\n\\quad V=\\{ac,ad,bc,bd\\}.\n\\]\n加法单调，乘法在矩形上的极值出现在四角；各角先外包后取极值即可。点输入从 `[x_j,x_j]` 与 `[y_j,y_j]` 开始，从 `[0,0]` 累计区间和。通过运算步数归纳，最终[L,U]包含s。NaN、溢出、非有限邻接端点、未知算术条件时停止认证。本结论为前提明确的数学证明思路；没有Lean形式化验证。\n\n区间依赖可能导致宽度很大；正确包含不等于有信息，更不意味着高速。间隔为0时不能从区间重叠推断排序关系。\n\n## 可复核例子、边界和反例\n\n1. `x=(2^53,1,-2^53), y=(1,1,1)`，精确s=1，普通顺序结果为0。仅给最终0补一邻接ULP的区间约为 `[-2^-1074,2^-1074]`，不含1；逐步外包则包含1，但可能很宽。\n2. 最小正次正规数 `η=2^-1074` 与0.5相乘，精确结果 `η/2`，RN结果为0；渐进下溢条件下 `[down(0),up(0)]`包含它。相对误差模型不能直接解释为误差≤u倍真值。\n3. FTZ反例：把 `2^-1022 * 0.25` 非法地冲刷成0，则真值 `2^-1024`远大于0的邻接间隔，上述邻接包络失效。这是算术前提失效，不能用一次探针当作所有kernel已认证。\n4. 有限输入也可能在乘法/加法/向外一邻接步溢出；本方法拒绝给有限证书。维度不匹配、NaN输入、反向端点或非法k同样拒用。\n5. 缓存量化结果0乘1的存储目标接近0，无法担保量化前原始1000的分数。没有输入误差界时拒绝原始输入目标；存储dtype更高不改变这个事实。\n\n## 严格迁移：坐标粗筛＋遗漏项界\n\n沿用 `math.residual-interval-screening@1` 的有效逐项包络要求，不更改其版本/历史引用。为避免未知学习投影误差，演示只选固定坐标S，其余坐标H；P为精确坐标投影。\n\n对q与第i个键k_i，粗分数 `a_i=sum_{j∈S} q_j k_ij` 用逐运算包络。遗漏项满足直接三角界\n\\[\n\\left|\\sum_{j\\in H}q_j k_{ij}\\right|\n\\le \\max_{j\\in H}|q_j|\\,\\sum_{j\\in H}|k_{ij}|.\n\\]\n空H令右边0。对键的非负绝对和逐步外包取得上界，对查询max取精确存储值最大绝对值，再向外乘法；得到认证的ρ_i。用外包加法组合 `[a_i^- -ρ_i,a_i^+ +ρ_i]`。本轮demo重算键和，未实测预缓存性能。\n\n令τ为第k大下界，仅删除 `U_i<τ`；**相等必须保留**。被删项至少有k个别的下界高于其上界，因此不可能属于实数目标Top-k；对保留项用同一精确目标及tie规则重排，恢复一个原Top-k解。候选可退化为全量，这是合法负结果。\n\n| 输入形式 | 可严格映射的目标 | 仍须另查 |\n|---|---|---|\n| 仅NoPE | 相同存储q/k的实数点积 | 输入量化、实际GPU累加器目标 |\n| 仅RoPE | 已在正确位置旋转并存储后的q/k点积 | 理想旋转、sin/cos、位置/频率布局和旋转舍入误差 |\n| NoPE+RoPE | 各分量包络再外包相加、已知标量外包相乘 | 缩放目标、两个路径精度及mask是否一致 |\n| 学习U或低秩表示 | 仅其存储压缩坐标的点积 | 原空间投影缺陷、非正交性、逐项真实残差；未知则不证原分数 |\n\n本证书指向存储输入的精确实数目标。若要保护实际dense kernel的浮点Top-k，还需另有每项kernel结果距该实数目标的认证界ζ_i，再向外扩展区间。否则真实数学排序与dense浮点排序可能不同。它也不提供注意力质量、质量总量或e2e精度保证。\n\n## 跨领域迁移：传感器网络电流\n\n测量电导G_j（siemens）与电压V_j（volts），线性电流 `I=sum G_j V_j`（amperes）保留了同一双线性结构。存储数据 `G=(1/8,1/4,1/2), V=(3,-2,1)` 给出精确 `I=3/8 A`，逐步区间应包含它。这是算术迁移的可证伪预测，不是物理传感器的真实误差保证；测量校准、温漂、非线性接触电阻和相关误差需额外证据/输入盒。不把单位一致当成模型已实测。\n\n## 验证、关系和来源\n\n- 验证脚本及精确Fraction oracle：`agent_doc/results/math-rounding-20261008/validate.py`，raw.json保留输入hex、精确目标、端点与所有失败/回退案例。浮点样例不替代上述一般推导。\n- 前置概念：实数区间、浮点相邻数、加法单调、乘法四角极值；本卡自包含，不强依赖加载全部筛除卡。实际筛除迁移的knowledge-use仍固定筛除卡及其依赖。\n- 相关：`math.residual-interval-screening`（认证前提桥）、`math.linear-solve-backward-error`（残差不能替代真误差）、`math.rotation-intertwiner`（旋转与压缩目标）、`math.support-conditioning`（分数/支持与质量归一化区别）。\n- 经典准确出处：Higham作者《What Is Fast Matrix Multiplication?》，2022-09-13，公式(1)及γ定义；其列出的Higham2002教材仅作原始参考，不称本轮通读。https://nhigham.com/2022/09/13/what-is-fast-matrix-multiplication/\n- 正式操作文档：Python `math.nextafter`、`math.ulp`；检索2026-10-08。https://docs.python.org/3/library/math.html\n- 近期筛选：He/Panchekha，《Accurate Residues for Floating-Point Debugging》，arXiv2604.06258v2，修订2026-09-01；已读相关残值/吸收与范围限制段落。其残值估计不能直接作为本项目严格区间，未复现论文工具或采用其性能数字。https://arxiv.org/html/2604.06258v2\n- 2609.37844仅摘要候选，正文/版本未核实，排除在知识保证之外；访问状态在sources.json。\n\n实际验证状态由独立审查记录给出；无Lean、真实模型、GPU、token A/B或保留的未见模型测试。公开查询、暴露后的独立案例均属于开发/回归，不能继续称未见。\n",
+  "path": "entries/math.floating-dot-enclosure.json",
+  "sha256": "e800ad6e5dbd1be9aa2de66da0e06933cccb84c41419668ae0550f4407db1bbb",
+  "knowledge_refs": [
+    {
+      "id": "math.floating-dot-enclosure",
+      "version": 1,
+      "sha256": "e800ad6e5dbd1be9aa2de66da0e06933cccb84c41419668ae0550f4407db1bbb"
+    }
+  ]
+}
