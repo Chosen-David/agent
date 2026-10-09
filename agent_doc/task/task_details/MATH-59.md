@@ -20,3 +20,5 @@ Date: 2026-10-09
 - git diff --check 无输出；generated-reference --check 失败于 main 已有 code-reading_execution.md stale，本轮未改该范围。文档审核发现准确耗时是最大性充分条件、不应写成必要条件，已纠正并重绑 manifest；完整审核反馈待 FINAL。
 
 - 第二次实际文档 FINAL approve-with-document-scope，冻结 advice sha1bd362a11b0cc042372415442ee99b615540c8d3d5acb8555fa8b722face9485。一般证明、解析算例与源解释检查通过；无新实验与Agent效果结论。准备发布，远端核验后收尾。
+
+- 文档发布4a1ec24b767ef1c181843a36d042708c1a24e305，远端fetch/ls-remote及tree694bd69e3a4c4596e236dbaa6b25e5ebe2dfa37f匹配。推送前发现并保留3bd1eb3硬件candidate，rebase后新鲜fetch+CAS；未强推，未修改其卡。收尾保留原next_topic。后续核查真实FIFO完成ID、verifier可见延迟和有效成本上包络；没有实际模型/GPU性能结论。
