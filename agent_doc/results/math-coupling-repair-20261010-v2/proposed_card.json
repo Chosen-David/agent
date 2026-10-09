@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "id": "math.coupling-marginal-repair",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "近似运输耦合的边际修正与保守代价证书",
+  "summary": "先核对质量守恒，再裁减并补缺额；将近似计划修成可行输出上界，修正对偶违反并拒绝禁止边和浮点伪证书。",
+  "aliases": [
+    "矩阵 行列质量 不匹配 输出 误差 修正",
+    "力 混合 缺额 质量 补回",
+    "禁止边 缺额 修复 拒绝",
+    "coupling marginal rounding repair"
+  ],
+  "domains": [
+    "numerical-analysis",
+    "probability-and-optimization"
+  ],
+  "structures": [
+    "marginal-feasibility",
+    "rank-one-deficit-repair",
+    "cost-certificate",
+    "forbidden-support",
+    "dual-violation"
+  ],
+  "assumptions": [
+    "有限非空矩形，a,b非负总和1，F逐项非负有限；所有矩形边可用",
+    "成本0≤Cij≤D有限；实际value成本另核验运输卡的固定线性输出前提",
+    "精确实数/有理数计算；浮点非负/边际/成本与对偶最大违反必须有严格误差界",
+    "稀疏/禁止边、partial/unbalanced目标不得直接套全矩形补质量"
+  ],
+  "sources": [
+    {
+      "url": "https://papers.nips.cc/paper_files/paper/2017/file/491442df5f88c6aa018e86dac21d3606-Paper.pdf",
+      "locator": "Altschuler, Jonathan Niles-Weed, Rigollet; NIPS2017 Algo2 printedp3 and Lemma7 printedp7; original paper inspected; own zero-deficit/rectangular/cost extensions distinguished",
+      "accessed": "2026-10-10"
+    },
+    {
+      "url": "https://arxiv.org/html/2606.28973v1",
+      "locator": "Guillaume Wang; submitted2026-06-27 15:25:34UTC; v1 preprint; HTML internaldate2026-08-24 not arXiv revision; selective §1/§2.3/Thm1.1",
+      "accessed": "2026-10-10"
+    },
+    {
+      "url": "https://arxiv.org/html/2609.07954v1",
+      "locator": "Dylan Forde; v1 submitted2026-09-07 20:18:56UTC; preprint; abs title Support Topology and Gradient Mixing in Sinkhorn Layers; HTML title Transport Topology for Fixed-Support Sinkhorn Layers; selective §1/2.1 fixed-support assumptions/two half-steps",
+      "accessed": "2026-10-10"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "agent_doc/results/math-coupling-repair-20261010-v2/raw.json",
+      "agent_doc/results/math-coupling-repair-20261010-v2/independent_receipt.json"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.transport-output-certificate",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.dual-certificates"
+    }
+  ]
+}

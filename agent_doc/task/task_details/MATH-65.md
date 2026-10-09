@@ -25,3 +25,5 @@ fixtures冻结八例（T7明确含不等质量及同总质量2的非法边际变
 - 当前全局文档问题为TOK-003/TOK-004 Progress边界，未改。coverage/state仅记录失败缺口；全部既有领域/GPU游标保留，TASK仍未完成。下一步明确版本化修正T6并重新计划/完整重测/独立验收。失败归档直接main读回见publication.json，未改SGLang/人类guide。
 
 - 失败证据已发布main `e4c6f5e0c462b85e459d644fc462121c8240e6b7`，远端ref/parent/tree匹配、本地clean；本记录随后元数据提交保存。实验invalid与TASKpending保持，不是知识验收完成。
+
+- 2026-10-10版本化续接 `math-coupling-repair-20261010-v2/`：闭式预期T6=1经不同fresh主控数学检查确认；未执行producer/检索/回归，也未发布新卡。独立计划`revise`：预算耗尽后的可信宿主恢复缺失、候选语料staging缺失、完整执行/证据DAG缺失。所有15冻结输入、231语料路径及50旧证据路径在审查终点保持。只归档阻塞报告，TASK不勾选。恢复须遵守dual_main_workflow人工宿主迁移，不换run/lineage重置额度；其他独立授权主题可继续。报告及完整反馈见新results目录。
