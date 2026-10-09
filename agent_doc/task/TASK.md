@@ -2,7 +2,7 @@
 
 ## 2026-10-10
 
-- [ ] [TOK-004] Reversible validation display: archive complete observations and preserve all blocking information; short matched provider test and independent gate before count/publication. ([detail](task_details/TOK-004.md))
+- [x] [TOK-004] Recoverable validation display passed scoped provider/quality checks and verified main publication; success target 4/100. ([detail](task_details/TOK-004.md))
 
 ## 2026-10-09
 
