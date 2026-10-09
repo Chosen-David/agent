@@ -303,12 +303,18 @@ def validate_guide_reviews(snapshot, reviews, task_ids):
 
 def task_document_refs(snapshot, task_refs, assessments=(), guide_reviews=()):
     """Bind only this task's planning inputs and adopted advice, plus all guides."""
-    result = json.loads(json.dumps(snapshot))
-    result['guide_reviews'] = json.loads(json.dumps(guide_reviews))
-    result['task_details'] = {key: value for key, value in snapshot['task_details'].items() if key in task_refs}
-    result['adopted_advice'] = {item['path']: item['sha256'] for item in assessments
-                              if item['disposition'] in ('adopt', 'adapt') and set(item['task_refs']) & set(task_refs)}
-    return result
+    adopted = {item['path']: item['sha256'] for item in assessments
+               if item['disposition'] in ('adopt', 'adapt') and set(item['task_refs']) & set(task_refs)}
+    # Keep the full discovery/assessment inventory on the global plan. A worker
+    # needs only its adopted sources, not another copy of every historical path.
+    # Filter before deep-copying so unrelated details/inventory are not copied
+    # transiently either. Preserve unknown snapshot fields and all guide inputs.
+    scoped = {**snapshot,
+              'guide_reviews': guide_reviews,
+              'task_details': {key: value for key, value in snapshot['task_details'].items() if key in task_refs},
+              'advice': {path: snapshot['advice'][path] for path in adopted},
+              'adopted_advice': adopted}
+    return json.loads(json.dumps(scoped))
 
 
 def bind_advice(plan, assessments):

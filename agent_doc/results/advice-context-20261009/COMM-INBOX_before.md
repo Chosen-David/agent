@@ -1,0 +1,23 @@
+# COMM-INBOX-01 — pending inbox lookup
+
+## Plan
+
+User scope: improve Agent communication with measured benefit, direct main publication after checks. Keep public API, events, ACK, budgets, evidence/knowledge validation, cross-run isolation and existing roles. Project and workflow root are this repository; guide is empty, never written. This is a bounded local engineering round, not a deployed ManagedEngine/supervisor.
+
+Chain: prior-result/source review → independent proposal review → producer diagnostic/patch/paired measurements → independent verify_experiment_result → scoped report/regression → refresh main/ordinary publication/readback. Independent contexts are provided by host collaboration; no fabricated ReviewSession receipt or runtime dispatch.
+
+Budget: <=2 candidate index/query variants; <=20,000 fixture events per case, 21 paired samples, 3 warmups, <=10 minutes CPU per experiment; no GPU/model calls or new services. Measurement matrix: history=0,1000,20000; pending=0,5; one and four runs. Include many unrelated pending deliveries in multi-run cases. Legacy migration, startup/reopen, publish and ACK measured separately. Fixture seed bypasses publish solely to populate identical history; real public methods measured and unit-tested.
+
+Acceptance: every inbox exactly matches independent expected seq/event output and frozen baseline. >=2x SQLite VM-step reduction in the one-run 20k acknowledged-history cases; finite full raw latency samples and median/range, no universal latency claim. Publish/ACK median candidate <=2x baseline OR added median <1 ms, legacy migration <10 seconds for 20k; migration/startup overhead reported. Existing communication/knowledge/revision tests and full required repository and paper-reader regressions pass (document preexisting failures). Independent reviewer reads source, checks fixture coverage/measurements, recomputes aggregates and reruns a case. Result remains pending until real independent verification; no token or model-quality claims.
+
+Prior reuse: bounded actual result_store lexical search, 56 records scanned with missing-record errors (see prior_search.json). Candidates concern knowledge, not inbox history performance. Existing communication latency diagnosis concerns model/host scheduling at tiny scale; cannot reuse for new database scaling claim. No exhaustive history claim. Static envelope already carries action/summary/refs; research suggests preserving these, not stripping evidence. Partial pending B-tree vs full secondary index evaluated as storage/update tradeoff; avoid new protocol/service.
+
+## Progress
+
+2026-10-09: main bb5bf5b synced; prior results and actual Mailbox call path read; proposal review underway. Initial unarchived probe indicates SQLite scans acknowledged rows, requiring frozen paired evidence before any accepted benefit.
+
+Initial four-run fixture accidentally collapsed other runs to one ID; discarded from acceptance, raw retained as diagnostic_two_runs.json. Corrected before accepted measurements. Focused module command lacked tests import path; log preserved, rerun with PYTHONPATH=tests:. Full discover commands have proper test import discovery.
+
+Independent context /root/verify_results accepted usable-with-scope: all six domains, 12-case rerun, 192 boundary comparisons, 73 targeted tests. Producer focused 56/56, reader 3/3. Full suite 853 with 8 skipped and sole pre-existing generated sync failure; one generated copy repaired using existing script and targeted test passes independently. No broad rerun claimed. At one-run20k+5pending: 220205→201 VM, median10.221→0.427ms in noisy fixture only. See ../../results/comm-inbox-20261009/report.md, manifest.json, validation.json, record.json. Implementation/measurement requirement closed; authorized ordinary main publication is next checkpoint, then remote SHA readback. Continuous exploration remains open as user requested; no scheduler disabled.
+
+Publication refresh found concurrent0498816 communication ledger; initial ff-only pull aborted without push. Clean rebase preserved ledger/index and regenerated copy. New comm-inbox-integration-20261009 result supersedes historical runtime bindings: independently accepted against exact0498816, fresh12-case paired benchmark,192oracle checks,73+9targeted tests, full862tests OK8skipped. Final producer20k+5pending median9.589→0.509ms, VM220233→229; synthetic local scope only. Ledger-enabled index migration max9.418ms, no combined-upgrade timing claim. See ../../results/comm-inbox-integration-20261009/report.md. Fresh ordinary push/readback next; no other goal marked completed.

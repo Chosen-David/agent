@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "snapshot": "451ca92210e1d1b4d6dc95ac097bd37f30ee1c832669d9688596787f52a2a239",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "ds.dsu-connectivity",
+      "version": 1,
+      "sha256": "fa46c241c4f909a508efe77816eaba0280225c1556d04170d8d5b358bd7bfea5",
+      "title": "DSU：增量连通与不可删除边界",
+      "summary": "ACL DSU 用按大小合并与路径压缩支持增量连通；均摊 O(α(n))，不能处理删除边或有向可达性。",
+      "status": "published",
+      "assumptions": [
+        "operation: incremental undirected connectivity",
+        "updates: insert-only",
+        "concurrency: single writer"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.dsu-connectivity"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "compression"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "compression"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "compression"
+          ]
+        }
+      ],
+      "score": 10
+    },
+    {
+      "id": "algo.rl-sft-trajectory-concentration",
+      "version": 1,
+      "sha256": "4c7afd59193e92088e409e2170dcae236c4dde6860807a4d1d16a32544552cd7",
+      "title": "RL／SFT 推理路径：区分成功率、路径多样性与采样预算",
+      "summary": "ICLR 2026 的既有模型比较中，RL 常压缩错误和正确路径，SFT 扩充正确路径；应联合检查 pass@1、pass@k 与聚类代理，不能断言 RL 永远不产生新能力。",
+      "status": "published",
+      "assumptions": [
+        "models: Table 1 Qwen 1.5B/7B/14B Base/RL/SFT/SFT+RL checkpoints; observational comparison",
+        "tasks: AIME24/AIME25/AMC23; HumanEval for Table 1 7B models",
+        "sampling: 256 responses/problem; temperature 0.6; top_p 0.95; model-dependent 4096/16000 context cap",
+        "metric: correct/incorrect UPGMA chrF clusters at similarity 60; pass@k; not latent capability proof"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-checked",
+        "checks": [
+          "docs/knowledge_learning/2026-10-08-rl-probability/report.md#algo.rl-sft-trajectory-concentration"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "budget"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "budget"
+          ]
+        }
+      ],
+      "score": 9
+    },
+    {
+      "id": "algo.nsa-native-training",
+      "version": 1,
+      "sha256": "881e71e4805ef18c4c2aecab243aef639e51ada5c48e5e5894b8ae45e249cd13",
+      "title": "NSA：原生稀疏训练不等于无损替换",
+      "summary": "ACL 2025 的 NSA 在共同训练设置下保持多数任务质量，并有明确退化项；它是训练架构变化，不能直接套到未训练的密集模型。",
+      "status": "published",
+      "assumptions": [
+        "model: 27B total / 3B active MoE with GQA",
+        "training: 270B tokens at 8k then 32k continuation",
+        "method: compression selection sliding-window branches"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.nsa-native-training"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "context"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "compression",
+            "context"
+          ]
+        }
+      ],
+      "score": 7
+    }
+  ]
+}

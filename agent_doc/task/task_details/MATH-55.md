@@ -1,5 +1,8 @@
 # [MATH-55] 有限随机投影与打分
 
+Task-ID: MATH-55
+Date: 2026-10-09
+
 ## Plan
 
 授权：持续基础知识建设；直接main发布。主写者root，SGLang/guide/生产行为/未用测试内容禁止修改。

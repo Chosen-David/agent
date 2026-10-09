@@ -1,5 +1,8 @@
 # [MATH-56] 低秩逆更新与稳定性
 
+Task-ID: MATH-56
+Date: 2026-10-09
+
 ## Plan
 
 授权：持续基础知识建设/直接main发布；root唯一写TASK。SGLang、人类guide、生产行为、未用测试内容禁止改。

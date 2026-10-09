@@ -1,6 +1,9 @@
 # WRITE-EVIDENCE-20261009-01 全面取证与贡献导向写作
 
-## Stable plan
+Task-ID: WRITE-EVIDENCE-20261009-01
+Date: 2026-10-09
+
+## Plan
 
 目标：在既有论文技能及科研探索交接中，明确有界实验覆盖、claim-evidence 对齐、贡献主线及重要负结果就近披露。复用 paper_exemplar_learning 与已有 claim ledger，不创建新运行时或 schema，不修改人类 guide。
 

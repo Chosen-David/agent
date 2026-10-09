@@ -314,3 +314,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-09 通信运行时性能
 
 - [x] [COMM-PERF-20261009-01] 通信增量计账、旧库兼容、对照测量及独立核验通过，直接main发布。 ([详情](task_details/COMM-PERF-20261009-01.md))
+
+- [ ] [CTX-20261009-01] advice 上下文重复修复与多 AI 记忆治理设计 ([详情](task_details/CTX-20261009-01.md))

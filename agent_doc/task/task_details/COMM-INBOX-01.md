@@ -1,5 +1,8 @@
 # COMM-INBOX-01 — pending inbox lookup
 
+Task-ID: COMM-INBOX-01
+Date: 2026-10-09
+
 ## Plan
 
 User scope: improve Agent communication with measured benefit, direct main publication after checks. Keep public API, events, ACK, budgets, evidence/knowledge validation, cross-run isolation and existing roles. Project and workflow root are this repository; guide is empty, never written. This is a bounded local engineering round, not a deployed ManagedEngine/supervisor.

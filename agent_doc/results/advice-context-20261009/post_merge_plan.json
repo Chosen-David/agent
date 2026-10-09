@@ -1,0 +1,31 @@
+{
+  "schema_version": "local-post-merge-plan/v1",
+  "task_id": "CTX-20261009-01",
+  "reason": "Fresh remote 0498816 added malformed canonical task; independent native snapshot found publication blocker after full fixture suite passed",
+  "base_main": "0498816",
+  "authorization": "Existing agent bug-fix and direct-main scope; concurrent synchronization required; no change to SGLang",
+  "scope": [
+    "Only insert Task-ID: COMM-PERF-20261009-01 and Date: 2026-10-09 before existing ## Plan; every other byte retained",
+    "Keep original 63 experiment bindings, raw rows and acceptance immutable",
+    "Independent post-merge snapshot and exact metadata proof required before publication"
+  ],
+  "before_ref": {
+    "path": "agent_doc/results/advice-context-20261009/COMM-PERF_before.md",
+    "sha256": "30b257ae7091a00c27f980f38c33dafaed58e572a702b47975fd4f0fb417694f"
+  },
+  "allowed_writes": [
+    "agent_doc/task/task_details/COMM-PERF-20261009-01.md",
+    "agent_doc/results/advice-context-20261009/post_merge_metadata_checks.json",
+    "agent_doc/results/advice-context-20261009/post_merge_validation_by_gpt.json",
+    "agent_doc/results/advice-context-20261009/post_merge_review_by_gpt.md",
+    "CTX Progress and publication artifacts"
+  ],
+  "budget": {
+    "additional_metadata_repairs": 1,
+    "model_runs": 0,
+    "gpu_runs": 0,
+    "test_rerun": "native snapshot plus relevant boundary tests; no full suite rerun for identity-only fields"
+  },
+  "prior_budget": "Original production plan/review history unchanged; this is incoming-main publication integration amendment, not a runtime ledger reset",
+  "done_when": "Actual independent plan approval, exact one-substitution transform, native snapshot current main succeeds; actual independent publication review approves and CAS remote verified"
+}
