@@ -290,4 +290,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-09 全局质量区间
 
-- [ ] [MATH-57] 推导分数盒上的保留质量极值与逐层near/far证书接口；筛选近期softmax验证研究，独立文档审核后发布。 ([detail](task_details/MATH-57.md))
+- [x] [MATH-57] 推导分数盒上的保留质量极值与逐层near/far证书接口；筛选近期softmax验证研究，独立文档审核后发布。 ([detail](task_details/MATH-57.md))
