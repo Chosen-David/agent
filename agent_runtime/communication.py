@@ -215,11 +215,23 @@ class Mailbox:
                 result.append(self._store_publish(db, event, body, recipients))
             return result
 
-    def inbox(self, recipient, *, limit=20):
+    def inbox(self, recipient, *, limit=20, task_id=None):
+        """Read pending deliveries, optionally for one host-selected routed task.
+
+        Task selection never filters kinds or acknowledges other deliveries.
+        It is not a global-clearance check: the coordinator still reads the
+        unscoped inbox for cross-task dependencies and outstanding issues.
+        """
         if type(limit) is not int or not 1 <= limit <= 100:
             raise ValueError('limit must be 1..100')
         if recipient not in {r['recipient'] for r in self.plan['routes']}:
             raise ValueError('unknown recipient')
+        if task_id is not None and (not nonblank(task_id) or task_id not in {
+                r['task_id'] for r in self.plan['routes'] if r['recipient'] == recipient}):
+            raise ValueError('task_id must be an explicitly routed task for this recipient')
+        # Filter before LIMIT, preserving order even after an unrelated backlog.
+        scope_sql = " AND json_extract(e.body, '$.task_id')=?" if task_id is not None else ''
+        params = (self.run_id, recipient) + ((task_id,) if task_id is not None else ()) + (limit,)
         with self.connect() as db:
             # Exact ledger and inbox query share one read snapshot.
             db.execute('BEGIN')
@@ -231,12 +243,12 @@ class Mailbox:
                 rows = db.execute('''SELECT e.seq,e.body FROM communication_events e
                     WHERE e.run_id=? AND EXISTS (SELECT 1 FROM communication_deliveries d
                         WHERE d.seq=e.seq AND d.recipient=? AND d.receipt IS NULL)
-                    ORDER BY e.seq LIMIT ?''', (self.run_id, recipient, limit)).fetchall()
+                    ''' + scope_sql + ' ORDER BY e.seq LIMIT ?', params).fetchall()
                 return [{'seq': r['seq'], 'event': json.loads(r['body'])} for r in rows]
             rows = db.execute('''SELECT e.seq,e.body FROM communication_events e
                 JOIN communication_deliveries d ON e.seq=d.seq
                 WHERE e.run_id=? AND d.recipient=? AND d.receipt IS NULL
-                ORDER BY d.seq LIMIT ?''', (self.run_id, recipient, limit)).fetchall()
+                ''' + scope_sql + ' ORDER BY d.seq LIMIT ?', params).fetchall()
         return [{'seq': r['seq'], 'event': json.loads(r['body'])} for r in rows]
 
     def acknowledge(self, recipient, seq, receipt):
@@ -369,6 +381,7 @@ def main():
     p = sub.add_parser('publish'); p.add_argument('event', type=Path)
     p = sub.add_parser('publish-many'); p.add_argument('events', type=Path)
     p = sub.add_parser('inbox'); p.add_argument('recipient'); p.add_argument('--limit', type=int, default=20)
+    p.add_argument('--task-id', help='host-selected routed task; not global pending clearance')
     p = sub.add_parser('ack'); p.add_argument('recipient'); p.add_argument('seq', type=int); p.add_argument('receipt', type=Path)
     p = sub.add_parser('consume'); p.add_argument('recipient'); p.add_argument('seq', type=int); p.add_argument('--request', type=Path, required=True)
     p = sub.add_parser('context'); p.add_argument('recipient'); p.add_argument('seq', type=int)
@@ -384,7 +397,7 @@ def main():
         elif args.command == 'publish-many':
             result = box.publish_many(_load_json(args.events))
         elif args.command == 'inbox':
-            result = box.inbox(args.recipient, limit=args.limit)
+            result = box.inbox(args.recipient, limit=args.limit, task_id=args.task_id)
         elif args.command == 'ack':
             box.acknowledge(args.recipient, args.seq, _load_json(args.receipt)); result = {'acknowledged': True}
         elif args.command == 'consume':

@@ -1,0 +1,84 @@
+For the host-selected FIG-1 task, report its observed unresolved messages.
+The host explicitly selects FIG-1 local handling, not global clearance. Other task IDs are independently coordinated by the main host. Preserve all FIG-1 kinds. A blocker is unresolved until independently verified; correction alone does not clear it. Return JSON: blocked boolean, messages in seq order with seq, kind, action copied exactly. No tools.
+[
+  {
+    "seq": 1,
+    "event": {
+      "action": "Revise the legend units from milliseconds to seconds before publishing panel 2.",
+      "event_id": "notice-1",
+      "input_version": "figures:v1",
+      "kind": "review",
+      "refs": [
+        {
+          "id": "finding-1",
+          "path": "agent_doc/results/token-005-inbox-20261010/fixture-records/1.json",
+          "sha256": "446f7b52f8382f45aa3d4e7c0a1a612e6dd3c008fc092508725e0adb1fc7fbe3"
+        }
+      ],
+      "run_id": "token005-inbox",
+      "sender": "reviewer",
+      "summary": "Panel 2 legend labels disagree with the measured seconds column; check the source units.",
+      "task_id": "FIG-2"
+    }
+  },
+  {
+    "seq": 2,
+    "event": {
+      "action": "Keep panel 1 consumption blocked until an independent reviewer validates the corrected data.",
+      "event_id": "notice-2",
+      "input_version": "figures:v1",
+      "kind": "blocker",
+      "refs": [
+        {
+          "id": "finding-2",
+          "path": "agent_doc/results/token-005-inbox-20261010/fixture-records/2.json",
+          "sha256": "3d88893515c3f4737fcc12f7182a4976bdfc6a4f708e4521fec51e0166ed0eff"
+        }
+      ],
+      "run_id": "token005-inbox",
+      "sender": "reviewer",
+      "summary": "Panel 1 has a stale measurement snapshot and lacks current independent validation.",
+      "task_id": "FIG-1"
+    }
+  },
+  {
+    "seq": 3,
+    "event": {
+      "action": "Confirm whether panel 2 should show median with IQR or individual repeat measurements.",
+      "event_id": "notice-3",
+      "input_version": "figures:v1",
+      "kind": "question",
+      "refs": [
+        {
+          "id": "finding-3",
+          "path": "agent_doc/results/token-005-inbox-20261010/fixture-records/3.json",
+          "sha256": "9d1cdde68ce0f0b3dcd23754566682cff18a0750bf56becd6dff46fb2a68acb5"
+        }
+      ],
+      "run_id": "token005-inbox",
+      "sender": "reviewer",
+      "summary": "The panel 2 aggregation convention remains unresolved; main host coordinates this separate task.",
+      "task_id": "FIG-2"
+    }
+  },
+  {
+    "seq": 4,
+    "event": {
+      "action": "Read the replacement panel 1 dataset and obtain fresh independent validation; retain the blocker.",
+      "event_id": "notice-4",
+      "input_version": "figures:v1",
+      "kind": "correction",
+      "refs": [
+        {
+          "id": "finding-4",
+          "path": "agent_doc/results/token-005-inbox-20261010/fixture-records/4.json",
+          "sha256": "adb05c888e084165372dc9d042d8f823a9244bf7591e1a17ba00ea8836fac382"
+        }
+      ],
+      "run_id": "token005-inbox",
+      "sender": "reviewer",
+      "summary": "A replacement panel 1 dataset is available; its producer notification is not acceptance.",
+      "task_id": "FIG-1"
+    }
+  }
+]

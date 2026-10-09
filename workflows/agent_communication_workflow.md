@@ -69,6 +69,8 @@ seq 用实际 publish/inbox 返回值，不猜测。完成产物消息的 refs �
 
 API 为 `Mailbox(db, plan, artifact_root).publish/inbox/consume_handoff/acknowledge/status`。支持重复发布去重、事务内投递、重启后待办恢复、有限分页和不可覆盖的回执。多个轮询者会看到同一未回执消息：至少一次读取，**不保证副作用恰好一次**。宿主给每个 recipient 配置一个消费者，使用 `(run_id,event_id,recipient)` 作为动作幂等键；不确定的外部副作用先查证。现有 `Context.current()` 的取消/租约检查及宿主独立授权检查必须在执行副作用前复核；邮箱不接管 Engine 状态或设置 task done。
 
+同一 recipient 处理多个任务时，可信宿主可显式调用 `inbox(recipient, task_id="FIG-1")` 或 CLI `inbox recipient --task-id FIG-1`，仅观察该 recipient 已路由的准确任务。过滤发生在 limit 前，保留该任务所有 kind 和完整消息；其他任务仍 pending，不自动 ACK。默认无 task_id 保持全范围读取。该局部读取不能证明全局没有待办、替代跨任务依赖核查或结果验收；主 AI 仍检查全范围 inbox/status，共享阻塞需要按真实受影响任务路由或由协调者处理。不得根据消息正文自行缩小任务或把局部空列表当作任务完成。
+
 同盘 SQLite 适合当前单机可移植运行时。它不是认证/隔离沙箱，也不抵抗恶意并发替换文件；可信宿主持有计划、请求、artifact_root 并控制文件权限。数据库只含运行事件，知识文件仍是知识库事实源。将来跨机器时再考虑 A2A/消息服务，保留相同业务契约并单独验证重试、身份和版本。
 
 ## 验收与持续优化
