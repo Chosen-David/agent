@@ -1,0 +1,161 @@
+{
+  "schema_version": "experiment-validation/v1",
+  "manifest_sha256": "3b5894a95e7241f85e0936b47db425455c54302b2e0dfd7ee60c80a7a20a6a26",
+  "artifact_hashes": {
+    "agent_doc/results/comm-pending-index-20261009/validation-plan.json": "b457fef0ecd00dba31c0564ce73ae3b783932b3b1fbb2771a89c0d20b67d3b0a",
+    "agent_runtime/communication.py": "13c24e39159ce8199db36210f7653f2bbc6fbfc83bf753d9da2df993c9440bec",
+    "agent_runtime/project_docs.py": "d34556ecd2fd7822d4808c1e882f8ef559c750ed8dafdc22b5687e33699594b7",
+    "scripts/validate_handoff.py": "d182adfa0d118d6245f0a58623114d8fbeb70dd6ab8fa3ea4c1d93754bcedf9d",
+    "scripts/benchmark_communication_inbox.py": "c9df7dcc141cf460fbdf20c3ff142dd5cdd99621b8b181395d1000f8aafff2ab",
+    "tests/test_communication.py": "83a8c92792d7f69ab8365fd09d04a5d80f9448ee88d430fe37edf27d081f5f80",
+    "agent_doc/results/comm-pending-index-20261009/benchmark-v1.py": "548993e4963babf2f760b5036ee51518528d9d544213503848742806cf175478",
+    "agent_doc/results/comm-pending-index-20261009/baseline-communication.py": "2df62b823606ca4d0ff1059c632dc567180ba816dd126f2ecd6ed84168963a7c",
+    "agent_doc/results/comm-pending-index-20261009/plan.json": "8d8ae18d169d51a9d4f1553d7c743d1c6c65d050c79a01258bda7f9ef9eb3c37",
+    "agent_doc/results/comm-pending-index-20261009/raw/index-only.json": "60310d409a73fb47453ed88a5a7135e6b9ef25a48b10a180b84ffbbf04e62193",
+    "agent_doc/results/comm-pending-index-20261009/raw/independent-quiet.json": "7a024b80a4777e71981835671c8fd5b68e49f878014e45d854b540fb61ddc64e",
+    "agent_doc/results/comm-pending-index-20261009/raw/regression.log": "f7615412166906d6d1d7208a61a1c19ed9b0f4f41145026ee5f464dbbbc582ad",
+    "agent_doc/results/comm-pending-index-20261009/raw/baseline-known-failure.log": "4c93dce9bf1ce47f25a3c7c9a30531ea9e44b142e0fc50b63430a8a2e08caa3d",
+    "agent_doc/results/comm-pending-index-20261009/measurement_summary.json": "35e319cbe4b28bc0d956bb624b2fc11257164908d0daa757a36fc86195591c09",
+    "agent_doc/results/comm-pending-index-20261009/environment.json": "d0223ef4abd87b19e036534019af20b760c6898b9d36802c81ee144f5014f40c"
+  },
+  "validation_plan_sha256": "b457fef0ecd00dba31c0564ce73ae3b783932b3b1fbb2771a89c0d20b67d3b0a",
+  "scope": "Local SQLite synthetic envelope workload, no LLM/token/e2e quality claim",
+  "status": "usable-with-scope",
+  "verifier": {
+    "actor": "comm_review",
+    "independent": true,
+    "source": "Actual Work collaboration context /root/comm_review independently dispatched by /root; manual host review, not authenticated ReviewSession deployment",
+    "run_id": "comm-pending-index-20261009-independent-quiet",
+    "method": "Independent source/harness review, all-six-case quiet reproduction session30312, deterministic fixture regeneration, raw/statistical/metric/hash recomputation and16 targeted unittest executions"
+  },
+  "checks": {
+    "implementation": {
+      "verdict": "pass",
+      "reason": "Independently inspected additive index-only production diff, relevant source dependencies and both harness versions; executed candidate hash matches frozen source, original baseline bytes match pinned git. Query/contracts unchanged.",
+      "evidence": [
+        {
+          "path": "agent_runtime/communication.py",
+          "sha256": "13c24e39159ce8199db36210f7653f2bbc6fbfc83bf753d9da2df993c9440bec"
+        },
+        {
+          "path": "scripts/benchmark_communication_inbox.py",
+          "sha256": "c9df7dcc141cf460fbdf20c3ff142dd5cdd99621b8b181395d1000f8aafff2ab"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/baseline-communication.py",
+          "sha256": "2df62b823606ca4d0ff1059c632dc567180ba816dd126f2ecd6ed84168963a7c"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/code_review.md",
+          "sha256": "e3c140f054f79ec2c6998e39e51963a80c2f2e6ae3e833b9f9ccd77d455c60ce"
+        }
+      ]
+    },
+    "reference_boundary": {
+      "verdict": "pass",
+      "reason": "All six rerun cases asserted exact inbox event/sequence output against independently constructed expected fixtures at limits1/20/100 and exact final status/usage; independently ran16 communication tests including migration, sparse/interleaved runs, per-recipient ACK, immutable receipt/retry, concurrency and changed refs.",
+      "evidence": [
+        {
+          "path": "tests/test_communication.py",
+          "sha256": "83a8c92792d7f69ab8365fd09d04a5d80f9448ee88d430fe37edf27d081f5f80"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/raw/independent-quiet.json",
+          "sha256": "7a024b80a4777e71981835671c8fd5b68e49f878014e45d854b540fb61ddc64e"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/result_review.md",
+          "sha256": "eceda5289b2023733de9eb28d23d858b965a95755630397b7a1e05e3ff031d50"
+        }
+      ]
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "Recomputed fixture hashes from deterministic event tuples and two-byte artifact reference. All6 frozen cases,31x2 positive observations for poll/publish/ACK, no omitted cases; all source/config/raw/summary/environment bindings rechecked. No first-run timing accepted as quiet.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/raw/independent-quiet.json",
+          "sha256": "7a024b80a4777e71981835671c8fd5b68e49f878014e45d854b540fb61ddc64e"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/raw/index-only.json",
+          "sha256": "60310d409a73fb47453ed88a5a7135e6b9ef25a48b10a180b84ffbbf04e62193"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/plan.json",
+          "sha256": "8d8ae18d169d51a9d4f1553d7c743d1c6c65d050c79a01258bda7f9ef9eb3c37"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/result_review.md",
+          "sha256": "eceda5289b2023733de9eb28d23d858b965a95755630397b7a1e05e3ff031d50"
+        }
+      ]
+    },
+    "numerical_sanity": {
+      "verdict": "pass",
+      "reason": "Independently recomputed exact medians, nearest-rank p95, speedup and VM ratios from every raw sample; all24 manifest metrics/units and complete summary match; negative multi-run VM reductions retained.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/raw/independent-quiet.json",
+          "sha256": "7a024b80a4777e71981835671c8fd5b68e49f878014e45d854b540fb61ddc64e"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/measurement_summary.json",
+          "sha256": "35e319cbe4b28bc0d956bb624b2fc11257164908d0daa757a36fc86195591c09"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/result_review.md",
+          "sha256": "eceda5289b2023733de9eb28d23d858b965a95755630397b7a1e05e3ff031d50"
+        }
+      ]
+    },
+    "measurement_validity": {
+      "verdict": "pass",
+      "reason": "Quiet all-six rerun after broad suite completion; full inbox connection/query/JSON timing,5warmups,31alternating pairs, separate VM instrumentation, actual matching PRAGMA values, raw costs and timestamp windows. Three frozen improvement gates pass; multi-run VM regression and small-control noise disclosed.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/raw/independent-quiet.json",
+          "sha256": "7a024b80a4777e71981835671c8fd5b68e49f878014e45d854b540fb61ddc64e"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/environment.json",
+          "sha256": "d0223ef4abd87b19e036534019af20b760c6898b9d36802c81ee144f5014f40c"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/result_review.md",
+          "sha256": "eceda5289b2023733de9eb28d23d858b965a95755630397b7a1e05e3ff031d50"
+        }
+      ]
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "Reviewer independently executed full frozen six-case workload in session30312, not only producer output. Fixture hashes, query plans and VM counts exactly match original; wall-clock improvement direction reproduces with expected variation. Independent targeted16 tests pass; known broad-suite baseline failure retained.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/raw/independent-quiet.json",
+          "sha256": "7a024b80a4777e71981835671c8fd5b68e49f878014e45d854b540fb61ddc64e"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/raw/index-only.json",
+          "sha256": "60310d409a73fb47453ed88a5a7135e6b9ef25a48b10a180b84ffbbf04e62193"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/raw/baseline-known-failure.log",
+          "sha256": "4c93dce9bf1ce47f25a3c7c9a30531ea9e44b142e0fc50b63430a8a2e08caa3d"
+        },
+        {
+          "path": "agent_doc/results/comm-pending-index-20261009/result_review.md",
+          "sha256": "eceda5289b2023733de9eb28d23d858b965a95755630397b7a1e05e3ff031d50"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Only six synthetic local SQLite workloads on recorded Xeon8573C/SQLite3.53.1; no model/token/network/GPU/end-to-end benefit or remote/tmux service deployment.",
+    "First production run overlapped full regressions; its timings are exploratory. Accepted latency observations come from the independent quiet rerun; external host interference cannot be globally excluded.",
+    "Multi-run VM steps increase about1.9x and DB files grow about1.13MB despite observed lower latency; no universal CPU-work or cross-run scalability guarantee.",
+    "Single31-pair sample sets, noisy small-control and write timings; first-open is one complete-constructor observation, not isolated index creation distribution.",
+    "Full repository regression has1preexisting baseline-reproduced generated-reference failure and8skips; only16 focused communication tests independently rerun here.",
+    "Finite code/data review supports scoped acceptance, never universal bug freedom. This record requires host-established reviewer provenance and current binding validation; JSON alone does not establish trust."
+  ]
+}

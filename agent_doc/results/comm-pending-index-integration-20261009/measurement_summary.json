@@ -1,0 +1,312 @@
+{
+  "scope": "Local SQLite synthetic envelope workload, no LLM/token/e2e quality claim",
+  "source": "raw/independent-quiet.json",
+  "cases": [
+    {
+      "case": {
+        "name": "small",
+        "events": 100,
+        "recipients": 2,
+        "ack_fraction": 0,
+        "runs": 1,
+        "placement": "prefix ACK; pending tail; interleaved run_id by event index",
+        "limit": 20
+      },
+      "pending_target": 100,
+      "inbox_summary": [
+        {
+          "median": 420445,
+          "p95": 1604973
+        },
+        {
+          "median": 423541,
+          "p95": 1551806
+        }
+      ],
+      "vm_steps": [
+        1856,
+        1444
+      ],
+      "speedup": 0.9926902000042499,
+      "vm_reduction": 0.2219827586206896,
+      "publish_summary": [
+        {
+          "median": 728259,
+          "p95": 2739157
+        },
+        {
+          "median": 781235,
+          "p95": 1867533
+        }
+      ],
+      "ack_summary": [
+        {
+          "median": 571126,
+          "p95": 5325988
+        },
+        {
+          "median": 489776,
+          "p95": 767527
+        }
+      ],
+      "candidate_first_open_ns": 803681,
+      "db_bytes_before": 81920,
+      "db_bytes_after_index": 86016
+    },
+    {
+      "case": {
+        "name": "default_backlog",
+        "events": 1000,
+        "recipients": 8,
+        "ack_fraction": 0.95,
+        "runs": 1,
+        "placement": "prefix ACK; pending tail; interleaved run_id by event index",
+        "limit": 20
+      },
+      "pending_target": 50,
+      "inbox_summary": [
+        {
+          "median": 1072846,
+          "p95": 2770844
+        },
+        {
+          "median": 468431,
+          "p95": 905857
+        }
+      ],
+      "vm_steps": [
+        11478,
+        844
+      ],
+      "speedup": 2.290296756619438,
+      "vm_reduction": 0.9264680257884649,
+      "publish_summary": [
+        {
+          "median": 1306729,
+          "p95": 2986283
+        },
+        {
+          "median": 1165668,
+          "p95": 8728034
+        }
+      ],
+      "ack_summary": [
+        {
+          "median": 849297,
+          "p95": 2593031
+        },
+        {
+          "median": 866408,
+          "p95": 2347302
+        }
+      ],
+      "candidate_first_open_ns": 4099168,
+      "db_bytes_before": 1105920,
+      "db_bytes_after_index": 1118208
+    },
+    {
+      "case": {
+        "name": "large_backlog",
+        "events": 10000,
+        "recipients": 8,
+        "ack_fraction": 0.99,
+        "runs": 1,
+        "placement": "prefix ACK; pending tail; interleaved run_id by event index",
+        "limit": 20
+      },
+      "pending_target": 100,
+      "inbox_summary": [
+        {
+          "median": 9743258,
+          "p95": 21471757
+        },
+        {
+          "median": 678521,
+          "p95": 1150538
+        }
+      ],
+      "vm_steps": [
+        110728,
+        1444
+      ],
+      "speedup": 14.359552615173296,
+      "vm_reduction": 0.9869590347518243,
+      "publish_summary": [
+        {
+          "median": 723528,
+          "p95": 2163273
+        },
+        {
+          "median": 801950,
+          "p95": 2427380
+        }
+      ],
+      "ack_summary": [
+        {
+          "median": 542271,
+          "p95": 1442722
+        },
+        {
+          "median": 544291,
+          "p95": 945734
+        }
+      ],
+      "candidate_first_open_ns": 7781746,
+      "db_bytes_before": 11157504,
+      "db_bytes_after_index": 11177984
+    },
+    {
+      "case": {
+        "name": "drained",
+        "events": 10000,
+        "recipients": 8,
+        "ack_fraction": 1,
+        "runs": 1,
+        "placement": "prefix ACK; pending tail; interleaved run_id by event index",
+        "limit": 20
+      },
+      "pending_target": 0,
+      "inbox_summary": [
+        {
+          "median": 7292756,
+          "p95": 9586696
+        },
+        {
+          "median": 388413,
+          "p95": 1615356
+        }
+      ],
+      "vm_steps": [
+        110128,
+        144
+      ],
+      "speedup": 18.77577732980101,
+      "vm_reduction": 0.9986924306261804,
+      "publish_summary": [
+        {
+          "median": 659354,
+          "p95": 1314107
+        },
+        {
+          "median": 694157,
+          "p95": 1199100
+        }
+      ],
+      "ack_summary": [
+        {
+          "median": 420104,
+          "p95": 887125
+        },
+        {
+          "median": 425653,
+          "p95": 776824
+        }
+      ],
+      "candidate_first_open_ns": 5326225,
+      "db_bytes_before": 11202560,
+      "db_bytes_after_index": 11202560
+    },
+    {
+      "case": {
+        "name": "multi_run",
+        "events": 10000,
+        "recipients": 8,
+        "ack_fraction": 0.99,
+        "runs": 4,
+        "placement": "prefix ACK; pending tail; interleaved run_id by event index",
+        "limit": 20
+      },
+      "pending_target": 25,
+      "inbox_summary": [
+        {
+          "median": 3091412,
+          "p95": 3984012
+        },
+        {
+          "median": 2449530,
+          "p95": 3692507
+        }
+      ],
+      "vm_steps": [
+        27854,
+        53044
+      ],
+      "speedup": 1.2620429225198304,
+      "vm_reduction": -0.9043584404394343,
+      "publish_summary": [
+        {
+          "median": 648511,
+          "p95": 1000681
+        },
+        {
+          "median": 760832,
+          "p95": 1094673
+        }
+      ],
+      "ack_summary": [
+        {
+          "median": 440302,
+          "p95": 1469458
+        },
+        {
+          "median": 442847,
+          "p95": 1023661
+        }
+      ],
+      "candidate_first_open_ns": 21620935,
+      "db_bytes_before": 7897088,
+      "db_bytes_after_index": 9027584
+    },
+    {
+      "case": {
+        "name": "other_run_pending",
+        "events": 10000,
+        "recipients": 8,
+        "ack_fraction": 1,
+        "runs": 4,
+        "placement": "prefix ACK; pending tail; interleaved run_id by event index",
+        "limit": 20
+      },
+      "pending_target": 0,
+      "inbox_summary": [
+        {
+          "median": 3001793,
+          "p95": 4184678
+        },
+        {
+          "median": 2459433,
+          "p95": 3081603
+        }
+      ],
+      "vm_steps": [
+        27629,
+        52644
+      ],
+      "speedup": 1.2205223724329957,
+      "vm_reduction": -0.9053892649028195,
+      "publish_summary": [
+        {
+          "median": 721497,
+          "p95": 1178462
+        },
+        {
+          "median": 861390,
+          "p95": 1413646
+        }
+      ],
+      "ack_summary": [
+        {
+          "median": 500552,
+          "p95": 1008048
+        },
+        {
+          "median": 578792,
+          "p95": 1510777
+        }
+      ],
+      "candidate_first_open_ns": 20033790,
+      "db_bytes_before": 7909376,
+      "db_bytes_after_index": 9035776
+    }
+  ]
+}

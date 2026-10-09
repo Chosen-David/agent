@@ -1,0 +1,36 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "Local SQLite synthetic envelope workload, no LLM/token/e2e quality claim",
+  "criteria": {
+    "implementation": {
+      "procedure": "Read executed diff and frozen harness; compare old and candidate SQL semantics",
+      "acceptance": "Only derived indexes/query planning changes; no changed message contracts",
+      "allow_not_applicable": false
+    },
+    "reference_boundary": {
+      "procedure": "Compare exact baseline/candidate inbox data against generated expected seq/event IDs; migration, multi-run, per-recipient ACK, duplicate, concurrent, changed-ref tests",
+      "acceptance": "All exact behavior checks pass",
+      "allow_not_applicable": false
+    },
+    "data_integrity": {
+      "procedure": "Verify source hashes, fixture sizes, repetitions, raw samples and command provenance",
+      "acceptance": "All31 pairs per workload and complete controls; no missing/filtered cases",
+      "allow_not_applicable": false
+    },
+    "numerical_sanity": {
+      "procedure": "Recompute median,p95,VM-step ratios from raw arrays",
+      "acceptance": "Positive finite ns, exact units and matching summaries",
+      "allow_not_applicable": false
+    },
+    "measurement_validity": {
+      "procedure": "Check full inbox timing, separate VM instrumentation, alternating order,5 warmups,write overhead and index cost",
+      "acceptance": "Complete equivalent paired measurements including controls and overhead; negative results remain usable. Positive adoption thresholds are separately frozen in plan.json.",
+      "allow_not_applicable": false
+    },
+    "reproducibility": {
+      "procedure": "Independent representative rerun on isolated output with same frozen script",
+      "acceptance": "Equivalent outputs; consistent rerun direction and magnitude with noise and any disagreement disclosed; no positive benefit required for a usable negative result.",
+      "allow_not_applicable": false
+    }
+  }
+}

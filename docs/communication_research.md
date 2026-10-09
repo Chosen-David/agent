@@ -70,3 +70,7 @@ flowchart TD
 ## 2026-10-09：近期筛选与无损计账落地
 
 [GOSC、上游消息替代效应、OpenMAS-GCom、RADAR及工程来源的本轮筛选](../agent_doc/results/communication-ledger-20261009/research.md) 区分全文章节、摘要、源码片段和未能访问的内容。本轮应用为通信预算的事务增量维护，不宣称复现语义调度/学习拓扑。比较原始扫描、覆盖索引扫描和增量账本；[测量与限制](../agent_doc/results/communication-ledger-20261009/report.md) 单独列出小负载退化、迁移成本及没有模型质量A/B的边界。
+
+## 2026-10-09：独立复测补充与并发去重
+
+另一路独立工作完成CPP/MUTE/AgentPrune筛选和六场景Mailbox复测，见 [研究](../agent_doc/results/comm-pending-index-20261009/research.md) 与 [整合证据](../agent_doc/results/comm-pending-index-integration-20261009/report.md)。发布核对发现ab6cc59已实现等价待处理索引，因此保留其源码、测试和benchmark，仅合入本轮独立证据，不重复索引。两个索引候选仅名称不同，当前源码等价核对和数据适用范围见 [协调记录](../agent_doc/results/comm-pending-index-integration-20261009/publication_reconciliation.md)。

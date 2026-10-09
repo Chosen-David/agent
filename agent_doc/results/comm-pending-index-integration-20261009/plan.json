@@ -1,0 +1,176 @@
+{
+  "task_id": "COMM-PERF-01",
+  "base_revision": "0498816bbe0a9d5eeee78284d2cba94817c4eb7c",
+  "goal": "Reduce durable mailbox inbox polling work without losing/reordering messages or changing contracts",
+  "scope": "Local SQLite synthetic envelope workload, no LLM/token/e2e quality claim",
+  "hypothesis": "A recipient/sequence partial index over receipt IS NULL avoids scanning acknowledged deliveries; measure existing query before deciding whether an ordered query adjustment is needed.",
+  "invariants": [
+    "same exact inbox result and FIFO order",
+    "independent recipient receipts",
+    "cross-run isolation",
+    "idempotent retry and immutable receipt",
+    "all references and budget checks unchanged",
+    "existing database migration"
+  ],
+  "workloads": [
+    {
+      "name": "small",
+      "events": 100,
+      "recipients": 2,
+      "ack_fraction": 0,
+      "runs": 1,
+      "placement": "prefix ACK; pending tail; interleaved run_id by event index",
+      "limit": 20
+    },
+    {
+      "name": "default_backlog",
+      "events": 1000,
+      "recipients": 8,
+      "ack_fraction": 0.95,
+      "runs": 1,
+      "placement": "prefix ACK; pending tail; interleaved run_id by event index",
+      "limit": 20
+    },
+    {
+      "name": "large_backlog",
+      "events": 10000,
+      "recipients": 8,
+      "ack_fraction": 0.99,
+      "runs": 1,
+      "placement": "prefix ACK; pending tail; interleaved run_id by event index",
+      "limit": 20
+    },
+    {
+      "name": "drained",
+      "events": 10000,
+      "recipients": 8,
+      "ack_fraction": 1,
+      "runs": 1,
+      "placement": "prefix ACK; pending tail; interleaved run_id by event index",
+      "limit": 20
+    },
+    {
+      "name": "multi_run",
+      "events": 10000,
+      "recipients": 8,
+      "ack_fraction": 0.99,
+      "runs": 4,
+      "placement": "prefix ACK; pending tail; interleaved run_id by event index",
+      "limit": 20
+    },
+    {
+      "name": "other_run_pending",
+      "events": 10000,
+      "recipients": 8,
+      "ack_fraction": 1,
+      "runs": 4,
+      "placement": "prefix ACK; pending tail; interleaved run_id by event index",
+      "limit": 20
+    }
+  ],
+  "measurement": {
+    "warmups": 5,
+    "paired_repetitions": 31,
+    "timer": "perf_counter_ns, full Mailbox.inbox including connection and JSON",
+    "primary": "SQLite VM instructions via progress handler separately from uninstrumented timing",
+    "secondary": [
+      "median and p95 poll ns",
+      "publish and ACK ns",
+      "index initialization ns",
+      "database bytes"
+    ],
+    "acceptance": "Exact behavior all cases; >80% VM-step decrease and >=2x median on acknowledged-backlog cases; report all controls and write overhead. No timing gate in unit tests.",
+    "gated_cases": [
+      "default_backlog",
+      "large_backlog",
+      "drained"
+    ],
+    "other_runs": "Other runs never ACK; target run0 prefix ACK. Population uses actual public publish/ack once per fixture then SQLite backup into equivalent arms. All setup outside timing.",
+    "write_measurement": "31 paired new publish calls and31 paired ACK calls on each workload after read measurements; events increase identically; report median,p95 and storage before/after index; single first index creation timed separately.",
+    "target_recipient": "reader0",
+    "construction": "deterministic: event i run=i%runs, local event index=i//runs. ACK floor(events/runs*ack_fraction) prefix events of target run only; every recipient ACKed in that prefix. fixed summary/action and referenced two-byte {} artifact; event_id decimal i; JSON canonical UTF8.",
+    "p95": "nearest rank ceil(.95*n)-1",
+    "candidate_budget": "One fixed integration candidate; keep old evidence, no changing thresholds.",
+    "index_sql": "CREATE INDEX IF NOT EXISTS communication_pending_recipient_seq ON communication_deliveries(recipient,seq) WHERE receipt IS NULL"
+  },
+  "dag": [
+    {
+      "id": "review",
+      "owner": "independent-context",
+      "depends_on": []
+    },
+    {
+      "id": "implement_measure",
+      "owner": "root",
+      "depends_on": [
+        "review"
+      ],
+      "produces_data": true,
+      "experiment_result": {
+        "result_id": "comm-pending-index-integration-20261009",
+        "producer_task_id": "implement_measure",
+        "producer_actor": "root",
+        "manifest_path": "agent_doc/results/comm-pending-index-integration-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-pending-index-integration-20261009/validation-plan.json",
+          "sha256": "b457fef0ecd00dba31c0564ce73ae3b783932b3b1fbb2771a89c0d20b67d3b0a"
+        },
+        "scope": "Local SQLite synthetic envelope workload, no LLM/token/e2e quality claim"
+      }
+    },
+    {
+      "id": "verify_experiment_result",
+      "owner": "independent-context",
+      "depends_on": [
+        "implement_measure"
+      ],
+      "result_validation": {
+        "result_id": "comm-pending-index-integration-20261009",
+        "producer_task_id": "implement_measure",
+        "producer_actor": "root",
+        "manifest_path": "agent_doc/results/comm-pending-index-integration-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-pending-index-integration-20261009/validation-plan.json",
+          "sha256": "b457fef0ecd00dba31c0564ce73ae3b783932b3b1fbb2771a89c0d20b67d3b0a"
+        },
+        "scope": "Local SQLite synthetic envelope workload, no LLM/token/e2e quality claim"
+      }
+    },
+    {
+      "id": "publish",
+      "owner": "root",
+      "depends_on": [
+        "verify_experiment_result"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "comm-pending-index-integration-20261009",
+          "producer_task_id": "implement_measure",
+          "producer_actor": "root",
+          "manifest_path": "agent_doc/results/comm-pending-index-integration-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-pending-index-integration-20261009/validation-plan.json",
+            "sha256": "b457fef0ecd00dba31c0564ce73ae3b783932b3b1fbb2771a89c0d20b67d3b0a"
+          },
+          "scope": "Local SQLite synthetic envelope workload, no LLM/token/e2e quality claim"
+        }
+      ]
+    }
+  ],
+  "prior_result_decision": "verify_delta: initial accepted index-only result is frozen against bb5bf5b, new main0498816 changes initialization/publish/usage. Inbox method unchanged but schema/write overhead and exact candidate code differ; perform all6cases against0498816 and affected integration regressions.",
+  "resource_budget": "one local CPU bounded experiment; stdlib only; no paid model API/GPU or external deployment",
+  "permissions": "User requested communication improvement and direct main publication; preserve all unrelated files, no SGLang or human-guide writes.",
+  "runtime_limit": "Manual Work host with real fresh-context review; no tmux/model adapter installed or claimed.",
+  "validation_contract": {
+    "result_id": "comm-pending-index-integration-20261009",
+    "producer_task_id": "implement_measure",
+    "producer_actor": "root",
+    "manifest_path": "agent_doc/results/comm-pending-index-integration-20261009/manifest.json",
+    "validation_plan": {
+      "path": "agent_doc/results/comm-pending-index-integration-20261009/validation-plan.json",
+      "sha256": "b457fef0ecd00dba31c0564ce73ae3b783932b3b1fbb2771a89c0d20b67d3b0a"
+    },
+    "scope": "Local SQLite synthetic envelope workload, no LLM/token/e2e quality claim"
+  },
+  "integration": "Preserve upstream0498816 transactional usage ledger; only additive pending index differs. Original result remains historical and source bindings are no longer current. Same frozen workloads/gates, one integration candidate, all6cases quiet rerun against new baseline. No second variant."
+}

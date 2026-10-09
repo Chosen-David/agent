@@ -1,0 +1,27 @@
+# Independent implementation and benchmark review
+
+Status: **implementation acceptable; data acceptance pending**. This is a read-only inspection before the six-case run completed. No numerical performance conclusion is accepted here.
+
+Reviewer: Work collaboration context `/root/comm_review`. Files reviewed: current diff of `agent_runtime/communication.py`, current diff of `tests/test_communication.py`, and full `scripts/benchmark_communication_inbox.py`. Only this review file was written.
+
+## Code and semantic checks
+
+The implementation adds only the approved partial index `(recipient,seq) WHERE receipt IS NULL`. Inbox/publish/ACK SQL and message contracts are otherwise unchanged. SQLite maintains index membership under existing transactions, so this change does not introduce an alternate receipt state or change filtering/order semantics. `CREATE INDEX IF NOT EXISTS` supports reopening the existing schema. New tests cover old-schema-equivalent reopen by dropping the derived index, preserved history/usage/retry, independent subscriber membership, sparse receipts and interleaved runs across limits1/2/20/100. Existing tests continue to cover error paths, reference changes and budget enforcement.
+
+No code-level correctness blocker found in this narrowly scoped diff. Finite tests and this review do not prove universal correctness or deployment safety at arbitrary database sizes.
+
+## Harness assessment
+
+The harness uses the trusted pinned baseline module for fixture creation through public APIs, then SQLite backup for identical arm state. Deterministic prefix ACKs, target reader0/run0 and interleaved total event count implement the plan. Expected outputs are independently built from fixture publication records, not from the candidate inbox query. Timings cover complete inbox calls, including connection/guard/JSON decoding, while progress-handler instrumentation is separate. Measurement order alternates;31 observations per arm and5 warmups are retained. Nearest-rank p95 and ratio-of-medians follow the plan. Publish/ACK samples use equivalent new events, alternate order and check final history/usage equality. Index storage and first-open cost are recorded separately. The single VM observation is a deterministic statement-work diagnostic, not a latency distribution.
+
+No methodological defect requiring cancellation of the run was identified by inspection. Remaining evidence requirements below apply before acceptance.
+
+## Remaining evidence requirements and bounded advice
+
+1. **Interference:** the planner reports a concurrent full regression suite. The current harness records no per-case timed-window timestamps, so an exact claim of no overlap cannot be inferred from the JSON alone. Preserve actual launch/completion logs and state the uncertainty. The independent representative rerun should happen after the suite is complete in a quiet host, and compare timing direction/magnitude with noise disclosed. If controlled reruns disagree materially, the contaminated timing claim remains inconclusive; do not use deterministic VM reduction to imply an unverified latency factor.
+2. **Environment/dependencies:** the JSON's processor string may be empty and its journal/synchronous fields are labels, not queried settings. Manifest environment should record actual CPU/resource availability and actual SQLite PRAGMA settings for the fixture. Bind actual dirty source/test/harness bytes, the git baseline bytes, relevant shared `validate_handoff`/`project_docs` dependencies, frozen plan and all raw output in the final manifest. Temporary random artifact-root paths appear in persistent plans but do not change event envelope sizes; no external filesystem data is used.
+3. **Cross-run selectivity:** the pending-recipient index spans runs; a target run with few pending items can still inspect many other-run pending entries. The current `ORDER BY e.seq` may also require temporary sorting. These are real limitations to inspect in completed query plans and raw controls. The frozen plan requires disclosure, not a claim of universal acceleration. A substantial control regression should trigger an explicit adoption tradeoff, not be hidden behind the three positive gates.
+4. **Second variant:** `ORDER BY d.seq` is semantically equivalent through the equality join, but changing order expression does not add run_id to the index and cannot by itself guarantee bounded work with other-run pending messages. It is warranted only as the predeclared bounded alternative if the complete index-only results or query plan show a material issue. Preserve the full index-only result, identify each arm and review the actual candidate if changed. The harness's hardcoded EXPLAIN query currently matches the unchanged index-only query; if a second query is tested, EXPLAIN must reflect that exact variant.
+5. **Result status:** partial checkpoint JSON is raw pending evidence. Accept only after all six cases,31 full pairs/overhead samples, fixture identities, semantic checks, summaries, source/config hashes and independent representative reproduction are verified. The final first-open value includes full Mailbox initialization plus index creation, not isolated CREATE INDEX time; retain its honest `candidate_first_open_ns` label. Per-workload one-shot initialization cost has no repeatability interval and should be reported as such.
+
+These are evidence/reporting requirements and limitations, not permission requests. No numerical checkpoint was used to approve or reject a candidate here.

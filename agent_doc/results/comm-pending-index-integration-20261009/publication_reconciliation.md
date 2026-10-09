@@ -1,0 +1,11 @@
+# 发布并发协调：复用等价实现
+
+Git-data发布尝试以0498816为expected_sha；工具返回错误后先只读核对，发现main已变为ab6cc593e69b9361bac1b799a96e71e90287889a。未强推/覆盖该提交。它已经实现相同(recipient,seq) WHERE receipt IS NULL索引，并保存自己的独立验收。
+
+本轮候选与ab6cc59的communication.py逐字比较仅差索引名：communication_pending_recipient_seq → communication_pending_recipient。不重复创建两份索引、不改对方脚本和测试。当前生产实现沿用ab6cc59，本轮发布只补研究、历史精确源快照和独立实测证据，不能宣称新增了第二次加速。
+
+本轮2.29×/14.36×/18.78×是归档候选对0498816的本地合成实测。该候选的算法/查询与当前实现一致，但源码哈希和索引名不同；原manifest/record保持历史快照，不能从旧stored pass冒称对当前文件的fresh验收。当前源等价检查和针对性回归另由独立上下文确认。研究质量/真实LLM token/端到端效果仍未测。
+
+原benchmark精确字节保存为benchmark-reviewed.py；它是历史源码归档，ROOT相对路径按原scripts位置定义。要重放历史数据，在隔离checkout中按manifest恢复candidate-communication.py到agent_runtime/communication.py，并将benchmark-reviewed.py恢复到scripts/benchmark_communication_inbox.py；不要覆盖现用工作树的上游实现。当前上游复现入口遵循comm-inbox-integration-20261009/report.md。
+
+每小时通信任务保持启用；这次重复候选说明未来需要跨执行者的任务认领/检查点协议，列下一轮候选，不能用本轮索引实测给协调机制宣称收益。

@@ -146,3 +146,5 @@ KERNEL-FEEDBACK-01：`workflows/kernel_optimization_feedback.md` 是编译/性�
 - `agent_doc/results/math-conditioning-20261008/`：冻结协议、压缩完整CPU记录、近期来源、独立review与检索证据；根AI写任务/state，独立审查者只写验收产物，无SGLang修改。
 
 COMM-INBOX-01: `agent_runtime/communication.py` → SQLite待处理收件箱；`scripts/benchmark_communication_inbox.py` 配对查询/迁移/写入基准，`tests/test_communication.py` 旧库升级与语义保护，证据位于 `agent_doc/results/comm-inbox-20261009/`。只验本地CPU/SQLite，不代表模型或token收益。
+
+COMM-PERF-01：`agent_doc/results/comm-pending-index-20261009/` 和 `comm-pending-index-integration-20261009/` 保存独立复测和研究补充。并发main `ab6cc59` 已发布等价partial index，保留其源码/测试/benchmark，不增加重复索引。验收针对明确历史源快照，当前采用说明见整合目录publication_reconciliation.md。
