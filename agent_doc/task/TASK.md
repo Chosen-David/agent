@@ -2,7 +2,7 @@
 
 ## 2026-10-10
 
-- [ ] [TOK-005] Explicit task-local inbox scope; preserve all selected kinds and global coordinator coverage, measure short real provider pair before counting. ([detail](task_details/TOK-005.md))
+- [x] [TOK-005] Explicit task-local inbox passed short real provider/quality checks and verified main; success target 5/100. ([detail](task_details/TOK-005.md))
 - [x] [TOK-004] Recoverable validation display passed scoped provider/quality checks and verified main publication; success target 4/100. ([detail](task_details/TOK-004.md))
 
 ## 2026-10-09
