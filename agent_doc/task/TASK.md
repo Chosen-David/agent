@@ -286,4 +286,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-09 低秩逆更新
 
-- [ ] [MATH-56] 核验低秩逆更新、正定删除边界与浮点相消，筛选最新数值稳定性研究；独立验收后main发布。 ([detail](task_details/MATH-56.md))
+- [x] [MATH-56] 核验低秩逆更新、正定删除边界与浮点相消，筛选最新数值稳定性研究；独立验收后main发布。 ([detail](task_details/MATH-56.md))

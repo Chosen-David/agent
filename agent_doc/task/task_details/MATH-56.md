@@ -15,3 +15,9 @@ DAG：独立新上下文计划approve→produce→另一独立verify_experiment_
 ## Progress
 
 - main从647eea7 fast-forward到48bfa27，清洁工作树；同步最新指南/角色/知识索引/状态并检查无同主题活动。
+
+- 完成：math.low-rank-inverse-update@1；SMW可逆等价不要求列满秩，SPD删除边界、真实binary64相消反例和在线ridge右端项更新。
+- 10/10公开案例、6/6结构检索、53相关回归及镜像检查通过；独立计划approve与结果usable-with-scope已实际观察，508绑定完整。非Lean/未见模型/GPU/e2e/token收益。
+- 近期阅读2609.12266v1（PDF2026-09-10），未确认最新版/正式发表；MSM未执行，保留候选。
+- 科学提交e0e0c6e381f0572e6b903082037ceaae9d449dc9，树5b6e4f918db8895185a7dd9bfb6a740e0e68a2aa，fresh fetch/ls-remote一致；报告 [report_by_gpt.md](../../results/math-inverse-update-20261009/report_by_gpt.md)。
+- 下一步：实际因子更新/直接分解/MSM残差与成本对照；保持既有next_topic与未见holdout，不改生产求解器或SGLang。
