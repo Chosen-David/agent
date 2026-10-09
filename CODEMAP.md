@@ -1,5 +1,7 @@
 # 本轮增量代码与产物地图
 
+TOK-003：`Mailbox.prepare_context` → `agent_runtime/handoff_basis.py` → `agent_runtime/handoff_encoding.py`；兼容消费者显式选择无损 claim 表格，缺省 JSON 不变，依赖/候选/拒用/前提/引用哈希保留。两份相关测试覆盖格式、不可变消费绑定、新鲜度和预算；`docs/token_optimization/handoff_encoding.md` 为消费入口。`agent_doc/results/token-003-claims-20261010/` 独立验收仅接受六节点短测总 token 19720→19643，不外推长文或现金成本。
+
 TOK-002：`scripts/codex_tool_scope.py` → `agent_runtime/codex_tool_scope.py` → 显式宿主的 `thread/start.config`；仅完整空外部需求收窄目录，未知工具/分页/错误阻止派发；`tests/test_codex_tool_scope.py` 覆盖边界。`agent_doc/results/token-002-scope-20261009/` 是WSL tmux下两个真实fresh短轮的服务端计量和独立验收。一次短任务总token20851→19632，不是全会话/长文质量或现金成本证明。
 
 TOK-001：`scripts/prompt_context.py` → `agent_runtime/prompt_context.py` 显式受控组合；`agent_runtime/token_usage.py` 严格核账 fresh CLI/RPC 单轮用量，`tests/test_prompt_context.py` 验证范围与计量边界。消费者为显式调用组合器的宿主，默认会话不自动接入。`docs/token_optimization/` 和 `agent_doc/results/token-001*-20261009/` 保存研究、失败对照与独立受控短测；不外推长文。

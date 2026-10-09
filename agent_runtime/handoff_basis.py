@@ -10,6 +10,7 @@ from pathlib import Path
 
 from .knowledge import KnowledgeStore, check_handoff_knowledge
 from .project_memory import MemoryLedger, _ids
+from .handoff_encoding import FORMAT as CLAIM_TABLE_FORMAT, encode_claims_table
 from scripts.validate_handoff import validate
 
 
@@ -96,6 +97,8 @@ def claim_graph(record):
 def check_handoff_basis(root, record, request):
     """Mandatory when declared; requirements belong to the consumer, not output."""
     _require(isinstance(record, dict) and isinstance(request, dict), 'basis requires objects')
+    _require(request.get('context_format', 'json') in ('json', CLAIM_TABLE_FORMAT),
+             'unsupported consumer context format')
     for key in ('context_max_chars', 'context_max_tokens'):
         if key in request:
             cap = request[key]
@@ -277,7 +280,8 @@ def basis_context(root, record, request, *, known_knowledge_refs=(), known_memor
             memory_entries.update((entry['id'], entry) for entry in entries)
             pending = {dep for entry in entries for dep in entry['deps']} - memory_entries.keys()
     payload['memory_entries'] = [memory_entries[k] for k in sorted(memory_entries) if k not in known_memory_ids]
-    serialized = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+    wire_payload = encode_claims_table(payload) if request.get('context_format') == CLAIM_TABLE_FORMAT else payload
+    serialized = json.dumps(wire_payload, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
     _require(len(serialized) <= max_chars, 'complete basis exceeds character budget; narrow task or reuse context')
     tokens = None
     if token_counter is not None:

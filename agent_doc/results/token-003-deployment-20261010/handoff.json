@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "run_id": "claims-fixture",
+  "role": "code",
+  "input_version": "v1",
+  "status": "completed",
+  "limitations": [],
+  "artifacts": [
+    {
+      "id": "A1",
+      "path": "agent_doc/results/token-003-claims-20261010/artifact.json",
+      "sha256": "0ac1d8338d701c1477254e877224125d3dadf5fe044a17e34a889d98a7a5b30a"
+    }
+  ],
+  "knowledge_refs": [],
+  "memory_refs": [],
+  "evidence_claims": [
+    {
+      "id": "C_BASE",
+      "status": "supported",
+      "depends_on": [],
+      "artifact_ids": [
+        "A1"
+      ],
+      "knowledge_ids": [],
+      "memory_ids": [],
+      "assumptions": []
+    },
+    {
+      "id": "C_CHAIN",
+      "status": "supported",
+      "depends_on": [
+        "C_BASE"
+      ],
+      "artifact_ids": [
+        "A1"
+      ],
+      "knowledge_ids": [],
+      "memory_ids": [],
+      "assumptions": []
+    },
+    {
+      "id": "C_MEASURE",
+      "status": "candidate",
+      "depends_on": [
+        "C_CHAIN"
+      ],
+      "artifact_ids": [
+        "A1"
+      ],
+      "knowledge_ids": [],
+      "memory_ids": [],
+      "assumptions": [
+        {
+          "name": "independent measurement completed",
+          "status": "unknown",
+          "evidence_ids": []
+        }
+      ]
+    },
+    {
+      "id": "C_REJECT",
+      "status": "rejected",
+      "depends_on": [
+        "C_BASE"
+      ],
+      "artifact_ids": [
+        "A1"
+      ],
+      "knowledge_ids": [],
+      "memory_ids": [],
+      "assumptions": [
+        {
+          "name": "revision still current",
+          "status": "unsatisfied",
+          "evidence_ids": [
+            "A1"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "C_REVIEW",
+      "status": "candidate",
+      "depends_on": [
+        "C_MEASURE"
+      ],
+      "artifact_ids": [
+        "A1"
+      ],
+      "knowledge_ids": [],
+      "memory_ids": [],
+      "assumptions": []
+    },
+    {
+      "id": "C_RELEASE",
+      "status": "candidate",
+      "depends_on": [
+        "C_REVIEW",
+        "C_REJECT"
+      ],
+      "artifact_ids": [
+        "A1"
+      ],
+      "knowledge_ids": [],
+      "memory_ids": [],
+      "assumptions": []
+    }
+  ],
+  "checks": [
+    {
+      "criterion": "synthetic structure only",
+      "status": "pass",
+      "artifact_ids": [
+        "A1"
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "task_id": "T1",
+      "status": "done",
+      "evidence": [
+        "A1"
+      ]
+    }
+  ]
+}

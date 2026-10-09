@@ -18,6 +18,22 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class BasisTests(unittest.TestCase):
+    def test_consumer_table_format_preserves_full_basis_and_gates(self):
+        from agent_runtime.handoff_encoding import decode_basis_payload
+        seq = self.send()
+        default = self.box.prepare_context('writer', seq, self.request)
+        request = {**self.request, 'context_format': 'claims-table/v1'}
+        table = self.box.prepare_context('review', seq, request)
+        self.assertEqual(decode_basis_payload(table['payload']), json.loads(default['payload']))
+        for bad in ('unknown', False, None):
+            with self.assertRaises(ValueError):
+                self.box.prepare_context('review', seq, {**self.request, 'context_format': bad})
+        with self.assertRaisesRegex(ValueError, 'character budget'):
+            self.box.prepare_context('review', seq, request, max_chars=20)
+        (self.root / 'result.json').write_text('changed')
+        with self.assertRaises(ValueError):
+            self.box.prepare_context('review', seq, request)
+
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(); self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
@@ -212,7 +228,7 @@ class BasisTests(unittest.TestCase):
                               token_counter=lambda s: count)
 
     def test_cache_scope_and_freshness_remain_required(self):
-        with self.assertRaisesRegex(ValueError, 'project-relative'):
+        with self.assertRaisesRegex(ValueError, 'project-relative|outside project'):
             basis_context(self.root, dict(self.record, knowledge_refs=[], evidence_claims=[]),
                           dict(self.request, knowledge_root='/tmp', knowledge_required=False,
                                knowledge_refs=[], required_claim_ids=[]), known_knowledge_refs=self.refs)

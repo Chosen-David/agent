@@ -1,5 +1,7 @@
 # 组合入口的 token 优化
 
+交接还可由兼容消费者显式选择 `claims-table/v1`，把重复 claim 字段名变成一次列头，保留全部值、否决和前提；默认 JSON 不变。调用路径、不可更改的消费绑定和短测边界见 [交接编码说明](handoff_encoding.md)。
+
 外部工具目录也可按明确任务需求收窄：宿主确认需求完整且为空时，`scripts/codex_tool_scope.py --root ABSOLUTE_PROJECT_ROOT --contract task-scope.json` 输出新线程的配置覆盖；宿主将 `config_overrides` 传给 `thread/start.config`。契约示例：`{"schema_version":"codex-tool-scope/v1","requirements_complete":true,"external_tool_requirements":[]}`。有需求或不确定时保留默认；实际目录仍有未知工具则不派发此profile。全局配置、项目规则和权限不变。研究与限制见 [本轮说明](tool_scope_research.md)。这同样需要宿主显式调用，没有自动改变已运行会话。
 
 只有在同一上下文确实需要同时载入决策、通用编排和科研编排入口时，调用受控组合器：
