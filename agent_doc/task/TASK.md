@@ -1,5 +1,9 @@
 # Project tasks
 
+## 2026-10-09
+
+- [ ] [WRITE-EVIDENCE-20261009-01] 接入全面取证与贡献导向写作规范，完成有范围的独立审阅和发布核对；不宣称运行时行为已验证。 ([detail](task_details/WRITE-EVIDENCE-20261009-01.md))
+
 ## 2026-10-08 代码 Agent 编译反馈
 
 - [x] [KERNEL-FEEDBACK-01] 提取编译资源诊断、接通条件化优化参考与独立验收，核验 main 发布状态。 ([detail](task_details/KERNEL-FEEDBACK-01.md))
