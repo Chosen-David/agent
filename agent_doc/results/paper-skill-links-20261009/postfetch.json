@@ -1,0 +1,56 @@
+{
+  "remote_sha": "7c2449ed16f979ca9f59579651f8f9d022525c02",
+  "same_as_tested_base": true,
+  "integration": "No remote changes to integrate. Seven tested source hashes unchanged; focused post-fetch recheck executed.",
+  "checks": [
+    {
+      "name": "catalog",
+      "argv": [
+        "python",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "tests",
+        "-p",
+        "test_eval_catalog.py",
+        "-v"
+      ],
+      "exit_code": 0,
+      "log": "postfetch-catalog.log",
+      "sha256": "a1461bebf1cf8bcc89c0ad0359e319c2b238d59b34ef1549a8cbe0fd53a0b009"
+    },
+    {
+      "name": "sync-check",
+      "argv": [
+        "python",
+        "scripts/sync_plugin_references.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "postfetch-sync-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "links",
+      "argv": [
+        "python",
+        "/workspace/agent-paper-links/agent_doc/results/paper-skill-links-20261009/verify_links.py"
+      ],
+      "exit_code": 0,
+      "log": "postfetch-links.log",
+      "sha256": "1b46b4bc331ab9f0f59c488ba2a8ab9c3829e94056859ee073c8fe734275d94f"
+    },
+    {
+      "name": "diff-check",
+      "argv": [
+        "git",
+        "diff",
+        "--check"
+      ],
+      "exit_code": 0,
+      "log": "postfetch-diff-check.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ]
+}

@@ -291,3 +291,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-09 全局质量区间
 
 - [x] [MATH-57] 推导分数盒上的保留质量极值与逐层near/far证书接口；筛选近期softmax验证研究，独立文档审核后发布。 ([detail](task_details/MATH-57.md))
+
+## 2026-10-09 论文技能链接兼容
+
+- [ ] [PAPER-LINK-20261009-01] 七处章节链接最小文档兼容修复，独立验证与发布待完成。 ([detail](task_details/PAPER-LINK-20261009-01.md))
