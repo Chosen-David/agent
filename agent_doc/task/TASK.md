@@ -297,3 +297,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [ ] [PAPER-LINK-20261009-01] 七处章节链接修复已独立验收并推送main；CI查询Forbidden待核实。 ([detail](task_details/PAPER-LINK-20261009-01.md))
 
 - [x] [MATH-58] 突发服务包络与任务队列边界（文档限定） ([详情](task_details/MATH-58.md))
+
+## 2026-10-09 离散完成边界
+
+- [ ] [MATH-59] 完成量、packetizer 与分块安全边界（文档限定） ([详情](task_details/MATH-59.md))

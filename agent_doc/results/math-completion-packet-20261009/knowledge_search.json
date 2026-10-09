@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "snapshot": "f7025f3817e6fdc2899d373021b1625dada56725c3f4f960360b7d2dd1c5fa3e",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "infra.pagedattention-kv",
+      "version": 1,
+      "sha256": "c722bfee22d00e0e8d2469cca633a9bb6735001381ae129f1c1958d4a9803c1f",
+      "title": "PagedAttention：KV 分页与服务吞吐",
+      "summary": "SOSP 2023 的 vLLM 实验支持用按需分页和共享 KV 减少服务内存浪费；收益来自内存管理与调度的组合。",
+      "status": "published",
+      "assumptions": [
+        "hardware: A100",
+        "models: OPT and LLaMA-13B",
+        "workload: ShareGPT/Alpaca length traces with Poisson arrivals",
+        "metric: normalized end-to-end latency versus request rate"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#infra.pagedattention-kv"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "服务"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "服务"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "服务",
+            "队列"
+          ]
+        }
+      ],
+      "score": 10
+    },
+    {
+      "id": "impl.flashinfer-plan-run",
+      "version": 1,
+      "sha256": "6298cd56a7d5fd2353b0b73ddfaece642584620cc8c53f5ba302dd5957d7f5cf",
+      "title": "复用 FlashInfer plan/run 接口",
+      "summary": "服务推理需要分页/不规则 KV 时先复用 FlashInfer wrapper；workspace、layout 与 plan 生命周期是接口契约的一部分。",
+      "status": "published",
+      "assumptions": [
+        "operation: paged or ragged attention inference",
+        "device: supported NVIDIA GPU",
+        "lifecycle: explicit plan then run"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#impl.flashinfer-plan-run"
+        ]
+      },
+      "matches": [
+        {
+          "field": "summary",
+          "terms": [
+            "服务"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "服务"
+          ]
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "math.alpha-spending-stopping",
+      "version": 1,
+      "sha256": "54d4325ccdf1a12e50841ffc124dfa11fcf1dfbd0a254242fc916d8b5f573d06",
+      "title": "逐次错误预算下的随机停止保证",
+      "summary": "对同一稳定均值的每次查看分配可求和错误概率，以联合界保证任意数据依赖停止时的覆盖；保守且不保证早停。",
+      "status": "published",
+      "assumptions": [
+        "无限序列 X_i 相互独立、具有同一均值 μ 且落在已知确定区间 [a,b]",
+        "δ∈(0,1)，δ_t=δ/[t(t+1)] 在数据之前规定",
+        "评测对象、分布与取值范围固定；本条不覆盖复用数据训练后自适应选择的新模型"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-concentration/checks.json",
+          "docs/knowledge_learning/2026-10-06-concentration/verify.py"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "完成",
+            "队列"
+          ]
+        }
+      ],
+      "score": 2
+    }
+  ]
+}
