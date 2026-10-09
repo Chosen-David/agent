@@ -2,7 +2,7 @@
 
 ## 2026-10-09
 
-- [ ] [TOK-001] 验证组合协议去重的真实短任务token收益，独立验收并发布；100次目标成功计数仍0。 ([detail](task_details/TOK-001.md))
+- [x] [TOK-001] Verified short token reduction and main publication; continuous target now 1/100. ([detail](task_details/TOK-001.md))
 - [x] [COMM-PERF-01] 独立通信索引研究与六场景复验完成；复用并发发布的等价索引实现，合入补充证据。 ([detail](task_details/COMM-PERF-01.md))
 
 - [x] [COMM-INBOX-01] 完成待处理收件箱索引优化、配对测量及独立验收；发布检查点见详情。 ([detail](task_details/COMM-INBOX-01.md))
