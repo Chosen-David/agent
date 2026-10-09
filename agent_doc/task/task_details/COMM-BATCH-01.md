@@ -17,3 +17,5 @@ Frozenperformance nativeacceptedkeep=true beforeFF (ed1c78 proof; registered). C
 Rnativefresh-dependency acceptance d4304b5e49f8b89a7cea58587de3b34700d84487b49978c638c1ea621d630125 authenticatedandregistered. Exactcandidate/new8test adopted;901fulltests893pass8skip, reader3, batch8inclactualCLI, pluginreferencecheckpass. NativeI producerartifact frozen; independentintegrationgate pending. No additionalperformanceexperiment; broadcontinuousactive.
 
 Actual independent nativeI accepted and authenticated proof081797c7009cfa13b0a586ec15ee8dd8585104d90e07f272f0b46843016b58d5; registered before publication. Final staged inventory and remote readback pending.
+
+Positive batch adopted and first main publication confirmed50f4891a781fb734ab069773f0189f872112288b, tree6b6a76a4076e282b0ceec8d85a08e94f920bbab6 via API and freshgitfetch. FiniteCOMM-BATCH complete; broadcontinuouscommunicationoptimization remains active. Closure metadata review/readback follows, no source/report/benchmark changed.
