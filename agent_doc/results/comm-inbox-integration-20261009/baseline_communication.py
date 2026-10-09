@@ -77,9 +77,6 @@ class Mailbox:
                     seq INTEGER NOT NULL, recipient TEXT NOT NULL,
                     record TEXT NOT NULL, request TEXT NOT NULL,
                     PRIMARY KEY(seq,recipient));
-                CREATE INDEX IF NOT EXISTS communication_pending_recipient
-                    ON communication_deliveries(recipient,seq)
-                    WHERE receipt IS NULL;
             ''')
             db.execute('BEGIN IMMEDIATE')
             db.execute('INSERT OR IGNORE INTO communication_plans VALUES (?,?,?)',

@@ -1,0 +1,240 @@
+{
+  "manifest_sha256": "0362f2fa7ff0194ac2b7761c879779b51f9dbc0b630f2311a43ae0a41cd72f2b",
+  "artifact_hashes": {
+    "agent_doc/results/comm-inbox-integration-20261009/validation_plan.json": "139ec3420e6995a0ac6de7753109526d192a11d2ce48cea7366cda3523a254ae",
+    "agent_runtime/communication.py": "c322cdb7d61dbc98bb8e6139bb817b1825742aa3aca9285b35609556384dd975",
+    "agent_runtime/project_docs.py": "d34556ecd2fd7822d4808c1e882f8ef559c750ed8dafdc22b5687e33699594b7",
+    "scripts/validate_handoff.py": "d182adfa0d118d6245f0a58623114d8fbeb70dd6ab8fa3ea4c1d93754bcedf9d",
+    "scripts/benchmark_communication_inbox.py": "4208cc9d64b23f835ec71ab39aed1ea1d8aff853cbe9d0663f88bac7e1c19931",
+    "agent_doc/results/comm-inbox-integration-20261009/baseline_communication.py": "eecfe2b16a40d6118db8d7c99f9a89311eaaf491a55a51b6ac65c924d2ae115e",
+    "agent_doc/results/comm-inbox-20261009/summarize.py": "ae01a548f41287022e866ed1fc4dcda90ac89859f5d12eee8402ca4002ceb263",
+    "agent_doc/results/comm-inbox-integration-20261009/plan_snapshot.md": "6c0b8be02d57331b4ce2c3642922e2baa9912aa280e92744d017e55a9cc67dee",
+    "agent_doc/results/comm-inbox-integration-20261009/raw.json": "3f38d527172d0657bd659749287feac8f8abe03ea9bce1c4d861b8bfa86b562a",
+    "agent_doc/results/comm-inbox-integration-20261009/summary.json": "9fc33a64b25e34a688598bd93d53d1b61cb5ba16639cf13dcd87c8cd59f43bee",
+    "agent_doc/results/comm-inbox-integration-20261009/environment.json": "3b50af1839a23f07d111f57f2cbf7c24e6e1e5586fc02456d6a27ad9c85c826e"
+  },
+  "validation_plan_sha256": "139ec3420e6995a0ac6de7753109526d192a11d2ce48cea7366cda3523a254ae",
+  "scope": "Local SQLite inbox exactness and paired scaling on deterministic fixtures; no model/token/e2e claims",
+  "schema_version": "experiment-validation/v1",
+  "status": "usable-with-scope",
+  "verifier": {
+    "actor": "host-collaboration:/root/verify_results",
+    "independent": true,
+    "source": "Actual controller host collaboration context /root/verify_results; identity authenticated by controller, not by JSON alone",
+    "run_id": "comm-inbox-integration-20261009-independent-review-1",
+    "method": "Independent integrated source and hash review against 0498816; raw/summary recomputation; fresh benchmark rerun; closed-form and interleaving oracle; usage scans and regression tests"
+  },
+  "limitations": [
+    "Local deterministic <=20k-history SQLite fixtures; shared CPU/cache and no affinity; wall latency scoped to all samples.",
+    "Synthetic setup uses SQL inserts with automatic ledger triggers; arbitrary traffic/concurrent throughput unmeasured.",
+    "Append-only ledger assumptions preserved; direct historical SQL edits/deletes/replaces unsupported.",
+    "No LLM/token/network/end-to-end/deployment claim; limited tests are not a universal bug-free guarantee.",
+    "Full suite 862 tests OK, eight skipped remain unexecuted; reader source unchanged, prior reader three-test pass is separate evidence."
+  ],
+  "checks": {
+    "implementation": {
+      "verdict": "pass",
+      "reason": "Entire ledger-integrated implementation read; exact pending-index-only delta to frozen 0498816 baseline verified; 73 communication/handoff and 9 ledger tests pass. Completed full suite reviewed: 862 tests OK, eight skipped.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_review.md",
+          "sha256": "17e4b40ab958e116413148ef73ccddb9a8e258c69693d09d7051f4987a8fb571"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_checks.py",
+          "sha256": "0b1af1de55b72c978763353c58d3be37a6590cba7c05bfe412cc4e904f566dc3"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_checks.json",
+          "sha256": "7ce746c1ae9cd2af13f791e5dce52307f4c336e3bf846bac5cc7564546ee05eb"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_raw.json",
+          "sha256": "2780f8a6f1e520a565cb55f98e01e5397da1a41c8be7b34a7c535d8241e08701"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_tests.log",
+          "sha256": "ac8db50689828a76403f863c9dc9074ecd2e29851f943f3a97eee75faf702dc0"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_usage_tests.log",
+          "sha256": "11ab21e5e55d1cbc3dd4b52f8ddc883108db3ce197ddab8bb3676f4c27ff88ff"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/full_tests.log",
+          "sha256": "3c12e278d4732b51ff9b8684d9d3c852506c9df4c3073c5c29adca1dd0888068"
+        }
+      ]
+    },
+    "reference_boundary": {
+      "verdict": "pass",
+      "reason": "Independent closed-form oracle, 192 public interleaving/boundary/migration checks, usage byte/count scans and combined legacy migration suite pass.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_review.md",
+          "sha256": "17e4b40ab958e116413148ef73ccddb9a8e258c69693d09d7051f4987a8fb571"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_checks.py",
+          "sha256": "0b1af1de55b72c978763353c58d3be37a6590cba7c05bfe412cc4e904f566dc3"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_checks.json",
+          "sha256": "7ce746c1ae9cd2af13f791e5dce52307f4c336e3bf846bac5cc7564546ee05eb"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_raw.json",
+          "sha256": "2780f8a6f1e520a565cb55f98e01e5397da1a41c8be7b34a7c535d8241e08701"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_tests.log",
+          "sha256": "ac8db50689828a76403f863c9dc9074ecd2e29851f943f3a97eee75faf702dc0"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_usage_tests.log",
+          "sha256": "11ab21e5e55d1cbc3dd4b52f8ddc883108db3ce197ddab8bb3676f4c27ff88ff"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/full_tests.log",
+          "sha256": "3c12e278d4732b51ff9b8684d9d3c852506c9df4c3073c5c29adca1dd0888068"
+        }
+      ]
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "All new frozen manifest hashes verified; 12 unique matrix cases with all 21 paired records and five rerun records, three source-verified warmups, automatic fixture ledger triggers verified.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_review.md",
+          "sha256": "17e4b40ab958e116413148ef73ccddb9a8e258c69693d09d7051f4987a8fb571"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_checks.py",
+          "sha256": "0b1af1de55b72c978763353c58d3be37a6590cba7c05bfe412cc4e904f566dc3"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_checks.json",
+          "sha256": "7ce746c1ae9cd2af13f791e5dce52307f4c336e3bf846bac5cc7564546ee05eb"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_raw.json",
+          "sha256": "2780f8a6f1e520a565cb55f98e01e5397da1a41c8be7b34a7c535d8241e08701"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_tests.log",
+          "sha256": "ac8db50689828a76403f863c9dc9074ecd2e29851f943f3a97eee75faf702dc0"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_usage_tests.log",
+          "sha256": "11ab21e5e55d1cbc3dd4b52f8ddc883108db3ce197ddab8bb3676f4c27ff88ff"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/full_tests.log",
+          "sha256": "3c12e278d4732b51ff9b8684d9d3c852506c9df4c3073c5c29adca1dd0888068"
+        }
+      ]
+    },
+    "numerical_sanity": {
+      "verdict": "pass",
+      "reason": "Every aggregate and finite positive raw timing checked; independent recomputation exactly equals summary and frozen thresholds pass.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_review.md",
+          "sha256": "17e4b40ab958e116413148ef73ccddb9a8e258c69693d09d7051f4987a8fb571"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_checks.py",
+          "sha256": "0b1af1de55b72c978763353c58d3be37a6590cba7c05bfe412cc4e904f566dc3"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_checks.json",
+          "sha256": "7ce746c1ae9cd2af13f791e5dce52307f4c336e3bf846bac5cc7564546ee05eb"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_raw.json",
+          "sha256": "2780f8a6f1e520a565cb55f98e01e5397da1a41c8be7b34a7c535d8241e08701"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_tests.log",
+          "sha256": "ac8db50689828a76403f863c9dc9074ecd2e29851f943f3a97eee75faf702dc0"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_usage_tests.log",
+          "sha256": "11ab21e5e55d1cbc3dd4b52f8ddc883108db3ce197ddab8bb3676f4c27ff88ff"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/full_tests.log",
+          "sha256": "3c12e278d4732b51ff9b8684d9d3c852506c9df4c3073c5c29adca1dd0888068"
+        }
+      ]
+    },
+    "measurement_validity": {
+      "verdict": "pass",
+      "reason": "Complete public wall-time/connect/JSON in alternating paired samples; VM separately instrumented; fresh baseline write fixture; migration separately timed; noise and host scope explicit.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_review.md",
+          "sha256": "17e4b40ab958e116413148ef73ccddb9a8e258c69693d09d7051f4987a8fb571"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_checks.py",
+          "sha256": "0b1af1de55b72c978763353c58d3be37a6590cba7c05bfe412cc4e904f566dc3"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_checks.json",
+          "sha256": "7ce746c1ae9cd2af13f791e5dce52307f4c336e3bf846bac5cc7564546ee05eb"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_raw.json",
+          "sha256": "2780f8a6f1e520a565cb55f98e01e5397da1a41c8be7b34a7c535d8241e08701"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_tests.log",
+          "sha256": "ac8db50689828a76403f863c9dc9074ecd2e29851f943f3a97eee75faf702dc0"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_usage_tests.log",
+          "sha256": "11ab21e5e55d1cbc3dd4b52f8ddc883108db3ce197ddab8bb3676f4c27ff88ff"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/full_tests.log",
+          "sha256": "3c12e278d4732b51ff9b8684d9d3c852506c9df4c3073c5c29adca1dd0888068"
+        }
+      ]
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "Fresh independent five-repeat/three-warmup matrix rerun reproduces output and exact VM reductions, with focused and ledger tests plus independent scans.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_review.md",
+          "sha256": "17e4b40ab958e116413148ef73ccddb9a8e258c69693d09d7051f4987a8fb571"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_checks.py",
+          "sha256": "0b1af1de55b72c978763353c58d3be37a6590cba7c05bfe412cc4e904f566dc3"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_checks.json",
+          "sha256": "7ce746c1ae9cd2af13f791e5dce52307f4c336e3bf846bac5cc7564546ee05eb"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_raw.json",
+          "sha256": "2780f8a6f1e520a565cb55f98e01e5397da1a41c8be7b34a7c535d8241e08701"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_tests.log",
+          "sha256": "ac8db50689828a76403f863c9dc9074ecd2e29851f943f3a97eee75faf702dc0"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/independent_usage_tests.log",
+          "sha256": "11ab21e5e55d1cbc3dd4b52f8ddc883108db3ce197ddab8bb3676f4c27ff88ff"
+        },
+        {
+          "path": "agent_doc/results/comm-inbox-integration-20261009/full_tests.log",
+          "sha256": "3c12e278d4732b51ff9b8684d9d3c852506c9df4c3073c5c29adca1dd0888068"
+        }
+      ]
+    }
+  }
+}

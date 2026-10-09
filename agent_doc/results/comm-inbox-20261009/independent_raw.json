@@ -1,0 +1,1835 @@
+{
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "sqlite": "3.53.1",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "cpu": "x86_64"
+  },
+  "config": {
+    "history": [
+      0,
+      1000,
+      20000
+    ],
+    "pending": [
+      0,
+      5
+    ],
+    "runs": [
+      1,
+      4
+    ],
+    "warmups": 3,
+    "repeats": 5,
+    "units": "ms",
+    "seed": "deterministic"
+  },
+  "cases": [
+    {
+      "history": 0,
+      "pending": 0,
+      "runs": 1,
+      "expected": [],
+      "raw": [
+        {
+          "candidate": 0.215535,
+          "baseline": 0.20924
+        },
+        {
+          "baseline": 0.420719,
+          "candidate": 0.25469
+        },
+        {
+          "candidate": 0.232879,
+          "baseline": 0.220289
+        },
+        {
+          "baseline": 0.254684,
+          "candidate": 0.234668
+        },
+        {
+          "candidate": 0.415219,
+          "baseline": 0.310623
+        }
+      ],
+      "vm": {
+        "baseline": 101,
+        "candidate": 116
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.254684,
+        "candidate": 0.234668
+      },
+      "migration": {
+        "ms": 1.630637,
+        "reopen_ms": 0.505814,
+        "before_bytes": 40960,
+        "after_bytes": 45056
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.991122,
+            "ack_ms": 0.69004
+          },
+          {
+            "publish_ms": 0.923525,
+            "ack_ms": 0.835089
+          },
+          {
+            "publish_ms": 0.803017,
+            "ack_ms": 0.619836
+          },
+          {
+            "publish_ms": 1.136623,
+            "ack_ms": 0.739473
+          },
+          {
+            "publish_ms": 0.794185,
+            "ack_ms": 0.58918
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.818222,
+            "ack_ms": 0.672341
+          },
+          {
+            "publish_ms": 0.776462,
+            "ack_ms": 0.654947
+          },
+          {
+            "publish_ms": 1.138872,
+            "ack_ms": 0.703574
+          },
+          {
+            "publish_ms": 0.800512,
+            "ack_ms": 0.671264
+          },
+          {
+            "publish_ms": 0.748214,
+            "ack_ms": 0.653627
+          }
+        ]
+      }
+    },
+    {
+      "history": 0,
+      "pending": 0,
+      "runs": 4,
+      "expected": [],
+      "raw": [
+        {
+          "candidate": 0.222607,
+          "baseline": 0.212361
+        },
+        {
+          "baseline": 0.248044,
+          "candidate": 0.235359
+        },
+        {
+          "candidate": 0.225354,
+          "baseline": 0.21617
+        },
+        {
+          "baseline": 0.292142,
+          "candidate": 0.227764
+        },
+        {
+          "candidate": 0.217632,
+          "baseline": 0.216905
+        }
+      ],
+      "vm": {
+        "baseline": 101,
+        "candidate": 116
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.216905,
+        "candidate": 0.225354
+      },
+      "migration": {
+        "ms": 4.438283,
+        "reopen_ms": 1.47451,
+        "before_bytes": 40960,
+        "after_bytes": 45056
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.844057,
+            "ack_ms": 0.62461
+          },
+          {
+            "publish_ms": 0.807106,
+            "ack_ms": 0.686793
+          },
+          {
+            "publish_ms": 0.841245,
+            "ack_ms": 1.230604
+          },
+          {
+            "publish_ms": 0.852942,
+            "ack_ms": 0.668708
+          },
+          {
+            "publish_ms": 0.766874,
+            "ack_ms": 0.807262
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.988813,
+            "ack_ms": 0.823954
+          },
+          {
+            "publish_ms": 0.749765,
+            "ack_ms": 0.815276
+          },
+          {
+            "publish_ms": 1.123138,
+            "ack_ms": 0.70684
+          },
+          {
+            "publish_ms": 1.421379,
+            "ack_ms": 0.973508
+          },
+          {
+            "publish_ms": 0.834304,
+            "ack_ms": 0.670917
+          }
+        ]
+      }
+    },
+    {
+      "history": 0,
+      "pending": 5,
+      "runs": 1,
+      "expected": [
+        {
+          "seq": 1,
+          "event": {
+            "event_id": "1",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 2,
+          "event": {
+            "event_id": "2",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 3,
+          "event": {
+            "event_id": "3",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 4,
+          "event": {
+            "event_id": "4",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 5,
+          "event": {
+            "event_id": "5",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "candidate": 0.247254,
+          "baseline": 0.609063
+        },
+        {
+          "baseline": 0.311458,
+          "candidate": 0.271206
+        },
+        {
+          "candidate": 0.256797,
+          "baseline": 0.301522
+        },
+        {
+          "baseline": 0.256165,
+          "candidate": 0.268694
+        },
+        {
+          "candidate": 0.243002,
+          "baseline": 0.285186
+        }
+      ],
+      "vm": {
+        "baseline": 205,
+        "candidate": 201
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.301522,
+        "candidate": 0.256797
+      },
+      "migration": {
+        "ms": 0.609314,
+        "reopen_ms": 0.452656,
+        "before_bytes": 40960,
+        "after_bytes": 45056
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 1.034152,
+            "ack_ms": 0.657295
+          },
+          {
+            "publish_ms": 0.941456,
+            "ack_ms": 0.655064
+          },
+          {
+            "publish_ms": 0.785045,
+            "ack_ms": 0.712955
+          },
+          {
+            "publish_ms": 0.950977,
+            "ack_ms": 0.62814
+          },
+          {
+            "publish_ms": 0.882141,
+            "ack_ms": 0.945047
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.962901,
+            "ack_ms": 0.747481
+          },
+          {
+            "publish_ms": 0.845534,
+            "ack_ms": 0.82432
+          },
+          {
+            "publish_ms": 0.99143,
+            "ack_ms": 0.705939
+          },
+          {
+            "publish_ms": 0.971677,
+            "ack_ms": 0.674177
+          },
+          {
+            "publish_ms": 0.852813,
+            "ack_ms": 0.785826
+          }
+        ]
+      }
+    },
+    {
+      "history": 0,
+      "pending": 5,
+      "runs": 4,
+      "expected": [
+        {
+          "seq": 1,
+          "event": {
+            "event_id": "1",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 2,
+          "event": {
+            "event_id": "2",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 3,
+          "event": {
+            "event_id": "3",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 4,
+          "event": {
+            "event_id": "4",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 5,
+          "event": {
+            "event_id": "5",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "candidate": 0.382128,
+          "baseline": 0.263848
+        },
+        {
+          "baseline": 0.362385,
+          "candidate": 0.272595
+        },
+        {
+          "candidate": 0.25186,
+          "baseline": 0.277631
+        },
+        {
+          "baseline": 0.244815,
+          "candidate": 0.724829
+        },
+        {
+          "candidate": 0.279576,
+          "baseline": 0.272053
+        }
+      ],
+      "vm": {
+        "baseline": 205,
+        "candidate": 201
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.272053,
+        "candidate": 0.279576
+      },
+      "migration": {
+        "ms": 0.978174,
+        "reopen_ms": 0.909581,
+        "before_bytes": 40960,
+        "after_bytes": 45056
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.839397,
+            "ack_ms": 0.679577
+          },
+          {
+            "publish_ms": 0.739174,
+            "ack_ms": 0.650338
+          },
+          {
+            "publish_ms": 0.966377,
+            "ack_ms": 0.64176
+          },
+          {
+            "publish_ms": 1.311752,
+            "ack_ms": 0.718385
+          },
+          {
+            "publish_ms": 0.853275,
+            "ack_ms": 0.619871
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.860522,
+            "ack_ms": 0.823128
+          },
+          {
+            "publish_ms": 0.780348,
+            "ack_ms": 0.60631
+          },
+          {
+            "publish_ms": 0.840294,
+            "ack_ms": 0.664675
+          },
+          {
+            "publish_ms": 0.783876,
+            "ack_ms": 0.682132
+          },
+          {
+            "publish_ms": 0.894866,
+            "ack_ms": 0.921065
+          }
+        ]
+      }
+    },
+    {
+      "history": 1000,
+      "pending": 0,
+      "runs": 1,
+      "expected": [],
+      "raw": [
+        {
+          "candidate": 0.316058,
+          "baseline": 2.210339
+        },
+        {
+          "baseline": 0.744804,
+          "candidate": 0.302704
+        },
+        {
+          "candidate": 0.269642,
+          "baseline": 0.673122
+        },
+        {
+          "baseline": 0.74391,
+          "candidate": 0.324845
+        },
+        {
+          "candidate": 0.264976,
+          "baseline": 0.932297
+        }
+      ],
+      "vm": {
+        "baseline": 11100,
+        "candidate": 116
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.744804,
+        "candidate": 0.302704
+      },
+      "migration": {
+        "ms": 1.481906,
+        "reopen_ms": 0.50034,
+        "before_bytes": 315392,
+        "after_bytes": 339968
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.86748,
+            "ack_ms": 0.622841
+          },
+          {
+            "publish_ms": 1.188654,
+            "ack_ms": 1.024065
+          },
+          {
+            "publish_ms": 1.270916,
+            "ack_ms": 0.717244
+          },
+          {
+            "publish_ms": 1.180901,
+            "ack_ms": 0.763445
+          },
+          {
+            "publish_ms": 0.89741,
+            "ack_ms": 0.921435
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.869031,
+            "ack_ms": 0.679028
+          },
+          {
+            "publish_ms": 1.522552,
+            "ack_ms": 0.860246
+          },
+          {
+            "publish_ms": 1.522967,
+            "ack_ms": 1.040952
+          },
+          {
+            "publish_ms": 1.149743,
+            "ack_ms": 0.80217
+          },
+          {
+            "publish_ms": 1.00259,
+            "ack_ms": 0.742135
+          }
+        ]
+      }
+    },
+    {
+      "history": 1000,
+      "pending": 0,
+      "runs": 4,
+      "expected": [],
+      "raw": [
+        {
+          "candidate": 0.747294,
+          "baseline": 1.55277
+        },
+        {
+          "baseline": 1.661264,
+          "candidate": 1.586899
+        },
+        {
+          "candidate": 0.358927,
+          "baseline": 0.41244
+        },
+        {
+          "baseline": 0.71519,
+          "candidate": 0.474539
+        },
+        {
+          "candidate": 0.753533,
+          "baseline": 0.737789
+        }
+      ],
+      "vm": {
+        "baseline": 2850,
+        "candidate": 424
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.737789,
+        "candidate": 0.747294
+      },
+      "migration": {
+        "ms": 2.222927,
+        "reopen_ms": 0.674719,
+        "before_bytes": 315392,
+        "after_bytes": 344064
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.947577,
+            "ack_ms": 0.7805
+          },
+          {
+            "publish_ms": 0.846774,
+            "ack_ms": 0.615647
+          },
+          {
+            "publish_ms": 0.888737,
+            "ack_ms": 0.807923
+          },
+          {
+            "publish_ms": 0.926253,
+            "ack_ms": 0.63555
+          },
+          {
+            "publish_ms": 0.780726,
+            "ack_ms": 0.656351
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.923305,
+            "ack_ms": 0.669768
+          },
+          {
+            "publish_ms": 0.895935,
+            "ack_ms": 0.804946
+          },
+          {
+            "publish_ms": 0.83995,
+            "ack_ms": 1.003159
+          },
+          {
+            "publish_ms": 0.85742,
+            "ack_ms": 0.80133
+          },
+          {
+            "publish_ms": 0.935307,
+            "ack_ms": 0.713924
+          }
+        ]
+      }
+    },
+    {
+      "history": 1000,
+      "pending": 5,
+      "runs": 1,
+      "expected": [
+        {
+          "seq": 1001,
+          "event": {
+            "event_id": "1001",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1002,
+          "event": {
+            "event_id": "1002",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1003,
+          "event": {
+            "event_id": "1003",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1004,
+          "event": {
+            "event_id": "1004",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1005,
+          "event": {
+            "event_id": "1005",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "candidate": 0.271822,
+          "baseline": 0.637248
+        },
+        {
+          "baseline": 0.611788,
+          "candidate": 0.385267
+        },
+        {
+          "candidate": 0.272636,
+          "baseline": 0.633625
+        },
+        {
+          "baseline": 0.633672,
+          "candidate": 0.30949
+        },
+        {
+          "candidate": 0.266193,
+          "baseline": 0.588296
+        }
+      ],
+      "vm": {
+        "baseline": 11205,
+        "candidate": 201
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.633625,
+        "candidate": 0.272636
+      },
+      "migration": {
+        "ms": 1.448712,
+        "reopen_ms": 0.526916,
+        "before_bytes": 315392,
+        "after_bytes": 339968
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.841417,
+            "ack_ms": 0.818327
+          },
+          {
+            "publish_ms": 1.015014,
+            "ack_ms": 0.783269
+          },
+          {
+            "publish_ms": 1.066047,
+            "ack_ms": 0.888957
+          },
+          {
+            "publish_ms": 0.977699,
+            "ack_ms": 0.813345
+          },
+          {
+            "publish_ms": 1.08522,
+            "ack_ms": 0.689984
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.977018,
+            "ack_ms": 0.652156
+          },
+          {
+            "publish_ms": 0.894217,
+            "ack_ms": 0.823309
+          },
+          {
+            "publish_ms": 0.828174,
+            "ack_ms": 0.844922
+          },
+          {
+            "publish_ms": 0.964888,
+            "ack_ms": 0.691375
+          },
+          {
+            "publish_ms": 0.972743,
+            "ack_ms": 0.660111
+          }
+        ]
+      }
+    },
+    {
+      "history": 1000,
+      "pending": 5,
+      "runs": 4,
+      "expected": [
+        {
+          "seq": 1001,
+          "event": {
+            "event_id": "1001",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1002,
+          "event": {
+            "event_id": "1002",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1003,
+          "event": {
+            "event_id": "1003",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1004,
+          "event": {
+            "event_id": "1004",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1005,
+          "event": {
+            "event_id": "1005",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "candidate": 0.362225,
+          "baseline": 0.377574
+        },
+        {
+          "baseline": 2.377758,
+          "candidate": 1.264555
+        },
+        {
+          "candidate": 0.367819,
+          "baseline": 0.703708
+        },
+        {
+          "baseline": 0.420902,
+          "candidate": 0.421394
+        },
+        {
+          "candidate": 0.307498,
+          "baseline": 0.402434
+        }
+      ],
+      "vm": {
+        "baseline": 2955,
+        "candidate": 509
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.420902,
+        "candidate": 0.367819
+      },
+      "migration": {
+        "ms": 2.253827,
+        "reopen_ms": 0.551286,
+        "before_bytes": 315392,
+        "after_bytes": 344064
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.906872,
+            "ack_ms": 0.663801
+          },
+          {
+            "publish_ms": 2.384486,
+            "ack_ms": 0.774607
+          },
+          {
+            "publish_ms": 1.067445,
+            "ack_ms": 0.726703
+          },
+          {
+            "publish_ms": 0.819706,
+            "ack_ms": 0.340832
+          },
+          {
+            "publish_ms": 1.164405,
+            "ack_ms": 0.529335
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 1.190016,
+            "ack_ms": 0.970564
+          },
+          {
+            "publish_ms": 0.909095,
+            "ack_ms": 0.732149
+          },
+          {
+            "publish_ms": 3.02578,
+            "ack_ms": 0.722906
+          },
+          {
+            "publish_ms": 0.531736,
+            "ack_ms": 0.366243
+          },
+          {
+            "publish_ms": 0.561471,
+            "ack_ms": 0.493453
+          }
+        ]
+      }
+    },
+    {
+      "history": 20000,
+      "pending": 0,
+      "runs": 1,
+      "expected": [],
+      "raw": [
+        {
+          "candidate": 0.277951,
+          "baseline": 8.569286
+        },
+        {
+          "baseline": 8.635937,
+          "candidate": 0.46881
+        },
+        {
+          "candidate": 0.286291,
+          "baseline": 10.319492
+        },
+        {
+          "baseline": 11.359596,
+          "candidate": 0.373999
+        },
+        {
+          "candidate": 0.274399,
+          "baseline": 8.236235
+        }
+      ],
+      "vm": {
+        "baseline": 220100,
+        "candidate": 116
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 8.635937,
+        "candidate": 0.286291
+      },
+      "migration": {
+        "ms": 5.540335,
+        "reopen_ms": 0.676881,
+        "before_bytes": 5586944,
+        "after_bytes": 5996544
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 1.276744,
+            "ack_ms": 0.421295
+          },
+          {
+            "publish_ms": 1.216349,
+            "ack_ms": 0.359919
+          },
+          {
+            "publish_ms": 1.302022,
+            "ack_ms": 0.39375
+          },
+          {
+            "publish_ms": 1.109805,
+            "ack_ms": 0.511817
+          },
+          {
+            "publish_ms": 1.485873,
+            "ack_ms": 0.597077
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 1.299527,
+            "ack_ms": 0.381218
+          },
+          {
+            "publish_ms": 1.38535,
+            "ack_ms": 0.391036
+          },
+          {
+            "publish_ms": 1.085284,
+            "ack_ms": 0.446273
+          },
+          {
+            "publish_ms": 1.10412,
+            "ack_ms": 3.073301
+          },
+          {
+            "publish_ms": 1.555913,
+            "ack_ms": 0.392973
+          }
+        ]
+      }
+    },
+    {
+      "history": 20000,
+      "pending": 0,
+      "runs": 4,
+      "expected": [],
+      "raw": [
+        {
+          "candidate": 1.345854,
+          "baseline": 2.786531
+        },
+        {
+          "baseline": 3.122655,
+          "candidate": 1.155821
+        },
+        {
+          "candidate": 1.215061,
+          "baseline": 2.815523
+        },
+        {
+          "baseline": 3.292009,
+          "candidate": 1.171588
+        },
+        {
+          "candidate": 1.534216,
+          "baseline": 3.488901
+        }
+      ],
+      "vm": {
+        "baseline": 55100,
+        "candidate": 6290
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 3.122655,
+        "candidate": 1.215061
+      },
+      "migration": {
+        "ms": 7.520118,
+        "reopen_ms": 0.65643,
+        "before_bytes": 5656576,
+        "after_bytes": 6082560
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.623859,
+            "ack_ms": 0.398315
+          },
+          {
+            "publish_ms": 0.600856,
+            "ack_ms": 0.372026
+          },
+          {
+            "publish_ms": 0.806707,
+            "ack_ms": 0.883795
+          },
+          {
+            "publish_ms": 1.569867,
+            "ack_ms": 0.44564
+          },
+          {
+            "publish_ms": 0.629812,
+            "ack_ms": 0.383191
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.620922,
+            "ack_ms": 0.413419
+          },
+          {
+            "publish_ms": 0.642043,
+            "ack_ms": 0.722908
+          },
+          {
+            "publish_ms": 0.810241,
+            "ack_ms": 0.397801
+          },
+          {
+            "publish_ms": 1.050313,
+            "ack_ms": 0.397861
+          },
+          {
+            "publish_ms": 0.810705,
+            "ack_ms": 0.419321
+          }
+        ]
+      }
+    },
+    {
+      "history": 20000,
+      "pending": 5,
+      "runs": 1,
+      "expected": [
+        {
+          "seq": 20001,
+          "event": {
+            "event_id": "20001",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20002,
+          "event": {
+            "event_id": "20002",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20003,
+          "event": {
+            "event_id": "20003",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20004,
+          "event": {
+            "event_id": "20004",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20005,
+          "event": {
+            "event_id": "20005",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "candidate": 0.506781,
+          "baseline": 10.698062
+        },
+        {
+          "baseline": 11.542201,
+          "candidate": 1.852869
+        },
+        {
+          "candidate": 0.347115,
+          "baseline": 17.086893
+        },
+        {
+          "baseline": 8.607668,
+          "candidate": 0.404462
+        },
+        {
+          "candidate": 0.448381,
+          "baseline": 8.608847
+        }
+      ],
+      "vm": {
+        "baseline": 220205,
+        "candidate": 201
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 10.698062,
+        "candidate": 0.448381
+      },
+      "migration": {
+        "ms": 5.464799,
+        "reopen_ms": 0.59667,
+        "before_bytes": 5591040,
+        "after_bytes": 6000640
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 1.087066,
+            "ack_ms": 0.34868
+          },
+          {
+            "publish_ms": 1.464213,
+            "ack_ms": 0.40917
+          },
+          {
+            "publish_ms": 1.223874,
+            "ack_ms": 0.442964
+          },
+          {
+            "publish_ms": 1.183484,
+            "ack_ms": 0.401742
+          },
+          {
+            "publish_ms": 1.114426,
+            "ack_ms": 0.610488
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 1.11065,
+            "ack_ms": 0.430037
+          },
+          {
+            "publish_ms": 1.108433,
+            "ack_ms": 0.366378
+          },
+          {
+            "publish_ms": 1.317057,
+            "ack_ms": 0.39949
+          },
+          {
+            "publish_ms": 1.35322,
+            "ack_ms": 0.744492
+          },
+          {
+            "publish_ms": 1.118995,
+            "ack_ms": 0.372358
+          }
+        ]
+      }
+    },
+    {
+      "history": 20000,
+      "pending": 5,
+      "runs": 4,
+      "expected": [
+        {
+          "seq": 20001,
+          "event": {
+            "event_id": "20001",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20002,
+          "event": {
+            "event_id": "20002",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20003,
+          "event": {
+            "event_id": "20003",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20004,
+          "event": {
+            "event_id": "20004",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20005,
+          "event": {
+            "event_id": "20005",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "candidate": 1.69863,
+          "baseline": 3.020632
+        },
+        {
+          "baseline": 3.055663,
+          "candidate": 1.197569
+        },
+        {
+          "candidate": 2.371349,
+          "baseline": 3.479973
+        },
+        {
+          "baseline": 4.873993,
+          "candidate": 1.754828
+        },
+        {
+          "candidate": 1.149385,
+          "baseline": 3.363837
+        }
+      ],
+      "vm": {
+        "baseline": 55205,
+        "candidate": 6375
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 3.363837,
+        "candidate": 1.69863
+      },
+      "migration": {
+        "ms": 8.423382,
+        "reopen_ms": 1.177034,
+        "before_bytes": 5656576,
+        "after_bytes": 6082560
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 1.235838,
+            "ack_ms": 0.50707
+          },
+          {
+            "publish_ms": 0.94162,
+            "ack_ms": 0.620963
+          },
+          {
+            "publish_ms": 0.614173,
+            "ack_ms": 0.370601
+          },
+          {
+            "publish_ms": 0.786485,
+            "ack_ms": 0.663818
+          },
+          {
+            "publish_ms": 0.754348,
+            "ack_ms": 0.383458
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.700922,
+            "ack_ms": 0.388055
+          },
+          {
+            "publish_ms": 0.732837,
+            "ack_ms": 0.371784
+          },
+          {
+            "publish_ms": 0.689763,
+            "ack_ms": 0.427812
+          },
+          {
+            "publish_ms": 2.354278,
+            "ack_ms": 0.871526
+          },
+          {
+            "publish_ms": 0.875732,
+            "ack_ms": 0.684867
+          }
+        ]
+      }
+    }
+  ]
+}

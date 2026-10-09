@@ -1,0 +1,36 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "Local SQLite inbox exactness and paired scaling on deterministic fixtures; no model/token/e2e claims",
+  "criteria": {
+    "implementation": {
+      "procedure": "Read baseline/candidate source and actual public methods; immutable events/ACK/budget/evidence preserved",
+      "acceptance": "Only pending index added; source and regressions verified",
+      "allow_not_applicable": false
+    },
+    "reference_boundary": {
+      "procedure": "Compare baseline/candidate to independently derived sequences and JSON at every case",
+      "acceptance": "Exact equality, restart and migration preserved",
+      "allow_not_applicable": false
+    },
+    "data_integrity": {
+      "procedure": "Check cases, 21 paired samples, 3 warmups and all failures, bound source/environment",
+      "acceptance": "No missing/duplicate cases; raw finite data",
+      "allow_not_applicable": false
+    },
+    "numerical_sanity": {
+      "procedure": "Recompute medians, VM-step ratios, validate units",
+      "acceptance": "Aggregates agree with all samples",
+      "allow_not_applicable": false
+    },
+    "measurement_validity": {
+      "procedure": "Alternating paired order; time public inbox including connect/JSON without progress handler; VM measured separately; overhead/migration separate",
+      "acceptance": ">=2x VM reduction at one-run 20k history; publish/ACK <=2x or <1ms added median; migration <10s",
+      "allow_not_applicable": false
+    },
+    "reproducibility": {
+      "procedure": "Independent verifier reruns bounded benchmark and tests",
+      "acceptance": "Exact output and scoped VM threshold reproduce",
+      "allow_not_applicable": false
+    }
+  }
+}

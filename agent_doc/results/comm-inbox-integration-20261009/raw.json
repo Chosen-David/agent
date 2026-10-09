@@ -1,0 +1,4139 @@
+{
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "sqlite": "3.53.1",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "cpu": "x86_64"
+  },
+  "config": {
+    "history": [
+      0,
+      1000,
+      20000
+    ],
+    "pending": [
+      0,
+      5
+    ],
+    "runs": [
+      1,
+      4
+    ],
+    "warmups": 3,
+    "repeats": 21,
+    "units": "ms",
+    "seed": "deterministic"
+  },
+  "cases": [
+    {
+      "history": 0,
+      "pending": 0,
+      "runs": 1,
+      "expected": [],
+      "raw": [
+        {
+          "candidate": 0.281769,
+          "baseline": 0.263471
+        },
+        {
+          "baseline": 0.324072,
+          "candidate": 0.280264
+        },
+        {
+          "candidate": 0.280899,
+          "baseline": 0.62108
+        },
+        {
+          "baseline": 0.283979,
+          "candidate": 0.443009
+        },
+        {
+          "candidate": 0.280915,
+          "baseline": 0.260815
+        },
+        {
+          "baseline": 0.323983,
+          "candidate": 0.474194
+        },
+        {
+          "candidate": 0.2972,
+          "baseline": 0.306093
+        },
+        {
+          "baseline": 0.261277,
+          "candidate": 0.445788
+        },
+        {
+          "candidate": 0.443748,
+          "baseline": 0.295026
+        },
+        {
+          "baseline": 0.330889,
+          "candidate": 0.347226
+        },
+        {
+          "candidate": 0.564688,
+          "baseline": 0.48389
+        },
+        {
+          "baseline": 0.283705,
+          "candidate": 0.274029
+        },
+        {
+          "candidate": 0.515504,
+          "baseline": 0.292847
+        },
+        {
+          "baseline": 0.273531,
+          "candidate": 0.416138
+        },
+        {
+          "candidate": 0.436716,
+          "baseline": 0.337721
+        },
+        {
+          "baseline": 0.492268,
+          "candidate": 0.387832
+        },
+        {
+          "candidate": 0.309135,
+          "baseline": 0.879182
+        },
+        {
+          "baseline": 0.280164,
+          "candidate": 0.597802
+        },
+        {
+          "candidate": 0.332248,
+          "baseline": 0.281256
+        },
+        {
+          "baseline": 0.29975,
+          "candidate": 0.290598
+        },
+        {
+          "candidate": 0.551418,
+          "baseline": 0.55538
+        }
+      ],
+      "vm": {
+        "baseline": 129,
+        "candidate": 144
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.29975,
+        "candidate": 0.387832
+      },
+      "migration": {
+        "ms": 2.303996,
+        "reopen_ms": 0.757135,
+        "before_bytes": 49152,
+        "after_bytes": 53248
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.661086,
+            "ack_ms": 0.362526
+          },
+          {
+            "publish_ms": 0.686833,
+            "ack_ms": 0.556073
+          },
+          {
+            "publish_ms": 0.769647,
+            "ack_ms": 0.396688
+          },
+          {
+            "publish_ms": 0.565892,
+            "ack_ms": 0.524913
+          },
+          {
+            "publish_ms": 1.398609,
+            "ack_ms": 0.843539
+          },
+          {
+            "publish_ms": 0.776028,
+            "ack_ms": 0.406034
+          },
+          {
+            "publish_ms": 0.757177,
+            "ack_ms": 0.399701
+          },
+          {
+            "publish_ms": 0.608535,
+            "ack_ms": 0.371042
+          },
+          {
+            "publish_ms": 3.768212,
+            "ack_ms": 0.526202
+          },
+          {
+            "publish_ms": 0.834776,
+            "ack_ms": 0.381119
+          },
+          {
+            "publish_ms": 0.613283,
+            "ack_ms": 0.358843
+          },
+          {
+            "publish_ms": 0.604927,
+            "ack_ms": 0.363738
+          },
+          {
+            "publish_ms": 0.533107,
+            "ack_ms": 0.444541
+          },
+          {
+            "publish_ms": 0.66732,
+            "ack_ms": 0.812036
+          },
+          {
+            "publish_ms": 0.535058,
+            "ack_ms": 0.497492
+          },
+          {
+            "publish_ms": 0.55088,
+            "ack_ms": 0.547314
+          },
+          {
+            "publish_ms": 0.660094,
+            "ack_ms": 0.363362
+          },
+          {
+            "publish_ms": 0.777288,
+            "ack_ms": 0.539762
+          },
+          {
+            "publish_ms": 0.647935,
+            "ack_ms": 0.366662
+          },
+          {
+            "publish_ms": 0.809045,
+            "ack_ms": 0.52641
+          },
+          {
+            "publish_ms": 1.549816,
+            "ack_ms": 0.722162
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 1.017382,
+            "ack_ms": 0.608743
+          },
+          {
+            "publish_ms": 0.806522,
+            "ack_ms": 0.483919
+          },
+          {
+            "publish_ms": 1.361638,
+            "ack_ms": 0.536346
+          },
+          {
+            "publish_ms": 1.554087,
+            "ack_ms": 0.877163
+          },
+          {
+            "publish_ms": 0.634089,
+            "ack_ms": 0.446652
+          },
+          {
+            "publish_ms": 0.60216,
+            "ack_ms": 0.591838
+          },
+          {
+            "publish_ms": 0.667887,
+            "ack_ms": 0.898835
+          },
+          {
+            "publish_ms": 0.57023,
+            "ack_ms": 0.375532
+          },
+          {
+            "publish_ms": 0.861525,
+            "ack_ms": 0.832669
+          },
+          {
+            "publish_ms": 0.722613,
+            "ack_ms": 0.38489
+          },
+          {
+            "publish_ms": 0.714377,
+            "ack_ms": 0.373892
+          },
+          {
+            "publish_ms": 0.787201,
+            "ack_ms": 0.513623
+          },
+          {
+            "publish_ms": 0.74964,
+            "ack_ms": 0.470902
+          },
+          {
+            "publish_ms": 1.588723,
+            "ack_ms": 0.600243
+          },
+          {
+            "publish_ms": 0.748654,
+            "ack_ms": 0.505573
+          },
+          {
+            "publish_ms": 0.597637,
+            "ack_ms": 0.376451
+          },
+          {
+            "publish_ms": 0.608379,
+            "ack_ms": 0.505413
+          },
+          {
+            "publish_ms": 2.3624,
+            "ack_ms": 0.936647
+          },
+          {
+            "publish_ms": 1.275952,
+            "ack_ms": 0.418809
+          },
+          {
+            "publish_ms": 1.298272,
+            "ack_ms": 0.602091
+          },
+          {
+            "publish_ms": 0.645882,
+            "ack_ms": 1.003209
+          }
+        ]
+      }
+    },
+    {
+      "history": 0,
+      "pending": 0,
+      "runs": 4,
+      "expected": [],
+      "raw": [
+        {
+          "candidate": 0.260355,
+          "baseline": 0.295753
+        },
+        {
+          "baseline": 0.277603,
+          "candidate": 0.270722
+        },
+        {
+          "candidate": 0.374656,
+          "baseline": 0.269367
+        },
+        {
+          "baseline": 0.259087,
+          "candidate": 0.3055
+        },
+        {
+          "candidate": 0.274602,
+          "baseline": 0.250489
+        },
+        {
+          "baseline": 0.244205,
+          "candidate": 0.333578
+        },
+        {
+          "candidate": 0.292071,
+          "baseline": 0.275623
+        },
+        {
+          "baseline": 0.608564,
+          "candidate": 0.267521
+        },
+        {
+          "candidate": 0.568537,
+          "baseline": 0.295845
+        },
+        {
+          "baseline": 0.267037,
+          "candidate": 0.301824
+        },
+        {
+          "candidate": 0.290281,
+          "baseline": 0.261839
+        },
+        {
+          "baseline": 0.252045,
+          "candidate": 0.366273
+        },
+        {
+          "candidate": 0.256115,
+          "baseline": 0.242271
+        },
+        {
+          "baseline": 0.397522,
+          "candidate": 0.279111
+        },
+        {
+          "candidate": 0.25564,
+          "baseline": 0.245228
+        },
+        {
+          "baseline": 0.295373,
+          "candidate": 0.269788
+        },
+        {
+          "candidate": 0.251356,
+          "baseline": 0.245679
+        },
+        {
+          "baseline": 0.280759,
+          "candidate": 0.651702
+        },
+        {
+          "candidate": 0.50208,
+          "baseline": 0.284971
+        },
+        {
+          "baseline": 0.265093,
+          "candidate": 0.597281
+        },
+        {
+          "candidate": 0.562549,
+          "baseline": 0.301061
+        }
+      ],
+      "vm": {
+        "baseline": 129,
+        "candidate": 144
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.269367,
+        "candidate": 0.292071
+      },
+      "migration": {
+        "ms": 1.126114,
+        "reopen_ms": 1.145208,
+        "before_bytes": 49152,
+        "after_bytes": 53248
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.625729,
+            "ack_ms": 0.403286
+          },
+          {
+            "publish_ms": 0.896167,
+            "ack_ms": 0.405804
+          },
+          {
+            "publish_ms": 0.533915,
+            "ack_ms": 0.400181
+          },
+          {
+            "publish_ms": 0.525222,
+            "ack_ms": 1.061655
+          },
+          {
+            "publish_ms": 0.716685,
+            "ack_ms": 0.361796
+          },
+          {
+            "publish_ms": 0.697513,
+            "ack_ms": 0.491759
+          },
+          {
+            "publish_ms": 0.66908,
+            "ack_ms": 0.456664
+          },
+          {
+            "publish_ms": 0.535595,
+            "ack_ms": 0.47794
+          },
+          {
+            "publish_ms": 0.814168,
+            "ack_ms": 0.427822
+          },
+          {
+            "publish_ms": 0.644787,
+            "ack_ms": 0.411271
+          },
+          {
+            "publish_ms": 0.59653,
+            "ack_ms": 0.394503
+          },
+          {
+            "publish_ms": 0.669562,
+            "ack_ms": 0.364138
+          },
+          {
+            "publish_ms": 0.561188,
+            "ack_ms": 0.557071
+          },
+          {
+            "publish_ms": 0.544501,
+            "ack_ms": 0.452433
+          },
+          {
+            "publish_ms": 0.602686,
+            "ack_ms": 0.420365
+          },
+          {
+            "publish_ms": 0.523898,
+            "ack_ms": 0.581316
+          },
+          {
+            "publish_ms": 0.56071,
+            "ack_ms": 0.421659
+          },
+          {
+            "publish_ms": 0.507723,
+            "ack_ms": 0.411256
+          },
+          {
+            "publish_ms": 0.517342,
+            "ack_ms": 0.463081
+          },
+          {
+            "publish_ms": 0.520794,
+            "ack_ms": 0.416021
+          },
+          {
+            "publish_ms": 0.582571,
+            "ack_ms": 0.36991
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.545013,
+            "ack_ms": 0.54306
+          },
+          {
+            "publish_ms": 1.762079,
+            "ack_ms": 0.497259
+          },
+          {
+            "publish_ms": 0.558011,
+            "ack_ms": 0.447663
+          },
+          {
+            "publish_ms": 0.740584,
+            "ack_ms": 0.39636
+          },
+          {
+            "publish_ms": 0.623269,
+            "ack_ms": 0.374853
+          },
+          {
+            "publish_ms": 0.620134,
+            "ack_ms": 0.451467
+          },
+          {
+            "publish_ms": 0.540476,
+            "ack_ms": 0.416464
+          },
+          {
+            "publish_ms": 0.579452,
+            "ack_ms": 0.444872
+          },
+          {
+            "publish_ms": 0.523511,
+            "ack_ms": 0.418477
+          },
+          {
+            "publish_ms": 0.722347,
+            "ack_ms": 0.417022
+          },
+          {
+            "publish_ms": 0.619994,
+            "ack_ms": 0.375612
+          },
+          {
+            "publish_ms": 0.63252,
+            "ack_ms": 0.409077
+          },
+          {
+            "publish_ms": 0.980056,
+            "ack_ms": 0.498663
+          },
+          {
+            "publish_ms": 0.799158,
+            "ack_ms": 0.547649
+          },
+          {
+            "publish_ms": 0.766649,
+            "ack_ms": 0.524717
+          },
+          {
+            "publish_ms": 0.573901,
+            "ack_ms": 0.437066
+          },
+          {
+            "publish_ms": 0.533166,
+            "ack_ms": 0.547302
+          },
+          {
+            "publish_ms": 0.560049,
+            "ack_ms": 0.439686
+          },
+          {
+            "publish_ms": 0.701026,
+            "ack_ms": 0.493961
+          },
+          {
+            "publish_ms": 0.514718,
+            "ack_ms": 0.578345
+          },
+          {
+            "publish_ms": 0.625168,
+            "ack_ms": 0.40837
+          }
+        ]
+      }
+    },
+    {
+      "history": 0,
+      "pending": 5,
+      "runs": 1,
+      "expected": [
+        {
+          "seq": 1,
+          "event": {
+            "event_id": "1",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 2,
+          "event": {
+            "event_id": "2",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 3,
+          "event": {
+            "event_id": "3",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 4,
+          "event": {
+            "event_id": "4",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 5,
+          "event": {
+            "event_id": "5",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "candidate": 0.612495,
+          "baseline": 0.301029
+        },
+        {
+          "baseline": 0.303305,
+          "candidate": 0.344748
+        },
+        {
+          "candidate": 0.713161,
+          "baseline": 0.369331
+        },
+        {
+          "baseline": 0.299766,
+          "candidate": 0.44033
+        },
+        {
+          "candidate": 0.300894,
+          "baseline": 0.303197
+        },
+        {
+          "baseline": 0.326993,
+          "candidate": 0.651906
+        },
+        {
+          "candidate": 0.519054,
+          "baseline": 0.31065
+        },
+        {
+          "baseline": 0.286412,
+          "candidate": 0.519947
+        },
+        {
+          "candidate": 0.310403,
+          "baseline": 0.356172
+        },
+        {
+          "baseline": 0.572278,
+          "candidate": 0.700037
+        },
+        {
+          "candidate": 0.461685,
+          "baseline": 0.362207
+        },
+        {
+          "baseline": 0.291236,
+          "candidate": 0.348775
+        },
+        {
+          "candidate": 0.470966,
+          "baseline": 0.28919
+        },
+        {
+          "baseline": 0.274166,
+          "candidate": 0.576918
+        },
+        {
+          "candidate": 0.31526,
+          "baseline": 0.338067
+        },
+        {
+          "baseline": 0.592171,
+          "candidate": 0.518925
+        },
+        {
+          "candidate": 0.312597,
+          "baseline": 0.295509
+        },
+        {
+          "baseline": 0.38197,
+          "candidate": 0.289047
+        },
+        {
+          "candidate": 0.348456,
+          "baseline": 0.350467
+        },
+        {
+          "baseline": 0.427647,
+          "candidate": 0.354129
+        },
+        {
+          "candidate": 0.50389,
+          "baseline": 0.390396
+        }
+      ],
+      "vm": {
+        "baseline": 233,
+        "candidate": 229
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.326993,
+        "candidate": 0.461685
+      },
+      "migration": {
+        "ms": 0.684437,
+        "reopen_ms": 0.522428,
+        "before_bytes": 49152,
+        "after_bytes": 53248
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 1.243202,
+            "ack_ms": 0.418795
+          },
+          {
+            "publish_ms": 0.705428,
+            "ack_ms": 0.418026
+          },
+          {
+            "publish_ms": 0.694955,
+            "ack_ms": 0.64013
+          },
+          {
+            "publish_ms": 0.708762,
+            "ack_ms": 0.97816
+          },
+          {
+            "publish_ms": 0.610672,
+            "ack_ms": 0.373504
+          },
+          {
+            "publish_ms": 0.604611,
+            "ack_ms": 0.382876
+          },
+          {
+            "publish_ms": 0.790884,
+            "ack_ms": 0.44083
+          },
+          {
+            "publish_ms": 0.547027,
+            "ack_ms": 0.532663
+          },
+          {
+            "publish_ms": 0.566715,
+            "ack_ms": 0.529644
+          },
+          {
+            "publish_ms": 0.59862,
+            "ack_ms": 0.400245
+          },
+          {
+            "publish_ms": 0.754071,
+            "ack_ms": 0.481979
+          },
+          {
+            "publish_ms": 0.551525,
+            "ack_ms": 0.976119
+          },
+          {
+            "publish_ms": 0.672039,
+            "ack_ms": 0.373554
+          },
+          {
+            "publish_ms": 0.588916,
+            "ack_ms": 0.35136
+          },
+          {
+            "publish_ms": 0.686125,
+            "ack_ms": 0.509623
+          },
+          {
+            "publish_ms": 0.565143,
+            "ack_ms": 1.065559
+          },
+          {
+            "publish_ms": 0.788768,
+            "ack_ms": 0.380421
+          },
+          {
+            "publish_ms": 1.095603,
+            "ack_ms": 0.481718
+          },
+          {
+            "publish_ms": 0.742187,
+            "ack_ms": 0.475641
+          },
+          {
+            "publish_ms": 0.688373,
+            "ack_ms": 0.400196
+          },
+          {
+            "publish_ms": 0.542797,
+            "ack_ms": 0.488529
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 1.280095,
+            "ack_ms": 0.419871
+          },
+          {
+            "publish_ms": 0.97902,
+            "ack_ms": 0.477243
+          },
+          {
+            "publish_ms": 0.683059,
+            "ack_ms": 0.477318
+          },
+          {
+            "publish_ms": 0.592367,
+            "ack_ms": 0.464275
+          },
+          {
+            "publish_ms": 0.55977,
+            "ack_ms": 0.641708
+          },
+          {
+            "publish_ms": 0.591953,
+            "ack_ms": 0.395653
+          },
+          {
+            "publish_ms": 0.966718,
+            "ack_ms": 0.393731
+          },
+          {
+            "publish_ms": 0.57528,
+            "ack_ms": 0.596308
+          },
+          {
+            "publish_ms": 0.564152,
+            "ack_ms": 0.437549
+          },
+          {
+            "publish_ms": 0.772658,
+            "ack_ms": 0.676194
+          },
+          {
+            "publish_ms": 0.642189,
+            "ack_ms": 0.376659
+          },
+          {
+            "publish_ms": 0.657099,
+            "ack_ms": 0.792151
+          },
+          {
+            "publish_ms": 1.001056,
+            "ack_ms": 0.640445
+          },
+          {
+            "publish_ms": 0.60064,
+            "ack_ms": 0.390742
+          },
+          {
+            "publish_ms": 0.609847,
+            "ack_ms": 0.491342
+          },
+          {
+            "publish_ms": 0.912796,
+            "ack_ms": 0.51717
+          },
+          {
+            "publish_ms": 0.552499,
+            "ack_ms": 0.600333
+          },
+          {
+            "publish_ms": 0.568178,
+            "ack_ms": 0.592755
+          },
+          {
+            "publish_ms": 0.70557,
+            "ack_ms": 0.409025
+          },
+          {
+            "publish_ms": 0.747176,
+            "ack_ms": 0.534686
+          },
+          {
+            "publish_ms": 0.80338,
+            "ack_ms": 0.50706
+          }
+        ]
+      }
+    },
+    {
+      "history": 0,
+      "pending": 5,
+      "runs": 4,
+      "expected": [
+        {
+          "seq": 1,
+          "event": {
+            "event_id": "1",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 2,
+          "event": {
+            "event_id": "2",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 3,
+          "event": {
+            "event_id": "3",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 4,
+          "event": {
+            "event_id": "4",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 5,
+          "event": {
+            "event_id": "5",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "candidate": 0.273161,
+          "baseline": 0.315077
+        },
+        {
+          "baseline": 0.371601,
+          "candidate": 0.313243
+        },
+        {
+          "candidate": 0.345613,
+          "baseline": 0.494054
+        },
+        {
+          "baseline": 0.902396,
+          "candidate": 0.492332
+        },
+        {
+          "candidate": 1.008069,
+          "baseline": 0.333637
+        },
+        {
+          "baseline": 0.311937,
+          "candidate": 0.70561
+        },
+        {
+          "candidate": 0.31755,
+          "baseline": 0.334756
+        },
+        {
+          "baseline": 0.476487,
+          "candidate": 0.389478
+        },
+        {
+          "candidate": 0.670444,
+          "baseline": 0.511351
+        },
+        {
+          "baseline": 0.306799,
+          "candidate": 0.293017
+        },
+        {
+          "candidate": 0.595164,
+          "baseline": 0.725063
+        },
+        {
+          "baseline": 0.437944,
+          "candidate": 0.325582
+        },
+        {
+          "candidate": 0.495223,
+          "baseline": 0.306582
+        },
+        {
+          "baseline": 1.34903,
+          "candidate": 0.929443
+        },
+        {
+          "candidate": 0.658781,
+          "baseline": 0.688206
+        },
+        {
+          "baseline": 0.312693,
+          "candidate": 0.572757
+        },
+        {
+          "candidate": 0.346093,
+          "baseline": 0.300468
+        },
+        {
+          "baseline": 1.291911,
+          "candidate": 0.388003
+        },
+        {
+          "candidate": 0.316866,
+          "baseline": 0.419868
+        },
+        {
+          "baseline": 0.455467,
+          "candidate": 0.460238
+        },
+        {
+          "candidate": 0.362765,
+          "baseline": 0.453089
+        }
+      ],
+      "vm": {
+        "baseline": 233,
+        "candidate": 229
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.437944,
+        "candidate": 0.389478
+      },
+      "migration": {
+        "ms": 0.75768,
+        "reopen_ms": 1.070507,
+        "before_bytes": 49152,
+        "after_bytes": 53248
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 3.220719,
+            "ack_ms": 0.683487
+          },
+          {
+            "publish_ms": 0.96798,
+            "ack_ms": 1.340567
+          },
+          {
+            "publish_ms": 0.640222,
+            "ack_ms": 1.547808
+          },
+          {
+            "publish_ms": 2.151818,
+            "ack_ms": 0.833266
+          },
+          {
+            "publish_ms": 0.706476,
+            "ack_ms": 2.333003
+          },
+          {
+            "publish_ms": 1.556103,
+            "ack_ms": 0.641803
+          },
+          {
+            "publish_ms": 1.300799,
+            "ack_ms": 0.789639
+          },
+          {
+            "publish_ms": 0.606862,
+            "ack_ms": 0.551584
+          },
+          {
+            "publish_ms": 1.053173,
+            "ack_ms": 0.422569
+          },
+          {
+            "publish_ms": 0.723263,
+            "ack_ms": 0.421719
+          },
+          {
+            "publish_ms": 0.770527,
+            "ack_ms": 0.385401
+          },
+          {
+            "publish_ms": 0.727021,
+            "ack_ms": 0.411292
+          },
+          {
+            "publish_ms": 0.699507,
+            "ack_ms": 0.405847
+          },
+          {
+            "publish_ms": 0.576951,
+            "ack_ms": 0.389883
+          },
+          {
+            "publish_ms": 1.593726,
+            "ack_ms": 1.198116
+          },
+          {
+            "publish_ms": 0.63895,
+            "ack_ms": 0.49321
+          },
+          {
+            "publish_ms": 0.780419,
+            "ack_ms": 0.450344
+          },
+          {
+            "publish_ms": 5.231955,
+            "ack_ms": 0.546474
+          },
+          {
+            "publish_ms": 0.998122,
+            "ack_ms": 0.418337
+          },
+          {
+            "publish_ms": 0.602199,
+            "ack_ms": 0.355158
+          },
+          {
+            "publish_ms": 0.555235,
+            "ack_ms": 1.378662
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 1.754821,
+            "ack_ms": 1.480265
+          },
+          {
+            "publish_ms": 0.882662,
+            "ack_ms": 1.010266
+          },
+          {
+            "publish_ms": 1.047429,
+            "ack_ms": 0.855434
+          },
+          {
+            "publish_ms": 0.710632,
+            "ack_ms": 1.970222
+          },
+          {
+            "publish_ms": 1.24163,
+            "ack_ms": 0.612249
+          },
+          {
+            "publish_ms": 0.640516,
+            "ack_ms": 0.388523
+          },
+          {
+            "publish_ms": 0.926741,
+            "ack_ms": 0.510591
+          },
+          {
+            "publish_ms": 0.588072,
+            "ack_ms": 0.57529
+          },
+          {
+            "publish_ms": 1.038796,
+            "ack_ms": 0.795932
+          },
+          {
+            "publish_ms": 1.184737,
+            "ack_ms": 0.601611
+          },
+          {
+            "publish_ms": 0.649406,
+            "ack_ms": 0.403237
+          },
+          {
+            "publish_ms": 0.6112,
+            "ack_ms": 0.362096
+          },
+          {
+            "publish_ms": 0.799385,
+            "ack_ms": 0.421178
+          },
+          {
+            "publish_ms": 0.575316,
+            "ack_ms": 0.601144
+          },
+          {
+            "publish_ms": 0.610469,
+            "ack_ms": 0.520072
+          },
+          {
+            "publish_ms": 0.989591,
+            "ack_ms": 0.804994
+          },
+          {
+            "publish_ms": 0.595098,
+            "ack_ms": 3.554124
+          },
+          {
+            "publish_ms": 1.290723,
+            "ack_ms": 0.474701
+          },
+          {
+            "publish_ms": 0.593423,
+            "ack_ms": 0.718891
+          },
+          {
+            "publish_ms": 0.752915,
+            "ack_ms": 0.410115
+          },
+          {
+            "publish_ms": 0.790914,
+            "ack_ms": 0.497125
+          }
+        ]
+      }
+    },
+    {
+      "history": 1000,
+      "pending": 0,
+      "runs": 1,
+      "expected": [],
+      "raw": [
+        {
+          "candidate": 0.32787,
+          "baseline": 0.728939
+        },
+        {
+          "baseline": 0.732922,
+          "candidate": 0.303047
+        },
+        {
+          "candidate": 0.330549,
+          "baseline": 0.611039
+        },
+        {
+          "baseline": 0.638294,
+          "candidate": 0.280786
+        },
+        {
+          "candidate": 0.276416,
+          "baseline": 0.64616
+        },
+        {
+          "baseline": 0.691849,
+          "candidate": 0.322421
+        },
+        {
+          "candidate": 0.279132,
+          "baseline": 0.635667
+        },
+        {
+          "baseline": 0.665916,
+          "candidate": 0.308024
+        },
+        {
+          "candidate": 0.290538,
+          "baseline": 0.641414
+        },
+        {
+          "baseline": 0.719507,
+          "candidate": 0.306668
+        },
+        {
+          "candidate": 0.273414,
+          "baseline": 0.637542
+        },
+        {
+          "baseline": 0.675559,
+          "candidate": 0.299041
+        },
+        {
+          "candidate": 0.273811,
+          "baseline": 2.507378
+        },
+        {
+          "baseline": 0.734801,
+          "candidate": 0.525812
+        },
+        {
+          "candidate": 0.307104,
+          "baseline": 0.672656
+        },
+        {
+          "baseline": 0.78141,
+          "candidate": 0.32629
+        },
+        {
+          "candidate": 0.28839,
+          "baseline": 0.696566
+        },
+        {
+          "baseline": 1.984339,
+          "candidate": 0.374518
+        },
+        {
+          "candidate": 1.355839,
+          "baseline": 0.643904
+        },
+        {
+          "baseline": 0.705284,
+          "candidate": 0.306398
+        },
+        {
+          "candidate": 0.357976,
+          "baseline": 0.624313
+        }
+      ],
+      "vm": {
+        "baseline": 11128,
+        "candidate": 144
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.675559,
+        "candidate": 0.306668
+      },
+      "migration": {
+        "ms": 1.195598,
+        "reopen_ms": 0.718866,
+        "before_bytes": 323584,
+        "after_bytes": 348160
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.981477,
+            "ack_ms": 0.518432
+          },
+          {
+            "publish_ms": 1.019432,
+            "ack_ms": 0.599205
+          },
+          {
+            "publish_ms": 0.658961,
+            "ack_ms": 0.593042
+          },
+          {
+            "publish_ms": 0.611131,
+            "ack_ms": 0.424335
+          },
+          {
+            "publish_ms": 0.84586,
+            "ack_ms": 0.450794
+          },
+          {
+            "publish_ms": 0.582042,
+            "ack_ms": 0.532152
+          },
+          {
+            "publish_ms": 0.675736,
+            "ack_ms": 2.998975
+          },
+          {
+            "publish_ms": 1.612526,
+            "ack_ms": 0.452231
+          },
+          {
+            "publish_ms": 0.641439,
+            "ack_ms": 0.42194
+          },
+          {
+            "publish_ms": 0.581295,
+            "ack_ms": 0.569975
+          },
+          {
+            "publish_ms": 81.760051,
+            "ack_ms": 2.302551
+          },
+          {
+            "publish_ms": 0.875027,
+            "ack_ms": 7.573139
+          },
+          {
+            "publish_ms": 1.629642,
+            "ack_ms": 0.491501
+          },
+          {
+            "publish_ms": 1.170043,
+            "ack_ms": 0.611903
+          },
+          {
+            "publish_ms": 0.717713,
+            "ack_ms": 2.927328
+          },
+          {
+            "publish_ms": 0.770113,
+            "ack_ms": 0.420957
+          },
+          {
+            "publish_ms": 0.579661,
+            "ack_ms": 0.436276
+          },
+          {
+            "publish_ms": 1.343868,
+            "ack_ms": 0.618035
+          },
+          {
+            "publish_ms": 1.02942,
+            "ack_ms": 0.439186
+          },
+          {
+            "publish_ms": 0.692947,
+            "ack_ms": 0.403809
+          },
+          {
+            "publish_ms": 0.597456,
+            "ack_ms": 0.359359
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.739324,
+            "ack_ms": 0.471339
+          },
+          {
+            "publish_ms": 1.261348,
+            "ack_ms": 0.470863
+          },
+          {
+            "publish_ms": 1.637531,
+            "ack_ms": 0.652977
+          },
+          {
+            "publish_ms": 0.749831,
+            "ack_ms": 0.458251
+          },
+          {
+            "publish_ms": 0.627356,
+            "ack_ms": 0.730464
+          },
+          {
+            "publish_ms": 1.20286,
+            "ack_ms": 0.532435
+          },
+          {
+            "publish_ms": 2.336694,
+            "ack_ms": 0.468125
+          },
+          {
+            "publish_ms": 3.790792,
+            "ack_ms": 0.462498
+          },
+          {
+            "publish_ms": 1.779799,
+            "ack_ms": 0.637986
+          },
+          {
+            "publish_ms": 2.69854,
+            "ack_ms": 0.470088
+          },
+          {
+            "publish_ms": 0.850381,
+            "ack_ms": 25.099512
+          },
+          {
+            "publish_ms": 2.214662,
+            "ack_ms": 0.8724
+          },
+          {
+            "publish_ms": 0.710582,
+            "ack_ms": 0.405442
+          },
+          {
+            "publish_ms": 0.668033,
+            "ack_ms": 0.588489
+          },
+          {
+            "publish_ms": 0.64521,
+            "ack_ms": 0.523205
+          },
+          {
+            "publish_ms": 0.64843,
+            "ack_ms": 1.34249
+          },
+          {
+            "publish_ms": 0.876691,
+            "ack_ms": 0.528769
+          },
+          {
+            "publish_ms": 0.641014,
+            "ack_ms": 0.794807
+          },
+          {
+            "publish_ms": 1.081581,
+            "ack_ms": 0.481876
+          },
+          {
+            "publish_ms": 0.760519,
+            "ack_ms": 0.428638
+          },
+          {
+            "publish_ms": 0.640251,
+            "ack_ms": 0.383337
+          }
+        ]
+      }
+    },
+    {
+      "history": 1000,
+      "pending": 0,
+      "runs": 4,
+      "expected": [],
+      "raw": [
+        {
+          "candidate": 0.459713,
+          "baseline": 0.43465
+        },
+        {
+          "baseline": 0.399691,
+          "candidate": 0.36827
+        },
+        {
+          "candidate": 0.457386,
+          "baseline": 0.38949
+        },
+        {
+          "baseline": 0.483308,
+          "candidate": 0.338699
+        },
+        {
+          "candidate": 0.302744,
+          "baseline": 0.417829
+        },
+        {
+          "baseline": 0.395879,
+          "candidate": 0.308577
+        },
+        {
+          "candidate": 0.353356,
+          "baseline": 0.402163
+        },
+        {
+          "baseline": 0.510214,
+          "candidate": 0.328838
+        },
+        {
+          "candidate": 0.30005,
+          "baseline": 0.585827
+        },
+        {
+          "baseline": 0.386069,
+          "candidate": 0.389047
+        },
+        {
+          "candidate": 0.328001,
+          "baseline": 0.377799
+        },
+        {
+          "baseline": 0.412456,
+          "candidate": 0.304102
+        },
+        {
+          "candidate": 0.312709,
+          "baseline": 0.420282
+        },
+        {
+          "baseline": 0.370091,
+          "candidate": 0.404371
+        },
+        {
+          "candidate": 0.337595,
+          "baseline": 0.385486
+        },
+        {
+          "baseline": 0.431579,
+          "candidate": 0.326569
+        },
+        {
+          "candidate": 0.301575,
+          "baseline": 0.428389
+        },
+        {
+          "baseline": 0.393653,
+          "candidate": 0.34299
+        },
+        {
+          "candidate": 0.339945,
+          "baseline": 0.380087
+        },
+        {
+          "baseline": 0.471034,
+          "candidate": 0.318814
+        },
+        {
+          "candidate": 0.2989,
+          "baseline": 0.61266
+        }
+      ],
+      "vm": {
+        "baseline": 2878,
+        "candidate": 452
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.412456,
+        "candidate": 0.328838
+      },
+      "migration": {
+        "ms": 0.988201,
+        "reopen_ms": 0.55457,
+        "before_bytes": 323584,
+        "after_bytes": 352256
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.782023,
+            "ack_ms": 0.391309
+          },
+          {
+            "publish_ms": 0.947955,
+            "ack_ms": 0.464855
+          },
+          {
+            "publish_ms": 0.561311,
+            "ack_ms": 0.490565
+          },
+          {
+            "publish_ms": 0.574241,
+            "ack_ms": 0.413674
+          },
+          {
+            "publish_ms": 0.532277,
+            "ack_ms": 0.468725
+          },
+          {
+            "publish_ms": 0.564454,
+            "ack_ms": 0.416944
+          },
+          {
+            "publish_ms": 0.660226,
+            "ack_ms": 0.395169
+          },
+          {
+            "publish_ms": 0.902152,
+            "ack_ms": 0.603643
+          },
+          {
+            "publish_ms": 0.636001,
+            "ack_ms": 0.378298
+          },
+          {
+            "publish_ms": 0.579647,
+            "ack_ms": 0.385315
+          },
+          {
+            "publish_ms": 1.267156,
+            "ack_ms": 0.622934
+          },
+          {
+            "publish_ms": 1.28947,
+            "ack_ms": 0.574704
+          },
+          {
+            "publish_ms": 0.75941,
+            "ack_ms": 0.773381
+          },
+          {
+            "publish_ms": 0.591416,
+            "ack_ms": 0.955903
+          },
+          {
+            "publish_ms": 0.582729,
+            "ack_ms": 0.429684
+          },
+          {
+            "publish_ms": 0.724652,
+            "ack_ms": 0.492088
+          },
+          {
+            "publish_ms": 0.728259,
+            "ack_ms": 0.573586
+          },
+          {
+            "publish_ms": 0.708439,
+            "ack_ms": 0.376573
+          },
+          {
+            "publish_ms": 0.596516,
+            "ack_ms": 0.359944
+          },
+          {
+            "publish_ms": 0.672404,
+            "ack_ms": 0.369224
+          },
+          {
+            "publish_ms": 0.690979,
+            "ack_ms": 0.382768
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.773464,
+            "ack_ms": 0.42121
+          },
+          {
+            "publish_ms": 0.583272,
+            "ack_ms": 0.425327
+          },
+          {
+            "publish_ms": 0.635541,
+            "ack_ms": 0.443409
+          },
+          {
+            "publish_ms": 0.550621,
+            "ack_ms": 0.418269
+          },
+          {
+            "publish_ms": 0.568668,
+            "ack_ms": 0.439227
+          },
+          {
+            "publish_ms": 0.537187,
+            "ack_ms": 0.422316
+          },
+          {
+            "publish_ms": 1.052769,
+            "ack_ms": 0.422962
+          },
+          {
+            "publish_ms": 0.98979,
+            "ack_ms": 0.420653
+          },
+          {
+            "publish_ms": 0.683708,
+            "ack_ms": 0.390364
+          },
+          {
+            "publish_ms": 0.619526,
+            "ack_ms": 0.370534
+          },
+          {
+            "publish_ms": 1.475739,
+            "ack_ms": 0.433848
+          },
+          {
+            "publish_ms": 0.746176,
+            "ack_ms": 0.616913
+          },
+          {
+            "publish_ms": 0.912238,
+            "ack_ms": 0.839663
+          },
+          {
+            "publish_ms": 0.748086,
+            "ack_ms": 0.414746
+          },
+          {
+            "publish_ms": 0.858686,
+            "ack_ms": 0.473707
+          },
+          {
+            "publish_ms": 0.550939,
+            "ack_ms": 0.473139
+          },
+          {
+            "publish_ms": 0.545168,
+            "ack_ms": 0.435543
+          },
+          {
+            "publish_ms": 0.636667,
+            "ack_ms": 0.379198
+          },
+          {
+            "publish_ms": 0.619669,
+            "ack_ms": 0.395409
+          },
+          {
+            "publish_ms": 0.596439,
+            "ack_ms": 0.369385
+          },
+          {
+            "publish_ms": 0.642903,
+            "ack_ms": 0.374387
+          }
+        ]
+      }
+    },
+    {
+      "history": 1000,
+      "pending": 5,
+      "runs": 1,
+      "expected": [
+        {
+          "seq": 1001,
+          "event": {
+            "event_id": "1001",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1002,
+          "event": {
+            "event_id": "1002",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1003,
+          "event": {
+            "event_id": "1003",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1004,
+          "event": {
+            "event_id": "1004",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1005,
+          "event": {
+            "event_id": "1005",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "candidate": 0.82536,
+          "baseline": 1.095071
+        },
+        {
+          "baseline": 0.813509,
+          "candidate": 0.663729
+        },
+        {
+          "candidate": 0.385153,
+          "baseline": 0.953212
+        },
+        {
+          "baseline": 0.707033,
+          "candidate": 0.340787
+        },
+        {
+          "candidate": 0.309031,
+          "baseline": 0.824492
+        },
+        {
+          "baseline": 0.732083,
+          "candidate": 0.339499
+        },
+        {
+          "candidate": 0.308836,
+          "baseline": 0.665198
+        },
+        {
+          "baseline": 0.674568,
+          "candidate": 0.320883
+        },
+        {
+          "candidate": 0.292768,
+          "baseline": 0.838766
+        },
+        {
+          "baseline": 0.716234,
+          "candidate": 0.33953
+        },
+        {
+          "candidate": 0.340161,
+          "baseline": 0.626596
+        },
+        {
+          "baseline": 0.683538,
+          "candidate": 0.457513
+        },
+        {
+          "candidate": 0.545397,
+          "baseline": 0.783763
+        },
+        {
+          "baseline": 0.830533,
+          "candidate": 0.377957
+        },
+        {
+          "candidate": 0.395141,
+          "baseline": 0.835899
+        },
+        {
+          "baseline": 0.834614,
+          "candidate": 0.363679
+        },
+        {
+          "candidate": 0.360054,
+          "baseline": 0.626819
+        },
+        {
+          "baseline": 0.70305,
+          "candidate": 0.316752
+        },
+        {
+          "candidate": 0.345028,
+          "baseline": 0.645031
+        },
+        {
+          "baseline": 0.71905,
+          "candidate": 0.317199
+        },
+        {
+          "candidate": 0.354143,
+          "baseline": 0.621451
+        }
+      ],
+      "vm": {
+        "baseline": 11233,
+        "candidate": 229
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.71905,
+        "candidate": 0.345028
+      },
+      "migration": {
+        "ms": 1.306276,
+        "reopen_ms": 0.66538,
+        "before_bytes": 323584,
+        "after_bytes": 348160
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 1.013437,
+            "ack_ms": 0.565831
+          },
+          {
+            "publish_ms": 0.612194,
+            "ack_ms": 0.412214
+          },
+          {
+            "publish_ms": 0.685368,
+            "ack_ms": 0.381122
+          },
+          {
+            "publish_ms": 0.715753,
+            "ack_ms": 0.384191
+          },
+          {
+            "publish_ms": 0.865285,
+            "ack_ms": 0.389335
+          },
+          {
+            "publish_ms": 0.761043,
+            "ack_ms": 0.384765
+          },
+          {
+            "publish_ms": 0.750481,
+            "ack_ms": 0.419838
+          },
+          {
+            "publish_ms": 0.595901,
+            "ack_ms": 0.364936
+          },
+          {
+            "publish_ms": 0.693004,
+            "ack_ms": 0.364625
+          },
+          {
+            "publish_ms": 0.570936,
+            "ack_ms": 0.378572
+          },
+          {
+            "publish_ms": 0.690184,
+            "ack_ms": 0.374107
+          },
+          {
+            "publish_ms": 0.57809,
+            "ack_ms": 0.346784
+          },
+          {
+            "publish_ms": 0.641405,
+            "ack_ms": 0.382753
+          },
+          {
+            "publish_ms": 0.584085,
+            "ack_ms": 0.348518
+          },
+          {
+            "publish_ms": 0.738512,
+            "ack_ms": 0.363774
+          },
+          {
+            "publish_ms": 0.575193,
+            "ack_ms": 0.350725
+          },
+          {
+            "publish_ms": 0.681927,
+            "ack_ms": 0.372057
+          },
+          {
+            "publish_ms": 0.706318,
+            "ack_ms": 1.014269
+          },
+          {
+            "publish_ms": 2.442391,
+            "ack_ms": 0.50824
+          },
+          {
+            "publish_ms": 0.645164,
+            "ack_ms": 0.371093
+          },
+          {
+            "publish_ms": 0.875298,
+            "ack_ms": 0.411353
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.60024,
+            "ack_ms": 0.617656
+          },
+          {
+            "publish_ms": 0.74144,
+            "ack_ms": 0.602413
+          },
+          {
+            "publish_ms": 0.561111,
+            "ack_ms": 0.795863
+          },
+          {
+            "publish_ms": 0.868157,
+            "ack_ms": 0.484504
+          },
+          {
+            "publish_ms": 0.646618,
+            "ack_ms": 0.443068
+          },
+          {
+            "publish_ms": 0.641429,
+            "ack_ms": 0.379422
+          },
+          {
+            "publish_ms": 1.078225,
+            "ack_ms": 0.51367
+          },
+          {
+            "publish_ms": 0.797387,
+            "ack_ms": 0.393795
+          },
+          {
+            "publish_ms": 0.698998,
+            "ack_ms": 0.385586
+          },
+          {
+            "publish_ms": 0.601462,
+            "ack_ms": 0.367001
+          },
+          {
+            "publish_ms": 0.581292,
+            "ack_ms": 0.364796
+          },
+          {
+            "publish_ms": 0.5774,
+            "ack_ms": 0.397074
+          },
+          {
+            "publish_ms": 0.59413,
+            "ack_ms": 0.367224
+          },
+          {
+            "publish_ms": 0.580999,
+            "ack_ms": 0.398197
+          },
+          {
+            "publish_ms": 0.626465,
+            "ack_ms": 0.39551
+          },
+          {
+            "publish_ms": 0.610616,
+            "ack_ms": 0.371816
+          },
+          {
+            "publish_ms": 0.663827,
+            "ack_ms": 0.367115
+          },
+          {
+            "publish_ms": 0.645617,
+            "ack_ms": 1.102721
+          },
+          {
+            "publish_ms": 0.729233,
+            "ack_ms": 0.752798
+          },
+          {
+            "publish_ms": 0.925216,
+            "ack_ms": 1.080449
+          },
+          {
+            "publish_ms": 0.783387,
+            "ack_ms": 0.746737
+          }
+        ]
+      }
+    },
+    {
+      "history": 1000,
+      "pending": 5,
+      "runs": 4,
+      "expected": [
+        {
+          "seq": 1001,
+          "event": {
+            "event_id": "1001",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1002,
+          "event": {
+            "event_id": "1002",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1003,
+          "event": {
+            "event_id": "1003",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1004,
+          "event": {
+            "event_id": "1004",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 1005,
+          "event": {
+            "event_id": "1005",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "candidate": 0.424307,
+          "baseline": 0.740056
+        },
+        {
+          "baseline": 0.866873,
+          "candidate": 0.448456
+        },
+        {
+          "candidate": 0.649712,
+          "baseline": 0.970296
+        },
+        {
+          "baseline": 0.645235,
+          "candidate": 0.807128
+        },
+        {
+          "candidate": 0.428093,
+          "baseline": 0.613606
+        },
+        {
+          "baseline": 0.426878,
+          "candidate": 0.668889
+        },
+        {
+          "candidate": 0.3893,
+          "baseline": 0.957375
+        },
+        {
+          "baseline": 0.514034,
+          "candidate": 0.491188
+        },
+        {
+          "candidate": 0.53532,
+          "baseline": 0.446139
+        },
+        {
+          "baseline": 0.511903,
+          "candidate": 0.358575
+        },
+        {
+          "candidate": 0.438632,
+          "baseline": 0.429652
+        },
+        {
+          "baseline": 0.429741,
+          "candidate": 0.353852
+        },
+        {
+          "candidate": 0.341041,
+          "baseline": 0.612103
+        },
+        {
+          "baseline": 0.688031,
+          "candidate": 0.399136
+        },
+        {
+          "candidate": 0.348632,
+          "baseline": 1.14935
+        },
+        {
+          "baseline": 0.495188,
+          "candidate": 0.350367
+        },
+        {
+          "candidate": 0.389515,
+          "baseline": 0.469567
+        },
+        {
+          "baseline": 0.512445,
+          "candidate": 0.362896
+        },
+        {
+          "candidate": 0.352746,
+          "baseline": 0.509682
+        },
+        {
+          "baseline": 0.628314,
+          "candidate": 0.495319
+        },
+        {
+          "candidate": 0.356297,
+          "baseline": 0.462046
+        }
+      ],
+      "vm": {
+        "baseline": 2983,
+        "candidate": 537
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 0.514034,
+        "candidate": 0.399136
+      },
+      "migration": {
+        "ms": 0.971071,
+        "reopen_ms": 1.058745,
+        "before_bytes": 323584,
+        "after_bytes": 352256
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.848928,
+            "ack_ms": 0.397952
+          },
+          {
+            "publish_ms": 0.858523,
+            "ack_ms": 0.552358
+          },
+          {
+            "publish_ms": 1.248529,
+            "ack_ms": 0.466195
+          },
+          {
+            "publish_ms": 1.199077,
+            "ack_ms": 0.476767
+          },
+          {
+            "publish_ms": 0.91415,
+            "ack_ms": 1.048995
+          },
+          {
+            "publish_ms": 0.706284,
+            "ack_ms": 0.396535
+          },
+          {
+            "publish_ms": 0.683887,
+            "ack_ms": 0.534711
+          },
+          {
+            "publish_ms": 0.619993,
+            "ack_ms": 0.54168
+          },
+          {
+            "publish_ms": 0.569482,
+            "ack_ms": 4.789577
+          },
+          {
+            "publish_ms": 0.948425,
+            "ack_ms": 0.444281
+          },
+          {
+            "publish_ms": 0.646944,
+            "ack_ms": 0.383585
+          },
+          {
+            "publish_ms": 0.580487,
+            "ack_ms": 0.370376
+          },
+          {
+            "publish_ms": 0.580078,
+            "ack_ms": 0.407333
+          },
+          {
+            "publish_ms": 0.593613,
+            "ack_ms": 0.378481
+          },
+          {
+            "publish_ms": 0.664354,
+            "ack_ms": 0.393712
+          },
+          {
+            "publish_ms": 0.56306,
+            "ack_ms": 0.412099
+          },
+          {
+            "publish_ms": 0.598323,
+            "ack_ms": 0.373435
+          },
+          {
+            "publish_ms": 0.632581,
+            "ack_ms": 0.546178
+          },
+          {
+            "publish_ms": 0.666606,
+            "ack_ms": 0.62225
+          },
+          {
+            "publish_ms": 0.72922,
+            "ack_ms": 1.764688
+          },
+          {
+            "publish_ms": 0.85484,
+            "ack_ms": 0.43022
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.548617,
+            "ack_ms": 0.54572
+          },
+          {
+            "publish_ms": 0.728914,
+            "ack_ms": 0.833805
+          },
+          {
+            "publish_ms": 0.649778,
+            "ack_ms": 0.39085
+          },
+          {
+            "publish_ms": 0.58406,
+            "ack_ms": 0.617949
+          },
+          {
+            "publish_ms": 1.063817,
+            "ack_ms": 0.452942
+          },
+          {
+            "publish_ms": 1.13171,
+            "ack_ms": 0.469931
+          },
+          {
+            "publish_ms": 0.620594,
+            "ack_ms": 0.414573
+          },
+          {
+            "publish_ms": 0.664266,
+            "ack_ms": 0.597639
+          },
+          {
+            "publish_ms": 0.616933,
+            "ack_ms": 0.538569
+          },
+          {
+            "publish_ms": 0.857666,
+            "ack_ms": 0.45156
+          },
+          {
+            "publish_ms": 0.610235,
+            "ack_ms": 0.406515
+          },
+          {
+            "publish_ms": 0.702727,
+            "ack_ms": 0.41648
+          },
+          {
+            "publish_ms": 0.594619,
+            "ack_ms": 0.396948
+          },
+          {
+            "publish_ms": 1.924202,
+            "ack_ms": 0.526166
+          },
+          {
+            "publish_ms": 1.778189,
+            "ack_ms": 0.60889
+          },
+          {
+            "publish_ms": 0.669074,
+            "ack_ms": 0.404386
+          },
+          {
+            "publish_ms": 0.841834,
+            "ack_ms": 0.40501
+          },
+          {
+            "publish_ms": 0.577932,
+            "ack_ms": 0.511973
+          },
+          {
+            "publish_ms": 1.027637,
+            "ack_ms": 1.360038
+          },
+          {
+            "publish_ms": 0.701619,
+            "ack_ms": 0.410044
+          },
+          {
+            "publish_ms": 0.644497,
+            "ack_ms": 0.97006
+          }
+        ]
+      }
+    },
+    {
+      "history": 20000,
+      "pending": 0,
+      "runs": 1,
+      "expected": [],
+      "raw": [
+        {
+          "candidate": 0.364288,
+          "baseline": 8.385733
+        },
+        {
+          "baseline": 9.325606,
+          "candidate": 0.704595
+        },
+        {
+          "candidate": 0.353926,
+          "baseline": 19.71727
+        },
+        {
+          "baseline": 11.198339,
+          "candidate": 0.507515
+        },
+        {
+          "candidate": 0.314107,
+          "baseline": 9.210999
+        },
+        {
+          "baseline": 8.716832,
+          "candidate": 0.433646
+        },
+        {
+          "candidate": 0.35887,
+          "baseline": 11.189674
+        },
+        {
+          "baseline": 8.647222,
+          "candidate": 0.73022
+        },
+        {
+          "candidate": 0.393435,
+          "baseline": 8.552773
+        },
+        {
+          "baseline": 12.826898,
+          "candidate": 0.744937
+        },
+        {
+          "candidate": 0.530412,
+          "baseline": 14.083081
+        },
+        {
+          "baseline": 15.129266,
+          "candidate": 0.44954
+        },
+        {
+          "candidate": 0.328556,
+          "baseline": 157.178734
+        },
+        {
+          "baseline": 27.106898,
+          "candidate": 0.780122
+        },
+        {
+          "candidate": 0.811858,
+          "baseline": 9.455621
+        },
+        {
+          "baseline": 10.28581,
+          "candidate": 0.504124
+        },
+        {
+          "candidate": 0.318368,
+          "baseline": 67.429046
+        },
+        {
+          "baseline": 10.232485,
+          "candidate": 0.615025
+        },
+        {
+          "candidate": 0.395582,
+          "baseline": 9.914376
+        },
+        {
+          "baseline": 8.950965,
+          "candidate": 0.437076
+        },
+        {
+          "candidate": 0.314509,
+          "baseline": 14.165324
+        }
+      ],
+      "vm": {
+        "baseline": 220128,
+        "candidate": 144
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 10.28581,
+        "candidate": 0.437076
+      },
+      "migration": {
+        "ms": 9.353659,
+        "reopen_ms": 0.780244,
+        "before_bytes": 5595136,
+        "after_bytes": 6004736
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 1.080222,
+            "ack_ms": 0.461864
+          },
+          {
+            "publish_ms": 0.646151,
+            "ack_ms": 0.573182
+          },
+          {
+            "publish_ms": 0.91539,
+            "ack_ms": 0.774485
+          },
+          {
+            "publish_ms": 0.665235,
+            "ack_ms": 0.457457
+          },
+          {
+            "publish_ms": 0.564235,
+            "ack_ms": 0.479199
+          },
+          {
+            "publish_ms": 0.858556,
+            "ack_ms": 0.423499
+          },
+          {
+            "publish_ms": 0.727827,
+            "ack_ms": 0.533503
+          },
+          {
+            "publish_ms": 0.84358,
+            "ack_ms": 0.685567
+          },
+          {
+            "publish_ms": 1.103088,
+            "ack_ms": 0.561157
+          },
+          {
+            "publish_ms": 0.580386,
+            "ack_ms": 0.431085
+          },
+          {
+            "publish_ms": 1.046912,
+            "ack_ms": 0.444603
+          },
+          {
+            "publish_ms": 0.757112,
+            "ack_ms": 0.496331
+          },
+          {
+            "publish_ms": 0.881062,
+            "ack_ms": 0.733893
+          },
+          {
+            "publish_ms": 0.981976,
+            "ack_ms": 0.544263
+          },
+          {
+            "publish_ms": 0.704325,
+            "ack_ms": 0.441409
+          },
+          {
+            "publish_ms": 0.590649,
+            "ack_ms": 0.597676
+          },
+          {
+            "publish_ms": 0.917076,
+            "ack_ms": 0.734542
+          },
+          {
+            "publish_ms": 0.775945,
+            "ack_ms": 0.407631
+          },
+          {
+            "publish_ms": 0.774305,
+            "ack_ms": 0.402557
+          },
+          {
+            "publish_ms": 0.951783,
+            "ack_ms": 0.628213
+          },
+          {
+            "publish_ms": 0.639665,
+            "ack_ms": 0.425287
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.638796,
+            "ack_ms": 0.570217
+          },
+          {
+            "publish_ms": 1.40452,
+            "ack_ms": 0.895017
+          },
+          {
+            "publish_ms": 1.04869,
+            "ack_ms": 0.820434
+          },
+          {
+            "publish_ms": 1.371554,
+            "ack_ms": 0.508911
+          },
+          {
+            "publish_ms": 0.598495,
+            "ack_ms": 0.486487
+          },
+          {
+            "publish_ms": 0.835633,
+            "ack_ms": 0.413585
+          },
+          {
+            "publish_ms": 1.014946,
+            "ack_ms": 0.504113
+          },
+          {
+            "publish_ms": 0.923018,
+            "ack_ms": 0.658278
+          },
+          {
+            "publish_ms": 1.11097,
+            "ack_ms": 0.713193
+          },
+          {
+            "publish_ms": 0.738964,
+            "ack_ms": 0.671145
+          },
+          {
+            "publish_ms": 0.944571,
+            "ack_ms": 0.707434
+          },
+          {
+            "publish_ms": 0.769211,
+            "ack_ms": 0.491534
+          },
+          {
+            "publish_ms": 0.585779,
+            "ack_ms": 0.689811
+          },
+          {
+            "publish_ms": 0.700904,
+            "ack_ms": 0.402216
+          },
+          {
+            "publish_ms": 0.657071,
+            "ack_ms": 0.396819
+          },
+          {
+            "publish_ms": 0.591116,
+            "ack_ms": 0.50448
+          },
+          {
+            "publish_ms": 0.56393,
+            "ack_ms": 0.777768
+          },
+          {
+            "publish_ms": 0.691482,
+            "ack_ms": 0.634537
+          },
+          {
+            "publish_ms": 0.800283,
+            "ack_ms": 0.622384
+          },
+          {
+            "publish_ms": 1.054654,
+            "ack_ms": 0.800429
+          },
+          {
+            "publish_ms": 1.091726,
+            "ack_ms": 0.473952
+          }
+        ]
+      }
+    },
+    {
+      "history": 20000,
+      "pending": 0,
+      "runs": 4,
+      "expected": [],
+      "raw": [
+        {
+          "candidate": 1.205027,
+          "baseline": 3.330537
+        },
+        {
+          "baseline": 3.122784,
+          "candidate": 1.369962
+        },
+        {
+          "candidate": 1.337385,
+          "baseline": 3.116663
+        },
+        {
+          "baseline": 3.108962,
+          "candidate": 1.374649
+        },
+        {
+          "candidate": 1.218598,
+          "baseline": 3.417173
+        },
+        {
+          "baseline": 3.650395,
+          "candidate": 1.567664
+        },
+        {
+          "candidate": 1.475489,
+          "baseline": 3.302239
+        },
+        {
+          "baseline": 4.370231,
+          "candidate": 2.030214
+        },
+        {
+          "candidate": 1.241445,
+          "baseline": 3.487151
+        },
+        {
+          "baseline": 3.575735,
+          "candidate": 1.305896
+        },
+        {
+          "candidate": 1.554678,
+          "baseline": 3.406077
+        },
+        {
+          "baseline": 3.635682,
+          "candidate": 1.365153
+        },
+        {
+          "candidate": 1.23077,
+          "baseline": 3.423501
+        },
+        {
+          "baseline": 3.39545,
+          "candidate": 1.146929
+        },
+        {
+          "candidate": 1.294333,
+          "baseline": 2.906539
+        },
+        {
+          "baseline": 3.46561,
+          "candidate": 1.922089
+        },
+        {
+          "candidate": 2.086257,
+          "baseline": 4.757819
+        },
+        {
+          "baseline": 3.452754,
+          "candidate": 1.221085
+        },
+        {
+          "candidate": 2.020308,
+          "baseline": 3.419272
+        },
+        {
+          "baseline": 3.429421,
+          "candidate": 1.43169
+        },
+        {
+          "candidate": 1.463426,
+          "baseline": 3.553214
+        }
+      ],
+      "vm": {
+        "baseline": 55128,
+        "candidate": 6318
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 3.423501,
+        "candidate": 1.369962
+      },
+      "migration": {
+        "ms": 6.679793,
+        "reopen_ms": 0.827134,
+        "before_bytes": 5664768,
+        "after_bytes": 6090752
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.60651,
+            "ack_ms": 0.484582
+          },
+          {
+            "publish_ms": 0.66935,
+            "ack_ms": 0.580802
+          },
+          {
+            "publish_ms": 0.655388,
+            "ack_ms": 0.37864
+          },
+          {
+            "publish_ms": 0.644023,
+            "ack_ms": 0.591389
+          },
+          {
+            "publish_ms": 0.693753,
+            "ack_ms": 0.502458
+          },
+          {
+            "publish_ms": 0.718571,
+            "ack_ms": 0.647852
+          },
+          {
+            "publish_ms": 0.797869,
+            "ack_ms": 0.699928
+          },
+          {
+            "publish_ms": 0.628273,
+            "ack_ms": 0.468412
+          },
+          {
+            "publish_ms": 0.855839,
+            "ack_ms": 0.458781
+          },
+          {
+            "publish_ms": 0.668215,
+            "ack_ms": 0.498818
+          },
+          {
+            "publish_ms": 0.618804,
+            "ack_ms": 0.604221
+          },
+          {
+            "publish_ms": 1.057957,
+            "ack_ms": 0.415528
+          },
+          {
+            "publish_ms": 1.962501,
+            "ack_ms": 0.687626
+          },
+          {
+            "publish_ms": 0.639598,
+            "ack_ms": 0.578149
+          },
+          {
+            "publish_ms": 0.863801,
+            "ack_ms": 0.760753
+          },
+          {
+            "publish_ms": 1.040165,
+            "ack_ms": 0.615794
+          },
+          {
+            "publish_ms": 0.908238,
+            "ack_ms": 0.608408
+          },
+          {
+            "publish_ms": 0.854647,
+            "ack_ms": 0.47883
+          },
+          {
+            "publish_ms": 0.773547,
+            "ack_ms": 0.534608
+          },
+          {
+            "publish_ms": 0.652329,
+            "ack_ms": 0.38501
+          },
+          {
+            "publish_ms": 0.680289,
+            "ack_ms": 0.432034
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.835635,
+            "ack_ms": 0.513378
+          },
+          {
+            "publish_ms": 0.883597,
+            "ack_ms": 0.432229
+          },
+          {
+            "publish_ms": 0.708552,
+            "ack_ms": 0.435635
+          },
+          {
+            "publish_ms": 0.605948,
+            "ack_ms": 0.521723
+          },
+          {
+            "publish_ms": 0.858611,
+            "ack_ms": 0.586877
+          },
+          {
+            "publish_ms": 0.615154,
+            "ack_ms": 0.486571
+          },
+          {
+            "publish_ms": 0.787195,
+            "ack_ms": 0.489007
+          },
+          {
+            "publish_ms": 0.569145,
+            "ack_ms": 0.452576
+          },
+          {
+            "publish_ms": 0.83336,
+            "ack_ms": 0.649027
+          },
+          {
+            "publish_ms": 0.960511,
+            "ack_ms": 0.466637
+          },
+          {
+            "publish_ms": 0.929942,
+            "ack_ms": 0.506549
+          },
+          {
+            "publish_ms": 0.814569,
+            "ack_ms": 0.477203
+          },
+          {
+            "publish_ms": 0.563674,
+            "ack_ms": 1.119953
+          },
+          {
+            "publish_ms": 0.696507,
+            "ack_ms": 0.394635
+          },
+          {
+            "publish_ms": 1.148321,
+            "ack_ms": 0.463711
+          },
+          {
+            "publish_ms": 1.213678,
+            "ack_ms": 0.437055
+          },
+          {
+            "publish_ms": 0.652861,
+            "ack_ms": 0.404183
+          },
+          {
+            "publish_ms": 0.79973,
+            "ack_ms": 0.623597
+          },
+          {
+            "publish_ms": 0.945097,
+            "ack_ms": 0.778415
+          },
+          {
+            "publish_ms": 0.842239,
+            "ack_ms": 0.490583
+          },
+          {
+            "publish_ms": 0.571826,
+            "ack_ms": 0.685798
+          }
+        ]
+      }
+    },
+    {
+      "history": 20000,
+      "pending": 5,
+      "runs": 1,
+      "expected": [
+        {
+          "seq": 20001,
+          "event": {
+            "event_id": "20001",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20002,
+          "event": {
+            "event_id": "20002",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20003,
+          "event": {
+            "event_id": "20003",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20004,
+          "event": {
+            "event_id": "20004",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20005,
+          "event": {
+            "event_id": "20005",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "candidate": 0.332447,
+          "baseline": 10.635466
+        },
+        {
+          "baseline": 9.469566,
+          "candidate": 0.537546
+        },
+        {
+          "candidate": 0.619107,
+          "baseline": 10.361098
+        },
+        {
+          "baseline": 9.748167,
+          "candidate": 1.165977
+        },
+        {
+          "candidate": 0.621356,
+          "baseline": 10.637974
+        },
+        {
+          "baseline": 10.221278,
+          "candidate": 0.650136
+        },
+        {
+          "candidate": 0.385671,
+          "baseline": 9.081093
+        },
+        {
+          "baseline": 8.810297,
+          "candidate": 0.508965
+        },
+        {
+          "candidate": 0.529097,
+          "baseline": 9.599686
+        },
+        {
+          "baseline": 9.680269,
+          "candidate": 0.44013
+        },
+        {
+          "candidate": 0.43492,
+          "baseline": 8.145451
+        },
+        {
+          "baseline": 8.437158,
+          "candidate": 0.481387
+        },
+        {
+          "candidate": 0.336189,
+          "baseline": 8.71342
+        },
+        {
+          "baseline": 9.091738,
+          "candidate": 0.443907
+        },
+        {
+          "candidate": 0.650423,
+          "baseline": 11.093775
+        },
+        {
+          "baseline": 9.895771,
+          "candidate": 0.749701
+        },
+        {
+          "candidate": 0.791269,
+          "baseline": 8.666066
+        },
+        {
+          "baseline": 9.709892,
+          "candidate": 0.437058
+        },
+        {
+          "candidate": 0.402529,
+          "baseline": 8.92319
+        },
+        {
+          "baseline": 8.369697,
+          "candidate": 0.519556
+        },
+        {
+          "candidate": 0.368277,
+          "baseline": 9.589474
+        }
+      ],
+      "vm": {
+        "baseline": 220233,
+        "candidate": 229
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 9.589474,
+        "candidate": 0.508965
+      },
+      "migration": {
+        "ms": 9.418362,
+        "reopen_ms": 1.070143,
+        "before_bytes": 5599232,
+        "after_bytes": 6008832
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.777977,
+            "ack_ms": 0.637016
+          },
+          {
+            "publish_ms": 0.903662,
+            "ack_ms": 0.88156
+          },
+          {
+            "publish_ms": 1.751115,
+            "ack_ms": 0.878944
+          },
+          {
+            "publish_ms": 1.020039,
+            "ack_ms": 0.555109
+          },
+          {
+            "publish_ms": 0.640678,
+            "ack_ms": 0.731858
+          },
+          {
+            "publish_ms": 0.670077,
+            "ack_ms": 0.539665
+          },
+          {
+            "publish_ms": 0.630854,
+            "ack_ms": 0.491227
+          },
+          {
+            "publish_ms": 0.653311,
+            "ack_ms": 0.460699
+          },
+          {
+            "publish_ms": 1.514984,
+            "ack_ms": 0.888887
+          },
+          {
+            "publish_ms": 0.984297,
+            "ack_ms": 0.874989
+          },
+          {
+            "publish_ms": 0.919157,
+            "ack_ms": 0.600442
+          },
+          {
+            "publish_ms": 0.870765,
+            "ack_ms": 0.579642
+          },
+          {
+            "publish_ms": 0.713137,
+            "ack_ms": 0.43961
+          },
+          {
+            "publish_ms": 0.667078,
+            "ack_ms": 0.681378
+          },
+          {
+            "publish_ms": 0.742705,
+            "ack_ms": 0.56678
+          },
+          {
+            "publish_ms": 0.664282,
+            "ack_ms": 0.508539
+          },
+          {
+            "publish_ms": 0.75247,
+            "ack_ms": 0.442629
+          },
+          {
+            "publish_ms": 0.710857,
+            "ack_ms": 0.697814
+          },
+          {
+            "publish_ms": 0.856132,
+            "ack_ms": 0.516218
+          },
+          {
+            "publish_ms": 0.626622,
+            "ack_ms": 0.650677
+          },
+          {
+            "publish_ms": 1.214868,
+            "ack_ms": 0.665136
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.924128,
+            "ack_ms": 0.564723
+          },
+          {
+            "publish_ms": 0.675375,
+            "ack_ms": 0.534265
+          },
+          {
+            "publish_ms": 1.062091,
+            "ack_ms": 0.682261
+          },
+          {
+            "publish_ms": 0.674194,
+            "ack_ms": 0.660788
+          },
+          {
+            "publish_ms": 0.79678,
+            "ack_ms": 0.523689
+          },
+          {
+            "publish_ms": 0.714703,
+            "ack_ms": 0.442366
+          },
+          {
+            "publish_ms": 0.724278,
+            "ack_ms": 0.675556
+          },
+          {
+            "publish_ms": 0.771405,
+            "ack_ms": 0.481325
+          },
+          {
+            "publish_ms": 1.125079,
+            "ack_ms": 0.711204
+          },
+          {
+            "publish_ms": 1.23941,
+            "ack_ms": 0.966826
+          },
+          {
+            "publish_ms": 0.99211,
+            "ack_ms": 0.997991
+          },
+          {
+            "publish_ms": 0.800541,
+            "ack_ms": 0.557838
+          },
+          {
+            "publish_ms": 0.742208,
+            "ack_ms": 0.464759
+          },
+          {
+            "publish_ms": 1.068681,
+            "ack_ms": 0.749192
+          },
+          {
+            "publish_ms": 1.017861,
+            "ack_ms": 0.762329
+          },
+          {
+            "publish_ms": 0.68941,
+            "ack_ms": 0.581526
+          },
+          {
+            "publish_ms": 0.676236,
+            "ack_ms": 0.437711
+          },
+          {
+            "publish_ms": 0.952108,
+            "ack_ms": 0.834247
+          },
+          {
+            "publish_ms": 0.980616,
+            "ack_ms": 0.518357
+          },
+          {
+            "publish_ms": 0.934081,
+            "ack_ms": 0.478846
+          },
+          {
+            "publish_ms": 0.717797,
+            "ack_ms": 0.469302
+          }
+        ]
+      }
+    },
+    {
+      "history": 20000,
+      "pending": 5,
+      "runs": 4,
+      "expected": [
+        {
+          "seq": 20001,
+          "event": {
+            "event_id": "20001",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20002,
+          "event": {
+            "event_id": "20002",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20003,
+          "event": {
+            "event_id": "20003",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20004,
+          "event": {
+            "event_id": "20004",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        },
+        {
+          "seq": 20005,
+          "event": {
+            "event_id": "20005",
+            "run_id": "target",
+            "payload": "界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界界"
+          }
+        }
+      ],
+      "raw": [
+        {
+          "candidate": 1.791888,
+          "baseline": 4.06941
+        },
+        {
+          "baseline": 9.157717,
+          "candidate": 1.413386
+        },
+        {
+          "candidate": 1.310531,
+          "baseline": 3.897436
+        },
+        {
+          "baseline": 4.192206,
+          "candidate": 2.939992
+        },
+        {
+          "candidate": 1.482355,
+          "baseline": 3.024512
+        },
+        {
+          "baseline": 3.298395,
+          "candidate": 1.230134
+        },
+        {
+          "candidate": 1.212091,
+          "baseline": 5.051307
+        },
+        {
+          "baseline": 16.883012,
+          "candidate": 6.112409
+        },
+        {
+          "candidate": 17.914456,
+          "baseline": 3.333367
+        },
+        {
+          "baseline": 3.35483,
+          "candidate": 2.050581
+        },
+        {
+          "candidate": 1.732204,
+          "baseline": 3.758724
+        },
+        {
+          "baseline": 3.455119,
+          "candidate": 1.361999
+        },
+        {
+          "candidate": 1.226739,
+          "baseline": 3.138841
+        },
+        {
+          "baseline": 4.902314,
+          "candidate": 2.416731
+        },
+        {
+          "candidate": 1.395796,
+          "baseline": 2.985544
+        },
+        {
+          "baseline": 3.65807,
+          "candidate": 1.252751
+        },
+        {
+          "candidate": 1.441307,
+          "baseline": 4.003628
+        },
+        {
+          "baseline": 3.306842,
+          "candidate": 1.287711
+        },
+        {
+          "candidate": 1.435917,
+          "baseline": 3.404241
+        },
+        {
+          "baseline": 4.206097,
+          "candidate": 1.391757
+        },
+        {
+          "candidate": 1.449062,
+          "baseline": 3.665116
+        }
+      ],
+      "vm": {
+        "baseline": 55233,
+        "candidate": 6403
+      },
+      "query_plans": {
+        "baseline": [
+          [
+            7,
+            0,
+            62,
+            "SEARCH e USING INDEX sqlite_autoindex_communication_events_1 (run_id=?)"
+          ],
+          [
+            14,
+            0,
+            47,
+            "SEARCH d USING INDEX sqlite_autoindex_communication_deliveries_1 (seq=? AND recipient=?)"
+          ],
+          [
+            34,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ],
+        "candidate": [
+          [
+            6,
+            0,
+            62,
+            "SEARCH d USING INDEX communication_pending_recipient (recipient=?)"
+          ],
+          [
+            13,
+            0,
+            45,
+            "SEARCH e USING INTEGER PRIMARY KEY (rowid=?)"
+          ],
+          [
+            28,
+            0,
+            0,
+            "USE TEMP B-TREE FOR ORDER BY"
+          ]
+        ]
+      },
+      "median_ms": {
+        "baseline": 3.665116,
+        "candidate": 1.435917
+      },
+      "migration": {
+        "ms": 6.976258,
+        "reopen_ms": 0.645411,
+        "before_bytes": 5664768,
+        "after_bytes": 6090752
+      },
+      "overhead": {
+        "baseline": [
+          {
+            "publish_ms": 0.662107,
+            "ack_ms": 0.412746
+          },
+          {
+            "publish_ms": 0.929731,
+            "ack_ms": 0.717795
+          },
+          {
+            "publish_ms": 0.644817,
+            "ack_ms": 0.49779
+          },
+          {
+            "publish_ms": 0.918227,
+            "ack_ms": 0.493161
+          },
+          {
+            "publish_ms": 0.762607,
+            "ack_ms": 0.477845
+          },
+          {
+            "publish_ms": 0.911817,
+            "ack_ms": 0.589698
+          },
+          {
+            "publish_ms": 0.739486,
+            "ack_ms": 0.683258
+          },
+          {
+            "publish_ms": 0.819619,
+            "ack_ms": 0.669872
+          },
+          {
+            "publish_ms": 0.792222,
+            "ack_ms": 0.443073
+          },
+          {
+            "publish_ms": 0.696015,
+            "ack_ms": 0.442568
+          },
+          {
+            "publish_ms": 0.751619,
+            "ack_ms": 0.80994
+          },
+          {
+            "publish_ms": 0.66797,
+            "ack_ms": 0.482539
+          },
+          {
+            "publish_ms": 0.994989,
+            "ack_ms": 0.503745
+          },
+          {
+            "publish_ms": 0.725307,
+            "ack_ms": 0.442394
+          },
+          {
+            "publish_ms": 0.663092,
+            "ack_ms": 0.599486
+          },
+          {
+            "publish_ms": 0.633815,
+            "ack_ms": 0.542023
+          },
+          {
+            "publish_ms": 0.747845,
+            "ack_ms": 0.595927
+          },
+          {
+            "publish_ms": 0.642,
+            "ack_ms": 0.512204
+          },
+          {
+            "publish_ms": 0.770497,
+            "ack_ms": 0.403826
+          },
+          {
+            "publish_ms": 0.662182,
+            "ack_ms": 0.407881
+          },
+          {
+            "publish_ms": 0.576667,
+            "ack_ms": 0.718216
+          }
+        ],
+        "candidate": [
+          {
+            "publish_ms": 0.830997,
+            "ack_ms": 0.600372
+          },
+          {
+            "publish_ms": 0.927439,
+            "ack_ms": 0.620905
+          },
+          {
+            "publish_ms": 0.658588,
+            "ack_ms": 0.557411
+          },
+          {
+            "publish_ms": 0.693877,
+            "ack_ms": 0.670117
+          },
+          {
+            "publish_ms": 0.841421,
+            "ack_ms": 0.472079
+          },
+          {
+            "publish_ms": 0.632317,
+            "ack_ms": 0.495733
+          },
+          {
+            "publish_ms": 2.839795,
+            "ack_ms": 0.612581
+          },
+          {
+            "publish_ms": 1.283223,
+            "ack_ms": 0.48696
+          },
+          {
+            "publish_ms": 0.661605,
+            "ack_ms": 0.429637
+          },
+          {
+            "publish_ms": 0.597638,
+            "ack_ms": 0.493194
+          },
+          {
+            "publish_ms": 0.593112,
+            "ack_ms": 0.706086
+          },
+          {
+            "publish_ms": 0.620449,
+            "ack_ms": 0.757806
+          },
+          {
+            "publish_ms": 1.103897,
+            "ack_ms": 4.151665
+          },
+          {
+            "publish_ms": 0.701503,
+            "ack_ms": 0.466943
+          },
+          {
+            "publish_ms": 0.741889,
+            "ack_ms": 0.463018
+          },
+          {
+            "publish_ms": 0.598899,
+            "ack_ms": 0.674738
+          },
+          {
+            "publish_ms": 0.697191,
+            "ack_ms": 0.431347
+          },
+          {
+            "publish_ms": 0.612673,
+            "ack_ms": 0.557946
+          },
+          {
+            "publish_ms": 0.637505,
+            "ack_ms": 0.604894
+          },
+          {
+            "publish_ms": 0.646949,
+            "ack_ms": 0.605113
+          },
+          {
+            "publish_ms": 0.648918,
+            "ack_ms": 0.529745
+          }
+        ]
+      }
+    }
+  ]
+}

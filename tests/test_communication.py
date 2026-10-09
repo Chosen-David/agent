@@ -166,6 +166,27 @@ class CommunicationTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout+result.stderr)
         self.assertEqual(json.loads(result.stdout)['artifacts'], [self.ref])
 
+    def test_pending_index_migrates_history_without_changing_delivery(self):
+        seqs = [self.box.publish(dict(self.event, event_id=str(i)))['seq'] for i in range(4)]
+        self.box.acknowledge('writer', seqs[1], {'status': 'consumed', 'reason': 'read'})
+        before = self.box.status()
+        # A populated database created by an earlier release has no pending index.
+        with self.box.connect() as db:
+            db.execute('DROP INDEX communication_pending_recipient')
+        reopened = Mailbox(self.db, self.plan, self.root)
+        self.assertEqual(reopened.status(), before)
+        self.assertEqual([r['seq'] for r in reopened.inbox('writer', limit=2)], [seqs[0], seqs[2]])
+        self.assertEqual([r['seq'] for r in reopened.inbox('reviewer')], seqs)
+        next_plan = dict(self.plan, run_id='next')
+        next_box = Mailbox(self.db, next_plan, self.root)
+        next_box.publish(dict(self.event, run_id='next', event_id='other-run'))
+        self.assertEqual(len(reopened.inbox('reviewer')), 4)
+        self.assertEqual(len(next_box.inbox('reviewer')), 1)
+        # ACK removes one reader's pending entry, preserving all other deliveries.
+        reopened.acknowledge('writer', seqs[0], {'status': 'rejected', 'reason': 'scope'})
+        self.assertEqual([r['seq'] for r in reopened.inbox('writer')], seqs[2:])
+        self.assertEqual(Mailbox(self.db, self.plan, self.root).status(), reopened.status())
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -144,3 +144,5 @@ KERNEL-FEEDBACK-01：`workflows/kernel_optimization_feedback.md` 是编译/性�
 
 - `knowledge/entries/math.support-conditioning.{json,md}`：有限条件分布的KL方向、稳定界及质量不可识别；现有model-with-knowledge消费入口，元数据派生学科/结构索引，无常驻全库注入。
 - `agent_doc/results/math-conditioning-20261008/`：冻结协议、压缩完整CPU记录、近期来源、独立review与检索证据；根AI写任务/state，独立审查者只写验收产物，无SGLang修改。
+
+COMM-INBOX-01: `agent_runtime/communication.py` → SQLite待处理收件箱；`scripts/benchmark_communication_inbox.py` 配对查询/迁移/写入基准，`tests/test_communication.py` 旧库升级与语义保护，证据位于 `agent_doc/results/comm-inbox-20261009/`。只验本地CPU/SQLite，不代表模型或token收益。

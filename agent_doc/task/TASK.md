@@ -2,6 +2,8 @@
 
 ## 2026-10-09
 
+- [x] [COMM-INBOX-01] 完成待处理收件箱索引优化、配对测量及独立验收；发布检查点见详情。 ([detail](task_details/COMM-INBOX-01.md))
+
 - [x] [WRITE-EVIDENCE-20261009-01] 接入全面取证与贡献导向写作规范，完成有范围的独立审阅和发布核对；不宣称运行时行为已验证。 ([detail](task_details/WRITE-EVIDENCE-20261009-01.md))
 
 ## 2026-10-08 代码 Agent 编译反馈
