@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "snapshot": "fc38cced840a60b4ed2472c67ec01e4ae9fa615968220434e8c72e8e0fa069bf",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "ds.faiss-exact-vector",
+      "version": 1,
+      "sha256": "2ca159a814b69cd3984d49e5e71f494ac145b129ada2c6f0e5ae702064c35eb4",
+      "title": "Faiss IndexFlat：精确向量搜索强基线",
+      "summary": "需要精确召回或评估 ANN 时，先用 Faiss IndexFlat 建立强基线；精确扫描每 query 约 O(nd)，并考虑 batched BLAS 路径。",
+      "status": "published",
+      "assumptions": [
+        "operation: dense vector nearest-neighbor search",
+        "metric: L2 or inner product",
+        "quality: exact"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.faiss-exact-vector"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "exact"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "exact"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "exact"
+          ]
+        }
+      ],
+      "score": 10
+    },
+    {
+      "id": "ds.hnsw-recall-budget",
+      "version": 1,
+      "sha256": "8f736520925598cd563890785a162bc50b45891506c859ab1685434dbd10d11c",
+      "title": "HNSW：ef、召回与内存预算",
+      "summary": "HNSW 的 ef/M/ef_construction 是召回、查询/构建成本和内存的折中；参数不能只按教程默认值宣称最优。",
+      "status": "published",
+      "assumptions": [
+        "operation: approximate vector nearest-neighbor search",
+        "metric: l2 ip or cosine",
+        "quality: approximate"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.hnsw-recall-budget"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "exact"
+          ]
+        }
+      ],
+      "score": 1
+    },
+    {
+      "id": "ds.segment-monoid",
+      "version": 1,
+      "sha256": "704383602e286115a01d428c82e437c1815283ecf44e2b9001864387b1e3d51b",
+      "title": "Segment tree：结合聚合与边界搜索",
+      "summary": "ACL segtree 支持满足结合律/单位元的区间聚合；set/prod 为 O(log n)，不要擅自要求交换律。",
+      "status": "published",
+      "assumptions": [
+        "algebra: associative op with identity",
+        "range: zero-based half-open",
+        "operation: point set and range aggregate"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.segment-monoid"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "predicate"
+          ]
+        }
+      ],
+      "score": 1
+    }
+  ]
+}

@@ -1,0 +1,415 @@
+{
+  "task_id": "COMM-ROUTE-BIND-01",
+  "nodes": [
+    {
+      "id": "prepare",
+      "depends_on": [],
+      "owner": "root",
+      "done_when": "prepare exact evidence matches frozen plan"
+    },
+    {
+      "id": "plan_review",
+      "depends_on": [
+        "prepare"
+      ],
+      "owner": "independent_plan",
+      "done_when": "plan_review exact evidence matches frozen plan"
+    },
+    {
+      "id": "produce",
+      "depends_on": [
+        "plan_review"
+      ],
+      "owner": "root",
+      "done_when": "produce exact evidence matches frozen plan",
+      "produces_data": true,
+      "experiment_result": {
+        "result_id": "comm-route-bind-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-route-producer",
+        "manifest_path": "agent_doc/results/comm-route-bind-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-route-bind-20261009/validation_plan.json",
+          "sha256": "0a63ed702fd5acedbd8e4fbf1f9cb78e0a652cf531cb9ee4f3fea0c1a2738003"
+        },
+        "scope": "Exact publicpublish route field binding;current+strong baselines;4cohorts31alternating pairs/3warmups/3syntheticSQLite shapes;noLLM/network/tokenclaim"
+      }
+    },
+    {
+      "id": "verify_experiment_result",
+      "depends_on": [
+        "produce"
+      ],
+      "owner": "independent_result",
+      "done_when": "verify_experiment_result exact evidence matches frozen plan",
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "comm-route-bind-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-route-producer",
+        "manifest_path": "agent_doc/results/comm-route-bind-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-route-bind-20261009/validation_plan.json",
+          "sha256": "0a63ed702fd5acedbd8e4fbf1f9cb78e0a652cf531cb9ee4f3fea0c1a2738003"
+        },
+        "scope": "Exact publicpublish route field binding;current+strong baselines;4cohorts31alternating pairs/3warmups/3syntheticSQLite shapes;noLLM/network/tokenclaim"
+      }
+    },
+    {
+      "id": "adopt_or_revert",
+      "depends_on": [
+        "verify_experiment_result"
+      ],
+      "owner": "root",
+      "done_when": "adopt_or_revert exact evidence matches frozen plan",
+      "required_result_refs": [
+        {
+          "result_id": "comm-route-bind-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-route-producer",
+          "manifest_path": "agent_doc/results/comm-route-bind-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-route-bind-20261009/validation_plan.json",
+            "sha256": "0a63ed702fd5acedbd8e4fbf1f9cb78e0a652cf531cb9ee4f3fea0c1a2738003"
+          },
+          "scope": "Exact publicpublish route field binding;current+strong baselines;4cohorts31alternating pairs/3warmups/3syntheticSQLite shapes;noLLM/network/tokenclaim"
+        }
+      ]
+    },
+    {
+      "id": "regression",
+      "depends_on": [
+        "adopt_or_revert"
+      ],
+      "owner": "root",
+      "done_when": "regression exact evidence matches frozen plan",
+      "required_result_refs": [
+        {
+          "result_id": "comm-route-bind-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-route-producer",
+          "manifest_path": "agent_doc/results/comm-route-bind-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-route-bind-20261009/validation_plan.json",
+            "sha256": "0a63ed702fd5acedbd8e4fbf1f9cb78e0a652cf531cb9ee4f3fea0c1a2738003"
+          },
+          "scope": "Exact publicpublish route field binding;current+strong baselines;4cohorts31alternating pairs/3warmups/3syntheticSQLite shapes;noLLM/network/tokenclaim"
+        }
+      ],
+      "produces_data": true,
+      "experiment_result": {
+        "result_id": "comm-route-bind-integration-20261009",
+        "producer_task_id": "regression",
+        "producer_actor": "root-route-integration-producer",
+        "manifest_path": "agent_doc/results/comm-route-bind-integration-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-route-bind-integration-20261009/validation_plan.json",
+          "sha256": "29e80c04f3fc8c0caef2a618f89ecb2bf09da881d7c485be44b801143d4dfa04"
+        },
+        "scope": "Integration of exact accepted per-call route candidate or retained baseline negative;fullrepo+reader+newrouteauthority tests ifkept;noLLM/network/token claims"
+      },
+      "condition": "Only kept branch creates full regression result; negative branch retainsbaseline/report and no new integration data, publish requires acceptednegative performancecontract and independent evidence-only audit"
+    },
+    {
+      "id": "integration_review",
+      "depends_on": [
+        "regression"
+      ],
+      "owner": "independent_result",
+      "done_when": "integration_review exact evidence matches frozen plan",
+      "required_result_refs": [
+        {
+          "result_id": "comm-route-bind-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-route-producer",
+          "manifest_path": "agent_doc/results/comm-route-bind-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-route-bind-20261009/validation_plan.json",
+            "sha256": "0a63ed702fd5acedbd8e4fbf1f9cb78e0a652cf531cb9ee4f3fea0c1a2738003"
+          },
+          "scope": "Exact publicpublish route field binding;current+strong baselines;4cohorts31alternating pairs/3warmups/3syntheticSQLite shapes;noLLM/network/tokenclaim"
+        }
+      ],
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "comm-route-bind-integration-20261009",
+        "producer_task_id": "regression",
+        "producer_actor": "root-route-integration-producer",
+        "manifest_path": "agent_doc/results/comm-route-bind-integration-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-route-bind-integration-20261009/validation_plan.json",
+          "sha256": "29e80c04f3fc8c0caef2a618f89ecb2bf09da881d7c485be44b801143d4dfa04"
+        },
+        "scope": "Integration of exact accepted per-call route candidate or retained baseline negative;fullrepo+reader+newrouteauthority tests ifkept;noLLM/network/token claims"
+      },
+      "condition": "Keptbranchintegrationvalidation;negativebranchindependentreport/source audit without an experiment claim"
+    },
+    {
+      "id": "publish",
+      "depends_on": [
+        "integration_review"
+      ],
+      "owner": "root",
+      "done_when": "publish exact evidence matches frozen plan",
+      "required_result_refs": [
+        {
+          "result_id": "comm-route-bind-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-route-producer",
+          "manifest_path": "agent_doc/results/comm-route-bind-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-route-bind-20261009/validation_plan.json",
+            "sha256": "0a63ed702fd5acedbd8e4fbf1f9cb78e0a652cf531cb9ee4f3fea0c1a2738003"
+          },
+          "scope": "Exact publicpublish route field binding;current+strong baselines;4cohorts31alternating pairs/3warmups/3syntheticSQLite shapes;noLLM/network/tokenclaim"
+        },
+        {
+          "result_id": "comm-route-bind-integration-20261009",
+          "producer_task_id": "regression",
+          "producer_actor": "root-route-integration-producer",
+          "manifest_path": "agent_doc/results/comm-route-bind-integration-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-route-bind-integration-20261009/validation_plan.json",
+            "sha256": "29e80c04f3fc8c0caef2a618f89ecb2bf09da881d7c485be44b801143d4dfa04"
+          },
+          "scope": "Integration of exact accepted per-call route candidate or retained baseline negative;fullrepo+reader+newrouteauthority tests ifkept;noLLM/network/token claims"
+        }
+      ],
+      "negative_branch": {
+        "required_result_refs": [
+          {
+            "result_id": "comm-route-bind-20261009",
+            "producer_task_id": "produce",
+            "producer_actor": "root-route-producer",
+            "manifest_path": "agent_doc/results/comm-route-bind-20261009/manifest.json",
+            "validation_plan": {
+              "path": "agent_doc/results/comm-route-bind-20261009/validation_plan.json",
+              "sha256": "0a63ed702fd5acedbd8e4fbf1f9cb78e0a652cf531cb9ee4f3fea0c1a2738003"
+            },
+            "scope": "Exact publicpublish route field binding;current+strong baselines;4cohorts31alternating pairs/3warmups/3syntheticSQLite shapes;noLLM/network/tokenclaim"
+          }
+        ],
+        "gate": "Exactbaseline + independentnegative-onlyreport/publicationaudit;nointegration/fullsuiteclaim"
+      }
+    },
+    {
+      "id": "readback",
+      "depends_on": [
+        "publish"
+      ],
+      "owner": "root",
+      "done_when": "readback exact evidence matches frozen plan",
+      "required_result_refs": [
+        {
+          "result_id": "comm-route-bind-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-route-producer",
+          "manifest_path": "agent_doc/results/comm-route-bind-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-route-bind-20261009/validation_plan.json",
+            "sha256": "0a63ed702fd5acedbd8e4fbf1f9cb78e0a652cf531cb9ee4f3fea0c1a2738003"
+          },
+          "scope": "Exact publicpublish route field binding;current+strong baselines;4cohorts31alternating pairs/3warmups/3syntheticSQLite shapes;noLLM/network/tokenclaim"
+        },
+        {
+          "result_id": "comm-route-bind-integration-20261009",
+          "producer_task_id": "regression",
+          "producer_actor": "root-route-integration-producer",
+          "manifest_path": "agent_doc/results/comm-route-bind-integration-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-route-bind-integration-20261009/validation_plan.json",
+            "sha256": "29e80c04f3fc8c0caef2a618f89ecb2bf09da881d7c485be44b801143d4dfa04"
+          },
+          "scope": "Integration of exact accepted per-call route candidate or retained baseline negative;fullrepo+reader+newrouteauthority tests ifkept;noLLM/network/token claims"
+        }
+      ],
+      "negative_branch": {
+        "required_result_refs": [
+          {
+            "result_id": "comm-route-bind-20261009",
+            "producer_task_id": "produce",
+            "producer_actor": "root-route-producer",
+            "manifest_path": "agent_doc/results/comm-route-bind-20261009/manifest.json",
+            "validation_plan": {
+              "path": "agent_doc/results/comm-route-bind-20261009/validation_plan.json",
+              "sha256": "0a63ed702fd5acedbd8e4fbf1f9cb78e0a652cf531cb9ee4f3fea0c1a2738003"
+            },
+            "scope": "Exact publicpublish route field binding;current+strong baselines;4cohorts31alternating pairs/3warmups/3syntheticSQLite shapes;noLLM/network/tokenclaim"
+          }
+        ],
+        "gate": "Exactbaseline + independentnegative-onlyreport/publicationaudit;nointegration/fullsuiteclaim"
+      }
+    }
+  ],
+  "input_refs": [
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/plan_snapshot.md",
+      "sha256": "a011111ba4302d589459b2eeed2b5009cb1d2f90fe223039307abdbdd42a2a38"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/approved_task_detail.md",
+      "sha256": "67646b6677ea3f1182d4411bd7f98b2ffbdcb4b3ec5dca06f975e68167b2f568"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/approved_task_index.md",
+      "sha256": "bc179d491d95776fcebef2ff6ac9f3cffea01050544a3a63ba75dbc2e5f2a302"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/config.json",
+      "sha256": "eb20d2216b1c4a1057fdb0bfef86261e385e4b7c13c0c3cafeab3e90614c744d"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/prior_search.json",
+      "sha256": "9ddb43e939e8495297af63f2a8975b446cd45e38ab7fbda190e8e43fad92110a"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/prior_decisions.json",
+      "sha256": "46e2161c4bc1f22f703f46521118f4bae05ed0234e21f54827b441f111156822"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/knowledge_search.json",
+      "sha256": "3c89c2c0b3675f0545e5b2c0b2d320750467512d31ed0feee74ff51e8b312b23"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/research.md",
+      "sha256": "ac4322fe5c0b77531515b4b4c72d8919e682f82a22252033c6120f5017d3d5d4"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/candidate_matrix.md",
+      "sha256": "479b7847f56f1c779a4c78ba1d0feb798268642ec2fd09ceabcc003905e82c40"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/baseline.py",
+      "sha256": "758347d97ce93ebea4b46bfc6a7ac17cab7d5e1a0e7171533c8c9ed26fe02b1f"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/strong_baseline.py",
+      "sha256": "4d216e414e77ee2de6ec6cc1862cde83fccbb42e06c02099dd42287c1806ac91"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/candidate.py",
+      "sha256": "5c83c18e9dd5cb33fe6ba545e86cc10b99d63f7965ee4789bd9dc3db226cc34e"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/validation_plan.json",
+      "sha256": "0a63ed702fd5acedbd8e4fbf1f9cb78e0a652cf531cb9ee4f3fea0c1a2738003"
+    },
+    {
+      "path": "scripts/benchmark_communication_candidates_v2.py",
+      "sha256": "773706bef179857d3bc6de55eeecfa69cd733371d8bf10dc2f1b62fb83a11183"
+    },
+    {
+      "path": "agent_doc/results/comm20-20261009/independent_properties.py",
+      "sha256": "915a6f00ef3938c94b074edd51aa8f6578199fe839e8a9f8a2510c505f3af6ab"
+    },
+    {
+      "path": "tests/test_communication_regressions.py",
+      "sha256": "5c82624bc8e60a3ea5058314ffeae7631967cb424be4bda3ba68492d935e8456"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/profile.py",
+      "sha256": "a260e12d058ff004a56162700ffe4efd24a310c0cae5df09adf2c4138dc1781a"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-20261009/integration_tests.py",
+      "sha256": "7151ce0b2db02a23a72bad2d84f7e918642ffd2349c46ae04e770d559fd996ad"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-integration-20261009/validation_plan.json",
+      "sha256": "29e80c04f3fc8c0caef2a618f89ecb2bf09da881d7c485be44b801143d4dfa04"
+    },
+    {
+      "path": "agent_doc/results/comm-route-bind-integration-20261009/contract.json",
+      "sha256": "ea2f16af9781677dffefb6a496c7103db14595da90a031de494bf2311e5024d5"
+    }
+  ],
+  "document_binding": {
+    "canonical_index": "agent_doc/task/TASK.md",
+    "canonical_detail": "agent_doc/task/task_details/COMM-ROUTE-BIND-01.md",
+    "stable_prefix": {
+      "path": "agent_doc/results/comm-route-bind-20261009/plan_snapshot.md",
+      "sha256": "a011111ba4302d589459b2eeed2b5009cb1d2f90fe223039307abdbdd42a2a38"
+    },
+    "full_snapshots": [
+      {
+        "path": "agent_doc/results/comm-route-bind-20261009/approved_task_detail.md",
+        "sha256": "67646b6677ea3f1182d4411bd7f98b2ffbdcb4b3ec5dca06f975e68167b2f568"
+      },
+      {
+        "path": "agent_doc/results/comm-route-bind-20261009/approved_task_index.md",
+        "sha256": "bc179d491d95776fcebef2ff6ac9f3cffea01050544a3a63ba75dbc2e5f2a302"
+      }
+    ],
+    "adopted_advice": [],
+    "guide_inventory": "all actual files bound;GUIDEempty,README provenance notauthorization"
+  },
+  "authorization": "Currentusercontinuouscommunication upgrade/directmain onverifiedgain",
+  "host": "Actual fresh host collaboration review;no deployed Engine/tmux backend",
+  "resources": {
+    "baseline_main": "0a532bf447936fd7c07d0d97779a600c6a764905",
+    "operation": "publish",
+    "primary_shape": [
+      100,
+      "single",
+      1000
+    ],
+    "repeats": 31,
+    "independent_repeats": 31,
+    "warmups": 3,
+    "comparisons": [
+      "current",
+      "strong"
+    ],
+    "primary_acceptance": "current/candidate>=1.25 AND current-candidate>=0.05ms in producer AND independent primary",
+    "guard": "candidate<=1.25*reference OR candidate-reference<0.2ms for everypublic publish/freshACK/shape in all4cohorts",
+    "storage": "exact equal",
+    "maintenance": "diagnostic unchangedDDL only",
+    "profile": "out of timing; baseline route genexpr>0,candidate=strong=0; not primary latency",
+    "harness": "scripts/benchmark_communication_candidates_v2.py",
+    "cpu_seconds_budget": 900,
+    "candidate_count": 1,
+    "performance_retry_budget": 0,
+    "plan_review_cycles": 2
+  },
+  "risk": "Equivalent predicate;no routecache,no validation shortcuts;strongbaselineguard",
+  "version": 2,
+  "prior_feedback": {
+    "path": "agent_doc/results/comm-route-bind-20261009/plan_review.json",
+    "sha256": "48cc41736764d6a476744939eba69bd98beaa19da6c5682ce6e30ee3ce5abeb4"
+  },
+  "integration_binding": {
+    "contract": {
+      "result_id": "comm-route-bind-integration-20261009",
+      "producer_task_id": "regression",
+      "producer_actor": "root-route-integration-producer",
+      "manifest_path": "agent_doc/results/comm-route-bind-integration-20261009/manifest.json",
+      "validation_plan": {
+        "path": "agent_doc/results/comm-route-bind-integration-20261009/validation_plan.json",
+        "sha256": "29e80c04f3fc8c0caef2a618f89ecb2bf09da881d7c485be44b801143d4dfa04"
+      },
+      "scope": "Integration of exact accepted per-call route candidate or retained baseline negative;fullrepo+reader+newrouteauthority tests ifkept;noLLM/network/token claims"
+    },
+    "performance_required_result_refs": [
+      {
+        "result_id": "comm-route-bind-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-route-producer",
+        "manifest_path": "agent_doc/results/comm-route-bind-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-route-bind-20261009/validation_plan.json",
+          "sha256": "0a63ed702fd5acedbd8e4fbf1f9cb78e0a652cf531cb9ee4f3fea0c1a2738003"
+        },
+        "scope": "Exact publicpublish route field binding;current+strong baselines;4cohorts31alternating pairs/3warmups/3syntheticSQLite shapes;noLLM/network/tokenclaim"
+      }
+    ],
+    "scope": "Preregistered fullsuite result contract;conditionalnegativebranch explicit, no fake fullsuite result"
+  }
+}

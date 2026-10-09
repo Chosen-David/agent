@@ -1,0 +1,26 @@
+{
+  "baseline_main": "0a532bf447936fd7c07d0d97779a600c6a764905",
+  "operation": "publish",
+  "primary_shape": [
+    100,
+    "single",
+    1000
+  ],
+  "repeats": 31,
+  "independent_repeats": 31,
+  "warmups": 3,
+  "comparisons": [
+    "current",
+    "strong"
+  ],
+  "primary_acceptance": "current/candidate>=1.25 AND current-candidate>=0.05ms in producer AND independent primary",
+  "guard": "candidate<=1.25*reference OR candidate-reference<0.2ms for everypublic publish/freshACK/shape in all4cohorts",
+  "storage": "exact equal",
+  "maintenance": "diagnostic unchangedDDL only",
+  "profile": "out of timing; baseline route genexpr>0,candidate=strong=0; not primary latency",
+  "harness": "scripts/benchmark_communication_candidates_v2.py",
+  "cpu_seconds_budget": 900,
+  "candidate_count": 1,
+  "performance_retry_budget": 0,
+  "plan_review_cycles": 2
+}

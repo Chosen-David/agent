@@ -1,0 +1,9 @@
+# Sources screened2026-10-09
+
+HEAR, submitted2026-10-05 https://arxiv.org/abs/2610.06597 : primary abstract checked, harness intent/engine state and separating protocol semantics from optimization policy. LocalMailbox has no KV/inference engine, so not instantiated; no author speedups transplanted.
+AECP, submitted2026-10-05 https://arxiv.org/abs/2610.06481 : primary abstract checked, actionable structured-artifact/harness coordination. Existing refs already bind artifacts; do not claim a new AECP implementation/model-quality or injection defense result.
+ABCAgent, submitted2026-10-04 https://arxiv.org/abs/2610.04824 : primary abstract checked, deterministic programmatic behavior across parametric tasks. Inspiration for explicitly verifiable repeated control paths, not replication; this candidate is ordinary Python predicate specialization/per-call field binding, not novel scientific contribution.
+Routed Graph Handoff https://arxiv.org/abs/2608.25277 primary abstract checked, format selection requires delegation quality/model tests; deferred. Proxifield2609.20889 primary fetch failed DisabledError; aggregator snippet not enough to adopt.
+Author/official GitHub https://github.com/a2aproject/a2a checked README overview, opaque-agent interoperability. Current trustedSQLiteMailbox is not network A2A; no installed integration/security or throughput claim. Primary engineering blog previously examined AWS BuildersLibrary idempotent APIs https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/; duplicate trust checks must remain.
+
+Latest search engines used both routine and primary coverage searches; no claim exhaustive latest-paper survey/full PDF reading. Selected exact local optimization leaves route authorization,fanout,refs,bytes,transactions,eventid idempotence and budget semantics intact. No cache of exposed mutable self.plan: re-read routes each call.

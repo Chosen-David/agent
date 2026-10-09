@@ -329,6 +329,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [COMM-ACK-CONFIRM-01] ACK重试免写单次确认已独立验收并发布负结果；未达门槛，运行时保留基线。 ([详情](task_details/COMM-ACK-CONFIRM-01.md))
 
-- [x] [MATH-64] value运输耦合、输出误差与度量误用边界 ([详情](task_details/MATH-64.md))
-
 - [ ] [COMM-ROUTE-BIND-01] 精确路由字段绑定候选：当前实现与强基线双对照，仅通过收益与正确性后采用。 ([详情](task_details/COMM-ROUTE-BIND-01.md))

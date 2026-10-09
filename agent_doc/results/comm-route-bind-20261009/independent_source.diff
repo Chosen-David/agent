@@ -1,0 +1,13 @@
+--- baseline
++++ candidate
+@@ -152,8 +152,9 @@
+             raise ValueError('event needs exact envelope fields and a concrete action')
+         if event['run_id'] != self.run_id or event['input_version'] != self.plan['input_version']:
+             raise ValueError('stale or cross-run event')
++        sender, task_id, kind = event['sender'], event['task_id'], event['kind']
+         recipients = sorted({r['recipient'] for r in self.plan['routes']
+-                             if all(r[k] == event[k] for k in ('sender', 'task_id', 'kind'))})
++                             if r['sender'] == sender and r['task_id'] == task_id and r['kind'] == kind})
+         if not recipients:
+             raise ValueError('no approved consumer route')
+         body = canonical(event)
