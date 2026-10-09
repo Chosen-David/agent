@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "ds.maxflow-matching",
+      "version": 1,
+      "sha256": "68e82e8fe97179a2d7ce409b1e23b6bbaa2367f61601daff8854b8d1c8c8cee1",
+      "title": "最大流：容量网络与二分图匹配",
+      "summary": "ACL mf_graph 是可复用残量网络入口；一般复杂度按 Dinic 最坏界 O(V²E)，特殊图的更好界需单独证明。",
+      "status": "published",
+      "assumptions": [
+        "graph: directed capacity network",
+        "capacity: nonnegative integer",
+        "source_sink: distinct"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.maxflow-matching"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "二分",
+            "分图",
+            "匹配",
+            "容量"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "二分",
+            "分图",
+            "匹配"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "二分",
+            "分图",
+            "匹配"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "二分",
+            "分图",
+            "匹配",
+            "容量"
+          ]
+        }
+      ],
+      "score": 51
+    },
+    {
+      "id": "math.fano-message-budget",
+      "version": 1,
+      "sha256": "7efd6910745e07f3509e8cbebb9dbbc8991fb674a9ce827d0c7e091b52241348",
+      "title": "条件 Fano 与有限消息辨别容量",
+      "summary": "有限标签任务的消息字母容量限制辨别成功率；条件熵与错误概率给必要界。旁信息、长度及检索输出须计入观察，不能由 token 数推断任务质量。",
+      "status": "published",
+      "assumptions": [
+        "Y∈{1,…,M}, M≥2；所有熵与互信息用 log2；M=1单独处理",
+        "接收者只观察T,Z；随机解码独立于Y给定T,Z，否则相关随机性计入Z",
+        "每个给定Z的合法消息支持数至多C；先验及旁信息分布明确",
+        "固定B-bit/固定n-token格式才直接给2^B/V^n消息界；变长、时间、检索和工具输出另计"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-fano-message-20261009/verify.py",
+          "agent_doc/results/math-fano-message-20261009/raw.json",
+          "agent_doc/results/math-fano-message-20261009/retrieval.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "容量"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "容量"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "匹配",
+            "容量",
+            "禁止"
+          ]
+        }
+      ],
+      "score": 11
+    },
+    {
+      "id": "ai.speculative-sampling-residual-exactness",
+      "version": 1,
+      "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331",
+      "title": "推测采样：剩余质量校正与分布不变条件",
+      "summary": "固定共同token空间、正确前缀和真实提议分布，以min(1,p/q)接受并在拒绝后抽取正部残差，恢复目标分布；greedy、树候选和MTP名称本身不保证随机采样无损。",
+      "status": "published",
+      "assumptions": [
+        "p与q为同一有限输出空间上的归一化分布，包含实际采样变换；p固定为所比较的目标生成策略",
+        "候选从实际q生成；接受检验随机数符合条件独立性，不能把argmax生成的点质量伪装成soft q",
+        "只对q(X)>0计算比值；Z=0意味着不会进入残差归一化分支，不要求目标支撑包含于提议支撑",
+        "链式验证的p/q、位置及缓存对应同一前缀；第一次拒绝后丢弃不再对应正确前缀的后续草稿",
+        "确定性候选消元的顺序不偷看本次接受随机数，拒绝后更新剩余分布；此特例不认证任意树实现",
+        "理论使用精确概率运算，有限精度/缓存/终止/随机数实现须另验；分布相同不等于same-seed逐字相同"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "structures",
+          "terms": [
+            "匹配"
+          ]
+        }
+      ],
+      "score": 4
+    }
+  ]
+}
