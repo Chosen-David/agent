@@ -23,3 +23,5 @@ fixtures冻结八例（T7明确含不等质量及同总质量2的非法边际变
 - 独立结果审核确认原scope不通过，主AI钉定实际完成receipt后native gate为invalid；不登记usable或让科学消费者继续。草稿移至本轮candidate_card.json/md，不发布新KB条目。其T6错例及outputs.json的初始计数均不作为验收依据。
 - 34回归与6次检索/16368字符是在历史临时草稿语料上完成，不代表当前语料含该卡；原231条路径及holdout字节保持。没有模型/GPU/Lean/e2e/token收益。
 - 当前全局文档问题为TOK-003/TOK-004 Progress边界，未改。coverage/state仅记录失败缺口；全部既有领域/GPU游标保留，TASK仍未完成。下一步明确版本化修正T6并重新计划/完整重测/独立验收。失败归档直接main读回见publication.json，未改SGLang/人类guide。
+
+- 失败证据已发布main `e4c6f5e0c462b85e459d644fc462121c8240e6b7`，远端ref/parent/tree匹配、本地clean；本记录随后元数据提交保存。实验invalid与TASKpending保持，不是知识验收完成。
