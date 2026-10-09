@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "snapshot": "f7025f3817e6fdc2899d373021b1625dada56725c3f4f960360b7d2dd1c5fa3e",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "ai.speculative-decoding-cost-bound",
+      "version": 1,
+      "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f",
+      "title": "推测解码：接受前缀尾和与成本盈亏条件",
+      "summary": "单提议接受率为1−TV；一轮输出长度由连续接受事件的尾和决定。只有附加恒定条件接受率和固定验证成本假设才得到几何加速式；树、MTP、batch变化必须重建事件与成本。",
+      "status": "published",
+      "assumptions": [
+        "单提议1−TV恒等式沿用残差校正条目的真实p/q与正确前缀；不能直接套整棵树",
+        "固定正整数horizon γ，一轮L=N+1包含补偿或bonus，公式暂不包含EOS/最大长度截断",
+        "一般尾和无需独立性；几何式额外要求每个到达深度的条件接受概率为同一α",
+        "基线T、draft比率c、验证比率v及额外成本o按同一硬件/模型/采样/负载口径定义；γc假设串行每步draft成本相同",
+        "速度比公式对应长序列稳定成本模型；随机轮成本须满足长期均值比率成立条件，不能使用平均逐轮速度比",
+        "α>c的存在性阈值只适用于v=1,o=0的理想模型；真实v/o、树形及并发负载须另测"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "latency"
+          ]
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "infra.flashinfer-scheduling",
+      "version": 1,
+      "sha256": "b2c5115a588c93b3bce8e56986069415fe37569aa887e25ee6cd2a8f425d5770",
+      "title": "FlashInfer：不规则 KV 与负载平衡",
+      "summary": "MLSys 2025 以可组合 KV 格式、JIT 与调度支持不同推理形状；库选择必须匹配 KV 布局、decode/prefill 和计划成本。",
+      "status": "published",
+      "assumptions": [
+        "hardware: A100 40GB SXM or H100 80GB SXM",
+        "workload: ragged/batched LLM inference",
+        "metric: attention latency and end-to-end serving"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#infra.flashinfer-scheduling"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "latency"
+          ]
+        }
+      ],
+      "score": 1
+    },
+    {
+      "id": "infra.pagedattention-kv",
+      "version": 1,
+      "sha256": "c722bfee22d00e0e8d2469cca633a9bb6735001381ae129f1c1958d4a9803c1f",
+      "title": "PagedAttention：KV 分页与服务吞吐",
+      "summary": "SOSP 2023 的 vLLM 实验支持用按需分页和共享 KV 减少服务内存浪费；收益来自内存管理与调度的组合。",
+      "status": "published",
+      "assumptions": [
+        "hardware: A100",
+        "models: OPT and LLaMA-13B",
+        "workload: ShareGPT/Alpaca length traces with Poisson arrivals",
+        "metric: normalized end-to-end latency versus request rate"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#infra.pagedattention-kv"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "latency"
+          ]
+        }
+      ],
+      "score": 1
+    }
+  ]
+}
