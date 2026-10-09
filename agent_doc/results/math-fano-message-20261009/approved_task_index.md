@@ -2,7 +2,6 @@
 
 ## 2026-10-09
 
-- [x] [COMM-CONFIRM-01] 自适应收件箱固定31组配对复验，保留旧负结果与原阈值。 ([detail](task_details/COMM-CONFIRM-01.md))
 - [x] [COMM20-01] 用户触发连续20轮通信优化，逐轮独立验收、有收益才采用。 ([detail](task_details/COMM20-01.md))
 
 - [x] [COMM-ORDER-01] 保持通信顺序的有界待办查询，测量/独立验收后直接main。 ([detail](task_details/COMM-ORDER-01.md))
@@ -325,4 +324,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [MATH-62] 切换更新的共同度量与驻留边界 ([详情](task_details/MATH-62.md))
 
-- [x] [MATH-63] 有限消息容量与条件分类错误下界 ([详情](task_details/MATH-63.md))
+- [ ] [MATH-63] 有限消息容量与条件分类错误下界 ([详情](task_details/MATH-63.md))

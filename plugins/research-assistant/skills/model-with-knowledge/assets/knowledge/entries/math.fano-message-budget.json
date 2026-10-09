@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "id": "math.fano-message-budget",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "条件 Fano 与有限消息辨别容量",
+  "summary": "有限标签任务的消息字母容量限制辨别成功率；条件熵与错误概率给必要界。旁信息、长度及检索输出须计入观察，不能由 token 数推断任务质量。",
+  "aliases": [
+    "有限 消息 数量 分类 错误 上限",
+    "分片 路由 标签 两种 消息",
+    "变长 编码 旁信息 拒绝 bit",
+    "conditional Fano finite message cardinality classification converse"
+  ],
+  "domains": [
+    "information-theory",
+    "statistics",
+    "agent-memory"
+  ],
+  "structures": [
+    "finite-message-alphabet",
+    "classification-converse",
+    "side-information",
+    "lossy-compression",
+    "enumeration-preservation"
+  ],
+  "assumptions": [
+    "Y∈{1,…,M}, M≥2；所有熵与互信息用 log2；M=1单独处理",
+    "接收者只观察T,Z；随机解码独立于Y给定T,Z，否则相关随机性计入Z",
+    "每个给定Z的合法消息支持数至多C；先验及旁信息分布明确",
+    "固定B-bit/固定n-token格式才直接给2^B/V^n消息界；变长、时间、检索和工具输出另计"
+  ],
+  "sources": [
+    {
+      "url": "https://web.stanford.edu/class/stats311/lecture-notes.pdf",
+      "locator": "John Duchi, Lecture Notes on Statistics and Information Theory, December 6 2023, §2.3.2 Proposition 2.3.3, eq(2.3.1), printed pp31–32; convert all entropy terms consistently to bits",
+      "accessed": "2026-10-09"
+    },
+    {
+      "url": "https://tselab.stanford.edu/mirror/ee376a_winter1617/Lecture_10.pdf",
+      "locator": "David Tse, EE/Stats376A Winter2017, Lecture10, February9, Theorem1, printed p10-1, weak Fano form",
+      "accessed": "2026-10-09"
+    },
+    {
+      "url": "https://arxiv.org/abs/2609.37590v1",
+      "locator": "Dixit, Bastos, Zhang, Bansal, Rajmohan, FOCUS: Training-Free Decision-Preserving Context Compression for LLM Agents, submitted 2026-09-29 13:45:34 UTC, v1; abstract says Preprint. Under Review; selective HTML §4.1–4.4, A.2,A.8–A.10",
+      "accessed": "2026-10-09"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "agent_doc/results/math-fano-message-20261009/verify.py",
+      "agent_doc/results/math-fano-message-20261009/raw.json",
+      "agent_doc/results/math-fano-message-20261009/retrieval.json"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.data-processing-task-sufficiency",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.softmax-barycenter-error"
+    }
+  ]
+}
