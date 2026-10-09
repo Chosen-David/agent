@@ -1,0 +1,431 @@
+{
+  "project_root": "C:\\Users\\WI\\Desktop\\home_work\\AI_LLM\\agent",
+  "contract": {
+    "schema_version": "codex-skill-scope/v1",
+    "requirements_complete": true,
+    "required_skill_paths": [
+      "C:\\Users\\WI\\.agents\\skills\\research-implement-optimize\\SKILL.md",
+      "C:\\Users\\WI\\.agents\\skills\\code-reading\\SKILL.md",
+      "C:\\Users\\WI\\.agents\\skills\\model-with-knowledge\\SKILL.md",
+      "C:\\Users\\WI\\.agents\\skills\\code-organization\\SKILL.md",
+      "C:\\Users\\WI\\.codex\\skills\\.system\\openai-docs\\SKILL.md"
+    ],
+    "excluded_skill_paths": [
+      "C:\\Users\\WI\\.agents\\skills\\explain-research-concepts\\SKILL.md",
+      "C:\\Users\\WI\\.agents\\skills\\paper-reading-companion\\SKILL.md",
+      "C:\\Users\\WI\\.agents\\skills\\research-assistant\\SKILL.md",
+      "C:\\Users\\WI\\.agents\\skills\\research-data-visualization\\SKILL.md",
+      "C:\\Users\\WI\\.agents\\skills\\research-diagrams\\SKILL.md",
+      "C:\\Users\\WI\\.agents\\skills\\research-explore\\SKILL.md",
+      "C:\\Users\\WI\\.agents\\skills\\research-figures\\SKILL.md",
+      "C:\\Users\\WI\\.agents\\skills\\research-read-pdf\\SKILL.md",
+      "C:\\Users\\WI\\.agents\\skills\\research-review\\SKILL.md",
+      "C:\\Users\\WI\\.agents\\skills\\research-write\\SKILL.md",
+      "C:\\Users\\WI\\.agents\\skills\\travel-planner\\SKILL.md"
+    ]
+  },
+  "catalog": {
+    "cwd": "C:\\Users\\WI\\Desktop\\home_work\\AI_LLM\\agent",
+    "skills": [
+      {
+        "name": "browser:control-in-app-browser",
+        "description": "Control the in-app Browser for opening, navigating, inspecting visible or interactive page state, clicking, typing, screenshots, and local web testing. It can have existing signed-in sessions. For semantic operations on linked resources, prefer a purpose-built connector, API, or CLI when available.",
+        "interface": {
+          "displayName": "Browser",
+          "shortDescription": "Browser lets ChatGPT open and control the in-app browser, mainly for local development pages and files. Use it to navigate, inspect, click, type, and take screenshots while testing pages inside ChatGPT.",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "Inspect the current in-app browser tab or open a local app in the in-app browser and verify it."
+        },
+        "path": "C:\\Users\\WI\\.codex\\plugins\\cache\\openai-bundled\\browser\\26.928.31416\\skills\\control-in-app-browser\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": "browser@openai-bundled"
+      },
+      {
+        "name": "code-organization",
+        "description": "管理项目文件并组织代码仓库。用于文件散落、跨 Agent 产物交接、任务开始前规划输出目录、逐任务文件登记、轮次收官和 CODEMAP 维护。以项目 agent_doc/task/TASK.md 为唯一任务入口，协助主 AI 协调生产者与消费者，核对引用/版本/数据归属；保护运行中路径，不自动删除文件。",
+        "path": "C:\\Users\\WI\\.agents\\skills\\code-organization\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "code-reading",
+        "description": "只读理解代码库、追踪真实调用链与数据流，核查报告机制和默认/可选配置；以 commit、函数、行号交付证据。适用于代码解释与实现前核查，不自动修改目标。用户授权的审查轮次按升级路径执行：先查回信，再审最新本地代码找 bug（有则写 advice），无 bug 时探测数据结构/算法/AI 算法的 CPU/GPU 性能优化点，本地实测确认真实改进才写 advice，都没有则零输出不提交。",
+        "interface": {
+          "displayName": "代码阅读与机制核查",
+          "shortDescription": "只读追踪调用与数据流，核查默认配置并定位源码证据",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $code-reading 分析指定代码与机制，区分静态推断和运行证据。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\code-reading\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "computer-use:computer-use",
+        "description": "Control Windows apps from ChatGPT",
+        "path": "C:\\Users\\WI\\.codex\\plugins\\cache\\openai-bundled\\computer-use\\26.928.31416\\skills\\computer-use\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": "computer-use@openai-bundled"
+      },
+      {
+        "name": "explain-research-concepts",
+        "description": "解释论文或技术学习中的概念、公式、图表与机制，联网核查权威来源，用小例子、精确推导并按需调用作图角色生成网页会话图解。用于知识问答和论文伴读，不编造原文细节、引文或实验结果。",
+        "interface": {
+          "displayName": "科研知识点讲解",
+          "shortDescription": "核查概念与例子，按需调用作图角色，在网页会话中渐进图解",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $explain-research-concepts 解释这个知识点，核验来源、给出小例子，需要时调用作图角色逐步图解。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\explain-research-concepts\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "model-with-knowledge",
+        "description": "按问题结构检索数学/物理、AI Infra、AI算法与跨物种神经科学研究，以及固定版本数据结构/算法实现。用于建模、采样分布校正、算法成本条件、实验前决策、仿生AI假设筛选与代码复用；核对来源、前提与迁移限制，不以文献替代必做验证。",
+        "interface": {
+          "displayName": "知识建模与推导",
+          "shortDescription": "从实际问题建立模型，检索基础知识并核对前提、推导与验证",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $model-with-knowledge 建模当前问题，检索相关知识，核对适用条件并验证结论。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\model-with-knowledge\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "paper-reading-companion",
+        "description": "陪用户阅读具体论文 PDF 或链接，定位英文原页、段落、公式和图表，维护阅读状态并衔接知识点解释；支持生成原页与解释并排的离线 HTML。用于边读边问，不等同投稿审稿或全页质量检查。",
+        "interface": {
+          "displayName": "论文伴读",
+          "shortDescription": "陪你阅读英文论文原文，逐页定位问题并衔接有证据的知识图解",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $paper-reading-companion 帮我阅读这份论文并解释当前问题。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\paper-reading-companion\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "research-assistant",
+        "description": "协调科研项目从 Idea、实验到论文修订。用于需要跨研究探索、实现优化、作图、写作和审读协作的任务，或用户明确调用科研助手时；单一专业任务优先对应技能，不用于无关日常问答。",
+        "interface": {
+          "displayName": "科研助手",
+          "shortDescription": "按项目阶段协调科研探索、代码优化、作图写作和双重审阅闭环",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $research-assistant 推进我的科研项目，按当前材料选择流程并交付可核验结果。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\research-assistant\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "research-data-visualization",
+        "description": "将真实研究数据、可追溯汇总表、仿真输出或明确公式绘制成美观且数值忠实的论文图。用于图型选择、统计图、准确曲线与已有数据图精修；不负责流程架构示意或凭空造结果。",
+        "interface": {
+          "displayName": "论文数据可视化",
+          "shortDescription": "真实论文数据的主动美学设计、可复现绘图与数值保真和视觉验收",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $research-data-visualization 将我的研究数据绘成美观、准确、可复现的论文图。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\research-data-visualization\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "research-diagrams",
+        "description": "根据方法、论文、代码或已确认关系绘制精美准确的流程图、架构图、机制与理论示意。保留节点箭头语义和可编辑源；不负责真实统计结果图或虚构方法结构。",
+        "interface": {
+          "displayName": "科研流程与架构图",
+          "shortDescription": "精美流程与架构示意、准确节点箭头语义、可编辑图源和视觉验收",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $research-diagrams 根据我的方法与代码绘制精美、语义准确的流程或架构图。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\research-diagrams\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "research-explore",
+        "description": "研究选题、Idea 查新与可行性探索：检索原始文献、挑战机制与替代解释，形成可证伪假设、最小判别实验和任务链。用于新方向、研究假设或负结果分析，不把计划写成已验证结论。",
+        "interface": {
+          "displayName": "科研探索",
+          "shortDescription": "基于原始文献与反证组织研究假设、最小判别实验和可执行任务",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $research-explore 分析我的研究 Idea，查找相关工作并给出最小验证实验。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\research-explore\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "research-figures",
+        "description": "兼容论文作图入口：按证据与表达目的路由到论文数据可视化或流程架构图；负责全篇图规划、混合多面板整合和知识解释方调用的网页教学图。单一数据图或示意图优先专业技能。",
+        "interface": {
+          "displayName": "论文作图协调",
+          "shortDescription": "协调论文与教学图，按证据路由专业角色并完成图文对应验收",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $research-figures 根据我的论文材料选择专业作图路线，统一设计并完成混合图。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\research-figures\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "research-implement-optimize",
+        "description": "端到端代码实现与性能优化，适用于算法或系统实现、CPU/GPU kernel、profiling 和高性能改造。调研先进解法、算法与 LeetCode 模式，比较时空复杂度和成熟库，按实际硬件选择 PTX/CPU 原语并实测；不把纯概念问答扩成优化项目。",
+        "interface": {
+          "displayName": "代码实现与优化",
+          "shortDescription": "比较先进算法与数据结构，按 CPU/GPU 硬件完成实现和实测优化",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $research-implement-optimize 实现并优化这个任务，比较先进解法并提供正确性与性能证据。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\research-implement-optimize\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "research-read-pdf",
+        "description": "从读者角度逐页查看最终论文 PDF 的渲染图片，检查乱码、重叠、图表含义、符号和叙事理解，提供全页覆盖记录与疑点任务链。用于论文最终 PDF 视觉审读，不以文本提取或缩略图代替逐页阅读。",
+        "interface": {
+          "displayName": "论文逐页读者",
+          "shortDescription": "逐页查看最终 PDF 图片，定位生成缺陷、图文问题和理解障碍",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $research-read-pdf 逐页阅读这个最终 PDF，检查乱码、图表与叙事并生成核验任务。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\research-read-pdf\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "research-review",
+        "description": "按实际顶会或期刊标准审阅论文贡献、正确性、方法与证据，输出定位明确的意见和核验修订复查任务链。用于科学审稿、投稿前自查及审稿复查；最终 PDF 版面逐页检查使用 research-read-pdf。",
+        "interface": {
+          "displayName": "论文审稿",
+          "shortDescription": "按目标会议标准审阅贡献与证据，组织主 AI 核验修订复查任务",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $research-review 按目标会议标准审阅这篇论文，将意见整理成可核验任务链。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\research-review\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "research-write",
+        "description": "根据研究证据写作、重构和修订论文，优先具体模板，核验引用并组织图文与 PDF 构建。用于完整论文或章节写作、改投与 revision；证据不足输出工作稿和缺口，不编造结果。",
+        "interface": {
+          "displayName": "论文写作",
+          "shortDescription": "依照指定模板与研究证据完成论文、核验引用并衔接构建审读",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $research-write 按给定模板和真实研究材料完成论文，并核验图文与引用。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\research-write\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "travel-planner",
+        "description": "根据日期、目的地、酒店或集合点、预算与指定活动规划旅行，核查天气、营业和交通，维护行程并按需输出Word等文档。用于旅游、约会、运动出游、住宿区域建议和行中改计划；单点查询直接回答，不擅自预订或付款。",
+        "interface": {
+          "displayName": "旅游规划",
+          "shortDescription": "结合酒店位置、指定活动、天气与营业时间安排旅行并交付可核查的行程文档",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "使用 $travel-planner 根据我的日期、目的地和活动偏好安排旅行，并生成 Word 行程。"
+        },
+        "path": "C:\\Users\\WI\\.agents\\skills\\travel-planner\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "visualize:visualize",
+        "description": "Create visualizations and interactive tools directly in conversation. Proactively use to show how something works; explore 'what happens when', 'what changes', or 'help me understand'; compare or inspect; create simulations, maps, charts, graphs, and mockups. Use standard tools for static scientific figures.",
+        "interface": {
+          "displayName": "Visualize",
+          "shortDescription": "Turn ideas and data into interactive visuals",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "Use $visualize to create an interactive visual when a chart, map, diagram, simulation, 3D model, data explorer, or UI preview would make the result easier to understand or adjust."
+        },
+        "path": "C:\\Users\\WI\\.codex\\plugins\\cache\\openai-bundled\\visualize\\1.0.45\\skills\\visualize\\SKILL.md",
+        "scope": "user",
+        "enabled": true,
+        "pluginId": "visualize@openai-bundled"
+      },
+      {
+        "name": "imagegen",
+        "description": "Generate or edit raster images when the task benefits from AI-created bitmap visuals such as photos, illustrations, textures, sprites, mockups, or transparent-background cutouts. Use when Codex should create a brand-new image, transform an existing image, or derive visual variants from references, and the output should be a bitmap asset rather than repo-native code or vector. Do not use when the task is better handled by editing existing SVG/vector/code-native assets, extending an established icon or logo system, or building the visual directly in HTML/CSS/canvas.",
+        "interface": {
+          "displayName": "Image Gen",
+          "shortDescription": "Generate or edit images for websites, games, and more",
+          "iconSmall": "C:\\Users\\WI\\.codex\\skills\\.system\\imagegen\\assets\\imagegen-small.svg",
+          "iconLarge": "C:\\Users\\WI\\.codex\\skills\\.system\\imagegen\\assets\\imagegen.png",
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "Use $imagegen to make or edit an image for this project."
+        },
+        "path": "C:\\Users\\WI\\.codex\\skills\\.system\\imagegen\\SKILL.md",
+        "scope": "system",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "openai-docs",
+        "description": "Use for Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, customization, automations, and self-knowledge—including 'you,' 'your,' 'this app,' or 'this coding agent' when they refer to Codex—and for OpenAI APIs/products and ChatGPT Work. Also use for model choice/migration, prompting, SDKs, Responses, Realtime, agents, evals, and Chat/Work/Codex comparisons. Do not use for generic app/software tasks that merely mention Codex.",
+        "shortDescription": "Codex models/pricing, scheduled tasks, skills, settings, setup, troubleshooting, and self-knowledge; OpenAI APIs and ChatGPT Work. 'You'/'this app' means Codex only.",
+        "interface": {
+          "displayName": "OpenAI Docs",
+          "shortDescription": "OpenAI and Codex docs for models, skills, tasks, and setup",
+          "iconSmall": "C:\\Users\\WI\\.codex\\skills\\.system\\openai-docs\\assets\\openai-small.svg",
+          "iconLarge": "C:\\Users\\WI\\.codex\\skills\\.system\\openai-docs\\assets\\openai.png",
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "Use OpenAI Docs for official docs lookup, questions about Codex itself or Codex surfaces, model selection, model migration, and prompt-upgrade work."
+        },
+        "path": "C:\\Users\\WI\\.codex\\skills\\.system\\openai-docs\\SKILL.md",
+        "scope": "system",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "review-agent",
+        "description": "Perform a read-only, defect-first review of a specified code change and return every actionable finding. Use when another agent delegates review of uncommitted changes, a base-branch diff, a commit, or custom review instructions.",
+        "interface": {
+          "displayName": "Review Agent",
+          "shortDescription": "Find actionable bugs in code changes",
+          "iconSmall": null,
+          "iconLarge": null,
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": "Use $review-agent to review the requested code changes and return actionable findings."
+        },
+        "path": "C:\\Users\\WI\\.codex\\skills\\.system\\review-agent\\SKILL.md",
+        "scope": "system",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "skill-creator",
+        "description": "Create or update a Codex skill with appropriately scoped instructions and any needed supporting resources.",
+        "shortDescription": "Create or update a skill",
+        "interface": {
+          "displayName": "Skill Creator",
+          "shortDescription": "Create or update a skill",
+          "iconSmall": "C:\\Users\\WI\\.codex\\skills\\.system\\skill-creator\\assets\\skill-creator-small.svg",
+          "iconLarge": "C:\\Users\\WI\\.codex\\skills\\.system\\skill-creator\\assets\\skill-creator.png",
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": null
+        },
+        "path": "C:\\Users\\WI\\.codex\\skills\\.system\\skill-creator\\SKILL.md",
+        "scope": "system",
+        "enabled": true,
+        "pluginId": null
+      },
+      {
+        "name": "skill-installer",
+        "description": "Install Codex skills into $CODEX_HOME/skills from a curated list or a GitHub repo path. Use when a user asks to list installable skills, install a curated skill, or install a skill from another repo (including private repos).",
+        "shortDescription": "Install curated skills from openai/skills or other repos",
+        "interface": {
+          "displayName": "Skill Installer",
+          "shortDescription": "Install curated skills from openai/skills or other repos",
+          "iconSmall": "C:\\Users\\WI\\.codex\\skills\\.system\\skill-installer\\assets\\skill-installer-small.svg",
+          "iconLarge": "C:\\Users\\WI\\.codex\\skills\\.system\\skill-installer\\assets\\skill-installer.png",
+          "iconSmallUrl": null,
+          "iconLargeUrl": null,
+          "brandColor": null,
+          "defaultPrompt": null
+        },
+        "path": "C:\\Users\\WI\\.codex\\skills\\.system\\skill-installer\\SKILL.md",
+        "scope": "system",
+        "enabled": true,
+        "pluginId": null
+      }
+    ],
+    "errors": []
+  },
+  "current_skills_config": []
+}

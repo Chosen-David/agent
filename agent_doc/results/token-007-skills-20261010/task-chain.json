@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-007-probe",
+      "owner": "native-skill-probe",
+      "action": "short_model_probe",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-007-skills-20261010",
+        "producer_task_id": "TOK-007-probe",
+        "producer_actor": "native-skill-probe",
+        "manifest_path": "agent_doc/results/token-007-skills-20261010/manifest.json",
+        "scope": "one short closed synthetic interpretation task; explicit skill exposure only, actual native catalog delta required",
+        "validation_plan": {
+          "path": "agent_doc/results/token-007-skills-20261010/validation-plan.json",
+          "sha256": "de6f33c10c4344c60a9ca853dd8e752582ce6595e1bf13dc5e8915d2553c9ca9"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-007-verify",
+      "owner": "host-skill-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-007-probe"
+      ],
+      "result_validation": {
+        "result_id": "token-007-skills-20261010",
+        "producer_task_id": "TOK-007-probe",
+        "producer_actor": "native-skill-probe",
+        "manifest_path": "agent_doc/results/token-007-skills-20261010/manifest.json",
+        "scope": "one short closed synthetic interpretation task; explicit skill exposure only, actual native catalog delta required",
+        "validation_plan": {
+          "path": "agent_doc/results/token-007-skills-20261010/validation-plan.json",
+          "sha256": "de6f33c10c4344c60a9ca853dd8e752582ce6595e1bf13dc5e8915d2553c9ca9"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-007-publish",
+      "owner": "main-ai",
+      "action": "publish_verified_improvement",
+      "depends_on": [
+        "TOK-007-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-007-skills-20261010",
+          "producer_task_id": "TOK-007-probe",
+          "producer_actor": "native-skill-probe",
+          "manifest_path": "agent_doc/results/token-007-skills-20261010/manifest.json",
+          "scope": "one short closed synthetic interpretation task; explicit skill exposure only, actual native catalog delta required",
+          "validation_plan": {
+            "path": "agent_doc/results/token-007-skills-20261010/validation-plan.json",
+            "sha256": "de6f33c10c4344c60a9ca853dd8e752582ce6595e1bf13dc5e8915d2553c9ca9"
+          }
+        }
+      ]
+    }
+  ]
+}

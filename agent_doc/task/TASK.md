@@ -2,6 +2,8 @@
 
 ## 2026-10-10
 
+- [ ] [TOK-007] Explicit task skill exclusions: prototype and boundary checks; actual native savings and independent acceptance pending. ([detail](task_details/TOK-007.md))
+
 - [x] [TOK-006] Character-splice short trial costs 246 more total tokens; negative preserved, not counted; line variant follows. ([detail](task_details/TOK-006.md))
 - [x] [TOK-006-L] Complete-line comparison accepted and main verified; total -148 tokens in one short pair, upgrade 6/100; character-splice negative retained. ([detail](task_details/TOK-006-L.md))
 - [x] [TOK-005] Explicit task-local inbox passed short real provider/quality checks and verified main; success target 5/100. ([detail](task_details/TOK-005.md))
