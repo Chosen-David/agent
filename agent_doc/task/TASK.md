@@ -294,4 +294,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-09 论文技能链接兼容
 
-- [ ] [PAPER-LINK-20261009-01] 七处章节链接最小文档兼容修复，独立验证与发布待完成。 ([detail](task_details/PAPER-LINK-20261009-01.md))
+- [ ] [PAPER-LINK-20261009-01] 七处章节链接修复已独立验收并推送main；CI查询Forbidden待核实。 ([detail](task_details/PAPER-LINK-20261009-01.md))
