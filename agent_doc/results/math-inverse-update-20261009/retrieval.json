@@ -1,0 +1,1335 @@
+{
+  "scope": "Public structural checks only",
+  "snapshot": "f7025f3817e6fdc2899d373021b1625dada56725c3f4f960360b7d2dd1c5fa3e",
+  "protocol_sha256": "98f3e932ebc120ff23b0b2ab37da54e3d5ab026b44296dbbf8db8a177070a5e3",
+  "load_seconds": 0.029217748990049586,
+  "index_build_seconds": 0.14227940599084832,
+  "records": [
+    {
+      "backend": "files-lexical-v1",
+      "case": "R1",
+      "query": "矩阵 添加 少量 观测 逆 更新",
+      "actual": [
+        "math.low-rank-inverse-update",
+        "math.frank-wolfe-output-solver",
+        "math.matrix-function-jordan-calculus"
+      ],
+      "hit": true,
+      "seconds": 0.016644342002109624,
+      "chars": 2538,
+      "bytes": 3504,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "f7025f3817e6fdc2899d373021b1625dada56725c3f4f960360b7d2dd1c5fa3e",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.low-rank-inverse-update",
+            "version": 1,
+            "sha256": "fbaf3c9e5191feb0b59b298cf348fc90ef66d40b6c21aa47e083a11d977c01a0",
+            "title": "低秩逆更新、正定删除与浮点相消边界",
+            "summary": "可逆A的低秩更新由小系统S=I+V^TA^-1U判可逆；正定删除需u^TA^-1u<1。精确恒等式不保证浮点稳定，完整残差仍需核验。",
+            "status": "published",
+            "assumptions": [
+              "实A为n×n可逆矩阵，U,V为n×k，S=I_k+V^TA^-1U；B可逆等价于S可逆，不要求因子满列秩。",
+              "rank-one公式需beta=1+v^TA^-1u非零；SPD判据另需A实对称正定，正负更新为uu^T。",
+              "精确实数恒等式与实际浮点算法分开；IEEE binary64反例限定Python记录的运算顺序。",
+              "在线ridge仅是未归一化Gram λI+Σx_ix_i^T，λ>0；回归rhs须一起更新，不能套用到含均值/归一化变化的原始协方差删除。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-inverse-update-20261009：10公开精确/实际binary64边界与独立审核；非形式化、非通用稳定/模型收益证明。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "更新"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "少量",
+                  "更新",
+                  "添加",
+                  "矩阵",
+                  "观测",
+                  "逆"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "更新"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "少量",
+                  "更新",
+                  "添加",
+                  "矩阵"
+                ]
+              }
+            ],
+            "score": 42
+          },
+          {
+            "id": "math.frank-wolfe-output-solver",
+            "version": 1,
+            "sha256": "90ccb92febf95e295600b4c33841f746e67541016cf440606642da83e5205ff5",
+            "title": "固定凸输出的逐步非负重赋权、迭代界与停止证书",
+            "summary": "完整残差oracle与可行simplex更新给固定平方输出FW递推、O(1/t)目标误差及gap停止；schedule不保证单调，部分max不认证。",
+            "status": "published",
+            "assumptions": [
+              "非空有限固定v_i、已知固定z，f=1/2||y−z||²，C=conv(v)，β≥0且Σβ=1。",
+              "精确oracle遍历全部定义C的点；近似oracle须认证加性缺口η，未控η不套无误差rate。",
+              "schedule gamma=2/(t+2),t从0；或精确[0,1]线搜索；gap停止只界距最优，非绝对输出误差。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-frank-wolfe-20261009：公开Fraction轨迹、检索与独立验收；非形式化/非模型GPU。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "添加"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "更新"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "更新",
+                  "添加",
+                  "矩阵"
+                ]
+              }
+            ],
+            "score": 11
+          },
+          {
+            "id": "math.matrix-function-jordan-calculus",
+            "version": 1,
+            "sha256": "8d0aad81af2b3408f16e15d19b342aaaa2664d6e220d66c00e4a6db2344e9d92",
+            "title": "矩阵函数、Hermite 插值与缺陷谱",
+            "summary": "f(J)=Σ_{k=0}^{m−1} f^{(k)}(λ) N^k/k!。",
+            "status": "published",
+            "assumptions": [
+              "f 在谱附近解析；每个 Jordan 块 J=λI+N，N^m=0。有理函数分母在谱上非零。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文逐项来源/证明核查；非 Lean 形式化证明",
+                "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "矩阵"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "矩阵"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "矩阵"
+                ]
+              }
+            ],
+            "score": 11
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R2",
+      "query": "传感器 协方差 删除 样本 正定",
+      "actual": [
+        "math.low-rank-inverse-update",
+        "math.centered-covariance-merge",
+        "math.singular-support-bilinear-low-rank"
+      ],
+      "hit": true,
+      "seconds": 0.016658252003253438,
+      "chars": 2954,
+      "bytes": 4411,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "f7025f3817e6fdc2899d373021b1625dada56725c3f4f960360b7d2dd1c5fa3e",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.low-rank-inverse-update",
+            "version": 1,
+            "sha256": "fbaf3c9e5191feb0b59b298cf348fc90ef66d40b6c21aa47e083a11d977c01a0",
+            "title": "低秩逆更新、正定删除与浮点相消边界",
+            "summary": "可逆A的低秩更新由小系统S=I+V^TA^-1U判可逆；正定删除需u^TA^-1u<1。精确恒等式不保证浮点稳定，完整残差仍需核验。",
+            "status": "published",
+            "assumptions": [
+              "实A为n×n可逆矩阵，U,V为n×k，S=I_k+V^TA^-1U；B可逆等价于S可逆，不要求因子满列秩。",
+              "rank-one公式需beta=1+v^TA^-1u非零；SPD判据另需A实对称正定，正负更新为uu^T。",
+              "精确实数恒等式与实际浮点算法分开；IEEE binary64反例限定Python记录的运算顺序。",
+              "在线ridge仅是未归一化Gram λI+Σx_ix_i^T，λ>0；回归rhs须一起更新，不能套用到含均值/归一化变化的原始协方差删除。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-inverse-update-20261009：10公开精确/实际binary64边界与独立审核；非形式化、非通用稳定/模型收益证明。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "删除",
+                  "正定"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "传感",
+                  "删除",
+                  "协方",
+                  "感器",
+                  "方差",
+                  "样本",
+                  "正定"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "删除",
+                  "正定"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传感",
+                  "删除",
+                  "协方",
+                  "感器",
+                  "方差",
+                  "正定"
+                ]
+              }
+            ],
+            "score": 57
+          },
+          {
+            "id": "math.centered-covariance-merge",
+            "version": 1,
+            "sha256": "f9ebd428b6fd9f78ac667a6a2419e277c5d8ca1731d3e5357b25a9a62f7a9b28",
+            "title": "中心化协方差、可合并散布统计量与误差桥",
+            "summary": "区分二阶矩与中心协方差；按计数/均值/散布精确合并，避免遗漏组间项；统计保证与浮点稳定性分别审查。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量，同维度/坐标/单位和相同预处理；精确恒等式不要求iid",
+              "A、B为不重复不遗漏的数据分区，计数为非负整数；空分区用单位元，不定义空均值",
+              "C_n=S/n对n≥1；S/(n−1)只对n≥2，称总体协方差无偏还需iid及有限二阶矩",
+              "概率误差桥需已证明的均值和二阶矩误差事件；合并公式不赋予独立性或覆盖保证",
+              "浮点不具有严格结合律；需单独检查输入精度、溢出、抵消及舍入误差"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-centering/verify.py",
+                "docs/knowledge_learning/2026-10-07-centering/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "协方",
+                  "方差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "协方",
+                  "方差"
+                ]
+              },
+              {
+                "field": "structures",
+                "terms": [
+                  "协方",
+                  "方差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "协方",
+                  "方差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传感",
+                  "协方",
+                  "感器",
+                  "方差",
+                  "样本"
+                ]
+              }
+            ],
+            "score": 39
+          },
+          {
+            "id": "math.singular-support-bilinear-low-rank",
+            "version": 1,
+            "sha256": "60301c861c559bba11a030e7fe98e8a789ede04777b62cadad8cdfa5b5b79cd2",
+            "title": "奇异支持下的双线性低秩分数近似",
+            "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+              "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+              "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文条件式推导；非Lean形式化证明",
+                "agent_doc/results/math-singular-bilinear-20261008-v2/validate.py、raw.json：公开有限CPU检查；旧数值范围失败保存，v2独立回执另存；有限输出不保证任意病态尺度精度"
+              ]
+            },
+            "matches": [
+              {
+                "field": "aliases",
+                "terms": [
+                  "传感",
+                  "协方",
+                  "感器",
+                  "方差",
+                  "样本"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "样本"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "传感",
+                  "协方",
+                  "感器",
+                  "方差",
+                  "样本",
+                  "正定"
+                ]
+              }
+            ],
+            "score": 34
+          }
+        ]
+      }
+    },
+    {
+      "backend": "files-lexical-v1",
+      "case": "R3",
+      "query": "公式 正确 浮点 相消 残差",
+      "actual": [
+        "math.low-rank-inverse-update",
+        "math.floating-dot-enclosure",
+        "math.residual-interval-screening"
+      ],
+      "hit": true,
+      "seconds": 0.016009232989745215,
+      "chars": 3249,
+      "bytes": 4626,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "f7025f3817e6fdc2899d373021b1625dada56725c3f4f960360b7d2dd1c5fa3e",
+        "backend": "files-lexical-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.low-rank-inverse-update",
+            "version": 1,
+            "sha256": "fbaf3c9e5191feb0b59b298cf348fc90ef66d40b6c21aa47e083a11d977c01a0",
+            "title": "低秩逆更新、正定删除与浮点相消边界",
+            "summary": "可逆A的低秩更新由小系统S=I+V^TA^-1U判可逆；正定删除需u^TA^-1u<1。精确恒等式不保证浮点稳定，完整残差仍需核验。",
+            "status": "published",
+            "assumptions": [
+              "实A为n×n可逆矩阵，U,V为n×k，S=I_k+V^TA^-1U；B可逆等价于S可逆，不要求因子满列秩。",
+              "rank-one公式需beta=1+v^TA^-1u非零；SPD判据另需A实对称正定，正负更新为uu^T。",
+              "精确实数恒等式与实际浮点算法分开；IEEE binary64反例限定Python记录的运算顺序。",
+              "在线ridge仅是未归一化Gram λI+Σx_ix_i^T，λ>0；回归rhs须一起更新，不能套用到含均值/归一化变化的原始协方差删除。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-inverse-update-20261009：10公开精确/实际binary64边界与独立审核；非形式化、非通用稳定/模型收益证明。"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "浮点",
+                  "相消"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "公式",
+                  "正确",
+                  "残差",
+                  "浮点",
+                  "相消"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "残差",
+                  "浮点"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "公式",
+                  "残差",
+                  "浮点",
+                  "相消"
+                ]
+              }
+            ],
+            "score": 45
+          },
+          {
+            "id": "math.floating-dot-enclosure",
+            "version": 1,
+            "sha256": "e800ad6e5dbd1be9aa2de66da0e06933cccb84c41419668ae0550f4407db1bbb",
+            "title": "浮点点积外包与严格安全筛除",
+            "summary": "对存储binary64点积逐运算向外扩展，核对正确舍入/渐进下溢；累计丢失小项、量化原始输入及GPU排序目标需区分，未知前提拒用。",
+            "status": "published",
+            "assumptions": [
+              "输入为有限存储binary64数，目标为其精确实数点积；量化前输入和实际GPU结果是其他目标",
+              "每个标量加乘正确RN舍入到同一binary64格式、邻接nextafter正确、渐进下溢，无FTZ/未知重排或低精度路径",
+              "每步结果及外包邻接端点有限；无法满足则无法认证并保留/回退，不按失败值剪枝",
+              "安全筛除有全部逐项包络，tau取第k大下界，删除仅限U_i<tau，重排目标/tie规则一致",
+              "坐标投影误差界仅适用显式选坐标；学习投影、理想RoPE、输入误差与GPUkernel偏差须另行认证"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Conditional induction proof and exact-rational public CPU data at agent_doc/results/math-rounding-20261008/; independent actual code/math/data acceptance required before publication",
+                "No Lean/formal proof, platform-wide arithmetic certification, GPU/model/quality/token performance experiment"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "浮点"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "浮点"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "正确"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "公式",
+                  "正确",
+                  "残差",
+                  "浮点"
+                ]
+              }
+            ],
+            "score": 17
+          },
+          {
+            "id": "math.residual-interval-screening",
+            "version": 1,
+            "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+            "title": "正交残差包络与安全候选筛除",
+            "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+              "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+              "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+              "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+                "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+              ]
+            },
+            "matches": [
+              {
+                "field": "title",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "aliases",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "summary",
+                "terms": [
+                  "残差"
+                ]
+              },
+              {
+                "field": "content",
+                "terms": [
+                  "正确",
+                  "残差",
+                  "浮点",
+                  "相消"
+                ]
+              }
+            ],
+            "score": 17
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R1",
+      "query": "矩阵 添加 少量 观测 逆 更新",
+      "actual": [
+        "math.low-rank-inverse-update",
+        "math.frank-wolfe-output-solver",
+        "math.krylov-minimal-polynomial"
+      ],
+      "hit": true,
+      "seconds": 0.005044182995334268,
+      "chars": 6199,
+      "bytes": 10260,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "f7025f3817e6fdc2899d373021b1625dada56725c3f4f960360b7d2dd1c5fa3e",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.low-rank-inverse-update",
+            "version": 1,
+            "sha256": "fbaf3c9e5191feb0b59b298cf348fc90ef66d40b6c21aa47e083a11d977c01a0",
+            "title": "低秩逆更新、正定删除与浮点相消边界",
+            "summary": "可逆A的低秩更新由小系统S=I+V^TA^-1U判可逆；正定删除需u^TA^-1u<1。精确恒等式不保证浮点稳定，完整残差仍需核验。",
+            "status": "published",
+            "assumptions": [
+              "实A为n×n可逆矩阵，U,V为n×k，S=I_k+V^TA^-1U；B可逆等价于S可逆，不要求因子满列秩。",
+              "rank-one公式需beta=1+v^TA^-1u非零；SPD判据另需A实对称正定，正负更新为uu^T。",
+              "精确实数恒等式与实际浮点算法分开；IEEE binary64反例限定Python记录的运算顺序。",
+              "在线ridge仅是未归一化Gram λI+Σx_ix_i^T，λ>0；回归rhs须一起更新，不能套用到含均值/归一化变化的原始协方差删除。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-inverse-update-20261009：10公开精确/实际binary64边界与独立审核；非形式化、非通用稳定/模型收益证明。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "可算正例、边界与误用",
+                "start_line": 21,
+                "end_line": 30,
+                "excerpt": "## 可算正例、边界与误用\n\n一般rank1：A=[[2,1],[0,3]],u=(1,2),v=(2,−1),b=(3,4)。β=2/3，B=[[4,0],[4,1]]，更新解=(3/4,1)，与直接消元一致。零U使S=I且逆不变。\n\n秩亏因子正例：A=I₂，U=V=[[1,1],[0,0]]，两因子均不满列秩，但S=[[2,1],[1,2]]可逆，B=diag(3,1)，公式仍成立。\n\nA=diag(0,1)，添加e₁e₁^T后B=I可逆，但A不可逆，拒用当前公式。A=I，u=e₁,v=−e₁时β=0，B奇异。SPD删除：A=diag(2,3),u=e₁时a=1/2，删除后diag(1,3)仍SPD；A=I,u=2e₁时a=4，B=diag(−3,1)可逆却不能作正定协方差。对称/正定前提不可因矩阵名字叫covariance而省略。\n\n**实际binary64相消反例（本项目构造与实测）**：标量A=1,b=v=1,u=2^54，B=1+2^54。A与真实B的2-范数条件数均1，精确β巨大而非接近0。按y=1,z=u,α=1,β=fl(1+u)=u,θ=α/β=2^{-54}，最终fl(y−zθ)=0。精确解1/(1+2^54)>0；真实残差1，η=1，前向相对误差1。非零β与良好条件数都未防止减去两个几乎相同量的实现错误。直接对已舍入B做标量除法得到2^{-54}是对照诊断，不是所有问题上直接求逆更稳定的证明。只证明本运算顺序的有限反例；GPU/FMA/其他顺序另测。\n\n"
+              },
+              {
+                "node": "s5",
+                "title": "问题结构与具体迁移",
+                "start_line": 31,
+                "end_line": 40,
+                "excerpt": "## 问题结构与具体迁移\n\n触发：旧线性系统已分解，新系统只添加/删除少量外积；先识别A、更新U/V、rhs、正定需求，再检索此卡及Schur前置。对象中的“低秩更新”与“数据集中在低秩子空间”是不同结构，不能互换。\n\n在线ridge严格映射：C=λI+Σx_ix_i^T、h=Σx_i y_i，λ>0。新增(x,y)给C_new=C+xx^T、h_new=h+xy；删除给相应负更新。添加保证SPD，删除须判a<1且真实数据/λ保持同一定义。示例C=diag(2,3),x=(1,2)，C_new=[[3,2],[2,7]]，inverse=[[7,−2],[−2,3]]/17。用于离线indexer校准或传感器回归的候选计算路径；保持Gram线性关系，不保持真实模型输出/轨迹、时间成本或子空间投影质量。中心化或归一化协方差变动不能只加xx^T，须额外处理均值/计数，见centered-covariance-merge。\n\n可证伪预测：精确有理算术下满足A/S可逆时更新解与直接消元一致；有真实SPD需求但a≥1时必须拒用该正定删除结论。浮点必须对真实更新算子验证残差；多次递推可累积误差，候选策略是残差门禁与必要重分解，阈值/频率不能凭本轮指定为生产最佳值。\n\n密集A已有LU分解、一般k下预处理成本约O(n²k+nk²+k³)，一次rhs含O(n²+nk+k²)；额外存储O(nk+k²)，不含原分解。k固定时可比重新密集分解的O(n³)低，但批处理、内存、稀疏结构、稳定性检查与硬件决定实际延迟。此为算法计数，不是本机或GPU加速证明。未部署生产实现。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.frank-wolfe-output-solver",
+            "version": 1,
+            "sha256": "90ccb92febf95e295600b4c33841f746e67541016cf440606642da83e5205ff5",
+            "title": "固定凸输出的逐步非负重赋权、迭代界与停止证书",
+            "summary": "完整残差oracle与可行simplex更新给固定平方输出FW递推、O(1/t)目标误差及gap停止；schedule不保证单调，部分max不认证。",
+            "status": "published",
+            "assumptions": [
+              "非空有限固定v_i、已知固定z，f=1/2||y−z||²，C=conv(v)，β≥0且Σβ=1。",
+              "精确oracle遍历全部定义C的点；近似oracle须认证加性缺口η，未控η不套无误差rate。",
+              "schedule gamma=2/(t+2),t从0；或精确[0,1]线搜索；gap停止只界距最优，非绝对输出误差。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-frank-wolfe-20261009：公开Fraction轨迹、检索与独立验收；非形式化/非模型GPU。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.048131080389144903,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "检索、迁移与成本",
+                "start_line": 39,
+                "end_line": 48,
+                "excerpt": "## 检索、迁移与成本\n\n结构触发：非负权重迭代拟合固定输出、混合配方逐步添加成分、候选部分最大残差假收敛。先核对固定对象/目标/单位、simplex可行性及全oracle，再使用ID和强前置`math.convex-projection-certificate@1`（包含`math.dual-certificates@1`）。\n\nIndexer严格映射：对固定query，z是dense teacher输出，v_i为固定选中原values，β是允许新权重。可离线比较初始softmax子集重归一化与迭代结果；达到gap≤ε才认证与此子集的最优误差相差≤2ε。保持value和非负归一结构，丢失跨query共享、softmax参数化、跨层非线性与运行开销；不是线上选择速度或e2e改善。若原权重不可改变，本求解器只给诊断基准。\n\n每步穷举oracle约O(np)点积，加O(p)输出更新；若显式更新全部权重需O(n)，稀疏支持可按其大小处理。取得z与n个value已经有成本；投影-free不等于读数据-free、token-free或GPU更快。完整支持太大时只能研究可认证近似oracle，不能靠漏点省成本并称gap已认证。配方/传感器平均是同一数学问题；协方差、负权回归等不是。\n\n最小可证伪检查：固定C/z下每步β合法；展开等式成立；全gap上界误差；与独立解析最优比较。实际模型实验需要同模型权限/预算、matched index维度和完整e2e输出对照，未测不接生产。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "对象与准确条件",
+                "start_line": 5,
+                "end_line": 18,
+                "excerpt": "## 对象与准确条件\n\n非空有限原点v_i∈R^p，固定已知z；C=conv{v_i}，f(y)=1/2||y−z||²，f*=min_C f，h_t=f(y_t)−f*。所有权重β_i≥0、Σβ=1，y_t=Σβ_i v_i。D=diam(C)=max_{i,j}||v_i−v_j||。量纲：f,h,g,D²均为输出单位平方，不能当token overlap或attention mass。\n\n精确oracle选j_t∈argmax_i (z−y_t)ᵀv_i，d_t=v_j−y_t，g_t=(z−y_t)ᵀd_t。完整max给g_t≥h_t≥0；g_t≤ε认证f(y_t)−f*≤ε，即平方误差距最优≤2ε，不表示绝对误差≤2ε（f*可能正）。\n\n更新y_{t+1}=y_t+γ_t d_t、β_{t+1}=(1−γ_t)β_t+γ_t e_j，0≤γ≤1保证可行。两种policy：固定schedule γ_t=2/(t+2)，t=0开始；精确线搜索 γ=clip(g_t/||d_t||²,0,1)，d=0时γ=0。\n\n对schedule和精确线搜索都有\n\n$$h_{t+1}\\le(1-\\bar\\gamma_t)h_t+\\tfrac12\\bar\\gamma_t^2D^2,\\quad\\bar\\gamma_t=\\frac2{t+2},\\qquad h_t\\le\\frac{2D^2}{t+2}\\ (t\\ge1).$$\n\n只有线搜索保证f每步不增，固定schedule可能上升。h_t的O(1/t)不等于最后一步g_t同样O(1/t)；必须实际计算gap，不能按次数误报停止。D=0时所有点相同、h=0，但绝对f可为正。从一个顶点初始化，t步最多t+1个正权点；一般m_0点初始化最多m_0+t，不保证最小支持。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.krylov-minimal-polynomial",
+            "version": 1,
+            "sha256": "f535738133829d3d6293a39591ac8b4b0f5212e70930c94b9035a4f1822490e4",
+            "title": "起点最小多项式与精确 Krylov 闭包",
+            "summary": "K_m=span(b,Ab,…,A^{m−1}b) 的维数 min(m,g)，K_g 为 A 不变子空间。",
+            "status": "published",
+            "assumptions": [
+              "A∈F^{n×n}，b≠0；μ_{A,b} 为使 p(A)b=0 的首一次数最小多项式，g=deg μ_{A,b}；闭包结论为精确算术。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文逐项来源/证明核查；非 Lean 形式化证明",
+                "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 5
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 6
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 4
+              }
+            ],
+            "score": 0.04616113053613054,
+            "sections": [
+              {
+                "node": "s8",
+                "title": "前置关系与来源版本",
+                "start_line": 23,
+                "end_line": 25,
+                "excerpt": "## 前置关系与来源版本\n基础前置：有限维空间、基、矩阵乘法和域算术；涉及内积的条目另需共轭转置/正定范数。本条在正文重述使用的基础结论，导航关联不要求一次加载整条课程。准确出处：[2nd ed 2003，§6.2，Propositions6.1/6.2/6.6，printed158–162/PDF178–182](https://www-users.cse.umn.edu/~saad/IterMethBook_2ndEd.pdf)。Axler 使用第四版、作者2026-08-16 PDF修订；Saad 使用第二版2003；Conrad未标日期的讲义以本轮PDF哈希固定；网页按标题日期与检索日期固定。PDF哈希/近期论文筛选见本轮 sources.json/research.md。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R2",
+      "query": "传感器 协方差 删除 样本 正定",
+      "actual": [
+        "math.low-rank-inverse-update",
+        "math.singular-support-bilinear-low-rank",
+        "math.centered-covariance-merge"
+      ],
+      "hit": true,
+      "seconds": 0.00492957400274463,
+      "chars": 6108,
+      "bytes": 10765,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "f7025f3817e6fdc2899d373021b1625dada56725c3f4f960360b7d2dd1c5fa3e",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.low-rank-inverse-update",
+            "version": 1,
+            "sha256": "fbaf3c9e5191feb0b59b298cf348fc90ef66d40b6c21aa47e083a11d977c01a0",
+            "title": "低秩逆更新、正定删除与浮点相消边界",
+            "summary": "可逆A的低秩更新由小系统S=I+V^TA^-1U判可逆；正定删除需u^TA^-1u<1。精确恒等式不保证浮点稳定，完整残差仍需核验。",
+            "status": "published",
+            "assumptions": [
+              "实A为n×n可逆矩阵，U,V为n×k，S=I_k+V^TA^-1U；B可逆等价于S可逆，不要求因子满列秩。",
+              "rank-one公式需beta=1+v^TA^-1u非零；SPD判据另需A实对称正定，正负更新为uu^T。",
+              "精确实数恒等式与实际浮点算法分开；IEEE binary64反例限定Python记录的运算顺序。",
+              "在线ridge仅是未归一化Gram λI+Σx_ix_i^T，λ>0；回归rhs须一起更新，不能套用到含均值/归一化变化的原始协方差删除。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-inverse-update-20261009：10公开精确/实际binary64边界与独立审核；非形式化、非通用稳定/模型收益证明。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "问题结构与具体迁移",
+                "start_line": 31,
+                "end_line": 40,
+                "excerpt": "## 问题结构与具体迁移\n\n触发：旧线性系统已分解，新系统只添加/删除少量外积；先识别A、更新U/V、rhs、正定需求，再检索此卡及Schur前置。对象中的“低秩更新”与“数据集中在低秩子空间”是不同结构，不能互换。\n\n在线ridge严格映射：C=λI+Σx_ix_i^T、h=Σx_i y_i，λ>0。新增(x,y)给C_new=C+xx^T、h_new=h+xy；删除给相应负更新。添加保证SPD，删除须判a<1且真实数据/λ保持同一定义。示例C=diag(2,3),x=(1,2)，C_new=[[3,2],[2,7]]，inverse=[[7,−2],[−2,3]]/17。用于离线indexer校准或传感器回归的候选计算路径；保持Gram线性关系，不保持真实模型输出/轨迹、时间成本或子空间投影质量。中心化或归一化协方差变动不能只加xx^T，须额外处理均值/计数，见centered-covariance-merge。\n\n可证伪预测：精确有理算术下满足A/S可逆时更新解与直接消元一致；有真实SPD需求但a≥1时必须拒用该正定删除结论。浮点必须对真实更新算子验证残差；多次递推可累积误差，候选策略是残差门禁与必要重分解，阈值/频率不能凭本轮指定为生产最佳值。\n\n密集A已有LU分解、一般k下预处理成本约O(n²k+nk²+k³)，一次rhs含O(n²+nk+k²)；额外存储O(nk+k²)，不含原分解。k固定时可比重新密集分解的O(n³)低，但批处理、内存、稀疏结构、稳定性检查与硬件决定实际延迟。此为算法计数，不是本机或GPU加速证明。未部署生产实现。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "可算正例、边界与误用",
+                "start_line": 21,
+                "end_line": 30,
+                "excerpt": "## 可算正例、边界与误用\n\n一般rank1：A=[[2,1],[0,3]],u=(1,2),v=(2,−1),b=(3,4)。β=2/3，B=[[4,0],[4,1]]，更新解=(3/4,1)，与直接消元一致。零U使S=I且逆不变。\n\n秩亏因子正例：A=I₂，U=V=[[1,1],[0,0]]，两因子均不满列秩，但S=[[2,1],[1,2]]可逆，B=diag(3,1)，公式仍成立。\n\nA=diag(0,1)，添加e₁e₁^T后B=I可逆，但A不可逆，拒用当前公式。A=I，u=e₁,v=−e₁时β=0，B奇异。SPD删除：A=diag(2,3),u=e₁时a=1/2，删除后diag(1,3)仍SPD；A=I,u=2e₁时a=4，B=diag(−3,1)可逆却不能作正定协方差。对称/正定前提不可因矩阵名字叫covariance而省略。\n\n**实际binary64相消反例（本项目构造与实测）**：标量A=1,b=v=1,u=2^54，B=1+2^54。A与真实B的2-范数条件数均1，精确β巨大而非接近0。按y=1,z=u,α=1,β=fl(1+u)=u,θ=α/β=2^{-54}，最终fl(y−zθ)=0。精确解1/(1+2^54)>0；真实残差1，η=1，前向相对误差1。非零β与良好条件数都未防止减去两个几乎相同量的实现错误。直接对已舍入B做标量除法得到2^{-54}是对照诊断，不是所有问题上直接求逆更稳定的证明。只证明本运算顺序的有限反例；GPU/FMA/其他顺序另测。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.singular-support-bilinear-low-rank",
+            "version": 1,
+            "sha256": "60301c861c559bba11a030e7fe98e8a789ede04777b62cadad8cdfa5b5b79cd2",
+            "title": "奇异支持下的双线性低秩分数近似",
+            "summary": "独立q/k与PSD非中心二阶矩下，在有效支持内截断加权SVD并伪逆回提升；固定目标的规范最小范数解，不把ridge或样本秩当原风险证书。",
+            "status": "published",
+            "assumptions": [
+              "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq/Sk≥0；H固定；目标为原始分数MSE",
+              "r为0到min(m,n)的整数，rank(M)≤r；支持是指定分布的精确支持，不是未经验证的数值秩",
+              "Cr是支持内截断SVD；固定Cr的规范lift最小Frobenius范数，任意不可见N还须核对总rank预算"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "正文条件式推导；非Lean形式化证明",
+                "agent_doc/results/math-singular-bilinear-20261008-v2/validate.py、raw.json：公开有限CPU检查；旧数值范围失败保存，v2独立回执另存；有限输出不保证任意病态尺度精度"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 2
+              }
+            ],
+            "score": 0.04788306451612903,
+            "sections": [
+              {
+                "node": "s5",
+                "title": "误用反例与拒用",
+                "start_line": 39,
+                "end_line": 48,
+                "excerpt": "## 误用反例与拒用\n\n- **相关分布**：q=k∈{−1,0,1}，概率{1/4,1/2,1/4}，H=1、M=0。真实风险1/2；两侧二阶矩乘积仅1/4。不能把“paired样本”自动当独立。\n- **中心化误替**：q≡2、k≡3，H=1、M=0，风险36，而中心协方差都0。\n- **ridge改变目标**：Sq=Sk=diag(1,0)、H=diag(1,10)、r=1。支持目标选diag(1,0)，风险0。加λ=1后加权C=diag(2,10)，截断并反变换选diag(0,10)，原风险1。ridge可能有稳定性价值，但不是精确优化原风险；非本轮推荐生产默认。\n- **tiny≠zero**：q=(0,±10⁻⁶)、k=(±1,0)独立，H₂₁=10⁶。Sq唯一非零值10⁻¹²，原分数±1、丢弃方向的真实风险1。单看小特征值不能证明该方向无用。\n- 伪逆放大：平方根特征值10⁻⁶时，该方向whitened扰动10⁻¹²回提升可变10⁻⁶。数值阈值是新的截断模型，不是精确秩证书；同时记录目标变化和实际误差。\n\n实际原型使用**已声明的正交支持基**与严格正尺度，不根据容差声称识别真实支持。NaN/Inf、错形状、非正尺度、非正交基、非法rank、非实输入拒用。输入采样无足够证据时，只能给条件式结果。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "触发问题与数学对象",
+                "start_line": 5,
+                "end_line": 12,
+                "excerpt": "## 触发问题与数学对象\n\n校准 query/key 的二阶矩秩亏，无法全空间 whitening inverse；应在明确的有效支持内求解，而不是把奇异性藏进逆矩阵。以下推广是项目自己的推导，使用经典截断 SVD 和 Moore–Penrose 伪逆，不声称新原创定理。\n\nq∈R^m、k∈R^n 独立，有限**非中心二阶矩** Sq=E[qqᵀ]≥0、Sk=E[kkᵀ]≥0；H∈R^(m×n)固定。目标是 J(M)=E[(qᵀ(H−M)k)²]，rank(M)≤r，r为0至min(m,n)的整数。q/k不必高斯或零均值。负特征值不符合二阶矩模型；中心协方差、真实 paired 分布、softmax、输出误差不是本目标。\n\nL=Sq^(1/2)、R=Sk^(1/2)是对称 PSD 平方根，L⁺、R⁺取**精确非零**特征值的倒数；Pq=L L⁺、Pk=R⁺ R是正交支持投影。C=L H R。零支持与空有效特征合法。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.centered-covariance-merge",
+            "version": 1,
+            "sha256": "f9ebd428b6fd9f78ac667a6a2419e277c5d8ca1731d3e5357b25a9a62f7a9b28",
+            "title": "中心化协方差、可合并散布统计量与误差桥",
+            "summary": "区分二阶矩与中心协方差；按计数/均值/散布精确合并，避免遗漏组间项；统计保证与浮点稳定性分别审查。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量，同维度/坐标/单位和相同预处理；精确恒等式不要求iid",
+              "A、B为不重复不遗漏的数据分区，计数为非负整数；空分区用单位元，不定义空均值",
+              "C_n=S/n对n≥1；S/(n−1)只对n≥2，称总体协方差无偏还需iid及有限二阶矩",
+              "概率误差桥需已证明的均值和二阶矩误差事件；合并公式不赋予独立性或覆盖保证",
+              "浮点不具有严格结合律；需单独检查输入精度、溢出、抵消及舍入误差"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "docs/knowledge_learning/2026-10-07-centering/verify.py",
+                "docs/knowledge_learning/2026-10-07-centering/checks.json"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 4
+              }
+            ],
+            "score": 0.047371031746031744,
+            "sections": [
+              {
+                "node": "s2",
+                "title": "触发与对象",
+                "start_line": 3,
+                "end_line": 5,
+                "excerpt": "## 触发与对象\n多个worker/传感器分块汇总、PCA校准、均值偏移很大但波动很小。先确定目标是原点二阶矩 M，还是中心协方差 Σ；不可默默互换。以下为实向量，转置不是复共轭扩展的证明。\n\n"
+              },
+              {
+                "node": "s6",
+                "title": "迁移与消费者",
+                "start_line": 34,
+                "end_line": 38,
+                "excerpt": "## 迁移与消费者\n把worker的校准行分区映射为有限向量多重集，只传(n,m,S)及分区/预处理版本即可保留中心协方差目标；这是精确代数映射，不是自然语言消息充分性的类比。必须先检查n、去重、坐标、dtype、目标和舍入。可证伪预测：精确合并等于集中式散布，不同分区树等价；有限精度偏差单列。\n跨领域温度传感器：同一标定和单位℃下，固定零点平移不影响中心协方差，S单位℃²；跨传感器尺度不同或时间耦合会改变目标/统计保证。不能用代数合并证明独立性。\n以二进制/文件引用交接避免把O(d²)数字全写进聊天；这只是候选工程建议，没有实测Agent token、模型质量或GPU吞吐收益。该统计量只充分描述计数/均值/散布，不能恢复token身份、时序、自回归模型或原始检索目标。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "backend": "sqlite-fts5-rrf-v1",
+      "case": "R3",
+      "query": "公式 正确 浮点 相消 残差",
+      "actual": [
+        "math.low-rank-inverse-update",
+        "math.floating-dot-enclosure",
+        "math.residual-interval-screening"
+      ],
+      "hit": true,
+      "seconds": 0.004959557001711801,
+      "chars": 7279,
+      "bytes": 11912,
+      "result": {
+        "schema_version": 1,
+        "snapshot": "f7025f3817e6fdc2899d373021b1625dada56725c3f4f960360b7d2dd1c5fa3e",
+        "backend": "sqlite-fts5-rrf-v1",
+        "applicability": "unchecked",
+        "results": [
+          {
+            "id": "math.low-rank-inverse-update",
+            "version": 1,
+            "sha256": "fbaf3c9e5191feb0b59b298cf348fc90ef66d40b6c21aa47e083a11d977c01a0",
+            "title": "低秩逆更新、正定删除与浮点相消边界",
+            "summary": "可逆A的低秩更新由小系统S=I+V^TA^-1U判可逆；正定删除需u^TA^-1u<1。精确恒等式不保证浮点稳定，完整残差仍需核验。",
+            "status": "published",
+            "assumptions": [
+              "实A为n×n可逆矩阵，U,V为n×k，S=I_k+V^TA^-1U；B可逆等价于S可逆，不要求因子满列秩。",
+              "rank-one公式需beta=1+v^TA^-1u非零；SPD判据另需A实对称正定，正负更新为uu^T。",
+              "精确实数恒等式与实际浮点算法分开；IEEE binary64反例限定Python记录的运算顺序。",
+              "在线ridge仅是未归一化Gram λI+Σx_ix_i^T，λ>0；回归rhs须一起更新，不能套用到含均值/归一化变化的原始协方差删除。"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-inverse-update-20261009：10公开精确/实际binary64边界与独立审核；非形式化、非通用稳定/模型收益证明。"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 1
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 1
+              }
+            ],
+            "score": 0.04918032786885246,
+            "sections": [
+              {
+                "node": "s4",
+                "title": "可算正例、边界与误用",
+                "start_line": 21,
+                "end_line": 30,
+                "excerpt": "## 可算正例、边界与误用\n\n一般rank1：A=[[2,1],[0,3]],u=(1,2),v=(2,−1),b=(3,4)。β=2/3，B=[[4,0],[4,1]]，更新解=(3/4,1)，与直接消元一致。零U使S=I且逆不变。\n\n秩亏因子正例：A=I₂，U=V=[[1,1],[0,0]]，两因子均不满列秩，但S=[[2,1],[1,2]]可逆，B=diag(3,1)，公式仍成立。\n\nA=diag(0,1)，添加e₁e₁^T后B=I可逆，但A不可逆，拒用当前公式。A=I，u=e₁,v=−e₁时β=0，B奇异。SPD删除：A=diag(2,3),u=e₁时a=1/2，删除后diag(1,3)仍SPD；A=I,u=2e₁时a=4，B=diag(−3,1)可逆却不能作正定协方差。对称/正定前提不可因矩阵名字叫covariance而省略。\n\n**实际binary64相消反例（本项目构造与实测）**：标量A=1,b=v=1,u=2^54，B=1+2^54。A与真实B的2-范数条件数均1，精确β巨大而非接近0。按y=1,z=u,α=1,β=fl(1+u)=u,θ=α/β=2^{-54}，最终fl(y−zθ)=0。精确解1/(1+2^54)>0；真实残差1，η=1，前向相对误差1。非零β与良好条件数都未防止减去两个几乎相同量的实现错误。直接对已舍入B做标量除法得到2^{-54}是对照诊断，不是所有问题上直接求逆更稳定的证明。只证明本运算顺序的有限反例；GPU/FMA/其他顺序另测。\n\n"
+              },
+              {
+                "node": "s2",
+                "title": "对象、前提与准确结论",
+                "start_line": 3,
+                "end_line": 12,
+                "excerpt": "## 对象、前提与准确结论\n\n实A∈R^{n×n}可逆；U,V∈R^{n×k}，k≥1；B=A+UV^T；S=I_k+V^TA^{-1}U。**经典恒等式**：B可逆当且仅当S可逆，成立时\n\nB^{-1}=A^{-1}−A^{-1}U S^{-1}V^TA^{-1}。\n\nU/V不必满列秩，UV^T的秩至多k；不要把某篇数值误差定理的满列秩假设当成恒等式必要条件，也不能删去误差定理自己的前提。A奇异时此公式不适用，即使B可逆；不能默默把inverse替换为pseudoinverse。\n\nrank1：u,v∈R^n，β=1+v^TA^{-1}u≠0。用已有A的分解解Ay=b、Az=u，随后x=y−z(v^Ty)/β。分母β非零是精确可逆判据，不是浮点稳定性认证。\n\n"
+              }
+            ]
+          },
+          {
+            "id": "math.floating-dot-enclosure",
+            "version": 1,
+            "sha256": "e800ad6e5dbd1be9aa2de66da0e06933cccb84c41419668ae0550f4407db1bbb",
+            "title": "浮点点积外包与严格安全筛除",
+            "summary": "对存储binary64点积逐运算向外扩展，核对正确舍入/渐进下溢；累计丢失小项、量化原始输入及GPU排序目标需区分，未知前提拒用。",
+            "status": "published",
+            "assumptions": [
+              "输入为有限存储binary64数，目标为其精确实数点积；量化前输入和实际GPU结果是其他目标",
+              "每个标量加乘正确RN舍入到同一binary64格式、邻接nextafter正确、渐进下溢，无FTZ/未知重排或低精度路径",
+              "每步结果及外包邻接端点有限；无法满足则无法认证并保留/回退，不按失败值剪枝",
+              "安全筛除有全部逐项包络，tau取第k大下界，删除仅限U_i<tau，重排目标/tie规则一致",
+              "坐标投影误差界仅适用显式选坐标；学习投影、理想RoPE、输入误差与GPUkernel偏差须另行认证"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "Conditional induction proof and exact-rational public CPU data at agent_doc/results/math-rounding-20261008/; independent actual code/math/data acceptance required before publication",
+                "No Lean/formal proof, platform-wide arithmetic certification, GPU/model/quality/token performance experiment"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 3
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 4
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 3
+              }
+            ],
+            "score": 0.047371031746031744,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "严格迁移：坐标粗筛＋遗漏项界",
+                "start_line": 64,
+                "end_line": 85,
+                "excerpt": "## 严格迁移：坐标粗筛＋遗漏项界\n\n沿用 `math.residual-interval-screening@1` 的有效逐项包络要求，不更改其版本/历史引用。为避免未知学习投影误差，演示只选固定坐标S，其余坐标H；P为精确坐标投影。\n\n对q与第i个键k_i，粗分数 `a_i=sum_{j∈S} q_j k_ij` 用逐运算包络。遗漏项满足直接三角界\n\\[\n\\left|\\sum_{j\\in H}q_j k_{ij}\\right|\n\\le \\max_{j\\in H}|q_j|\\,\\sum_{j\\in H}|k_{ij}|.\n\\]\n空H令右边0。对键的非负绝对和逐步外包取得上界，对查询max取精确存储值最大绝对值，再向外乘法；得到认证的ρ_i。用外包加法组合 `[a_i^- -ρ_i,a_i^+ +ρ_i]`。本轮demo重算键和，未实测预缓存性能。\n\n令τ为第k大下界，仅删除 `U_i<τ`；**相等必须保留**。被删项至少有k个别的下界高于其上界，因此不可能属于实数目标Top-k；对保留项用同一精确目标及tie规则重排，恢复一个原Top-k解。候选可退化为全量，这是合法负结果。\n\n| 输入形式 | 可严格映射的目标 | 仍须另查 |\n|---|---|---|\n| 仅NoPE | 相同存储q/k的实数点积 | 输入量化、实际GPU累加器目标 |\n| 仅RoPE | 已在正确位置旋转并存储后的q/k点积 | 理想旋转、sin/cos、位置/频率布局和旋转舍入误差 |\n| NoPE+RoPE | 各分量包络再外包相加、已知标量外包相乘 | 缩放目标、两个路径精度及mask是否一致 |\n| 学习U或低秩表示 | 仅其存储压缩坐标的点积 | 原空间投影缺陷、非正交性、逐项真实残差；未知则不证原分数 |\n\n本证书指向存储输入的精确实数目标。若要保护实际dense kernel的浮点Top-k，还需另有每项kernel结果距该实数目标的认证界ζ_i，再向外扩展区间。否则真实数学排序与dense浮点排序可能不同。它也不提供注意力质量、质量总量或e2e精度保证。\n\n"
+              },
+              {
+                "node": "s8",
+                "title": "验证、关系和来源",
+                "start_line": 90,
+                "end_line": 100,
+                "excerpt": "## 验证、关系和来源\n\n- 验证脚本及精确Fraction oracle：`agent_doc/results/math-rounding-20261008/validate.py`，raw.json保留输入hex、精确目标、端点与所有失败/回退案例。浮点样例不替代上述一般推导。\n- 前置概念：实数区间、浮点相邻数、加法单调、乘法四角极值；本卡自包含，不强依赖加载全部筛除卡。实际筛除迁移的knowledge-use仍固定筛除卡及其依赖。\n- 相关：`math.residual-interval-screening`（认证前提桥）、`math.linear-solve-backward-error`（残差不能替代真误差）、`math.rotation-intertwiner`（旋转与压缩目标）、`math.support-conditioning`（分数/支持与质量归一化区别）。\n- 经典准确出处：Higham作者《What Is Fast Matrix Multiplication?》，2022-09-13，公式(1)及γ定义；其列出的Higham2002教材仅作原始参考，不称本轮通读。https://nhigham.com/2022/09/13/what-is-fast-matrix-multiplication/\n- 正式操作文档：Python `math.nextafter`、`math.ulp`；检索2026-10-08。https://docs.python.org/3/library/math.html\n- 近期筛选：He/Panchekha，《Accurate Residues for Floating-Point Debugging》，arXiv2604.06258v2，修订2026-09-01；已读相关残值/吸收与范围限制段落。其残值估计不能直接作为本项目严格区间，未复现论文工具或采用其性能数字。https://arxiv.org/html/2604.06258v2\n- 2609.37844仅摘要候选，正文/版本未核实，排除在知识保证之外；访问状态在"
+              }
+            ]
+          },
+          {
+            "id": "math.residual-interval-screening",
+            "version": 1,
+            "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+            "title": "正交残差包络与安全候选筛除",
+            "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+            "status": "published",
+            "assumptions": [
+              "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+              "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+              "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+              "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+            ],
+            "verification": {
+              "source": "checked",
+              "proof": "derivation-reviewed",
+              "checks": [
+                "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+                "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+              ]
+            },
+            "matches": [
+              {
+                "retriever": "document-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "section-bm25",
+                "rank": 2
+              },
+              {
+                "retriever": "curated-structure",
+                "rank": 9
+              }
+            ],
+            "score": 0.04675081813931744,
+            "sections": [
+              {
+                "node": "s6",
+                "title": "计算验证与限制",
+                "start_line": 33,
+                "end_line": 35,
+                "excerpt": "## 计算验证与限制\n公开开发例、Fraction精确二维投影、NumPy QR有限诊断及反例见agent_doc/results/math-screening-20261008/。浮点诊断用容差检查，未实现外包区间；P≈UUᵀ的数值正交性误差须计入，直接sqrt(||x||²−||Uᵀx||²)可能因相消低估残差。量化须外包膨胀。没有Lean形式化证明、真实模型/trace/GPU/e2e或未见模型测试。候选规则仅作为已核查知识；生产消费者尚未接入。\n\n"
+              },
+              {
+                "node": "s4",
+                "title": "正例、边界与误用反例",
+                "start_line": 17,
+                "end_line": 25,
+                "excerpt": "## 正例、边界与误用反例\nP=diag(1,0)，q=(1,1)，键(10,0),(8,1),(0,0)。h=(10,8,0)，e=(0,1,0)，k=1时tau=10，C仅首键，正确。若q属于投影子空间，全部e=0，即可精确按h选；k=N保留全部。零投影往往过宽，仍安全但可能毫无筛除收益。\n\n均值残差反例：q=(1,1)，一键(0,100)，其余999键(1,0)，P=diag(1,0)。残差平均0.1；若错误地把e=0.1赋给每项，就会删掉真实分数100的键。这不是逐项证书。\n\n非正交反例：P=[[1,1],[0,0]]虽P²=P，但Pᵀ≠P；q=(1,0),k=(0,1)有s=0,h=1，而||(I−P)q||=0，错误产品界给0。一般AᵀB低秩映射不等于正交P；可另用||q|| ||(I−AᵀB)k_i||，不能偷换成本和误差。\n\nTop-k正确不代表full-softmax输出正确：两个相同logit而不同v，只取一个即会改变加权输出。应结合math.attention-output-geometry，核对value、重归一化和跨层影响。\n\n"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "context": {
+    "schema_version": 1,
+    "snapshot": "f7025f3817e6fdc2899d373021b1625dada56725c3f4f960360b7d2dd1c5fa3e",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "status": "partial",
+    "budget": {
+      "max_entries": 3,
+      "max_chars": 17000,
+      "used_chars": 12481,
+      "scope": "serialized entry payload characters, not model tokens or outer envelope"
+    },
+    "retrieved_ids": [
+      "math.low-rank-inverse-update"
+    ],
+    "entries": [
+      {
+        "schema_version": 1,
+        "id": "math.low-rank-inverse-update",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "低秩逆更新、正定删除与浮点相消边界",
+        "summary": "可逆A的低秩更新由小系统S=I+V^TA^-1U判可逆；正定删除需u^TA^-1u<1。精确恒等式不保证浮点稳定，完整残差仍需核验。",
+        "aliases": [
+          "矩阵 添加 少量 观测 逆 更新",
+          "传感器 协方差 删除 样本 正定",
+          "公式 正确 浮点 相消 残差",
+          "Sherman Morrison Woodbury inverse update rank one downdate numerical cancellation"
+        ],
+        "domains": [
+          "linear-algebra",
+          "numerical-analysis"
+        ],
+        "structures": [
+          "low-rank-matrix-update",
+          "reused-linear-solves",
+          "positive-definite-downdate",
+          "floating-cancellation"
+        ],
+        "assumptions": [
+          "实A为n×n可逆矩阵，U,V为n×k，S=I_k+V^TA^-1U；B可逆等价于S可逆，不要求因子满列秩。",
+          "rank-one公式需beta=1+v^TA^-1u非零；SPD判据另需A实对称正定，正负更新为uu^T。",
+          "精确实数恒等式与实际浮点算法分开；IEEE binary64反例限定Python记录的运算顺序。",
+          "在线ridge仅是未归一化Gram λI+Σx_ix_i^T，λ>0；回归rhs须一起更新，不能套用到含均值/归一化变化的原始协方差删除。"
+        ],
+        "sources": [
+          {
+            "url": "https://nhigham.com/2020/09/29/what-is-the-sherman-morrison-woodbury-formula/",
+            "locator": "Sherman-Morrison, SMW and General Formula sections; identity and Schur derivation; do not reuse simplified k-variable complexity as full general cost",
+            "accessed": "2026-10-09"
+          },
+          {
+            "url": "https://arxiv.org/pdf/2609.12266v1",
+            "locator": "Abstract/Section1/Algorithm1.1/Section3.1 Algorithm3.2 and adjacent derivation; not all error theorems/proofs or experiment reproduction",
+            "accessed": "2026-10-09"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "agent_doc/results/math-inverse-update-20261009：10公开精确/实际binary64边界与独立审核；非形式化、非通用稳定/模型收益证明。"
+          ]
+        },
+        "requires": [
+          {
+            "id": "math.schur-complement-block-elimination",
+            "version": 1
+          }
+        ],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.linear-solve-backward-error"
+          },
+          {
+            "type": "related",
+            "id": "math.centered-covariance-merge"
+          },
+          {
+            "type": "related",
+            "id": "math.linear-system-stability"
+          }
+        ],
+        "content": "# math.low-rank-inverse-update@1 — 低秩逆更新与稳定性\n\n## 对象、前提与准确结论\n\n实A∈R^{n×n}可逆；U,V∈R^{n×k}，k≥1；B=A+UV^T；S=I_k+V^TA^{-1}U。**经典恒等式**：B可逆当且仅当S可逆，成立时\n\nB^{-1}=A^{-1}−A^{-1}U S^{-1}V^TA^{-1}。\n\nU/V不必满列秩，UV^T的秩至多k；不要把某篇数值误差定理的满列秩假设当成恒等式必要条件，也不能删去误差定理自己的前提。A奇异时此公式不适用，即使B可逆；不能默默把inverse替换为pseudoinverse。\n\nrank1：u,v∈R^n，β=1+v^TA^{-1}u≠0。用已有A的分解解Ay=b、Az=u，随后x=y−z(v^Ty)/β。分母β非零是精确可逆判据，不是浮点稳定性认证。\n\n## 可复核证明（非形式化）\n\n用强前置math.schur-complement-block-elimination：M=[[A,U],[-V^T,I_k]]。消A给S，消I_k给B；detM=detA detS=detB，所以可逆等价。令Z=A^{-1}U、T=V^TA^{-1}，候选X=A^{-1}−ZS^{-1}T。BX=I+UT−US^{-1}T−U(V^TZ)S^{-1}T=I，因为I+V^TZ=S。对方阵右逆就是逆；不需要因子满秩。rank1是k=1特例。\n\nSPD条件：A=A^T>0时A+uu^T>0。对于删除B=A−uu^T，令w=A^{-1/2}u、a=u^TA^{-1}u=||w||²。白化合同给A^{-1/2}BA^{-1/2}=I−ww^T；沿w特征值1−a，正交补为1。因此B>0 iff a<1；a=1奇异；a>1可逆但不正定（n≥2时不定，n=1时负定）。只检查逆存在不足以批准covariance downdate。\n\n残差映射是本项目重述的基本恒等式：对真实B可逆、计算结果x_hat，r=b−Bx_hat，x_hat−x=−B^{-1}r，故||x_hat−x||≤||B^{-1}||||r||。实际浮点残差需另控计算误差；小绝对残差也不能在病态B下证明小前向误差。归一化诊断η=||r||/(||B||||x_hat||+||b||)，分母为0时单独处理。严格证书需外包算术或可认证残差/范数界，此轮未提供一般浮点包络。\n\n## 可算正例、边界与误用\n\n一般rank1：A=[[2,1],[0,3]],u=(1,2),v=(2,−1),b=(3,4)。β=2/3，B=[[4,0],[4,1]]，更新解=(3/4,1)，与直接消元一致。零U使S=I且逆不变。\n\n秩亏因子正例：A=I₂，U=V=[[1,1],[0,0]]，两因子均不满列秩，但S=[[2,1],[1,2]]可逆，B=diag(3,1)，公式仍成立。\n\nA=diag(0,1)，添加e₁e₁^T后B=I可逆，但A不可逆，拒用当前公式。A=I，u=e₁,v=−e₁时β=0，B奇异。SPD删除：A=diag(2,3),u=e₁时a=1/2，删除后diag(1,3)仍SPD；A=I,u=2e₁时a=4，B=diag(−3,1)可逆却不能作正定协方差。对称/正定前提不可因矩阵名字叫covariance而省略。\n\n**实际binary64相消反例（本项目构造与实测）**：标量A=1,b=v=1,u=2^54，B=1+2^54。A与真实B的2-范数条件数均1，精确β巨大而非接近0。按y=1,z=u,α=1,β=fl(1+u)=u,θ=α/β=2^{-54}，最终fl(y−zθ)=0。精确解1/(1+2^54)>0；真实残差1，η=1，前向相对误差1。非零β与良好条件数都未防止减去两个几乎相同量的实现错误。直接对已舍入B做标量除法得到2^{-54}是对照诊断，不是所有问题上直接求逆更稳定的证明。只证明本运算顺序的有限反例；GPU/FMA/其他顺序另测。\n\n## 问题结构与具体迁移\n\n触发：旧线性系统已分解，新系统只添加/删除少量外积；先识别A、更新U/V、rhs、正定需求，再检索此卡及Schur前置。对象中的“低秩更新”与“数据集中在低秩子空间”是不同结构，不能互换。\n\n在线ridge严格映射：C=λI+Σx_ix_i^T、h=Σx_i y_i，λ>0。新增(x,y)给C_new=C+xx^T、h_new=h+xy；删除给相应负更新。添加保证SPD，删除须判a<1且真实数据/λ保持同一定义。示例C=diag(2,3),x=(1,2)，C_new=[[3,2],[2,7]]，inverse=[[7,−2],[−2,3]]/17。用于离线indexer校准或传感器回归的候选计算路径；保持Gram线性关系，不保持真实模型输出/轨迹、时间成本或子空间投影质量。中心化或归一化协方差变动不能只加xx^T，须额外处理均值/计数，见centered-covariance-merge。\n\n可证伪预测：精确有理算术下满足A/S可逆时更新解与直接消元一致；有真实SPD需求但a≥1时必须拒用该正定删除结论。浮点必须对真实更新算子验证残差；多次递推可累积误差，候选策略是残差门禁与必要重分解，阈值/频率不能凭本轮指定为生产最佳值。\n\n密集A已有LU分解、一般k下预处理成本约O(n²k+nk²+k³)，一次rhs含O(n²+nk+k²)；额外存储O(nk+k²)，不含原分解。k固定时可比重新密集分解的O(n³)低，但批处理、内存、稀疏结构、稳定性检查与硬件决定实际延迟。此为算法计数，不是本机或GPU加速证明。未部署生产实现。\n\n## 来源、版本与最新研究筛选\n\n经典来源：Nick Higham，作者讲解“ What Is the Sherman–Morrison–Woodbury Formula?”，2020-09-29；读rank1/SMW/general sections。Schur关系另沿用已有稳定ID。数学公式在本文完整重推；网页中的简化复杂度不可当任意k的完整成本。2026-10-09检索，HTML摘要哈希保存sources.json，不镜像第三方全文。\n\n最新候选：Hashemi & Nakatsukasa，“Error bounds for the Sherman-Morrison formula and its modification with improved stability”，arXiv2609.12266 **v1 2026-09-10**，由实际PDF页首核对。2026-10-09下载；abs/HTML访问失败，不能确认此后是否修订或正式发表。仅读Abstract/Section1/Alg1.1/Section3.1 Alg3.2及邻近推导，不宣称全文精读或复现。\n\n作者提出MSM，标准SM两次A系统求解，MSM三次；作者实验报告稳定，但明确MSM普遍稳定/不稳定的证明仍开放。此轮不执行MSM、不采用未读error theorem常数，不将作者经验结果或猜想标为已证明定理。它只是后续数值算法对照候选。原论文诊断与本项目标量反例分别标注，不冒充论文实验数据。\n\n## 验证状态\n\n10公开边界/实际binary64检查、file/SQLite问题结构检索、相关回归和另一上下文的证明/代码/数据审核。Fraction正例不替代一般证明；自然语言审核不是Lean。公开查询用于开发后不算未见测试；未读取旧模型holdouts内容。没有LLM自动建模/拒用、模型GPU/e2e或真实token收益实测。\n",
+        "path": "entries/math.low-rank-inverse-update.json",
+        "sha256": "fbaf3c9e5191feb0b59b298cf348fc90ef66d40b6c21aa47e083a11d977c01a0",
+        "selection_reason": "retrieved"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.schur-complement-block-elimination",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "Schur 补、块消元与边界等效",
+        "summary": "M=[[I,0],[CA⁻¹,I]] diag(A,S) [[I,A⁻¹B],[0,I]]；detM=detA detS。",
+        "aliases": [
+          "分块 消元 边界 等效 内部 变量 正定",
+          "Schur complement block elimination boundary Kron reduction"
+        ],
+        "domains": [
+          "algebra",
+          "linear-algebra"
+        ],
+        "structures": [
+          "linear-algebra",
+          "block-elimination",
+          "reduced-system"
+        ],
+        "assumptions": [
+          "M=[[A,B],[C,D]]，A 方阵可逆，S=D−CA⁻¹B；Hermitian正定判据另要求C=B*。"
+        ],
+        "sources": [
+          {
+            "url": "https://nhigham.com/2023/06/01/what-is-the-schur-complement-of-a-matrix/",
+            "locator": "2023-06-01 block factorization、positive-definite property；边界映射为本项目推导",
+            "accessed": "2026-10-07"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "正文逐项来源/证明核查；非 Lean 形式化证明",
+            "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+          ]
+        },
+        "requires": [],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.bilinear-quadratic-inertia"
+          }
+        ],
+        "content": "# Schur 补、块消元与边界等效\n\n稳定 ID：math.schur-complement-block-elimination；语义版本1；核查日期2026-10-07。\n\n## 对象、符号与前提\nM=[[A,B],[C,D]]，A 方阵可逆，S=D−CA⁻¹B；Hermitian正定判据另要求C=B*。\n\n## 经典结论\nM=[[I,0],[CA⁻¹,I]] diag(A,S) [[I,A⁻¹B],[0,I]]；detM=detA detS。Mx=(f,g) 化为 Sx₂=g−CA⁻¹f，x₁=A⁻¹(f−Bx₂)。Hermitian情况下 inertia(M)=inertia(A)+inertia(S)；M>0 iff A>0且S>0。\n\n## 证明思路与可复核推导\n逐块相乘验证因子化。Hermitian情况下因子为 L diag(A,S)L*，可逆合同保持惯性；SPD若成立其A主块SPD，逆向两块正给整体正。消元需同时变换rhs，不只替换D。\n\n## 正例与边界\n[[2,−1],[−1,2]] 消去首变量得到S=3/2。对接地电阻网络消内部节点，边界电压与电流响应完全保持，此为线性方程严格迁移。\n\n## 误用反例与拒用条件\n[[0,1],[1,0]] 整体可逆但A=0不可逆，需换枢轴。简单删除内部节点用D代替S改变响应；奇异未接地拉普拉斯不能直接求A逆（可能内部块可逆，但必须检查）。\n\n## 问题结构与迁移\n保持边界消费者观测的精确消元；实际实现用solve A而非显式逆，误差与 fill-in 成本单独评估。\n\n## 前置关系与来源版本\n基础前置：有限维空间、基、矩阵乘法和域算术；涉及内积的条目另需共轭转置/正定范数。本条在正文重述使用的基础结论，导航关联不要求一次加载整条课程。准确出处：[2023-06-01 block factorization、positive-definite property；边界映射为本项目推导](https://nhigham.com/2023/06/01/what-is-the-schur-complement-of-a-matrix/)。Axler 使用第四版、作者2026-08-16 PDF修订；Saad 使用第二版2003；Conrad未标日期的讲义以本轮PDF哈希固定；网页按标题日期与检索日期固定。PDF哈希/近期论文筛选见本轮 sources.json/research.md。\n\n## 验证状态与限制\n已核对所列来源的相关段落，并人工检查上面的证明思路/自推公式。verify.py 对该主题给公开正例、边界或反例；Fraction精确运算与float64数值检查分别标注。数学证明核查不是 Lean 形式化证明；计算实例不证明一般结论。未做同模型Agent A/B或真实GPU系统测试；没有性能收益声明。\n",
+        "path": "entries/math.schur-complement-block-elimination.json",
+        "sha256": "c5ba8bd8f24ad71922d6b9c90cb7e8d1f525ca6dfa209d73edffc323e98cfaca",
+        "selection_reason": "prerequisite"
+      },
+      {
+        "schema_version": 1,
+        "id": "math.linear-solve-backward-error",
+        "version": 1,
+        "status": "published",
+        "kind": "theorem",
+        "title": "线性求解的后向误差、条件性与下游误差证书",
+        "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+        "aliases": [
+          "linear solve residual conditioning backward error",
+          "线性方程 小残差 解误差 病态 排名",
+          "接地 电路 导纳 电流 电压 误差",
+          "逆矩阵 范数 Neumann certificate"
+        ],
+        "domains": [
+          "numerical-analysis",
+          "linear-algebra",
+          "physics"
+        ],
+        "structures": [
+          "linear-solve",
+          "conditioning",
+          "residual-error-bound",
+          "ranking",
+          "grounded-network"
+        ],
+        "assumptions": [
+          "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+          "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+          "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+          "下游排序须真实线性评分映射和严格逐对误差间隔"
+        ],
+        "sources": [
+          {
+            "url": "https://epubs.siam.org/doi/10.1137/1.9780898718027.ch7",
+            "locator": "Higham 2nd ed (2002), ch7 pp119–137, §7.1 Theorem7.1 equations7.1–7.2; preview sign caveat in Markdown",
+            "accessed": "2026-10-07"
+          },
+          {
+            "url": "https://tbetcke.github.io/math0058_lecture_notes/linear_system_error.html",
+            "locator": "Betcke MATH0058: Backward error, Neumann lemma, Sensitivity; unversioned",
+            "accessed": "2026-10-07"
+          }
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+            "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+          ]
+        },
+        "requires": [],
+        "relations": [
+          {
+            "type": "related",
+            "id": "math.topk-margin"
+          },
+          {
+            "type": "related",
+            "id": "math.score-difference-bound"
+          },
+          {
+            "type": "related",
+            "id": "math.contraction-residual-certificate"
+          },
+          {
+            "type": "related",
+            "id": "physics.dimensionless"
+          },
+          {
+            "type": "related",
+            "id": "math.linear-system-stability"
+          }
+        ],
+        "content": "# 线性求解的后向误差、条件性与下游误差证书\n\nID: `math.linear-solve-backward-error`；版本 1。经典结论与本条自推导分开标明；人工推导核查和有限计算检查，不是 Lean 形式化证明。\n\n## 触发结构\n\n方阵线性方程的近似解、很小的残差却错误的排名、接地电路的电压误差。先确定对象 A、右端 b、近似解 y、范数、数据精度及下游查询 c；只在存在可核验逆算子界时把残差转换为解误差。动态系统稳定性、迭代收缩性与线性方程条件性是不同问题。\n\n## 对象与准确结论\n\n实方阵 A 可逆，Ax=b，r=b−Ay；向量采用无穷范数，矩阵采用诱导行和范数，κ=‖A‖∞‖A⁻¹‖∞。以下残差首先指精确输入数据的精确残差。\n\n**经典联合非结构化后向误差**：使 (A+ΔA)y=b+Δb，且 ‖ΔA‖∞≤η‖A‖∞、‖Δb‖∞≤η‖b‖∞ 的最小 η 为\n\nη=‖r‖∞/(‖A‖∞‖y‖∞+‖b‖∞)。\n\n分母为零时 y=b=0，定义 η=0。该允许扰动的集合不要求保留对称性、稀疏性、电路守恒或数据单位；结构化后向误差不能直接用此公式代替。\n\n**前向误差**：若 H≥‖A⁻¹‖∞、R≥‖r‖∞ 已被核验，则 E=HR 满足 ‖x−y‖∞≤E。b≠0 时另有相对误差 ≤κ‖r‖∞/‖b‖∞；若 κη<1，还有 ≤2κη/(1−κη)。κ很大可以放大小残差；条件不满足只说明这个界不能保证，不能据此断言实际失败。\n\n**本条自推导的可计算逆界**：给定方阵 B，证明 q=‖I−BA‖∞<1，则 A 可逆且 H=‖B‖∞/(1−q) 是有效上界。浮点估计值必须加上计算误差上界再检查 q<1；无保证的条件数估计不能冒充证书。\n\n**本条自推导的下游查询界**：si=ciᵀx，ŝi=ciᵀy，则 |si−ŝi|≤‖ci‖₁E。对近似排序中选中的 i 和未选中的 j，若 ŝi−ŝj>(‖ci‖₁+‖cj‖₁)E，则真值也有 si>sj。逐对满足才能保证集合；相等边界不保证唯一排序。只有线性评分映射被保留时可用，不能推出注意力输出、工具成功率或 Agent 质量提升。\n\n## 可复核推导\n\n后向误差下界来自 r=ΔAy−Δb 与三角不等式。令 D=‖A‖∞‖y‖∞+‖b‖∞，y≠0 时选择最大绝对分量 j，vᵀ=sign(yj)ejᵀ。于是 vᵀy=‖y‖∞、‖v‖₁=1。取 ΔA=(‖A‖∞/D)rvᵀ、Δb=−(‖b‖∞/D)r 即达到下界。y=0、b≠0 时取 ΔA=0、Δb=−b。注意 Δb 的负号。\n\n设 e=y−x，则 ‖e‖∞≤‖A⁻¹‖∞‖r‖∞。又 r=ΔAy−Δb，‖y‖∞≤‖x‖∞+‖e‖∞、‖b‖∞≤‖A‖∞‖x‖∞，得到 (1−κη)‖e‖∞≤2κη‖x‖∞；分母为正时才可除。对逆界，T=I−BA，Neumann 级数给出 (BA)⁻¹，A⁻¹=(I−T)⁻¹B，级数范数 ≤1/(1−q)。查询界来自有限和 |Σci,k ek|≤‖ci‖₁‖e‖∞，再对两项误差做三角界。\n\n## 正例、边界与误用反例\n\n- A=diag(2,1)，x=(1,2)，y=(1.01,1.99)：R=0.02、H=1、E=0.02，观测分量间隔 0.98>2E，排名被认证。\n- A=[[1,1],[1,1+ε]]，ε=10⁻⁸，x=(1,2)，y=(3,0)：残差仅 (0,2ε)，η约2.22×10⁻⁹，排名却翻转，实际误差为2。合法 H=(2+ε)/ε 给 E=4+2ε，拒绝保证排名。小后向误差不等于小前向误差。\n- b=0 时唯一解为0，绝对界可用，相对解误差无定义。矩形最小二乘、奇异方程、非线性系统需其他理论。共同缩放 (A,b)→(cA,cb) 保留 κ、η、HR，却改变残差数值。\n- 浮点残差 r̃ 必须使用 R≥‖r̃‖∞+ρ，ρ覆盖计算误差；输入舍入与模型误差另计。仅打印零残差不能核验精确系统。\n\n## 迁移：决策与电路\n\nAgent 科研/工程任务中的有限线性响应求解对应 Ax=b，候选的线性效用对应 ci；这是真实代数映射。文本概率、消息压缩的语义损失及自适应工具策略没有天然对应，不直接迁移。可证伪预测为：已核验 H、R 且逐对间隔成立时，精确求解不会翻转集合；verify.py 检查正例和拒用反例。\n\n接地导纳矩阵 L=[[2,−1],[−1,2]] S，电流 b=(1,0) A，电压 x=(2/3,1/3) V。y=x+(0.01,−0.01) V 时残差为 (−0.03,0.03) A，H=1 Ω，E=0.03 V；量纲 Ω·A=V，电压大小关系可认证。接地移除了常数零模态；未接地 [[1,−1],[−1,1]] 的解可以任意加常数，即使零残差也无唯一绝对电压，必须拒绝本条可逆前提。非线性器件、频率依赖参数和实测导纳误差未覆盖。\n\n## 前置与检索关系\n\n条目内定义了有限维范数、逆矩阵和级数证明所需对象，无强制知识依赖。相关 `math.topk-margin`、`math.score-difference-bound` 是排序误差工具；`math.contraction-residual-certificate` 给其他残差结构；`physics.dimensionless` 支持量纲审查；`math.linear-system-stability` 处理时间演化而非本条敏感性。先按 linear-solve / residual-error-bound / conditioning 结构检索，再按需要加载全文，不扩充常驻提示。\n\n## 来源、版本与验证\n\n- Higham, *Accuracy and Stability of Numerical Algorithms*, 第二版，2002，Chapter 7, pp119–137，§7.1 Theorem 7.1（Rigal–Gaches）、(7.1)–(7.2)，联合后向误差；[SIAM 章节](https://epubs.siam.org/doi/10.1137/1.9780898718027.ch7)。出版网页2012上线日期不当作书籍年份。网页式(7.3)的显示符号与残差定义疑似不一致，本条独立推导扰动并精确检查；未核实原版PDF排印问题。\n- Timo Betcke, UCL MATH0058, [Backward error and condition number](https://tbetcke.github.io/math0058_lecture_notes/linear_system_error.html)，无固定版本，检索2026-10-07；Backward error、Neumann lemma、Sensitivity各节。使用定义与推导，不依赖网页末行的等号排版。\n- 实际检查：`docs/knowledge_learning/2026-10-07-conditioning/verify.py`、`checks.json`，Fraction精确有限输入、binary64取消误差、物理单位与奇异反例。数学证明为人工核查，未运行Lean；有限样例不替代一般证明。近期低秩更新仅研究筛选，见同目录research.md，无生产算法替换或模型A/B。\n",
+        "path": "entries/math.linear-solve-backward-error.json",
+        "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+        "selection_reason": "related"
+      }
+    ],
+    "knowledge_refs": [
+      {
+        "id": "math.linear-solve-backward-error",
+        "version": 1,
+        "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d"
+      },
+      {
+        "id": "math.low-rank-inverse-update",
+        "version": 1,
+        "sha256": "fbaf3c9e5191feb0b59b298cf348fc90ef66d40b6c21aa47e083a11d977c01a0"
+      },
+      {
+        "id": "math.schur-complement-block-elimination",
+        "version": 1,
+        "sha256": "c5ba8bd8f24ad71922d6b9c90cb7e8d1f525ca6dfa209d73edffc323e98cfaca"
+      }
+    ],
+    "skipped": [
+      {
+        "id": "math.centered-covariance-merge",
+        "reason": "complete prerequisite bundle exceeds context budget",
+        "selection_reason": "related"
+      },
+      {
+        "id": "math.linear-system-stability",
+        "reason": "complete prerequisite bundle exceeds context budget",
+        "selection_reason": "related"
+      }
+    ]
+  },
+  "token_cost": "unmeasured; chars/bytes not tokens",
+  "holdouts_metadata_sha256": "5a0572863e75526de915f22108fc90b5e8ce58de14292e7159054af3ba9fe48a"
+}

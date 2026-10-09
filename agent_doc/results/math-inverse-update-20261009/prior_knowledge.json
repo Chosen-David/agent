@@ -1,0 +1,144 @@
+{
+  "schema_version": 1,
+  "snapshot": "b4ca0daf3bad406601371f7afcc6addafafcece99e96eff5ed043eef69a9d69e",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "algo.lora-intrinsic-rank",
+      "version": 1,
+      "sha256": "3e894218cca78c85f76d603e76957ae185f43ebf65468ef742b18ecebe797a29",
+      "title": "LoRA：低秩更新与合并边界",
+      "summary": "ICLR 2022 实验支持部分任务用低秩权重更新进行高效适配；低秩需求是任务相关的经验，不是所有模型更新的定理。",
+      "status": "published",
+      "assumptions": [
+        "method: frozen backbone plus low-rank weight update",
+        "models: RoBERTa DeBERTa GPT-2 GPT-3 in paper",
+        "metric: task quality and trainable parameters"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.lora-intrinsic-rank"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "低秩",
+            "更新"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "低秩"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "低秩"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "低秩",
+            "更新"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "低秩",
+            "更新"
+          ]
+        }
+      ],
+      "score": 27
+    },
+    {
+      "id": "math.low-rank-svd",
+      "version": 1,
+      "sha256": "a62b7eb5702662d678165acad4d439826ac79260bc083dda8b8f7763681621b8",
+      "title": "截断 SVD 的最优低秩近似",
+      "summary": "谱范数和 Frobenius 范数下的低秩近似；不直接保证下游排序或加速。",
+      "status": "published",
+      "assumptions": [
+        "有限实矩阵 A，r 为 0 到 min(m,n) 的整数",
+        "优化目标为谱范数或 Frobenius 范数，候选矩阵秩至多 r"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 中的命题、推导与边界；非形式化证明",
+          "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "低秩"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "低秩"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "低秩"
+          ]
+        }
+      ],
+      "score": 13
+    },
+    {
+      "id": "math.support-conditioning",
+      "version": 1,
+      "sha256": "4358cbb6785d8b709037d448a5738354be5134ce8f64127931430f3d39f186fd",
+      "title": "有限支持条件化：逆向KL投影、稳定性与质量不可识别",
+      "summary": "候选内归一化不识别全局保留质量；以逆向KL分解、条件TV放大界和分区分母恢复核查hard mask与near/far统计前提。",
+      "status": "published",
+      "assumptions": [
+        "同一非空有限合法集合上的非负归一化概率；事件索引唯一合法且质量正",
+        "条件TV须两分布事件质量均正；逆向KL有限式须q支持事件且q绝对连续于P",
+        "候选比例恢复全局质量需独立事件质量/完整分母；logit温度与因果全集一致",
+        "精确算术推导；浮点样例非认证包络，未证明模型/e2e收益"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-conditioning-20261008/independent_review_v2.md: finite proof/code/data review; not formal",
+          "agent_doc/results/math-conditioning-20261008/validation_results_v2.json: public CPU development cases"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "定性",
+            "稳定"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "定性",
+            "稳定"
+          ]
+        }
+      ],
+      "score": 12
+    }
+  ]
+}

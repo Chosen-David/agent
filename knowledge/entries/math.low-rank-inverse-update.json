@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "id": "math.low-rank-inverse-update",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "低秩逆更新、正定删除与浮点相消边界",
+  "summary": "可逆A的低秩更新由小系统S=I+V^TA^-1U判可逆；正定删除需u^TA^-1u<1。精确恒等式不保证浮点稳定，完整残差仍需核验。",
+  "aliases": [
+    "矩阵 添加 少量 观测 逆 更新",
+    "传感器 协方差 删除 样本 正定",
+    "公式 正确 浮点 相消 残差",
+    "Sherman Morrison Woodbury inverse update rank one downdate numerical cancellation"
+  ],
+  "domains": [
+    "linear-algebra",
+    "numerical-analysis"
+  ],
+  "structures": [
+    "low-rank-matrix-update",
+    "reused-linear-solves",
+    "positive-definite-downdate",
+    "floating-cancellation"
+  ],
+  "assumptions": [
+    "实A为n×n可逆矩阵，U,V为n×k，S=I_k+V^TA^-1U；B可逆等价于S可逆，不要求因子满列秩。",
+    "rank-one公式需beta=1+v^TA^-1u非零；SPD判据另需A实对称正定，正负更新为uu^T。",
+    "精确实数恒等式与实际浮点算法分开；IEEE binary64反例限定Python记录的运算顺序。",
+    "在线ridge仅是未归一化Gram λI+Σx_ix_i^T，λ>0；回归rhs须一起更新，不能套用到含均值/归一化变化的原始协方差删除。"
+  ],
+  "sources": [
+    {
+      "url": "https://nhigham.com/2020/09/29/what-is-the-sherman-morrison-woodbury-formula/",
+      "locator": "Sherman-Morrison, SMW and General Formula sections; identity and Schur derivation; do not reuse simplified k-variable complexity as full general cost",
+      "accessed": "2026-10-09"
+    },
+    {
+      "url": "https://arxiv.org/pdf/2609.12266v1",
+      "locator": "Abstract/Section1/Algorithm1.1/Section3.1 Algorithm3.2 and adjacent derivation; not all error theorems/proofs or experiment reproduction",
+      "accessed": "2026-10-09"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "agent_doc/results/math-inverse-update-20261009：10公开精确/实际binary64边界与独立审核；非形式化、非通用稳定/模型收益证明。"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.schur-complement-block-elimination",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.linear-solve-backward-error"
+    },
+    {
+      "type": "related",
+      "id": "math.centered-covariance-merge"
+    },
+    {
+      "type": "related",
+      "id": "math.linear-system-stability"
+    }
+  ]
+}

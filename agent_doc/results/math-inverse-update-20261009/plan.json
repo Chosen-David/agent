@@ -1,0 +1,163 @@
+{
+  "task_refs": [
+    "MATH-56"
+  ],
+  "scope": "Exact low-rank inverse/solve update, SPD downdate boundary and one actual binary64 cancellation witness; public structure checks only, no model/GPU/e2e/token benefit",
+  "budget_seconds": 1200,
+  "max_cycles": 2,
+  "max_attempts": 2,
+  "authorization": "current user continuous foundation build/direct main push",
+  "decision": "EXECUTE",
+  "startup_revision": "48bfa27fac284c704eb2e8c2d0a96c3fd00eba0c",
+  "evidence_refs": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "ff97d09aeb35cff3a973d1423f325ef6274f33b4c68830e8c899821e989bd63a"
+    },
+    {
+      "path": "prompts/decision_review.md",
+      "sha256": "55b793450ff0e3d29696dae7626afab7f15d1ab843baa396dcc1d564e532c849"
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "7962983465b49b87d0463578a29609a45cd716f9c993ad4a2be6eae76ad4a27f"
+    },
+    {
+      "path": "agent_doc/task/task_details/MATH-56.md",
+      "sha256": "2dfc71db9153da5597771ad464d6ff95cb57ccba07f1fc90479210e6a6a7cae4"
+    },
+    {
+      "path": "config/role_registry.json",
+      "sha256": "c231d5031aab337845de3e970f0253fc8d5156be3a3bdff839f2ebf696f7c5eb"
+    },
+    {
+      "path": "knowledge/learning_state.json",
+      "sha256": "a1f14f52f26cac9ba76567ed217768de5ab1cca9d37ee2c4c3ceca29284d0a0e"
+    },
+    {
+      "path": "knowledge/README.md",
+      "sha256": "aebd4eca92e38ecae7a609b8e906ce9ddd0d505ca4e36738d79de44ad509554a"
+    },
+    {
+      "path": "knowledge/FORMAT.md",
+      "sha256": "ef6a2fa1048e2345573374c914d4e7cb4771e0e5882dadfd97dc6b1b3c24d3a0"
+    },
+    {
+      "path": "plugins/research-assistant/skills/model-with-knowledge/SKILL.md",
+      "sha256": "c1a060f682e5c1996d56978a68a5a9c916f828e7f2eec31a8892ab9b95d2c65b"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "agent_doc/results/math-inverse-update-20261009/sources.json",
+      "sha256": "93e476087b223a24e2abec517519ace5152ed7efecc0c5840d1a17a79613c0b2"
+    },
+    {
+      "path": "agent_doc/results/math-inverse-update-20261009/prior_search.json",
+      "sha256": "901ba53e0562ce908069a5bcf074c5850a729cf9aa843b7de4dd63430876ceaa"
+    },
+    {
+      "path": "agent_doc/results/math-inverse-update-20261009/prior_knowledge.json",
+      "sha256": "43d2db9a2438bf884c838809961f6c65c07c4009e8fd416c866043989decdeb2"
+    },
+    {
+      "path": "agent_doc/results/math-inverse-update-20261009/prior_review.json",
+      "sha256": "75bb066b6aa5ea6d632235af704bb260feb44ec7b24fd13d2943d73e33cfd785"
+    },
+    {
+      "path": "agent_doc/results/math-inverse-update-20261009/prior_card.json",
+      "sha256": "76b11a6fe486a7fd2a554222a5b7e4a6eccac1f8e42a0805c064f8aaab436867"
+    },
+    {
+      "path": "agent_doc/results/math-inverse-update-20261009/cases.json",
+      "sha256": "e10be9dd651adbade5604d44b0cd1c5167d2d0c618cf9b92ad2e8da15b222424"
+    },
+    {
+      "path": "agent_doc/results/math-inverse-update-20261009/retrieval_protocol.json",
+      "sha256": "98f3e932ebc120ff23b0b2ab37da54e3d5ab026b44296dbbf8db8a177070a5e3"
+    },
+    {
+      "path": "agent_doc/results/math-inverse-update-20261009/validation_plan.json",
+      "sha256": "c73cfb11e505b9630e5472443dbde739cf21f4507ea1b2c76eea34b26d76ec0c"
+    }
+  ],
+  "dag": [
+    {
+      "id": "independent-plan",
+      "acceptance": "Real fresh independent plan approval before producer"
+    },
+    {
+      "id": "produce",
+      "depends_on": [
+        "independent-plan"
+      ],
+      "experiment_result": {
+        "result_id": "math-inverse-update-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-inverse-producer",
+        "manifest_path": "agent_doc/results/math-inverse-update-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-inverse-update-20261009/validation_plan.json",
+          "sha256": "c73cfb11e505b9630e5472443dbde739cf21f4507ea1b2c76eea34b26d76ec0c"
+        },
+        "scope": "Exact low-rank inverse/solve update, SPD downdate boundary and one actual binary64 cancellation witness; public structure checks only, no model/GPU/e2e/token benefit"
+      }
+    },
+    {
+      "id": "verify",
+      "depends_on": [
+        "produce"
+      ],
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "math-inverse-update-20261009",
+        "producer_task_id": "produce",
+        "producer_actor": "root-inverse-producer",
+        "manifest_path": "agent_doc/results/math-inverse-update-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-inverse-update-20261009/validation_plan.json",
+          "sha256": "c73cfb11e505b9630e5472443dbde739cf21f4507ea1b2c76eea34b26d76ec0c"
+        },
+        "scope": "Exact low-rank inverse/solve update, SPD downdate boundary and one actual binary64 cancellation witness; public structure checks only, no model/GPU/e2e/token benefit"
+      }
+    },
+    {
+      "id": "publish",
+      "depends_on": [
+        "verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-inverse-update-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-inverse-producer",
+          "manifest_path": "agent_doc/results/math-inverse-update-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/math-inverse-update-20261009/validation_plan.json",
+            "sha256": "c73cfb11e505b9630e5472443dbde739cf21f4507ea1b2c76eea34b26d76ec0c"
+          },
+          "scope": "Exact low-rank inverse/solve update, SPD downdate boundary and one actual binary64 cancellation witness; public structure checks only, no model/GPU/e2e/token benefit"
+        }
+      ]
+    }
+  ],
+  "write_scope": [
+    "new inverse-update card/mirror",
+    "README/coverage/task/learning state",
+    "scoped resultdir"
+  ],
+  "prohibited": [
+    "SGLang",
+    "guide",
+    "production behavior",
+    "holdout content"
+  ],
+  "method": "# [MATH-56] 低秩逆更新与稳定性\n\n## Plan\n\n授权：持续基础知识建设/直接main发布；root唯一写TASK。SGLang、人类guide、生产行为、未用测试内容禁止改。\n\n方法：A可逆，B=A+UV^T，S=I+V^TA^-1U；用块Schur证明B可逆当且仅当S可逆与Woodbury恒等式，不要求U/V满列秩。rank1 solve与SPD加/删除u，删除需u^TA^-1u<1；等号奇异，大于1可逆却非正定。在线ridge矩阵增量给严格数学迁移。自推并实测binary64标量A=1,b=1,u=2^54,v=1，SM最终相减得0而精确解非零；非小分母、A/B条件数均1，残差暴露错误。无普遍修复实现，近期MSM仅候选。\n\n验收：非形式化完整恒等式与正定证明审核；10公开案例、3条无定理名/跨领域/前提失效查询×file/SQLite；53相关回归及镜像检查。没有LLM/GPU/e2e/token收益报告。复用Schur卡并固定强依赖；未用holdout仅元数据hash。\n\nDAG：独立新上下文计划approve→produce→另一独立verify_experiment_result→consumer/publish；同一frozen合同贯穿。1200秒、最多2cycles/2attempts；仅本地工具真实调用，无远端GPU/监督服务，记录此限制。\n\n先查历史原始输出与partial错误；原结果前提/数据不同，不复用为新实验。保持其他任务/next_topic。\n\n",
+  "cycle": 1
+}
