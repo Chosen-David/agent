@@ -26,3 +26,5 @@ Date: 2026-10-09
 - 独立计划approve后生产，独立结果审核实际完成后钉定receipt，通过native gate登记usable-with-scope。8公开精确案例、6检索及34回归通过，2条目11270字符；没有模型/GPU/Lean/e2e/token收益。
 - 原229个知识/候选/holdout路径保持；holdout未读。全局元数据现有COMM-CONFIRM-01身份/日期不一致，局部通过不代表全库通过。
 - coverage/state及镜像更新，原GPU和跨域next_topic保留。下一步真实value trace及浮点边际验证；直接main读回见publication.json。
+
+- 内容已发布main `594be1fab78129455a85a0b7b55fdbdad0c1600f`；远端ref/parent/tree读回匹配，本地clean tree对齐。具体证据见publication.json。本条发布记录由随后元数据提交保存。
