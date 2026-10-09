@@ -1,0 +1,13 @@
+# Independent failure-evidence publication review
+
+Decision: **approve failure archive only**. Original result remains invalid under the pinned independent receipt SHA256 `d489a27b261c9f7804a213c3e3496fe618567332720266341f876a71ef3c5ebf`; this is not scientific consumer acceptance or canonical knowledge publication.
+
+Read report_by_gpt.md and current MATH-65 detail/Progress, TASK diff, actual coverage/learning_state diffs and mirrored files; read actual host_acceptance status invalid. MATH-65 remains unchecked/pending. Report correctly identifies frozen T6 actualcost1 versus expected1/2, unchanged producer exit1 beforeT7/T8, diagnostic six repair cases with five matching costs, exhausted two plan reviews, and required explicit future versioned continuation. It rejects known candidate/outputs.json errors, marks six hits/16368 characters and34 tests as historical temporary-draft evidence, and does not convert source screening or general informal derivation into current scientific acceptance. Recent source reading and non-model/non-GPU/non-token boundaries agree with the result review.
+
+Inspected git diffs: coverage appends one failed-attempt gap; learning_state appends one next action, one history entry with entries=[], and last_attempted_round. Independently parsed HEAD/current learning_state: every old field except append-only history/open_questions remains exactly equal, including all previous last_completed_round, next_topic and domain/engineering/GPU cursor structures. Original history is an exact prefix. Coverage's existing records/fields are unchanged except the explicitly appended gap. Both metadata mirrors have exact equal bytes. No new canonical coupling card exists.
+
+Recomputed all231 preservation_baseline SHA256 values without parsing/inspecting holdout contents: unchanged. Result/code/input/raw/config frozen bindings and original invalid receipt are preserved; nothing here supersedes them. TASK diff adds only the pending MATH-65 entry; MATH-65 detail retains its Plan and appends failure Progress. Existing TOK-003/TOK-004 global boundary issues are accurately distinguished from this scoped review; no global pass is claimed.
+
+Permitted publication is preservation of failed raw data, negative acceptance receipt, diagnostic/review evidence, report and failure-only metadata/continuation gap. Publication itself is performed by the parent; final commit/remote readback remains the parent's duty and is not certified by this prepublication review. No ResultStore usable registration, scientific downstream consumption, accepted new knowledge count, guide write, SGLang change or production adoption follows.
+
+FINAL: approve failure-evidence publication; original experiment acceptance=invalid; MATH-65=pending.

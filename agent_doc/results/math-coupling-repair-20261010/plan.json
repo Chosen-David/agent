@@ -1,0 +1,115 @@
+{
+  "task_refs": [
+    "MATH-65"
+  ],
+  "scope": "Finite full-support exact coupling repair, conservative cost and dual-feasibility certificate; eight public CPU cases and curated lexical retrieval only; no model/GPU/Lean/token/e2e gains",
+  "decision": "EXECUTE",
+  "budget_seconds": 1800,
+  "max_cycles": 2,
+  "started_unix": 1791565713.5370326,
+  "startup_revision": "fac9c18f8a91868fa4709e062da095dc0a7a4c5f",
+  "tasks": [
+    {
+      "id": "plan-review",
+      "owner": "fresh-repair-plan-reviewer"
+    },
+    {
+      "id": "produce",
+      "owner": "root-repair-producer",
+      "depends_on": [
+        "plan-review"
+      ],
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "math-coupling-repair-20261010",
+        "producer_task_id": "produce",
+        "producer_actor": "root-repair-producer",
+        "manifest_path": "agent_doc/results/math-coupling-repair-20261010/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-coupling-repair-20261010/validation_plan.json",
+          "sha256": "e7ffcf050733f4758f679842fe9f9a3bbb44ba79aa00910bcf1de0ad4fb001b7"
+        },
+        "scope": "Finite full-support exact coupling repair, conservative cost and dual-feasibility certificate; eight public CPU cases and curated lexical retrieval only; no model/GPU/Lean/token/e2e gains"
+      }
+    },
+    {
+      "id": "verify",
+      "owner": "distinct-fresh-repair-result-reviewer",
+      "depends_on": [
+        "produce"
+      ],
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "math-coupling-repair-20261010",
+        "producer_task_id": "produce",
+        "producer_actor": "root-repair-producer",
+        "manifest_path": "agent_doc/results/math-coupling-repair-20261010/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/math-coupling-repair-20261010/validation_plan.json",
+          "sha256": "e7ffcf050733f4758f679842fe9f9a3bbb44ba79aa00910bcf1de0ad4fb001b7"
+        },
+        "scope": "Finite full-support exact coupling repair, conservative cost and dual-feasibility certificate; eight public CPU cases and curated lexical retrieval only; no model/GPU/Lean/token/e2e gains"
+      }
+    },
+    {
+      "id": "publish",
+      "owner": "root",
+      "depends_on": [
+        "verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "math-coupling-repair-20261010",
+          "producer_task_id": "produce",
+          "producer_actor": "root-repair-producer",
+          "manifest_path": "agent_doc/results/math-coupling-repair-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/math-coupling-repair-20261010/validation_plan.json",
+            "sha256": "e7ffcf050733f4758f679842fe9f9a3bbb44ba79aa00910bcf1de0ad4fb001b7"
+          },
+          "scope": "Finite full-support exact coupling repair, conservative cost and dual-feasibility certificate; eight public CPU cases and curated lexical retrieval only; no model/GPU/Lean/token/e2e gains"
+        }
+      ]
+    }
+  ],
+  "frozen_inputs": [
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "2315ae874eac77e35566778966a45532a4439e7b924ffcd6ae26c6e7a922782e"
+    },
+    {
+      "path": "agent_doc/task/task_details/MATH-65.md",
+      "sha256": "72c4b20abb8dcb755fbcd1a3ac0f25467db130f5a28c555ad7cf077c2a4b3af4"
+    },
+    {
+      "path": "agent_doc/results/math-coupling-repair-20261010/fixtures.json",
+      "sha256": "96ab605c00e86fab6ac12bf36177b5fda550c7cc16884357633a596b97121af8"
+    },
+    {
+      "path": "agent_doc/results/math-coupling-repair-20261010/retrieval_protocol.json",
+      "sha256": "1d2537796931201043392aef43508fd00e50afe0bd6f321fd0ead87b8044b266"
+    },
+    {
+      "path": "agent_doc/results/math-coupling-repair-20261010/prior_search.json",
+      "sha256": "ea2f790e21a7a75c3bdb8cd714483f44a16afcb33def76506e452d7625e715f0"
+    },
+    {
+      "path": "agent_doc/results/math-coupling-repair-20261010/prior_knowledge.json",
+      "sha256": "09c5c8857359543ff645a33badeec3436788fd08f42125c55876d6d67f9282fc"
+    },
+    {
+      "path": "agent_doc/results/math-coupling-repair-20261010/prior_decisions.json",
+      "sha256": "5f918bc2f7138d5d52b105ca4e4065d66199b4d5a1ea26e4b80c15a27eeae498"
+    },
+    {
+      "path": "agent_doc/results/math-coupling-repair-20261010/preservation_baseline.json",
+      "sha256": "e51b5e4b7dd7ed0c30ce71507d27baf6ce27ac4e189b881ccc254d501b49dfc3"
+    },
+    {
+      "path": "agent_doc/results/math-coupling-repair-20261010/validation_plan.json",
+      "sha256": "e7ffcf050733f4758f679842fe9f9a3bbb44ba79aa00910bcf1de0ad4fb001b7"
+    }
+  ],
+  "version": 2,
+  "reconciliation": "B1 T7 illegal mass variants explicitly frozen; original v1 preserved; same started_unix/resource limit"
+}
