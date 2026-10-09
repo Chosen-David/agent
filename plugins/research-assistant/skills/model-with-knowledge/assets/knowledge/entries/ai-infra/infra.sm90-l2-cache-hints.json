@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "id": "infra.sm90-l2-cache-hints",
+  "version": 1,
+  "status": "candidate",
+  "kind": "case",
+  "title": "sm_90 上 L2 evict-first 提示的真实生效编码：__ldcs，而非 createpolicy+L2::cache_hint",
+  "summary": "在 H20-3e (sm_90, CUDA 12.9/nvcc V12.9.41) 实测：PTX createpolicy+ld.global.L2::cache_hint 可编译但生成的 SASS 与普通 load 逐字节相同（策略被丢弃）；v4.u32 直写 ld.global.nc.L2::evict_first 报错要求 v8.b32/v4.b64（256-bit load 需 sm_100+）；唯一真实产生 evict-first 行为的编码是 __ldcs，SASS 为 LDG.E.EF.128。",
+  "aliases": [
+    "evict first",
+    "L2 cache hint",
+    "__ldcs",
+    "createpolicy",
+    "streaming load"
+  ],
+  "domains": [
+    "ai-infra"
+  ],
+  "structures": [
+    "流式数据不冲刷 L2 复用数据",
+    "cache eviction policy",
+    "GPU 访存提示验证",
+    "SASS-level verification of load hints"
+  ],
+  "assumptions": [
+    "hardware: NVIDIA H20-3e (sm_90), CUDA 12.9, nvcc V12.9.41",
+    "目标：流式 B 矩阵 load 不冲刷 L2 中常驻的复用数据 A（GEMV 类带宽受限算子）",
+    "以 SASS 反汇编（nvcc -arch=sm_90 + cuobjdump/编译期 SASS dump）判定提示是否生效"
+  ],
+  "sources": [
+    {
+      "url": "https://docs.nvidia.com/cuda/parallel-thread-execution/",
+      "locator": "PTX ISA createpolicy / ld.global.L2::cache_hint / evict_first 语义（外网当日不可达未直接打开；本证据全部来自本机 SASS 实测，见 checks）",
+      "accessed": "2026-10-09"
+    }
+  ],
+  "verification": {
+    "source": "unverified",
+    "proof": "not-applicable",
+    "checks": [
+      "CUDA-Triton-Learn/.agent-runs/gemv-s4-round2/evict_hint_probes/（4 个 probe 源码+SASS 证据与 EVIDENCE.md，2026-10-09 本机 nvcc 12.9 + sm_90 实测）",
+      "CUDA-Triton-Learn/.agent-runs/gemv-s4-round2/sass_v2.log（每 kernel 的 LDG/EF 编码定位）",
+      "双上下文验证：单次 load 与热循环内 load 均确认 createpolicy 策略被丢弃"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "infra.h20-gemv-bandwidth-envelope"
+    }
+  ],
+  "reuse": {
+    "type": "implementation",
+    "claim": "sm_90 (H20) 上唯一真实生效的 evict-first load 编码是 __ldcs（SASS LDG.E.EF.128）；createpolicy+L2::cache_hint 编译通过但策略被丢弃；256-bit evict_first 向量 load 需 sm_100+。",
+    "conditions": {
+      "hardware": "NVIDIA sm_90 (H20-3e)",
+      "toolchain": "nvcc V12.9.41, -arch=sm_90",
+      "pattern": "streaming loads that should not evict L2-resident reused data"
+    },
+    "observations": [
+      "createpolicy+L2::cache_hint 路径：可编译，SASS 与普通 load 逐字节相同（单次与循环上下文双验证）。",
+      "ld.global.nc.L2::evict_first 的 v4.u32 形式：ptxas 报 requires '.v8.b32/.v4.b64'；256-bit load 是 sm_100+ 能力。",
+      "__ldcs 生成 LDG.E.EF.128，是 sm_90 上确认生效的唯一 evict-first 编码。",
+      "const __restrict__ 指针已免费生成 LDG.E.128.CONSTANT（即 .nc 语义），无需额外 hint。"
+    ],
+    "limitations": [
+      "结论限于 sm_90 + CUDA 12.9；sm_100+（Blackwell）的 256-bit evict_first 与 cache policy 行为需另行验证。",
+      "SASS 编码生效不等于性能收益：evict-first 对小 A（≤32KB vs 60MB L2）场景的净收益仍需 A/B 实测。",
+      "未测 __ldlu（last-use）与 persisting L2 window（cudaStreamSetAttribute accessPolicyWindow）路径。"
+    ],
+    "minimal_checks": [
+      "迁移到其他架构/工具链时重跑 evict_hint_probes 并 diff SASS。",
+      "使用前用 cuobjdump -sass 确认目标 kernel 的 LDG 编码含 .EF。",
+      "性能主张必须以同条件 A/B 实测支持，编码生效只是先验。"
+    ],
+    "code": {
+      "repository": "Chosen-David/CUDA-Triton-Learn",
+      "commit": "ff65a6aec5c62534aef2a4d6f938c73546f74d92",
+      "paths": [
+        "GEMV/agent/agent_gemv.cuh"
+      ],
+      "symbols": [
+        "agent_gemv_reg2"
+      ],
+      "license": "Proprietary (user-owned learning repo; evidence files freely reusable as methodology)",
+      "language": "CUDA C++",
+      "entrypoint": "GEMV/agent/test_agent_gemv_v2.cu",
+      "local_execution": "not-run"
+    }
+  }
+}

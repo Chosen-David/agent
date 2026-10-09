@@ -301,3 +301,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-09 离散完成边界
 
 - [x] [MATH-59] 完成量、packetizer 与分块安全边界（文档限定） ([详情](task_details/MATH-59.md))
+
+- [ ] [MATH-60] FIFO完成量知识入口与前提边界 ([详情](task_details/MATH-60.md))

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "id": "infra.h20-gemv-bandwidth-envelope",
+  "version": 1,
+  "status": "candidate",
+  "kind": "case",
+  "title": "H20-3e 硬件包络与带宽受限 GEMV 的 roofline 推导",
+  "summary": "本地 CUDA 探测的 H20-3e 关键参数（78 SM sm_90、L2 60MiB、smem 228KiB/SM、L2 persisting 37.5MiB）与 half GEMV 算术强度约 1 FLOP/2 字节的 roofline 推导：瓶颈是 HBM 流量而非算术，优化目标是字节数与访存并发。",
+  "aliases": [
+    "GEMV bandwidth bound",
+    "roofline GEMV",
+    "H20 hardware envelope",
+    "带宽受限 kernel"
+  ],
+  "domains": [
+    "ai-infra"
+  ],
+  "structures": [
+    "带宽受限算子优化",
+    "roofline 算术强度",
+    "GEMV 内存流量",
+    "bandwidth-bound kernel tuning"
+  ],
+  "assumptions": [
+    "operator: y[M] = a[1,K] · B[M,K], B 行主序 half 输入, C=half 或 float 输出",
+    "B 每元素仅读取一次（无跨行复用可利用, A 向量长度 K 远小于 B 总量）",
+    "hardware: NVIDIA H20-3e, sm_90, CUDA 12.9 runtime",
+    "数据已在 device 端, 不含 H2D 传输"
+  ],
+  "sources": [
+    {
+      "url": "https://docs.nvidia.com/cuda/cuda-runtime-api/structcudaDeviceProp.html",
+      "locator": "cudaDeviceProp 字段语义（官方文档; 本机外网当日不可达未直接打开, 已用本地 CUDA 12.9 头文件 /usr/local/cuda/include/driver_types.h 交叉核对: multiProcessorCount L2446, memoryClockRate Deprecated L2480, memoryBusWidth L2481, l2CacheSize L2482, persistingL2CacheMaxSize L2483, sharedMemPerBlockOptin L2501）",
+      "accessed": "2026-10-09"
+    }
+  ],
+  "verification": {
+    "source": "unverified",
+    "proof": "not-applicable",
+    "checks": [
+      "本地执行 device_probe.cu (nvcc 12.9, -arch=sm_90) 于 2026-10-09, 原始日志 CUDA-Triton-Learn/.agent-runs/gemv-s1s2/device_probe.log",
+      "字段语义核对本地 CUDA 12.9 头文件 driver_types.h 上述行号（本地可复核的一手证据）"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "infra.flashattention-io"
+    }
+  ]
+}

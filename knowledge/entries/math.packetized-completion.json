@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "id": "math.packetized-completion",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "FIFO 完成量、整块边界与末端延迟",
+  "summary": "正长度有界FIFO前缀完成量是处理量的整块截断；完整边界命中时间不变，但中间取整、乱序和验证等待不能沿用此保证。服务曲线弱化不是实际新增延迟。",
+  "aliases": [
+    "记录 处理 进度 完整 输出 延迟",
+    "多机 工人 乱序 完成 工作 前缀",
+    "流水线 整块 发布 流式 传输 等待",
+    "packetizer completed work fifo backlog terminal tandem delay"
+  ],
+  "domains": [
+    "network-calculus",
+    "optimization-and-control"
+  ],
+  "structures": [
+    "packetized-completion",
+    "fifo-work-prefix",
+    "service-curve",
+    "terminal-versus-tandem"
+  ],
+  "assumptions": [
+    "0<l_i≤L<∞，Q_n→∞，输入有限且packetized；空初始、单调右连续、每有限时段有限到达。",
+    "单流同序无丢弃FIFO；D_f≤A且完整边界即时可见D_c=P(D_f)，单位是累计工作量而非任务数。",
+    "服务弱化另需合法的普通服务曲线；形状/平均速率不提供严格服务保证。",
+    "完成延迟等价仅针对同一输出的完整边界末端取整，不保证任意部分工作阈值、中间packetizer、乱序工人或验证等待。"
+  ],
+  "sources": [
+    {
+      "url": "https://leboudec.github.io/netcal/latex/netCalBook.pdf",
+      "locator": "LNCS2050(2001), author online Version August23,2022; §1.7.2 Definitions1.7.1–1.7.5,eq1.21,Theorem1.7.1+proof pp41–44,Remark1.7.1 p45; scoped derivations only",
+      "accessed": "2026-10-09"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "agent_doc/results/math-packet-entry-20261009/：独立结果审核后才发布；公开精确/词法结构检查，不是Lean或模型/GPU/e2e/token验证。"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "infra.pagedattention-kv"
+    }
+  ]
+}
