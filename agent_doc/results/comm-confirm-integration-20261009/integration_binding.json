@@ -1,0 +1,127 @@
+{
+  "version": 2,
+  "parent_dag": "agent_doc/results/comm-confirm-20261009/task_dag.json",
+  "purpose": "Explicit binding for alreadyplanned finalregression and downstreamintegration gates; no newmeasurementoracceptancechange",
+  "nodes": [
+    {
+      "id": "regression",
+      "depends_on": [
+        "adopt_or_revert"
+      ],
+      "experiment_result": {
+        "result_id": "comm-confirm-integration-20261009",
+        "producer_task_id": "regression",
+        "producer_actor": "root-confirm-producer",
+        "manifest_path": "agent_doc/results/comm-confirm-integration-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-confirm-integration-20261009/validation_plan.json",
+          "sha256": "82a7147d30c926e72010eb3da370b006ccd536bd0cdd07b35c512015004bc69e"
+        },
+        "scope": "Finaladaptiveinboxintegration, currentexactcandidate andpublicsnapshotregression; performance reused only from authenticated31pairscopedresult"
+      },
+      "required_result_refs": [
+        {
+          "result_id": "comm-confirm-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-confirm-producer",
+          "manifest_path": "agent_doc/results/comm-confirm-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-confirm-20261009/validation_plan.json",
+            "sha256": "c856e8778866a46fef61bb800ec5c20cec925141910e13c55d9f59a8d3ffcc81"
+          },
+          "scope": "One-shot31pair confirmation of exact adaptive localSQLite inbox, against currentmain; noLLM/network/tokenclaims"
+        }
+      ]
+    },
+    {
+      "id": "integration_review",
+      "depends_on": [
+        "regression"
+      ],
+      "result_validation": {
+        "result_id": "comm-confirm-integration-20261009",
+        "producer_task_id": "regression",
+        "producer_actor": "root-confirm-producer",
+        "manifest_path": "agent_doc/results/comm-confirm-integration-20261009/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-confirm-integration-20261009/validation_plan.json",
+          "sha256": "82a7147d30c926e72010eb3da370b006ccd536bd0cdd07b35c512015004bc69e"
+        },
+        "scope": "Finaladaptiveinboxintegration, currentexactcandidate andpublicsnapshotregression; performance reused only from authenticated31pairscopedresult"
+      },
+      "required_result_refs": [
+        {
+          "result_id": "comm-confirm-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-confirm-producer",
+          "manifest_path": "agent_doc/results/comm-confirm-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-confirm-20261009/validation_plan.json",
+            "sha256": "c856e8778866a46fef61bb800ec5c20cec925141910e13c55d9f59a8d3ffcc81"
+          },
+          "scope": "One-shot31pair confirmation of exact adaptive localSQLite inbox, against currentmain; noLLM/network/tokenclaims"
+        }
+      ]
+    },
+    {
+      "id": "publish",
+      "depends_on": [
+        "integration_review"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "comm-confirm-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-confirm-producer",
+          "manifest_path": "agent_doc/results/comm-confirm-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-confirm-20261009/validation_plan.json",
+            "sha256": "c856e8778866a46fef61bb800ec5c20cec925141910e13c55d9f59a8d3ffcc81"
+          },
+          "scope": "One-shot31pair confirmation of exact adaptive localSQLite inbox, against currentmain; noLLM/network/tokenclaims"
+        },
+        {
+          "result_id": "comm-confirm-integration-20261009",
+          "producer_task_id": "regression",
+          "producer_actor": "root-confirm-producer",
+          "manifest_path": "agent_doc/results/comm-confirm-integration-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-confirm-integration-20261009/validation_plan.json",
+            "sha256": "82a7147d30c926e72010eb3da370b006ccd536bd0cdd07b35c512015004bc69e"
+          },
+          "scope": "Finaladaptiveinboxintegration, currentexactcandidate andpublicsnapshotregression; performance reused only from authenticated31pairscopedresult"
+        }
+      ]
+    },
+    {
+      "id": "readback",
+      "depends_on": [
+        "publish"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "comm-confirm-20261009",
+          "producer_task_id": "produce",
+          "producer_actor": "root-confirm-producer",
+          "manifest_path": "agent_doc/results/comm-confirm-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-confirm-20261009/validation_plan.json",
+            "sha256": "c856e8778866a46fef61bb800ec5c20cec925141910e13c55d9f59a8d3ffcc81"
+          },
+          "scope": "One-shot31pair confirmation of exact adaptive localSQLite inbox, against currentmain; noLLM/network/tokenclaims"
+        },
+        {
+          "result_id": "comm-confirm-integration-20261009",
+          "producer_task_id": "regression",
+          "producer_actor": "root-confirm-producer",
+          "manifest_path": "agent_doc/results/comm-confirm-integration-20261009/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-confirm-integration-20261009/validation_plan.json",
+            "sha256": "82a7147d30c926e72010eb3da370b006ccd536bd0cdd07b35c512015004bc69e"
+          },
+          "scope": "Finaladaptiveinboxintegration, currentexactcandidate andpublicsnapshotregression; performance reused only from authenticated31pairscopedresult"
+        }
+      ]
+    }
+  ]
+}

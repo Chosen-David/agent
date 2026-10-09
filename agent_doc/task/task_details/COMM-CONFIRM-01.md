@@ -1,0 +1,13 @@
+# COMM-CONFIRM-01
+
+## Plan
+
+Current user continuous communication optimization, directmain after independent checks. Baseline fresh mainaa93e85; exactr17candidate reused only as a hypothesis, original negative/noise remains unchanged. One producer31pairedpublicinbox samples/3warmups + independent31pair replay, no optional repeated retries/threshold tuning. Primary20kforeignpending,last5target andabsenttarget each>=1.25x AND>=.05ms absolute OR>=20%VMreduction with latency nonregression. Otherinbox scenarios and publish/freshACK each candidate<=1.25x baseline OR added<.2ms, unchanged thresholds. Same7shapes, samefull publicfixture/harnessv2 unchanged; unchangedDDL/init migration diagnostic perapprovedv8. Require61ownpublicproperties+newnestedplan/duplicaterefregressions, explicitWAL/DELETE writerafterledgerread0/1/4events, allaffectedtests. Exactledger read andquery useexplicitBEGIN;append-onlysupported scope, no network/token/model claims. Budget1candidate,31producerpairs,31independentpairs,CPU600seconds,no paidcalls/GPU/permissions/systemsettings; sharedCPU remains limited. No tmux/backend currently available, no durablemonitor claim. Solewriterroot forTASK/code/newoutput; independents ownreview artifacts. DAG:preparefreeze->independentplanreview->produce->independentverify->adoptorrevert->fullregressionifkept->independentintegration->freshmainexpectedSHApublish->readback->completion. Onnegative keep currentmain, preservevalid negative/result report; no fakegain. Prior search8partial candidates90scanned/missingrecords; explicitly inspectedr17/confirmation source, no previous timings count ascurrentgain. ProtocolBench official2026ICML abstract checked2026-10-09 encourages measuringlatency/overhead/robustness jointly; not its protocol/router code or authorresults transplanted. ExistingPython/SQLite establishedmechanisms and existing versionedskill/harness used,no newtools installed,humanGUIDE/SGLang untouched.
+
+## Progress
+
+Prepared frozenplan awaiting independentapproval.
+
+Authenticated independent SHA107922ce57fb1873cae48db8a2c25e80078d75d00a42feb0dfb8ef0357160663 registered usable-with-scope; keep=true, both31paircohorts/allpublicguards passed, ownproperties/snapshotchecks passed. Exactcandidate adopted locally; fullintegration/publication still pending. Original20r17 negative unchanged.
+
+Finalintegration authenticated independentSHAb6595fdd8fe7237b94cf1382cd7862494186580f78b752f9ff312c96d62a594f registered scopedusable; currentexactcandidate,31pairperformance proofs and889test/reader3/source/report aligned; publication/readback next. Draftprotocolreference error and testproxyfailure preserved with corrected versions.

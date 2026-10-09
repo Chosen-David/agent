@@ -197,18 +197,6 @@ class Mailbox:
         if recipient not in {r['recipient'] for r in self.plan['routes']}:
             raise ValueError('unknown recipient')
         with self.connect() as db:
-            # Exact ledger and inbox query share one read snapshot.
-            db.execute('BEGIN')
-            count = db.execute('SELECT events FROM communication_usage_v1 WHERE run_id=?',
-                               (self.run_id,)).fetchone()['events']
-            if count == 0:
-                return []
-            if count <= limit:
-                rows = db.execute('''SELECT e.seq,e.body FROM communication_events e
-                    WHERE e.run_id=? AND EXISTS (SELECT 1 FROM communication_deliveries d
-                        WHERE d.seq=e.seq AND d.recipient=? AND d.receipt IS NULL)
-                    ORDER BY e.seq LIMIT ?''', (self.run_id, recipient, limit)).fetchall()
-                return [{'seq': r['seq'], 'event': json.loads(r['body'])} for r in rows]
             rows = db.execute('''SELECT e.seq,e.body FROM communication_events e
                 JOIN communication_deliveries d ON e.seq=d.seq
                 WHERE e.run_id=? AND d.recipient=? AND d.receipt IS NULL

@@ -1,0 +1,94 @@
+{
+  "task_id": "COMM-CONFIRM-01",
+  "nodes": [
+    {
+      "id": "prepare",
+      "depends_on": [],
+      "owner": "root",
+      "done_when": "frozen baseline/candidate/plan/config"
+    },
+    {
+      "id": "plan_review",
+      "depends_on": [
+        "prepare"
+      ],
+      "owner": "independent_host_review",
+      "done_when": "actual independent approve hostmessage and hash"
+    },
+    {
+      "id": "produce",
+      "depends_on": [
+        "plan_review"
+      ],
+      "owner": "root",
+      "done_when": "31pairs raw safety/tests and frozen result manifest"
+    },
+    {
+      "id": "verify_experiment_result",
+      "depends_on": [
+        "produce"
+      ],
+      "owner": "independent_host_review",
+      "done_when": "actual independent accepted scopeddata + keep decision"
+    },
+    {
+      "id": "adopt_or_revert",
+      "depends_on": [
+        "verify_experiment_result"
+      ],
+      "owner": "root",
+      "done_when": "only exactcandidate ifallgatepass else preservebaseline"
+    },
+    {
+      "id": "regression",
+      "depends_on": [
+        "adopt_or_revert"
+      ],
+      "owner": "root",
+      "done_when": "fullsuite ifkept; honestnegativeotherwise"
+    },
+    {
+      "id": "integration_review",
+      "depends_on": [
+        "regression"
+      ],
+      "owner": "independent_host_review",
+      "done_when": "actual source/logs/artifact independentreview ifkept"
+    },
+    {
+      "id": "publish",
+      "depends_on": [
+        "integration_review"
+      ],
+      "owner": "root",
+      "done_when": "freshmainexpectedhead nonforce afterallgates"
+    },
+    {
+      "id": "readback",
+      "depends_on": [
+        "publish"
+      ],
+      "owner": "root",
+      "done_when": "remoteSHA/tree matches testedtree"
+    }
+  ],
+  "input_refs": [
+    {
+      "path": "agent_doc/results/comm-confirm-20261009/plan_snapshot.md",
+      "sha256": "9521ee3f905a06c3592b273fee46f00f5d517445ed667a832b1406ecad5d8644"
+    },
+    {
+      "path": "agent_doc/results/comm-confirm-20261009/config.json",
+      "sha256": "bf44202c3c3075df2c420efaf05c9d7aa9fba712928aff1227e417cb3904cfbb"
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "0a46679fadd05826ccdc82ba8cf391fc2b8e8d725be77bd37c132b2e257ae976"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "host": "actual synchronous host collaboration; no installed supervisor/runtimeprotection claimed"
+}
