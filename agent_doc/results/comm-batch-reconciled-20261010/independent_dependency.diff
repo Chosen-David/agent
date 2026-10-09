@@ -1,0 +1,81 @@
+diff --git a/agent_runtime/handoff_basis.py b/agent_runtime/handoff_basis.py
+index 00c7d7d..4648622 100644
+--- a/agent_runtime/handoff_basis.py
++++ b/agent_runtime/handoff_basis.py
+@@ -10,6 +10,7 @@ from pathlib import Path
+ 
+ from .knowledge import KnowledgeStore, check_handoff_knowledge
+ from .project_memory import MemoryLedger, _ids
++from .handoff_encoding import FORMAT as CLAIM_TABLE_FORMAT, encode_claims_table
+ from scripts.validate_handoff import validate
+ 
+ 
+@@ -96,6 +97,8 @@ def claim_graph(record):
+ def check_handoff_basis(root, record, request):
+     """Mandatory when declared; requirements belong to the consumer, not output."""
+     _require(isinstance(record, dict) and isinstance(request, dict), 'basis requires objects')
++    _require(request.get('context_format', 'json') in ('json', CLAIM_TABLE_FORMAT),
++             'unsupported consumer context format')
+     for key in ('context_max_chars', 'context_max_tokens'):
+         if key in request:
+             cap = request[key]
+@@ -277,7 +280,8 @@ def basis_context(root, record, request, *, known_knowledge_refs=(), known_memor
+             memory_entries.update((entry['id'], entry) for entry in entries)
+             pending = {dep for entry in entries for dep in entry['deps']} - memory_entries.keys()
+     payload['memory_entries'] = [memory_entries[k] for k in sorted(memory_entries) if k not in known_memory_ids]
+-    serialized = json.dumps(payload, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
++    wire_payload = encode_claims_table(payload) if request.get('context_format') == CLAIM_TABLE_FORMAT else payload
++    serialized = json.dumps(wire_payload, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+     _require(len(serialized) <= max_chars, 'complete basis exceeds character budget; narrow task or reuse context')
+     tokens = None
+     if token_counter is not None:
+diff --git a/agent_runtime/handoff_encoding.py b/agent_runtime/handoff_encoding.py
+new file mode 100644
+index 0000000..6b11bd1
+--- /dev/null
++++ b/agent_runtime/handoff_encoding.py
+@@ -0,0 +1,44 @@
++"""Opt-in, lossless claim-table context. Not evidence acceptance or compression of prose."""
++from copy import deepcopy
++import json
++
++FORMAT='claims-table/v1'
++COLUMNS=('id','status','depends_on','artifact_ids','knowledge_ids','memory_ids','assumptions')
++
++def encode_claims_table(payload):
++    if not isinstance(payload,dict) or 'context_format' in payload:
++        raise ValueError('unencoded basis object required')
++    claims=payload.get('evidence_claims')
++    if not isinstance(claims,list) or any(not isinstance(c,dict) or set(c)!=set(COLUMNS) for c in claims):
++        raise ValueError('complete claim objects required; never drop unknown fields')
++    result=deepcopy(payload)
++    result['context_format']=FORMAT
++    result['evidence_claims']={'columns':list(COLUMNS),'rows':[[deepcopy(c[k]) for k in COLUMNS] for c in claims]}
++    return result
++
++def _unique_keys(pairs):
++    result={}
++    for k,v in pairs:
++        if k in result:raise ValueError('duplicate context key')
++        result[k]=v
++    return result
++
++def decode_basis_payload(text):
++    """Restore exact JSON values. Caller still must revalidate source/freshness/authority."""
++    if not isinstance(text,str) or len(text)>200000:
++        raise ValueError('bounded serialized context required')
++    def nonfinite(value):raise ValueError('nonfinite context value: '+value)
++    data=json.loads(text,object_pairs_hook=_unique_keys,parse_constant=nonfinite)
++    if not isinstance(data,dict):raise ValueError('basis object required')
++    if 'context_format' not in data:return data
++    if data.pop('context_format')!=FORMAT:raise ValueError('unsupported context format')
++    table=data.get('evidence_claims')
++    if (not isinstance(table,dict) or set(table)!={'columns','rows'} or
++            table['columns']!=list(COLUMNS) or not isinstance(table['rows'],list)):
++        raise ValueError('exact claim table schema required')
++    claims=[]
++    for row in table['rows']:
++        if not isinstance(row,list) or len(row)!=len(COLUMNS):raise ValueError('truncated/extended claim row')
++        claims.append(dict(zip(COLUMNS,row)))
++    data['evidence_claims']=claims
++    return data

@@ -1,0 +1,30 @@
+{
+  "base_main": "e6b3dc14ad9eb2c5d3c1cb09ccda5027a7d74019",
+  "shapes": [
+    [
+      1,
+      1
+    ],
+    [
+      8,
+      1
+    ],
+    [
+      32,
+      3
+    ]
+  ],
+  "seed_events": 100,
+  "repeats": 31,
+  "warmups": 3,
+  "independent_repeats": 31,
+  "primary": "B8/B32 BOTHcohorts currentsequential/batch>=2 AND delta>=.5ms",
+  "guard": "candidate<=1.25*reference OR delta<.2ms;legacysequential+atomicreference allshapes;B1batch;allACKpaths",
+  "performance_retries": 0,
+  "cpu_seconds_budget": 900,
+  "plan_review_cycles": 2,
+  "batch_cap": 100,
+  "pre_adoption_tests": "7batchAPI+25existingcandidate+61independentpublic+2oldregressions;CLI8thactualintegrationonly",
+  "benchmark": "benchmark_v2.py",
+  "retention": "exception-safe pair checkpoints+partial outputs/trace;failed runs invalid/no retries"
+}

@@ -1,0 +1,387 @@
+{
+  "task_id": "COMM-BATCH-01",
+  "run_id": "comm-batch-20261010",
+  "project_root": "/workspace/scratch/cac7689316eb/agent-comm20",
+  "user_authorization": "Current continuous communication upgrades and directmain;no SGLang or human-guide writes",
+  "decision": "EXECUTE boundedoptinnewAPI",
+  "scope": "COMM-BATCH-01 only; broadhistoricalTASK notcompleted",
+  "budget": {
+    "base_main": "e6b3dc14ad9eb2c5d3c1cb09ccda5027a7d74019",
+    "shapes": [
+      [
+        1,
+        1
+      ],
+      [
+        8,
+        1
+      ],
+      [
+        32,
+        3
+      ]
+    ],
+    "seed_events": 100,
+    "repeats": 31,
+    "warmups": 3,
+    "independent_repeats": 31,
+    "primary": "B8/B32 BOTHcohorts currentsequential/batch>=2 AND delta>=.5ms",
+    "guard": "candidate<=1.25*reference OR delta<.2ms;legacysequential+atomicreference allshapes;B1batch;allACKpaths",
+    "performance_retries": 0,
+    "cpu_seconds_budget": 900,
+    "plan_review_cycles": 2,
+    "batch_cap": 100,
+    "pre_adoption_tests": "7batchAPI+25existingcandidate+61independentpublic+2oldregressions;CLI8thactualintegrationonly",
+    "benchmark": "benchmark_v2.py",
+    "retention": "exception-safe pair checkpoints+partial outputs/trace;failed runs invalid/no retries"
+  },
+  "nodes": [
+    {
+      "id": "prepare",
+      "owner": "root",
+      "depends_on": [],
+      "action": "freeze",
+      "outputs": [
+        "agent_doc/results/comm-batch-20261010/task_dag.json"
+      ]
+    },
+    {
+      "id": "plan_review",
+      "owner": "fresh-plan-reviewer",
+      "depends_on": [
+        "prepare"
+      ],
+      "action": "independent_plan_review"
+    },
+    {
+      "id": "produce",
+      "owner": "root-batch-producer",
+      "depends_on": [
+        "plan_review"
+      ],
+      "action": "frozen_benchmark_correctness",
+      "experiment_result": {
+        "result_id": "comm-batch-20261010",
+        "producer_task_id": "produce",
+        "producer_actor": "root-batch-producer",
+        "manifest_path": "agent_doc/results/comm-batch-20261010/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-batch-20261010/validation_plan.json",
+          "sha256": "dd7a2f6a0c3621693b03a76fbe6861bee2c2e1ca7a5af32d6d3118606c4ee88c"
+        },
+        "scope": "Frozen boundedatomicbatch syntheticSQLite public API;3shapes4paths31pairs root+independent;noLLM/network/token"
+      }
+    },
+    {
+      "id": "verify",
+      "owner": "fresh-result-verifier",
+      "depends_on": [
+        "produce"
+      ],
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "comm-batch-20261010",
+        "producer_task_id": "produce",
+        "producer_actor": "root-batch-producer",
+        "manifest_path": "agent_doc/results/comm-batch-20261010/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-batch-20261010/validation_plan.json",
+          "sha256": "dd7a2f6a0c3621693b03a76fbe6861bee2c2e1ca7a5af32d6d3118606c4ee88c"
+        },
+        "scope": "Frozen boundedatomicbatch syntheticSQLite public API;3shapes4paths31pairs root+independent;noLLM/network/token"
+      }
+    },
+    {
+      "id": "adopt",
+      "owner": "root",
+      "depends_on": [
+        "verify"
+      ],
+      "action": "all_frozen_gates_or_keepbaseline",
+      "required_result_refs": [
+        {
+          "result_id": "comm-batch-20261010",
+          "producer_task_id": "produce",
+          "producer_actor": "root-batch-producer",
+          "manifest_path": "agent_doc/results/comm-batch-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-20261010/validation_plan.json",
+            "sha256": "dd7a2f6a0c3621693b03a76fbe6861bee2c2e1ca7a5af32d6d3118606c4ee88c"
+          },
+          "scope": "Frozen boundedatomicbatch syntheticSQLite public API;3shapes4paths31pairs root+independent;noLLM/network/token"
+        }
+      ]
+    },
+    {
+      "id": "regression",
+      "owner": "root-batch-integration-producer",
+      "depends_on": [
+        "adopt"
+      ],
+      "action": "if_kept_fullrepo_reader_batchCLI",
+      "experiment_result": {
+        "result_id": "comm-batch-integration-20261010",
+        "producer_task_id": "regression",
+        "producer_actor": "root-batch-integration-producer",
+        "manifest_path": "agent_doc/results/comm-batch-integration-20261010/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-batch-integration-20261010/validation_plan.json",
+          "sha256": "12077f107e9e6cd56a89f90a91af6b1cdb521ca36ba2ac9a6856b16f1dbd051c"
+        },
+        "scope": "Exactacceptedbatchcandidate fullrepo+reader+8batchtests inclactualCLI;negativebranchnointegrationclaim"
+      },
+      "required_result_refs": [
+        {
+          "result_id": "comm-batch-20261010",
+          "producer_task_id": "produce",
+          "producer_actor": "root-batch-producer",
+          "manifest_path": "agent_doc/results/comm-batch-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-20261010/validation_plan.json",
+            "sha256": "dd7a2f6a0c3621693b03a76fbe6861bee2c2e1ca7a5af32d6d3118606c4ee88c"
+          },
+          "scope": "Frozen boundedatomicbatch syntheticSQLite public API;3shapes4paths31pairs root+independent;noLLM/network/token"
+        }
+      ]
+    },
+    {
+      "id": "integration_review",
+      "owner": "fresh-result-verifier",
+      "depends_on": [
+        "regression"
+      ],
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "comm-batch-integration-20261010",
+        "producer_task_id": "regression",
+        "producer_actor": "root-batch-integration-producer",
+        "manifest_path": "agent_doc/results/comm-batch-integration-20261010/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-batch-integration-20261010/validation_plan.json",
+          "sha256": "12077f107e9e6cd56a89f90a91af6b1cdb521ca36ba2ac9a6856b16f1dbd051c"
+        },
+        "scope": "Exactacceptedbatchcandidate fullrepo+reader+8batchtests inclactualCLI;negativebranchnointegrationclaim"
+      },
+      "required_result_refs": [
+        {
+          "result_id": "comm-batch-20261010",
+          "producer_task_id": "produce",
+          "producer_actor": "root-batch-producer",
+          "manifest_path": "agent_doc/results/comm-batch-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-20261010/validation_plan.json",
+            "sha256": "dd7a2f6a0c3621693b03a76fbe6861bee2c2e1ca7a5af32d6d3118606c4ee88c"
+          },
+          "scope": "Frozen boundedatomicbatch syntheticSQLite public API;3shapes4paths31pairs root+independent;noLLM/network/token"
+        }
+      ]
+    },
+    {
+      "id": "publish",
+      "owner": "root",
+      "depends_on": [
+        "integration_review"
+      ],
+      "action": "if_kept_exactsource_or_scoped_negative_evidenceaudit_then_expectedheadnonforce",
+      "required_result_refs": [
+        {
+          "result_id": "comm-batch-20261010",
+          "producer_task_id": "produce",
+          "producer_actor": "root-batch-producer",
+          "manifest_path": "agent_doc/results/comm-batch-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-20261010/validation_plan.json",
+            "sha256": "dd7a2f6a0c3621693b03a76fbe6861bee2c2e1ca7a5af32d6d3118606c4ee88c"
+          },
+          "scope": "Frozen boundedatomicbatch syntheticSQLite public API;3shapes4paths31pairs root+independent;noLLM/network/token"
+        },
+        {
+          "result_id": "comm-batch-integration-20261010",
+          "producer_task_id": "regression",
+          "producer_actor": "root-batch-integration-producer",
+          "manifest_path": "agent_doc/results/comm-batch-integration-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-integration-20261010/validation_plan.json",
+            "sha256": "12077f107e9e6cd56a89f90a91af6b1cdb521ca36ba2ac9a6856b16f1dbd051c"
+          },
+          "scope": "Exactacceptedbatchcandidate fullrepo+reader+8batchtests inclactualCLI;negativebranchnointegrationclaim"
+        }
+      ],
+      "negative_branch": {
+        "depends_on": [
+          "verify"
+        ],
+        "required_result_refs": [
+          {
+            "result_id": "comm-batch-20261010",
+            "producer_task_id": "produce",
+            "producer_actor": "root-batch-producer",
+            "manifest_path": "agent_doc/results/comm-batch-20261010/manifest.json",
+            "validation_plan": {
+              "path": "agent_doc/results/comm-batch-20261010/validation_plan.json",
+              "sha256": "dd7a2f6a0c3621693b03a76fbe6861bee2c2e1ca7a5af32d6d3118606c4ee88c"
+            },
+            "scope": "Frozen boundedatomicbatch syntheticSQLite public API;3shapes4paths31pairs root+independent;noLLM/network/token"
+          }
+        ],
+        "no_integration_result": true
+      }
+    },
+    {
+      "id": "readback",
+      "owner": "root",
+      "depends_on": [
+        "publish"
+      ],
+      "action": "API+terminaltreeSHA_thenfiniteclosure",
+      "required_result_refs": [
+        {
+          "result_id": "comm-batch-20261010",
+          "producer_task_id": "produce",
+          "producer_actor": "root-batch-producer",
+          "manifest_path": "agent_doc/results/comm-batch-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-20261010/validation_plan.json",
+            "sha256": "dd7a2f6a0c3621693b03a76fbe6861bee2c2e1ca7a5af32d6d3118606c4ee88c"
+          },
+          "scope": "Frozen boundedatomicbatch syntheticSQLite public API;3shapes4paths31pairs root+independent;noLLM/network/token"
+        },
+        {
+          "result_id": "comm-batch-integration-20261010",
+          "producer_task_id": "regression",
+          "producer_actor": "root-batch-integration-producer",
+          "manifest_path": "agent_doc/results/comm-batch-integration-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-integration-20261010/validation_plan.json",
+            "sha256": "12077f107e9e6cd56a89f90a91af6b1cdb521ca36ba2ac9a6856b16f1dbd051c"
+          },
+          "scope": "Exactacceptedbatchcandidate fullrepo+reader+8batchtests inclactualCLI;negativebranchnointegrationclaim"
+        }
+      ],
+      "negative_branch": {
+        "required_result_refs": [
+          {
+            "result_id": "comm-batch-20261010",
+            "producer_task_id": "produce",
+            "producer_actor": "root-batch-producer",
+            "manifest_path": "agent_doc/results/comm-batch-20261010/manifest.json",
+            "validation_plan": {
+              "path": "agent_doc/results/comm-batch-20261010/validation_plan.json",
+              "sha256": "dd7a2f6a0c3621693b03a76fbe6861bee2c2e1ca7a5af32d6d3118606c4ee88c"
+            },
+            "scope": "Frozen boundedatomicbatch syntheticSQLite public API;3shapes4paths31pairs root+independent;noLLM/network/token"
+          }
+        ]
+      }
+    }
+  ],
+  "input_refs": [
+    {
+      "path": "agent_doc/results/comm-batch-20261010/baseline.py",
+      "sha256": "758347d97ce93ebea4b46bfc6a7ac17cab7d5e1a0e7171533c8c9ed26fe02b1f"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/candidate.py",
+      "sha256": "d54550ca30acc1893192d195a041eba92746511dd9ba98c7e5b7a06bd8b12bba"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/batch_tests.py",
+      "sha256": "b8f966fb85d32d185e56f79c17345fb6ce65c02d11bc2d61f035e8f455d21c91"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/prior_search.json",
+      "sha256": "35f7471aba7129e45b3a4dd25f7c2e9eac74a45fb6bc4be42da6a805fd9e109f"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/knowledge_search.json",
+      "sha256": "4b91a6fbd7bf8ce902a97abd260049811f1dea3df5f24ada3f884808c0f757a5"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/prior_decisions.md",
+      "sha256": "805e816f7508641c9ac8d88e839823567ac6ee3d0524e4a90bf48d0909a5ba67"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/research.md",
+      "sha256": "01b4b3ca51d4639ed08d3d3b23c5d3c86e7e3b40f2640115c1e3307d83d4d8b7"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/candidate_matrix.md",
+      "sha256": "b632d5017a29f0673f980ff0cfabd1762c9a93287596ecf41603134b8aa4edb4"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/approved_task_index.md",
+      "sha256": "7f3de894dc1e86f4ccf099c2e342be08a309d942aac05786cfe2d2b90912c290"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/contract.json",
+      "sha256": "fd12d8928d4799524d12820bb11948424870dfc618fd9510ce88d0d8979d1a02"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/validation_plan.json",
+      "sha256": "dd7a2f6a0c3621693b03a76fbe6861bee2c2e1ca7a5af32d6d3118606c4ee88c"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-integration-20261010/contract.json",
+      "sha256": "3c4afe7dfd7551dfea920056eb39c8d0e78cc21602925c9098be3219ecae265f"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-integration-20261010/validation_plan.json",
+      "sha256": "12077f107e9e6cd56a89f90a91af6b1cdb521ca36ba2ac9a6856b16f1dbd051c"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "ff97d09aeb35cff3a973d1423f325ef6274f33b4c68830e8c899821e989bd63a"
+    },
+    {
+      "path": "prompts/decision_review.md",
+      "sha256": "55b793450ff0e3d29696dae7626afab7f15d1ab843baa396dcc1d564e532c849"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    },
+    {
+      "path": "scripts/benchmark_communication_candidates_v2.py",
+      "sha256": "773706bef179857d3bc6de55eeecfa69cd733371d8bf10dc2f1b62fb83a11183"
+    },
+    {
+      "path": "agent_doc/results/comm20-20261009/independent_properties.py",
+      "sha256": "915a6f00ef3938c94b074edd51aa8f6578199fe839e8a9f8a2510c505f3af6ab"
+    },
+    {
+      "path": "tests/test_communication_regressions.py",
+      "sha256": "5c82624bc8e60a3ea5058314ffeae7631967cb424be4bda3ba68492d935e8456"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/benchmark_v2.py",
+      "sha256": "1097f1b4bcf3ecf5e77a216776d3a83279948130be0003ed1f9a12992f5ef4cd"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/config_v2.json",
+      "sha256": "90ba7dd0dcba73773d45d3d536cad1c8b6b2882672f12961622f983c6a9eff64"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/plan_snapshot_v2.md",
+      "sha256": "e2624d662455abc38ee84155e79d9671efd3f0afb1a569eff55e002305e97499"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/approved_task_detail_v2.md",
+      "sha256": "5c1e2ceb469a87e4825f98bffa1bef224db8eaf37d52fd476701accd4f94c86c"
+    },
+    {
+      "path": "agent_doc/results/comm-batch-20261010/plan_review.json",
+      "sha256": "3ba752c56f9da13aa5fed94e4aca217a6bf1def6a200ab2f680dc2591e6d0e03"
+    }
+  ],
+  "supervision": "tmuxunavailable;actualsynchronoushostonly;noEngine/ReviewSession/backendinstalledclaim",
+  "negative_scope": "Baseline retained, usable negative requires independentnative andpublication audit; no newfullsuiteclaim",
+  "version": 2,
+  "prior_feedback": {
+    "path": "agent_doc/results/comm-batch-20261010/plan_review.json",
+    "sha256": "3ba752c56f9da13aa5fed94e4aca217a6bf1def6a200ab2f680dc2591e6d0e03"
+  }
+}

@@ -1,0 +1,230 @@
+{
+  "schema_version": "concurrent-dependency-reconciliation/v1",
+  "task_id": "COMM-BATCH-01",
+  "original_DAG": {
+    "path": "agent_doc/results/comm-batch-20261010/task_dag_v2.json",
+    "sha256": "3ade3e6852a97af27d9791dfef25209aaa7a3714621359f9a007810c0a01e94f"
+  },
+  "original_native_manifest": {
+    "path": "agent_doc/results/comm-batch-20261010/manifest.json",
+    "sha256": "3bc0926d92361628abed14ab1b56b506fbf78811ae23d48a8ce91f1ab6dc38b7"
+  },
+  "original_validation": {
+    "path": "agent_doc/results/comm-batch-20261010/validation.json",
+    "sha256": "ed1c78fb757d5af93c824dade6d65410c68e9d3f3e14ec305fc7b5e0be47308a"
+  },
+  "original_authentication": "actual /root/batch_verify ed1c78 proof returned and registered whilecheckout e6b3dc1; historicalafterFF, notcurrentolddepacceptance",
+  "fresh_main": "9073a100c965b196a76072a566515410e9b3c280",
+  "measured_dependency_snapshots": [
+    {
+      "original_path": "agent_runtime/handoff_basis.py",
+      "snapshot": {
+        "path": "agent_doc/results/comm-batch-reconciled-20261010/measured_handoff_basis.py",
+        "sha256": "a287e1ee0ca4fc00d5289a248b11c6149ccd40b455697774363abc4a250a57dc"
+      }
+    }
+  ],
+  "nodes": [
+    {
+      "id": "reconcile",
+      "owner": "root-batch-reconciler",
+      "depends_on": [],
+      "action": "copy_exact_frozenraw_and_targeted_fresh_dependencies",
+      "experiment_result": {
+        "result_id": "comm-batch-reconciled-20261010",
+        "producer_task_id": "reconcile",
+        "producer_actor": "root-batch-reconciler",
+        "manifest_path": "agent_doc/results/comm-batch-reconciled-20261010/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-batch-reconciled-20261010/validation_plan.json",
+          "sha256": "b7b4800f86b0a5b75e001f108a72deccefae195e83cf9990d34f0e42680fcef9"
+        },
+        "scope": "Reuse frozen31pair batch results after concurrent9073 handoffencoding update; unchangedpublicpublish/ACK path; freshdefault/handoff/batch compatibility; same original gains/guards;no performance retry"
+      }
+    },
+    {
+      "id": "reconcile_review",
+      "owner": "actualindependentbatchverifier",
+      "depends_on": [
+        "reconcile"
+      ],
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "comm-batch-reconciled-20261010",
+        "producer_task_id": "reconcile",
+        "producer_actor": "root-batch-reconciler",
+        "manifest_path": "agent_doc/results/comm-batch-reconciled-20261010/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-batch-reconciled-20261010/validation_plan.json",
+          "sha256": "b7b4800f86b0a5b75e001f108a72deccefae195e83cf9990d34f0e42680fcef9"
+        },
+        "scope": "Reuse frozen31pair batch results after concurrent9073 handoffencoding update; unchangedpublicpublish/ACK path; freshdefault/handoff/batch compatibility; same original gains/guards;no performance retry"
+      }
+    },
+    {
+      "id": "adopt",
+      "owner": "root",
+      "depends_on": [
+        "reconcile_review"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "comm-batch-reconciled-20261010",
+          "producer_task_id": "reconcile",
+          "producer_actor": "root-batch-reconciler",
+          "manifest_path": "agent_doc/results/comm-batch-reconciled-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-reconciled-20261010/validation_plan.json",
+            "sha256": "b7b4800f86b0a5b75e001f108a72deccefae195e83cf9990d34f0e42680fcef9"
+          },
+          "scope": "Reuse frozen31pair batch results after concurrent9073 handoffencoding update; unchangedpublicpublish/ACK path; freshdefault/handoff/batch compatibility; same original gains/guards;no performance retry"
+        }
+      ]
+    },
+    {
+      "id": "regression",
+      "owner": "root-batch-integration-producer",
+      "depends_on": [
+        "adopt"
+      ],
+      "experiment_result": {
+        "result_id": "comm-batch-integration-20261010",
+        "producer_task_id": "regression",
+        "producer_actor": "root-batch-integration-producer",
+        "manifest_path": "agent_doc/results/comm-batch-integration-20261010/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-batch-integration-20261010/validation_plan.json",
+          "sha256": "12077f107e9e6cd56a89f90a91af6b1cdb521ca36ba2ac9a6856b16f1dbd051c"
+        },
+        "scope": "Exactacceptedbatchcandidate fullrepo+reader+8batchtests inclactualCLI;negativebranchnointegrationclaim"
+      },
+      "required_result_refs": [
+        {
+          "result_id": "comm-batch-reconciled-20261010",
+          "producer_task_id": "reconcile",
+          "producer_actor": "root-batch-reconciler",
+          "manifest_path": "agent_doc/results/comm-batch-reconciled-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-reconciled-20261010/validation_plan.json",
+            "sha256": "b7b4800f86b0a5b75e001f108a72deccefae195e83cf9990d34f0e42680fcef9"
+          },
+          "scope": "Reuse frozen31pair batch results after concurrent9073 handoffencoding update; unchangedpublicpublish/ACK path; freshdefault/handoff/batch compatibility; same original gains/guards;no performance retry"
+        }
+      ]
+    },
+    {
+      "id": "integration_review",
+      "owner": "actualindependentbatchverifier",
+      "depends_on": [
+        "regression"
+      ],
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "comm-batch-integration-20261010",
+        "producer_task_id": "regression",
+        "producer_actor": "root-batch-integration-producer",
+        "manifest_path": "agent_doc/results/comm-batch-integration-20261010/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/comm-batch-integration-20261010/validation_plan.json",
+          "sha256": "12077f107e9e6cd56a89f90a91af6b1cdb521ca36ba2ac9a6856b16f1dbd051c"
+        },
+        "scope": "Exactacceptedbatchcandidate fullrepo+reader+8batchtests inclactualCLI;negativebranchnointegrationclaim"
+      },
+      "required_result_refs": [
+        {
+          "result_id": "comm-batch-reconciled-20261010",
+          "producer_task_id": "reconcile",
+          "producer_actor": "root-batch-reconciler",
+          "manifest_path": "agent_doc/results/comm-batch-reconciled-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-reconciled-20261010/validation_plan.json",
+            "sha256": "b7b4800f86b0a5b75e001f108a72deccefae195e83cf9990d34f0e42680fcef9"
+          },
+          "scope": "Reuse frozen31pair batch results after concurrent9073 handoffencoding update; unchangedpublicpublish/ACK path; freshdefault/handoff/batch compatibility; same original gains/guards;no performance retry"
+        }
+      ]
+    },
+    {
+      "id": "publish",
+      "owner": "root",
+      "depends_on": [
+        "integration_review"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "comm-batch-reconciled-20261010",
+          "producer_task_id": "reconcile",
+          "producer_actor": "root-batch-reconciler",
+          "manifest_path": "agent_doc/results/comm-batch-reconciled-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-reconciled-20261010/validation_plan.json",
+            "sha256": "b7b4800f86b0a5b75e001f108a72deccefae195e83cf9990d34f0e42680fcef9"
+          },
+          "scope": "Reuse frozen31pair batch results after concurrent9073 handoffencoding update; unchangedpublicpublish/ACK path; freshdefault/handoff/batch compatibility; same original gains/guards;no performance retry"
+        },
+        {
+          "result_id": "comm-batch-integration-20261010",
+          "producer_task_id": "regression",
+          "producer_actor": "root-batch-integration-producer",
+          "manifest_path": "agent_doc/results/comm-batch-integration-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-integration-20261010/validation_plan.json",
+            "sha256": "12077f107e9e6cd56a89f90a91af6b1cdb521ca36ba2ac9a6856b16f1dbd051c"
+          },
+          "scope": "Exactacceptedbatchcandidate fullrepo+reader+8batchtests inclactualCLI;negativebranchnointegrationclaim"
+        }
+      ]
+    },
+    {
+      "id": "readback",
+      "owner": "root",
+      "depends_on": [
+        "publish"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "comm-batch-reconciled-20261010",
+          "producer_task_id": "reconcile",
+          "producer_actor": "root-batch-reconciler",
+          "manifest_path": "agent_doc/results/comm-batch-reconciled-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-reconciled-20261010/validation_plan.json",
+            "sha256": "b7b4800f86b0a5b75e001f108a72deccefae195e83cf9990d34f0e42680fcef9"
+          },
+          "scope": "Reuse frozen31pair batch results after concurrent9073 handoffencoding update; unchangedpublicpublish/ACK path; freshdefault/handoff/batch compatibility; same original gains/guards;no performance retry"
+        },
+        {
+          "result_id": "comm-batch-integration-20261010",
+          "producer_task_id": "regression",
+          "producer_actor": "root-batch-integration-producer",
+          "manifest_path": "agent_doc/results/comm-batch-integration-20261010/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/comm-batch-integration-20261010/validation_plan.json",
+            "sha256": "12077f107e9e6cd56a89f90a91af6b1cdb521ca36ba2ac9a6856b16f1dbd051c"
+          },
+          "scope": "Exactacceptedbatchcandidate fullrepo+reader+8batchtests inclactualCLI;negativebranchnointegrationclaim"
+        }
+      ]
+    }
+  ],
+  "authorization": "Routine concurrent-source integration explicitlycoveredoriginalPlan; no new candidate,gates,performance experiment,planreviewcycle orbudget reset",
+  "budget_remaining": "OriginalCPU900 total and0performance retries;plancycles2 consumed",
+  "fresh_source_refs": [
+    {
+      "path": "agent_runtime/handoff_basis.py",
+      "sha256": "007f77ce4e4d02964df0617d8e3981d2292aa9fc8fced4dffa026b01a1738f8c"
+    },
+    {
+      "path": "agent_runtime/handoff_encoding.py",
+      "sha256": "8cd876ea088962930c61b703844040e9b955bae3f33d1488e03874bf4337bb68"
+    },
+    {
+      "path": "tests/test_handoff_basis.py",
+      "sha256": "8af871a6b9cfe9afbaff2494d7720b86e3fc5fe77b15bc1d2887ea0caf7b3a0c"
+    },
+    {
+      "path": "tests/test_handoff_encoding.py",
+      "sha256": "5834d6a962a755af72bea50d253a766d22706647d1456e1f0efab87cc0d6c723"
+    }
+  ]
+}

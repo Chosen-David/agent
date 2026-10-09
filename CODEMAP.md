@@ -162,3 +162,5 @@ COMM20-01: `agent_runtime/communication.py::usage` 明确列投影；`scripts/be
 COMM-CONFIRM-01: `agent_runtime/communication.py::inbox` 在同一读取快照中按精确账本选择空run、低基数run或原pending查询；固定31组生产/独立配对确认见 `agent_doc/results/comm-confirm-20261009/report.md`，`tests/test_communication_adaptive.py` 覆盖WAL/DELETE并发发布。旧COMM20第17轮仍是当时的负结果，新的独立确认不改写历史。
 
 COMM-ACK-CONFIRM-01: `agent_doc/results/comm-ack-confirm-20261009/report.md` 记录当前main上ACK免重复UPDATE候选的31+31组单次确认；独立数据可用但采用门槛失败，运行时保留基线。候选源码和失败诊断仅为实验记录。
+
+COMM-BATCH-01: `agent_runtime/communication.py::publish_many` 与 `publish-many` CLI提供1..100条显式原子批量提交，共享单条校验/存储核心；`tests/test_communication_batch.py` 覆盖回滚、预算、重复、并发及真实CLI；用法 `docs/communication_batch.md`，固定31组性能与强基线证据 `agent_doc/results/comm-batch-20261010/`，并发依赖复核 `comm-batch-reconciled-20261010/`，完整集成 `comm-batch-integration-20261010/`。无长期连接或自动队列。

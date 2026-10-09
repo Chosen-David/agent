@@ -143,7 +143,7 @@ class Mailbox:
         finally:
             db.close()
 
-    def _prepare_publish(self, event):
+    def publish(self, event):
         if not isinstance(event, dict):
             raise ValueError('event must be an object')
         required = {'event_id', 'run_id', 'input_version', 'sender', 'task_id',
@@ -169,51 +169,27 @@ class Mailbox:
                            'artifacts': refs, 'checks': [], 'tasks': []}, self.root)
         if errors:
             raise ValueError('; '.join(errors))
-        return body, recipients
-
-    def _store_publish(self, db, event, body, recipients):
-        old = db.execute('SELECT seq,body FROM communication_events WHERE run_id=? AND event_id=?',
-                         (self.run_id, event['event_id'])).fetchone()
-        if old:
-            if old['body'] != body:
-                raise ValueError('event_id reused with different content')
-            return {'seq': old['seq'], 'recipients': recipients, 'duplicate': True}
-        usage = db.execute('SELECT events,delivery_bytes FROM communication_usage_v1 WHERE run_id=?',
-                           (self.run_id,)).fetchone()
-        if usage['events'] >= self.plan.get('max_events', 1000):
-            raise ValueError('run event budget exhausted; reconcile before extending the plan')
-        if 'max_delivery_bytes' in self.plan:
-            spent = usage['delivery_bytes']
-            if spent + len(body.encode('utf-8')) * len(recipients) > self.plan['max_delivery_bytes']:
-                raise ValueError('run delivery byte budget exhausted; no partial fan-out')
-        seq = db.execute('INSERT INTO communication_events(run_id,event_id,body) VALUES (?,?,?)',
-                         (self.run_id, event['event_id'], body)).lastrowid
-        db.executemany('INSERT INTO communication_deliveries(seq,recipient) VALUES (?,?)',
-                       [(seq, recipient) for recipient in recipients])
-        return {'seq': seq, 'recipients': recipients, 'duplicate': False}
-
-    def publish(self, event):
-        body, recipients = self._prepare_publish(event)
         with self.connect() as db:
             db.execute('BEGIN IMMEDIATE')
-            return self._store_publish(db, event, body, recipients)
-
-    def publish_many(self, events):
-        """Publish 1..100 envelopes atomically, preserving input order.
-
-        Every envelope, including a duplicate, gets the ordinary publish checks.
-        Any error rolls back this batch's new events, fan-out and usage counters.
-        The host opts into one bounded transaction; no connection is retained.
-        """
-        if not isinstance(events, list) or not 1 <= len(events) <= 100:
-            raise ValueError('batch must be a list of 1..100 events')
-        with self.connect() as db:
-            db.execute('BEGIN IMMEDIATE')
-            result = []
-            for event in events:
-                body, recipients = self._prepare_publish(event)
-                result.append(self._store_publish(db, event, body, recipients))
-            return result
+            old = db.execute('SELECT seq,body FROM communication_events WHERE run_id=? AND event_id=?',
+                             (self.run_id, event['event_id'])).fetchone()
+            if old:
+                if old['body'] != body:
+                    raise ValueError('event_id reused with different content')
+                return {'seq': old['seq'], 'recipients': recipients, 'duplicate': True}
+            usage = db.execute('SELECT events,delivery_bytes FROM communication_usage_v1 WHERE run_id=?',
+                               (self.run_id,)).fetchone()
+            if usage['events'] >= self.plan.get('max_events', 1000):
+                raise ValueError('run event budget exhausted; reconcile before extending the plan')
+            if 'max_delivery_bytes' in self.plan:
+                spent = usage['delivery_bytes']
+                if spent + len(body.encode('utf-8')) * len(recipients) > self.plan['max_delivery_bytes']:
+                    raise ValueError('run delivery byte budget exhausted; no partial fan-out')
+            seq = db.execute('INSERT INTO communication_events(run_id,event_id,body) VALUES (?,?,?)',
+                             (self.run_id, event['event_id'], body)).lastrowid
+            db.executemany('INSERT INTO communication_deliveries(seq,recipient) VALUES (?,?)',
+                           [(seq, recipient) for recipient in recipients])
+            return {'seq': seq, 'recipients': recipients, 'duplicate': False}
 
     def inbox(self, recipient, *, limit=20):
         if type(limit) is not int or not 1 <= limit <= 100:
@@ -367,7 +343,6 @@ def main():
     sub.add_parser('impact')
     sub.add_parser('usage')
     p = sub.add_parser('publish'); p.add_argument('event', type=Path)
-    p = sub.add_parser('publish-many'); p.add_argument('events', type=Path)
     p = sub.add_parser('inbox'); p.add_argument('recipient'); p.add_argument('--limit', type=int, default=20)
     p = sub.add_parser('ack'); p.add_argument('recipient'); p.add_argument('seq', type=int); p.add_argument('receipt', type=Path)
     p = sub.add_parser('consume'); p.add_argument('recipient'); p.add_argument('seq', type=int); p.add_argument('--request', type=Path, required=True)
@@ -381,8 +356,6 @@ def main():
         box = Mailbox(args.db, _load_json(args.plan), args.root)
         if args.command == 'publish':
             result = box.publish(_load_json(args.event))
-        elif args.command == 'publish-many':
-            result = box.publish_many(_load_json(args.events))
         elif args.command == 'inbox':
             result = box.inbox(args.recipient, limit=args.limit)
         elif args.command == 'ack':

@@ -135,3 +135,15 @@ API 可提供 `known_knowledge_refs`、`known_memory_ids`（CLI --known 指向�
 升级前备份数据库需使用SQLite一致性备份或停写后的文件备份，不能复制正在写入的单个数据库文件。首次迁移会暂时持有写锁，成本随历史量增长；不是零停顿部署。原有30秒忙等待/错误处理不变，失败保留待处理工作后按原计划重试。恢复与全量历史审计仍可从原事件/投递重算。
 
 本轮复现入口为 `scripts/benchmark_communication_usage.py`，冻结原实现、原始样本、研究取舍、独立核验及适用范围位于 [通信计账性能记录](https://github.com/Chosen-David/agent/blob/main/agent_doc/results/communication-ledger-20261009/report.md)。使用新的输出文件保存复测，不覆盖旧样本；小负载的额外写成本和一次迁移成本必须同时报告。
+
+## 有界原子批量发布（显式选择）
+
+宿主已收集好一组独立信封时，可调用 `Mailbox.publish_many(events)` 或 `publish-many events.json`；输入是1..100条普通JSON信封的列表，调用期间不修改输入。逐条执行与 `publish` 相同的路由、引用、版本、幂等和预算校验，按输入顺序返回发布结果。一条失败则回滚这批新事件、投递和计账；重复事件不重新计账，也不跳过引用或当前路由检查。整个调用使用一个即时写事务和一条临时连接，结束后关闭连接。
+
+```bash
+python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . publish-many events.json
+```
+
+这是宿主显式选择的整批提交边界：消费者在提交后看到整批，首条消息不会提前独立提交；不要为等待凑批延误紧急消息或扩大预算。`publish` 保持单条事务，其他入口和默认交接编码不变。数量上限不能保证引用文件读取或持锁时间上限；没有自动队列、网络传输或后台批处理服务。
+
+[批量用法与边界](https://github.com/Chosen-David/agent/blob/main/docs/communication_batch.md) · [固定对照与独立验证](https://github.com/Chosen-David/agent/blob/main/agent_doc/results/comm-batch-20261010/report.md)。性能只针对报告中的本地合成SQLite批量场景，不代表模型质量、token或网络收益。
