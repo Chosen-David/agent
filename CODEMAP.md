@@ -1,5 +1,7 @@
 # 本轮增量代码与产物地图
 
+TOK-001：`scripts/prompt_context.py` → `agent_runtime/prompt_context.py` 显式受控组合；`agent_runtime/token_usage.py` 严格核账 fresh CLI/RPC 单轮用量，`tests/test_prompt_context.py` 验证范围与计量边界。消费者为显式调用组合器的宿主，默认会话不自动接入。`docs/token_optimization/` 和 `agent_doc/results/token-001*-20261009/` 保存研究、失败对照与独立受控短测；不外推长文。
+
 CLUSTER-01：`prompts/orchestrator.md` → `workflows/cluster_orchestration_workflow.md` → `scripts/plan_cluster.py` / `agent_runtime/cluster_planning.py`；主AI/可信快照生产者 → 单波次放置建议 → 可信宿主执行与既有独立验收。`examples/cluster_planning.json`、`tests/test_cluster_planning.py`、`agent_doc/results/cluster-planning-20261008/` 保存合成输入、约束/CLI回归与研究/独立审查。没有远程预留、GPU通信/性能或token收益实测；不修改SGLang。
 
 ADOPT-01–04：`scripts/setup_codex.py` 从已提交快照安装/同步 Codex 用户技能；`templates/codex_global_instructions.md` 为简短受管入口；`tests/test_codex_setup.py` 验证冲突、更新、备份和中断保护；`docs/codex_adoption/` 为接入/迭代及验收记录。主 AI 单一生产者；本机 Codex 和用户是消费者，私有部署记录在 `.agent-runs/codex-adoption/` 与 `CODEX_HOME/chosen-agent/`。

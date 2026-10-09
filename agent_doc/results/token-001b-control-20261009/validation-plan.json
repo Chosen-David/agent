@@ -1,0 +1,30 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "same native app-server, two independent fresh no-tool short-fixture turns",
+  "controls": {
+    "same_non_task_plaintext": true,
+    "same_model": "gpt-6.1-sol",
+    "same_effort": "high",
+    "max_invocations": 2,
+    "retries": 0,
+    "timeout_seconds": 90,
+    "max_prompt_chars": 2200,
+    "first_total_cap": 25000,
+    "paired_total_cap": 50000,
+    "caps_are_dispatch_and_acceptance_not_service_output_limit": true
+  },
+  "oracle": {
+    "proceed": false,
+    "reasons": [
+      "R_CANCEL",
+      "R_CAP",
+      "R_VERIFY"
+    ]
+  },
+  "success_requires": [
+    "provider total input+output decreases",
+    "both independent oracle pass",
+    "exact non-task instruction text hashes match",
+    "source/input/config bindings and independent verification pass"
+  ]
+}
