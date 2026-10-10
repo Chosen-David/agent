@@ -355,4 +355,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [TOK-008] Complete child dispatch passed native history/settings/quality/usage, independent gate and ordinary main verification; short pair -199 total tokens, upgrade8/100. ([detail](task_details/TOK-008.md))
 
-- [ ] [TOK-009] Exact Python symbol context:6 boundaries pass, short real-source/native savings and independent acceptance pending. ([detail](task_details/TOK-009.md))
+- [x] [TOK-009] Exact symbol source passed seven boundaries, native quality/usage and independent gate; ordinary main verified, short pair -357 total tokens, upgrade9/100. ([detail](task_details/TOK-009.md))
