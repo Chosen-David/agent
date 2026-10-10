@@ -36,3 +36,9 @@ Date: 2026-10-10
 完成docs/token_optimization/supervision_cost.md，记录Claude数字仅为来源自报，适配事件/ETA/临时列表清理/职责去重的边界；不采纳跨宿主dangling依赖无害假设或删除canonical任务/独立验收。已读Anthropic Managed Agents官方全文和AgentDropout摘要，仅作设计线索不迁移实验收益。本轮没有新模型对照、部署或成功计数。
 
 发布前再次fetch并保留75dc4ba的新GPU监督意见；补充“GPU空闲只是候选事件，不能证明作业完成/成功”的adapt/reject边界，要求owned job、退出状态、产物和独立验收。未执行或改变SGLang/GPU任务。
+
+### v4 - 普通main发布与接入同步
+
+已普通非force发布b41d1313b64103f686b0690d466f61f8aa7bcd18，GitHub独立读回ref与tree f385787b9a7148f80eb72f198f01f9216caedb2f一致；原生fetch后核对完整树、保留工作文件并同步到该HEAD。setup_codex更新17份受管文件（15份角色文档引用与2份知识快照），随后--check通过。合并并发数学/Claude提交；冻结8份生产源码与16项验收artifact绑定在发布后仍一致。
+
+本任务的来源/CPU/文档及工具发布完成，publication.json记录其范围；尚未部署宿主模型唤醒门禁或验证真实token节省。100次连续优化仍9/100，本轮不增加计数，没有新增模型A/B或hourly优化器。后续独立任务需针对可信adapter的无变化maintain/重复verifier请求，先冻结短对照和质量失效oracle。
