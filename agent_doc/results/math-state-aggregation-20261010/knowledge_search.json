@@ -1,0 +1,104 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.data-processing-task-sufficiency",
+      "version": 1,
+      "sha256": "641a0326aa9b82681619e2f6d82e77ba2b7076def3d4f086ac3037144e54e6c4",
+      "title": "数据处理不等式、支撑条件与任务充分压缩",
+      "summary": "有限字母的同一随机通道不会增加KL可区分性；目标→原始数据→摘要的Markov关系给互信息上界。保持任务后验才是充分性，摘要短、重建损失小或样本正确都不等于充分。",
+      "status": "published",
+      "assumptions": [
+        "本条结论限有限字母概率分布，使用同一对数底数；bit用log2",
+        "KL处理前后必须对P,Q应用同一行随机核K；p>0,q=0的项为正无穷",
+        "KL差值/后验等号公式要求P绝对连续于Q（有限字母下即支撑包含），避免无穷减无穷",
+        "任务Y、原数据X、摘要T满足Y→X→T；摘要随机性给定X不依赖Y",
+        "固定联合分布的任务充分性不能推广为所有任务/所有先验的统计充分性；引入外部R须扩展输入对象"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-information/verify.py",
+          "docs/knowledge_learning/2026-10-07-information/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "summary",
+          "terms": [
+            "markov"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "markov"
+          ]
+        }
+      ],
+      "score": 4
+    },
+    {
+      "id": "algo.dora-magnitude-direction",
+      "version": 1,
+      "sha256": "b4352aff30610f932921c84670c7630fb2e1ec15dc588a048a52ea9faebe764b",
+      "title": "DoRA：幅值/方向观察与额外训练成本",
+      "summary": "ICML 2024 的权重分析与任务实验支持把幅值和方向分开适配；分析里的相关趋势不能证明因果或普遍最优。",
+      "status": "published",
+      "assumptions": [
+        "method: magnitude plus low-rank directional updates",
+        "models: LLaMA LLaVA VL-BART in paper",
+        "metric: downstream task quality"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.dora-magnitude-direction"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "task"
+          ]
+        }
+      ],
+      "score": 1
+    },
+    {
+      "id": "algo.lora-intrinsic-rank",
+      "version": 1,
+      "sha256": "3e894218cca78c85f76d603e76957ae185f43ebf65468ef742b18ecebe797a29",
+      "title": "LoRA：低秩更新与合并边界",
+      "summary": "ICLR 2022 实验支持部分任务用低秩权重更新进行高效适配；低秩需求是任务相关的经验，不是所有模型更新的定理。",
+      "status": "published",
+      "assumptions": [
+        "method: frozen backbone plus low-rank weight update",
+        "models: RoBERTa DeBERTa GPT-2 GPT-3 in paper",
+        "metric: task quality and trainable parameters"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.lora-intrinsic-rank"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "task"
+          ]
+        }
+      ],
+      "score": 1
+    }
+  ]
+}

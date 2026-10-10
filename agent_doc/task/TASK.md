@@ -379,3 +379,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [EXPL-BLOG-01] 从优秀技术博客提炼概念讲解与教学作图方法，升级 skill 并验证。 ([详情](task_details/EXPL-BLOG-01.md))
 
 - [x] [MATH-77] Whitened factor positivity/inverse certificates and original-system refusals reviewed; existing candidate v3 supplement only. ([detail](task_details/MATH-77.md))
+
+- [x] [MATH-78] State-summary predictive aggregation and finite-time TV/refusal boundaries reviewed; document candidate only. ([detail](task_details/MATH-78.md))
