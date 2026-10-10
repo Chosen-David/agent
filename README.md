@@ -124,7 +124,7 @@ python scripts/setup_codex.py --check
 | `research-review` | 贡献、方法、证据与科学审稿 |
 | `research-read-pdf` | 最终 PDF 逐页视觉与读者检查 |
 | `paper-reading-companion` | 原文伴读与阅读状态 |
-| `explain-research-concepts` | 概念、公式、机制与教学图解 |
+| `explain-research-concepts` | 概念、公式、机制；借鉴优秀博客的渐进讲解与教学图型 |
 | `code-reading` | 源码定位与机制分析 |
 | `code-organization` | 文件组织、产物交接与 CODEMAP |
 | `model-with-knowledge` | 基于有条件知识的建模与推导 |

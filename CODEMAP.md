@@ -172,3 +172,5 @@ COMM-ACK-CONFIRM-01: `agent_doc/results/comm-ack-confirm-20261009/report.md` 记
 COMM-BATCH-01: `agent_runtime/communication.py::publish_many` 与 `publish-many` CLI提供1..100条显式原子批量提交，共享单条校验/存储核心；`tests/test_communication_batch.py` 覆盖回滚、预算、重复、并发及真实CLI；用法 `docs/communication_batch.md`，固定31组性能与强基线证据 `agent_doc/results/comm-batch-20261010/`，并发依赖复核 `comm-batch-reconciled-20261010/`，完整集成 `comm-batch-integration-20261010/`。无长期连接或自动队列。
 
 TOK-007：gent_runtime/codex_skill_scope.py / scripts/codex_skill_scope.py 是可信宿主明确技能排除入口，	ests/test_codex_skill_scope.py 验证完整行/默认/必需/配置及真实只读CLI边界。机器输出给新线程config，不复制给模型；当前项目request/root绑定，未知技能与权限保留。短对照/独立证据在 gent_doc/results/token-007-skills-20261010/，接入说明 docs/token_optimization/skill_scope.md。
+
+EXPL-BLOG-01：`workflows/explanation_patterns.md` → `scripts/sync_plugin_references.py` → 讲解/伴读/绘图六个 skill 的按需参考；`agent_doc/results/concept-teaching-20261010/` 保留同题试讲、图源与独立检查。范例表达方法不等于真实学习效果数据。
