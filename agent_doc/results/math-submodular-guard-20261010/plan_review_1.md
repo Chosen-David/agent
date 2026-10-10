@@ -1,0 +1,1 @@
+Ordinary independent context submodular_plan_review: revise; not ReviewSession. Required explicit finite cardinality comparator, approximate true marginal epsilon/2eta, P-containing residual comparator and evidence bindings. All four addressed in stable Plan v2. Budget not reset.

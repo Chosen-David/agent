@@ -1,0 +1,2 @@
+Independent context submodular_document_review: approve-with-document-scope. Exact/approximate recurrence and2eta, mandatory restricted comparator, all three counterexamples and six-region example correct; sensor exact mapping and Agent proxy boundaries appropriate. Recent source metadata/discovery only. All206 preserved hashes match. No required corrections. Ordinary document review, not ReviewSession/experiment/runtime/publication acceptance.
+Advice SHA256: 9e68901729b9998ac481c501d4bda35fecb8cade18fcacabc7449dd00f4ee426
