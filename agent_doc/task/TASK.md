@@ -2,6 +2,7 @@
 
 ## 2026-10-10
 
+- [ ] [ADV-POLL-01] SGLang advice提交复盘、版本变更导航与CPU独立验收；真实token收益待测，不计第10次。 ([detail](task_details/ADV-POLL-01.md))
 - [x] [MATH-68] Independently reviewed submodular coverage/prerequisite document candidate; no runtime adoption. ([detail](task_details/MATH-68.md))
 
 - [x] [MATH-67] Structured perturbations and subspace reuse: independently review document candidate, no runtime adoption. ([detail](task_details/MATH-67.md))

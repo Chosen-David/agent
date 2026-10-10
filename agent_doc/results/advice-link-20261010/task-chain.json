@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "ADV-POLL-01-produce",
+      "owner": "native-advice-poll-producer",
+      "task_type": "experiment",
+      "action": "produce_cpu_data",
+      "experiment_result": {
+        "result_id": "advice-link-20261010",
+        "producer_task_id": "ADV-POLL-01-produce",
+        "producer_actor": "native-advice-poll-producer",
+        "manifest_path": "agent_doc/results/advice-link-20261010/manifest.json",
+        "scope": "Advice inventory navigation CPU boundaries and frozen public SGLang Git text/metadata; no SGLang execution, model quality, token savings or scheduler deployment",
+        "validation_plan": {
+          "path": "agent_doc/results/advice-link-20261010/validation-plan.json",
+          "sha256": "bffcf03a71213d7e299b543822551817bac67b7b4e5e90f7f102feb520335d26"
+        }
+      }
+    },
+    {
+      "task_id": "ADV-POLL-01-verify",
+      "owner": "host-advice-poll-reviewer",
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "advice-link-20261010",
+        "producer_task_id": "ADV-POLL-01-produce",
+        "producer_actor": "native-advice-poll-producer",
+        "manifest_path": "agent_doc/results/advice-link-20261010/manifest.json",
+        "scope": "Advice inventory navigation CPU boundaries and frozen public SGLang Git text/metadata; no SGLang execution, model quality, token savings or scheduler deployment",
+        "validation_plan": {
+          "path": "agent_doc/results/advice-link-20261010/validation-plan.json",
+          "sha256": "bffcf03a71213d7e299b543822551817bac67b7b4e5e90f7f102feb520335d26"
+        }
+      },
+      "depends_on": [
+        "ADV-POLL-01-produce"
+      ]
+    },
+    {
+      "task_id": "ADV-POLL-01-publish",
+      "owner": "main-ai",
+      "action": "publish",
+      "required_result_refs": [
+        {
+          "result_id": "advice-link-20261010",
+          "producer_task_id": "ADV-POLL-01-produce",
+          "producer_actor": "native-advice-poll-producer",
+          "manifest_path": "agent_doc/results/advice-link-20261010/manifest.json",
+          "scope": "Advice inventory navigation CPU boundaries and frozen public SGLang Git text/metadata; no SGLang execution, model quality, token savings or scheduler deployment",
+          "validation_plan": {
+            "path": "agent_doc/results/advice-link-20261010/validation-plan.json",
+            "sha256": "bffcf03a71213d7e299b543822551817bac67b7b4e5e90f7f102feb520335d26"
+          }
+        }
+      ],
+      "depends_on": [
+        "ADV-POLL-01-verify"
+      ]
+    }
+  ]
+}
