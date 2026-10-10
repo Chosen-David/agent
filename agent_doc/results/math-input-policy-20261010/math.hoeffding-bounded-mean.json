@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "docs/knowledge_learning/2026-10-06-concentration/checks.json",
+      "docs/knowledge_learning/2026-10-06-concentration/verify.py"
+    ]
+  },
+  "requires": [],
+  "relations": [],
+  "id": "math.hoeffding-bounded-mean",
+  "title": "有界独立样本的均值误差与样本量",
+  "summary": "固定样本量下用确定的取值范围约束样本均值误差；不能从观测极值猜范围或把重复记录当独立样本。",
+  "aliases": [
+    "Hoeffding",
+    "bounded independent measurements",
+    "配对 测试 成功率 差值 样本 均值 误差",
+    "重复 样本 独立性 不成立"
+  ],
+  "domains": [
+    "probability",
+    "statistics"
+  ],
+  "structures": [
+    "concentration",
+    "sample-size",
+    "均值 误差 独立 样本"
+  ],
+  "assumptions": [
+    "X_i 相互独立，确定常数 a_i≤X_i≤b_i 几乎处处成立",
+    "n 在观察数据之前固定且 n≥1；目标为各期望的平均值",
+    "δ∈(0,1)，范围并非事后观测的最小/最大值"
+  ],
+  "sources": [
+    {
+      "url": "https://ai.stanford.edu/~gwthomas/notes/concentration.html",
+      "locator": "Hoeffding lemma and inequality; equations for sample means; undated author notes",
+      "accessed": "2026-10-06"
+    }
+  ],
+  "content": "# 有界独立样本的均值误差\n\n## 对象、前提与准确结论\nX_i 为独立实随机变量，a_i≤X_i≤b_i 几乎处处；a_i,b_i 是已知确定常数。n≥1 预先固定。\n记 m_n=n⁻¹Σ E[X_i]，V=Σ(b_i−a_i)²。若 V>0，则\nP(|X̄_n−m_n|≥ε)≤2 exp(−2n²ε²/V)，ε>0。\n因此 r_n=√(V log(2/δ)/(2n²)) 给出至少 1−δ 的覆盖。V=0 时变量确定，误差为零。\n同一范围宽度 R 且共同均值 μ 时，r_n=R√(log(2/δ)/(2n))；保证半宽≤ε 的充分样本量为 ceil(R² log(2/δ)/(2ε²))，至少1。\n不要求同分布；但无共同均值时不能声称估计固定 μ。\n\n## 核心证明（非形式化）\n前置：期望、独立性、Markov 不等式、凸性和联合界。\nHoeffding 引理由指数凸函数的割线界及 log-MGF 的二阶导数≤R²/4 得到 E exp(λ(X−EX))≤exp(λ²R²/8)。端点均值对应确定变量，单独处理。\n令 S=Σ(X_i−EX_i)，独立性使 MGF 相乘，Markov 给 P(S≥nε)≤exp(−λnε+λ²V/8)。选择 λ=4nε/V 得单侧界；对 −S 重复并联合得双侧界。该证明检查不等于 Lean 证明。\n\n## 正例、边界与误用\n配对冻结 Agent A/B：同任务差值 D_i=score_B−score_A∈[−1,1]；任务对之间独立，A/B 对内可以相关。R=2 而非1。\nδ=.05、ε=.1 需要 n=738；n=1000 的半宽约 .08589。均差 .1 的下界大于0只是条件式总体均差证据，不证明部署任务相同或更快。\n传感器值确在 [2,6]，n=100 时半宽约 .54324，单位与读数相同。\n反例：X_1=…=X_100=Z，Z为公平0/1变量。均值误差恒 .5，但若误套独立界会给极小尾概率；重复缓存不是100个新样本。\n原始延迟没有已知有限上界时拒用。截断会改变估计目标。观测范围不等于总体范围；挑选最好模型另需多重选择控制。\n\n## 任务映射与验证\n用于冻结评测的均值区间和预算规划；不能证明GPU性能收益、逐题正确性、数据代表性或自适应停止有效。\n相关后继 math.alpha-spending-stopping 扩展时间范围。知识 ID 由检索器提供，实际调用须保存完整 knowledge_refs。\n同轮 verify.py 检查精确二项概率、配对取值宽度和依赖反例；有限检查不代替一般证明。没有真实同模型A/B、token测量或形式化验证。\n\n## 来源\n作者讲义 https://ai.stanford.edu/~gwthomas/notes/concentration.html 的 Hoeffding 两节，2026-10-06核查。公式为经典结论；任务映射与反例为本条推导。\n",
+  "path": "entries/math.hoeffding-bounded-mean.json",
+  "sha256": "5da6b4040a6e6a838eb37d080b36b230e91ffc22d752146b888604f77a3aea0a",
+  "knowledge_refs": [
+    {
+      "id": "math.hoeffding-bounded-mean",
+      "version": 1,
+      "sha256": "5da6b4040a6e6a838eb37d080b36b230e91ffc22d752146b888604f77a3aea0a"
+    }
+  ]
+}

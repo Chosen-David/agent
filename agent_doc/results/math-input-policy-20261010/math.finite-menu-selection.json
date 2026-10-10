@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "id": "math.finite-menu-selection",
+  "version": 1,
+  "status": "published",
+  "kind": "modeling-pattern",
+  "title": "有限冻结候选的同时校准与选择后风险",
+  "summary": "用有界均值与联合界校准整个冻结菜单；选择后均值风险≤最优+两份误差+求解误差，期望成本认证不等于单次硬预算。",
+  "aliases": [
+    "finite menu uniform calibration",
+    "method 海选 选择偏差 总体 风险",
+    "传感器 滤波 档位 校准",
+    "候选 泄漏 多重选择",
+    "expected cost upper confidence"
+  ],
+  "domains": [
+    "probability-and-optimization",
+    "optimization"
+  ],
+  "structures": [
+    "finite-family",
+    "uniform-convergence",
+    "selection-bias",
+    "risk-control",
+    "expected-budget"
+  ],
+  "assumptions": [
+    "菜单及每个损失/成本可测函数、已知范围在校准前固定，或由独立学习集产生；M≥1有限",
+    "n≥1预先固定，独立同分布校准对象来自与声明目标相同P；候选之间可相关，重复同文档不算新iid对象",
+    "δ∈(0,1)，损失/成本有已知确定有限范围；比较对象须在所选可行集内；均值非单次保证"
+  ],
+  "sources": [
+    {
+      "url": "https://cs229.stanford.edu/notes_archive/cs229-notes4.pdf",
+      "locator": "Andrew Ng CS229 PartVI LearningTheory§3 PDFpp5–7，有限分类器统一收敛/ERM；版本日期未标",
+      "accessed": "2026-10-08"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "同名Markdown的联合/选择/期望成本推导和泄漏反例；非形式化",
+      "doc/results/math-selection-20261008/：公开CPU结构/精确概率与独立检查，不含模型/GPU"
+    ]
+  },
+  "requires": [
+    {
+      "id": "math.hoeffding-bounded-mean",
+      "version": 1
+    }
+  ],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.discrete-budget-allocation"
+    },
+    {
+      "type": "related",
+      "id": "math.alpha-spending-stopping"
+    },
+    {
+      "type": "related",
+      "id": "math.attention-output-geometry"
+    }
+  ],
+  "content": "# 有限冻结候选的同时校准与选择后风险\n\nID: math.finite-menu-selection@1。\n\n## 问题、对象与适用条件\n\n在许多method/逐层配置中挑校准均值最好的一个，单个方案的均值区间不足以控制选择偏差。设校准前固定非空有限族H，M=|H|，n≥1预先固定。Z_1,…,Z_n iid来自P；每个候选h的可测损失ℓ_h(Z)在已知确定范围[a_h,b_h]中，R_h=b_h−a_h，μ_h=E_Pℓ_h(Z)，μ̂_h=n⁻¹Σℓ_h(Z_i)。0<δ<1预先指定。\n\n整个损失函数、候选集合、范围及任何确定可行集合F⊆H在看本轮校准数据前冻结。可以用独立训练/探索集生成菜单，条件于其结果再应用保证。候选可在同一文档上评测、层/方法之间可相关；要求的是跨i的独立同分布，不是不同候选独立。同文档多个token通常不能直接充当多个独立样本。\n\n## 经典结论与本条推导\n\n依赖 math.hoeffding-bounded-mean@1，对每个h使用δ/M，得到\n\nr_h=R_h√[log(2M/δ)/(2n)]，P(存在h: |μ̂_h−μ_h|>r_h)≤δ。\n\nR_h=0时半径0、偏差0；使用严格“>”避免把确定零误差视为失败。证明是逐项Hoeffding与联合界，不需候选间独立。M=1退化为单候选区间。若共同范围宽R，对ε>0，要r≤ε的充分样本量为max(1,ceil(R² log(2M/δ)/(2ε²)))，R=0时任何n≥1；若求过小ε而当前r很大，报告界松/无区分力，不隐藏它。\n\n**选择后风险的明确推导。** 对非空校准前固定F，选择ĥ∈F且μ̂_ĥ≤min_{h∈F}μ̂_h+η，η≥0。令h*为F内总体均值最优。上述同时事件上，\n\nμ_ĥ ≤ μ̂_ĥ+r_ĥ ≤ μ̂_h*+η+r_ĥ ≤ μ_h*+η+r_ĥ+r_h*。\n\n共同r时得到μ_ĥ−min_F μ_h≤2r+η。这是总体平均损失的高概率上界，不是每题/每token保证、不是对全世界未知方法的最优保证，也不证明代理损失代表e2e。η必须是实际求解误差证书或可核验经验差，不能用迭代次数推测。\n\n如果F由本轮数据筛掉形成，上述同时事件仍对F中所有候选成立，因此可比较F内最佳，但不能把被删的总体最佳自动当比较对象。与固定预算DP的关联见 math.discrete-budget-allocation@1；它只给冻结代理优化，不自动给统计前提。\n\n## 同时检查成本：期望预算与硬预算分开\n\n若每个h还有冻结可测成本c_h(Z)∈[u_h,v_h]，令C_h=E c_h，Ĉ_h为同一iid文档均值。对2M个损失/成本函数联合使用δ/(2M)，损失半径改为r_h=R_h√[log(4M/δ)/(2n)]，成本半径s_h=(v_h−u_h)√[log(4M/δ)/(2n)]。\n\n在概率至少1−δ的共同事件上，所有候选均满足C_h≤U_h=Ĉ_h+s_h。定义F_safe={h:U_h≤T}。任何从非空F_safe选出的ĥ都满足**总体期望成本**C_ĥ≤T；它不保证随机单次成本≤T。空集合返回“无获证候选”，不能挑最小U而宣称安全；默认dense或原始方案若未单独认证也不自动获证。\n\n可以给F_safe内部的均值最优风险比较。要与原真实可行集比较，则需额外证据使某个比较对象进入F_safe。例如C_h≤T−2s_h在共同事件上推出U_h≤C_h+2s_h≤T；因此只可无条件比较带这种余量的候选，不是所有满足C_h≤T的边界候选。成本未知上界的原始GPU延迟拒用Hoeffding；截断后的保证只针对截断目标，不认证原延迟。\n\n## 可算正例、边界与拒用反例\n\nM=10、n=1000、共同R=1、δ=.05时r=√(log400/2000)≈.0547333；η=0时均值超额风险≤.1094666。差距小于此量级时不能凭此界分出优劣。这只是充分且可能保守的界。对paired质量差D=score_B−score_A∈[−1,1]，R=2，不能用R=1。\n\n**新问题映射：** 多个传感器滤波档位在独立重复测量上的归一化平方误差已知落[0,1]，固定档位集合及相同信号分布，校准选档后μ_ĥ仍受同时界约束；滤波参数若针对同批观测拟合或现场噪声分布改变需拒用。归一化尺度要先固定，不能用样本最大误差作为总体上界。未运行物理实验。\n\n**候选泄漏。** Z均匀于N=10000个ID；n=100校准后造唯一函数“在已观察ID上损失0，其余1”。μ̂=0，真实均值至少.99。把随机singleton当M=1，r≈.13581，却发生大偏差，失败概率1。修正方式是独立学习/校准拆分或对预先定义的整个大族控制复杂度，不能把搜索完保留的一项称作原候选数1。固定大H上删项仍受原H的同时界，但M仍取原族/有效预先界。\n\n**重复样本。** Z_i≡Z，Z公平0/1，n=100。样本均值与.5差恒.5，误套iid r≈.13581会失败概率1。不同候选共享Z_i允许，而所有i共享同一个Z不满足前提。\n\n**均值非硬预算。** 成本100以概率.01发生，否则0；C=1≤T=1，单次超预算概率仍.01。不得把期望认证当timeout保证。\n\n**分布漂移/输出代理。** 校准Z恒0、部署Z恒1时均值从0变1；没有同分布保证。层内误差分数和token overlap的界，只认证各自预定义均值；不能替换成e2e准确率。继续查看样本直到区间通过也不符合固定n；需要另读math.alpha-spending-stopping等并核对时间前提，当前条目不处理自适应停止。\n\n## 逐层配置和成本有限的Agent使用\n\n可将每个完整逐层α/β/γ表作为一个候选，或在固定可加局部loss族上先建立逐项同时界再对总和累积半径。但不能把“只评了Σ|J_l|个局部项”的族大小代入任意真实联合e2e配置数Π|J_l|；除非严格可加结构已证实。模块之间损失相关本身不会破坏联合界，可加代理是否等于联合目标另验。\n\n建议：独立探索集生成/筛method；冻结少量候选（含最优统一配置与baseline）、真实损失及范围；以新iid校准集形成同时区间，选择；锁定后对未用测试集报告全量LongBench/RULER等实际指标。已有公开bench不得自称iid总体抽样；没有代表性就报告有限benchmark结果，不伪造总体保证。M越大log罚项越大，局部搜索后只计算幸存者数会低估选择成本。\n\n对于Agent输出质量和token预算，只有冻结评分与已知有限token界/同分布独立任务才可考虑；消息数减少不等于质量或token收益。本轮未做同模型A/B、GPU、真实收费或生产接口修改。\n\n## 来源、前置、关系与实际验证状态\n\n强依赖：math.hoeffding-bounded-mean@1。与离散分配/alpha spending/attention输出几何为导航关系，不加载整库；它们的生产结论须各自核对。正文的联合界、可变半径选择证明、成本余量桥和反例为本项目明确推导，非形式化。\n\n经典有限分类器统一误差与ERM出处：Andrew Ng官方CS229 PartVI LearningTheory，§3，PDF pp5–7：https://cs229.stanford.edu/notes_archive/cs229-notes4.pdf ，原文件未标精确版次，2026-10-08核查。其Bernoulli分类器结论通过本库有界均值前提推广。\n\n最新原文筛选与发表/版本记录在 doc/results/math-selection-20261008/research.json：LTT专著2606.25601v3（2026-09-25）与ReCIRC2609.38112v1（2026-09-29）仅针对性方法/前提阅读，不当作全文精读或本机复现；不把边际期望风险、给定校准的高概率总体风险和条件风险混同。\n\n公开CPU开发数据与独立代码/数据/非形式化推导复核见 doc/results/math-selection-20261008/。整数/Fraction事件/概率，加binary64 log/sqrt并检查阈值间隔；独立高精度参考核对，不称形式认证。小样例不能证明一般概率定理。公开例已用于开发；没有未见模型题、实际模型检索/拒用/收益或真实传感器实验。\n",
+  "path": "entries/math.finite-menu-selection.json",
+  "sha256": "12a6934e379b7392d9272dcec55abdbc148464d435ed4ae437955b0f5dfa85b8",
+  "knowledge_refs": [
+    {
+      "id": "math.finite-menu-selection",
+      "version": 1,
+      "sha256": "12a6934e379b7392d9272dcec55abdbc148464d435ed4ae437955b0f5dfa85b8"
+    },
+    {
+      "id": "math.hoeffding-bounded-mean",
+      "version": 1,
+      "sha256": "5da6b4040a6e6a838eb37d080b36b230e91ffc22d752146b888604f77a3aea0a"
+    }
+  ]
+}
