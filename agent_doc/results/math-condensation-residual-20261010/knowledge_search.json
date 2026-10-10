@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.linear-solve-backward-error",
+      "version": 1,
+      "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+      "title": "线性求解的后向误差、条件性与下游误差证书",
+      "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+      "status": "published",
+      "assumptions": [
+        "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+        "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+        "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+        "下游排序须真实线性评分映射和严格逐对误差间隔"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+          "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "conditioning",
+            "error",
+            "residual"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "conditioning"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "conditioning",
+            "error"
+          ]
+        }
+      ],
+      "score": 21
+    },
+    {
+      "id": "math.linear-system-stability",
+      "version": 1,
+      "sha256": "caacac2221436b3cd671b9a307f8598e8481af537400839a430f5558bd04b4a4",
+      "title": "条件数、残差与有限扰动误差界",
+      "summary": "小残差不保证小解误差；用条件数与显式扰动条件评估线性求解可靠性。",
+      "status": "published",
+      "assumptions": [
+        "A 为可逆实方阵，b 非零，使用相容诱导矩阵范数",
+        "有限扰动公式要求 κ(A)‖E‖/‖A‖<1；不能把一阶近似当任意扰动保证"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 的明确推导与反例；非形式化证明",
+          "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "error",
+            "residual"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "conditioning"
+          ]
+        }
+      ],
+      "score": 14
+    },
+    {
+      "id": "math.contraction-residual-certificate",
+      "version": 1,
+      "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+      "title": "收缩迭代的残差误差证书与不精确求解边界",
+      "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+      "status": "published",
+      "assumptions": [
+        "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+        "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+        "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+          "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "residual"
+          ]
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "math.eigenspace-gap-perturbation",
+      "version": 1,
+      "sha256": "9737b6e1fb288bf682e23f1910f32aadc43421bd42821550a82e419303a7e292",
+      "title": "谱隙、子空间扰动与投影打分证书",
+      "summary": "实对称矩阵的隔离特征值簇可用边界谱隙控制子空间误差；主方向稳定取决于误差与谱隙的比值。投影比较消除符号和簇内旋转歧义，可传播到有范数约束的打分。",
+      "status": "published",
+      "assumptions": [
+        "A与Ahat=A+E是同维实对称矩阵，使用一致坐标及欧氏算子/Frobenius范数",
+        "特征值降序，目标为同一索引区间r..s；d=s-r+1，外侧边界谱隙g=min(lambda_(r-1)-lambda_r,lambda_s-lambda_(s+1))>0，端点取无穷",
+        "U与Uhat列正交；比较投影或主角度，不能直接比较未对齐的基",
+        "本文自推较紧rank-one界另需目标最大特征值、g=lambda_1-lambda_2>0、认证epsilon>=||E||op且epsilon<g；epsilon<g/2额外认证扰动后最大特征值简单",
+        "打分迁移需q,k位于同一欧氏坐标系、目标确为q^T P k；只控制换基误差，不控制舍弃补空间或完整注意力输出"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-subspace/verify.py",
+          "docs/knowledge_learning/2026-10-07-subspace/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "bound"
+          ]
+        }
+      ],
+      "score": 5
+    }
+  ]
+}

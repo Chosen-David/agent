@@ -2,6 +2,8 @@
 
 ## 2026-10-10
 
+- [x] [MATH-76] Original-system residual and adjoint observable identities reviewed; existing candidate v2 supplement only. ([detail](task_details/MATH-76.md))
+
 - [x] [MATH-74] Gibbs menu raw-cost/proxy bounds and hard-feasibility refusals independently reviewed; document candidate. ([detail](task_details/MATH-74.md))
 
 - [x] [MATH-75] Singular range/source compatibility and boundary fill-in independently reviewed; document candidate only. ([detail](task_details/MATH-75.md))
