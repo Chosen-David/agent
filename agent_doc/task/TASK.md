@@ -2,6 +2,8 @@
 
 ## 2026-10-10
 
+- [x] [MATH-74] Gibbs menu raw-cost/proxy bounds and hard-feasibility refusals independently reviewed; document candidate. ([detail](task_details/MATH-74.md))
+
 - [x] [MATH-73] Block softmax merge proof/identity and numerical/refusal boundaries reviewed; document candidate only. ([detail](task_details/MATH-73.md))
 
 - [x] [MATH-72] Input-conditioned risk/oracle boundaries independently reviewed; document candidate only. ([detail](task_details/MATH-72.md))

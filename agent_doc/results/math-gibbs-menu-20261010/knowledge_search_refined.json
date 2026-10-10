@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.softmax-kl-fisher",
+      "version": 1,
+      "sha256": "e8b5926cdfdd48d44a5b6c6e03ae4ee71ba1aade837c3d2f96beed5a36c9d7f9",
+      "title": "有限softmax的KL与中心化Fisher曲率",
+      "summary": "分数误差在共同平移商空间中决定概率KL；用路径方差给全局上界与条件下界，饱和时不能由低秩分数MSE推出概率有效秩。",
+      "status": "published",
+      "assumptions": [
+        "共同非空有限支持集、有限实logits；温度正且已计入，KL自然对数",
+        "概率下界须覆盖整个连接路径；Fisher近似需振幅R小；没有统一全局正下界",
+        "硬mask/greedy/不同支持集另处理；attention概率轴不等于输出词表生成轴"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Self-contained finite derivations; no formal proof",
+          "doc/results/math-softmax-kl-20261008 public CPU cases; publication subject to independent acceptance"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "kl"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "kl"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "kl"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "kl"
+          ]
+        }
+      ],
+      "score": 14
+    },
+    {
+      "id": "algo.rl-spurious-reward-regimes",
+      "version": 1,
+      "sha256": "84b89bf957366dba328c3364c0be729843c630d02bbf04cfa7474b923ed1d744",
+      "title": "随机奖励与 clipping：熵下降不是推理能力提升的充分证据",
+      "summary": "ICLR 2026 在随机 Bernoulli 奖励的数学训练中区分 clipping 稳定性、初始策略偏斜和任务难度；关闭 clipping 可提高熵，也可能导致梯度爆炸。",
+      "status": "published",
+      "assumptions": [
+        "model: Qwen2.5-Math-7B; additional QwQ-32B and R1-Distill-Llama-8B cases",
+        "data: DeepScaleR or harder AIME Past training; MATH500 validation",
+        "reward: iid Bernoulli(1/2), independent of correctness",
+        "training: verl; batch 128; group 16; temperature 1.0; lr 5e-7; clip 0.2; KL 0"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-checked",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-rl-probability/report.md#algo.rl-spurious-reward-regimes"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "entropy"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "entropy"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "entropy",
+            "kl"
+          ]
+        }
+      ],
+      "score": 11
+    },
+    {
+      "id": "algo.dpo-offline-preferences",
+      "version": 1,
+      "sha256": "5edf0ba6d8dd82be84009ad7d2ae0c9ea7056203525dca1a29b13236e66980e8",
+      "title": "DPO：离线偏好优化的适用前提",
+      "summary": "NeurIPS 2023 在偏好数据任务上支持直接优化 policy 的路线，可避免显式训练 reward model 和训练时在线生成；不保证所有 RLHF 任务更优。",
+      "status": "published",
+      "assumptions": [
+        "data: paired chosen/rejected offline preferences",
+        "objective: KL-regularized preference learning",
+        "metric: preference quality versus KL"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.dpo-offline-preferences"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "kl"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "kl"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "kl"
+          ]
+        }
+      ],
+      "score": 10
+    }
+  ]
+}
