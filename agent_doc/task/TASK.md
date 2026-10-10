@@ -2,6 +2,8 @@
 
 ## 2026-10-10
 
+- [x] [MATH-71] Fixed-set versus posterior-path gains reviewed; existing candidate v2, documentation only. ([detail](task_details/MATH-71.md))
+
 - [x] [MATH-70] Conditional information gain/complementarity independently reviewed; document candidate only. ([detail](task_details/MATH-70.md))
 
 - [x] [ADV-POLL-01] SGLang advice复盘、变更导航、监督器调用链及独立CPU检查已发布main；真实token收益待测，不计第10次。 ([detail](task_details/ADV-POLL-01.md))
