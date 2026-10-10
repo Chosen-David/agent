@@ -2,6 +2,8 @@
 
 ## 2026-10-10
 
+- [x] [MATH-73] Block softmax merge proof/identity and numerical/refusal boundaries reviewed; document candidate only. ([detail](task_details/MATH-73.md))
+
 - [x] [MATH-72] Input-conditioned risk/oracle boundaries independently reviewed; document candidate only. ([detail](task_details/MATH-72.md))
 
 - [x] [MATH-71] Fixed-set versus posterior-path gains reviewed; existing candidate v2, documentation only. ([detail](task_details/MATH-71.md))
