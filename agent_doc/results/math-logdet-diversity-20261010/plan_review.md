@@ -1,0 +1,1 @@
+Ordinary independent context logdet_plan_review approve. Not ReviewSession/dispatch/document acceptance. Fixed-vector SPD logdet route sound; require exact prior precision/noise mapping, empty convention and explicit clipping example. All263 preserved hashes match. One plan cycle used; no experiment.

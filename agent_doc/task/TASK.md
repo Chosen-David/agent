@@ -3,6 +3,8 @@
 ## 2026-10-10
 
 - [x] [ADV-POLL-01] SGLang advice复盘、变更导航、监督器调用链及独立CPU检查已发布main；真实token收益待测，不计第10次。 ([detail](task_details/ADV-POLL-01.md))
+- [x] [MATH-69] Fixed-vector log-det diversity and surrogate boundaries reviewed; document candidate only. ([detail](task_details/MATH-69.md))
+
 - [x] [MATH-68] Independently reviewed submodular coverage/prerequisite document candidate; no runtime adoption. ([detail](task_details/MATH-68.md))
 
 - [x] [MATH-67] Structured perturbations and subspace reuse: independently review document candidate, no runtime adoption. ([detail](task_details/MATH-67.md))
