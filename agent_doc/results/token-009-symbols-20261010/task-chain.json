@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-009-probe",
+      "owner": "native-symbol9-probe",
+      "action": "short_model_probe",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-009-symbols-20261010",
+        "producer_task_id": "TOK-009-probe",
+        "producer_actor": "native-symbol9-probe",
+        "manifest_path": "agent_doc/results/token-009-symbols-20261010/manifest.json",
+        "scope": "one short real Python function interpretation task on three fixed cases; exact local symbol source view, not repository localization/whole-program/long-context/cash",
+        "validation_plan": {
+          "path": "agent_doc/results/token-009-symbols-20261010/validation-plan.json",
+          "sha256": "245c7425b11e3706e2faf0b3219cd4c13004108cc0e2e8c41e71fd016db9f624"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-009-verify",
+      "owner": "host-symbol9-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-009-probe"
+      ],
+      "result_validation": {
+        "result_id": "token-009-symbols-20261010",
+        "producer_task_id": "TOK-009-probe",
+        "producer_actor": "native-symbol9-probe",
+        "manifest_path": "agent_doc/results/token-009-symbols-20261010/manifest.json",
+        "scope": "one short real Python function interpretation task on three fixed cases; exact local symbol source view, not repository localization/whole-program/long-context/cash",
+        "validation_plan": {
+          "path": "agent_doc/results/token-009-symbols-20261010/validation-plan.json",
+          "sha256": "245c7425b11e3706e2faf0b3219cd4c13004108cc0e2e8c41e71fd016db9f624"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-009-publish",
+      "owner": "main-ai",
+      "action": "publish_verified_improvement",
+      "depends_on": [
+        "TOK-009-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-009-symbols-20261010",
+          "producer_task_id": "TOK-009-probe",
+          "producer_actor": "native-symbol9-probe",
+          "manifest_path": "agent_doc/results/token-009-symbols-20261010/manifest.json",
+          "scope": "one short real Python function interpretation task on three fixed cases; exact local symbol source view, not repository localization/whole-program/long-context/cash",
+          "validation_plan": {
+            "path": "agent_doc/results/token-009-symbols-20261010/validation-plan.json",
+            "sha256": "245c7425b11e3706e2faf0b3219cd4c13004108cc0e2e8c41e71fd016db9f624"
+          }
+        }
+      ]
+    }
+  ]
+}
