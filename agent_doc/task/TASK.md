@@ -381,3 +381,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-77] Whitened factor positivity/inverse certificates and original-system refusals reviewed; existing candidate v3 supplement only. ([detail](task_details/MATH-77.md))
 
 - [x] [MATH-78] State-summary predictive aggregation and finite-time TV/refusal boundaries reviewed; document candidate only. ([detail](task_details/MATH-78.md))
+
+- [x] [MATH-79] Marginal contraction and stationary/path distinction reviewed; existing candidate v2 supplement only. ([detail](task_details/MATH-79.md))
