@@ -377,3 +377,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [TOK-009] Exact symbol source passed seven boundaries, native quality/usage and independent gate; ordinary main verified, short pair -357 total tokens, upgrade9/100. ([detail](task_details/TOK-009.md))
 
 - [x] [EXPL-BLOG-01] 从优秀技术博客提炼概念讲解与教学作图方法，升级 skill 并验证。 ([详情](task_details/EXPL-BLOG-01.md))
+
+- [x] [MATH-77] Whitened factor positivity/inverse certificates and original-system refusals reviewed; existing candidate v3 supplement only. ([detail](task_details/MATH-77.md))

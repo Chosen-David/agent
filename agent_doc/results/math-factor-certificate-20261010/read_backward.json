@@ -1,0 +1,86 @@
+{
+  "schema_version": 1,
+  "id": "math.linear-solve-backward-error",
+  "version": 1,
+  "status": "published",
+  "kind": "theorem",
+  "title": "线性求解的后向误差、条件性与下游误差证书",
+  "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+  "aliases": [
+    "linear solve residual conditioning backward error",
+    "线性方程 小残差 解误差 病态 排名",
+    "接地 电路 导纳 电流 电压 误差",
+    "逆矩阵 范数 Neumann certificate"
+  ],
+  "domains": [
+    "numerical-analysis",
+    "linear-algebra",
+    "physics"
+  ],
+  "structures": [
+    "linear-solve",
+    "conditioning",
+    "residual-error-bound",
+    "ranking",
+    "grounded-network"
+  ],
+  "assumptions": [
+    "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+    "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+    "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+    "下游排序须真实线性评分映射和严格逐对误差间隔"
+  ],
+  "sources": [
+    {
+      "url": "https://epubs.siam.org/doi/10.1137/1.9780898718027.ch7",
+      "locator": "Higham 2nd ed (2002), ch7 pp119–137, §7.1 Theorem7.1 equations7.1–7.2; preview sign caveat in Markdown",
+      "accessed": "2026-10-07"
+    },
+    {
+      "url": "https://tbetcke.github.io/math0058_lecture_notes/linear_system_error.html",
+      "locator": "Betcke MATH0058: Backward error, Neumann lemma, Sensitivity; unversioned",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "derivation-reviewed",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+      "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.topk-margin"
+    },
+    {
+      "type": "related",
+      "id": "math.score-difference-bound"
+    },
+    {
+      "type": "related",
+      "id": "math.contraction-residual-certificate"
+    },
+    {
+      "type": "related",
+      "id": "physics.dimensionless"
+    },
+    {
+      "type": "related",
+      "id": "math.linear-system-stability"
+    }
+  ],
+  "content": "# 线性求解的后向误差、条件性与下游误差证书\n\nID: `math.linear-solve-backward-error`；版本 1。经典结论与本条自推导分开标明；人工推导核查和有限计算检查，不是 Lean 形式化证明。\n\n## 触发结构\n\n方阵线性方程的近似解、很小的残差却错误的排名、接地电路的电压误差。先确定对象 A、右端 b、近似解 y、范数、数据精度及下游查询 c；只在存在可核验逆算子界时把残差转换为解误差。动态系统稳定性、迭代收缩性与线性方程条件性是不同问题。\n\n## 对象与准确结论\n\n实方阵 A 可逆，Ax=b，r=b−Ay；向量采用无穷范数，矩阵采用诱导行和范数，κ=‖A‖∞‖A⁻¹‖∞。以下残差首先指精确输入数据的精确残差。\n\n**经典联合非结构化后向误差**：使 (A+ΔA)y=b+Δb，且 ‖ΔA‖∞≤η‖A‖∞、‖Δb‖∞≤η‖b‖∞ 的最小 η 为\n\nη=‖r‖∞/(‖A‖∞‖y‖∞+‖b‖∞)。\n\n分母为零时 y=b=0，定义 η=0。该允许扰动的集合不要求保留对称性、稀疏性、电路守恒或数据单位；结构化后向误差不能直接用此公式代替。\n\n**前向误差**：若 H≥‖A⁻¹‖∞、R≥‖r‖∞ 已被核验，则 E=HR 满足 ‖x−y‖∞≤E。b≠0 时另有相对误差 ≤κ‖r‖∞/‖b‖∞；若 κη<1，还有 ≤2κη/(1−κη)。κ很大可以放大小残差；条件不满足只说明这个界不能保证，不能据此断言实际失败。\n\n**本条自推导的可计算逆界**：给定方阵 B，证明 q=‖I−BA‖∞<1，则 A 可逆且 H=‖B‖∞/(1−q) 是有效上界。浮点估计值必须加上计算误差上界再检查 q<1；无保证的条件数估计不能冒充证书。\n\n**本条自推导的下游查询界**：si=ciᵀx，ŝi=ciᵀy，则 |si−ŝi|≤‖ci‖₁E。对近似排序中选中的 i 和未选中的 j，若 ŝi−ŝj>(‖ci‖₁+‖cj‖₁)E，则真值也有 si>sj。逐对满足才能保证集合；相等边界不保证唯一排序。只有线性评分映射被保留时可用，不能推出注意力输出、工具成功率或 Agent 质量提升。\n\n## 可复核推导\n\n后向误差下界来自 r=ΔAy−Δb 与三角不等式。令 D=‖A‖∞‖y‖∞+‖b‖∞，y≠0 时选择最大绝对分量 j，vᵀ=sign(yj)ejᵀ。于是 vᵀy=‖y‖∞、‖v‖₁=1。取 ΔA=(‖A‖∞/D)rvᵀ、Δb=−(‖b‖∞/D)r 即达到下界。y=0、b≠0 时取 ΔA=0、Δb=−b。注意 Δb 的负号。\n\n设 e=y−x，则 ‖e‖∞≤‖A⁻¹‖∞‖r‖∞。又 r=ΔAy−Δb，‖y‖∞≤‖x‖∞+‖e‖∞、‖b‖∞≤‖A‖∞‖x‖∞，得到 (1−κη)‖e‖∞≤2κη‖x‖∞；分母为正时才可除。对逆界，T=I−BA，Neumann 级数给出 (BA)⁻¹，A⁻¹=(I−T)⁻¹B，级数范数 ≤1/(1−q)。查询界来自有限和 |Σci,k ek|≤‖ci‖₁‖e‖∞，再对两项误差做三角界。\n\n## 正例、边界与误用反例\n\n- A=diag(2,1)，x=(1,2)，y=(1.01,1.99)：R=0.02、H=1、E=0.02，观测分量间隔 0.98>2E，排名被认证。\n- A=[[1,1],[1,1+ε]]，ε=10⁻⁸，x=(1,2)，y=(3,0)：残差仅 (0,2ε)，η约2.22×10⁻⁹，排名却翻转，实际误差为2。合法 H=(2+ε)/ε 给 E=4+2ε，拒绝保证排名。小后向误差不等于小前向误差。\n- b=0 时唯一解为0，绝对界可用，相对解误差无定义。矩形最小二乘、奇异方程、非线性系统需其他理论。共同缩放 (A,b)→(cA,cb) 保留 κ、η、HR，却改变残差数值。\n- 浮点残差 r̃ 必须使用 R≥‖r̃‖∞+ρ，ρ覆盖计算误差；输入舍入与模型误差另计。仅打印零残差不能核验精确系统。\n\n## 迁移：决策与电路\n\nAgent 科研/工程任务中的有限线性响应求解对应 Ax=b，候选的线性效用对应 ci；这是真实代数映射。文本概率、消息压缩的语义损失及自适应工具策略没有天然对应，不直接迁移。可证伪预测为：已核验 H、R 且逐对间隔成立时，精确求解不会翻转集合；verify.py 检查正例和拒用反例。\n\n接地导纳矩阵 L=[[2,−1],[−1,2]] S，电流 b=(1,0) A，电压 x=(2/3,1/3) V。y=x+(0.01,−0.01) V 时残差为 (−0.03,0.03) A，H=1 Ω，E=0.03 V；量纲 Ω·A=V，电压大小关系可认证。接地移除了常数零模态；未接地 [[1,−1],[−1,1]] 的解可以任意加常数，即使零残差也无唯一绝对电压，必须拒绝本条可逆前提。非线性器件、频率依赖参数和实测导纳误差未覆盖。\n\n## 前置与检索关系\n\n条目内定义了有限维范数、逆矩阵和级数证明所需对象，无强制知识依赖。相关 `math.topk-margin`、`math.score-difference-bound` 是排序误差工具；`math.contraction-residual-certificate` 给其他残差结构；`physics.dimensionless` 支持量纲审查；`math.linear-system-stability` 处理时间演化而非本条敏感性。先按 linear-solve / residual-error-bound / conditioning 结构检索，再按需要加载全文，不扩充常驻提示。\n\n## 来源、版本与验证\n\n- Higham, *Accuracy and Stability of Numerical Algorithms*, 第二版，2002，Chapter 7, pp119–137，§7.1 Theorem 7.1（Rigal–Gaches）、(7.1)–(7.2)，联合后向误差；[SIAM 章节](https://epubs.siam.org/doi/10.1137/1.9780898718027.ch7)。出版网页2012上线日期不当作书籍年份。网页式(7.3)的显示符号与残差定义疑似不一致，本条独立推导扰动并精确检查；未核实原版PDF排印问题。\n- Timo Betcke, UCL MATH0058, [Backward error and condition number](https://tbetcke.github.io/math0058_lecture_notes/linear_system_error.html)，无固定版本，检索2026-10-07；Backward error、Neumann lemma、Sensitivity各节。使用定义与推导，不依赖网页末行的等号排版。\n- 实际检查：`docs/knowledge_learning/2026-10-07-conditioning/verify.py`、`checks.json`，Fraction精确有限输入、binary64取消误差、物理单位与奇异反例。数学证明为人工核查，未运行Lean；有限样例不替代一般证明。近期低秩更新仅研究筛选，见同目录research.md，无生产算法替换或模型A/B。\n",
+  "path": "entries/math.linear-solve-backward-error.json",
+  "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+  "knowledge_refs": [
+    {
+      "id": "math.linear-solve-backward-error",
+      "version": 1,
+      "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d"
+    }
+  ]
+}

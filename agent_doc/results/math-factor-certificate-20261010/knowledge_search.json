@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.low-rank-inverse-update",
+      "version": 1,
+      "sha256": "fbaf3c9e5191feb0b59b298cf348fc90ef66d40b6c21aa47e083a11d977c01a0",
+      "title": "低秩逆更新、正定删除与浮点相消边界",
+      "summary": "可逆A的低秩更新由小系统S=I+V^TA^-1U判可逆；正定删除需u^TA^-1u<1。精确恒等式不保证浮点稳定，完整残差仍需核验。",
+      "status": "published",
+      "assumptions": [
+        "实A为n×n可逆矩阵，U,V为n×k，S=I_k+V^TA^-1U；B可逆等价于S可逆，不要求因子满列秩。",
+        "rank-one公式需beta=1+v^TA^-1u非零；SPD判据另需A实对称正定，正负更新为uu^T。",
+        "精确实数恒等式与实际浮点算法分开；IEEE binary64反例限定Python记录的运算顺序。",
+        "在线ridge仅是未归一化Gram λI+Σx_ix_i^T，λ>0；回归rhs须一起更新，不能套用到含均值/归一化变化的原始协方差删除。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-inverse-update-20261009：10公开精确/实际binary64边界与独立审核；非形式化、非通用稳定/模型收益证明。"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "inverse"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "inverse"
+          ]
+        }
+      ],
+      "score": 6
+    },
+    {
+      "id": "math.contraction-residual-certificate",
+      "version": 1,
+      "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+      "title": "收缩迭代的残差误差证书与不精确求解边界",
+      "summary": "在完备不变域、指定范数和已证明的统一收缩常数下，将残差及oracle误差转换为解误差；小步长、局部观测比率和谱半径不能替代这些前提。",
+      "status": "published",
+      "assumptions": [
+        "非空完备度量空间X，G:X→X；范数情形须指定范数和不变域",
+        "统一证明 d(Gx,Gy)≤q d(x,y)，0≤q<1；有限次观测不能证明全局q",
+        "不精确证书须有确定性oracle误差上界eta，包含残差计算误差，且迭代留在域内"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-contraction/verify.py",
+          "docs/knowledge_learning/2026-10-07-contraction/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "residual"
+          ]
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "math.linear-solve-backward-error",
+      "version": 1,
+      "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+      "title": "线性求解的后向误差、条件性与下游误差证书",
+      "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+      "status": "published",
+      "assumptions": [
+        "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+        "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+        "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+        "下游排序须真实线性评分映射和严格逐对误差间隔"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+          "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "residual"
+          ]
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "math.linear-system-stability",
+      "version": 1,
+      "sha256": "caacac2221436b3cd671b9a307f8598e8481af537400839a430f5558bd04b4a4",
+      "title": "条件数、残差与有限扰动误差界",
+      "summary": "小残差不保证小解误差；用条件数与显式扰动条件评估线性求解可靠性。",
+      "status": "published",
+      "assumptions": [
+        "A 为可逆实方阵，b 非零，使用相容诱导矩阵范数",
+        "有限扰动公式要求 κ(A)‖E‖/‖A‖<1；不能把一阶近似当任意扰动保证"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 的明确推导与反例；非形式化证明",
+          "tests/test_knowledge_math.py 数值/代数实例与独立使用记录见 docs/knowledge_learning/2026-10-06-round2/"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "residual"
+          ]
+        }
+      ],
+      "score": 5
+    }
+  ]
+}
