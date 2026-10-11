@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.freedman-variance-budget",
+      "version": 1,
+      "sha256": "1fa401c6307800e52301c08f3a4528f5c0587d30c0a712c1d74512b807e65e8b",
+      "title": "标量Freedman界：可预测方差预算与停止事件",
+      "summary": "条件零均值鞅差在确定增量上界下，以固定可预测二次变差预算控制跨时刻越界；不能把经验方差或逐时刻选取的预算直接代入同一错误概率。",
+      "status": "published",
+      "assumptions": [
+        "离散过滤族F_t，D_t适应且每个t平方可积，E[D_t|F_(t-1)]=0；S_0=V_0=0",
+        "确定R>0，D_t≤R几乎处处；上尾不要求下界，双侧另需|D_t|≤R",
+        "V_t=sum_{j≤t}E[D_j²|F_(j-1)]，不是样本方差或sum D_j²",
+        "x≥0与v>0事先固定；阈值反演δ∈(0,1)固定；预算变化需单独校准",
+        "停止结论只约束{τ<∞,S_τ≥x,V_τ≤v}联合事件，不是条件概率且不保证τ有限"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/report.md",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/checks.json",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_review.md",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_results.json",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/report.md",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/independent_review.md",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/integration_review.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "event"
+          ]
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "math.alpha-spending-stopping",
+      "version": 1,
+      "sha256": "54d4325ccdf1a12e50841ffc124dfa11fcf1dfbd0a254242fc916d8b5f573d06",
+      "title": "逐次错误预算下的随机停止保证",
+      "summary": "对同一稳定均值的每次查看分配可求和错误概率，以联合界保证任意数据依赖停止时的覆盖；保守且不保证早停。",
+      "status": "published",
+      "assumptions": [
+        "无限序列 X_i 相互独立、具有同一均值 μ 且落在已知确定区间 [a,b]",
+        "δ∈(0,1)，δ_t=δ/[t(t+1)] 在数据之前规定",
+        "评测对象、分布与取值范围固定；本条不覆盖复用数据训练后自适应选择的新模型"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-concentration/checks.json",
+          "docs/knowledge_learning/2026-10-06-concentration/verify.py"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "agent"
+          ]
+        }
+      ],
+      "score": 1
+    },
+    {
+      "id": "math.attention-output-geometry",
+      "version": 1,
+      "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+      "title": "固定value的Gram输出几何与局部敏感度",
+      "summary": "以实际value和输出投影的Gram半范数衡量权重误差；区别精确有限误差、局部Jacobian余项和固定线性margin。",
+      "status": "published",
+      "assumptions": [
+        "有限固定value与线性W，欧氏范数；α和β均非负归一化",
+        "局部公式要求固定支持集、有限logits和已计入温度；改变value另计误差",
+        "下游保持仅适用于指定固定线性分类器和严格margin，不是e2e证书"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Explicit derivation in paired Markdown; independent review recorded in doc/results/math-geometry-20261007/independent/",
+          "CPU finite development checks; no Lean/model/GPU/e2e verification"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "agent"
+          ]
+        }
+      ],
+      "score": 1
+    }
+  ]
+}

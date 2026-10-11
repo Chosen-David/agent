@@ -1,5 +1,7 @@
 # 本轮增量代码与产物地图
 
+TOK-010：`agent_runtime/maintenance_gate.py` 显式包装可信 `build()['maintain']`，项目/运行/外部事件绑定、handled确认、重复跳过与quiet补查；默认worker/scheduler/verifier不变。`tests/test_maintenance_gate.py` 十项边界及 `docs/token_optimization/maintenance_gate.md` 为接入入口。`token-010-maintenance-cpu-r3-20261011`仅CPU独立验收；真实短对照在模型调用前因额度99%停止，成功计数仍9/100。
+
 TOK-006：`scripts/artifact_context.py` → `agent_runtime/artifact_context.py`；同一payload保留完整旧版，新版按完整行单splice，仅更短才选，`restore_comparison` 按独立root/refs校验精确恢复、不授信。`tests/test_artifact_context.py` 七测试含解析资源、Unicode/CRLF、删除/取消和CLI；`docs/token_optimization/artifact_comparison.md` 说明scope。字符候选负结果(总+246)与整行候选(19996→19848)各自冻结，不重用账单，只计一个slot；任务文档九项纯格式修复不计成功。
 
 TOK-005：`Mailbox.inbox(task_id=...)` / CLI `inbox --task-id` → `agent_runtime/communication.py`；显式按接收者已路由任务过滤，发生在limit前，不筛kind、不ACK、不证明全局完成。`tests/test_communication_task_scope.py` 覆盖分页、所有kind、引用原值、重启和隔离；`docs/token_optimization/inbox_task_scope.md` 为适用范围。`agent_doc/results/token-005-inbox-20261010/` 的真实短测总token20148→19709，保留未解决blocker；不外推全通信链/长文或现金成本。

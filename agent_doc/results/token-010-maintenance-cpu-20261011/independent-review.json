@@ -1,0 +1,118 @@
+{
+  "schema_version": "experiment-validation/v1",
+  "manifest_sha256": "7c686e916653c71f084027186ad704d0ec3e8705b369d3e334b7125132161235",
+  "artifact_hashes": {
+    "agent_doc/results/token-010-maintenance-cpu-20261011/validation-plan.json": "3bed71abf5f42f01f3fc273d820e6917f030d4db949548745a0faff4b3883345",
+    "agent_doc/results/token-010-maintenance-cpu-20261011/code_snapshot/agent_runtime/maintenance_gate.py": "91f40b40d92e7b8ce2f60e424033381d434c9e4b0bf405c2ca890917312d4e05",
+    "agent_doc/results/token-010-maintenance-cpu-20261011/code_snapshot/tests/test_maintenance_gate.py": "512fb041285699b9d879665465c55abbe579d0c40aa0201cd052836203b6e9b2",
+    "agent_doc/results/token-010-maintenance-cpu-20261011/code_snapshot/agent_runtime/result_validation.py": "06f64f3444fa3933c3b8cb042a9ae6b86044c4cc69512d33f6cd08bd19218ba9",
+    "agent_doc/results/token-010-maintenance-cpu-20261011/code_snapshot/agent_runtime/result_store.py": "3e446c8ef9d3bde03a92545fcfd76b6895af0cfc82a49cf8a79d4e63326e55b5",
+    "agent_doc/results/token-010-maintenance-cpu-20261011/code_snapshot/agent_runtime/legacy_result_paths.py": "b82622cd42e0824f4e6d064e2c4e9a6cea464e0761ec7c0b32adfc5e86751525",
+    "agent_doc/results/token-010-maintenance-cpu-20261011/code_snapshot/agent_runtime/project_docs.py": "6e4c0573bd4d99beb350068424f94430111440fea79d71b5bb8e94310f53ae07",
+    "agent_doc/results/token-010-maintenance-cpu-20261011/code_snapshot/.agent-runs/token10-20261011/cpu_host.py": "465be0d12195848b0207ca1222eb90876c3bda84ade7b913d8cd04b601774d88",
+    "agent_doc/results/token-010-maintenance-cpu-20261011/source-inventory.json": "658bcb95f5432bbaa1d4c47bf60083f97ba52e2ee2db61a657ffaf3cbc90bd24",
+    "agent_doc/results/token-010-maintenance-cpu-20261011/config.json": "cc6c6fe7d1bfebc5de6ee7d47c6feef2cb9d7eea66ebe864f1635457e12b83e8",
+    "agent_doc/results/token-010-maintenance-cpu-20261011/producer-tests.log": "28fc5810ec648f9dd4f8bf8010ee50cc76b8a29c921e0bcc848be075fa829d82",
+    "agent_doc/results/token-010-maintenance-cpu-20261011/producer-checks.json": "8c4b86acb0f79730beaa00e0e7e08eecc3e37fe36ca295382ffcff79c1393d98"
+  },
+  "validation_plan_sha256": "3bed71abf5f42f01f3fc273d820e6917f030d4db949548745a0faff4b3883345",
+  "scope": "Opt-in maintenance gate CPU boundaries and independent event/deadline replay; no model usage, token saving or live deployment",
+  "verifier": {
+    "actor": "host-maintenance-cpu-reviewer",
+    "source": "fixed host CPU entry, separately executed in WSL",
+    "run_id": "TOK-010-CPU-verify",
+    "method": "source/archive hashes, independent event/deadline trace,10 actual CPU tests",
+    "independent": true
+  },
+  "limitations": [
+    "CPU boundaries only, no model usage/quality/token savings or live adapter deployment.",
+    "Trusted observer event completeness and real handled acknowledgements remain host obligations.",
+    "Independent Windows/Linux CPU checks do not establish long-running tmux survival or whole-project behavior."
+  ],
+  "checks": {
+    "implementation": {
+      "verdict": "pass",
+      "reason": "Read exact ACK, event binding, quiet bound and explicit host callable path. Confirm within CPU scope.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/token-010-maintenance-cpu-20261011/independent-checks.json",
+          "sha256": "af6db0fe00063eca869d69a95c6e3aa7034c4910a19849b4f168d4ba7ead1557"
+        },
+        {
+          "path": "agent_doc/results/token-010-maintenance-cpu-20261011/independent-tests.log",
+          "sha256": "a26f9cdeda27723006e3e8e3d4a720c438b4b6b5d70c3bbf702a16c88c397dc9"
+        }
+      ]
+    },
+    "reference_boundary": {
+      "verdict": "pass",
+      "reason": "Independently replay presentation-only repeat, due/source changes and expiry;10 bounded failure/race/config tests. Confirm within CPU scope.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/token-010-maintenance-cpu-20261011/independent-checks.json",
+          "sha256": "af6db0fe00063eca869d69a95c6e3aa7034c4910a19849b4f168d4ba7ead1557"
+        },
+        {
+          "path": "agent_doc/results/token-010-maintenance-cpu-20261011/independent-tests.log",
+          "sha256": "a26f9cdeda27723006e3e8e3d4a720c438b4b6b5d70c3bbf702a16c88c397dc9"
+        }
+      ]
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "Bind current/archive sources, frozen plan and actual separate producer/reviewer logs. Confirm within CPU scope.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/token-010-maintenance-cpu-20261011/independent-checks.json",
+          "sha256": "af6db0fe00063eca869d69a95c6e3aa7034c4910a19849b4f168d4ba7ead1557"
+        },
+        {
+          "path": "agent_doc/results/token-010-maintenance-cpu-20261011/independent-tests.log",
+          "sha256": "a26f9cdeda27723006e3e8e3d4a720c438b4b6b5d70c3bbf702a16c88c397dc9"
+        }
+      ]
+    },
+    "numerical_sanity": {
+      "verdict": "pass",
+      "reason": "Compare exact statuses/counts and finite integer metrics; invalid clocks/JSON tested. Confirm within CPU scope.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/token-010-maintenance-cpu-20261011/independent-checks.json",
+          "sha256": "af6db0fe00063eca869d69a95c6e3aa7034c4910a19849b4f168d4ba7ead1557"
+        },
+        {
+          "path": "agent_doc/results/token-010-maintenance-cpu-20261011/independent-tests.log",
+          "sha256": "a26f9cdeda27723006e3e8e3d4a720c438b4b6b5d70c3bbf702a16c88c397dc9"
+        }
+      ]
+    },
+    "measurement_validity": {
+      "verdict": "pass",
+      "reason": "CPU behavioral checks only; no time/speed/model or scientific quality measurement. Confirm within CPU scope.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/token-010-maintenance-cpu-20261011/independent-checks.json",
+          "sha256": "af6db0fe00063eca869d69a95c6e3aa7034c4910a19849b4f168d4ba7ead1557"
+        },
+        {
+          "path": "agent_doc/results/token-010-maintenance-cpu-20261011/independent-tests.log",
+          "sha256": "a26f9cdeda27723006e3e8e3d4a720c438b4b6b5d70c3bbf702a16c88c397dc9"
+        }
+      ]
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "Separate Windows producer and Linux WSL host10-test replay with distinct owner/PID. Confirm within CPU scope.",
+      "evidence": [
+        {
+          "path": "agent_doc/results/token-010-maintenance-cpu-20261011/independent-checks.json",
+          "sha256": "af6db0fe00063eca869d69a95c6e3aa7034c4910a19849b4f168d4ba7ead1557"
+        },
+        {
+          "path": "agent_doc/results/token-010-maintenance-cpu-20261011/independent-tests.log",
+          "sha256": "a26f9cdeda27723006e3e8e3d4a720c438b4b6b5d70c3bbf702a16c88c397dc9"
+        }
+      ]
+    }
+  }
+}
