@@ -83,6 +83,64 @@ def synchronize(root):
     command(root,sys.executable,'scripts/setup_codex.py');command(root,sys.executable,'scripts/setup_codex.py','--check')
     return head
 
+def observe_parent_turn(q,backlog,tid,turn,run,send,*,timeout_seconds,max_observed_tokens):
+    """Observe native parent snapshots, never infer a final or cross-actor bill."""
+    deadline=time.monotonic()+timeout_seconds;observed=None;previous=None;interrupted=False;saw_error=False
+    fields=('inputTokens','cachedInputTokens','outputTokens','totalTokens','reasoningOutputTokens')
+    def receipt(status,invalid=None):
+        usage_status=('invalid' if invalid else 'missing' if observed is None else
+                      'observed' if status=='worker-completed' and not saw_error else 'partial')
+        return {'status':status,'model_requests':None,'thread_id':tid,'turn_id':turn,
+                'observed_parent_total_tokens':None if invalid else observed,
+                'last_observed_parent_total_tokens':observed,
+                'usage_status':usage_status,'usage_complete':False,
+                'usage_reason':invalid or ('no matching usage notification' if observed is None else
+                    'parent snapshot only; terminal/final bill and child usage are not certified'),
+                'counts_as_token_success':False}
+    try:
+        while time.monotonic()<deadline:
+            try:event=backlog.pop(0) if backlog else q.get(timeout=min(2,max(.1,deadline-time.monotonic())))
+            except queue.Empty:continue
+            if not isinstance(event,dict) or event.get('local_error'):
+                raise ValueError('damaged native transport')
+            p=event.get('params',{})
+            if not isinstance(p,dict):raise ValueError('invalid native event params')
+            if p.get('threadId')!=tid:continue
+            method=event.get('method')
+            if method in ('thread/tokenUsage/updated','error'):
+                if p.get('turnId')!=turn:continue
+                if method=='error':saw_error=True;continue
+                usage=p.get('tokenUsage')
+                if not isinstance(usage,dict):raise ValueError('missing native usage')
+                last=usage.get('last');total=usage.get('total')
+                # Same five native counters/arithmetic as current_turn_usage; no cache subtraction.
+                for u in (last,total):
+                    if not isinstance(u,dict) or any(type(u.get(k)) is not int or u[k]<0 for k in fields):
+                        raise ValueError('missing/inconsistent native counters')
+                    if u['totalTokens']!=u['inputTokens']+u['outputTokens'] or u['cachedInputTokens']>u['inputTokens'] or u['reasoningOutputTokens']>u['outputTokens']:
+                        raise ValueError('inconsistent native counter arithmetic')
+                if any(total[k]<last[k] or (previous is not None and total[k]<previous[k]) for k in fields):
+                    raise ValueError('invalid cumulative usage')
+                observed=total['totalTokens'];previous=total.copy()
+                atomic(run/'observed-usage.json',{'total_tokens':observed,'budget':max_observed_tokens,
+                       'thread_id':tid,'turn_id':turn,'tokenUsage':usage,'usage_complete':False,
+                       'scope':'parent thread only; child benchmarks must separately account all calls'})
+                if observed>=max_observed_tokens and not interrupted:
+                    send('turn/interrupt',{'threadId':tid,'turnId':turn});interrupted=True;deadline=min(deadline,time.monotonic()+15)
+            if method=='turn/completed':
+                terminal=p.get('turn')
+                if not isinstance(terminal,dict):raise ValueError('invalid terminal turn')
+                if terminal.get('id')!=turn:continue
+                if terminal.get('status') not in ('completed','failed','interrupted'):
+                    raise ValueError('invalid terminal status')
+                if terminal.get('error'):saw_error=True
+                return receipt('budget-interrupted' if interrupted else 'worker-'+terminal['status'])
+        send('turn/interrupt',{'threadId':tid,'turnId':turn})
+        return receipt('time-or-interrupt-deadline')
+    except ValueError as exc:
+        send('turn/interrupt',{'threadId':tid,'turnId':turn})
+        return receipt('usage-invalid',str(exc))
+
 def run_worker(root,exe,run,*,timeout_seconds=1200,max_observed_tokens=75000,probe_only=False):
     if os.name!='nt':raise ValueError('selected native backend requires Windows Python; WSL hosts the tmux timer')
     q=queue.Queue();counter=0;backlog=[]
@@ -122,25 +180,8 @@ def run_worker(root,exe,run,*,timeout_seconds=1200,max_observed_tokens=75000,pro
             t=call('thread/start',{'cwd':str(root),'model':'gpt-6.1-sol','approvalPolicy':'never','sandbox':'danger-full-access','config':config})
             tid=t['thread']['id'];atomic(run/'thread.json',{'thread_id':tid,'model':t['model'],'effort':t['reasoningEffort'],'project_root':str(root)})
             turn=call('turn/start',{'threadId':tid,'input':[{'type':'text','text':PROMPT,'text_elements':[]}],'effort':'high'})['turn']['id']
-            deadline=time.monotonic()+timeout_seconds;observed=0;interrupted=False
-            while time.monotonic()<deadline:
-                try:event=backlog.pop(0) if backlog else q.get(timeout=min(2,max(.1,deadline-time.monotonic())))
-                except queue.Empty:continue
-                if event.get('local_error'):raise RuntimeError('damaged native transport')
-                p=event.get('params',{})
-                if p.get('threadId')!=tid:continue
-                if event.get('method')=='thread/tokenUsage/updated':
-                    total=p['tokenUsage']['total']['totalTokens']
-                    if type(total) is not int or total<observed:raise ValueError('invalid cumulative usage')
-                    observed=total;atomic(run/'observed-usage.json',{'total_tokens':observed,'budget':max_observed_tokens,'scope':'parent thread only; child benchmarks must separately account all calls'})
-                    if observed>=max_observed_tokens and not interrupted:
-                        send('turn/interrupt',{'threadId':tid,'turnId':turn});interrupted=True;deadline=min(deadline,time.monotonic()+15)
-                if event.get('method')=='turn/completed' and p['turn']['id']==turn:
-                    return {'status':'budget-interrupted' if interrupted else 'worker-'+p['turn']['status'],
-                            'model_requests':'see private native transport','observed_parent_total_tokens':observed,
-                            'thread_id':tid,'counts_as_token_success':False}
-            send('turn/interrupt',{'threadId':tid,'turnId':turn})
-            return {'status':'time-or-interrupt-deadline','observed_parent_total_tokens':observed,'counts_as_token_success':False}
+            return observe_parent_turn(q,backlog,tid,turn,run,send,
+                                       timeout_seconds=timeout_seconds,max_observed_tokens=max_observed_tokens)
         finally:
             # Only this owned backend PID/tree. Never kill unrelated Codex sessions.
             if proc.poll() is None:subprocess.run(['taskkill','/PID',str(proc.pid),'/T','/F'],capture_output=True,timeout=15)

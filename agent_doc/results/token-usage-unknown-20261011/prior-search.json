@@ -1,0 +1,20 @@
+{
+  "base": "9f1d5f61e6290384cb627d5b6b79bae7fca3da4e",
+  "task_refs": [
+    "TOK-FIVE"
+  ],
+  "queries": [
+    "rg observed_parent_total_tokens|observed-usage scripts tests docs agent_doc/results",
+    "git diff c535330..9f1d5f6 -- TOK8 interfaces",
+    "git log -- scripts/token_optimizer.py"
+  ],
+  "hits": [
+    "agent_doc/results/token-five-hourly-cpu-20261011/code_snapshot/scripts/token_optimizer.py",
+    "tests/test_token_optimizer.py",
+    "docs/token_optimization/hourly_optimizer.md"
+  ],
+  "reuse": "Retain existing hourly scheduling/quota tests; original tests mock run_worker and cannot validate missing notification. Add local synthetic parent monitor tests. No model-quality or spend result reused.",
+  "owner": "Tracked WSL hourly host optimizer remains owner; this delegated correction edits isolated source only, never runs or replaces its worker. No same-file remote change as of fetched base; recheck before publication.",
+  "consumers": "run_worker -> tick -> receipt.json/state.last_result -> CLI JSON. No saving/cost sorting/success numeric consumer found. Frozen historical source snapshots remain untouched.",
+  "excluded": "c535330 candidate and request_usage.py; no full-chain billing acceptance"
+}

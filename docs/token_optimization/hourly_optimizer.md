@@ -8,6 +8,10 @@ Worker scope is this repository's token optimization. Only relevant skills are e
 
 The parent turn has a 1200-second deadline and interruption at observed cumulative usage >=75000. An in-flight request may overshoot; this is not a hard bill limit. Child benchmark usage is separately recorded and is not included in the parent's provider counter. Raw pending work survives interruption. The actual backend is Windows-only; WSL runs the timer/CPU verification. Cleanup targets only the still-live owned Windows backend PID tree. Never force-push or auto-stash/delete concurrent files.
 
+Parent usage receipts distinguish `missing`, `invalid`, `partial` and `observed`. Missing or invalid measurements use JSON `null` for `observed_parent_total_tokens`; an authenticated transport snapshot containing zero remains numeric zero. `last_observed_parent_total_tokens` retains the last validated observation after malformed data, and `observed-usage.json` retains the complete native `tokenUsage` snapshot, including extra fields. Snapshot validation uses the existing five native counters, arithmetic/subset checks and nondecreasing cumulative counters; snapshots are never summed or cache-subtracted. Only matching thread/turn notifications count. Invalid transport/usage interrupts the owned turn; failed, retried, interrupted and timed-out turns remain partial when a valid observation exists.
+
+Even normal completion with a snapshot is only observed parent usage: `usage_complete=false` and `counts_as_token_success=false` remain explicit. `model_requests=null` means the count is unknown. These observations and diagnostic last-known values must not enter savings ratios, cost rankings or success decisions; use separately validated complete measurement receipts for those purposes. No-usage completion is not free execution. Repository consumers only persist/print these receipts; this change adds no billing ledger or provider request identity.
+
 Consumer opt-in examples:
 
 ```text

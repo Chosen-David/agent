@@ -1,0 +1,27 @@
+test_bundle_exact_and_cli_without_repository (tests.test_knowledge.KnowledgeTests.test_bundle_exact_and_cli_without_repository) ... FAIL
+test_generated_plugin_references_are_current (tests.test_plugin_reference_sync.PluginReferenceSyncTests.test_generated_plugin_references_are_current) ... FAIL
+
+======================================================================
+FAIL: test_bundle_exact_and_cli_without_repository (tests.test_knowledge.KnowledgeTests.test_bundle_exact_and_cli_without_repository)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/token-baseline/tests/test_knowledge.py", line 228, in test_bundle_exact_and_cli_without_repository
+    for p in canonical: self.assertEqual((ROOT/'knowledge'/p).read_bytes(),(bundled/p).read_bytes())
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: b'{\n[21241 chars]ied.",\n        "Document candidate candidate.[10597 chars]n}\n' != b'{\n[21241 chars]ied."\n      ]\n    },\n    {\n      "area": "[10196 chars]n}\n'
+
+======================================================================
+FAIL: test_generated_plugin_references_are_current (tests.test_plugin_reference_sync.PluginReferenceSyncTests.test_generated_plugin_references_are_current)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/token-baseline/tests/test_plugin_reference_sync.py", line 17, in test_generated_plugin_references_are_current
+    self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+AssertionError: 1 != 0 : stale generated references:
+ - plugins/research-assistant/skills/model-with-knowledge/assets/knowledge/coverage.json
+ - plugins/research-assistant/skills/model-with-knowledge/assets/knowledge/learning_state.json
+
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.141s
+
+FAILED (failures=2)
