@@ -1,0 +1,145 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.freedman-variance-budget",
+      "version": 1,
+      "sha256": "1fa401c6307800e52301c08f3a4528f5c0587d30c0a712c1d74512b807e65e8b",
+      "title": "标量Freedman界：可预测方差预算与停止事件",
+      "summary": "条件零均值鞅差在确定增量上界下，以固定可预测二次变差预算控制跨时刻越界；不能把经验方差或逐时刻选取的预算直接代入同一错误概率。",
+      "status": "published",
+      "assumptions": [
+        "离散过滤族F_t，D_t适应且每个t平方可积，E[D_t|F_(t-1)]=0；S_0=V_0=0",
+        "确定R>0，D_t≤R几乎处处；上尾不要求下界，双侧另需|D_t|≤R",
+        "V_t=sum_{j≤t}E[D_j²|F_(j-1)]，不是样本方差或sum D_j²",
+        "x≥0与v>0事先固定；阈值反演δ∈(0,1)固定；预算变化需单独校准",
+        "停止结论只约束{τ<∞,S_τ≥x,V_τ≤v}联合事件，不是条件概率且不保证τ有限"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/report.md",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/checks.json",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_review.md",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_results.json",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/report.md",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/independent_review.md",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/integration_review.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "budget",
+            "conditional"
+          ]
+        },
+        {
+          "field": "domains",
+          "terms": [
+            "probability"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "budget"
+          ]
+        }
+      ],
+      "score": 13
+    },
+    {
+      "id": "prob.self-normalized-dimension-barrier",
+      "version": 1,
+      "sha256": "396aa263a1f4db2ae80ab07152c3f1e5cbaa10a49cf4817480cc5a86a88c4fda",
+      "title": "高维自归一化：无正则、双重统一界的维度障碍与平滑条件",
+      "summary": "COLT 2026 区分一维对数界与d≥2全对抗线性下界；受固定基准测度密度比约束的平滑协变量可恢复次线性界，不能无条件删除正则。",
+      "status": "published",
+      "assumptions": [
+        "setting: online squared-loss linear regression; unrestricted comparator norm and covariate scale",
+        "noise: dyadic Rademacher martingale for lower bound; conditional sigma-sub-Gaussian for Theorem 11",
+        "smoothness: conditional covariate law relative to partial covariate history dominated by fixed mu with density ratio <= Ccov",
+        "response: Theorem 9 responses in [-1,1]; dimension-one theorem uses |y|<=m"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-checked",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.self-normalized-dimension-barrier"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "sequential"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "sequential"
+          ]
+        },
+        {
+          "field": "domains",
+          "terms": [
+            "probability"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "conditional",
+            "sequential"
+          ]
+        }
+      ],
+      "score": 13
+    },
+    {
+      "id": "math.betting-test-martingale",
+      "version": 1,
+      "sha256": "a082de859efe25ad7cef832d8c8433aaf0f72cd92399d6601c24eebe37cb5ca9",
+      "title": "可预测下注、条件均值与序贯检验有效性",
+      "summary": "有界观测在零假设下具有固定条件均值时，合法且只使用过去信息的乘积证据构成非负鞅；由Ville界控制任意停止误报。边际均值相同不够。",
+      "status": "published",
+      "assumptions": [
+        "过滤族 F_t 包含当前全部可用历史；X_t∈[0,1] 几乎处处",
+        "零假设下 E[X_t|F_(t-1)]=m，固定 m∈(0,1)，不能仅有边际均值m",
+        "lambda_t 是 F_(t-1) 可测，并满足 -1/(1-m)≤lambda_t≤1/m",
+        "初始财富 W_0=1；错误预算 alpha∈(0,1) 在检验前规定"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-betting/verify.py",
+          "docs/knowledge_learning/2026-10-07-betting/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "conditional",
+            "sequential"
+          ]
+        },
+        {
+          "field": "domains",
+          "terms": [
+            "probability"
+          ]
+        }
+      ],
+      "score": 12
+    }
+  ]
+}

@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "id": "prob.conformal-policy-control",
+  "version": 1,
+  "status": "published",
+  "kind": "method",
+  "title": "Conformal Policy Control：非单调风险校准与近似权重的保证边界",
+  "summary": "ICML 2026 将校准作用于策略偏离程度；风险保证是带稳定性余项的边际期望界，精确多轮权重与实用近似须区分。",
+  "aliases": [
+    "非单调风险校准",
+    "conformal policy control",
+    "safe policy importance weighting",
+    "反馈协变量偏移",
+    "expected risk stability"
+  ],
+  "domains": [
+    "probability",
+    "sequential-decision"
+  ],
+  "structures": [
+    "非单调风险校准",
+    "conformal policy control",
+    "safe policy importance weighting",
+    "反馈协变量偏移",
+    "expected risk stability"
+  ],
+  "assumptions": [
+    "loss: bounded loss in [0,B]; known acceptable-risk reference policy",
+    "policy: mutually absolutely continuous policies; computable likelihoods; stable context distribution",
+    "calibration: gCRC exchangeability plus Lipschitz/replace-one stability; CPC exact weighted calibration plus relative replace-one stability",
+    "guarantee: marginal expected risk, not per-context or high-probability safety"
+  ],
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/mlresearch/v306/main/assets/prinster26a/prinster26a.pdf",
+      "locator": "§4.1/Theorem 4.2; §4.2/Theorem 4.6; §5–6, Figures 4–6; Appendix C/D (PDF pp.5–9)",
+      "accessed": "2026-10-07"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-checked",
+    "checks": [
+      "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.conformal-policy-control"
+    ]
+  },
+  "requires": [],
+  "relations": [
+    {
+      "type": "related",
+      "id": "math.betting-test-martingale"
+    }
+  ],
+  "reuse": {
+    "type": "paper-result",
+    "claim": "ICML 2026 将校准作用于策略偏离程度；风险保证是带稳定性余项的边际期望界，精确多轮权重与实用近似须区分。",
+    "conditions": {
+      "loss": "bounded loss in [0,B]; known acceptable-risk reference policy",
+      "policy": "mutually absolutely continuous policies; computable likelihoods; stable context distribution",
+      "calibration": "gCRC exchangeability plus Lipschitz/replace-one stability; CPC exact weighted calibration plus relative replace-one stability",
+      "guarantee": "marginal expected risk, not per-context or high-probability safety"
+    },
+    "observations": [
+      "Theorem 4.2：交换的非单调 K-Lipschitz 损失与ε replace-one稳定性给出 E L≤α+Kε。Theorem 4.6：CPC 的精确多轮校准给出 E Lt≤α+max(α,B−α)ε¹。",
+      "策略为 min(πt,βπ0) 再归一化；§4.2 的置换权重通常不可计算，算法采用历史策略混合与经验最大权重近似，不自动继承精确界。",
+      "§5/Fig.4–6：MedLFQA gCRC 控制FDR/保留true-claim recall；三回归数据集主动学习以α=0.2约束违规率；Pythia14M/Ehrlich 序列实验中中等风险限制有时提高目标值。"
+    ],
+    "limitations": [
+      "医学QA是数据集上的方法实验，不是临床可靠性认证；序列实验是合成 Ehrlich 函数，不是湿实验生物结论。",
+      "有限样本并不消除稳定性余项；未知K/ε、近似密度比、分布漂移或不可行校准均须额外核验。",
+      "CPC多轮结果使用加权非交换性框架，不能把gCRC的普通交换性直接当作反馈策略已满足。"
+    ],
+    "minimal_checks": [
+      "核实安全参考、支持集重叠、loss上界、目标分布和稳定性条件，明确α是期望而非逐次保证。",
+      "验证权重/归一化/采样实现、近似误差和校准失败回退；漂移后重校准。"
+    ],
+    "paper": {
+      "venue": "ICML",
+      "year": 2026,
+      "review_status": "peer-reviewed",
+      "local_reproduction": "not-run"
+    }
+  },
+  "content": "# Conformal Policy Control：非单调风险校准与近似权重的保证边界\n\n## 问题触发\n\n非单调风险校准；conformal policy control；safe policy importance weighting；反馈协变量偏移；expected risk stability。\n\n## 结论与来源观察\n\nICML 2026 将校准作用于策略偏离程度；风险保证是带稳定性余项的边际期望界，精确多轮权重与实用近似须区分。\n\nTheorem 4.2：交换的非单调 K-Lipschitz 损失与ε replace-one稳定性给出 E L≤α+Kε。Theorem 4.6：CPC 的精确多轮校准给出 E Lt≤α+max(α,B−α)ε¹。\n\n策略为 min(πt,βπ0) 再归一化；§4.2 的置换权重通常不可计算，算法采用历史策略混合与经验最大权重近似，不自动继承精确界。\n\n§5/Fig.4–6：MedLFQA gCRC 控制FDR/保留true-claim recall；三回归数据集主动学习以α=0.2约束违规率；Pythia14M/Ehrlich 序列实验中中等风险限制有时提高目标值。\n\n## 前提\n\n- loss：bounded loss in [0,B]; known acceptable-risk reference policy\n- policy：mutually absolutely continuous policies; computable likelihoods; stable context distribution\n- calibration：gCRC exchangeability plus Lipschitz/replace-one stability; CPC exact weighted calibration plus relative replace-one stability\n- guarantee：marginal expected risk, not per-context or high-probability safety\n\n## 推导范围与算例\n\n定理代入示例：B=1、α=0.2、ε¹=0.01 且精确CPC前提成立时，期望界是0.208，不是0.2。这是条件代数，不是实测违规率。\n\n来源核对不等于完整证明审查；理论只按原文前提引用，未做形式化证明或本机论文复现。\n\n## 反例与限制\n\n医学QA是数据集上的方法实验，不是临床可靠性认证；序列实验是合成 Ehrlich 函数，不是湿实验生物结论。\n\n有限样本并不消除稳定性余项；未知K/ε、近似密度比、分布漂移或不可行校准均须额外核验。\n\nCPC多轮结果使用加权非交换性框架，不能把gCRC的普通交换性直接当作反馈策略已满足。\n\n## 任务映射与最小检查\n\n- 核实安全参考、支持集重叠、loss上界、目标分布和稳定性条件，明确α是期望而非逐次保证。\n- 验证权重/归一化/采样实现、近似误差和校准失败回退；漂移后重校准。\n\n用于实验前筛选、识别无效重复探索和制定最小迁移检查。用户指定实验、显式复现、新环境性能与正确性验收仍需执行；文献值不得记为本机实测。\n\n## 来源定位与未验证项\n\n[ICML 2026 正式论文](https://raw.githubusercontent.com/mlresearch/v306/main/assets/prinster26a/prinster26a.pdf)：§4.1/Theorem 4.2; §4.2/Theorem 4.6; §5–6, Figures 4–6; Appendix C/D (PDF pp.5–9)。2026-10-07核查相关正文、设置、图表与附录。完整PDF字节SHA256：`754fe349ce8894181b7b19f69d47e834bbb05d86d784224db4071336d636b0f5`；53页。\n\n`local_reproduction=not-run`；作者实现未固定源码commit或本地执行，本卡不提供可直接复用且已验收的代码。\n",
+  "path": "entries/probability/prob.conformal-policy-control.json",
+  "sha256": "c80d9008b17bdac2f9c77995c4c490c476f7d72aba816e513ce395b41cdfb304",
+  "knowledge_refs": [
+    {
+      "id": "prob.conformal-policy-control",
+      "version": 1,
+      "sha256": "c80d9008b17bdac2f9c77995c4c490c476f7d72aba816e513ce395b41cdfb304"
+    }
+  ]
+}
