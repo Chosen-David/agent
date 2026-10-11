@@ -415,3 +415,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-87] Finite-error document discovery bridge; fixed-query structure checks, no model acceptance. ([detail](task_details/MATH-87.md))
 
 - [x] [MATH-88] Finite representation averaging and heterogeneous-role refusals; document-only, production deferred. ([detail](task_details/MATH-88.md))
+
+- [x] [MATH-89] Exact generator checks and word-length defect bounds; document-only, production deferred. ([detail](task_details/MATH-89.md))
