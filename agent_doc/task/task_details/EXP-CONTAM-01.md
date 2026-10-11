@@ -20,3 +20,5 @@ Date: 2026-10-11
 最终候选：污染回归17/17，独立上下文 `/root/review` 实跑17+79通过并记录源码SHA；main入口5/5、实验10/10、reader3/3。全仓1008项出现3 failures/3 errors/1 skip；相同origin/main的干净独立worktree991项复现完全相同失败，均为既有知识镜像及包内advice_meetings缺失链接。本次不维护这些无关文件。分支保护/必需CI读取Forbidden，提交状态接口statuses为空不作通过。证据见 `agent_doc/results/contamination-20261011/report.md` 与各log。任务未完成；按用户后备要求保存本地可续候选，不推main，不宣称部署外部作业控制。
 
 下一步由主AI在基线分发检查修复、必需CI可见后恢复：fetch整合最新main，复核独立源码哈希并复测，通过后只暂存本次文件、非force推main及远端内容读回。保留停止失败/归档失败与边界，不改SGLang，不运行模型/Claude/GPU或新增付费。
+
+后续收尾指令：重新fetch仍是f11cc4b。六条测试记录及源码提交归因见 `agent_doc/results/contamination-20261011/blocker-diagnosis.md`；证实为此前无关知识/任务解析/advice分发工作，而非本次五份引用的缺口。不扩大修改范围或放宽测试。运行时代码未变，既有独立审查哈希保持；明确没有内置远端/多rank/SGLang停止适配器，仅真实测试适配器验证单个受控Linux子进程。按用户要求将完整源码快照、补丁、日志、SHA身份和恢复步骤保存为新的Library候选；收到上传回执与下载字节核对后报告ID/版本。main仍不得发布。
