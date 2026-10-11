@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "prob.self-normalized-dimension-barrier",
+      "version": 1,
+      "sha256": "396aa263a1f4db2ae80ab07152c3f1e5cbaa10a49cf4817480cc5a86a88c4fda",
+      "title": "高维自归一化：无正则、双重统一界的维度障碍与平滑条件",
+      "summary": "COLT 2026 区分一维对数界与d≥2全对抗线性下界；受固定基准测度密度比约束的平滑协变量可恢复次线性界，不能无条件删除正则。",
+      "status": "published",
+      "assumptions": [
+        "setting: online squared-loss linear regression; unrestricted comparator norm and covariate scale",
+        "noise: dyadic Rademacher martingale for lower bound; conditional sigma-sub-Gaussian for Theorem 11",
+        "smoothness: conditional covariate law relative to partial covariate history dominated by fixed mu with density ratio <= Ccov",
+        "response: Theorem 9 responses in [-1,1]; dimension-one theorem uses |y|<=m"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-checked",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.self-normalized-dimension-barrier"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "linear"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "linear"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "linear"
+          ]
+        }
+      ],
+      "score": 10
+    },
+    {
+      "id": "math.linear-prediction-residual",
+      "version": 1,
+      "sha256": "749b0f08d599bcc73f35f564583281dd3c4761c3f31b44ac1b75d1e356186ba3",
+      "title": "保留分量线性预测、Schur残差与分数融合边界",
+      "summary": "非中心二阶矩给无截距最佳线性预测和残差Schur补；折入query精确分解score，但paired目标、条件方差及RoPE跨频不能混同。",
+      "status": "published",
+      "assumptions": [
+        "a∈R^s,b∈R^h，s,h≥1，有限非中心二阶矩，Caa SPD；固定无截距线性重建目标和分布",
+        "score二阶矩分离另需query独立于key；paired必须核对联合混合四阶可积及真实目标",
+        "pre-RoPE预测沿频率使用需逐块Rh(n)B=B Rs(n)；post-RoPE预测不宣称固定频率"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-linear-residual-20261008-v2: exact public development fixtures, actual independent scope receipt; not Lean/model/GPU"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "linear"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "output"
+          ]
+        }
+      ],
+      "score": 6
+    },
+    {
+      "id": "math.convex-projection-certificate",
+      "version": 1,
+      "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c",
+      "title": "选定凸输出的投影、误差下界与残差间隙证书",
+      "summary": "有限value凸包的平方误差投影以可行性和全顶点残差max认证；P−2g≤最优误差≤P，g=0 iff投影。",
+      "status": "published",
+      "assumptions": [
+        "非空有限v_i∈R^p和固定已知z；Euclidean平方误差；C=conv{v_i}，允许改变权重但β≥0且Σβ=1。",
+        "候选y必须属于C；h_C(r)=max_i r·v_i遍历C的全部给定点；只对明确选定value集合给界。",
+        "固定线性W可对Wv和Wz使用结论；只保真W输出，不保证raw输出、全部query或模型e2e。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "精确展开/凸性证明人工审核，不是Lean或浮点数值证书。",
+          "agent_doc/results/math-convex-projection-20261009：12公开Fraction例、6结构检索、定向回归及独立六域验收；无模型/GPU实测。"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "output"
+          ]
+        }
+      ],
+      "score": 5
+    }
+  ]
+}

@@ -402,3 +402,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-84] 有限窗口线性放大残差见证：文档复核通过，生产迁移待验证 ([详情](task_details/MATH-84.md))
 
 - [x] [EXP-CONTAM-01] 污染处置与发布依赖已验证并普通推main；远端源码读回一致，无必需CI配置。 ([详情](task_details/EXP-CONTAM-01.md))
+
+- [x] [MATH-85] 有限时域输入能量与终端输出：普通文档复核通过，生产迁移待验证 ([详情](task_details/MATH-85.md))
