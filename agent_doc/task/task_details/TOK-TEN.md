@@ -24,3 +24,7 @@ Existing timer held under the exact manual-batch reason, preserving checkpoint01
 ### Round 1: accepted, publication pending
 
 Explicit identical-target alias avoids replaying the empty splice and redundant base digest. Native total 18016 -> 17953, saving 63 tokens in the fixed short scope; 14 independently rerun affected checks. [Acceptance](../../results/token-ten-1-r4-20261011/acceptance.json). Ordinary main readback is required before success accounting; receipt is retained by the host.
+
+### Round 2: accepted, publication pending
+
+Bounded multiple artifact edits avoid reinjecting their unchanged middle. Native total 18074 -> 18050, saving 24 tokens in the fixed short scope; 22 independently rerun affected checks. [Acceptance](../../results/token-ten-2-20261011/acceptance.json). Ordinary main readback is required before success accounting; receipt is retained by the host.

@@ -6,6 +6,7 @@ neither selects relevant sections nor authenticates/accepts artifact contents.
 """
 import hashlib
 import json
+from difflib import SequenceMatcher
 from pathlib import Path
 
 from .result_validation import LIMIT, _bound, _json, _need, _ref
@@ -52,8 +53,23 @@ def _splice(before, after):
             'insert': ''.join(after[start:len(after)-end if end else len(after)])}
 
 
+def _edits(before, after):
+    # Bound quadratic matching; bigger files retain the existing linear mode.
+    if max(len(before), len(after)) > 65536:
+        return None
+    old = before.splitlines(keepends=True); new = after.splitlines(keepends=True)
+    if max(len(old), len(new)) > 2048:
+        return None
+    edits = [{'start': a, 'delete': b-a, 'insert': ''.join(new[c:d])}
+             for tag,a,b,c,d in SequenceMatcher(None,old,new,autojunk=False).get_opcodes()
+             if tag != 'equal']
+    if not 1 <= len(edits) <= 64:
+        return None
+    return {'base_sha256': _digest(before), 'edits': edits}
+
+
 def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=20000,
-                      reuse_identical=False):
+                      reuse_identical=False, multi_edit=False):
     """Read both SHA-bound regular UTF-8 files; return a complete comparison.
 
     Even a fresh/reset model receives the entire base here. No persisted hint
@@ -64,6 +80,7 @@ def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=2000
     root = _root(root)
     _need(type(full) is bool, 'full must be boolean')
     _need(type(reuse_identical) is bool, 'reuse_identical must be boolean')
+    _need(type(multi_edit) is bool, 'multi_edit must be boolean')
     _need(type(max_chars) is int and 1 <= max_chars <= LIMIT, 'invalid character budget')
     before_ref = _binding(before_ref); after_ref = _binding(after_ref)
     before = _bound(root, before_ref).decode('utf-8')
@@ -72,6 +89,12 @@ def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=2000
     candidate = {'ref': after_ref, 'representation': 'splice', 'splice': _splice(before, after)}
     if not full and len(_json_text(candidate)) < len(_json_text(target)):
         target = candidate
+    if not full and multi_edit:
+        patch = _edits(before, after)
+        if patch:
+            candidate = {'ref': after_ref, 'representation': 'edits', 'patch': patch}
+            if len(_json_text(candidate)) < len(_json_text(target)):
+                target = candidate
     # The complete base is present in this same packet; no history/cache hint.
     if not full and reuse_identical and before == after:
         candidate = {'ref': after_ref, 'representation': 'identical'}
@@ -116,6 +139,31 @@ def restore_comparison(root, payload, before_ref, after_ref):
         _need(set(new) == {'ref', 'representation'}, 'invalid identical representation')
         _need(before_ref['sha256'] == after_ref['sha256'], 'identical hash mismatch')
         after = before
+    elif new.get('representation') == 'edits':
+        _need(set(new) == {'ref', 'representation', 'patch'}, 'invalid multi-edit representation')
+        patch = new['patch']
+        _need(isinstance(patch,dict) and set(patch) == {'base_sha256','edits'} and
+              patch['base_sha256'] == before_ref['sha256'], 'invalid multi-edit base/fields')
+        edits = patch['edits']
+        _need(isinstance(edits,list) and 1 <= len(edits) <= 64, 'invalid multi-edit count')
+        lines = before.splitlines(keepends=True); pieces = []; end = 0; previous = -1
+        chars = 0; byte_count = 0
+        def append_piece(text):
+            nonlocal chars,byte_count
+            _need(len(text) <= LIMIT-chars, 'reconstructed character budget exceeded')
+            size = len(text.encode('utf-8'))
+            _need(size <= LIMIT-byte_count, 'reconstructed byte budget exceeded')
+            chars += len(text);byte_count += size;pieces.append(text)
+        for edit in edits:
+            _need(isinstance(edit,dict) and set(edit) == {'start','delete','insert'}, 'invalid edit fields')
+            start,delete,insert = edit['start'],edit['delete'],edit['insert']
+            _need(type(start) is int and type(delete) is int and isinstance(insert,str) and
+                  end <= start <= len(lines) and previous < start and
+                  0 <= delete <= len(lines)-start, 'invalid or overlapping edit')
+            _need(len(insert) <= LIMIT, 'edit insert exceeds character bound')
+            append_piece(''.join(lines[end:start]));append_piece(insert)
+            end=start+delete;previous=start
+        append_piece(''.join(lines[end:]));after=''.join(pieces)
     else:
         _need(new.get('representation') == 'splice' and set(new) == {'ref', 'representation', 'splice'}, 'unknown representation')
         patch = new['splice']
