@@ -417,3 +417,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-88] Finite representation averaging and heterogeneous-role refusals; document-only, production deferred. ([detail](task_details/MATH-88.md))
 
 - [x] [MATH-89] Exact generator checks and word-length defect bounds; document-only, production deferred. ([detail](task_details/MATH-89.md))
+
+- [x] [MATH-90] Chinese symmetry candidate discovery routing; fixed-query checks only, real model acceptance deferred. ([detail](task_details/MATH-90.md))
