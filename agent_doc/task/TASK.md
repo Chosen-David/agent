@@ -401,4 +401,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [MATH-84] 有限窗口线性放大残差见证：文档复核通过，生产迁移待验证 ([详情](task_details/MATH-84.md))
 
-- [ ] [EXP-CONTAM-01] 污染处置候选已独立审查；基线分发测试失败和CI可见性阻塞，保存本地候选未发布。 ([详情](task_details/EXP-CONTAM-01.md))
+- [ ] [EXP-CONTAM-01] 已整合897c032并复测；同六条基线失败及CI可见性阻塞，Library候选待发布。 ([详情](task_details/EXP-CONTAM-01.md))

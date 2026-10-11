@@ -22,3 +22,5 @@ Date: 2026-10-11
 下一步由主AI在基线分发检查修复、必需CI可见后恢复：fetch整合最新main，复核独立源码哈希并复测，通过后只暂存本次文件、非force推main及远端内容读回。保留停止失败/归档失败与边界，不改SGLang，不运行模型/Claude/GPU或新增付费。
 
 后续收尾指令：重新fetch仍是f11cc4b。六条测试记录及源码提交归因见 `agent_doc/results/contamination-20261011/blocker-diagnosis.md`；证实为此前无关知识/任务解析/advice分发工作，而非本次五份引用的缺口。不扩大修改范围或放宽测试。运行时代码未变，既有独立审查哈希保持；明确没有内置远端/多rank/SGLang停止适配器，仅真实测试适配器验证单个受控Linux子进程。按用户要求将完整源码快照、补丁、日志、SHA身份和恢复步骤保存为新的Library候选；收到上传回执与下载字节核对后报告ID/版本。main仍不得发布。
+
+按最新收尾指令实际整合897c032：合并构建044201214ee371c4ad3505d851aa1c2d346328fc；TASK唯一追加冲突保留双方条目及远端原始字节。新全仓1008项与clean main991项均同样3 failures/3 errors/1 skip；污染17/17、结果79/79、reader3/3通过；代码哈希仍匹配既有独立审查，没有新模型调用。完整新日志/测试归属/六条精确失败在 `agent_doc/results/contamination-integrated-20261011/`。无关源代码和测试未改、main未推，原Library身份以版本0保护更新整合后的完整候选；发布仍待基线及CI门禁恢复。
