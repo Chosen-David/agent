@@ -90,6 +90,25 @@ rsync 后逐文件 md5 人工核对，多机对账繁琐且易漏；成仓后 co
 一枚即完成身份对齐——有 git 通道还继续手抄 md5 是自找麻烦，但旧
 记录的 md5 字段仍是有效证据，不因新口径作废。
 
+**双 remote 拓扑（2026-10-11 晚落地，机群同步 MUST 走此拓扑）**：
+当共享盘（BeeGFS/NFS 类）四机同挂且可写时，机群日常同步面 =
+**共享盘裸仓库**（如 `bee = /mnt/.../tla/two-level-attention.git`），
+GitHub 等外网 remote 只作外部 AI 窗口与异地备份：
+
+- **`bee` = 机群 canonical remote**：git fetch/push 走共享盘文件
+  协议，纯内网、无网络栈、无外网被墙/只读风险；GPU 机上的 hotfix
+  可直接 `git push bee main` 回流主仓；
+- **双推纪律（本地权威仓 MUST）**：`git push bee main &&
+  git push origin main`——先 bee（机群立即可见）后 origin（外部窗口）；
+- **裸仓库坑**：`git init --bare` 默认 HEAD 指 master，push main 后
+  远端 clone 报 "HEAD refers to nonexistent ref"——新裸仓 MUST
+  `git symbolic-ref HEAD refs/heads/main` 修正；
+- **结果面直写共享盘**：runner `--output-dir` 直接指向共享盘
+  `results/<实验>/<arm>/`，本地打分机直读，**rsync 拉回循环整体退役**；
+  在飞链保持原输出目录不动，新派单起执行新口径；
+- 外网 remote（origin/github）对 GPU 机可能间歇不可达——GPU 机
+  派单对齐一律 `git fetch bee`，不依赖 origin。
+
 ## 2. 规划：任务属性 → 分配
 
 ### 2.1 任务清点矩阵
