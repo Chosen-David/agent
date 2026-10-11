@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-TEN-4-produce",
+      "owner": "native-token-ten-producer",
+      "action": "short_native_fixture",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-ten-4-20261011",
+        "producer_task_id": "TOK-TEN-4-produce",
+        "producer_actor": "native-token-ten-producer",
+        "manifest_path": "agent_doc/results/token-ten-4-20261011/manifest.json",
+        "scope": "One bound log excerpt with every line retained; fresh short turns, not long-context/cash or task-success evidence",
+        "validation_plan": {
+          "path": "agent_doc/results/token-ten-4-20261011/validation-plan.json",
+          "sha256": "ef0865b57595efbbaecaedba41d98b5ab6afe6fdecd5b7332f2cc19755e041e2"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-TEN-4-verify",
+      "owner": "host-token-ten-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-TEN-4-produce"
+      ],
+      "result_validation": {
+        "result_id": "token-ten-4-20261011",
+        "producer_task_id": "TOK-TEN-4-produce",
+        "producer_actor": "native-token-ten-producer",
+        "manifest_path": "agent_doc/results/token-ten-4-20261011/manifest.json",
+        "scope": "One bound log excerpt with every line retained; fresh short turns, not long-context/cash or task-success evidence",
+        "validation_plan": {
+          "path": "agent_doc/results/token-ten-4-20261011/validation-plan.json",
+          "sha256": "ef0865b57595efbbaecaedba41d98b5ab6afe6fdecd5b7332f2cc19755e041e2"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-TEN-4-publish",
+      "owner": "main-ai",
+      "action": "publish_upgrade",
+      "depends_on": [
+        "TOK-TEN-4-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-ten-4-20261011",
+          "producer_task_id": "TOK-TEN-4-produce",
+          "producer_actor": "native-token-ten-producer",
+          "manifest_path": "agent_doc/results/token-ten-4-20261011/manifest.json",
+          "scope": "One bound log excerpt with every line retained; fresh short turns, not long-context/cash or task-success evidence",
+          "validation_plan": {
+            "path": "agent_doc/results/token-ten-4-20261011/validation-plan.json",
+            "sha256": "ef0865b57595efbbaecaedba41d98b5ab6afe6fdecd5b7332f2cc19755e041e2"
+          }
+        }
+      ]
+    }
+  ]
+}

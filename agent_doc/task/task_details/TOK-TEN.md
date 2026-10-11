@@ -32,3 +32,7 @@ Bounded multiple artifact edits avoid reinjecting their unchanged middle. Native
 ### Round 3: accepted, publication pending
 
 One explicit whitespace-only compact serializer across task/log/advice/knowledge context CLIs. Native total 18019 -> 17879, saving 140 tokens in the fixed short scope; 27 independently rerun affected checks. [Acceptance](../../results/token-ten-3-20261011/acceptance.json). Ordinary main readback is required before success accounting; receipt is retained by the host.
+
+### Round 4: accepted, publication pending
+
+Opt-in contiguous log chunks preserving selected line positions, literal text and all scope metadata. Native total 18015 -> 17909, saving 106 tokens in the fixed short scope; 18 independently rerun affected checks. [Acceptance](../../results/token-ten-4-20261011/acceptance.json). Ordinary main readback is required before success accounting; receipt is retained by the host.

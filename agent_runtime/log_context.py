@@ -4,8 +4,10 @@ from .advice_poll import _root
 from .maintenance_observer import read_bound
 
 
-def log_view(root, path, expected_sha256, *, needles=(), head=2, tail=2, context=1, max_chars=20000):
+def log_view(root, path, expected_sha256, *, needles=(), head=2, tail=2, context=1, max_chars=20000, encoding='lines'):
     root=_root(root)
+    if encoding not in ('lines','chunks'):
+        raise ValueError('unknown log encoding')
     if type(expected_sha256) is not str or re.fullmatch('[0-9a-f]{64}',expected_sha256) is None:
         raise ValueError('source SHA256 required')
     if (not isinstance(needles,(list,tuple)) or len(needles)>16 or
@@ -32,6 +34,62 @@ def log_view(root, path, expected_sha256, *, needles=(), head=2, tail=2, context
            'literal_match_line_counts':counts,'total_lines':len(lines),'omitted_lines':len(lines)-len(keep),
            'lines':[{'line':i+1,'text':lines[i]} for i in sorted(keep)],
            'scope':'partial display only; retrieve omitted lines from exact source; no proof of success or absence of errors'}
+    if encoding=='chunks':
+        if sum(len(row['text']) for row in value['lines'])>max_chars:
+            raise ValueError('selected log exceeds budget; no silent truncation')
+        chunks=[];parts=[];end=0;start=0
+        for row in value.pop('lines'):
+            if parts and row['line']!=end+1:
+                chunks.append({'start':start,'text':''.join(parts)});parts=[]
+            if not parts:start=row['line']
+            parts.append(row['text'])
+            end=row['line']
+        if parts:chunks.append({'start':start,'text':''.join(parts)})
+        value.update(encoding='chunks',chunks=chunks)
     if len(json.dumps(value,ensure_ascii=False))>max_chars:
         raise ValueError('selected log exceeds budget; no silent truncation')
     return value
+
+
+def restore_log_lines(value, *, max_chars=1000000):
+    """Decode selected lines, without claiming source authenticity or success."""
+    if type(max_chars) is not int or not 1<=max_chars<=1000000:
+        raise ValueError('invalid restoration budget')
+    if type(value) is not dict or value.get('schema_version')!='log-view/v1':
+        raise ValueError('invalid log view')
+    total=value.get('total_lines');omitted=value.get('omitted_lines')
+    if any(type(n) is not int or n<0 for n in (total,omitted)) or omitted>total:
+        raise ValueError('invalid line counts')
+    if value.get('encoding','lines')=='lines':
+        if 'chunks' in value:raise ValueError('ambiguous line encoding')
+        rows=value.get('lines')
+    elif value.get('encoding')=='chunks':
+        if 'lines' in value or type(value.get('chunks')) is not list:
+            raise ValueError('ambiguous chunk encoding')
+        rows=[];last=0;used=0
+        for chunk in value['chunks']:
+            if type(chunk) is not dict or set(chunk)!={'start','text'}:
+                raise ValueError('invalid chunk')
+            start=chunk['start'];text=chunk['text']
+            if type(start) is not int or start<=last or type(text) is not str or not text:
+                raise ValueError('invalid chunk start/text')
+            used+=len(text)
+            if used>max_chars:raise ValueError('restored log exceeds budget')
+            for offset,line in enumerate(text.splitlines(keepends=True)):
+                rows.append({'line':start+offset,'text':line})
+                if len(rows)>total-omitted:raise ValueError('too many restored lines')
+            last=rows[-1]['line']
+    else:raise ValueError('unknown log encoding')
+    if type(rows) is not list or len(rows)!=total-omitted:
+        raise ValueError('selected line count mismatch')
+    last=0;used=0
+    for row in rows:
+        if type(row) is not dict or set(row)!={'line','text'}:
+            raise ValueError('invalid selected line')
+        position=row['line'];text=row['text']
+        if type(position) is not int or not last<position<=total or type(text) is not str or not text or text.splitlines(keepends=True)!=[text]:
+            raise ValueError('invalid selected line boundary')
+        used+=len(text)
+        if used>max_chars:raise ValueError('restored log exceeds budget')
+        last=position
+    return [dict(row) for row in rows]
