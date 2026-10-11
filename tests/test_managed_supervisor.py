@@ -19,6 +19,24 @@ from agent_runtime.core import Store
 from agent_runtime.task_manifest import atomic_json, prepare
 from agent_runtime.task_supervisor import TMUX_SOCKET, start, status, tmux
 
+class GuardCrashPolicyTests(unittest.TestCase):
+    def test_guard_stops_rebuilding_after_three_crashes_and_after_restart(self):
+        from unittest.mock import Mock,patch
+        from agent_runtime.task_supervisor import guard
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);state=root/'run';state.mkdir()
+            config=root/'launch.json'
+            atomic_json(config,{'project_root':str(root),'state_dir':str(state),'run_id':'run'})
+            store=Mock()
+            store.snapshot.side_effect=[{'state':{'status':s}} for s in ['running']*4+['cancelled']]
+            with patch.dict(os.environ,{'TMUX':'explicit-test'}),patch('agent_runtime.task_supervisor.Store',return_value=store),patch('agent_runtime.task_supervisor.subprocess.run',return_value=Mock(returncode=1)) as run,patch('agent_runtime.task_supervisor.time.sleep') as sleep:
+                guard(config)
+                self.assertEqual(run.call_count,3)
+                self.assertEqual([c.args[0] for c in sleep.call_args_list],[5,10,30])
+            store.snapshot.side_effect=[{'state':{'status':s}} for s in ['running','cancelled']]
+            with patch.dict(os.environ,{'TMUX':'explicit-test'}),patch('agent_runtime.task_supervisor.Store',return_value=store),patch('agent_runtime.task_supervisor.subprocess.run') as run,patch('agent_runtime.task_supervisor.time.sleep'):
+                guard(config);run.assert_not_called()
+
 ROOT = Path(__file__).resolve().parents[1]
 
 

@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-HOURLY-REPAIR-produce",
+      "owner": "producer",
+      "action": "native_health",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-hourly-repair-r3-20261011",
+        "producer_task_id": "TOK-HOURLY-REPAIR-produce",
+        "producer_actor": "producer",
+        "manifest_path": "agent_doc/results/token-hourly-repair-r3-20261011/manifest.json",
+        "scope": "r2 native health reused unchanged; generic guard log compatibility fixed with fresh CPU checks. Hourly repair CPU boundaries and one short native tool turn plus same-thread continuation; four archived failed-run observations only, no savings/full optimization/billing claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-hourly-repair-r3-20261011/validation-plan.json",
+          "sha256": "8101e2790d503488c845d14123e3394a846cb0301d60879eb95caa16b2b821a8"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-HOURLY-REPAIR-verify",
+      "owner": "independent-host",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-HOURLY-REPAIR-produce"
+      ],
+      "result_validation": {
+        "result_id": "token-hourly-repair-r3-20261011",
+        "producer_task_id": "TOK-HOURLY-REPAIR-produce",
+        "producer_actor": "producer",
+        "manifest_path": "agent_doc/results/token-hourly-repair-r3-20261011/manifest.json",
+        "scope": "r2 native health reused unchanged; generic guard log compatibility fixed with fresh CPU checks. Hourly repair CPU boundaries and one short native tool turn plus same-thread continuation; four archived failed-run observations only, no savings/full optimization/billing claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-hourly-repair-r3-20261011/validation-plan.json",
+          "sha256": "8101e2790d503488c845d14123e3394a846cb0301d60879eb95caa16b2b821a8"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-HOURLY-REPAIR-deploy",
+      "owner": "main-ai",
+      "action": "resume_single_timer",
+      "depends_on": [
+        "TOK-HOURLY-REPAIR-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-hourly-repair-r3-20261011",
+          "producer_task_id": "TOK-HOURLY-REPAIR-produce",
+          "producer_actor": "producer",
+          "manifest_path": "agent_doc/results/token-hourly-repair-r3-20261011/manifest.json",
+          "scope": "r2 native health reused unchanged; generic guard log compatibility fixed with fresh CPU checks. Hourly repair CPU boundaries and one short native tool turn plus same-thread continuation; four archived failed-run observations only, no savings/full optimization/billing claim",
+          "validation_plan": {
+            "path": "agent_doc/results/token-hourly-repair-r3-20261011/validation-plan.json",
+            "sha256": "8101e2790d503488c845d14123e3394a846cb0301d60879eb95caa16b2b821a8"
+          }
+        }
+      ]
+    }
+  ]
+}

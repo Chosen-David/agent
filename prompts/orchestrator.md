@@ -231,3 +231,5 @@ SSH/客户端断链不是停止指令；tmux 在服务器与进程存活时继�
 AI Infra/AI算法实验与数据结构/算法实现任务先按 [工程知识复用](../workflows/engineering_knowledge_reuse_workflow.md) 检索；核对原始实验条件/负例与固定commit/API/许可证，记录knowledge_refs。文献支持决策与最小迁移检查，不替代用户必做实验、新性能主张或实现正确性验收。
 
 知识/通信交接使用消费者控制的统一依据门禁与结论依赖；需要理论/项目事实时明确 required 标记及已知引用。可信 host 按 inbox→prepare_context→独立审查/幂等动作→ACK 执行；impact 更正只重验声明的受影响结论。发送前执行整轮 token 余额和单次上下文硬限；消费者按需选择结论的完整依赖，保留必需声明和候选/拒用依据；全量复核沿用默认入口。只复用当前上下文实际保有的依据，缓存仍核验版本。实际 tokenizer 不可用时不假报 token，不能绕过 token 硬限。接口与兼容规则见通信/知识接入工作流。
+
+持续任务的 token 控制必须接到实际宿主入口。启动/恢复按明确 task_refs 读取当前指南、TASK 选定行和详情依赖，使用已有 task_context、log_context、advice_context；不要每轮扫描全部结果路径、全文任务历史或完整建议会议。PowerShell 显式 UTF-8；工具输出超限是缺证据，按版本和行号补读必需部分，不能把截断当完成审核。预算中断保存真实会话和带版本的工作检查点，下轮验证依赖后续跑；失败反复触发必须熔断，不能新建会话重读同样材料。当前 token 优化器的有界宿主实现见 [小时优化器](../docs/token_optimization/hourly_optimizer.md)；通用 tmux guard 在三次进程崩溃后持久化阻塞，status 返回 guard_blocked，诊断修复后由宿主显式清除准确的 guard-failure.json，不自动重置任务或模型预算。定时触发、进程存活、完成模型回合和已验证的新升级分别报告。

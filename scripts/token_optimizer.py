@@ -6,13 +6,53 @@ Never force-push, auto-stash, remove user data, or count a skipped tick as savin
 from __future__ import annotations
 import argparse
 from contextlib import contextmanager
-import json,math,os,queue,subprocess,sys,threading,time
+import hashlib,json,math,os,queue,subprocess,sys,threading,time
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from agent_runtime.project_docs import guard_write_path
 
 INTERVAL=3600
 PROMPT='''PROJECT_ROOT=WORKFLOW_ROOT=current repository. Continue agent token optimization only, one concrete iteration. Read current human GUIDE, TASK/TOK-FIVE, progress.json and relevant prior results/advice, not historical full transcripts. Preserve concurrent work. Prefer high-frequency communication and long-context costs. No other project advice interaction, duplicate agents or schedules. Reuse current mechanisms. Limit one optional actual short no-tool A/B pair to 2200 supplied chars per prompt, at most 2 paid calls/50000 paired tokens, no retries; read fresh quota before paid tests. Provider totals and independent quality/source verification are required to count a success; CPU/estimates/negative results do not count. Preserve pending/failed data. Make a useful change, run necessary checks, fetch again and ordinary commit/push main (GitHub MCP non-force expected-SHA publication if native auth fails), independently read back remote and synchronize setup_codex.py then --check. Preserve conflicts and write a concise recovery record if blocked. Keep final report brief; no fabricated token/cash or weight-update claim.'''
+PROMPT+=''' Host already pulled verified main and synchronized skills. Do not repeat host bootstrap or list all repository/results paths. Use UTF-8 explicitly (Get-Content -Encoding UTF8, python -X utf8). Read exact selected task rows with task_context, not full TASK; read only the relevant Plan/Progress section and progress counters, not the full upgrades ledger. Bound rg by known directories and return at most 20 matches. Request <=768 output tokens per command; batch independent small reads. Truncated output is incomplete evidence: recover exact required lines before edits/claims. Prioritize one small actionable change; consolidate commands and preserve an explicit checkpoint before spending the tick budget. An interrupted thread will resume next hour, so do not restart finished reads.'''
+PROFILE_VERSION='bounded-resumable-v1'
+TOOL_OUTPUT_TOKENS=768
+
+def worker_config(root):
+    registry=json.loads((root/'config/role_registry.json').read_bytes())
+    relevant={'code-reading','code-organization','model-with-knowledge','research-implement-optimize'}
+    return {'features.apps':True,'mcp_servers.node_repl.enabled':False,
+            'tool_output_token_limit':TOOL_OUTPUT_TOKENS,'model_reasoning_effort':'high',
+            'skills.config':[{'path':str(Path.home()/'.agents/skills'/r['id']/'SKILL.md'),
+                             'enabled':r['id'] in relevant} for r in registry['roles']]}
+
+def work_snapshot(root):
+    """Exact host-owned continuation boundary; no overwriting concurrent bytes."""
+    status=command(root,'git','status','--porcelain')
+    paths=set()
+    for args in (('diff','--name-only','-z'),('diff','--cached','--name-only','-z'),
+                 ('ls-files','--others','--exclude-standard','-z')):
+        paths.update(p for p in command(root,'git',*args).split('\0') if p)
+    if len(paths)>100:raise RuntimeError('too many dirty paths for bounded recovery')
+    files={}
+    for name in sorted(paths):
+        path=root/name
+        guard_write_path(path)
+        if path.is_symlink() or not path.resolve().is_relative_to(root):
+            raise RuntimeError('unsafe continuation path')
+        if path.exists():
+            if not path.is_file() or path.stat().st_size>2*1024*1024:
+                raise RuntimeError('unbounded continuation file')
+            files[name]=hashlib.sha256(path.read_bytes()).hexdigest()
+        else:files[name]=None
+    index=command(root,'git','ls-files','--stage','-z')
+    return {'head':command(root,'git','rev-parse','HEAD'),'status':status,'files':files,
+            'index_sha256':hashlib.sha256(index.encode('utf-8')).hexdigest()}
+
+def publication_state(base,local,remote,dirty):
+    current=not dirty and local==remote
+    return {'current_snapshot_verified':current,
+            'new_remote_snapshot_verified':current and local!=base,
+            'publication_attribution':'unknown; equality is not evidence of worker authorship'}
 
 def atomic(path,value):
     guard_write_path(path);path.parent.mkdir(parents=True,exist_ok=True)
@@ -72,7 +112,7 @@ def command(root,*args):
     env=dict(os.environ,GIT_TERMINAL_PROMPT='0',GCM_INTERACTIVE='never',PYTHONUTF8='1')
     p=subprocess.run(args,cwd=root,env=env,capture_output=True,text=True,encoding='utf-8',timeout=90)
     if p.returncode:raise RuntimeError('host preflight failed: '+args[0])
-    return p.stdout.strip()
+    return p.stdout if '-z' in args else p.stdout.strip()
 
 def synchronize(root):
     if command(root,'git','branch','--show-current')!='main':raise RuntimeError('main required')
@@ -83,9 +123,10 @@ def synchronize(root):
     command(root,sys.executable,'scripts/setup_codex.py');command(root,sys.executable,'scripts/setup_codex.py','--check')
     return head
 
-def observe_parent_turn(q,backlog,tid,turn,run,send,*,timeout_seconds,max_observed_tokens):
+def observe_parent_turn(q,backlog,tid,turn,run,send,*,timeout_seconds,max_observed_tokens,initial_total_tokens=0):
     """Observe native parent snapshots, never infer a final or cross-actor bill."""
-    deadline=time.monotonic()+timeout_seconds;observed=None;previous=None;interrupted=False;saw_error=False
+    if type(initial_total_tokens) is not int or initial_total_tokens<0:raise ValueError('invalid resumed usage baseline')
+    deadline=time.monotonic()+timeout_seconds;observed=None;absolute=None;previous=None;interrupted=False;saw_error=False
     fields=('inputTokens','cachedInputTokens','outputTokens','totalTokens','reasoningOutputTokens')
     def receipt(status,invalid=None):
         usage_status=('invalid' if invalid else 'missing' if observed is None else
@@ -93,6 +134,7 @@ def observe_parent_turn(q,backlog,tid,turn,run,send,*,timeout_seconds,max_observ
         return {'status':status,'model_requests':None,'thread_id':tid,'turn_id':turn,
                 'observed_parent_total_tokens':None if invalid else observed,
                 'last_observed_parent_total_tokens':observed,
+                'thread_total_tokens':absolute,'initial_total_tokens':initial_total_tokens,
                 'usage_status':usage_status,'usage_complete':False,
                 'usage_reason':invalid or ('no matching usage notification' if observed is None else
                     'parent snapshot only; terminal/final bill and child usage are not certified'),
@@ -121,9 +163,10 @@ def observe_parent_turn(q,backlog,tid,turn,run,send,*,timeout_seconds,max_observ
                         raise ValueError('inconsistent native counter arithmetic')
                 if any(total[k]<last[k] or (previous is not None and total[k]<previous[k]) for k in fields):
                     raise ValueError('invalid cumulative usage')
-                observed=total['totalTokens'];previous=total.copy()
+                if total['totalTokens']<initial_total_tokens:raise ValueError('resumed cumulative usage regressed')
+                absolute=total['totalTokens'];observed=absolute-initial_total_tokens;previous=total.copy()
                 atomic(run/'observed-usage.json',{'total_tokens':observed,'budget':max_observed_tokens,
-                       'thread_id':tid,'turn_id':turn,'tokenUsage':usage,'usage_complete':False,
+                       'thread_id':tid,'turn_id':turn,'tokenUsage':usage,'initial_total_tokens':initial_total_tokens,'usage_complete':False,
                        'scope':'parent thread only; child benchmarks must separately account all calls'})
                 if observed>=max_observed_tokens and not interrupted:
                     send('turn/interrupt',{'threadId':tid,'turnId':turn});interrupted=True;deadline=min(deadline,time.monotonic()+15)
@@ -141,13 +184,14 @@ def observe_parent_turn(q,backlog,tid,turn,run,send,*,timeout_seconds,max_observ
         send('turn/interrupt',{'threadId':tid,'turnId':turn})
         return receipt('usage-invalid',str(exc))
 
-def run_worker(root,exe,run,*,timeout_seconds=1200,max_observed_tokens=75000,probe_only=False):
+def run_worker(root,exe,run,*,timeout_seconds=1200,max_observed_tokens=75000,probe_only=False,checkpoint=None,prompt=None):
     if os.name!='nt':raise ValueError('selected native backend requires Windows Python; WSL hosts the tmux timer')
     q=queue.Queue();counter=0;backlog=[]
     flags=subprocess.CREATE_NO_WINDOW if os.name=='nt' else 0
     with (run/'stderr.private.log').open('x',encoding='utf-8') as err:
         proc=subprocess.Popen([str(exe),'app-server'],cwd=root,stdin=subprocess.PIPE,stdout=subprocess.PIPE,
-                              stderr=err,text=True,encoding='utf-8',creationflags=flags)
+                              stderr=err,text=True,encoding='utf-8',creationflags=flags,
+                              env=dict(os.environ,PYTHONUTF8='1',PYTHONIOENCODING='utf-8'))
         def reader():
             with (run/'transport.private.jsonl').open('x',encoding='utf-8') as raw:
                 for line in proc.stdout:
@@ -173,15 +217,17 @@ def run_worker(root,exe,run,*,timeout_seconds=1200,max_observed_tokens=75000,pro
             admission=quota_admission(call('account/rateLimits/read',{}));atomic(run/'admission.json',admission)
             if not admission['admitted'] or probe_only:
                 return {'status':'quota-blocked' if not admission['admitted'] else 'probe-only','model_requests':0,'admission':admission}
-            registry=json.loads((root/'config/role_registry.json').read_bytes())
-            relevant={'code-reading','code-organization','model-with-knowledge','research-implement-optimize'}
-            config={'features.apps':True,'mcp_servers.node_repl.enabled':False,'model_reasoning_effort':'high',
-                    'skills.config':[{'path':str(Path.home()/'.agents/skills'/r['id']/'SKILL.md'),'enabled':r['id'] in relevant} for r in registry['roles']]}
-            t=call('thread/start',{'cwd':str(root),'model':'gpt-6.1-sol','approvalPolicy':'never','sandbox':'danger-full-access','config':config})
+            config=worker_config(root);atomic(run/'profile.json',{'version':PROFILE_VERSION,'config':config})
+            params={'cwd':str(root),'model':'gpt-6.1-sol','approvalPolicy':'never','sandbox':'danger-full-access','config':config}
+            if checkpoint:params['threadId']=checkpoint['thread_id']
+            t=call('thread/resume' if checkpoint else 'thread/start',params)
             tid=t['thread']['id'];atomic(run/'thread.json',{'thread_id':tid,'model':t['model'],'effort':t['reasoningEffort'],'project_root':str(root)})
-            turn=call('turn/start',{'threadId':tid,'input':[{'type':'text','text':PROMPT,'text_elements':[]}],'effort':'high'})['turn']['id']
+            text=prompt or PROMPT
+            if checkpoint:text='Continue this persisted optimization, avoiding repeated bootstrap. Host checked exact owned local bytes and fetched current origin/main; resolve any remote advance before ordinary publication. '+text
+            turn=call('turn/start',{'threadId':tid,'input':[{'type':'text','text':text,'text_elements':[]}],'effort':'high'})['turn']['id']
             return observe_parent_turn(q,backlog,tid,turn,run,send,
-                                       timeout_seconds=timeout_seconds,max_observed_tokens=max_observed_tokens)
+                                       timeout_seconds=timeout_seconds,max_observed_tokens=max_observed_tokens,
+                                       initial_total_tokens=checkpoint['thread_total_tokens'] if checkpoint else 0)
         finally:
             # Only this owned backend PID/tree. Never kill unrelated Codex sessions.
             if proc.poll() is None:subprocess.run(['taskkill','/PID',str(proc.pid),'/T','/F'],capture_output=True,timeout=15)
@@ -212,19 +258,46 @@ def tick(root,state_dir,exe,*,now=None,probe_only=False):
         if now<due:
             atomic(path,state);return {'status':'not-due','next_due':due,'model_requests':0}
         state['next_due']=advance_due(due,now);state['last_started']=now;atomic(path,state)
-        run=state_dir/(str(time.time_ns())+'-tick');run.mkdir();result={}
+        run=state_dir/(str(time.time_ns())+'-tick');run.mkdir();result={};worker_attempted=False
         try:
-            head=synchronize(root)
-            result={'base_revision':head,**run_worker(root,exe,run,probe_only=probe_only)}
+            if state.get('failure_latch'):
+                result={'status':'failure-latched','model_requests':0,'reason':state['failure_latch'],'counts_as_token_success':False}
+                atomic(run/'receipt.json',result);state['last_result']=result;state['last_finished']=time.time();atomic(path,state)
+                return result
+            checkpoint=state.get('checkpoint')
+            if checkpoint:
+                current=work_snapshot(root);saved=checkpoint['work_snapshot']
+                clean_advance=not current['status'] and not saved['status']
+                if checkpoint.get('profile_version')!=PROFILE_VERSION or (saved!=current and not clean_advance):
+                    raise RuntimeError('continuation changed; preserve concurrent work and require recovery')
+                command(root,'git','fetch','origin','main')
+                if clean_advance:
+                    command(root,'git','merge-base','--is-ancestor',saved['head'],'HEAD')
+                    head=synchronize(root)
+                else:head=checkpoint['work_snapshot']['head']
+            else:head=synchronize(root)
+            worker_attempted=True
+            result={'base_revision':head,**run_worker(root,exe,run,probe_only=probe_only,checkpoint=checkpoint)}
             # Read-only postcondition; never count worker exit as a published improvement.
             result['dirty_tree']=bool(command(root,'git','status','--porcelain'))
             result['local_head']=command(root,'git','rev-parse','HEAD')
             command(root,'git','fetch','origin','main')
             result['remote_head']=command(root,'git','rev-parse','origin/main')
-            result['publication_verified_by_host']=not result['dirty_tree'] and result['local_head']==result['remote_head']
-            if result['publication_verified_by_host']:
+            result.update(publication_state(head,result['local_head'],result['remote_head'],result['dirty_tree']))
+            if result['current_snapshot_verified']:
                 command(root,sys.executable,'scripts/setup_codex.py');command(root,sys.executable,'scripts/setup_codex.py','--check')
-        except Exception as exc:result={'status':'host-blocked','error_type':type(exc).__name__,'reason':str(exc),'counts_as_token_success':False}
+            if result['status'] in ('budget-interrupted','worker-completed') and not result['new_remote_snapshot_verified'] and type(result.get('thread_total_tokens')) is int:
+                snapshot=work_snapshot(root)
+                stagnant=(checkpoint.get('stagnant_ticks',0)+1 if checkpoint and checkpoint['work_snapshot']==snapshot else 0)
+                state['checkpoint']={'thread_id':result['thread_id'],'thread_total_tokens':result['thread_total_tokens'],
+                                     'work_snapshot':snapshot,'profile_version':PROFILE_VERSION,'stagnant_ticks':stagnant}
+                if stagnant>=2:state['failure_latch']='three consecutive ticks without a changed work snapshot; recovery required'
+            elif result['status']=='worker-completed' and result['new_remote_snapshot_verified']:state.pop('checkpoint',None)
+            elif result['status']!='quota-blocked':state['failure_latch']=result['status']
+        except Exception as exc:result={'status':'host-blocked','error_type':type(exc).__name__,'reason':str(exc),
+                                       'model_requests':None if worker_attempted else 0,'counts_as_token_success':False}
+        if result['status']=='host-blocked' and (worker_attempted or state.get('checkpoint')):
+            state['failure_latch']=result['reason']
         atomic(run/'receipt.json',result);state['last_result']=result;state['last_finished']=time.time();atomic(path,state)
         return result
 

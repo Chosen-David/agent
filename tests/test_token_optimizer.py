@@ -184,7 +184,7 @@ class ParentUsageTests(unittest.TestCase):
                     {'id':4,'result':{'turn':{'id':'turn'}}}]
                 proc=Mock(stdin=io.StringIO(),stdout=iter([json.dumps(x)+'\n' for x in replies]+[x+'\n' for x in tail]))
                 proc.poll.return_value=0
-                with (patch('scripts.token_optimizer.os',SimpleNamespace(name='nt')),
+                with (patch('scripts.token_optimizer.os',SimpleNamespace(name='nt',environ={})),
                      patch('scripts.token_optimizer.atomic'),
                      patch('scripts.token_optimizer.subprocess.CREATE_NO_WINDOW',0,create=True),
                      patch('scripts.token_optimizer.subprocess.Popen',return_value=proc),
@@ -208,3 +208,111 @@ class ParentUsageTests(unittest.TestCase):
                 self.assertIsNone(value['model_requests'])
                 self.assertFalse(value['usage_complete'])
                 self.assertFalse(value['counts_as_token_success'])
+
+class HourlyRepairTests(unittest.TestCase):
+    def test_unchanged_remote_is_not_new_publication(self):
+        from scripts.token_optimizer import publication_state
+        self.assertTrue(publication_state('a','a','a',False)['current_snapshot_verified'])
+        self.assertFalse(publication_state('a','a','a',False)['new_remote_snapshot_verified'])
+        self.assertTrue(publication_state('a','b','b',False)['new_remote_snapshot_verified'])
+        self.assertIn('unknown',publication_state('a','b','b',False)['publication_attribution'])
+        for args in (('a','b','c',False),('a','b','b',True)):
+            self.assertFalse(publication_state(*args)['new_remote_snapshot_verified'])
+
+    def test_resumed_usage_budget_is_delta_not_old_total(self):
+        import queue
+        from scripts.token_optimizer import observe_parent_turn
+        p=ParentUsageTests()
+        with tempfile.TemporaryDirectory() as tmp:
+            sent=[]
+            result=observe_parent_turn(queue.Queue(),[p.usage(100100),p.terminal()],
+                'thread','turn',Path(tmp),lambda *args:sent.append(args),timeout_seconds=2,
+                max_observed_tokens=1000,initial_total_tokens=100000)
+            self.assertEqual(result['observed_parent_total_tokens'],100)
+            self.assertEqual(result['thread_total_tokens'],100100)
+            self.assertEqual(sent,[])
+            result=observe_parent_turn(queue.Queue(),[p.usage(99999)],
+                'thread','turn',Path(tmp),lambda *args:sent.append(args),timeout_seconds=2,
+                max_observed_tokens=1000,initial_total_tokens=100000)
+            self.assertEqual(result['usage_status'],'invalid')
+
+    def test_failure_latch_advances_clock_without_model_or_sync(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp).resolve();state=root/'.agent-runs/repair';exe=root/'fake';exe.write_bytes(b'not invoked')
+            atomic(state/'state.json',{'project_root':str(root),'interval_seconds':INTERVAL,
+                   'next_due':100,'failure_latch':'usage-invalid'})
+            with patch('scripts.token_optimizer.run_worker') as worker,patch('scripts.token_optimizer.synchronize') as sync:
+                result=tick(root,state,exe,now=100)
+                self.assertEqual(result['status'],'failure-latched');self.assertEqual(result['model_requests'],0)
+                worker.assert_not_called();sync.assert_not_called()
+                self.assertEqual(json.loads((state/'state.json').read_bytes())['next_due'],3700)
+
+    def test_bounded_profile_preserves_publication_apps(self):
+        from scripts.token_optimizer import worker_config,TOOL_OUTPUT_TOKENS
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp);(root/'config').mkdir();(root/'config/role_registry.json').write_text('{"roles":[]}')
+            config=worker_config(root)
+            self.assertEqual(config['tool_output_token_limit'],TOOL_OUTPUT_TOKENS)
+            self.assertTrue(config['features.apps'])
+
+    def test_snapshot_detects_actual_edited_bytes(self):
+        from scripts.token_optimizer import work_snapshot
+        import subprocess
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            for args in (('init','-q'),('config','user.email','fixture@local'),('config','user.name','fixture')):
+                subprocess.run(['git',*args],cwd=root,check=True,capture_output=True)
+            (root/'x.py').write_text('original')
+            subprocess.run(['git','add','x.py'],cwd=root,check=True)
+            subprocess.run(['git','commit','-qm','fixture'],cwd=root,check=True)
+            (root/'x.py').write_text('owned')
+            (root/'中文 name.py').write_text('Unicode owned')
+            (root/' leading space.py').write_text('space owned')
+            first=work_snapshot(root)
+            self.assertEqual(first,work_snapshot(root))
+            (root/' leading space.py').write_text('space concurrent')
+            self.assertNotEqual(first,work_snapshot(root))
+            (root/' leading space.py').write_text('space owned')
+            (root/'x.py').write_text('concurrent')
+            self.assertNotEqual(first,work_snapshot(root))
+            (root/'x.py').write_text('owned')
+            (root/'中文 name.py').write_text('Unicode concurrent')
+            self.assertNotEqual(first,work_snapshot(root))
+            (root/'中文 name.py').write_text('Unicode owned')
+            subprocess.run(['git','add','x.py'],cwd=root,check=True)
+            first=work_snapshot(root)
+            oldblob=subprocess.check_output(['git','rev-parse','HEAD:x.py'],cwd=root).decode().strip()
+            subprocess.run(['git','update-index','--cacheinfo','100644',oldblob,'x.py'],cwd=root,check=True)
+            self.assertNotEqual(first['index_sha256'],work_snapshot(root)['index_sha256'])
+
+    def test_exception_after_worker_attempt_latches_and_keeps_unknown_usage(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp).resolve();state=root/'.agent-runs/repair';exe=root/'fake';exe.write_bytes(b'not invoked')
+            atomic(state/'state.json',{'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100})
+            with patch('scripts.token_optimizer.synchronize',return_value='base'),patch('scripts.token_optimizer.run_worker',side_effect=TimeoutError('RPC')) as worker:
+                first=tick(root,state,exe,now=100)
+                second=tick(root,state,exe,now=3700)
+                self.assertIsNone(first['model_requests'])
+                self.assertEqual(second['status'],'failure-latched');self.assertEqual(worker.call_count,1)
+
+    def test_checkpoint_reused_and_changed_owned_bytes_blocked(self):
+        from scripts.token_optimizer import PROFILE_VERSION
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp).resolve();state=root/'.agent-runs/repair';exe=root/'fake';exe.write_bytes(b'not invoked')
+            snapshot={'head':'base','status':' M owned.py','files':{'owned.py':'hash'},'index_sha256':'index'}
+            checkpoint={'thread_id':'persisted','thread_total_tokens':100000,'work_snapshot':snapshot,'profile_version':PROFILE_VERSION}
+            saved={'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100,'checkpoint':checkpoint}
+            atomic(state/'state.json',saved)
+            result={'status':'budget-interrupted','thread_id':'persisted','thread_total_tokens':180000,
+                    'observed_parent_total_tokens':80000,'counts_as_token_success':False}
+            def command_result(root,*args):
+                return ' M owned.py' if args[1:]==('status','--porcelain') else 'base' if args[1]=='rev-parse' else ''
+            with patch('scripts.token_optimizer.work_snapshot',return_value=snapshot),patch('scripts.token_optimizer.command',side_effect=command_result),patch('scripts.token_optimizer.run_worker',return_value=result) as worker,patch('scripts.token_optimizer.synchronize') as sync:
+                tick(root,state,exe,now=100)
+                self.assertEqual(worker.call_args.kwargs['checkpoint'],checkpoint);sync.assert_not_called()
+                self.assertEqual(json.loads((state/'state.json').read_bytes())['checkpoint']['thread_total_tokens'],180000)
+            with patch('scripts.token_optimizer.work_snapshot',return_value={**snapshot,'index_sha256':'concurrent'}),patch('scripts.token_optimizer.run_worker') as worker:
+                result=tick(root,state,exe,now=3700)
+                self.assertEqual(result['status'],'host-blocked');self.assertEqual(result['model_requests'],0)
+                worker.assert_not_called()
+                self.assertIn('failure_latch',json.loads((state/'state.json').read_bytes()))

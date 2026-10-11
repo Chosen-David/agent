@@ -22,6 +22,7 @@ import uuid
 
 from .core import ArtifactHandler, Engine, Store
 from .scheduler import LocalScheduler, arm
+from .crash_restart import read_crash_state, record_crash
 from .project_docs import assert_ai_writable, guard_write_path, resolve_task_file
 from .task_manifest import (ReportingHandler, atomic_json, prepare, review,
                             validate_contract)
@@ -187,23 +188,30 @@ def worker(config):
 
 
 def guard(config_path):
-    """Restart crashed worker in the owned tmux pane; keep all durable state."""
+    """Bound crashed-worker retries in the owned pane; keep all durable state."""
     if not os.environ.get('TMUX'):
         raise RuntimeError('guard requires tmux; use start')
     config = json.loads(Path(config_path).read_text())
     assert_ai_writable(config['project_root'], config['state_dir'])
+    crash_path=guard_write_path(Path(config['state_dir'])/'guard-failure.json')
     with guard_write_path(Path(config['state_dir']) / 'supervisor.log').open('a', buffering=1) as log:
         while True:
             if Store(Path(config['state_dir']) / 'state.sqlite').snapshot(config['run_id'])['state']['status'] == 'cancelled':
                 return
+            if read_crash_state(crash_path,config['run_id'])['status']=='blocked':
+                # Remain locally observable without rebuilding potentially paid adapters.
+                time.sleep(30)
+                continue
             result = subprocess.run([sys.executable, '-m', 'agent_runtime.task_supervisor',
                                      '_worker', '--config', str(config_path)], cwd=CODE_ROOT,
                                     stdout=log, stderr=subprocess.STDOUT)
             if result.returncode == 0:
                 return
-            log.write(f'worker exit={result.returncode}; restart in 5 seconds\n')
+            crash=record_crash(crash_path,config['run_id'],result.returncode)
+            action=(f"restart in {crash['retry_seconds']} seconds" if crash['retry_seconds'] is not None else 'restart blocked')
+            log.write(f"worker exit={result.returncode}; {action}; crash policy={crash['status']}\n")
             log.flush()
-            time.sleep(5)
+            if crash['retry_seconds'] is not None:time.sleep(crash['retry_seconds'])
 
 
 def status(config):
@@ -223,8 +231,10 @@ def status(config):
     monitor = snap['monitor']
     if monitor:
         monitor = LocalScheduler(store).read(monitor['id'])
+    crash=read_crash_state(state_dir/'guard-failure.json',config['run_id'])
     return {'run_id': config['run_id'], 'session': config['session'],
             'live': alive, 'runtime_status': snap['state']['status'], 'monitor': monitor,
+            'guard_blocked':crash['status']=='blocked','guard_crash_state':crash,
             'progress': str(state_dir / 'progress.json'),
             'final_report': str(state_dir / 'final-report.json') if (state_dir / 'final-report.json').exists() else None}
 

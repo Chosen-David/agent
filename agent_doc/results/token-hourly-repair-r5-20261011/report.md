@@ -1,0 +1,13 @@
+# Hourly execution repair
+
+The old timer triggered four times, but all workers restarted broad bootstrap reads and hit the observed token budget before making a new commit. Archived original transports independently reanalyzed:103146,103617,104539,103683 cumulative parent snapshots,414985 combined recorded observations. These are incomplete parent observations, not a certified final/cross-actor bill or cost ranking.
+
+The public worker now limits tool-history output to768 tokens, uses explicit UTF-8 and selected scope, resumes persisted interrupted/unfinished native threads, binds local HEAD/dirty bytes/index, and subtracts the saved cumulative baseline for each tick. Invalid transport, changed owned work or3 stagnant ticks latch before another paid worker. Remote equality verifies only the current/new snapshot; attribution remains unknown. Tick budget75000 is unchanged and in-flight overshoot remains possible.
+
+The generic task_supervisor guard retains durable state and budget, waits5/10 seconds after crashes and blocks adapter/worker rebuilding after3 recorded failures. status exposes guard_blocked. This is not an absolute lifetime launch cap: a crash before recording can be missed.
+
+Independent static review verified Unicode/leading-space paths, staged-index changes, fresh-run transport failure and the guard integration. Native28 CPU checks pass; independently run37 Linux checks pass with1 opt-in skip. The complete exact-source isolated checkout suite passed1033 tests:1021 pass,12 optional visualization/tmux skips. PyMuPDF1.28.2 and NumPy2.5.4 were installed only in a temporary isolated Linux environment; no model was invoked by these checks. Windows full-suite150s timeout and earlier missing-PDF/log-format/mixed-checkout-line-ending failures are retained separately; raw source and generated mirror bytes match in the final checkout.
+
+Native r2 health executed one shell command and resumed the identical thread:40415 then20299 observed parent tick tokens. It is a60714-token observation with partial accounting, not a savings experiment. Later CPU-only revisions reused the unchanged hourly source/profile and original events with independent source binding, avoiding more paid probes. All acceptances are scoped; no full optimization/long-context/cash benefit or14->15 increment is claimed.
+
+One existing WSL tmux timer is retained. Authoritative current phase/PID/next_due/failure/checkpoint are private heartbeat/state files, not old committed timestamps. After ordinary non-force main publication and independent readback, the host clears only its diagnosed repair hold and requests one manual due slot, then the same timer continues hourly. tmux protects terminal detachment; the Windows/WSL host must remain running.

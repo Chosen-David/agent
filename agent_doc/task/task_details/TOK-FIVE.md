@@ -1,12 +1,17 @@
 # TOK-FIVE
 
+Task-ID: TOK-FIVE
 Date: 2026-10-11
 
-## Plan v1
+## Plan
+
+### Version 1
 
 User requested five consecutive concrete token optimizations, then one hourly optimizer. Preserve pull/sync/check before each round, ordinary main publication and independent readback. No GUIDE writes, no external advice interaction or duplicated agents/schedules. Historical results are scoped to archived implementations; new claims require fresh independent checks. Installed knowledge search found transport/NSA entries inapplicable to host communication savings; official recoverable session-log and noninteractive CLI sources are design context only.
 
-## Progress v1
+## Progress
+
+### Version 1
 
 - Round 1: Required project document/advice/event observer plus typed handled maintenance ACK; avoid a repeated model decision; actual total 36310 → 18158 (-18152); accepted-and-main-verified; [evidence](../../results/token-five-1-20261011/acceptance.json).
 - Round 2: Explicit selected task rows with all global text retained, source SHA and line recovery; actual total 18604 → 18291 (-313); accepted-and-main-verified; [evidence](../../results/token-five-2-fixed-20261011/acceptance.json).
