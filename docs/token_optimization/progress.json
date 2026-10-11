@@ -1,11 +1,11 @@
 {
   "schema_version": "token-optimization-progress/v1",
   "target_successes": 100,
-  "success_count": 13,
-  "phase": "five-rounds-then-hourly",
+  "success_count": 14,
+  "phase": "hourly",
   "hourly_after_target_seconds": null,
-  "hourly_optimizer_started": false,
-  "active_owner": "single current Codex batch; tmux native probes, no parallel optimizer",
+  "hourly_optimizer_started": true,
+  "active_owner": "one WSL tmux hourly host optimizer; quota/dirty-tree checks precede actual Codex execution",
   "upgrades": [
     {
       "iteration_id": "TOK-001",
@@ -225,14 +225,16 @@
       "batch_id": "five-20261011",
       "mechanism": "Explicit advice topic selection retains shared leading rules and current issue, avoids replaying unrelated meeting paragraphs",
       "result_id": "token-five-5-20261011",
-      "status": "accepted-awaiting-main-verification",
+      "status": "accepted-and-main-verified",
       "baseline_total_tokens": 18454,
       "candidate_total_tokens": 18273,
       "saving_tokens": 181,
       "scope": "One 12-topic advice fixture with selected ISSUE-VERIFY, all leading rules and full source-version recovery; no automatic assessment, authority or general meeting-closure claim",
       "publication": {
         "branch": "main",
-        "status": "awaiting ordinary non-force publication and independent readback"
+        "commit": "a16bfe835451a3bbe58a124da5e828292c106ae4",
+        "tree": "0b05d4c0deea0872b2ac0e528d62d5dd66e04001",
+        "verification": "independent API ref/commit readback and native fetch/full working tree equality"
       }
     }
   ],
@@ -272,9 +274,21 @@
   "batch": {
     "id": "five-20261011",
     "requested_rounds": 5,
-    "main_verified_rounds": 4,
+    "main_verified_rounds": 5,
     "interval_seconds_after_batch": 3600,
     "instruction_supersedes": "hourly only after 100 successes",
     "scope": "Five concrete independently checked iterations; actual measured success accounting remains separate"
+  },
+  "hourly_schedule": {
+    "backend": "native Windows Codex app-server from one WSL tmux timer",
+    "session": "agent-token-optimizer",
+    "window": "hourly-token",
+    "interval_seconds": 3600,
+    "timer_pid": 1777,
+    "next_due_epoch": 1791710563.319298,
+    "next_due_beijing": "2026-10-11T17:22:43.319298+08:00",
+    "state_dir": "C:\\Users\\WI\\Desktop\\home_work\\AI_LLM\\agent\\.agent-runs\\token-optimizer-hourly",
+    "verified": "fresh heartbeat, live owned /proc command, tmux Python pane, future persisted due, CPU independent gate, real zero-inference admission probe",
+    "new_model_requests_during_setup": 0
   }
 }

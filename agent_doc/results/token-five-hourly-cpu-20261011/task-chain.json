@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-HOURLY-produce",
+      "owner": "native-hourly-cpu-producer",
+      "action": "cpu_and_quota_probe",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-five-hourly-cpu-20261011",
+        "producer_task_id": "TOK-HOURLY-produce",
+        "producer_actor": "native-hourly-cpu-producer",
+        "manifest_path": "agent_doc/results/token-five-hourly-cpu-20261011/manifest.json",
+        "scope": "Hourly optimizer CPU admission/cadence/exclusion/probe boundaries, independent WSL parser regression, and zero-inference native quota probe only; no additional token-saving success or paid hourly execution claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-five-hourly-cpu-20261011/validation-plan.json",
+          "sha256": "3f72e50df8d49d1ad0b5e1f8f9a6184ab51e295ca738d62ca604810281b6105d"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-HOURLY-verify",
+      "owner": "host-hourly-cpu-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-HOURLY-produce"
+      ],
+      "result_validation": {
+        "result_id": "token-five-hourly-cpu-20261011",
+        "producer_task_id": "TOK-HOURLY-produce",
+        "producer_actor": "native-hourly-cpu-producer",
+        "manifest_path": "agent_doc/results/token-five-hourly-cpu-20261011/manifest.json",
+        "scope": "Hourly optimizer CPU admission/cadence/exclusion/probe boundaries, independent WSL parser regression, and zero-inference native quota probe only; no additional token-saving success or paid hourly execution claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-five-hourly-cpu-20261011/validation-plan.json",
+          "sha256": "3f72e50df8d49d1ad0b5e1f8f9a6184ab51e295ca738d62ca604810281b6105d"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-HOURLY-deploy",
+      "owner": "main-ai",
+      "action": "deploy_hourly_timer",
+      "depends_on": [
+        "TOK-HOURLY-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-five-hourly-cpu-20261011",
+          "producer_task_id": "TOK-HOURLY-produce",
+          "producer_actor": "native-hourly-cpu-producer",
+          "manifest_path": "agent_doc/results/token-five-hourly-cpu-20261011/manifest.json",
+          "scope": "Hourly optimizer CPU admission/cadence/exclusion/probe boundaries, independent WSL parser regression, and zero-inference native quota probe only; no additional token-saving success or paid hourly execution claim",
+          "validation_plan": {
+            "path": "agent_doc/results/token-five-hourly-cpu-20261011/validation-plan.json",
+            "sha256": "3f72e50df8d49d1ad0b5e1f8f9a6184ab51e295ca738d62ca604810281b6105d"
+          }
+        }
+      ]
+    }
+  ]
+}
