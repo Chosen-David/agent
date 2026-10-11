@@ -411,3 +411,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-85] 有限时域输入能量与终端输出：普通文档复核通过，生产迁移待验证 ([详情](task_details/MATH-85.md))
 
 - [x] [MATH-86] 局部误差包络与管域闭合：普通文档复核通过，真实Agent迁移待验证 ([详情](task_details/MATH-86.md))
+
+- [x] [MATH-87] Finite-error document discovery bridge; fixed-query structure checks, no model acceptance. ([detail](task_details/MATH-87.md))
