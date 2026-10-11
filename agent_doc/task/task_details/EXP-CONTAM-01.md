@@ -30,3 +30,5 @@ Date: 2026-10-11
 按最新收尾指令实际整合897c032：合并构建044201214ee371c4ad3505d851aa1c2d346328fc；TASK唯一追加冲突保留双方条目及远端原始字节。新全仓1008项与clean main991项均同样3 failures/3 errors/1 skip；污染17/17、结果79/79、reader3/3通过；代码哈希仍匹配既有独立审查，没有新模型调用。完整新日志/测试归属/六条精确失败在 `agent_doc/results/contamination-integrated-20261011/`。无关源代码和测试未改、main未推，原Library身份以版本0保护更新整合后的完整候选；发布仍待基线及CI门禁恢复。
 
 发布依赖收尾：用户明确授权后，仅扩展既有同步映射并生成16份导航、刷新3份镜像；canonical文档/解析器/知识未改。ae80bfaff通过全仓1008项（1项opt-in跳过）、reader3项、sync检查和独立复审。此前阻塞记录现为历史；GitHub app成功读取main保护与rulesets，未配置必需检查。证据见 `agent_doc/results/contamination-release-20261011/`。普通推送与远端读回待完成。
+
+发布完成：普通非force推送897c032 → f57c237073592b0047989d2e8f249c09a37c4be2；fetch与GitHub分支接口读回同一SHA，远端所有test-source.json源码哈希匹配已测ae80bfaff。branch保护关闭、必需contexts/checks为空、rulesets为空；check-runs与Actions runs均为0，combined status为空且pending，不宣称CI通过。发布证据在release目录publication.json。此关闭记录只改证据与本任务状态；历史Library版本保留为此前候选，不再代表最新main。外部作业控制能力边界不变。
