@@ -1,6 +1,6 @@
 ---
 name: gpu-experiment-dispatch
-description: "多机异构 GPU 池实验派单全生命周期：SSH 接入、环境栈部署与冒烟、任务清点与成本权重规划、确定性分片互斥派单、点火三重验证、定时监督收割与证据落袋。适用于全量重跑（口径变更）、断点补格（幂等续跑）、小试判决（配对统计门禁）三类场景；不把单卡脚本扩成池化调度，也不凭 pid 存在断定任务健康。"
+description: "多机异构 GPU 池实验派单全生命周期：SSH 接入、环境栈部署与冒烟、任务清点与成本权重规划、确定性分片互斥派单、点火三重验证、定时监督收割与证据落袋。源身份以 git commit SHA 为首选（派单前核对远端 checkout），停车/杀进程只走精确 PID 三步、严禁 pkill -f 模糊模式。适用于全量重跑（口径变更）、断点补格（幂等续跑）、小试判决（配对统计门禁）三类场景；不把单卡脚本扩成池化调度，也不凭 pid 存在断定任务健康。"
 ---
 
 # GPU 实验多机派单
@@ -22,8 +22,10 @@ description: "多机异构 GPU 池实验派单全生命周期：SSH 接入、环
 - **重任务独占链头**：历史实测最重任务（如 128K fwe ~12h、500 行 lcc/repobench）放链头并单独估时，绝不与两个重任务同链。
 - **判决证据链**：只交汇总 JSON 等于审计不可复验——小数据整库入库 + 逐文件 sha256 manifest；大数据至少 manifest + 哈希 + 脚本入库。
 - **双口径铁律**：kernel 级 microbench 与 e2e 两层都测都诚实报告，排序反转时如实并报。
+- **危险进程操作（停车/杀链）**：NEVER 用 `pkill -f`/`pgrep -f` 模糊模式杀并行作业——多臂管道的 `tee`/`tail` 等共享组件名必然跨臂误伤；NEVER 让远程 ssh 命令字符串包含 pkill 模式（会话自杀 exit 255，误诊节点失联）。停车 MUST 精确 PID 三步：`ps` 定位父 shell → 先 kill 父 shell（防接力下一任务）→ 再 kill python；kill 后 MUST 三验证（显存释放、残留进程清点、partial 输出盘点）。真实事故：E125 停车一条 `pkill -9 -f 'tail -2'` 报废三臂在跑任务 + ssh 连接自杀。
+- **源身份 = git commit SHA（首选）**：被测代码仓独立成 git 仓后，远端同步从「rsync + md5」升级为 git 通道——派单前 MUST `git fetch && git log -1` 核对远端 checkout 与预期 commit SHA，派单身份登记记录 SHA（关键文件 md5 保留为兼容旧记录口径）；远端有未提交改动 MUST 先 `git stash -u && git pull --rebase && git stash pop` 处置再跑，两种同步通道口径不混标。
 
-真实事故复盘与逐坑解法见 [派单作战手册](references/dispatch_playbook.md) 第 5 节；监督收割与空卡补位模式见其第 6 节。
+真实事故复盘与逐坑解法见 [派单作战手册](references/dispatch_playbook.md) 第 5 节；监督收割与空卡补位模式见其第 6 节；危险进程操作（停车/杀链）见其第 8 节。
 
 ## 项目治理与结果纪律
 

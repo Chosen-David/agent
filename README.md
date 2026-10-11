@@ -129,7 +129,7 @@ python scripts/setup_codex.py --check
 | `code-reading` | 源码定位与机制分析 |
 | `code-organization` | 文件组织、产物交接与 CODEMAP |
 | `model-with-knowledge` | 基于有条件知识的建模与推导 |
-| `gpu-experiment-dispatch` | 多机 GPU 池实验派单、点火验证与收割落袋 |
+| `gpu-experiment-dispatch` | 多机 GPU 池实验派单、点火验证、精确 PID 停车纪律与收割落袋 |
 | `travel-planner` | 旅行研究、行程与约束核验 |
 
 [科研插件](plugins/research-assistant/) · [旅行插件](plugins/travel-assistant/) · [模式与跨模式调用](prompts/modes.md)
