@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-FIVE-2-produce",
+      "owner": "native-token-five-producer",
+      "action": "short_native_fixture",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-five-2-20261011",
+        "producer_task_id": "TOK-FIVE-2-produce",
+        "producer_actor": "native-token-five-producer",
+        "manifest_path": "agent_doc/results/token-five-2-20261011/manifest.json",
+        "scope": "One 25-row canonical task-index fixture; host selects T20, preserving all non-row text and source versions; no global task completion or long-paper claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-five-2-20261011/validation-plan.json",
+          "sha256": "da784e4244030ba0aa0e8df68023bcf4ba064c6d9ab1a26a0ca1202697a5baf9"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-FIVE-2-verify",
+      "owner": "host-token-five-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-FIVE-2-produce"
+      ],
+      "result_validation": {
+        "result_id": "token-five-2-20261011",
+        "producer_task_id": "TOK-FIVE-2-produce",
+        "producer_actor": "native-token-five-producer",
+        "manifest_path": "agent_doc/results/token-five-2-20261011/manifest.json",
+        "scope": "One 25-row canonical task-index fixture; host selects T20, preserving all non-row text and source versions; no global task completion or long-paper claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-five-2-20261011/validation-plan.json",
+          "sha256": "da784e4244030ba0aa0e8df68023bcf4ba064c6d9ab1a26a0ca1202697a5baf9"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-FIVE-2-publish",
+      "owner": "main-ai",
+      "action": "publish_upgrade",
+      "depends_on": [
+        "TOK-FIVE-2-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-five-2-20261011",
+          "producer_task_id": "TOK-FIVE-2-produce",
+          "producer_actor": "native-token-five-producer",
+          "manifest_path": "agent_doc/results/token-five-2-20261011/manifest.json",
+          "scope": "One 25-row canonical task-index fixture; host selects T20, preserving all non-row text and source versions; no global task completion or long-paper claim",
+          "validation_plan": {
+            "path": "agent_doc/results/token-five-2-20261011/validation-plan.json",
+            "sha256": "da784e4244030ba0aa0e8df68023bcf4ba064c6d9ab1a26a0ca1202697a5baf9"
+          }
+        }
+      ]
+    }
+  ]
+}
