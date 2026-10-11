@@ -189,7 +189,7 @@ class PlanReviewTests(unittest.TestCase):
         root = Path(__file__).resolve().parents[1]
         profiles = json.loads((root/'config/main_registry.json').read_text())['profiles']
         self.assertEqual({x['id'] for x in profiles}, {'planner-main', 'review-main'})
-        self.assertEqual(len(json.loads((root/'config/role_registry.json').read_text())['roles']), 15)
+        self.assertEqual(len(json.loads((root/'config/role_registry.json').read_text())['roles']), 16)
         for role in json.loads((root/'config/role_registry.json').read_text())['roles']:
             self.assertTrue((root/role['skill']).parent.joinpath('references/dual_main_workflow.md').is_file())
         for profile in profiles:

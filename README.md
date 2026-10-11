@@ -101,6 +101,7 @@ python scripts/setup_codex.py --check
 | **推进科研项目** | 查新、可证伪假设、最小实验、写作与审读衔接 | [科研主调度](prompts/research_orchestrator.md) |
 | **读懂代码与系统** | 固定 commit 的调用路径、控制/数据流与机制证据 | [代码阅读](workflows/code_reading_workflow.md) |
 | **实现与性能优化** | 正确性基线、profiling、CPU/GPU 候选及测量边界 | [实现与优化](workflows/implementation_optimization_workflow.md) · [编译反馈](workflows/kernel_optimization_feedback.md) |
+| **多机 GPU 实验派单** | 资源池盘点、确定性分片、点火三重验证与监督收割 | [GPU 派单](workflows/gpu_dispatch_workflow.md) · 只用实际已授权资源 |
 | **画清方法与结果** | 可编辑架构图、可追溯数据图、最终尺寸检查 | [架构图](workflows/diagram_workflow.md) · [数据可视化](workflows/data_visualization_workflow.md) |
 | **写作与修订论文** | 模板、证据忠实、引用、科学审稿、最终 PDF 逐页检查 | [写作](workflows/paper_writing_workflow.md) · [审稿](workflows/reviewer_workflow.md) · [PDF 审读](workflows/reader_workflow.md) |
 | **陪读与理解知识** | 原文定位、讲解卡、直觉/公式/例子与按需图解 | [论文伴读](workflows/paper_reading_companion_workflow.md) · [概念讲解](workflows/concept_explanation_workflow.md) |
@@ -108,9 +109,9 @@ python scripts/setup_codex.py --check
 | **规划可执行旅行** | 营业窗口、通勤、预约、午休、预算与行程修订 | [旅行规划](workflows/travel_planning_workflow.md) |
 
 <details>
-<summary><strong>展开全部 15 个角色与职责</strong></summary>
+<summary><strong>展开全部 16 个角色与职责</strong></summary>
 
-以 [角色注册表](config/role_registry.json) 为准；科研插件包含 14 个技能，旅行插件包含 1 个技能。
+以 [角色注册表](config/role_registry.json) 为准；科研插件包含 15 个技能，旅行插件包含 1 个技能。
 
 | 角色 | 职责 |
 | :--- | :--- |
@@ -128,6 +129,7 @@ python scripts/setup_codex.py --check
 | `code-reading` | 源码定位与机制分析 |
 | `code-organization` | 文件组织、产物交接与 CODEMAP |
 | `model-with-knowledge` | 基于有条件知识的建模与推导 |
+| `gpu-experiment-dispatch` | 多机 GPU 池实验派单、点火验证与收割落袋 |
 | `travel-planner` | 旅行研究、行程与约束核验 |
 
 [科研插件](plugins/research-assistant/) · [旅行插件](plugins/travel-assistant/) · [模式与跨模式调用](prompts/modes.md)

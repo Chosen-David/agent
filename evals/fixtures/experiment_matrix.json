@@ -1,0 +1,40 @@
+{
+  "schema_version": 1,
+  "expected_rows": {
+    "qasper": 200,
+    "hotpotqa": 200,
+    "gov_report": 200,
+    "lcc": 500,
+    "repobench-p": 500,
+    "niah_single_1": 100,
+    "niah_multikey": 100
+  },
+  "tiers": {
+    "L32768": ["niah_single_1", "niah_multikey"],
+    "L65536": ["niah_single_1", "niah_multikey", "lcc", "repobench-p"],
+    "L131072": ["niah_single_1", "niah_multikey", "lcc", "repobench-p"]
+  },
+  "arms": {
+    "method_a_static": {
+      "changed_code_paths": true,
+      "reuse_note": "走被改路径，口径相关"
+    },
+    "method_b_static": {
+      "changed_code_paths": true,
+      "reuse_note": "走被改路径，口径相关"
+    },
+    "dense_none": {
+      "changed_code_paths": false,
+      "reuse_note": "不走被改路径，口径无关，可复用旧数据"
+    }
+  },
+  "cost_weights_hint": {
+    "L131072": 4,
+    "L65536": 2,
+    "L32768": 1,
+    "500_rows_tasks": 2.5
+  },
+  "prior_partial_outputs": {
+    "dense_none/L65536/niah_single_1": {"cumulative_rows": 104, "best_single_file_rows": 91, "expected": 100}
+  }
+}
