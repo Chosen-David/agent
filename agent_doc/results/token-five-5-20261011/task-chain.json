@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-FIVE-5-produce",
+      "owner": "native-token-five-producer",
+      "action": "short_native_fixture",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-five-5-20261011",
+        "producer_task_id": "TOK-FIVE-5-produce",
+        "producer_actor": "native-token-five-producer",
+        "manifest_path": "agent_doc/results/token-five-5-20261011/manifest.json",
+        "scope": "One 12-topic advice fixture with selected ISSUE-VERIFY, all leading rules and full source-version recovery; no automatic assessment, authority or general meeting-closure claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-five-5-20261011/validation-plan.json",
+          "sha256": "ec672453762630792d58182fbab2401cc7c5c2b0f772dfa751686512ad703c58"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-FIVE-5-verify",
+      "owner": "host-token-five-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-FIVE-5-produce"
+      ],
+      "result_validation": {
+        "result_id": "token-five-5-20261011",
+        "producer_task_id": "TOK-FIVE-5-produce",
+        "producer_actor": "native-token-five-producer",
+        "manifest_path": "agent_doc/results/token-five-5-20261011/manifest.json",
+        "scope": "One 12-topic advice fixture with selected ISSUE-VERIFY, all leading rules and full source-version recovery; no automatic assessment, authority or general meeting-closure claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-five-5-20261011/validation-plan.json",
+          "sha256": "ec672453762630792d58182fbab2401cc7c5c2b0f772dfa751686512ad703c58"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-FIVE-5-publish",
+      "owner": "main-ai",
+      "action": "publish_upgrade",
+      "depends_on": [
+        "TOK-FIVE-5-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-five-5-20261011",
+          "producer_task_id": "TOK-FIVE-5-produce",
+          "producer_actor": "native-token-five-producer",
+          "manifest_path": "agent_doc/results/token-five-5-20261011/manifest.json",
+          "scope": "One 12-topic advice fixture with selected ISSUE-VERIFY, all leading rules and full source-version recovery; no automatic assessment, authority or general meeting-closure claim",
+          "validation_plan": {
+            "path": "agent_doc/results/token-five-5-20261011/validation-plan.json",
+            "sha256": "ec672453762630792d58182fbab2401cc7c5c2b0f772dfa751686512ad703c58"
+          }
+        }
+      ]
+    }
+  ]
+}
