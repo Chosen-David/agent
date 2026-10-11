@@ -386,7 +386,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-11
 
-- [ ] [TOK-HOURLY-REPAIR] ???????????/????????????????????????????????? ([??](task_details/TOK-HOURLY-REPAIR.md))
+- [x] [TOK-HOURLY-REPAIR] Published verified bounded/resumable hourly runtime and durable supervisor crash gate; actual optimization accounting remains separate. ([detail](task_details/TOK-HOURLY-REPAIR.md))
 
 - [x] [TOK-FIVE] Five short native token optimization rounds, then one hourly optimizer; per-round evidence in details. ([detail](task_details/TOK-FIVE.md))
 
