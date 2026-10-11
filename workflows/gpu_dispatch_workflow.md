@@ -23,9 +23,13 @@
 ### 阶段 1：接入盘点（只读）
 
 SSH 封装以机内既有文件为准；逐机过四清单（GPU 空闲、模型路径、数据集
-覆盖、基准数据 root）+ python/磁盘。代码同步用 `rsync -a --delete` 且
-`--exclude` 保护远端既有实验数据；同步后 compileall + 关键 import 冒烟，
-三机全绿才进阶段 2。任何一项盘点失败即回报主 AI，不硬闯。
+覆盖、基准数据 root）+ python/磁盘。代码同步优先 git 通道：被测代码仓
+独立成 git 仓后，源身份 = git commit SHA（首选）+ 关键文件 md5（兼容旧
+记录），派单前 `git fetch && git log -1` 核对远端 checkout 与预期 SHA
+一致，远端未提交改动先 `git stash -u && git pull --rebase && git stash
+pop` 处置；远端 git 不同源时退回 `rsync -a --delete` 且 `--exclude`
+保护远端既有实验数据，登记注明 rsync 口径。同步后 compileall + 关键
+import 冒烟，三机全绿才进阶段 2。任何一项盘点失败即回报主 AI，不硬闯。
 
 ### 阶段 2：规划
 
@@ -49,8 +53,13 @@ lib + 机器脚本两层；`bash -n` 语法检查；远程 nohup + `</dev/null`
 
 2h 巡检：GPU 空闲 = 完成或异常信号，两者都触发动作——完成则 rsync
 拉回 + best-file 对账 + 官方 scorer；异常则按 log 修复重派；空卡按
-分片表包抄最重未跑任务。收官判定：best-file 口径逐格达期望行数，
-不满足不判收官。
+分片表包抄最重未跑任务。需要中途停车/杀链时按[派单作战手册](../plugins/research-assistant/skills/gpu-experiment-dispatch/references/dispatch_playbook.md)第 8 节
+危险进程操作纪律执行：精确 PID 三步（先 `ps -eo pid,ppid,cmd` 定位
+父 shell，先 kill 父 shell 防接力、再 kill python），严禁 `pkill -f`
+模糊模式（多臂管道共享组件名必跨臂误伤，且 ssh 命令字符串含模式会
+话即自杀 exit 255）；kill 后三验证（显存释放、残留进程清点、partial
+输出盘点），被打断格按隔离惯例登记并以 SKIP 幂等重派补跑。收官判定：
+best-file 口径逐格达期望行数，不满足不判收官。
 
 ### 阶段 5：判决落袋
 
