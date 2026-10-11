@@ -180,3 +180,5 @@ EXPL-BLOG-01：`workflows/explanation_patterns.md` → `scripts/sync_plugin_refe
 EXP-CONTAM-01：`agent_runtime/contamination.py` 由主 AI/可信宿主绑定运行身份、确认污染、停止读回、隔离与修复门禁；`agent_runtime/result_validation.py` / `result_store.py` 消费撤销记录；`tests/test_contamination.py` 验证 CPU 实际停止、无关进程保护及恢复。入口与边界见 `workflows/experiment_execution_contract.md`；不部署外部作业控制器。
 
 TOK-FIVE usage correctness: `scripts/token_optimizer.py::observe_parent_turn` -> `tick` receipt/state persistence; `tests/test_token_optimizer.py` exercises synthetic native transport, unknown/zero/invalid/partial handling. Root agent owns this source correction; independent review and CPU evidence: `agent_doc/results/token-usage-unknown-20261011/`. No provider billing or token savings claim.
+
+TOK-MAILBOX-PAGE: `agent_runtime/communication.py` inbox/inbox_index/CLI seek by immutable seq; `tests/test_mailbox_pagination.py` fixed long coverage/recovery fixture; `agent_doc/results/mailbox-pagination-20261011/` baseline/candidate local traces and independent validation. No ACK or provider accounting change.

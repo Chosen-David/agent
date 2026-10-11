@@ -74,3 +74,12 @@ flowchart TD
 ## 2026-10-09：独立复测补充与并发去重
 
 另一路独立工作完成CPP/MUTE/AgentPrune筛选和六场景Mailbox复测，见 [研究](../agent_doc/results/comm-pending-index-20261009/research.md) 与 [整合证据](../agent_doc/results/comm-pending-index-integration-20261009/report.md)。发布核对发现ab6cc59已实现等价待处理索引，因此保留其源码、测试和benchmark，仅合入本轮独立证据，不重复索引。两个索引候选仅名称不同，当前源码等价核对和数据适用范围见 [协调记录](../agent_doc/results/comm-pending-index-integration-20261009/publication_reconciliation.md)。
+
+
+## Pending pages without premature ACK
+
+`inbox` and `inbox-index` accept `--after-seq N` (API `after_seq=N`, default0). The index returns `after_seq` and `next_after_seq`: continue after the last included item, not the lookahead. An empty page keeps its cursor. Persist the cursor together with project/run/input-version/recipient/task scope; reset it when scope changes. Both SQL paths filter before LIMIT. Existing body SHA checks, budgets, routes, all event kinds and ACK rules remain unchanged.
+
+Pages are separate read snapshots. Appends and ACKs can change later pages; `has_more=false` describes only the current pending page, never global clearance. Poll again after the returned cursor for appended corrections, and use the original scope/cursor to retry interrupted work. Navigation does not mean an item was consumed or scientifically accepted. Read exact bodies and referenced evidence before decisions.
+
+Validated on a120-message synthetic long dossier: six20-item pages cover all120 without ACK; a deliberate page retry is accounted separately. The former no-cursor interface repeatedly exposed only the first20. Recovery transfers more total bytes because it now reads all bodies; no provider-token, caching, quality or cash-saving claim. [Code, replay and independent evidence](../agent_doc/results/mailbox-pagination-20261011/report.md).

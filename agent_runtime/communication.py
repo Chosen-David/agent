@@ -217,13 +217,17 @@ class Mailbox:
                 result.append(self._store_publish(db, event, body, recipients))
             return result
 
-    def inbox(self, recipient, *, limit=20, task_id=None):
+    def inbox(self, recipient, *, limit=20, task_id=None, after_seq=0):
         """Read pending deliveries, optionally for one host-selected routed task.
 
         Task selection never filters kinds or acknowledges other deliveries.
         It is not a global-clearance check: the coordinator still reads the
         unscoped inbox for cross-task dependencies and outstanding issues.
+        after_seq is navigation within this run/recipient/task, never an ACK.
+        Pages are separate snapshots; poll again for newly appended corrections.
         """
+        if type(after_seq) is not int or not 0 <= after_seq <= 2**63-1:
+            raise ValueError('after_seq must be a nonnegative SQLite sequence')
         if type(limit) is not int or not 1 <= limit <= 100:
             raise ValueError('limit must be 1..100')
         if recipient not in {r['recipient'] for r in self.plan['routes']}:
@@ -233,7 +237,7 @@ class Mailbox:
             raise ValueError('task_id must be an explicitly routed task for this recipient')
         # Filter before LIMIT, preserving order even after an unrelated backlog.
         scope_sql = " AND json_extract(e.body, '$.task_id')=?" if task_id is not None else ''
-        params = (self.run_id, recipient) + ((task_id,) if task_id is not None else ()) + (limit,)
+        params = (self.run_id, recipient, after_seq) + ((task_id,) if task_id is not None else ()) + (limit,)
         with self.connect() as db:
             # Exact ledger and inbox query share one read snapshot.
             db.execute('BEGIN')
@@ -244,16 +248,16 @@ class Mailbox:
             if count <= limit:
                 rows = db.execute('''SELECT e.seq,e.body FROM communication_events e
                     WHERE e.run_id=? AND EXISTS (SELECT 1 FROM communication_deliveries d
-                        WHERE d.seq=e.seq AND d.recipient=? AND d.receipt IS NULL)
+                        WHERE d.seq=e.seq AND d.recipient=? AND d.receipt IS NULL) AND e.seq>?
                     ''' + scope_sql + ' ORDER BY e.seq LIMIT ?', params).fetchall()
                 return [{'seq': r['seq'], 'event': json.loads(r['body'])} for r in rows]
             rows = db.execute('''SELECT e.seq,e.body FROM communication_events e
                 JOIN communication_deliveries d ON e.seq=d.seq
-                WHERE e.run_id=? AND d.recipient=? AND d.receipt IS NULL
+                WHERE e.run_id=? AND d.recipient=? AND d.receipt IS NULL AND d.seq>?
                 ''' + scope_sql + ' ORDER BY d.seq LIMIT ?', params).fetchall()
         return [{'seq': r['seq'], 'event': json.loads(r['body'])} for r in rows]
 
-    def inbox_index(self, recipient, *, limit=20, task_id=None, max_chars=20000):
+    def inbox_index(self, recipient, *, limit=20, task_id=None, max_chars=20000, after_seq=0):
         """Navigation only, from one pending-inbox snapshot; never auto ACK.
 
         Body versions permit read_pending() before semantic decisions. All kinds
@@ -263,7 +267,7 @@ class Mailbox:
             raise ValueError('index limit must be 1..99 (one lookahead required)')
         if type(max_chars) is not int or not 1 <= max_chars <= 1000000:
             raise ValueError('invalid index display budget')
-        deliveries = self.inbox(recipient, limit=limit + 1, task_id=task_id)
+        deliveries = self.inbox(recipient, limit=limit + 1, task_id=task_id, after_seq=after_seq)
         items = []
         for delivery in deliveries[:limit]:
             event = delivery['event']
@@ -273,6 +277,7 @@ class Mailbox:
         result = {'schema_version': 'mailbox-index/v1', 'project_root': str(self.root.resolve()),
                   'run_id': self.run_id, 'input_version': self.plan['input_version'],
                   'recipient': recipient, 'task_id': task_id, 'has_more': len(deliveries) > limit,
+                  'after_seq': after_seq, 'next_after_seq': items[-1]['seq'] if items else after_seq,
                   'items': items, 'scope': 'pending page navigation only; read exact bodies before decisions; no ACK or global clearance'}
         if len(canonical(result)) > max_chars:
             raise ValueError('index exceeds budget; request a smaller explicit page')
@@ -428,8 +433,10 @@ def main():
     p = sub.add_parser('publish-many'); p.add_argument('events', type=Path)
     p = sub.add_parser('inbox'); p.add_argument('recipient'); p.add_argument('--limit', type=int, default=20)
     p.add_argument('--task-id', help='host-selected routed task; not global pending clearance')
+    p.add_argument('--after-seq', type=int, default=0, help='continue after this sequence; not ACK or clearance')
     p = sub.add_parser('inbox-index'); p.add_argument('recipient'); p.add_argument('--limit', type=int, default=20)
     p.add_argument('--task-id'); p.add_argument('--max-chars', type=int, default=20000)
+    p.add_argument('--after-seq', type=int, default=0, help='scope-bound pending-page cursor')
     p = sub.add_parser('read-pending'); p.add_argument('recipient'); p.add_argument('seq', type=int)
     p.add_argument('--body-sha256', required=True)
     p = sub.add_parser('ack'); p.add_argument('recipient'); p.add_argument('seq', type=int); p.add_argument('receipt', type=Path)
@@ -443,7 +450,7 @@ def main():
     try:
         box = Mailbox(args.db, _load_json(args.plan), args.root)
         if args.command == 'inbox-index':
-            result = box.inbox_index(args.recipient, limit=args.limit, task_id=args.task_id, max_chars=args.max_chars)
+            result = box.inbox_index(args.recipient, limit=args.limit, task_id=args.task_id, max_chars=args.max_chars, after_seq=args.after_seq)
         elif args.command == 'read-pending':
             result = box.read_pending(args.recipient, args.seq, args.body_sha256)
         elif args.command == 'publish':
@@ -451,7 +458,7 @@ def main():
         elif args.command == 'publish-many':
             result = box.publish_many(_load_json(args.events))
         elif args.command == 'inbox':
-            result = box.inbox(args.recipient, limit=args.limit, task_id=args.task_id)
+            result = box.inbox(args.recipient, limit=args.limit, task_id=args.task_id, after_seq=args.after_seq)
         elif args.command == 'ack':
             box.acknowledge(args.recipient, args.seq, _load_json(args.receipt)); result = {'acknowledged': True}
         elif args.command == 'consume':
