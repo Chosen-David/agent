@@ -60,3 +60,7 @@ For each testing/experiment round that produces data, follow `workflows/result_v
 ## Causal task decomposition
 
 When planning or revising a task chain, follow [causal task orchestration](workflows/causal_task_orchestration_workflow.md): split independent predecessor work, admit ready children against actual authorized capacity, pipeline verified subsets, and join complete required evidence before global conclusions. Preserve causal dependencies, per-result verification, stable identities and single-writer ownership; workflow publication does not deploy GPU scheduling.
+
+## Confirmed experiment contamination
+
+When the main AI confirms a defect affects an active experiment, immediately stop only the bound affected job, even near completion. Follow `workflows/experiment_execution_contract.md` contamination handling: revoke first, verify actual exit/fencing, recoverably quarantine active results and dependent references, validate the repair, then use fresh identities/caches within existing authorization. Suspicion is not confirmation; missing external job control must be reported honestly. `agent_runtime.contamination` is a trusted host API, not an installed scheduler.

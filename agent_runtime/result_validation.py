@@ -181,6 +181,8 @@ def validate_result_plan(plan):
 
 def _snapshot(root, contract):
     validate_contract(contract)
+    from .contamination import assert_not_revoked
+    assert_not_revoked(root, result_id=contract['result_id'])
     plan_bytes = _bound(root, contract['validation_plan'])
     plan = _json(plan_bytes)
     _need(plan.get('schema_version') == 'experiment-validation-plan/v1' and
@@ -193,6 +195,7 @@ def _snapshot(root, contract):
               'explicit procedure, acceptance and applicability required: ' + name)
     raw = _bytes(root, contract['manifest_path'])
     manifest = _json(raw)
+    assert_not_revoked(root, result_id=contract['result_id'], run_id=manifest.get('run_id'))
     _need(manifest.get('schema_version') == 'experiment-result/v1', 'experiment-result/v1 required')
     for field in ('result_id', 'producer_task_id', 'producer_actor', 'scope'):
         _need(manifest.get(field) == contract[field], 'result identity/scope mismatch: ' + field)

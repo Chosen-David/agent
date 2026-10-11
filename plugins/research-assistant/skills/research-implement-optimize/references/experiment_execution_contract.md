@@ -95,3 +95,39 @@ plan 用新鲜、严格解析的 `nvidia-smi` 快照，在授权 UUID 清单内�
 执行前绑定 agent_doc/task/TASK.md 的需求、意图 memory_refs、输入/脚本/配置版本与计时范围。相同实验协议复用一个参数化入口；dataset/seed/method/output_root 等作为配置，结果存唯一 run 目录，不复制脚本改常量。输出应保留复现命令、环境、实际调用参数、原始日志、汇总与结论限制；脚本复用不授权改变科学协议。
 
 收到用户纠正时读取项目记忆纠错契约，先隔离受影响结论与待执行依赖，保留旧测量。可复用的观测先按新目标重新验收，再新建派生分析；无法复用的只重跑受影响部分。自我反思发现替代方案时先保留提案，完成用户 TASK 基线后才在有授权/预算/真实监督条件的 agent/<task>/<run> 隔离分支测试；用数据比较，不改旧基线来制造提升。
+
+## 已证实污染：立即停止、隔离、验证后恢复
+
+主 AI 一旦证实正在运行的脚本存在**会影响本次运行结果**的缺陷，立即停止受影响作业，即使快收尾也不等它完成。待核怀疑先做最小确认，已证实但不影响当前代码/配置/数据的缺陷不触发停止；不以“可能有 bug”误杀无关作业。不使用整链 `Store.cancel` 冒充单作业停止。
+
+主 AI 在派发前固定 run ID、result ID/依赖结果、task_refs、实际执行源码（含 dirty diff/快照）、配置、数据身份与主机/调度器不可复用 job ID，或持有的 pidfd；裸 PID、进程名、GPU 空闲截图不能证明归属。宿主确认缺陷证据及影响范围后，先撤销有效结果资格，紧接着停止精确作业并读回所有 rank/子进程/写入者和自动重试均已停止或被 fencing 阻断。停止请求、取消标记、终端断开不算退出；失败/超时/身份不匹配记 blocked，保留证据并升级给主 AI，不清理仍在写的数据，不重跑。
+
+完整 checkout 提供 `agent_runtime.contamination.Contamination`，复用现有写入守卫与结果门禁：
+
+```python
+from agent_runtime.contamination import Contamination
+
+control = Contamination(project_root, authorize=host.authorize_contamination)
+bound = control.bind(binding)  # 启动前，host保留的真实job身份与全部输出/引用闭包
+# 主 AI 或既有 task_supervisor adapter 的 maintain 收到实际确认事件时调用：
+incident = control.contain(bound['run_id'], finding,
+                          confirm=host.confirm_defect, stop=host.stop_exact_job)
+# 只有 quarantined 后才能修复、独立核验并冻结 replacement；这里不启动它：
+replacement = control.prepare_replacement(bound['run_id'], new_binding,
+                                           verify_fix=host.verify_repair)
+# 后续通过原已授权调度器启动，并继续 producer → verify_experiment_result → consumer。
+```
+
+`binding` 字段：`run_id`、`result_ids`（本轮及实际受影响派生结果的完整闭包）、`task_refs`、`job`、`code/config/data`（各为非空 path/sha256 列表）、`owned_paths`、`inventory_complete=true`。`authorize(action,binding)` 由可信宿主核查归属、闭包完整性及当前资源预算，精确返回 True；JSON 的声明本身不证明授权。action 为 bind/contain/stop/quarantine/rerun。应登记不可变源码快照与数据版本，不把后来工作树当旧运行源码。
+
+`finding` 包含 `status=confirmed`、`affects_run=true`、`reason` 和 `evidence:[{path,sha256}]`。`confirm(binding,finding)` 实际检查证据与运行适用性后返回确切 `identity_sha256`；不是接受 worker 自填 pass。`stop(binding)` 必须执行幂等且有期限的真实取消，返回 `{job:原确切job对象, stopped:true, fenced:true, source:真实读回证据}`。同机 PID 应使用 pidfd 或调度器实例令牌，不能按名称、端口或裸PID广泛 kill。这个 Python API 不抢占挂起回调，超时/子进程/多机终止由现有宿主适配器负责。
+
+隔离只移动登记的 run 专属命名空间：`agent_doc/results/.../<run_id>/...` 或 `.agent-runs/.../<run_id>/...`；包括原始/部分结果、有效指标入口、排行榜条目、派生分析、缓存和完成标记。全部路径启动前须不存在，禁止复用旧缓存。共享排行榜应由原系统改为逐 run 条目，或由其已有事务接口精确撤销对应行；不得把含其他运行的整个表移走。外部/共享引用不能由本 API 自动发现或删除，宿主无法证明完整闭包时不得授权 bind/quarantine/rerun，须先完成原系统的精确撤销。多个受影响运行分别绑定/停止，不能一个回执代替所有作业。
+
+`.agent-runs/contamination/` 保留冻结身份、最小失效原因/影响范围、停止读回、证据副本和 source→quarantine 对照。文件只 rename，不不可恢复删除；部分移动失败可在同事件下恢复，源和隔离副本同时出现则阻塞。恢复证据可从对照复制到**新的取证路径**，不能把它放回有效结果入口；旧 run/result 永久撤销，不自动撤销污染判定。该状态目录是门禁依据，必须与结果一起备份/保留，不能把它当可清空缓存。无端到端宿主安装、恶意同权限写入防护或分布式事务保证。
+
+既有 `inspect_result` 在独立验证前/后检查撤销，生产者 `_snapshot`、下游 `required_result_refs` 和 ResultStore 复用判定共同拒绝旧结果，即使旧 manifest/验证 pass 未变。导出到外部系统的旧副本仍需要该系统的实际撤销，不宣称文件门禁已控制它。修复必须改变冻结 code/config，独立检查实际修复与回归并返回新身份；重新核对授权，冻结新 run/result/job 和空输出/缓存，再由原调度器重跑。不得继承污染完成标记，不因重跑增加 GPU 或付费预算；最终数据仍需现有独立验收。
+
+仅安装 Prompt/Skill 只能表达此行为契约，不会获得宿主取消作业、操作外部排行榜或控制其他会话的能力。CPU 回归通过也不等于真实模型、GPU 或外部调度器验证。
+
+同一污染事件只预留一次 replacement；验证失败不预留，预留后进程中断或 bind 失败须核对该候选，不能换 ID 重复派发。恢复状态仅承诺受支持调用的进程重启恢复，不承诺断电级多文件事务。若撤销存储首次写入失败，仍尽力精确停止并返回 `durable=false`/blocked；宿主先恢复持久门禁，禁止消费、清理或重跑。

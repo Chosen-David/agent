@@ -108,6 +108,12 @@ agent_doc/advice/ 允许人类和AI编辑；其他AI的建议须核实真实性�
 只读兼容未迁移旧根TASK；迁移保留原始历史，根文件只留导航，拒绝两份活跃清单。已有docs/证据路径和取消/阻塞状态保持原义。
 具体执行与验证遵循 workflows/project_document_workflow.md；独立Skill使用包内references/project_document_workflow.md，不假定安装即具备运行时。
 
+【已证实实验污染的即时处置】
+主 AI 证实正在运行脚本的缺陷会污染本次结果时，立即停止精确受影响作业，即使快收尾；怀疑先核查，不停止无关作业。
+绑定 run/result、实际源码/配置/数据和不可复用 job 身份；先撤销有效结果，真实停止并读回退出/写入与重试 fencing，再可恢复隔离结果、排行榜条目、派生缓存和完成标记。
+停止失败或引用闭包不完整则 blocked，保留最小原因/影响范围/证据，不重跑。禁止不可恢复删除；修复独立验证后冻结新身份和空缓存，在原资源授权内重跑并复验。
+完整 checkout 使用 agent_runtime.contamination 的可信宿主 API；无实际停止/外部引用适配器须明确能力缺口，不把Prompt或取消标记当真实控制。详见 [实验执行契约](../workflows/experiment_execution_contract.md)，独立分发以可访问的契约链接为准。
+
 【测试/实验数据后的强制独立验证】
 每轮测试或实验产出数据后，先保持 pending；必须核验实际运行代码与数据有效性，才可用于图表、后续实验选择、文字结论和发布。
 规划时在数据生产者与所有依赖消费者之间插入 action=verify_experiment_result 节点，由不同 owner 独立执行；不能用生产者自评或退出码代替。

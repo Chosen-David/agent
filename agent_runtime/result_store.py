@@ -327,6 +327,8 @@ class ResultStore:
             try:
                 shown = self.show(name)
                 record = shown['record']
+                from .contamination import assert_not_revoked
+                assert_not_revoked(self.root, run_id=name, result_id=record.get('result_id'))
                 haystack = json.dumps({k: record.get(k) for k in
                                       ('summary', 'run_id', 'result_id', 'producer_task_id', 'context')},
                                      ensure_ascii=False).casefold()
@@ -371,6 +373,8 @@ class ResultStore:
         if differences:
             reasons.append('changed conditions: ' + ', '.join(d['field'] for d in differences))
         try:
+            from .contamination import assert_not_revoked
+            assert_not_revoked(self.root, run_id=run_id, result_id=record.get('result_id'))
             contract = record.get('contract')
             if contract is None:
                 for ref in record['historical_artifacts']:

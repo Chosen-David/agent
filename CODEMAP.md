@@ -176,3 +176,5 @@ COMM-BATCH-01: `agent_runtime/communication.py::publish_many` 与 `publish-many`
 TOK-007：gent_runtime/codex_skill_scope.py / scripts/codex_skill_scope.py 是可信宿主明确技能排除入口，	ests/test_codex_skill_scope.py 验证完整行/默认/必需/配置及真实只读CLI边界。机器输出给新线程config，不复制给模型；当前项目request/root绑定，未知技能与权限保留。短对照/独立证据在 gent_doc/results/token-007-skills-20261010/，接入说明 docs/token_optimization/skill_scope.md。
 
 EXPL-BLOG-01：`workflows/explanation_patterns.md` → `scripts/sync_plugin_references.py` → 讲解/伴读/绘图六个 skill 的按需参考；`agent_doc/results/concept-teaching-20261010/` 保留同题试讲、图源与独立检查。范例表达方法不等于真实学习效果数据。
+
+EXP-CONTAM-01：`agent_runtime/contamination.py` 由主 AI/可信宿主绑定运行身份、确认污染、停止读回、隔离与修复门禁；`agent_runtime/result_validation.py` / `result_store.py` 消费撤销记录；`tests/test_contamination.py` 验证 CPU 实际停止、无关进程保护及恢复。入口与边界见 `workflows/experiment_execution_contract.md`；不部署外部作业控制器。
