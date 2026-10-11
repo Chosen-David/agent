@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.centered-covariance-merge",
+      "version": 1,
+      "sha256": "f9ebd428b6fd9f78ac667a6a2419e277c5d8ca1731d3e5357b25a9a62f7a9b28",
+      "title": "中心化协方差、可合并散布统计量与误差桥",
+      "summary": "区分二阶矩与中心协方差；按计数/均值/散布精确合并，避免遗漏组间项；统计保证与浮点稳定性分别审查。",
+      "status": "published",
+      "assumptions": [
+        "有限实向量，同维度/坐标/单位和相同预处理；精确恒等式不要求iid",
+        "A、B为不重复不遗漏的数据分区，计数为非负整数；空分区用单位元，不定义空均值",
+        "C_n=S/n对n≥1；S/(n−1)只对n≥2，称总体协方差无偏还需iid及有限二阶矩",
+        "概率误差桥需已证明的均值和二阶矩误差事件；合并公式不赋予独立性或覆盖保证",
+        "浮点不具有严格结合律；需单独检查输入精度、溢出、抵消及舍入误差"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-centering/verify.py",
+          "docs/knowledge_learning/2026-10-07-centering/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "协方",
+            "方差"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "协方",
+            "方差"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "协方",
+            "方差"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "协方",
+            "方差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "协方",
+            "方差",
+            "无偏",
+            "权重",
+            "相关"
+          ]
+        }
+      ],
+      "score": 39
+    },
+    {
+      "id": "math.dependent-mean-variance",
+      "version": 1,
+      "sha256": "03813de91ef8891cba4b6bcf95b9cb878ed4475533d5c430e582376c51ff4302",
+      "title": "依赖样本均值方差与目标专属有效样本量",
+      "summary": "从完整协方差计算固定n的均值方差；有效样本量只匹配该目标的方差，不证明独立性、高斯尾或二阶矩/子空间可靠性。",
+      "status": "published",
+      "assumptions": [
+        "n≥1事先固定；实标量过程有共同均值µ与有限二阶矩，协方差指真实模型量",
+        "平稳简式还要求γ_h=Cov(X_t,X_(t+h))不依赖t；γ0>0，负相关允许",
+        "AR(1)特例要求因果平稳初始化、|phi|<1及独立同分布零均值有限方差创新；不是从lag1估计直接得整个模型",
+        "高斯尾和平方相关公式额外要求联合高斯；平方例还要求µ=0，不能仅凭高斯边缘",
+        "样本ACF/phi/方差估计无本条误差认证；均值漂移、自适应抽样和停止时间需要另证"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-dependence/verify.py",
+          "docs/knowledge_learning/2026-10-07-dependence/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "方差"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "方差",
+            "相关"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "方差",
+            "相关"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "协方",
+            "方差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "协方",
+            "方差",
+            "无偏",
+            "相关"
+          ]
+        }
+      ],
+      "score": 33
+    },
+    {
+      "id": "math.gaussian-quadratic-energy",
+      "version": 1,
+      "sha256": "3580b149aab06433446fe8734f10b71e7e50455df4dec80b8b0bfa68e4ba9b3f",
+      "title": "高斯二次能量的谱尾界与相关样本二阶矩",
+      "summary": "联合高斯、固定PSD能量的误差同时依赖谱平方和及最大特征值；在已知可分离依赖模型下转换为保守协方差谱界，不以均值ESS或边缘正态代替前提。",
+      "status": "published",
+      "assumptions": [
+        "x联合零均值高斯、真实确定C=Cov(x)≥0；A为固定实对称PSD，随机但独立A仅允许条件化后另核查",
+        "t>0；B=C^(1/2)AC^(1/2)，范数为欧氏算子范数；B=0单独处理；非PSD/非零均值另证",
+        "矩阵迁移限定X=T^(1/2)GΣ^(1/2)，G的元素独立标准正态，T≥0且diag(T)=1，Σ≥0；n,d及抽样协议固定",
+        "谱界用真实确定tr(T²)、||T||和有效BΣ≥||Σ||；经验估计无误差认证不能代入",
+        "均值未知/样本中心化、同数据选投影、自适应停止、非可分离外积相关和真实token模型不由本条认证"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-quadratic/verify.py",
+          "docs/knowledge_learning/2026-10-07-quadratic/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "相关"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "相关"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "相关"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "协方",
+            "方差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "协方",
+            "方差",
+            "相关"
+          ]
+        }
+      ],
+      "score": 23
+    }
+  ]
+}
