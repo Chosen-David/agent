@@ -201,6 +201,14 @@ MAPPINGS['workflows/project_document_workflow.md'] = [
 # Target-project task-link examples must remain relative and executable offline.
 RAW_COPY_SOURCES.add('workflows/project_document_workflow.md')
 
+# The byte-exact project-document contract links ../docs/... from references/.
+# Bundle that existing navigation document in every consuming standalone skill;
+# its own repository evidence links use the normal renderer's canonical URLs.
+MAPPINGS['docs/token_optimization/advice_meetings.md'] = [
+    (Path(destination).parent.parent / 'docs/token_optimization/advice_meetings.md').as_posix()
+    for destination in MAPPINGS['workflows/project_document_workflow.md']
+]
+
 # One access contract, bundled locally for every registered role.
 MAPPINGS['workflows/knowledge_access_workflow.md'] = [
     (Path(role['skill']).parent / 'references/knowledge_access_workflow.md').as_posix()

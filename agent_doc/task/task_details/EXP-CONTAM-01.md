@@ -11,6 +11,10 @@ Date: 2026-10-11
 
 验收：确认/未证/无关作业、部分结果、缓存失效、停止失败/部分移动恢复、修复验证/新身份，以及现有消费者门禁。CPU 实际子进程停止验证；完整 unittest、reader 与同步检查。独立检查之后刷新远端，整合并发、复测、只暂存直接相关文件、非 force 推送并读回 SHA/内容/CI。没有必需证据不标完成。
 
+### 授权范围修订：发布必需的已有文件打包
+
+后续用户明确授权：仅通过现有 sync_plugin_references.py 把 canonical advice_meetings.md 按既有相对路径分发到消费该链接的独立技能，并刷新 project_docs.py、coverage.json、learning_state.json 镜像；不改 canonical 科学内容、知识引擎、旧查询或测试，不重做 advice 框架。此前六条基线失败现在是本任务获准处理的直接发布依赖。仍需独立审查、完整回归、刷新整合 main、非 force 发布与远端/CI读回；若失败更新同一 Library 候选。
+
 ## Progress
 
 2026-10-11：初始 work checkout 干净，fetch 后 fast-forward bcfb0ec → f11cc4b。未发现 checkout .agents/skills；只读相关源码 Skill，guide/GUIDE.md 为空。唯一索引无同主题任务，相关历史检索 `experiment contamination invalidation stop` 实际扫描141轮，词汇候选为语料/通信旧结果，任务与运行身份不匹配，不复用。部分旧记录缺失如实保留，不修无关档案。现有 TASK 未完成历史工作不冒领。
