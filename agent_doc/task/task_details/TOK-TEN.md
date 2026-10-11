@@ -28,3 +28,7 @@ Explicit identical-target alias avoids replaying the empty splice and redundant 
 ### Round 2: accepted, publication pending
 
 Bounded multiple artifact edits avoid reinjecting their unchanged middle. Native total 18074 -> 18050, saving 24 tokens in the fixed short scope; 22 independently rerun affected checks. [Acceptance](../../results/token-ten-2-20261011/acceptance.json). Ordinary main readback is required before success accounting; receipt is retained by the host.
+
+### Round 3: accepted, publication pending
+
+One explicit whitespace-only compact serializer across task/log/advice/knowledge context CLIs. Native total 18019 -> 17879, saving 140 tokens in the fixed short scope; 27 independently rerun affected checks. [Acceptance](../../results/token-ten-3-20261011/acceptance.json). Ordinary main readback is required before success accounting; receipt is retained by the host.

@@ -162,7 +162,7 @@ MAPPINGS['workflows/knowledge_modeling_workflow.md'] = [
     'plugins/research-assistant/skills/research-assistant/references/knowledge_modeling_workflow.md',
 ]
 MAPPINGS['docs/knowledge_upstreams.md'] = [KNOWLEDGE_SKILL + '/references/upstreams.md']
-for module in ('knowledge.py', 'knowledge_index.py', 'knowledge_ingest.py', 'knowledge_reuse.py', 'project_docs.py'):
+for module in ('knowledge.py', 'knowledge_index.py', 'knowledge_ingest.py', 'knowledge_reuse.py', 'project_docs.py', 'context_serialization.py'):
     MAPPINGS['agent_runtime/' + module] = [KNOWLEDGE_SKILL + '/scripts/' + module]
 for source_path in sorted((ROOT / 'knowledge').rglob('*')):
     if source_path.is_file() and source_path.suffix in {'.md', '.json', '.txt'}:

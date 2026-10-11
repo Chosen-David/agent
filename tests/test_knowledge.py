@@ -228,9 +228,14 @@ class KnowledgeTests(unittest.TestCase):
         for p in canonical: self.assertEqual((ROOT/'knowledge'/p).read_bytes(),(bundled/p).read_bytes())
         self.assertEqual((ROOT/'agent_runtime/knowledge.py').read_bytes(),(SKILL/'scripts/knowledge.py').read_bytes())
         isolated=self.project/'skill';shutil.copytree(SKILL,isolated)
-        cmd=[sys.executable,'-I',str(isolated/'scripts/knowledge.py'),'--root',str(isolated/'assets/knowledge')]
+        cmd=[sys.executable,'-X','utf8','-I',str(isolated/'scripts/knowledge.py'),'--root',str(isolated/'assets/knowledge')]
         result=subprocess.run(cmd+['show','math.topk-margin'],cwd=self.project,capture_output=True,text=True)
         self.assertEqual(result.returncode,0,result.stderr)
+        default_show = result.stdout
+        compact = subprocess.run(cmd+['--compact','show','math.topk-margin'],cwd=self.project,capture_output=True,text=True)
+        self.assertEqual(compact.returncode,0,compact.stderr)
+        self.assertEqual(json.loads(default_show),json.loads(compact.stdout))
+        self.assertLess(len(compact.stdout),len(default_show))
         refs=json.loads(result.stdout)['knowledge_refs']
         (self.project/'refs.json').write_text(json.dumps({'knowledge_refs':refs}))
         result=subprocess.run(cmd+['check-refs',str(self.project/'refs.json')],cwd=self.project,capture_output=True,text=True)

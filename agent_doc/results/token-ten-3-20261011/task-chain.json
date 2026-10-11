@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-TEN-3-produce",
+      "owner": "native-token-ten-producer",
+      "action": "short_native_fixture",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-ten-3-20261011",
+        "producer_task_id": "TOK-TEN-3-produce",
+        "producer_actor": "native-token-ten-producer",
+        "manifest_path": "agent_doc/results/token-ten-3-20261011/manifest.json",
+        "scope": "One structured pending-context fixture with identical parsed payload in pretty/compact JSON; preserves blockers, Unicode and nested values; fresh short turns only, no multi-turn/deployment/cash claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-ten-3-20261011/validation-plan.json",
+          "sha256": "b5c15dbbddd44dda24705a0125a52394bc387a23d1b915127ab4800dc1dd3b4c"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-TEN-3-verify",
+      "owner": "host-token-ten-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-TEN-3-produce"
+      ],
+      "result_validation": {
+        "result_id": "token-ten-3-20261011",
+        "producer_task_id": "TOK-TEN-3-produce",
+        "producer_actor": "native-token-ten-producer",
+        "manifest_path": "agent_doc/results/token-ten-3-20261011/manifest.json",
+        "scope": "One structured pending-context fixture with identical parsed payload in pretty/compact JSON; preserves blockers, Unicode and nested values; fresh short turns only, no multi-turn/deployment/cash claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-ten-3-20261011/validation-plan.json",
+          "sha256": "b5c15dbbddd44dda24705a0125a52394bc387a23d1b915127ab4800dc1dd3b4c"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-TEN-3-publish",
+      "owner": "main-ai",
+      "action": "publish_upgrade",
+      "depends_on": [
+        "TOK-TEN-3-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-ten-3-20261011",
+          "producer_task_id": "TOK-TEN-3-produce",
+          "producer_actor": "native-token-ten-producer",
+          "manifest_path": "agent_doc/results/token-ten-3-20261011/manifest.json",
+          "scope": "One structured pending-context fixture with identical parsed payload in pretty/compact JSON; preserves blockers, Unicode and nested values; fresh short turns only, no multi-turn/deployment/cash claim",
+          "validation_plan": {
+            "path": "agent_doc/results/token-ten-3-20261011/validation-plan.json",
+            "sha256": "b5c15dbbddd44dda24705a0125a52394bc387a23d1b915127ab4800dc1dd3b4c"
+          }
+        }
+      ]
+    }
+  ]
+}

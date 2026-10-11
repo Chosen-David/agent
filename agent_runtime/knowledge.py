@@ -386,8 +386,13 @@ def check_handoff_knowledge(root, record, request):
 
 
 def main(argv=None):
+    if __package__:
+        from .context_serialization import render_context
+    else:
+        from context_serialization import render_context
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', required=True, help='explicit knowledge directory')
+    parser.add_argument('--compact', action='store_true',help='preserve every JSON field without pretty-print whitespace')
     sub = parser.add_subparsers(dest='command', required=True)
     sub.add_parser('validate')
     sub.add_parser('snapshot')
@@ -494,7 +499,7 @@ def main(argv=None):
             if args.command == 'snapshot':
                 out['knowledge_refs'] = [store.ref(k) for k in sorted(store.records)
                                          if store.records[k]['status'] == 'published']
-        print(json.dumps(out, ensure_ascii=False, indent=2))
+        print(render_context(out,compact=args.compact,indent=2))
         return 0
     except (KnowledgeError, OSError, ValueError, TypeError, RecursionError, sqlite3.DatabaseError) as exc:
         print(json.dumps({'error': str(exc)}, ensure_ascii=False), file=sys.stderr)
