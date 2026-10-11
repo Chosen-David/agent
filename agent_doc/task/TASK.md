@@ -386,6 +386,9 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-11
 
+- [ ] [TOK-FIVE] Five short native token optimization rounds, then one hourly optimizer; per-round evidence in details. ([detail](task_details/TOK-FIVE.md))
+
+
 - [ ] [TOK-010] Maintenance gate/independent CPU checks published; native token trial blocked at99% quota, count remains9/100. ([detail](task_details/TOK-010.md))
 
 - [x] [MATH-80] Existing aggregation documents registered as unknown-validation history; public discovery/refusal checks only. ([detail](task_details/MATH-80.md))
