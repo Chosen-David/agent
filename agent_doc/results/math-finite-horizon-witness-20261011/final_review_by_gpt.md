@@ -1,0 +1,11 @@
+**APPROVE — ordinary document review only. No blocking findings.**
+
+Reviewed the actual advice, MATH-84 detail, report and metadata, and current repository diff. No edits, tests, scientific runs or delegation performed.
+
+- The finite telescoping identity and resulting \(M_K\) lower bound are correct. Lower \(\ell\), upper \(u\), and upper coefficient enclosures have the correct conservative directions. The strictly positive denominator handles true zero residual without division by residual.
+- All six analytic cases check out. In case 1, the rational bound and strict inequality \(43008<59049\) are correct; the one-step gain is \(65/4\). Cases 2–4 correctly distinguish zero residual, zero-time maxima and specified trajectories.
+- Case 5 is a valid stronger counterexample: the Frobenius square is \(0.51000001<1\), so every positive power contracts; the given SPD Hessian and positive diagonal preconditioner produce exactly \(J\). Its spectrum is simple, its displayed eigenbasis has condition number \(\sqrt{1000}\), and \(b^2\ne c^2\) establishes nonnormality. Thus \(\kappa(V)\rho(J)>1\) does not imply actual amplification.
+- Primary HTML confirms Oxford’s different finite-window formula and unpublished-note attribution. Ghosh III.1 supplies an upper bound; III.4 asserts the disputed sufficiency and onset interpretation. The supplied counterexample supports this targeted rejection. The observed v1 submission date and HTML date discrepancy are accurately recorded. genui{"citation":{"refs":["turn555view0","turn556view0","turn556view1"]}}
+- Current diff is confined to the new candidate/results/detail, appended TASK entry, coverage gap and learning history. No tracked deletions or guide/runtime/canonical-card modifications appear. This is a narrow diff inspection, not independent recomputation of the metadata’s 8,807-file preservation count.
+
+Nonblocking closeout items: reconcile final review counters, wall time, pending report/TASK wording and retained review evidence. Complete the parent’s expected-head publication and remote readback checks before claiming publication. Keep acceptance explicitly limited to document correctness; production/model/science acceptance remains deferred.
