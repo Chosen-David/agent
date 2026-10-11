@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-TEN-5-produce",
+      "owner": "native-token-ten-producer",
+      "action": "short_native_fixture",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-ten-5-20261011",
+        "producer_task_id": "TOK-TEN-5-produce",
+        "producer_actor": "native-token-ten-producer",
+        "manifest_path": "agent_doc/results/token-ten-5-20261011/manifest.json",
+        "scope": "One complete bound log with repeated pending observations and both blockers; fresh short turns only, no task-success/cash claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-ten-5-20261011/validation-plan.json",
+          "sha256": "5620a43f84e5e23e3c66092ed70b1969457ea14226ce6b187dd05bcf19eaf81c"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-TEN-5-verify",
+      "owner": "host-token-ten-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-TEN-5-produce"
+      ],
+      "result_validation": {
+        "result_id": "token-ten-5-20261011",
+        "producer_task_id": "TOK-TEN-5-produce",
+        "producer_actor": "native-token-ten-producer",
+        "manifest_path": "agent_doc/results/token-ten-5-20261011/manifest.json",
+        "scope": "One complete bound log with repeated pending observations and both blockers; fresh short turns only, no task-success/cash claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-ten-5-20261011/validation-plan.json",
+          "sha256": "5620a43f84e5e23e3c66092ed70b1969457ea14226ce6b187dd05bcf19eaf81c"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-TEN-5-publish",
+      "owner": "main-ai",
+      "action": "publish_upgrade",
+      "depends_on": [
+        "TOK-TEN-5-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-ten-5-20261011",
+          "producer_task_id": "TOK-TEN-5-produce",
+          "producer_actor": "native-token-ten-producer",
+          "manifest_path": "agent_doc/results/token-ten-5-20261011/manifest.json",
+          "scope": "One complete bound log with repeated pending observations and both blockers; fresh short turns only, no task-success/cash claim",
+          "validation_plan": {
+            "path": "agent_doc/results/token-ten-5-20261011/validation-plan.json",
+            "sha256": "5620a43f84e5e23e3c66092ed70b1969457ea14226ce6b187dd05bcf19eaf81c"
+          }
+        }
+      ]
+    }
+  ]
+}

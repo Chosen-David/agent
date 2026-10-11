@@ -6,7 +6,7 @@ from .maintenance_observer import read_bound
 
 def log_view(root, path, expected_sha256, *, needles=(), head=2, tail=2, context=1, max_chars=20000, encoding='lines'):
     root=_root(root)
-    if encoding not in ('lines','chunks'):
+    if encoding not in ('lines','chunks','runs'):
         raise ValueError('unknown log encoding')
     if type(expected_sha256) is not str or re.fullmatch('[0-9a-f]{64}',expected_sha256) is None:
         raise ValueError('source SHA256 required')
@@ -34,9 +34,18 @@ def log_view(root, path, expected_sha256, *, needles=(), head=2, tail=2, context
            'literal_match_line_counts':counts,'total_lines':len(lines),'omitted_lines':len(lines)-len(keep),
            'lines':[{'line':i+1,'text':lines[i]} for i in sorted(keep)],
            'scope':'partial display only; retrieve omitted lines from exact source; no proof of success or absence of errors'}
-    if encoding=='chunks':
+    if encoding in ('chunks','runs'):
         if sum(len(row['text']) for row in value['lines'])>max_chars:
             raise ValueError('selected log exceeds budget; no silent truncation')
+    if encoding=='runs':
+        runs=[];last=0
+        for row in value.pop('lines'):
+            if runs and row['line']==last+1 and row['text']==runs[-1]['text']:
+                runs[-1]['count']+=1
+            else:runs.append({'start':row['line'],'count':1,'text':row['text']})
+            last=row['line']
+        value.update(encoding='runs',runs=runs)
+    elif encoding=='chunks':
         chunks=[];parts=[];end=0;start=0
         for row in value.pop('lines'):
             if parts and row['line']!=end+1:
@@ -61,10 +70,10 @@ def restore_log_lines(value, *, max_chars=1000000):
     if any(type(n) is not int or n<0 for n in (total,omitted)) or omitted>total:
         raise ValueError('invalid line counts')
     if value.get('encoding','lines')=='lines':
-        if 'chunks' in value:raise ValueError('ambiguous line encoding')
+        if 'chunks' in value or 'runs' in value:raise ValueError('ambiguous line encoding')
         rows=value.get('lines')
     elif value.get('encoding')=='chunks':
-        if 'lines' in value or type(value.get('chunks')) is not list:
+        if 'lines' in value or 'runs' in value or type(value.get('chunks')) is not list:
             raise ValueError('ambiguous chunk encoding')
         rows=[];last=0;used=0
         for chunk in value['chunks']:
@@ -79,6 +88,26 @@ def restore_log_lines(value, *, max_chars=1000000):
                 rows.append({'line':start+offset,'text':line})
                 if len(rows)>total-omitted:raise ValueError('too many restored lines')
             last=rows[-1]['line']
+    elif value.get('encoding')=='runs':
+        if 'lines' in value or 'chunks' in value or type(value.get('runs')) is not list:
+            raise ValueError('ambiguous run encoding')
+        rows=[];last=0;used=0
+        for run in value['runs']:
+            if type(run) is not dict or set(run)!={'start','count','text'}:
+                raise ValueError('invalid run')
+            start,count,text=run['start'],run['count'],run['text']
+            if type(start) is not int or type(count) is not int or not last<start<=total or not 1<=count<=total-start+1 or count>total-omitted-len(rows):
+                raise ValueError('invalid run range')
+            if type(text) is not str or not text:
+                raise ValueError('run must contain one exact line')
+            used+=count*len(text)
+            if used>max_chars:raise ValueError('restored log exceeds budget')
+            if text.splitlines(keepends=True)!=[text]:
+                raise ValueError('run must contain one exact line')
+            if count>1 and text[-1] not in '\n\r\v\f\x1c\x1d\x1e\x85\u2028\u2029':
+                raise ValueError('repeated line must retain terminator')
+            rows.extend({'line':start+i,'text':text} for i in range(count))
+            last=start+count-1
     else:raise ValueError('unknown log encoding')
     if type(rows) is not list or len(rows)!=total-omitted:
         raise ValueError('selected line count mismatch')

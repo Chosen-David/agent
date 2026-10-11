@@ -36,3 +36,7 @@ One explicit whitespace-only compact serializer across task/log/advice/knowledge
 ### Round 4: accepted, publication pending
 
 Opt-in contiguous log chunks preserving selected line positions, literal text and all scope metadata. Native total 18015 -> 17909, saving 106 tokens in the fixed short scope; 18 independently rerun affected checks. [Acceptance](../../results/token-ten-4-20261011/acceptance.json). Ordinary main readback is required before success accounting; receipt is retained by the host.
+
+### Round 5: accepted, publication pending
+
+Opt-in repeated-log-line runs preserve every occurrence and original position without repeating literal pending lines. Native total 18047 -> 17863, saving 184 tokens in the fixed short scope; 23 independently rerun affected checks. [Acceptance](../../results/token-ten-5-20261011/acceptance.json). Ordinary main readback is required before success accounting; receipt is retained by the host.
