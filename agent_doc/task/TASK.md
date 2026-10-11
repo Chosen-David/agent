@@ -393,3 +393,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-81] First-failure conditional risk/spending bounds and average-risk refusals; ordinary document scope only. ([detail](task_details/MATH-81.md))
 
 - [x] [MATH-82] Calibration-certificate confidence and selection/time scope composition; ordinary document checks passed. ([detail](task_details/MATH-82.md))
+
+- [x] [MATH-83] 固定线性系统残差下界与近期非正规诊断筛选：文档复核完成，生产迁移待验证 ([详情](task_details/MATH-83.md))

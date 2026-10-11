@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.discrete-lyapunov",
+      "version": 1,
+      "sha256": "008bae30d58fde0bd552a6fcda931e8e71a8ca9d9aeaa6dfa7d1e25dc4e2a7b5",
+      "title": "离散二次稳定性证书与非正规瞬态",
+      "summary": "固定有限实矩阵的Schur稳定等价唯一正定离散Lyapunov解；构造P范数收缩并保留欧氏条件数前因子，拒绝逐层谱半径认证切换系统。",
+      "status": "published",
+      "assumptions": [
+        "固定有限维实A，整数时间完整状态x_next=Ax；Schur稳定要求ρ(A)<1",
+        "实对称Q≻0和P≻0；半正定情形须另证，不能套严格稳定等价",
+        "扰动界必须与同一P范数相容；时变层或非线性域需另证统一增益/度量转换"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-discrete-lyapunov-20261009/verify.py",
+          "agent_doc/results/math-discrete-lyapunov-20261009/raw.json",
+          "agent_doc/results/math-discrete-lyapunov-20261009/independent_review_by_gpt.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "transient"
+          ]
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "math.perturbation-propagation",
+      "version": 1,
+      "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381",
+      "title": "有限复合映射的扰动传播与逐层误差预算",
+      "summary": "有已核实增益和同输入缺陷时，乘积加权传播局部误差；teacher缺陷与参考增益不能混用，经验吸收不是一致证书。",
+      "status": "published",
+      "assumptions": [
+        "有限复合映射/固定赋范空间，参考和近似轨迹实际输入均落在有效域",
+        "路线A参考F的输入增益及近似输入上同输入缺陷；路线B近似G的输入增益及参考输入缺陷，不混用",
+        "L与epsilon有限非负且范数/单位一致；全菜单保证需一致域/增益/缺陷覆盖全部可达状态"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Paired Markdown finite induction; nonformal; final publication requires independent review",
+          "doc/results/math-propagation-20261008/ CPU public fixtures only; no model/GPU"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "amplification"
+          ]
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "prob.conformal-policy-control",
+      "version": 1,
+      "sha256": "c80d9008b17bdac2f9c77995c4c490c476f7d72aba816e513ce395b41cdfb304",
+      "title": "Conformal Policy Control：非单调风险校准与近似权重的保证边界",
+      "summary": "ICML 2026 将校准作用于策略偏离程度；风险保证是带稳定性余项的边际期望界，精确多轮权重与实用近似须区分。",
+      "status": "published",
+      "assumptions": [
+        "loss: bounded loss in [0,B]; known acceptable-risk reference policy",
+        "policy: mutually absolutely continuous policies; computable likelihoods; stable context distribution",
+        "calibration: gCRC exchangeability plus Lipschitz/replace-one stability; CPC exact weighted calibration plus relative replace-one stability",
+        "guarantee: marginal expected risk, not per-context or high-probability safety"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-checked",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.conformal-policy-control"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "stable"
+          ]
+        }
+      ],
+      "score": 1
+    }
+  ]
+}
