@@ -6,10 +6,12 @@ not an agent launcher, authentication boundary or semantic acceptance engine.
 from __future__ import annotations
 
 import argparse
+import hashlib
 from contextlib import contextmanager
 import json
 from pathlib import Path
 import sqlite3
+import re
 
 from scripts.validate_handoff import _load_json, validate
 from .project_docs import guard_write_path
@@ -251,6 +253,50 @@ class Mailbox:
                 ''' + scope_sql + ' ORDER BY d.seq LIMIT ?', params).fetchall()
         return [{'seq': r['seq'], 'event': json.loads(r['body'])} for r in rows]
 
+    def inbox_index(self, recipient, *, limit=20, task_id=None, max_chars=20000):
+        """Navigation only, from one pending-inbox snapshot; never auto ACK.
+
+        Body versions permit read_pending() before semantic decisions. All kinds
+        remain visible. has_more describes this selected page, not global closure.
+        """
+        if type(limit) is not int or not 1 <= limit <= 99:
+            raise ValueError('index limit must be 1..99 (one lookahead required)')
+        if type(max_chars) is not int or not 1 <= max_chars <= 1000000:
+            raise ValueError('invalid index display budget')
+        deliveries = self.inbox(recipient, limit=limit + 1, task_id=task_id)
+        items = []
+        for delivery in deliveries[:limit]:
+            event = delivery['event']
+            items.append({'seq': delivery['seq'], 'sender': event['sender'],
+                          'task_id': event['task_id'], 'kind': event['kind'],
+                          'body_sha256': hashlib.sha256(canonical(event).encode()).hexdigest()})
+        result = {'schema_version': 'mailbox-index/v1', 'project_root': str(self.root.resolve()),
+                  'run_id': self.run_id, 'input_version': self.plan['input_version'],
+                  'recipient': recipient, 'task_id': task_id, 'has_more': len(deliveries) > limit,
+                  'items': items, 'scope': 'pending page navigation only; read exact bodies before decisions; no ACK or global clearance'}
+        if len(canonical(result)) > max_chars:
+            raise ValueError('index exceeds budget; request a smaller explicit page')
+        return result
+
+    def read_pending(self, recipient, seq, body_sha256):
+        """Retrieve one version-bound currently pending routed delivery."""
+        if (type(seq) is not int or seq <= 0 or type(body_sha256) is not str
+                or re.fullmatch('[0-9a-f]{64}', body_sha256) is None):
+            raise ValueError('positive seq and exact body SHA256 required')
+        if recipient not in {r['recipient'] for r in self.plan['routes']}:
+            raise ValueError('unknown recipient')
+        with self.connect() as db:
+            row = db.execute('''SELECT e.body FROM communication_events e
+                JOIN communication_deliveries d ON e.seq=d.seq
+                WHERE e.run_id=? AND d.recipient=? AND e.seq=? AND d.receipt IS NULL''',
+                (self.run_id, recipient, seq)).fetchone()
+        if row is None:
+            raise ValueError('delivery missing or already handled; refresh pending index')
+        event = json.loads(row['body'])
+        if hashlib.sha256(canonical(event).encode()).hexdigest() != body_sha256:
+            raise ValueError('body version changed')
+        return {'seq': seq, 'event': event}
+
     def acknowledge(self, recipient, seq, receipt):
         # Receipt records handling, never task completion or scientific validity.
         if type(seq) is not int or not isinstance(receipt, dict) or set(receipt) != {'status', 'reason'}:
@@ -382,6 +428,10 @@ def main():
     p = sub.add_parser('publish-many'); p.add_argument('events', type=Path)
     p = sub.add_parser('inbox'); p.add_argument('recipient'); p.add_argument('--limit', type=int, default=20)
     p.add_argument('--task-id', help='host-selected routed task; not global pending clearance')
+    p = sub.add_parser('inbox-index'); p.add_argument('recipient'); p.add_argument('--limit', type=int, default=20)
+    p.add_argument('--task-id'); p.add_argument('--max-chars', type=int, default=20000)
+    p = sub.add_parser('read-pending'); p.add_argument('recipient'); p.add_argument('seq', type=int)
+    p.add_argument('--body-sha256', required=True)
     p = sub.add_parser('ack'); p.add_argument('recipient'); p.add_argument('seq', type=int); p.add_argument('receipt', type=Path)
     p = sub.add_parser('consume'); p.add_argument('recipient'); p.add_argument('seq', type=int); p.add_argument('--request', type=Path, required=True)
     p = sub.add_parser('context'); p.add_argument('recipient'); p.add_argument('seq', type=int)
@@ -392,7 +442,11 @@ def main():
     args = parser.parse_args()
     try:
         box = Mailbox(args.db, _load_json(args.plan), args.root)
-        if args.command == 'publish':
+        if args.command == 'inbox-index':
+            result = box.inbox_index(args.recipient, limit=args.limit, task_id=args.task_id, max_chars=args.max_chars)
+        elif args.command == 'read-pending':
+            result = box.read_pending(args.recipient, args.seq, args.body_sha256)
+        elif args.command == 'publish':
             result = box.publish(_load_json(args.event))
         elif args.command == 'publish-many':
             result = box.publish_many(_load_json(args.events))

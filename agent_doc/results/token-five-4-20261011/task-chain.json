@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-FIVE-4-produce",
+      "owner": "native-token-five-producer",
+      "action": "short_native_fixture",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-five-4-20261011",
+        "producer_task_id": "TOK-FIVE-4-produce",
+        "producer_actor": "native-token-five-producer",
+        "manifest_path": "agent_doc/results/token-five-4-20261011/manifest.json",
+        "scope": "One three-message pending mailbox fixture; metadata navigates to the blocker, then exact pending body retrieval is CPU-checked; no ACK, scientific validity or global clearance claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-five-4-20261011/validation-plan.json",
+          "sha256": "2288cb0116115360b546beede87140d5b988051c0eab040e3b78c55b8716b5b8"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-FIVE-4-verify",
+      "owner": "host-token-five-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-FIVE-4-produce"
+      ],
+      "result_validation": {
+        "result_id": "token-five-4-20261011",
+        "producer_task_id": "TOK-FIVE-4-produce",
+        "producer_actor": "native-token-five-producer",
+        "manifest_path": "agent_doc/results/token-five-4-20261011/manifest.json",
+        "scope": "One three-message pending mailbox fixture; metadata navigates to the blocker, then exact pending body retrieval is CPU-checked; no ACK, scientific validity or global clearance claim",
+        "validation_plan": {
+          "path": "agent_doc/results/token-five-4-20261011/validation-plan.json",
+          "sha256": "2288cb0116115360b546beede87140d5b988051c0eab040e3b78c55b8716b5b8"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-FIVE-4-publish",
+      "owner": "main-ai",
+      "action": "publish_upgrade",
+      "depends_on": [
+        "TOK-FIVE-4-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-five-4-20261011",
+          "producer_task_id": "TOK-FIVE-4-produce",
+          "producer_actor": "native-token-five-producer",
+          "manifest_path": "agent_doc/results/token-five-4-20261011/manifest.json",
+          "scope": "One three-message pending mailbox fixture; metadata navigates to the blocker, then exact pending body retrieval is CPU-checked; no ACK, scientific validity or global clearance claim",
+          "validation_plan": {
+            "path": "agent_doc/results/token-five-4-20261011/validation-plan.json",
+            "sha256": "2288cb0116115360b546beede87140d5b988051c0eab040e3b78c55b8716b5b8"
+          }
+        }
+      ]
+    }
+  ]
+}
