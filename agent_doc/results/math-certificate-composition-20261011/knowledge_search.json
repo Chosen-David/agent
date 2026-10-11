@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "prob.conformal-policy-control",
+      "version": 1,
+      "sha256": "c80d9008b17bdac2f9c77995c4c490c476f7d72aba816e513ce395b41cdfb304",
+      "title": "Conformal Policy Control：非单调风险校准与近似权重的保证边界",
+      "summary": "ICML 2026 将校准作用于策略偏离程度；风险保证是带稳定性余项的边际期望界，精确多轮权重与实用近似须区分。",
+      "status": "published",
+      "assumptions": [
+        "loss: bounded loss in [0,B]; known acceptable-risk reference policy",
+        "policy: mutually absolutely continuous policies; computable likelihoods; stable context distribution",
+        "calibration: gCRC exchangeability plus Lipschitz/replace-one stability; CPC exact weighted calibration plus relative replace-one stability",
+        "guarantee: marginal expected risk, not per-context or high-probability safety"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-checked",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.conformal-policy-control"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "risk"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "risk"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "calibration",
+            "risk"
+          ]
+        }
+      ],
+      "score": 11
+    },
+    {
+      "id": "algo.rs-grpo-exploration-tradeoff",
+      "version": 1,
+      "sha256": "4bcbc5e18921b7de77871712bc26fa114b931c9291f5525a4f17d91926672d90",
+      "title": "RS-GRPO：多次采样成功率、单次成功率与风险偏好需联合决策",
+      "summary": "ICLR 2026 用指数效用改变 advantage、增加难题探索；数学实验的平均 pass@32 改善伴随部分 pass@1 或单数据集退化，β 也非越大越好。",
+      "status": "published",
+      "assumptions": [
+        "model: five evaluated LLMs: Qwen2.5-Math-1.5B/7B, Qwen2.5-7B, Qwen3-4B-Base, Llama3.1-8B-Instruct",
+        "data: deepmath103k, dapo17k, math12k; six math evaluation benchmarks",
+        "stack: VeRL, vLLM 0.8.5, Math-Verify; N=16 responses/prompt; KL=0",
+        "evaluation: temperature 1.0 top-p 0.7; 1024 samples except MATH500 32; Table 2 beta=2"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-checked",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-rl-probability/report.md#algo.rs-grpo-exploration-tradeoff"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "risk"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "risk"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "risk"
+          ]
+        }
+      ],
+      "score": 10
+    },
+    {
+      "id": "math.finite-menu-selection",
+      "version": 1,
+      "sha256": "12a6934e379b7392d9272dcec55abdbc148464d435ed4ae437955b0f5dfa85b8",
+      "title": "有限冻结候选的同时校准与选择后风险",
+      "summary": "用有界均值与联合界校准整个冻结菜单；选择后均值风险≤最优+两份误差+求解误差，期望成本认证不等于单次硬预算。",
+      "status": "published",
+      "assumptions": [
+        "菜单及每个损失/成本可测函数、已知范围在校准前固定，或由独立学习集产生；M≥1有限",
+        "n≥1预先固定，独立同分布校准对象来自与声明目标相同P；候选之间可相关，重复同文档不算新iid对象",
+        "δ∈(0,1)，损失/成本有已知确定有限范围；比较对象须在所选可行集内；均值非单次保证"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名Markdown的联合/选择/期望成本推导和泄漏反例；非形式化",
+          "doc/results/math-selection-20261008/：公开CPU结构/精确概率与独立检查，不含模型/GPU"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "calibration",
+            "confidence"
+          ]
+        }
+      ],
+      "score": 10
+    }
+  ]
+}

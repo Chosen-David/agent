@@ -391,3 +391,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-80] Existing aggregation documents registered as unknown-validation history; public discovery/refusal checks only. ([detail](task_details/MATH-80.md))
 
 - [x] [MATH-81] First-failure conditional risk/spending bounds and average-risk refusals; ordinary document scope only. ([detail](task_details/MATH-81.md))
+
+- [x] [MATH-82] Calibration-certificate confidence and selection/time scope composition; ordinary document checks passed. ([detail](task_details/MATH-82.md))
