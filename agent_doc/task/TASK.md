@@ -383,3 +383,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-78] State-summary predictive aggregation and finite-time TV/refusal boundaries reviewed; document candidate only. ([detail](task_details/MATH-78.md))
 
 - [x] [MATH-79] Marginal contraction and stationary/path distinction reviewed; existing candidate v2 supplement only. ([detail](task_details/MATH-79.md))
+
+## 2026-10-11
+
+- [x] [MATH-80] Existing aggregation documents registered as unknown-validation history; public discovery/refusal checks only. ([detail](task_details/MATH-80.md))

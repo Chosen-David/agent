@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "ai.speculative-sampling-residual-exactness",
+      "version": 1,
+      "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331",
+      "title": "推测采样：剩余质量校正与分布不变条件",
+      "summary": "固定共同token空间、正确前缀和真实提议分布，以min(1,p/q)接受并在拒绝后抽取正部残差，恢复目标分布；greedy、树候选和MTP名称本身不保证随机采样无损。",
+      "status": "published",
+      "assumptions": [
+        "p与q为同一有限输出空间上的归一化分布，包含实际采样变换；p固定为所比较的目标生成策略",
+        "候选从实际q生成；接受检验随机数符合条件独立性，不能把argmax生成的点质量伪装成soft q",
+        "只对q(X)>0计算比值；Z=0意味着不会进入残差归一化分支，不要求目标支撑包含于提议支撑",
+        "链式验证的p/q、位置及缓存对应同一前缀；第一次拒绝后丢弃不再对应正确前缀的后续草稿",
+        "确定性候选消元的顺序不偷看本次接受随机数，拒绝后更新剩余分布；此特例不认证任意树实现",
+        "理论使用精确概率运算，有限精度/缓存/终止/随机数实现须另验；分布相同不等于same-seed逐字相同"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "probability"
+          ]
+        },
+        {
+          "field": "domains",
+          "terms": [
+            "probability"
+          ]
+        }
+      ],
+      "score": 7
+    },
+    {
+      "id": "math.residual-interval-screening",
+      "version": 1,
+      "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+      "title": "正交残差包络与安全候选筛除",
+      "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+      "status": "published",
+      "assumptions": [
+        "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+        "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+        "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+        "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+          "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "compressed"
+          ]
+        }
+      ],
+      "score": 5
+    },
+    {
+      "id": "ai.speculative-decoding-cost-bound",
+      "version": 1,
+      "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f",
+      "title": "推测解码：接受前缀尾和与成本盈亏条件",
+      "summary": "单提议接受率为1−TV；一轮输出长度由连续接受事件的尾和决定。只有附加恒定条件接受率和固定验证成本假设才得到几何加速式；树、MTP、batch变化必须重建事件与成本。",
+      "status": "published",
+      "assumptions": [
+        "单提议1−TV恒等式沿用残差校正条目的真实p/q与正确前缀；不能直接套整棵树",
+        "固定正整数horizon γ，一轮L=N+1包含补偿或bonus，公式暂不包含EOS/最大长度截断",
+        "一般尾和无需独立性；几何式额外要求每个到达深度的条件接受概率为同一α",
+        "基线T、draft比率c、验证比率v及额外成本o按同一硬件/模型/采样/负载口径定义；γc假设串行每步draft成本相同",
+        "速度比公式对应长序列稳定成本模型；随机轮成本须满足长期均值比率成立条件，不能使用平均逐轮速度比",
+        "α>c的存在性阈值只适用于v=1,o=0的理想模型；真实v/o、树形及并发负载须另测"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "domains",
+          "terms": [
+            "probability"
+          ]
+        }
+      ],
+      "score": 2
+    }
+  ]
+}

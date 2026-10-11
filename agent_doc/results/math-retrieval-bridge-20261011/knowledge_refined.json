@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.sequence-tv-coupling",
+      "version": 1,
+      "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+      "title": "有限序列分布的全变差与逐步耦合界",
+      "summary": "将真实共享前缀上的单步TV或参考前缀均值界传播到序列分布和有界奖励；最大耦合存在不保证相同seed或greedy输出一致。",
+      "status": "published",
+      "assumptions": [
+        "有限共同词表、固定非负整数长度，完整条件概率核和共同prompt/采样停止规则；EOS吸收padding",
+        "乘积界需每步所有相关共享前缀的TV上界epsilon在[0,1]；均值界是真实P前缀期望",
+        "奖励固定有界；轨迹比值评分须实际生成概率核，不能以经验片段覆盖或异路径评分冒充"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Paired finite-probability proofs, nonformal; final publication requires independent acceptance",
+          "doc/results/math-sequence-tv-20261008/ Fraction public CPU fixtures; no model/GPU"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "coupling",
+            "total",
+            "variation"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "coupling",
+            "total",
+            "variation"
+          ]
+        }
+      ],
+      "score": 18
+    },
+    {
+      "id": "ai.speculative-decoding-cost-bound",
+      "version": 1,
+      "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f",
+      "title": "推测解码：接受前缀尾和与成本盈亏条件",
+      "summary": "单提议接受率为1−TV；一轮输出长度由连续接受事件的尾和决定。只有附加恒定条件接受率和固定验证成本假设才得到几何加速式；树、MTP、batch变化必须重建事件与成本。",
+      "status": "published",
+      "assumptions": [
+        "单提议1−TV恒等式沿用残差校正条目的真实p/q与正确前缀；不能直接套整棵树",
+        "固定正整数horizon γ，一轮L=N+1包含补偿或bonus，公式暂不包含EOS/最大长度截断",
+        "一般尾和无需独立性；几何式额外要求每个到达深度的条件接受概率为同一α",
+        "基线T、draft比率c、验证比率v及额外成本o按同一硬件/模型/采样/负载口径定义；γc假设串行每步draft成本相同",
+        "速度比公式对应长序列稳定成本模型；随机轮成本须满足长期均值比率成立条件，不能使用平均逐轮速度比",
+        "α>c的存在性阈值只适用于v=1,o=0的理想模型；真实v/o、树形及并发负载须另测"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "total",
+            "variation"
+          ]
+        }
+      ],
+      "score": 10
+    },
+    {
+      "id": "math.freedman-variance-budget",
+      "version": 1,
+      "sha256": "1fa401c6307800e52301c08f3a4528f5c0587d30c0a712c1d74512b807e65e8b",
+      "title": "标量Freedman界：可预测方差预算与停止事件",
+      "summary": "条件零均值鞅差在确定增量上界下，以固定可预测二次变差预算控制跨时刻越界；不能把经验方差或逐时刻选取的预算直接代入同一错误概率。",
+      "status": "published",
+      "assumptions": [
+        "离散过滤族F_t，D_t适应且每个t平方可积，E[D_t|F_(t-1)]=0；S_0=V_0=0",
+        "确定R>0，D_t≤R几乎处处；上尾不要求下界，双侧另需|D_t|≤R",
+        "V_t=sum_{j≤t}E[D_j²|F_(j-1)]，不是样本方差或sum D_j²",
+        "x≥0与v>0事先固定；阈值反演δ∈(0,1)固定；预算变化需单独校准",
+        "停止结论只约束{τ<∞,S_τ≥x,V_τ≤v}联合事件，不是条件概率且不保证τ有限"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/report.md",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/checks.json",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_review.md",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_results.json",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/report.md",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/independent_review.md",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/integration_review.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "variation"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "sequence",
+            "variation"
+          ]
+        }
+      ],
+      "score": 7
+    }
+  ]
+}
