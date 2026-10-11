@@ -15,6 +15,8 @@ def main(argv=None):
     parser.add_argument('--before', required=True, help='project-relative path/sha256 JSON binding')
     parser.add_argument('--after', required=True, help='project-relative path/sha256 JSON binding')
     parser.add_argument('--full', action='store_true', help='retain both full texts for explicit comparison')
+    parser.add_argument('--reuse-identical', action='store_true',
+                        help='represent an unchanged target by the complete base in this same packet')
     parser.add_argument('--max-chars', type=int, default=20000)
     args=parser.parse_args(argv)
     try:
@@ -22,7 +24,7 @@ def main(argv=None):
         if not root.is_absolute(): raise ValueError('absolute PROJECT_ROOT required')
         root=root.resolve()
         result=compare_artifacts(root,_json(_bytes(root,args.before)),_json(_bytes(root,args.after)),
-                                 full=args.full,max_chars=args.max_chars)
+                                 full=args.full,max_chars=args.max_chars,reuse_identical=args.reuse_identical)
     except (OSError, ValueError) as exc:
         print(json.dumps({'error':str(exc)},ensure_ascii=False));return 1
     print(json.dumps(result,ensure_ascii=False,separators=(',', ':')));return 0

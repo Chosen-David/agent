@@ -386,6 +386,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-11
 
+- [ ] [TOK-TEN] Ten consecutive independently checked token optimizations; existing hourly admission held during manual ownership. ([detail](task_details/TOK-TEN.md))
 - [x] [TOK-MAILBOX-PAGE] Complete bounded pending-mailbox pagination without premature ACK; local coverage/recovery evidence, no provider savings claim. ([detail](task_details/TOK-MAILBOX-PAGE.md))
 
 - [x] [TOK-HOURLY-REPAIR] Published verified bounded/resumable hourly runtime and durable supervisor crash gate; actual optimization accounting remains separate. ([detail](task_details/TOK-HOURLY-REPAIR.md))

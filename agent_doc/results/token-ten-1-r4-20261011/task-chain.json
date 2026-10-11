@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "TOK-TEN-1-produce",
+      "owner": "native-token-ten-producer",
+      "action": "short_native_fixture",
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "token-ten-1-r4-20261011",
+        "producer_task_id": "TOK-TEN-1-produce",
+        "producer_actor": "native-token-ten-producer",
+        "manifest_path": "agent_doc/results/token-ten-1-r4-20261011/manifest.json",
+        "scope": "One unchanged two-version artifact with complete same-packet base, current blocker oracle and exact host-bound restoration; short fresh model turns only, not long-context/deployment/cash savings",
+        "validation_plan": {
+          "path": "agent_doc/results/token-ten-1-r4-20261011/validation-plan.json",
+          "sha256": "61c03ba31b56a11a33a98b94e02bede936d315a72f92272f4bf46800be339259"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-TEN-1-verify",
+      "owner": "host-token-ten-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "TOK-TEN-1-produce"
+      ],
+      "result_validation": {
+        "result_id": "token-ten-1-r4-20261011",
+        "producer_task_id": "TOK-TEN-1-produce",
+        "producer_actor": "native-token-ten-producer",
+        "manifest_path": "agent_doc/results/token-ten-1-r4-20261011/manifest.json",
+        "scope": "One unchanged two-version artifact with complete same-packet base, current blocker oracle and exact host-bound restoration; short fresh model turns only, not long-context/deployment/cash savings",
+        "validation_plan": {
+          "path": "agent_doc/results/token-ten-1-r4-20261011/validation-plan.json",
+          "sha256": "61c03ba31b56a11a33a98b94e02bede936d315a72f92272f4bf46800be339259"
+        }
+      }
+    },
+    {
+      "task_id": "TOK-TEN-1-publish",
+      "owner": "main-ai",
+      "action": "publish_upgrade",
+      "depends_on": [
+        "TOK-TEN-1-verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "token-ten-1-r4-20261011",
+          "producer_task_id": "TOK-TEN-1-produce",
+          "producer_actor": "native-token-ten-producer",
+          "manifest_path": "agent_doc/results/token-ten-1-r4-20261011/manifest.json",
+          "scope": "One unchanged two-version artifact with complete same-packet base, current blocker oracle and exact host-bound restoration; short fresh model turns only, not long-context/deployment/cash savings",
+          "validation_plan": {
+            "path": "agent_doc/results/token-ten-1-r4-20261011/validation-plan.json",
+            "sha256": "61c03ba31b56a11a33a98b94e02bede936d315a72f92272f4bf46800be339259"
+          }
+        }
+      ]
+    }
+  ]
+}

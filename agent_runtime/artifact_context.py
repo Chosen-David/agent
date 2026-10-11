@@ -52,7 +52,8 @@ def _splice(before, after):
             'insert': ''.join(after[start:len(after)-end if end else len(after)])}
 
 
-def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=20000):
+def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=20000,
+                      reuse_identical=False):
     """Read both SHA-bound regular UTF-8 files; return a complete comparison.
 
     Even a fresh/reset model receives the entire base here. No persisted hint
@@ -62,6 +63,7 @@ def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=2000
     """
     root = _root(root)
     _need(type(full) is bool, 'full must be boolean')
+    _need(type(reuse_identical) is bool, 'reuse_identical must be boolean')
     _need(type(max_chars) is int and 1 <= max_chars <= LIMIT, 'invalid character budget')
     before_ref = _binding(before_ref); after_ref = _binding(after_ref)
     before = _bound(root, before_ref).decode('utf-8')
@@ -70,6 +72,11 @@ def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=2000
     candidate = {'ref': after_ref, 'representation': 'splice', 'splice': _splice(before, after)}
     if not full and len(_json_text(candidate)) < len(_json_text(target)):
         target = candidate
+    # The complete base is present in this same packet; no history/cache hint.
+    if not full and reuse_identical and before == after:
+        candidate = {'ref': after_ref, 'representation': 'identical'}
+        if len(_json_text(candidate)) < len(_json_text(target)):
+            target = candidate
     output = {'schema_version': SCHEMA, 'project_root': str(root),
               'position_unit': 'lines with terminators',
               'before': {'ref': before_ref, 'text': before}, 'after': target}
@@ -105,6 +112,10 @@ def restore_comparison(root, payload, before_ref, after_ref):
     if new.get('representation') == 'full':
         _need(set(new) == {'ref', 'representation', 'text'} and isinstance(new['text'], str), 'invalid full representation')
         after = new['text']
+    elif new.get('representation') == 'identical':
+        _need(set(new) == {'ref', 'representation'}, 'invalid identical representation')
+        _need(before_ref['sha256'] == after_ref['sha256'], 'identical hash mismatch')
+        after = before
     else:
         _need(new.get('representation') == 'splice' and set(new) == {'ref', 'representation', 'splice'}, 'unknown representation')
         patch = new['splice']
