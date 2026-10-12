@@ -115,9 +115,18 @@ def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=2000
         target = candidate
     # Equal texts cannot produce edits. Avoid quadratic matching on repeated
     # lines; both sources have already been read and SHA-checked above.
-    skip_byte_only_edits = (not full and multi_edit and before != after and
-                            token_counter is None and
-                            _unique_single_splice(before, after, splice))
+    skip_byte_only_edits = False
+    if not full and multi_edit and before != after and token_counter is None:
+        # Every edit has nonnegative coordinates and an insert string, and
+        # every patch has at least one edit. This hypothetical empty edit is
+        # therefore a serialized-character lower bound, not a valid patch.
+        # Selection uses strict improvement, so an equal bound can also skip.
+        lower_bound = {'ref': after_ref, 'representation': 'edits',
+                       'patch': {'base_sha256': splice['base_sha256'],
+                                 'edits': [{'start': 0, 'delete': 0, 'insert': ''}]}}
+        skip_byte_only_edits = (
+            len(_json_text(target)) <= len(_json_text(lower_bound)) or
+            _unique_single_splice(before, after, splice))
     if not full and multi_edit and before != after and not skip_byte_only_edits:
         patch = _edits(before, after)
         if patch:

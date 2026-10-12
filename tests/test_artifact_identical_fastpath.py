@@ -39,7 +39,10 @@ class IdenticalFastpathTests(unittest.TestCase):
         b = self.save('b', 'changed\n' + 'original\n' * 9)
         with patch('agent_runtime.artifact_context.SequenceMatcher',
                    wraps=SequenceMatcher) as matcher:
-            result = compare_artifacts(self.root, a, b, multi_edit=True)
+            # Changed content must retain matching when the host supplies a
+            # custom metric; character bounds cannot prune token candidates.
+            result = compare_artifacts(self.root, a, b, multi_edit=True,
+                                       token_counter=lambda wire: len(wire))
         matcher.assert_called_once()
         self.assertEqual(restore_comparison(self.root, result, a, b),
                          ('original\n' * 10, 'changed\n' + 'original\n' * 9))

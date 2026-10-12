@@ -426,6 +426,8 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-10-12
 
+- [x] [ART-BOUND-01] 文本比较大小下界剪枝，精确输出与独立CPU验收完成；main发布回读收尾。 ([详情](task_details/ART-BOUND-01.md))
+
 - [ ] [TOK-FIFTY] Fifty distinct token/cost improvements; independent savings and main readback per round. ([detail](task_details/TOK-FIFTY.md))
 
 - [x] [MATH-93] Frozen logdet candidate historical registration repaired; fixed-query discovery only, production deferred. ([detail](task_details/MATH-93.md))

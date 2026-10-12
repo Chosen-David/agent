@@ -61,7 +61,9 @@ class LocalizedDiffTests(unittest.TestCase):
         prefix = ''.join(f'prefix {i}\r\n' for i in range(50))
         suffix = ''.join(f'suffix {i}\n' for i in range(50))
         before = prefix + 'old one\nold two\n' + suffix
-        after = prefix + 'new one\nnew two\n' + suffix
+        # Keep the insert above the serialized-size lower-bound fast path,
+        # so this fixture still verifies the necessary matcher fallback.
+        after = prefix + 'new one with a longer payload\nnew two with a longer payload\n' + suffix
         refs = self.save('old', before), self.save('new', after)
         with patch('agent_runtime.artifact_context.SequenceMatcher',
                    wraps=SequenceMatcher) as matcher:
