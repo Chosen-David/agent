@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "algo.rl-sft-trajectory-concentration",
+      "version": 1,
+      "sha256": "4c7afd59193e92088e409e2170dcae236c4dde6860807a4d1d16a32544552cd7",
+      "title": "RL／SFT 推理路径：区分成功率、路径多样性与采样预算",
+      "summary": "ICLR 2026 的既有模型比较中，RL 常压缩错误和正确路径，SFT 扩充正确路径；应联合检查 pass@1、pass@k 与聚类代理，不能断言 RL 永远不产生新能力。",
+      "status": "published",
+      "assumptions": [
+        "models: Table 1 Qwen 1.5B/7B/14B Base/RL/SFT/SFT+RL checkpoints; observational comparison",
+        "tasks: AIME24/AIME25/AMC23; HumanEval for Table 1 7B models",
+        "sampling: 256 responses/problem; temperature 0.6; top_p 0.95; model-dependent 4096/16000 context cap",
+        "metric: correct/incorrect UPGMA chrF clusters at similarity 60; pass@k; not latent capability proof"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-checked",
+        "checks": [
+          "docs/knowledge_learning/2026-10-08-rl-probability/report.md#algo.rl-sft-trajectory-concentration"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "路径"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "路径"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "路径"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "路径"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "路径"
+          ]
+        }
+      ],
+      "score": 18
+    },
+    {
+      "id": "infra.flashattention2-occupancy",
+      "version": 1,
+      "sha256": "620704a3d3a0064e356bc7b64e1033555fb6236f85106b7a75948064654868cb",
+      "title": "FlashAttention-2：小 batch 下的并行划分",
+      "summary": "ICLR 2024 的 A100 实验显示改善 block/warp 划分可提升效率；长序列、小 batch/少 heads 时应先检查并行度。",
+      "status": "published",
+      "assumptions": [
+        "hardware: A100",
+        "operator: dense exact attention",
+        "metric: kernel forward/backward throughput"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#infra.flashattention2-occupancy"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "并行"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "并行"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "并行"
+          ]
+        }
+      ],
+      "score": 9
+    },
+    {
+      "id": "ds.dsu-connectivity",
+      "version": 1,
+      "sha256": "fa46c241c4f909a508efe77816eaba0280225c1556d04170d8d5b358bd7bfea5",
+      "title": "DSU：增量连通与不可删除边界",
+      "summary": "ACL DSU 用按大小合并与路径压缩支持增量连通；均摊 O(α(n))，不能处理删除边或有向可达性。",
+      "status": "published",
+      "assumptions": [
+        "operation: incremental undirected connectivity",
+        "updates: insert-only",
+        "concurrency: single writer"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.dsu-connectivity"
+        ]
+      },
+      "matches": [
+        {
+          "field": "summary",
+          "terms": [
+            "路径"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "路径"
+          ]
+        }
+      ],
+      "score": 4
+    }
+  ]
+}

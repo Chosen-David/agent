@@ -439,3 +439,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-94] Frozen coverage/prerequisite candidate historical registration repaired; fixed-query discovery only. ([detail](task_details/MATH-94.md))
 
 - [MATH-95] 局部加速与整体耗时条件界：串行固定工作/额外开销推导及重叠、工作量变化反例；四个公开手算，仅文档检查，实际模型/性能未测。见 [详情](task_details/MATH-95.md)。
+
+- [MATH-96] 固定依赖图单节点加速：最长路径归纳、路径切换与并列瓶颈反例；四个公开手算，资源/模型收益未验证。见 [详情](task_details/MATH-96.md)。
