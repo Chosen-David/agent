@@ -1,0 +1,125 @@
+{
+  "schema_version": "independent-preflight-review/v1",
+  "actor": "/root/token_review",
+  "decision": "approve",
+  "plan_sha256": "c8dd3808d427154d62ecc8be3a7e513632b12fd6368254815f32a36ed50f98f3",
+  "validation_plan_sha256": "b3ff8794c67a71dc3b35cbba3252039b75f1f9e56ab800a75d575ffa72c18aee",
+  "checks": {
+    "implementation": {
+      "verdict": "pass",
+      "reason": "Corrected decoder serializes fresh original once and rejects over-budget ordered output before any arithmetic list allocation; final restored-wire equality uses cached original."
+    },
+    "reference_boundary": {
+      "verdict": "pass",
+      "reason": "New WSL expansion-over-budget negative and source byte/count caps both pass; existing integer/start/step/endpoint/type/order guards unchanged. Signed magnitude bound2**63-1 and count50000 enforced before expansion."
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "Only coredecoder/test/caseCOUNT changed since prior preflight; exact fixture/profile/schema/transport helpers and approved Plan/protocol unchanged. Runtime profile retention remains result-gate condition."
+    },
+    "numerical_sanity": {
+      "verdict": "pass",
+      "reason": "Source-derived oracle64/100000/100189/step3/tokens/pendingFalse confirmed; actual API and independently concatenated arithmetic expansion reproduce complete ordered data."
+    },
+    "measurement_validity": {
+      "verdict": "pass",
+      "reason": "No source omissions, scientific authority or paid observations claimed. Complete unknown metadata/rules/status/type/order retained; fixture bytes unchanged."
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "Reuse prior17confirmed WSL cases including symlink with unchanged case semantics; one new delta invocation passes2tests, raw mixed-encoding transport bytes retained. Testfile now18cases; no broad/native rerun."
+    }
+  },
+  "blocking_findings": [],
+  "resolved_findings": [
+    {
+      "prior_receipt_sha256": "be37701a9bf2132da4eeafee7b21c92b4fb0619c86ad4fbf01313fa3cefd5c2b",
+      "issue": "Compact frame bypassed restored output budget",
+      "resolution": "Reject original_wire length>max_chars before progression allocation; source-bound exact restoration ensures returned output shares bounded wire length."
+    }
+  ],
+  "delta_paths": [
+    "agent_runtime/grid_context.py",
+    "tests/test_grid_context.py",
+    ".agent-runs/token-fifty-04/case_4.py"
+  ],
+  "evidence": [
+    {
+      "path": "agent_runtime/grid_context.py",
+      "sha256": "0b93d48eaa9acfc1aa09f7053b22b59010f033c5dbb5b5e5580c0c3f49cb7862"
+    },
+    {
+      "path": "scripts/grid_context.py",
+      "sha256": "13fbd7be2ca11a3d4467b9bb292991173850432836d125d14891743407998328"
+    },
+    {
+      "path": "tests/test_grid_context.py",
+      "sha256": "f68e0a61398d8bbe1d1ee1b4eb4f84dcd575eb53a389361f6d96fd1147542dfd"
+    },
+    {
+      "path": ".agent-runs/token-fifty-04/case_4.py",
+      "sha256": "8d229c5ad31ab9f69c68c6b485f1002f7da3a683e734200929d98856376cfdcc"
+    },
+    {
+      "path": ".agent-runs/token-fifty-04/common.py",
+      "sha256": "9617855709f0b7a991abeff8aa63b0c96897b65fe6025cbeed5d7c7a56ce64ad"
+    },
+    {
+      "path": ".agent-runs/token-fifty-04/freeze.py",
+      "sha256": "bd29f89b6c21c661ce33d80e90d753a7096433c3121e090b1e627aaf1deebe23"
+    },
+    {
+      "path": ".agent-runs/token-fifty-04/native.py",
+      "sha256": "bc6d1951aed30dd852f3d5ad6cf7641ee72c340d2fc097e0ba1a03baedbcee71"
+    },
+    {
+      "path": "agent_doc/results/token-fifty-04-20261012/fixture.json",
+      "sha256": "a072d3de789ff96b51f4b18676a289e7f7a2c02ffa8a5c8aeedfb96271a223f9"
+    },
+    {
+      "path": "agent_doc/results/token-fifty-04-20261012/native-profile.json",
+      "sha256": "2cef2a6c80a06dac5b885b2974c50ce8ed93fca5ce08f2e839ca413e3e5c8516"
+    },
+    {
+      "path": "agent_doc/results/token-fifty-04-20261012/ThreadStartParams.json",
+      "sha256": "80a40a7fac15b4bf70efb7f893fb353acc0a0d30c68f54aee4f01923deca85de"
+    },
+    {
+      "path": "agent_doc/results/token-fifty-04-20261012/task-chain.json",
+      "sha256": "c8dd3808d427154d62ecc8be3a7e513632b12fd6368254815f32a36ed50f98f3"
+    },
+    {
+      "path": "agent_doc/results/token-fifty-04-20261012/validation-plan.json",
+      "sha256": "b3ff8794c67a71dc3b35cbba3252039b75f1f9e56ab800a75d575ffa72c18aee"
+    },
+    {
+      "path": ".agent-runs/token-fifty-04/reviews/round04-preflight.json",
+      "sha256": "be37701a9bf2132da4eeafee7b21c92b4fb0619c86ad4fbf01313fa3cefd5c2b"
+    },
+    {
+      "path": ".agent-runs/token-fifty-04/reviews/round04-independent-preflight-tests.log",
+      "sha256": "8f37a758423baed8fd32c871156d7124e0a1cf44c7f8a869072f43cb99e443fe"
+    },
+    {
+      "path": ".agent-runs/token-fifty-04/reviews/round04-independent-delta-tests.raw",
+      "sha256": "bd8fee24dbed305c7af4409999d29986d00299d7d3456831eb392b5a090c67cf"
+    }
+  ],
+  "independently_derived_oracle": {
+    "coordinate_count": 64,
+    "first": 100000,
+    "last": 100189,
+    "step": 3,
+    "unit": "tokens",
+    "publish": false
+  },
+  "confirmed_tests": {
+    "prior_suite_cases": 17,
+    "new_delta_invocation_cases": 2,
+    "new_unique_total_cases": 18,
+    "delta_failures": 0,
+    "delta_errors": 0,
+    "prior_symlink": "passed"
+  },
+  "scope": "Implementation/fixture preflight only. Freeze and exactly two new controlled native observations remain pending; runtime instruction preservation and independent data gate still required."
+}

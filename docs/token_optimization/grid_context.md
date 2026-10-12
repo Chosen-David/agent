@@ -1,0 +1,9 @@
+# Complete integer coordinate grids
+
+`scripts/grid_context.py --root ABSOLUTE_PROJECT_ROOT --path SOURCE_JSON --sha256 SOURCE_SHA256 --compact` reads a complete strict-JSON object with a `coordinates` list. `--full` gives the validated whole baseline. All metadata, negative statuses, units, values, types and order remain.
+
+An exact nonzero constant-step integer sequence may use `arithmetic` encoding: `start`, `step`, `count`; reconstruct index `i` as `start + i * step`, for `0 <= i < count`. At least3values, signed63-bit magnitude, max50000coordinates. Empty, mixed/noninteger, zero-step, nonconstant, huge-integer or nonshorter candidates use full representation. This is exact representation, with no rounding or selection of coordinates.
+
+`restore_grid_view(root, frame_text, source_path, source_sha)` validates the fresh exact source, count and endpoint before allocation, then checks complete ordered parsed values. The decoder's `max_chars` bounds both the received frame and the complete restored values; a small frame cannot bypass the expansion budget. Strict source/frame UTF8, JSON keys/numbers/Unicode, path/symlink/SHA and2MiBsource/1milliondisplay bounds reject partial/stale/tampered output. RawJSON formatting is outside semantic restoration; source bytes stay unchanged.
+
+Opt-in transport only; it grants no scientific validity, authority or meeting closure. [Round04 result](../../agent_doc/results/token-fifty-04-20261012/report.md) is independently usable-with-scope: input14486 ->14308; output89 ->83 (reasoning49 ->43 included); total14575 ->14391, saving184tokens (1.26%), pairspend28966, cache0/0. Main readback is pending; this observation supports only the complete synthetic grid fixture. Experimental narrow-base profile is for fixed synthetic questions only, and is not a production configuration or a second optimization count.

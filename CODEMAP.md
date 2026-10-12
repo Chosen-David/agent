@@ -1,3 +1,5 @@
+Round04 complete coordinate arithmetic transport: `agent_runtime/grid_context.py`, CLI `scripts/grid_context.py`, boundaries `tests/test_grid_context.py`, scope `docs/token_optimization/grid_context.md`. Exact nonzero constant-step grid values and metadata; current-source restoration, no scientific acceptance.
+
 Round03 path value transport: `agent_runtime/reference_context.py`, `scripts/reference_context.py`, `tests/test_reference_context.py`, `docs/token_optimization/reference_context.md`; complete collection, directory-prefix reconstruction, no artifact validity authority.
 
 Round02 explicit NDJSON records: `agent_runtime/record_context.py`, `scripts/record_context.py`, `tests/test_record_context.py`, `docs/token_optimization/record_context.md`; exact raw global/current lines, whole-source validation; no inferred completeness.

@@ -1,0 +1,100 @@
+{
+  "schema_version": "independent-preflight-review/v1",
+  "actor": "/root/token_review",
+  "decision": "revise",
+  "plan_sha256": "c8dd3808d427154d62ecc8be3a7e513632b12fd6368254815f32a36ed50f98f3",
+  "validation_plan_sha256": "b3ff8794c67a71dc3b35cbba3252039b75f1f9e56ab800a75d575ffa72c18aee",
+  "checks": {
+    "implementation": {
+      "verdict": "fail",
+      "reason": "Whole codec/restoration otherwise consistent; decoded ordered output is not checked against max_chars."
+    },
+    "reference_boundary": {
+      "verdict": "fail",
+      "reason": "Independent bounded source50k-coordinate frame250484chars expands1100027chars and is returned with max_chars1M, violating protocol output rejection boundary."
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "Actual fixture inspected; helpers differ from audited prior transport only by round namespace, freeze binds exact profile into settings, experimentalApi opt-in retained. Actual runtime profile retention remains pending."
+    },
+    "numerical_sanity": {
+      "verdict": "pass",
+      "reason": "Exact64distinct ints100000+3i, endpoint100189, pending/tokens/false publication oracle derived independently; no paid observation claim."
+    },
+    "measurement_validity": {
+      "verdict": "pass",
+      "reason": "No paid dispatch; identical both-arm profile designed. Current64fixture/all metadata remains complete; sourcebytes unchanged."
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "17confirmed independent WSL tests pass including symlink; budget bug independently reproduced with temp-only files. Initial capture decoding issue disclosed."
+    }
+  },
+  "blocking_findings": [
+    {
+      "path": "agent_runtime/grid_context.py",
+      "function": "restore_grid_view",
+      "issue": "Missing expanded ordered output length bound",
+      "required_fix": "Compute restored_wire once, reject len(restored_wire)>max_chars before return; add focused negative case where encoded frame fits but expanded complete output exceeds configured max_chars. Preserve exact source wire equality and preallocation count/start/step/endpoint guards."
+    }
+  ],
+  "evidence": [
+    {
+      "path": "agent_runtime/grid_context.py",
+      "sha256": "071a4a80c73c3b4085367fad8fd276ff40c7087da3f9945ec0a5aa486ea18782"
+    },
+    {
+      "path": "scripts/grid_context.py",
+      "sha256": "13fbd7be2ca11a3d4467b9bb292991173850432836d125d14891743407998328"
+    },
+    {
+      "path": "tests/test_grid_context.py",
+      "sha256": "d677b24cf6be5d15e20a5d6046f9518c76ca257dfdd4a8d7321174475de43cb0"
+    },
+    {
+      "path": ".agent-runs/token-fifty-04/case_4.py",
+      "sha256": "74373fc8689783b43c01bb452e4b12619e765af4b71a10cc89146ca9ac4800cd"
+    },
+    {
+      "path": ".agent-runs/token-fifty-04/common.py",
+      "sha256": "9617855709f0b7a991abeff8aa63b0c96897b65fe6025cbeed5d7c7a56ce64ad"
+    },
+    {
+      "path": ".agent-runs/token-fifty-04/freeze.py",
+      "sha256": "bd29f89b6c21c661ce33d80e90d753a7096433c3121e090b1e627aaf1deebe23"
+    },
+    {
+      "path": ".agent-runs/token-fifty-04/native.py",
+      "sha256": "bc6d1951aed30dd852f3d5ad6cf7641ee72c340d2fc097e0ba1a03baedbcee71"
+    },
+    {
+      "path": "agent_doc/results/token-fifty-04-20261012/fixture.json",
+      "sha256": "a072d3de789ff96b51f4b18676a289e7f7a2c02ffa8a5c8aeedfb96271a223f9"
+    },
+    {
+      "path": "agent_doc/results/token-fifty-04-20261012/native-profile.json",
+      "sha256": "2cef2a6c80a06dac5b885b2974c50ce8ed93fca5ce08f2e839ca413e3e5c8516"
+    },
+    {
+      "path": "agent_doc/results/token-fifty-04-20261012/ThreadStartParams.json",
+      "sha256": "80a40a7fac15b4bf70efb7f893fb353acc0a0d30c68f54aee4f01923deca85de"
+    },
+    {
+      "path": "agent_doc/results/token-fifty-04-20261012/task-chain.json",
+      "sha256": "c8dd3808d427154d62ecc8be3a7e513632b12fd6368254815f32a36ed50f98f3"
+    },
+    {
+      "path": "agent_doc/results/token-fifty-04-20261012/validation-plan.json",
+      "sha256": "b3ff8794c67a71dc3b35cbba3252039b75f1f9e56ab800a75d575ffa72c18aee"
+    },
+    {
+      "path": ".agent-runs/token-fifty-04/reviews/round04-preflight-control.json",
+      "sha256": "9232c7cb7094627053b468c8bd62f437fefff75c1764ec21e20ae04c1384ba27"
+    },
+    {
+      "path": ".agent-runs/token-fifty-04/reviews/round04-independent-preflight-tests.log",
+      "sha256": "8f37a758423baed8fd32c871156d7124e0a1cf44c7f8a869072f43cb99e443fe"
+    }
+  ],
+  "scope": "Preflight only; no frozen implementation, native measurement or data acceptance. Implementation remains pending revision."
+}
