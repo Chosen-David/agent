@@ -423,3 +423,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-91] Correlated unbiased scalar aggregation and singular covariance refusals; document-only, production deferred. ([detail](task_details/MATH-91.md))
 
 - [x] [MATH-92] Covariance uncertainty and conditional robust weights; document-only, real certificate/production deferred. ([detail](task_details/MATH-92.md))
+
+## 2026-10-12
+
+- [ ] [TOK-FIFTY] Fifty distinct token/cost improvements; independent savings and main readback per round. ([detail](task_details/TOK-FIFTY.md))

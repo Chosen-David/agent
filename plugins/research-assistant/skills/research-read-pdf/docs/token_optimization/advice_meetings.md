@@ -2,6 +2,8 @@
 
 # advice 会议：先检查变更，再加载必要证据
 
+发现单文件中的议题时，可先运行 `python scripts/advice_context.py --root ABSOLUTE_PROJECT_ROOT --path agent_doc/advice/MEETING.md --sha256 SOURCE_SHA256 --list-headings --compact`。返回全部唯一的字面 H2 标题、原文行范围、完整开头文本和源哈希，不加载历史议题正文。再用同一路径/哈希及 `--heading TITLE` 读取所选正文；源已变化、重复标题、注释布局、未闭合 fence 或超预算时拒绝部分输出。需要议题间依赖或完整评估时读取原文；目录不证明结案，不替代全局 advice 取舍。每个真实链条都应把发现、所选正文和必要全文恢复计入总成本。
+
 实现入口为 `scripts/advice_poll.py`。它递归扫描当前 PROJECT_ROOT 的 `agent_doc/advice/`，包括 archive，输出新增、修改、删除和可唯一配对的内容迁移；不输出正文或全量库存，不把归档/文件名/自报通过解释成已结案。缺失基线按首次观察枚举全部文件；基线须绑定项目根与实际 SHA256。不可读目录、链接、跨项目基线、文件/字节/目录数超限或观察到并发变化直接报错，不静默漏项。两次扫描不是原子事务，也不构成实时延迟上限；交接/消费前仍核对实际来源。
 
 ```powershell
