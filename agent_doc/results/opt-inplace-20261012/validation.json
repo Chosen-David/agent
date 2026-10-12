@@ -1,0 +1,35 @@
+{
+  "task_id": "OPT-INPLACE",
+  "tested_source": "bd65a2348e32d8a70af9e003cbc309064363dd9e plus listed patch",
+  "sha256": {
+    "workflows/implementation_optimization_workflow.md": "0bc8c7264f225d928e9007eeed0247b2e71e152fbb94b78241e2ba36d1652055",
+    "plugins/research-assistant/skills/research-implement-optimize/references/execution.md": "9cc06dcf44e4510003722386debe07c08cb818fa72a22180b4e85a5a62995695",
+    "plugins/research-assistant/skills/research-implement-optimize/references/workflow.md": "45c900a06732559b7bf8a49120bb743a2fa2ecab7991053ecc938d8bbe9ea283",
+    "plugins/research-assistant/skills/research-assistant/references/implementation_optimization_workflow.md": "9e2eb89d94996cf1758a3ff912d0e78ea94ce5735c7790744487c9aebb4da1a2",
+    "plugins/research-assistant/skills/research-assistant/references/research-implement-optimize_execution.md": "230192a4d32d8f4b7ca3afab3343e70a74f5484f8d6c7793acef4bba60bd015a"
+  },
+  "required": {
+    "run": 1150,
+    "passed": 1149,
+    "skipped": 1,
+    "skip": "opt-in tmux host test",
+    "log": "required.log"
+  },
+  "reader": {
+    "run": 3,
+    "passed": 3,
+    "log": "reader.log"
+  },
+  "mirror_check": "python scripts/sync_plugin_references.py --check passed",
+  "independent_review": {
+    "reviewer": "/root/accounting_review",
+    "status": "usable-with-scope",
+    "affected_tests_passed": 23,
+    "scope": "behavior contract, entrypoint/link consistency, generated mirrors; no model compliance or project performance claim",
+    "command": "PYTHONDONTWRITEBYTECODE=1 python -m unittest tests.test_plugin_reference_sync tests.test_project_docs_workflow -v",
+    "final_log_review": "Full-suite and reader logs inspected; scope accepted for publication."
+  },
+  "canonical_knowledge_changed": false,
+  "provider_calls": 0,
+  "gpu_runs": 0
+}
