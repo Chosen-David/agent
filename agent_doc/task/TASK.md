@@ -455,3 +455,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-13
 
 - [MATH-100] 中心化残差协方差与条件不确定性：一般律仅给平均界，联合高斯为固定条件协方差的充分条件；四个公开手算案例，模型验收待验证。见 [详情](task_details/MATH-100.md)。
+
+- [MATH-101] 代理协方差与真实误差：正态边缘/合法协方差不足以保证条件校准；四个公开解析例，已有候选的检索缺口保留，模型收益未测。见 [详情](task_details/MATH-101.md)。

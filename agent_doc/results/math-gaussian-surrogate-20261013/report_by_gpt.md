@@ -1,0 +1,9 @@
+# MATH-101 — Gaussian surrogate versus real conditional calibration
+
+New task-scoped candidate adds a positive-density two-Gaussian mixture counterexample: each marginal normal, true covariance identity/SPD, affine conditional mean correct, yet true conditional variance varies and exceeds proxy1 on a positive-probability observation set. Correct linear sensor case, misfitted legal proxy/MSE case and duplicate observation refusal complete4public handcases. No canonical/code/Skill/advice/production change or model performance claim.
+
+Actual3publicquestion lexicalCLI: marginal-normal problem misses MATH100top3; duplicate-sensor and affine-residual questions rankMATH100first. Prior190dirs60errorspartialtrue. No ranking repair/tuning after publication of these questions, no unseen tests and no automatic model decisions measured. FrozenMATH100document/sourceerrorstatus/record intact; only document references reused, not validated experimental data.
+
+Recent primaryHTML2609.32640v1 now readable, limited relevant surrogate-construction/proof scopedread. Formal matrix positivity is distinguished from real error calibration; no claim author promises calibration, no Prop3/experience adoption. MIT2014 conditioning reread limitedpp1–3. Remaining scientific backend/real jointlaw/modeltoolsbudgetholdout absent; MATH65 blocked/exhausted allcursors unchanged. Next actual consumer numeric-target/jointlaw/calibration plus reserved matched-model questions before confidence/stopping use.
+
+Ordinary independent finalreview usable-with-scope;10410 existing files outside five metadata preserved;3knowledge refs valid and1mirrorregression passed. Public lexical query times≈0.152/0.152/0.154s measure these CLI calls only, no token/model savings. New record remains unknown/nullmeasurement, source/model conclusions not promoted by registration.
