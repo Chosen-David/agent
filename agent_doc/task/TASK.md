@@ -459,3 +459,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [MATH-101] 代理协方差与真实误差：正态边缘/合法协方差不足以保证条件校准；四个公开解析例，已有候选的检索缺口保留，模型收益未测。见 [详情](task_details/MATH-101.md)。
 
 - [MATH-102] 复用已有二阶矩尾界：补充真实MSE、偏差与条件风险的阈值应用/拒用，四个公开手算；无生产或模型收益结论。见 [详情](task_details/MATH-102.md)。
+
+- [MATH-103] 既有阈值风险应用复核：三条公开查询两条首位、一条前三未命中；前提拒用与成本保存。本轮没有值得采用的新改进，模型/生产待验证。见 [详情](task_details/MATH-103.md)。

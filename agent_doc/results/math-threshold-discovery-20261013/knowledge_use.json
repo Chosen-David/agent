@@ -1,0 +1,263 @@
+{
+  "knowledge_refs": [
+    {
+      "id": "math.dependent-mean-variance",
+      "version": 1,
+      "sha256": "03813de91ef8891cba4b6bcf95b9cb878ed4475533d5c430e582376c51ff4302"
+    }
+  ],
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "actual_argv": [
+    "python",
+    "-m",
+    "agent_runtime.knowledge",
+    "--root",
+    "knowledge",
+    "search",
+    "有限方差 稀有大值 高斯边缘 概率保证",
+    "--limit",
+    "3"
+  ],
+  "actual_output": {
+    "schema_version": 1,
+    "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+    "backend": "files-lexical-v1",
+    "applicability": "unchecked",
+    "results": [
+      {
+        "id": "math.dependent-mean-variance",
+        "version": 1,
+        "sha256": "03813de91ef8891cba4b6bcf95b9cb878ed4475533d5c430e582376c51ff4302",
+        "title": "依赖样本均值方差与目标专属有效样本量",
+        "summary": "从完整协方差计算固定n的均值方差；有效样本量只匹配该目标的方差，不证明独立性、高斯尾或二阶矩/子空间可靠性。",
+        "status": "published",
+        "assumptions": [
+          "n≥1事先固定；实标量过程有共同均值µ与有限二阶矩，协方差指真实模型量",
+          "平稳简式还要求γ_h=Cov(X_t,X_(t+h))不依赖t；γ0>0，负相关允许",
+          "AR(1)特例要求因果平稳初始化、|phi|<1及独立同分布零均值有限方差创新；不是从lag1估计直接得整个模型",
+          "高斯尾和平方相关公式额外要求联合高斯；平方例还要求µ=0，不能仅凭高斯边缘",
+          "样本ACF/phi/方差估计无本条误差认证；均值漂移、自适应抽样和停止时间需要另证"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-dependence/verify.py",
+            "docs/knowledge_learning/2026-10-07-dependence/checks.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "方差",
+              "高斯"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "方差",
+              "高斯"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "保证",
+              "大值",
+              "斯边",
+              "方差",
+              "有大",
+              "有限",
+              "概率",
+              "率保",
+              "稀有",
+              "边缘",
+              "限方",
+              "高斯"
+            ]
+          }
+        ],
+        "score": 37
+      },
+      {
+        "id": "prob.vector-variance-aware-concentration",
+        "version": 1,
+        "sha256": "a39d6f473786b20228fd60342b0f364b39b7e396b45cb8a537e9e776054ff974",
+        "title": "向量自归一化：轻尾、方差自适应与序贯置信界的收益和代价",
+        "summary": "ALT 2026 在可分Hilbert空间构造超鞅，给出 Bernstein/Bennett 和混合序贯界；低方差合成bandit受益，高方差下并不总胜次高斯界。",
+        "status": "published",
+        "assumptions": [
+          "process: predictable X_t; conditional mean-zero epsilon_t; fixed rho>0; separable Hilbert space",
+          "tails: conditional Bernstein moment condition, or bounded noise and predictable variance bounds",
+          "horizon: Theorems 9/10 deterministic horizon n and variance envelope Cn; Theorems 11/12 fully sequential mixtures",
+          "empirical_variance: Theorem 12 requires bounded noise with constant conditional variance and a valid variance confidence sequence"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "not-checked",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.vector-variance-aware-concentration"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "方差"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "方差",
+              "高斯"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "方差",
+              "高斯"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "方差",
+              "高斯"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "方差",
+              "概率",
+              "限方",
+              "高斯"
+            ]
+          }
+        ],
+        "score": 33
+      },
+      {
+        "id": "math.gaussian-quadratic-energy",
+        "version": 1,
+        "sha256": "3580b149aab06433446fe8734f10b71e7e50455df4dec80b8b0bfa68e4ba9b3f",
+        "title": "高斯二次能量的谱尾界与相关样本二阶矩",
+        "summary": "联合高斯、固定PSD能量的误差同时依赖谱平方和及最大特征值；在已知可分离依赖模型下转换为保守协方差谱界，不以均值ESS或边缘正态代替前提。",
+        "status": "published",
+        "assumptions": [
+          "x联合零均值高斯、真实确定C=Cov(x)≥0；A为固定实对称PSD，随机但独立A仅允许条件化后另核查",
+          "t>0；B=C^(1/2)AC^(1/2)，范数为欧氏算子范数；B=0单独处理；非PSD/非零均值另证",
+          "矩阵迁移限定X=T^(1/2)GΣ^(1/2)，G的元素独立标准正态，T≥0且diag(T)=1，Σ≥0；n,d及抽样协议固定",
+          "谱界用真实确定tr(T²)、||T||和有效BΣ≥||Σ||；经验估计无误差认证不能代入",
+          "均值未知/样本中心化、同数据选投影、自适应停止、非可分离外积相关和真实token模型不由本条认证"
+        ],
+        "verification": {
+          "source": "checked",
+          "proof": "derivation-reviewed",
+          "checks": [
+            "docs/knowledge_learning/2026-10-07-quadratic/verify.py",
+            "docs/knowledge_learning/2026-10-07-quadratic/checks.json"
+          ]
+        },
+        "matches": [
+          {
+            "field": "title",
+            "terms": [
+              "高斯"
+            ]
+          },
+          {
+            "field": "aliases",
+            "terms": [
+              "高斯"
+            ]
+          },
+          {
+            "field": "structures",
+            "terms": [
+              "高斯"
+            ]
+          },
+          {
+            "field": "summary",
+            "terms": [
+              "方差",
+              "边缘",
+              "高斯"
+            ]
+          },
+          {
+            "field": "content",
+            "terms": [
+              "保证",
+              "斯边",
+              "方差",
+              "有限",
+              "概率",
+              "边缘",
+              "限方",
+              "高斯"
+            ]
+          }
+        ],
+        "score": 31
+      }
+    ]
+  },
+  "full_text_read": [
+    "math.dependent-mean-variance"
+  ],
+  "requires": "none",
+  "used": "existing finite-moment and nonGaussian-tail premises only; no ESS/AR transfer",
+  "document_refs": [
+    {
+      "path": "agent_doc/results/math-mse-threshold-20261013/application_card.json",
+      "sha256": "8cd9778b8d71f4136527be85ae3597eca18508e35d0fa5cd24f107fc1d5487ee"
+    },
+    {
+      "path": "agent_doc/results/math-mse-threshold-20261013/application_by_gpt.md",
+      "sha256": "8513a524089f7abe09306f7b0e012a648c196a2aa507c672bd6eb31ace43fc73"
+    },
+    {
+      "path": "agent_doc/results/math-mse-threshold-20261013/navigation.json",
+      "sha256": "1b4db12e1808f713d5770266ec16e753a484582f26d64629047b8fa47b8dc984"
+    },
+    {
+      "path": "agent_doc/results/math-mse-threshold-20261013/knowledge_use.json",
+      "sha256": "5994faf5c93879876ff876545fe1a294b1f3f6ce91706f8dbfe33e7c19000bc0"
+    },
+    {
+      "path": "agent_doc/results/math-mse-threshold-20261013/record.json",
+      "sha256": "f1a123e68a64453506fee0438b3afc72228c48f0ff404ee9eb65052c130dcf5a"
+    }
+  ],
+  "subject_index": [
+    "probability:second-moment-tail-bound"
+  ],
+  "problem_structure_index": [
+    "mse-threshold-failure",
+    "bias-versus-variance",
+    "global-versus-conditional-risk"
+  ],
+  "load": [
+    "agent_doc/results/math-mse-threshold-20261013/application_by_gpt.md"
+  ],
+  "production": "defer",
+  "reuse": "immutable document identity only; old validation unknown not renewed"
+}
