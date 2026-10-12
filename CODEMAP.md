@@ -1,3 +1,5 @@
+Round02 explicit NDJSON records: `agent_runtime/record_context.py`, `scripts/record_context.py`, `tests/test_record_context.py`, `docs/token_optimization/record_context.md`; exact raw global/current lines, whole-source validation; no inferred completeness.
+
 # 本轮增量代码与产物地图
 
 TOK-FIFTY-01: `scripts/advice_context.py --list-headings` -> `agent_runtime/advice_context.py::advice_headings` -> SHA-bound literal-topic directory -> existing selected-topic view. Main owns implementation and task index; `/root/token_review` independently checks code, fixtures and native accounting. `tests/test_advice_discovery.py` covers selection compatibility and negative boundaries. `agent_doc/results/token-fifty-01-r2-20261012/acceptance-v2.json` accepts one synthetic packet pair (19480 ->18722 tokens), with original preflight/binding failures retained; main publication is separately verified. Scope excludes long-horizon, role-fanout, real tool-chain and cash claims. `docs/token_optimization/fifty_rounds.md` is the batch navigation; package advice docs follow canonical generated-reference synchronization.
