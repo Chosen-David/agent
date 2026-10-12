@@ -445,3 +445,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [KNOW-MIRROR-01] 修复独立Skill知识状态副本漂移，独立安装与回归验证。 ([详情](task_details/KNOW-MIRROR-01.md))
 
 - [MATH-97] 既有耗时知识复核：三条公开问题已找到MATH95/96，记录前提路由与检索成本；本轮没有值得采用的新改进，模型验收仍待验证。见 [详情](task_details/MATH-97.md)。
+
+- [MATH-98] 观测后信息增益候选历史登记：保留平均/后验路径的拒用边界，核对固定查询发现；模型与生产验收仍待验证。见 [详情](task_details/MATH-98.md)。

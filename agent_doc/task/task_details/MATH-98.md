@@ -1,0 +1,24 @@
+# [MATH-98] 观测后信息增益候选的历史登记
+
+Task-ID: MATH-98
+Date: 2026-10-12 Asia/Shanghai
+
+## Plan
+
+Bounded900s independent metadata repair; twofreshordinaryreviews,parentsolewriter. Freshcleanbase01bbf4b27f5b1897e252ba1f7e73277e56371c62; AGENTS/decision/document hashesunchanged, existingmodel-with-knowledge workflow/fullrelevantcard read;16rolesemptyguide/noactiveownedruns. Canonicalsubjectindex/learningstate read; originalMATH71fulladvice/card/nav/sources/review/report/priorv1/read andhashesbound. No trustedmonitor/ReviewSession/sciencebackend; MATH65exhaustedblockedunchanged; no newcode/advice/canonicalentry/Skillentry/SGLangor experiment.
+
+BEFOREsaved3fixedpublicquestionqueries: fixedaveragegainversusobservedoldscore, threeequiprobablefaultsnegativefirstcheck, rareoutcomeentropyincrease. Each186dirs61errors; partialtrue,false,false; originalMATH71missingrecordall3, targetnotretrieved. Toplogdet/submodular/otherhistoricalrecords differinscope, notreusedexperiments. RecordwalltimesinJSON, token/currencyunknown. Canonicalfullmath.data-processing-task-sufficiency read requiresnone; notadaptivepathguarantee. PrimaryGolovinKrausev5Dec6 2017Definition1-3/metadatafreshchecked, Theorem13excluded; recent2609.21813freshabsfailed, historicalv2Sept30scope preservedwithoutcurrentclaim.
+
+ClassicfrozenMATH71three-state h2(1/3)->1 afternegative butaveraged2/3; rarepositiveprobabilityoutcome raisesposteriorentropy; fixedGaussianvalueindependentcovariance exception. These originalpublicproof/examples onlyreference, notnewtests/Lean/CPU/GPU/modelacceptance. Crossdomaindiagnosis andAgentreportpruning mappingrequiresactualfixedjointlaw; unknown. No stopping/pruningcontrolleradoption.
+
+DAGstartup/priorbefore/source=>ordinaryplan=>originalunknownrecord8immutablepathhashes andownauditunknownrecord=>same3AFTERCLI=>ordinaryfinal=>refs/JSON/oldbytes/generatedmirror sync=>freshsyncexpectedheadnonforcepublish=>remoteexactbytes. Register_history metadata usesmeasured_atnull/contractnull/validationunknown/proofnull, doesnotrenewoldscientificacceptance. Originalrawdocsnotmovedediteddeleted. AFTERoriginaltargettop1goal, actualfailuresrankshonest; fixedpublicqueriesnorecall/modelgainclaim. Ownauditrecordavoidnewmissingrecorderror.
+
+TASKappend/coverageinformation-theorygap/historyappendonly plus2generatedmetadata mirrorsviaexistingsync, leaveallcursorscountsunchanged. Existingreference/sync checks suitablemetadataonly. NextmainAI actualtask/reportjointlaw andsame-model/tools/budgetunusedretrieval/refusal/endtoendbeforeconsumeradoption; remainingrecorderrors separate. No restartblockedlineage orpaperreadingcountmetric.
+
+## Progress
+
+- Ordinary planapproved;8originalrefs frozen, originalhistoricalrecord andownaudit metadata registered. ActualAFTERqueries pending. No mathematical/productionadoption.
+
+- Same3AFTERoriginalMATH71rank1(score14/9/10),187dirs60errors/partialtrue,true,true. Fixedquerydiscoveryonly; one-read-error repaired. Rawbefore/aftertimings kept, no latencyimprovementclaim. Generated2metadata mirrorssynced, finalordinaryreview pending.
+
+- Finalordinaryindependentreview approved8originalrefs/nullunknownrecords andsame3querydiscovery withlimits. 10332oldregularpreservedoutside5metadata; generatedmirrors and1synctestpassed. Originalproof/history untouched. Publicationfreshsyncnonforceexpectedhead thenremotebytescheck, nomodel/scienceacceptance.
