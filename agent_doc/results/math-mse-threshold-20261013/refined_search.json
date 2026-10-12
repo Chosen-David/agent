@@ -1,0 +1,182 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.matrix-bernstein-covariance",
+      "version": 1,
+      "sha256": "a19353e007cec5fe3973b23bb156448d7ecc123aa596540a9c17eec835c6c4a9",
+      "title": "有界向量二阶矩的矩阵集中与校准可信度",
+      "summary": "独立有界向量的固定样本二阶矩可得谱误差概率界，核对均值、选样和谱隙后才传播到主子空间；不认证相关token或数据依赖子集。",
+      "status": "published",
+      "assumptions": [
+        "n≥1观察前固定；x_i∈R^d独立同分布，目标M=E[xx^T]",
+        "确定几乎处处||x||₂≤L；不能用观测最大值替代；L=0单独精确处理",
+        "Mhat=(1/n)Σxx^T，算子二范数；非零均值下M不等于中心化协方差",
+        "δ∈(0,1)，B≥||M||确定有效，可用B=L²；未知常数不替换为观测谱范数",
+        "下游主方向需要同一坐标和观测谱隙条件，并另外覆盖截断、量化、级联损失"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-matrix-concentration/verify.py",
+          "docs/knowledge_learning/2026-10-07-matrix-concentration/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "二阶",
+            "阶矩"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "方差",
+            "概率",
+            "独立"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "二阶",
+            "概率",
+            "独立",
+            "阶矩"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "二阶",
+            "方差",
+            "概率",
+            "独立",
+            "阶矩"
+          ]
+        }
+      ],
+      "score": 42
+    },
+    {
+      "id": "math.paired-bilinear-risk",
+      "version": 1,
+      "sha256": "0afa7f23f4b80cf3865ab01cd8d33296885bd2e093898f3b878ec27609824c8b",
+      "title": "成对双线性四阶风险与独立低秩代理证书",
+      "summary": "允许相关q/k时用联合外积四阶矩描述分数MSE；已知SPD相对度量η<1才有代理近似因子。去相关或两侧二阶矩不足，一般白化不保矩阵秩。",
+      "status": "published",
+      "assumptions": [
+        "q∈R^m,k∈R^n允许相关；E[||q||²||k||²]<∞，H/M固定，vec按列；rank(M)≤r且r为0到min(m,n)整数",
+        "独立代理另需非中心Sq/Sk有限；相对因子要求Sq,Sk SPD且真实D的η=||D0^{-1/2}DD0^{-1/2}−I||₂<1",
+        "只针对固定原始双线性scoreMSE；不是mask/topk/softmax/output/e2e精度或样本泛化证书"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "条件式自推证明，非Lean形式化验证",
+          "agent_doc/results/math-paired-risk-20261008/validate.py/raw.json与独立回执；公开精确/结构检查，无模型/e2e收益"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "独立"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "不独",
+            "二阶",
+            "独立",
+            "阶矩"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "二阶",
+            "阶矩"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "二阶",
+            "方差",
+            "概率",
+            "独立",
+            "阶矩"
+          ]
+        }
+      ],
+      "score": 36
+    },
+    {
+      "id": "math.gaussian-quadratic-energy",
+      "version": 1,
+      "sha256": "3580b149aab06433446fe8734f10b71e7e50455df4dec80b8b0bfa68e4ba9b3f",
+      "title": "高斯二次能量的谱尾界与相关样本二阶矩",
+      "summary": "联合高斯、固定PSD能量的误差同时依赖谱平方和及最大特征值；在已知可分离依赖模型下转换为保守协方差谱界，不以均值ESS或边缘正态代替前提。",
+      "status": "published",
+      "assumptions": [
+        "x联合零均值高斯、真实确定C=Cov(x)≥0；A为固定实对称PSD，随机但独立A仅允许条件化后另核查",
+        "t>0；B=C^(1/2)AC^(1/2)，范数为欧氏算子范数；B=0单独处理；非PSD/非零均值另证",
+        "矩阵迁移限定X=T^(1/2)GΣ^(1/2)，G的元素独立标准正态，T≥0且diag(T)=1，Σ≥0；n,d及抽样协议固定",
+        "谱界用真实确定tr(T²)、||T||和有效BΣ≥||Σ||；经验估计无误差认证不能代入",
+        "均值未知/样本中心化、同数据选投影、自适应停止、非可分离外积相关和真实token模型不由本条认证"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-quadratic/verify.py",
+          "docs/knowledge_learning/2026-10-07-quadratic/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "二阶",
+            "尾界",
+            "阶矩"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "二阶",
+            "阶矩"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "方差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "二阶",
+            "尾界",
+            "方差",
+            "概率",
+            "独立",
+            "阶矩"
+          ]
+        }
+      ],
+      "score": 32
+    }
+  ]
+}
