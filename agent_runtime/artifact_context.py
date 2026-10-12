@@ -69,7 +69,7 @@ def _edits(before, after):
 
 
 def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=20000,
-                      reuse_identical=False, multi_edit=False):
+                      reuse_identical=False, multi_edit=False, token_counter=None):
     """Read both SHA-bound regular UTF-8 files; return a complete comparison.
 
     Even a fresh/reset model receives the entire base here. No persisted hint
@@ -81,28 +81,49 @@ def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=2000
     _need(type(full) is bool, 'full must be boolean')
     _need(type(reuse_identical) is bool, 'reuse_identical must be boolean')
     _need(type(multi_edit) is bool, 'multi_edit must be boolean')
+    _need(token_counter is None or callable(token_counter), 'token_counter must be callable')
     _need(type(max_chars) is int and 1 <= max_chars <= LIMIT, 'invalid character budget')
     before_ref = _binding(before_ref); after_ref = _binding(after_ref)
     before = _bound(root, before_ref).decode('utf-8')
     after = _bound(root, after_ref).decode('utf-8')
     target = {'ref': after_ref, 'representation': 'full', 'text': after}
+    candidates = [target]
     candidate = {'ref': after_ref, 'representation': 'splice', 'splice': _splice(before, after)}
+    if not full:
+        candidates.append(candidate)
     if not full and len(_json_text(candidate)) < len(_json_text(target)):
         target = candidate
     if not full and multi_edit:
         patch = _edits(before, after)
         if patch:
             candidate = {'ref': after_ref, 'representation': 'edits', 'patch': patch}
+            candidates.append(candidate)
             if len(_json_text(candidate)) < len(_json_text(target)):
                 target = candidate
     # The complete base is present in this same packet; no history/cache hint.
     if not full and reuse_identical and before == after:
         candidate = {'ref': after_ref, 'representation': 'identical'}
+        candidates.append(candidate)
         if len(_json_text(candidate)) < len(_json_text(target)):
             target = candidate
     output = {'schema_version': SCHEMA, 'project_root': str(root),
               'position_unit': 'lines with terminators',
               'before': {'ref': before_ref, 'text': before}, 'after': target}
+    if token_counter is not None and not full:
+        best = None
+        # Stable ties: full, splice, eligible edits, eligible identical. Count
+        # the entire final wire packet; a longer target may tokenize cheaper.
+        for candidate in candidates:
+            packet = {**output, 'after': candidate}
+            wire = _json_text(packet)
+            if len(wire) > max_chars:
+                continue
+            count = token_counter(wire)
+            _need(type(count) is int and count >= 0, 'token_counter must return a nonnegative integer')
+            if best is None or count < best[0]:
+                best = (count, packet)
+        _need(best is not None, 'comparison exceeds budget; never truncate either version')
+        output = best[1]
     _need(len(_json_text(output)) <= max_chars, 'comparison exceeds budget; never truncate either version')
     return output
 

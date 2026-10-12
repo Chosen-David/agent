@@ -190,3 +190,5 @@ EXP-CONTAM-01：`agent_runtime/contamination.py` 由主 AI/可信宿主绑定运
 TOK-FIVE usage correctness: `scripts/token_optimizer.py::observe_parent_turn` -> `tick` receipt/state persistence; `tests/test_token_optimizer.py` exercises synthetic native transport, unknown/zero/invalid/partial handling. Root agent owns this source correction; independent review and CPU evidence: `agent_doc/results/token-usage-unknown-20261011/`. No provider billing or token savings claim.
 
 TOK-MAILBOX-PAGE: `agent_runtime/communication.py` inbox/inbox_index/CLI seek by immutable seq; `tests/test_mailbox_pagination.py` fixed long coverage/recovery fixture; `agent_doc/results/mailbox-pagination-20261011/` baseline/candidate local traces and independent validation. No ACK or provider accounting change.
+
+TOK-FIFTY-05: artifact_context optional whole-packet token_counter chooses among existing complete codecs; CLI explicit --encoding; tests/test_artifact_token_selection.py; docs/token_optimization/artifact_token_selection.md. Default character behavior preserved.

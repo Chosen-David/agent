@@ -19,13 +19,18 @@ def main(argv=None):
                         help='represent an unchanged target by the complete base in this same packet')
     parser.add_argument('--multi-edit', action='store_true', help='encode separated edits without replaying their unchanged middle')
     parser.add_argument('--max-chars', type=int, default=20000)
+    parser.add_argument('--encoding', help='optional explicit tiktoken encoding for whole-packet choice; never inferred from model')
     args=parser.parse_args(argv)
     try:
         root=Path(args.root)
         if not root.is_absolute(): raise ValueError('absolute PROJECT_ROOT required')
         root=root.resolve()
+        counter=None
+        if args.encoding is not None:
+            from agent_runtime.handoff_basis import make_token_counter
+            counter=make_token_counter(args.encoding)
         result=compare_artifacts(root,_json(_bytes(root,args.before)),_json(_bytes(root,args.after)),
-                                 full=args.full,max_chars=args.max_chars,reuse_identical=args.reuse_identical,multi_edit=args.multi_edit)
+                                 full=args.full,max_chars=args.max_chars,reuse_identical=args.reuse_identical,multi_edit=args.multi_edit,token_counter=counter)
     except (OSError, ValueError) as exc:
         print(json.dumps({'error':str(exc)},ensure_ascii=False));return 1
     print(json.dumps(result,ensure_ascii=False,separators=(',', ':')));return 0
