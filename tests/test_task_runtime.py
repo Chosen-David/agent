@@ -124,6 +124,28 @@ class RuntimeContracts(unittest.TestCase):
             with self.subTest(plan=p), self.assertRaises(ValueError):
                 validate(p)
 
+    def test_dependency_membership_retains_string_subclass_equality(self):
+        class OddHash(str):
+            def __hash__(self):
+                return 0
+
+        # Membership must match by equality before the existing cycle detector.
+        # Its set-based traversal rejects these unusual hashes later; preserve
+        # that error rather than changing it to "unknown dependency".
+        for p in (plan(task(OddHash('parent')), task('child', ['parent'])),
+                  plan(task('parent'), task('child', [OddHash('parent')]))):
+            with self.assertRaisesRegex(ValueError, '^dependency cycle$'):
+                validate(p)
+
+    def test_dependency_membership_preserves_invalid_input_error_order(self):
+        p = plan(task('a'), task('b', [[]]))
+        p['tasks'][1]['risk'] = None
+        with self.assertRaisesRegex(ValueError, '^unknown dependency$'):
+            validate(p)
+        p = plan(task([]))
+        with self.assertRaisesRegex(ValueError, '^unique nonempty task IDs required$'):
+            validate(p)
+
     def test_dependencies_restart_immutable_identity_and_duplicate_event(self):
         p = plan(task('child', ['parent']), task('parent'))
         self.store.create(p)

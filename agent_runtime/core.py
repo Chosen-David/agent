@@ -42,14 +42,19 @@ def validate(plan):
     if not isinstance(tasks, list) or not 1 <= len(tasks) <= 1000:
         raise ValueError('1..1000 tasks required')
     ids = [t.get('task_id') for t in tasks]
-    if any(not isinstance(i, str) or not i for i in ids) or len(set(ids)) != len(ids):
+    if any(not isinstance(i, str) or not i for i in ids):
         raise ValueError('unique nonempty task IDs required')
+    id_set = set(ids)
+    if len(id_set) != len(ids):
+        raise ValueError('unique nonempty task IDs required')
+    plain_ids = all(type(i) is str for i in ids)
     for task in tasks:
         for field in ('action', 'owner', 'done_when'):
             if not task.get(field):
                 raise ValueError(f'missing {field}')
         deps = task.get('depends_on', [])
-        if not isinstance(deps, list) or any(d not in ids for d in deps):
+        if not isinstance(deps, list) or any(
+                d not in id_set if plain_ids and type(d) is str else d not in ids for d in deps):
             raise ValueError('unknown dependency')
         if type(task.get('max_attempts')) is not int or not 1 <= task['max_attempts'] <= 20:
             raise ValueError('max_attempts must be 1..20')
