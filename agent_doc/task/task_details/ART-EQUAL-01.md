@@ -22,4 +22,4 @@ DAG：prior-search/read/plan-review → implement+paired CPU producer → indepe
 - 7对公开入口测量：中位473.834342ms → 1.400838ms，降低99.704%；所有原始样本见measurement.json。
 - 独立结果验收通过：480组组合等价和独立7对CPU复测，见independent_review.md。全库两项既有生成同步失败已用现有工具修复，23knowledge+1sync定向复验通过，reader3通过；原始失败日志保留。未将CPU局部收益计作模型token优化轮数。
 - 提交前ff整合并发edab6b4（in-place规范与相同知识副本同步），去掉重复metadata修改；影响路径字节未变，36项artifact和sync检查复验通过。
-- 远端发布/回读待完成，未触碰其他研究目录；后台监督/可信ReviewSession未启动。
+- 普通GitHub fast-forward发布main 8f4c287b21ac4bf9c492d5f20f7323f59545ee90；远端完整tree 79027f3ce4b89eb5b810e7377227a2a20a0ad280与验收候选相同，源码SHA e533244e68e698cb95f298bd04ce5e63727dd2cf485e4f731805883191b3e30f及report SHA bb8cdb67b8917a2716b7e3f851d5cf1e1367c78b6ac493ba749b764dd7248448回读一致。CLI无凭据，使用已连接GitHub工具且expected_sha匹配、force=false；未触碰其他研究目录。后台监督/可信ReviewSession未启动。
