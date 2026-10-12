@@ -1,0 +1,9 @@
+# Complete references with directory-prefix transport
+
+`scripts/reference_context.py --root ABSOLUTE_PROJECT_ROOT --path SOURCE_JSON --sha256 SOURCE_SHA256 --compact` reads a complete strict-JSON object containing a `references` list. Each reference has a normalized relative `path` and lowercase SHA256; other metadata is retained. `--full` provides the validated complete baseline.
+
+The optional `directory-prefix` frame stores one common directory ending in `/`. Each reference path is then its exact suffix; reconstruct with `path_prefix + path`. Every SHA, reference, duplicate entry, JSON value and encounter order remains. Extra reference fields, empty/noncommon collections and a nonshorter candidate use full representation. No reference rows or fields are selected away.
+
+`restore_reference_view(root, frame_text, source_path, source_sha)` re-reads the exact source and checks complete reconstructed ordered values. The decoder rejects stale/tampered/unknown frames. Source and display limits refuse partial output; UTF8, duplicate keys, nonfinite numeric overflow, Unicode surrogates and path/SHA errors fail. Source2MiB, references50000, display1million characters maximum. Raw JSON whitespace/number spelling is outside semantic restoration; original bytes are preserved.
+
+This is opt-in transport, with no artifact existence, freshness, validity, permission or meeting-closure authority. Restore the original reference contract before current gates. Source binding does not verify the referenced scientific artifacts. [Round03 result](../../agent_doc/results/token-fifty-03-r2-20261012/report.md) is independently usable-with-scope: one native controlled synthetic32reference pair total20589 ->20071, saving518tokens (2.52%), pairspend40660.18 independent WSL tests pass. Main readback is still required before counting publication. This is no live retrieval, long-horizon, cash or full-development net saving claim.

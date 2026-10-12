@@ -1,0 +1,1 @@
+Table proposal rejected as duplicate TOK-003 field-key interning. No implementation or native calls. Preserve draft; replacement is separately planned in token-fifty-03-r2-20261012. Not a successful round.
