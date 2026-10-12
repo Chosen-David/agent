@@ -1,0 +1,3 @@
+Approve ordinary bounded document withclarification: independentlycertified means separatelyjustified validpopulationoperatornormbound, notstatisticalindependence ofcertificate fordeterministicbound. Parentadoptedbeforewrite inPlanv1.1 andcandidate.
+
+Exactsuphat+epsilonI/minimaxsignedweights correct; bothweightcases/zerosample/biasMSEexamples correct. Preserve no sample-inferredcertificate,adaptiveBLUE,invertibilityepsilon0,simplexextension,science/deploymentacceptance. Limitedsources/MATH65unchanged appropriate. Noedits/sciencetests byreviewer.

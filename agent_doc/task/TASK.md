@@ -421,3 +421,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-90] Chinese symmetry candidate discovery routing; fixed-query checks only, real model acceptance deferred. ([detail](task_details/MATH-90.md))
 
 - [x] [MATH-91] Correlated unbiased scalar aggregation and singular covariance refusals; document-only, production deferred. ([detail](task_details/MATH-91.md))
+
+- [x] [MATH-92] Covariance uncertainty and conditional robust weights; document-only, real certificate/production deferred. ([detail](task_details/MATH-92.md))
