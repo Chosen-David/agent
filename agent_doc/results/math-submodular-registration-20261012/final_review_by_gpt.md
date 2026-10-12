@@ -1,0 +1,3 @@
+Approve ordinaryfinalreview, no revisions required.
+ExactBEFOREbytes equal scratchmath94-before.json; identical3queries/AFTERtargetfirst, scans179->180/errors59->58, partial[false,true,false]->[true,true,false]. Sixoriginalrefs matchHEADbytes/hashes; MATH68conclusions/unitcardinality/mandatoryrestrictedcomparison/complementarity/tokenknapsack restrictionsunchanged. Bothrecordsunknownvalidation/proofnull/contractnull/measured_atnull; artifacthashes resolve.
+Preservation10243oldregularfiles unchanged outside3authorizedappendmetadatafiles. Classictextualscope/OCRlimits vsrecentfailed/no currentcontentclaims separated. MATH65/cursors/SGLangunchanged. Noedits/science/modeltests/managedapproval. Parentadoptedapprove; rawqueries/originals unchanged.

@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.freedman-variance-budget",
+      "version": 1,
+      "sha256": "1fa401c6307800e52301c08f3a4528f5c0587d30c0a712c1d74512b807e65e8b",
+      "title": "标量Freedman界：可预测方差预算与停止事件",
+      "summary": "条件零均值鞅差在确定增量上界下，以固定可预测二次变差预算控制跨时刻越界；不能把经验方差或逐时刻选取的预算直接代入同一错误概率。",
+      "status": "published",
+      "assumptions": [
+        "离散过滤族F_t，D_t适应且每个t平方可积，E[D_t|F_(t-1)]=0；S_0=V_0=0",
+        "确定R>0，D_t≤R几乎处处；上尾不要求下界，双侧另需|D_t|≤R",
+        "V_t=sum_{j≤t}E[D_j²|F_(j-1)]，不是样本方差或sum D_j²",
+        "x≥0与v>0事先固定；阈值反演δ∈(0,1)固定；预算变化需单独校准",
+        "停止结论只约束{τ<∞,S_τ≥x,V_τ≤v}联合事件，不是条件概率且不保证τ有限"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/report.md",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/checks.json",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_review.md",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_results.json",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/report.md",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/independent_review.md",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/integration_review.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "预算"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "预算"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "预算"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "预算"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "前提",
+            "预算"
+          ]
+        }
+      ],
+      "score": 19
+    },
+    {
+      "id": "math.alpha-spending-stopping",
+      "version": 1,
+      "sha256": "54d4325ccdf1a12e50841ffc124dfa11fcf1dfbd0a254242fc916d8b5f573d06",
+      "title": "逐次错误预算下的随机停止保证",
+      "summary": "对同一稳定均值的每次查看分配可求和错误概率，以联合界保证任意数据依赖停止时的覆盖；保守且不保证早停。",
+      "status": "published",
+      "assumptions": [
+        "无限序列 X_i 相互独立、具有同一均值 μ 且落在已知确定区间 [a,b]",
+        "δ∈(0,1)，δ_t=δ/[t(t+1)] 在数据之前规定",
+        "评测对象、分布与取值范围固定；本条不覆盖复用数据训练后自适应选择的新模型"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-concentration/checks.json",
+          "docs/knowledge_learning/2026-10-06-concentration/verify.py"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "预算"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "预算"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "覆盖"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "前提",
+            "覆盖",
+            "预算"
+          ]
+        }
+      ],
+      "score": 16
+    },
+    {
+      "id": "prob.horizon-aware-betting",
+      "version": 1,
+      "sha256": "b8d4b79081e1971b88210e6d3cf57deff4657e1a17370acd72bc0a5549abbf18",
+      "title": "有限预算序贯检验：增长最优不等于截止期检验力最优",
+      "summary": "ICML 2026 将有界均值检验的截止期拒绝概率作为控制目标；Kelly 的长期增长目标与它不同，安全可预测下注下的有效性和策略检验力须分开核对。",
+      "status": "published",
+      "assumptions": [
+        "observations: iid X in [0,1]; fixed null mean m in (0,1); fixed alpha and deadline N",
+        "policy: bet uses past filtration only; lambda in [-1/(1-m),1/m]; implementation uses inward epsilon 1e-3",
+        "evaluation: Beta/Beta-mixture experiments; deadline hit probability and approximate grid-inverted CS; no target-agent data",
+        "theory_scope: Thm3.1 compact feasible set, bounded log increments and separated Kelly maximizer; Props3.4/3.6 finite-support rate conditions"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-checked",
+        "checks": [
+          "docs/knowledge_learning/2026-10-08-rl-probability/report.md#prob.horizon-aware-betting"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "预算"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "预算"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "预算"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "前提",
+            "预算"
+          ]
+        }
+      ],
+      "score": 16
+    }
+  ]
+}
