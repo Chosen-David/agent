@@ -192,3 +192,5 @@ TOK-FIVE usage correctness: `scripts/token_optimizer.py::observe_parent_turn` ->
 TOK-MAILBOX-PAGE: `agent_runtime/communication.py` inbox/inbox_index/CLI seek by immutable seq; `tests/test_mailbox_pagination.py` fixed long coverage/recovery fixture; `agent_doc/results/mailbox-pagination-20261011/` baseline/candidate local traces and independent validation. No ACK or provider accounting change.
 
 TOK-FIFTY-05: artifact_context optional whole-packet token_counter chooses among existing complete codecs; CLI explicit --encoding; tests/test_artifact_token_selection.py; docs/token_optimization/artifact_token_selection.md. Default character behavior preserved.
+
+TOK-FIFTY-06: complete arbitrary-LF text line dictionary, exact nonconsecutive sharing with all ordered indexes; agent_runtime/text_dictionary.py, scripts/text_dictionary.py, tests/test_text_dictionary.py; docs/token_optimization/text_dictionary.md. No meeting closure/semantic omission.

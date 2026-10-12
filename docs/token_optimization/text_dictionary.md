@@ -1,0 +1,9 @@
+# Complete advice text line dictionary
+
+`python scripts/text_dictionary.py --root ABSOLUTE_PROJECT_ROOT --path agent_doc/advice/meeting.md --sha256 SOURCE_SHA256 --compact` retains the complete text in either full form or an exact line dictionary plus every ordered index. It shares nonconsecutive equal lines and chooses dictionary form only when the whole serialized packet is shorter. `--full` supplies the complete baseline.
+
+Physical LF determines lines. CRLF, standalone CR, Unicode separators, blank lines, BOM and unterminated EOF remain exact. No issue/status/dissent/rule is selected or removed. Original files remain unchanged; this is transport and has no meeting closure or evidence acceptance authority.
+
+`restore_text_view(root, serialized, path, sha)` re-reads the fresh independently bound source, validates strict frame/types/counts/indexes and expansion character/byte totals before allocating restored text, then compares exact UTF8 bytes. CLI `--restore project/packet.json` requires the same independently supplied original binding. Max source2MiB,50000physical lines and1million serialized/expanded text characters; unsuitable or nonbeneficial sources retain full form subject to the same limits. Invalid or changed sources fail.
+
+[Round06 result](../../agent_doc/results/token-fifty-06-20261012/report.md) independently usable-with-scope: input15804 ->14978; output192 ->186 (reasoning29 ->23 included); total15996 ->15164, saving832tokens (5.20%), pairspend31160, cache0/0. Main/readback pending. One complete synthetic32issue advice text with exact arbitrary physical-LF dictionary and all65ordered indexes; all owner/status/dissent/requirements/global units/rule bytes retained. No omissions, summary/meeting closure, actual rolefanout/scientific acceptance, learned compression, longhorizon/statistical/cash/net-development or profile-effect claim.
