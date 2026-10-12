@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.linear-prediction-residual",
+      "version": 1,
+      "sha256": "749b0f08d599bcc73f35f564583281dd3c4761c3f31b44ac1b75d1e356186ba3",
+      "title": "保留分量线性预测、Schur残差与分数融合边界",
+      "summary": "非中心二阶矩给无截距最佳线性预测和残差Schur补；折入query精确分解score，但paired目标、条件方差及RoPE跨频不能混同。",
+      "status": "published",
+      "assumptions": [
+        "a∈R^s,b∈R^h，s,h≥1，有限非中心二阶矩，Caa SPD；固定无截距线性重建目标和分布",
+        "score二阶矩分离另需query独立于key；paired必须核对联合混合四阶可积及真实目标",
+        "pre-RoPE预测沿频率使用需逐块Rh(n)B=B Rs(n)；post-RoPE预测不宣称固定频率"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-linear-residual-20261008-v2: exact public development fixtures, actual independent scope receipt; not Lean/model/GPU"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "性预",
+            "残差",
+            "线性",
+            "预测"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "残差",
+            "预测"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "性预",
+            "方差",
+            "条件",
+            "残差",
+            "线性",
+            "预测"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "件协",
+            "协方",
+            "性预",
+            "方差",
+            "条件",
+            "残差",
+            "线性",
+            "非线",
+            "预测"
+          ]
+        }
+      ],
+      "score": 57
+    },
+    {
+      "id": "math.centered-covariance-merge",
+      "version": 1,
+      "sha256": "f9ebd428b6fd9f78ac667a6a2419e277c5d8ca1731d3e5357b25a9a62f7a9b28",
+      "title": "中心化协方差、可合并散布统计量与误差桥",
+      "summary": "区分二阶矩与中心协方差；按计数/均值/散布精确合并，避免遗漏组间项；统计保证与浮点稳定性分别审查。",
+      "status": "published",
+      "assumptions": [
+        "有限实向量，同维度/坐标/单位和相同预处理；精确恒等式不要求iid",
+        "A、B为不重复不遗漏的数据分区，计数为非负整数；空分区用单位元，不定义空均值",
+        "C_n=S/n对n≥1；S/(n−1)只对n≥2，称总体协方差无偏还需iid及有限二阶矩",
+        "概率误差桥需已证明的均值和二阶矩误差事件；合并公式不赋予独立性或覆盖保证",
+        "浮点不具有严格结合律；需单独检查输入精度、溢出、抵消及舍入误差"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-centering/verify.py",
+          "docs/knowledge_learning/2026-10-07-centering/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "协方",
+            "方差"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "协方",
+            "方差"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "协方",
+            "方差"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "协方",
+            "方差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "协方",
+            "方差",
+            "预测"
+          ]
+        }
+      ],
+      "score": 37
+    },
+    {
+      "id": "math.linear-solve-backward-error",
+      "version": 1,
+      "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+      "title": "线性求解的后向误差、条件性与下游误差证书",
+      "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+      "status": "published",
+      "assumptions": [
+        "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+        "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+        "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+        "下游排序须真实线性评分映射和严格逐对误差间隔"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+          "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "条件",
+            "线性"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "残差",
+            "线性"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "条件",
+            "残差",
+            "线性"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "条件",
+            "残差",
+            "线性",
+            "非线",
+            "预测"
+          ]
+        }
+      ],
+      "score": 34
+    }
+  ]
+}

@@ -451,3 +451,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [MATH-98] 观测后信息增益候选历史登记：保留平均/后验路径的拒用边界，核对固定查询发现；模型与生产验收仍待验证。见 [详情](task_details/MATH-98.md)。
 
 - [MATH-99] 固定集合信息候选历史版本绑定：v1导航改用哈希匹配快照，旧文件/v2记录保留；固定查询发现与身份检查，模型验收待验证。见 [详情](task_details/MATH-99.md)。
+
+## 2026-10-13
+
+- [MATH-100] 中心化残差协方差与条件不确定性：一般律仅给平均界，联合高斯为固定条件协方差的充分条件；四个公开手算案例，模型验收待验证。见 [详情](task_details/MATH-100.md)。
