@@ -449,3 +449,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [MATH-97] 既有耗时知识复核：三条公开问题已找到MATH95/96，记录前提路由与检索成本；本轮没有值得采用的新改进，模型验收仍待验证。见 [详情](task_details/MATH-97.md)。
 
 - [MATH-98] 观测后信息增益候选历史登记：保留平均/后验路径的拒用边界，核对固定查询发现；模型与生产验收仍待验证。见 [详情](task_details/MATH-98.md)。
+
+- [MATH-99] 固定集合信息候选历史版本绑定：v1导航改用哈希匹配快照，旧文件/v2记录保留；固定查询发现与身份检查，模型验收待验证。见 [详情](task_details/MATH-99.md)。
