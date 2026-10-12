@@ -1,0 +1,2 @@
+Approve bounded historical registration repair. PreserveMATH69fixedvectors/SPDbase/normalizedlogdet andno geometry=>errorcomplementarity/evidence sufficiency. Retrievalonlyacceptance,unknownvalidation/nullcontract,originalbytes/concurrentcommits preserved. DisabledError notfreshverification. Finalreview3frozenbeforeafterCLI/preservationhashes required; planonlyordinaryreview, notmanaged/science/modelacceptance.
+Parentclarificationv1.1 registers own auditunknownmetadata toavoidanothermissing-recorddirectory; sole originalrepairMATH69.

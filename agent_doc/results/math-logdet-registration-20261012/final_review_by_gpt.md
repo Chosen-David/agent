@@ -1,0 +1,3 @@
+Approve ordinary finalreview boundedmetadataregistration only.
+BEFOREexactbytes SHA25601f966dd7fa3cda7f3f6b0b6c03fd980e3a722cb52d6c275a5dc5ea657dcb379; same3queries/AFTERtargetfirst; scans173->174,errors58->57,partialflags[true,false,false]->[true,true,false]. Sixoriginalrefs matchhashes andHEADbytes; bothrecords validationunknown/proofnull/contractnull.
+Frozenmathboundaries/datedsource/freshDisabledErrorlimits preserved. No science/modelacceptance ormanagedreceipt. MATH65/SGLang/learningcursors unchanged. Parentclosure requiredreport/detailstatus update; publicationparentresponsibility. Parentadoptedapprove, originalbytes unchanged.
