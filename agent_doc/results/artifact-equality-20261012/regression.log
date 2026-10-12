@@ -1,0 +1,25 @@
+....................................................................................................................................................................................................................................................................................sssssss................................................................................................................................................................................F...........................................................................................................................s..............................................................................................................F..........................................................................................................................................................................................................................................................................................................................................................................................................................................................................
+======================================================================
+FAIL: test_bundle_exact_and_cli_without_repository (test_knowledge.KnowledgeTests.test_bundle_exact_and_cli_without_repository)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-current/tests/test_knowledge.py", line 228, in test_bundle_exact_and_cli_without_repository
+    for p in canonical: self.assertEqual((ROOT/'knowledge'/p).read_bytes(),(bundled/p).read_bytes())
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: b'{\n[43136 chars]    },\n    {\n      "round": "2026-10-12-logd[11093 chars]n}\n' != b'{\n[43136 chars]    }\n  ],\n  "engineering": {\n    "last_com[10679 chars]n}\n'
+
+======================================================================
+FAIL: test_generated_plugin_references_are_current (test_plugin_reference_sync.PluginReferenceSyncTests.test_generated_plugin_references_are_current)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-current/tests/test_plugin_reference_sync.py", line 17, in test_generated_plugin_references_are_current
+    self.assertEqual(run.returncode, 0, run.stdout + run.stderr)
+AssertionError: 1 != 0 : stale generated references:
+ - plugins/research-assistant/skills/model-with-knowledge/assets/knowledge/coverage.json
+ - plugins/research-assistant/skills/model-with-knowledge/assets/knowledge/learning_state.json
+
+
+----------------------------------------------------------------------
+Ran 1153 tests in 83.017s
+
+FAILED (failures=2, skipped=8)

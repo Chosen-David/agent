@@ -431,3 +431,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MATH-93] Frozen logdet candidate historical registration repaired; fixed-query discovery only, production deferred. ([detail](task_details/MATH-93.md))
 
 - [x] [OPT-INPLACE] 验收后的优化原地整合、冗余实现清理及保留例外；规范与镜像回归/独审。 ([detail](task_details/OPT-INPLACE.md))
+
+- [ ] [ART-EQUAL-01] Identical artifact CPU fast path independently verified; main publication pending. ([detail](task_details/ART-EQUAL-01.md))

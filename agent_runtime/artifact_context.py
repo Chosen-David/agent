@@ -93,7 +93,9 @@ def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=2000
         candidates.append(candidate)
     if not full and len(_json_text(candidate)) < len(_json_text(target)):
         target = candidate
-    if not full and multi_edit:
+    # Equal texts cannot produce edits. Avoid quadratic matching on repeated
+    # lines; both sources have already been read and SHA-checked above.
+    if not full and multi_edit and before != after:
         patch = _edits(before, after)
         if patch:
             candidate = {'ref': after_ref, 'representation': 'edits', 'patch': patch}

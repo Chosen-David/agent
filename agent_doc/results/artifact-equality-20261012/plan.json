@@ -1,0 +1,29 @@
+{
+  "task_id": "ART-EQUAL-01",
+  "base": "bd65a2348e32d8a70af9e003cbc309064363dd9e",
+  "decision": "EXECUTE",
+  "scope": "ordinary CPU artifact helper; not managed server dispatch or model A/B",
+  "hypothesis": "avoid SequenceMatcher on identical content; exact output invariant",
+  "criteria": {
+    "paired_payloads": ">=20 exactly identical and decoded",
+    "existing_tests": "all applicable artifact tests pass",
+    "cpu_gain": "7 paired full-entry calls on 2048 repeated identical lines, median reduction >=50%",
+    "regression": "changed inputs retain diff and all stale/flag/token errors"
+  },
+  "prior_results": "prior-search.json: token-fifty-05 token choice policy not identical-input CPU speed; not reused acceptance",
+  "knowledge": "knowledge-search.json hits vector/other problems inapplicable; use direct algorithm proof and CPython docs",
+  "source": "https://docs.python.org/3/library/difflib.html",
+  "paper": "2608.11888 previously full-read: remove unnecessary computation while preserving acceptance; no new reading count",
+  "outputs": [
+    "agent_runtime/artifact_context.py",
+    "tests/test_artifact_identical_fastpath.py",
+    "agent_doc/results/artifact-equality-20261012/",
+    "agent_doc/task/task_details/ART-EQUAL-01.md"
+  ],
+  "budget": {
+    "CPU_seconds": 60,
+    "paired_trials": 7,
+    "model_calls": 0,
+    "paid_services": 0
+  }
+}
