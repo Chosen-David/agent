@@ -443,3 +443,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [MATH-96] 固定依赖图单节点加速：最长路径归纳、路径切换与并列瓶颈反例；四个公开手算，资源/模型收益未验证。见 [详情](task_details/MATH-96.md)。
 
 - [x] [KNOW-MIRROR-01] 修复独立Skill知识状态副本漂移，独立安装与回归验证。 ([详情](task_details/KNOW-MIRROR-01.md))
+
+- [MATH-97] 既有耗时知识复核：三条公开问题已找到MATH95/96，记录前提路由与检索成本；本轮没有值得采用的新改进，模型验收仍待验证。见 [详情](task_details/MATH-97.md)。
