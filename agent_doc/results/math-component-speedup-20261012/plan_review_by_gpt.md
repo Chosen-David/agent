@@ -1,0 +1,1 @@
+Ordinary fresh-context review: approve with clarity fixes. Require I,R>=0,T>0,finite s>=1,unchanged workload/output and R, incremental H beyond baseline. Bound for p<1; specify limit and p=0 equality. Strict break-even S>1, equality S=1. All four cases correct. No trusted ReviewSession or science acceptance. Adopted in candidate.
