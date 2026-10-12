@@ -1,0 +1,78 @@
+{
+  "schema_version": "experiment-validation/v1",
+  "manifest_sha256": "e4c7a382df14070923e76a388d637be9beee5fd404184eae3dbafbb8a9605e16",
+  "artifact_hashes": {
+    "agent_doc/results/artifact-unique-splice-20261012/validation_plan.json": "db540222aad58d02de7a71cbeeba050f263b6fdfacacad06bed5122ba2635ad1",
+    "agent_runtime/artifact_context.py": "fa5935472ad49c6a80ae88e6d2c19cd9675e89780323e6275cffa1b868ebb738",
+    "tests/test_artifact_localized_diff.py": "59fdd512c302205e46f0459ee517f4d9cde63b33368c3fb33f428d8b16189425",
+    "agent_doc/results/artifact-unique-splice-20261012/measure.py": "bc449ee97ab803cf0a635ee12d122676d780fe28747cdcc5e6068f1d0d21ec61",
+    "agent_doc/results/artifact-unique-splice-20261012/measurement.json": "546290be522edc4baf84d23bf77bf91e666a784647f626730d6166f3e3cb5d0f",
+    "agent_doc/results/artifact-unique-splice-20261012/focused-tests.log": "2537d9a52ef3f64df8c9dc9e952d7908d4c17f4e3864ee6760a021817e827aa0"
+  },
+  "validation_plan_sha256": "db540222aad58d02de7a71cbeeba050f263b6fdfacacad06bed5122ba2635ad1",
+  "scope": "Complete compare_artifacts CPU byte-selection entry for a unique localized single-line change; exact packet equivalence on broad cases; no token-counter, model, cash, GPU, or end-to-end claim.",
+  "verifier": {
+    "actor": "/root/artifact_localized_verifier",
+    "independent": true,
+    "source": "separate read-only agent context",
+    "run_id": "ART-LOCAL-01-v2-verify",
+    "method": "frozen-baseline source review, independent packet/applicator differential, guard-call checks, paired timing, manifest hash readback, focused and full regression"
+  },
+  "limitations": [
+    "The speed measurement uses one synthetic repeated-line CPU workload and does not estimate a population mean for real artifacts.",
+    "Token-counter selection intentionally retains the original matcher and has no speedup claim.",
+    "No model quality, provider token, cash cost, GPU, network, or end-to-end Agent latency was measured.",
+    "The full repository has two pre-existing knowledge/plugin generated-reference failures, so the repository is not claimed fully green."
+  ],
+  "checks": {
+    "implementation": {
+      "verdict": "pass",
+      "reason": "Independent source inspection confirmed the guard only skips SequenceMatcher for byte selection when each side changes by at most one line absent from the opposite text; token-counter and reuse/multiline cases retain the original matcher.",
+      "evidence": [
+        {"path": "agent_runtime/artifact_context.py", "sha256": "fa5935472ad49c6a80ae88e6d2c19cd9675e89780323e6275cffa1b868ebb738"},
+        {"path": "agent_doc/results/artifact-unique-splice-20261012/independent_summary.json", "sha256": "2f717ba5960137eacb51e8ebea3c6005dd95bebe453480a217c0a867062771c0"}
+      ]
+    },
+    "reference_boundary": {
+      "verdict": "pass",
+      "reason": "Independent baseline comparison covered 3,016 empty, CRLF, Unicode, repeated, insertion/deletion/replacement, prior-failure, 2,048-line and 65,536-character cases in two modes: 6,032 packets matched byte-for-byte and independently restored.",
+      "evidence": [
+        {"path": "agent_doc/results/artifact-unique-splice-20261012/independent_summary.json", "sha256": "2f717ba5960137eacb51e8ebea3c6005dd95bebe453480a217c0a867062771c0"},
+        {"path": "tests/test_artifact_localized_diff.py", "sha256": "59fdd512c302205e46f0459ee517f4d9cde63b33368c3fb33f428d8b16189425"}
+      ]
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "All eight manifest references and the validation plan matched their frozen hashes; seed, case counts, code revision and seven paired samples were present and consistent.",
+      "evidence": [
+        {"path": "agent_doc/results/artifact-unique-splice-20261012/measurement.json", "sha256": "546290be522edc4baf84d23bf77bf91e666a784647f626730d6166f3e3cb5d0f"},
+        {"path": "agent_doc/results/artifact-unique-splice-20261012/independent_summary.json", "sha256": "2f717ba5960137eacb51e8ebea3c6005dd95bebe453480a217c0a867062771c0"}
+      ]
+    },
+    "numerical_sanity": {
+      "verdict": "pass",
+      "reason": "The seven producer samples were finite and nonnegative; independent median/reduction recomputation exactly matched the frozen measurement and manifest.",
+      "evidence": [
+        {"path": "agent_doc/results/artifact-unique-splice-20261012/measurement.json", "sha256": "546290be522edc4baf84d23bf77bf91e666a784647f626730d6166f3e3cb5d0f"},
+        {"path": "agent_doc/results/artifact-unique-splice-20261012/independent_summary.json", "sha256": "2f717ba5960137eacb51e8ebea3c6005dd95bebe453480a217c0a867062771c0"}
+      ]
+    },
+    "measurement_validity": {
+      "verdict": "pass",
+      "reason": "After warmup, seven alternating-order complete-entry pairs gave an independent median reduction from 632.832658 ms to 1.809249 ms; packet equivalence and restoration held, comfortably exceeding the predeclared 50% threshold.",
+      "evidence": [
+        {"path": "agent_doc/results/artifact-unique-splice-20261012/measurement.json", "sha256": "546290be522edc4baf84d23bf77bf91e666a784647f626730d6166f3e3cb5d0f"},
+        {"path": "agent_doc/results/artifact-unique-splice-20261012/independent_summary.json", "sha256": "2f717ba5960137eacb51e8ebea3c6005dd95bebe453480a217c0a867062771c0"}
+      ]
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "A separate read-only verifier reran the frozen baseline/candidate differential and 23 focused tests. The 1,174-test full suite retained only two unrelated baseline failures.",
+      "evidence": [
+        {"path": "agent_doc/results/artifact-unique-splice-20261012/focused-tests.log", "sha256": "2537d9a52ef3f64df8c9dc9e952d7908d4c17f4e3864ee6760a021817e827aa0"},
+        {"path": "agent_doc/results/artifact-unique-splice-20261012/full-regression.log", "sha256": "6456c9e5bf7b703d8dccdd957d445c7e7743aed9d81b7b8ef036a294e5fa7d03"},
+        {"path": "agent_doc/results/artifact-unique-splice-20261012/independent_summary.json", "sha256": "2f717ba5960137eacb51e8ebea3c6005dd95bebe453480a217c0a867062771c0"}
+      ]
+    }
+  }
+}

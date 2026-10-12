@@ -434,6 +434,8 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [ART-EQUAL-01] Identical artifact CPU fast path independently verified and main source/tree readback confirmed; scoped synthetic CPU gain. ([detail](task_details/ART-EQUAL-01.md))
 
+- [x] [ART-LOCAL-01] Unique single-line artifact splice fast path independently verified; exact packet parity and scoped synthetic CPU gain. ([detail](task_details/ART-LOCAL-01.md))
+
 - [x] [MATH-94] Frozen coverage/prerequisite candidate historical registration repaired; fixed-query discovery only. ([detail](task_details/MATH-94.md))
 
 - [MATH-95] 局部加速与整体耗时条件界：串行固定工作/额外开销推导及重叠、工作量变化反例；四个公开手算，仅文档检查，实际模型/性能未测。见 [详情](task_details/MATH-95.md)。

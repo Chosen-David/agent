@@ -1,0 +1,36 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "Complete compare_artifacts CPU entry for bounded synthetic localized text changes; exact restoration and non-increasing final wire size; no model, token, cash, GPU, or end-to-end claim.",
+  "criteria": {
+    "implementation": {
+      "procedure": "Independently inspect the public entry, changed helper, offsets, bounds and codec selection.",
+      "acceptance": "Only proven-equal edges are excluded; offsets stay relative to the complete base; existing bounds and SHA reads remain.",
+      "allow_not_applicable": false
+    },
+    "reference_boundary": {
+      "procedure": "Use an independently written patch applicator over empty, CRLF, Unicode, insert, delete, repeated and randomized cases.",
+      "acceptance": "Every accepted packet reconstructs the exact target and preserves source identity.",
+      "allow_not_applicable": false
+    },
+    "data_integrity": {
+      "procedure": "Check fixed baseline/code/input hashes, seed, case counts and all seven paired samples.",
+      "acceptance": "No missing/duplicate cases or samples; recorded hashes match actual files and baseline.",
+      "allow_not_applicable": false
+    },
+    "numerical_sanity": {
+      "procedure": "Recompute medians and reduction from finite nonnegative millisecond samples.",
+      "acceptance": "Reported values match raw pairs; no NaN, Inf, negative duration or unit mismatch.",
+      "allow_not_applicable": false
+    },
+    "measurement_validity": {
+      "procedure": "Run seven alternating-order paired calls after warmup through compare_artifacts including reads, hashes, selection and serialization.",
+      "acceptance": "Candidate median is at most half baseline and final wire size never exceeds baseline over at least 2,000 cases.",
+      "allow_not_applicable": false
+    },
+    "reproducibility": {
+      "procedure": "Run the frozen measurement command and focused artifact tests from a clean process.",
+      "acceptance": "Measurement assertions and focused tests pass on the recorded CPU environment.",
+      "allow_not_applicable": false
+    }
+  }
+}

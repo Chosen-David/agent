@@ -1,0 +1,12 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "Complete compare_artifacts CPU byte-selection entry for a unique localized single-line change; exact packet equivalence on broad cases; no token-counter, model, cash, GPU, or end-to-end claim.",
+  "criteria": {
+    "implementation": {"procedure": "Inspect the public entry and guard proof, including the token-counter exclusion.", "acceptance": "Only a single inserted/deleted line absent from the opposite text can skip matching; all other paths retain the original matcher.", "allow_not_applicable": false},
+    "reference_boundary": {"procedure": "Compare frozen baseline and candidate packets over empty, CRLF, Unicode, repeated, bound and randomized cases.", "acceptance": "All 6,032 complete-entry packets are byte-for-byte equal and restore exactly.", "allow_not_applicable": false},
+    "data_integrity": {"procedure": "Check baseline/code/input hashes, fixed seed, case count and seven samples.", "acceptance": "No missing cases or samples and all recorded hashes match.", "allow_not_applicable": false},
+    "numerical_sanity": {"procedure": "Recompute medians and reduction from finite nonnegative millisecond samples.", "acceptance": "Reported values match raw samples and units.", "allow_not_applicable": false},
+    "measurement_validity": {"procedure": "Run seven alternating-order paired complete-entry calls after warmup.", "acceptance": "Candidate median is at most half baseline without changing packets.", "allow_not_applicable": false},
+    "reproducibility": {"procedure": "Rerun the frozen measurement and focused artifact tests in a separate process.", "acceptance": "Assertions and focused tests pass on the recorded CPU environment.", "allow_not_applicable": false}
+  }
+}

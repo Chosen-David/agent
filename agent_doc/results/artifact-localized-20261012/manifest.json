@@ -1,0 +1,54 @@
+{
+  "schema_version": "experiment-result/v1",
+  "result_id": "artifact-localized-cpu-20261012",
+  "producer_task_id": "ART-LOCAL-01",
+  "producer_actor": "root-implementation-agent",
+  "manifest_path": "agent_doc/results/artifact-localized-20261012/manifest.json",
+  "validation_plan": {
+    "path": "agent_doc/results/artifact-localized-20261012/validation_plan.json",
+    "sha256": "86e1c2c815ade3a8a59c83a6500c35b4f377ed7a540e6689969fc6a2c6a1323e"
+  },
+  "scope": "Complete compare_artifacts CPU entry for bounded synthetic localized text changes; exact restoration and non-increasing final wire size; no model, token, cash, GPU, or end-to-end claim.",
+  "run_id": "artifact-localized-20261012",
+  "code_revision": "71496c7b1f42b94616343683c7671b6a0e6e8a3b+working-tree-candidate",
+  "execution": {
+    "command": [
+      "python agent_doc/results/artifact-localized-20261012/measure.py",
+      "python -m unittest tests.test_artifact_context tests.test_artifact_edits tests.test_artifact_identical_fastpath tests.test_artifact_localized_diff -v",
+      "python -m unittest discover -s tests -v"
+    ],
+    "environment_description": "Python 3.12.14, Linux 6.18.44 x86_64; bounded CPU-only local run",
+    "seeds": [8675309],
+    "repeats": 7
+  },
+  "artifacts": {
+    "code": [
+      {"path": "agent_runtime/artifact_context.py", "sha256": "21636fec2f09f526dd1ad864f6743760331f6664047ea72c3d6e4d1298f2d6fe"},
+      {"path": "tests/test_artifact_localized_diff.py", "sha256": "7f90b0cf77f6b6655924f9efacff310b6f988bbab197987816d9dde72a15a694"},
+      {"path": "agent_doc/results/artifact-localized-20261012/measure.py", "sha256": "aaa8c2249cf59f135c04b1caaeea663eaa5fc0f905f1ff1e6a0ec293af426fab"}
+    ],
+    "inputs": [
+      {"path": "agent_doc/results/artifact-localized-20261012/measure.py", "sha256": "aaa8c2249cf59f135c04b1caaeea663eaa5fc0f905f1ff1e6a0ec293af426fab"}
+    ],
+    "config": [
+      {"path": "agent_doc/results/artifact-localized-20261012/validation_plan.json", "sha256": "86e1c2c815ade3a8a59c83a6500c35b4f377ed7a540e6689969fc6a2c6a1323e"}
+    ],
+    "raw_data": [
+      {"path": "agent_doc/results/artifact-localized-20261012/measurement.json", "sha256": "350d899b68172b28bd715d9ec6c9b993404744140d429b4fe84c7ba52c5d21bb"}
+    ],
+    "outputs": [
+      {"path": "agent_doc/results/artifact-localized-20261012/focused-tests.log", "sha256": "41d1dc350e8cd956a93cc6dbbaae58f83bee78c19afec6a943def6fdba9c8b7f"},
+      {"path": "agent_doc/results/artifact-localized-20261012/full-regression.log", "sha256": "a94d78bab25a0337cf8d96e26045d5d8fe866ac0476dc3c3525a336d03a73e0d"}
+    ],
+    "environment": [
+      {"path": "agent_doc/results/artifact-localized-20261012/measurement.json", "sha256": "350d899b68172b28bd715d9ec6c9b993404744140d429b4fe84c7ba52c5d21bb"}
+    ]
+  },
+  "metrics": [
+    {"name": "baseline_median", "value": 619.523861, "unit": "milliseconds"},
+    {"name": "candidate_median", "value": 1.868739, "unit": "milliseconds"},
+    {"name": "reduction", "value": 0.9969835883367211, "unit": "dimensionless"},
+    {"name": "complete_entry_checks", "value": 4016, "unit": "count"},
+    {"name": "larger_packets", "value": 0, "unit": "count"}
+  ]
+}

@@ -68,6 +68,25 @@ def _edits(before, after):
     return {'base_sha256': _digest(before), 'edits': edits}
 
 
+def _unique_single_splice(before, after, patch):
+    """True when byte selection cannot benefit from multi-edit matching.
+
+    A single inserted/deleted line that occurs nowhere in the opposite text
+    cannot be reused as a match. Its one-edit representation contains the same
+    payload as the already-built splice plus extra schema overhead. Arbitrary
+    token counters still receive every codec, so this only guards byte mode.
+    """
+    old = before.splitlines(keepends=True)
+    new = after.splitlines(keepends=True)
+    start = patch['start']
+    deleted = old[start:start+patch['delete']]
+    inserted = patch['insert'].splitlines(keepends=True)
+    if not (deleted or inserted) or max(len(deleted), len(inserted)) > 1:
+        return False
+    return (all(line not in new for line in deleted) and
+            all(line not in old for line in inserted))
+
+
 def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=20000,
                       reuse_identical=False, multi_edit=False, token_counter=None):
     """Read both SHA-bound regular UTF-8 files; return a complete comparison.
@@ -88,14 +107,18 @@ def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=2000
     after = _bound(root, after_ref).decode('utf-8')
     target = {'ref': after_ref, 'representation': 'full', 'text': after}
     candidates = [target]
-    candidate = {'ref': after_ref, 'representation': 'splice', 'splice': _splice(before, after)}
+    splice = _splice(before, after)
+    candidate = {'ref': after_ref, 'representation': 'splice', 'splice': splice}
     if not full:
         candidates.append(candidate)
     if not full and len(_json_text(candidate)) < len(_json_text(target)):
         target = candidate
     # Equal texts cannot produce edits. Avoid quadratic matching on repeated
     # lines; both sources have already been read and SHA-checked above.
-    if not full and multi_edit and before != after:
+    skip_byte_only_edits = (not full and multi_edit and before != after and
+                            token_counter is None and
+                            _unique_single_splice(before, after, splice))
+    if not full and multi_edit and before != after and not skip_byte_only_edits:
         patch = _edits(before, after)
         if patch:
             candidate = {'ref': after_ref, 'representation': 'edits', 'patch': patch}
