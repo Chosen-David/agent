@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.linear-solve-backward-error",
+      "version": 1,
+      "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+      "title": "线性求解的后向误差、条件性与下游误差证书",
+      "summary": "用可核验的逆算子界将线性方程残差转换为解和线性评分误差；小残差不能替代条件性与输入误差审查。",
+      "status": "published",
+      "assumptions": [
+        "实可逆方阵，指定向量无穷范数与诱导行和矩阵范数",
+        "残差和逆算子范数均有有效上界；浮点和输入误差需另行覆盖",
+        "联合非结构化扰动不承诺保持物理或稀疏结构；相对误差须b≠0",
+        "下游排序须真实线性评分映射和严格逐对误差间隔"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-conditioning/verify.py",
+          "docs/knowledge_learning/2026-10-07-conditioning/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "线性",
+            "误差"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "线性",
+            "误差"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "线性",
+            "误差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "线性",
+            "误差",
+            "近似"
+          ]
+        }
+      ],
+      "score": 29
+    },
+    {
+      "id": "math.weighted-bilinear-low-rank",
+      "version": 1,
+      "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+      "title": "二阶矩加权的双线性低秩分数近似",
+      "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+      "status": "published",
+      "assumptions": [
+        "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+        "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+        "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "本条目显示的独立推导；非形式化证明",
+          "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "线性",
+            "近似"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "线性"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "误差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "线性",
+            "误差",
+            "近似"
+          ]
+        }
+      ],
+      "score": 21
+    },
+    {
+      "id": "math.convex-projection-certificate",
+      "version": 1,
+      "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c",
+      "title": "选定凸输出的投影、误差下界与残差间隙证书",
+      "summary": "有限value凸包的平方误差投影以可行性和全顶点残差max认证；P−2g≤最优误差≤P，g=0 iff投影。",
+      "status": "published",
+      "assumptions": [
+        "非空有限v_i∈R^p和固定已知z；Euclidean平方误差；C=conv{v_i}，允许改变权重但β≥0且Σβ=1。",
+        "候选y必须属于C；h_C(r)=max_i r·v_i遍历C的全部给定点；只对明确选定value集合给界。",
+        "固定线性W可对Wv和Wz使用结论；只保真W输出，不保证raw输出、全部query或模型e2e。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "精确展开/凸性证明人工审核，不是Lean或浮点数值证书。",
+          "agent_doc/results/math-convex-projection-20261009：12公开Fraction例、6结构检索、定向回归及独立六域验收；无模型/GPU实测。"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "误差"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "线性",
+            "误差"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "误差"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "线性",
+            "误差"
+          ]
+        }
+      ],
+      "score": 20
+    }
+  ]
+}

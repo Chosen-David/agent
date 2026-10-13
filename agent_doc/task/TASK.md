@@ -475,3 +475,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [MATH-109] 补齐有限菜单候选历史检索登记：三条相同公开查询找到原记录首位，旧证明和实验保留；仅词法结构检查，模型与生产待验证。见 [详情](task_details/MATH-109.md)。
 
 - [MATH-110] 周期移位与线性卷积应用：第一列核/Fourier谱展开，零填充与非线性拒用，环形差分解析核对；真实Agent迁移待验证。见 [详情](task_details/MATH-110.md)。
+
+- [MATH-111] 已有周期滤波前提审计：近似交换/单样本拒用、环形守恒及单槽边界，三条公开问题仅一条首位；没有值得采用的新改进，模型/生产待验证。见 [详情](task_details/MATH-111.md)。
