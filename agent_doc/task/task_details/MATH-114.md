@@ -13,3 +13,5 @@ Allowedownresults/detailTASKappendprobabilitygap/statehistory+2mirrors preservee
 普通独立计划审核通过；推导与四例已保存，最终普通复核待完成。源同步以API blob/tree/commit精确SHA恢复并保留并发升级。无可信科学验收/数值或模型实测；下一主AI认证真实固定核/状态定义/π和未见同预算任务。MATH65及全部科学游标保留。
 
 - 普通最终独立文档复核usable-with-scope无阻塞；完整有限推导/四手算/来源与方向边界核对，10695旧普通文件与并发代码保留、所有科学游标不变，引用有效、镜像一致、1项同步回归通过(.074s)。无形式化/数值/物理/模型或可信科学验收。下一步freshAPIhead expectedbase CASmain并远端SHA/文件及Git对象逐字节核对；实际固定核/π/未见同预算验证待后续，提交状态见最终回报。
+
+- 发布收尾：39ddb8183ea296947f06d7e01587d4e36c029be3已在main，前轮26个文件API逐字节与Git对象SHA核对完成，本轮新鲜HEAD确认同一提交。原冻结报告不改；真实Agent迁移仍待验证。
