@@ -471,3 +471,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [MATH-107] 历史条件风险与可求和预算：可预测选择仍需真实条件证书，保存固定边际低风险但选中必败反例；四个公开解析例，Agent迁移待验证。见 [详情](task_details/MATH-107.md)。
 
 - [MATH-108] 既有校准证书组合复核：MATH82已覆盖外层置信与内层风险，保存四个公开解析核对及检索缺口；本轮没有值得采用的新改进。见 [详情](task_details/MATH-108.md)。
+
+- [MATH-109] 补齐有限菜单候选历史检索登记：三条相同公开查询找到原记录首位，旧证明和实验保留；仅词法结构检查，模型与生产待验证。见 [详情](task_details/MATH-109.md)。
