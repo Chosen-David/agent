@@ -477,3 +477,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [MATH-110] 周期移位与线性卷积应用：第一列核/Fourier谱展开，零填充与非线性拒用，环形差分解析核对；真实Agent迁移待验证。见 [详情](task_details/MATH-110.md)。
 
 - [MATH-111] 已有周期滤波前提审计：近似交换/单样本拒用、环形守恒及单槽边界，三条公开问题仅一条首位；没有值得采用的新改进，模型/生产待验证。见 [详情](task_details/MATH-111.md)。
+
+## 2026-10-14
+
+- [MATH-112] 环形扩散离散更新：守恒、非负、谱稳定和端点振荡分开核验，专门时间误差界与四个公开解析例；真实数值/Agent迁移待验证。见 [详情](task_details/MATH-112.md)。
