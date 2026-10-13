@@ -1,0 +1,1 @@
+Ordinary /root/measure_diffusion_plan approves mathematical document plan, no blocker. Independently checkedweightedmass,rowstochasticpositivityiff tauq<=1,generalizedspectrum/Mnormstability,Euclideanrise andcomponentweightedmeans; no writes/trustedscience receipt.

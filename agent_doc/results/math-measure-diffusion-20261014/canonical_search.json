@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.generalized-hermitian-eigenproblem",
+      "version": 1,
+      "sha256": "cc93bd1de8feef3ce79b514f4f8989e453eb904c1b6e479770fdf2ff10869881",
+      "title": "广义自伴特征问题与质量度量",
+      "summary": "B=LL* 后 C=L⁻¹AL⁻* 为 Hermitian；Cu=λu 对应 z=L⁻*u。",
+      "status": "published",
+      "assumptions": [
+        "A=A*，B=B*>0，Az=λBz；B 的正定性必须成立，不能仅可逆。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "正文逐项来源/证明核查；非 Lean 形式化证明",
+          "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "广义",
+            "质量"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "广义",
+            "质量"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "广义",
+            "正定",
+            "矩阵",
+            "质量"
+          ]
+        }
+      ],
+      "score": 24
+    },
+    {
+      "id": "math.low-rank-inverse-update",
+      "version": 1,
+      "sha256": "fbaf3c9e5191feb0b59b298cf348fc90ef66d40b6c21aa47e083a11d977c01a0",
+      "title": "低秩逆更新、正定删除与浮点相消边界",
+      "summary": "可逆A的低秩更新由小系统S=I+V^TA^-1U判可逆；正定删除需u^TA^-1u<1。精确恒等式不保证浮点稳定，完整残差仍需核验。",
+      "status": "published",
+      "assumptions": [
+        "实A为n×n可逆矩阵，U,V为n×k，S=I_k+V^TA^-1U；B可逆等价于S可逆，不要求因子满列秩。",
+        "rank-one公式需beta=1+v^TA^-1u非零；SPD判据另需A实对称正定，正负更新为uu^T。",
+        "精确实数恒等式与实际浮点算法分开；IEEE binary64反例限定Python记录的运算顺序。",
+        "在线ridge仅是未归一化Gram λI+Σx_ix_i^T，λ>0；回归rhs须一起更新，不能套用到含均值/归一化变化的原始协方差删除。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-inverse-update-20261009：10公开精确/实际binary64边界与独立审核；非形式化、非通用稳定/模型收益证明。"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "正定"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "正定",
+            "矩阵"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "正定"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "正定",
+            "矩阵",
+            "质量"
+          ]
+        }
+      ],
+      "score": 21
+    },
+    {
+      "id": "math.softmax-barycenter-error",
+      "version": 1,
+      "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+      "title": "有限 softmax 与归一化加权输出误差",
+      "summary": "区分支持集、概率质量与value几何；以误差振幅控制TV和输出，分解剪枝、分数与value误差。",
+      "status": "published",
+      "assumptions": [
+        "非空有限支持集，比较概率来自同支持集有限logits；温度已计入",
+        "values与输出线性映射固定，范数和直径有效；非负归一化权重",
+        "剪枝单独分解，保留质量来自完整概率，不把输出界当端到端精度"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "Explicit finite derivation and counterexamples in matching Markdown; not formal verification",
+          "doc/results/math-softmax-20261007-v2/verify.py and independent review; CPU float64 development fixtures, no model A/B"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "加权"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "加权",
+            "质量"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "质量"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "加权",
+            "质量"
+          ]
+        }
+      ],
+      "score": 20
+    }
+  ]
+}

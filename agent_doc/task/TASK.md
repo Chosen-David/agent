@@ -481,3 +481,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-14
 
 - [MATH-112] 环形扩散离散更新：守恒、非负、谱稳定和端点振荡分开核验，专门时间误差界与四个公开解析例；真实数值/Agent迁移待验证。见 [详情](task_details/MATH-112.md)。
+
+- [MATH-113] 非均匀扩散度量：加权质量守恒、非负步长与广义谱稳定，普通和/欧氏范数/不连通平均反例；四个公开解析例，真实消费者待验证。见 [详情](task_details/MATH-113.md)。
