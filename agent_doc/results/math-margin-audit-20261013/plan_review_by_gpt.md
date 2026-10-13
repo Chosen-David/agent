@@ -1,0 +1,5 @@
+Approve for the bounded MATH-106 document audit only.
+
+Reviewer /root/margin_audit_plan_review. The plan reuses MATH105conditionalapplication without theorem/Skill/productionchange orscientificacceptance. Routes distinguish zeroadditive/preservedreference contraction, finiteobservations withoutuniformcertificate, andpersistentoffset tube0.2. Actualpriorsearch explicitmarginrank1/publicmiss-miss-third,196scans61errors allpartialtrue; preservefailures/ranks lexicalonly. Main-onlywrites/twoordinaryreviewstages/preservation/mirrorregression/freshsync/nonforcepublication/remotereadback fitdocumentscope.
+
+Finalacceptance inspectactualbytes/source readbacks orfailures/preservation. KeepMATH65blocked/scientificcursors/unseen0/tokenunknown/modelABabsent. Ordinarydocumentreview, nottrustedhostreceipt orscientificdispatchpermission.
