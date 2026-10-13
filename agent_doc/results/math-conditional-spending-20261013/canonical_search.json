@@ -1,0 +1,199 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.alpha-spending-stopping",
+      "version": 1,
+      "sha256": "54d4325ccdf1a12e50841ffc124dfa11fcf1dfbd0a254242fc916d8b5f573d06",
+      "title": "逐次错误预算下的随机停止保证",
+      "summary": "对同一稳定均值的每次查看分配可求和错误概率，以联合界保证任意数据依赖停止时的覆盖；保守且不保证早停。",
+      "status": "published",
+      "assumptions": [
+        "无限序列 X_i 相互独立、具有同一均值 μ 且落在已知确定区间 [a,b]",
+        "δ∈(0,1)，δ_t=δ/[t(t+1)] 在数据之前规定",
+        "评测对象、分布与取值范围固定；本条不覆盖复用数据训练后自适应选择的新模型"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-concentration/checks.json",
+          "docs/knowledge_learning/2026-10-06-concentration/verify.py"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "停止",
+            "误预",
+            "错误",
+            "预算"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "停止",
+            "反复",
+            "查看",
+            "误预",
+            "错误",
+            "预算"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "停止",
+            "反复",
+            "查看"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "停止",
+            "查看",
+            "错误"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "停止",
+            "反复",
+            "查看",
+            "误预",
+            "错误",
+            "预算"
+          ]
+        }
+      ],
+      "score": 77
+    },
+    {
+      "id": "math.freedman-variance-budget",
+      "version": 1,
+      "sha256": "1fa401c6307800e52301c08f3a4528f5c0587d30c0a712c1d74512b807e65e8b",
+      "title": "标量Freedman界：可预测方差预算与停止事件",
+      "summary": "条件零均值鞅差在确定增量上界下，以固定可预测二次变差预算控制跨时刻越界；不能把经验方差或逐时刻选取的预算直接代入同一错误概率。",
+      "status": "published",
+      "assumptions": [
+        "离散过滤族F_t，D_t适应且每个t平方可积，E[D_t|F_(t-1)]=0；S_0=V_0=0",
+        "确定R>0，D_t≤R几乎处处；上尾不要求下界，双侧另需|D_t|≤R",
+        "V_t=sum_{j≤t}E[D_j²|F_(j-1)]，不是样本方差或sum D_j²",
+        "x≥0与v>0事先固定；阈值反演δ∈(0,1)固定；预算变化需单独校准",
+        "停止结论只约束{τ<∞,S_τ≥x,V_τ≤v}联合事件，不是条件概率且不保证τ有限"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/report.md",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/checks.json",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_review.md",
+          "agent_doc/results/knowledge-freedman-20261008T0915Z/independent_results.json",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/report.md",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/independent_review.md",
+          "agent_doc/results/knowledge-freedman-20261008T1215Z/integration_review.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "停止",
+            "预算"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "预算"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "预算"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "错误",
+            "预算"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "停止",
+            "错误",
+            "预算"
+          ]
+        }
+      ],
+      "score": 28
+    },
+    {
+      "id": "algo.rl-sft-trajectory-concentration",
+      "version": 1,
+      "sha256": "4c7afd59193e92088e409e2170dcae236c4dde6860807a4d1d16a32544552cd7",
+      "title": "RL／SFT 推理路径：区分成功率、路径多样性与采样预算",
+      "summary": "ICLR 2026 的既有模型比较中，RL 常压缩错误和正确路径，SFT 扩充正确路径；应联合检查 pass@1、pass@k 与聚类代理，不能断言 RL 永远不产生新能力。",
+      "status": "published",
+      "assumptions": [
+        "models: Table 1 Qwen 1.5B/7B/14B Base/RL/SFT/SFT+RL checkpoints; observational comparison",
+        "tasks: AIME24/AIME25/AMC23; HumanEval for Table 1 7B models",
+        "sampling: 256 responses/problem; temperature 0.6; top_p 0.95; model-dependent 4096/16000 context cap",
+        "metric: correct/incorrect UPGMA chrF clusters at similarity 60; pass@k; not latent capability proof"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-checked",
+        "checks": [
+          "docs/knowledge_learning/2026-10-08-rl-probability/report.md#algo.rl-sft-trajectory-concentration"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "预算"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "错误"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "错误"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "错误"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "错误",
+            "预算"
+          ]
+        }
+      ],
+      "score": 19
+    }
+  ]
+}

@@ -467,3 +467,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [MATH-105] 名义收缩与算子误差余量：共同范数充分界、非正规小扰动反例及加性偏移区别；四个公开解析例，真实误差证书/模型收益未测。见 [详情](task_details/MATH-105.md)。
 
 - [MATH-106] 既有稳定余量应用复核：三条公开查询两条前三未命中、一条第三；有限样本/原参考/持续偏移拒用保存，本轮没有值得采用的新改进。见 [详情](task_details/MATH-106.md)。
+
+- [MATH-107] 历史条件风险与可求和预算：可预测选择仍需真实条件证书，保存固定边际低风险但选中必败反例；四个公开解析例，Agent迁移待验证。见 [详情](task_details/MATH-107.md)。
