@@ -1,0 +1,2 @@
+Usable-with-scope. No correctness blockers. Reviewer /root/cyclic_filter_final。
+Independently read actualMATH110/application/report/card/refs/full spectralcard, officialMITrelevanttext and arXivpage. Checked commutant columnproof/Fourier minus sign/unitarynormalnorm/fourhandcases/n1/conjugacy/units/refusals. Independently10592priorregularfilesoutside5metadata unchanged;TASKprefix/learningcursors preserved,mirrors equal,app/navigationhashes valid. Ordinarydocumentreview only;production/numerical/model/GPU/performanceunverified. No writes/trustedreceipt issued.
