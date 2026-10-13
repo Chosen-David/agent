@@ -463,3 +463,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [MATH-103] 既有阈值风险应用复核：三条公开查询两条首位、一条前三未命中；前提拒用与成本保存。本轮没有值得采用的新改进，模型/生产待验证。见 [详情](task_details/MATH-103.md)。
 
 - [MATH-104] 离散稳定性中英文导航：复用非正规瞬态/切换/完整状态知识，保留历史记录，核对公开中文查询发现；模型与生产收益未测。见 [详情](task_details/MATH-104.md)。
+
+- [MATH-105] 名义收缩与算子误差余量：共同范数充分界、非正规小扰动反例及加性偏移区别；四个公开解析例，真实误差证书/模型收益未测。见 [详情](task_details/MATH-105.md)。

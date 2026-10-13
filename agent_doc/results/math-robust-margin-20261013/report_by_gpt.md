@@ -1,0 +1,9 @@
+# MATH-105 — certified common-norm operator error margin
+
+Taskapplication derivesr=γ+δ<1 undertruefixed/commonSPDnormcertificate, uniformoperatorerror andfullreference-preservingupdate. Euclideannormconversion retains sqrtκP; additiveoffset givesη/(1−r) tube. Fourpublichandcases distinguish validarbitraryboundedsequence, nonnormalnominal-spectrumfailure, boundaryr1, additiveversusoperatorerrors. AffineperturbationE y* offsetexplicit; no automaticquantization/Agent guarantee.
+
+ExistingdiscreteLyap/switchedknowledge+4refclosure reused, no newcanonicaltheorem/Skill/advice/runtimechange. Prior195dirs61errorspartialtrue; no validatedscientificdatareused. Actual3publicqueries findMATH104navfirst, onlylexicalstructure. SourceBoyd2008-09discreteproofscope; recentleadprimaryaccessfailed/versionstatusunverified,noadoption. Generalproofowntriangle/induction notnoveltheorem; no numeric/Lean/symbolic/model/physical/GPUexperiment,unused0/tokenunknown. MATH65blockedexhausted/sciencecursors unchanged.
+
+Concreteupdate/quantizationtransfer needsactualfullstate/commontarget/normanderrorenclosure. Fourcasesfalsifiablebutonlyanalyticaldocumentcheck; matched-modeltoolsbudgetreservedacceptance absent. Productiondefer,no performancegainclaim.
+
+Ordinaryfinalindependentreviewusable-with-scope;4refsvalid/10493oldfilesoutside5metadatapreserved/allsciencecursors unchanged;1mirrorregressionpassed. ActualpublicCLIwallcosts≈.143/.136/.143s, notmodel/tokencostbenefit. Newrecordunknown/nullmeasurement; no scientificacceptance orproductionimprovement claimed.
