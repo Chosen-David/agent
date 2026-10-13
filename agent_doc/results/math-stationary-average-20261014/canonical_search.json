@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "ai.speculative-sampling-residual-exactness",
+      "version": 1,
+      "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331",
+      "title": "推测采样：剩余质量校正与分布不变条件",
+      "summary": "固定共同token空间、正确前缀和真实提议分布，以min(1,p/q)接受并在拒绝后抽取正部残差，恢复目标分布；greedy、树候选和MTP名称本身不保证随机采样无损。",
+      "status": "published",
+      "assumptions": [
+        "p与q为同一有限输出空间上的归一化分布，包含实际采样变换；p固定为所比较的目标生成策略",
+        "候选从实际q生成；接受检验随机数符合条件独立性，不能把argmax生成的点质量伪装成soft q",
+        "只对q(X)>0计算比值；Z=0意味着不会进入残差归一化分支，不要求目标支撑包含于提议支撑",
+        "链式验证的p/q、位置及缓存对应同一前缀；第一次拒绝后丢弃不再对应正确前缀的后续草稿",
+        "确定性候选消元的顺序不偷看本次接受随机数，拒绝后更新剩余分布；此特例不认证任意树实现",
+        "理论使用精确概率运算，有限精度/缓存/终止/随机数实现须另验；分布相同不等于same-seed逐字相同"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-review.md",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/source-lock.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/verify.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/checks.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_check.py",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/independent_math_result.json",
+          "docs/knowledge_learning/2026-10-07-ai-algorithms/report.md"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "分布"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "分布"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "分布"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "分布"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "分布"
+          ]
+        }
+      ],
+      "score": 18
+    },
+    {
+      "id": "math.weighted-bilinear-low-rank",
+      "version": 1,
+      "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+      "title": "二阶矩加权的双线性低秩分数近似",
+      "summary": "独立q/k与正定非中心二阶矩下，将分数均方误差化成双侧加权Frobenius目标；最优双投影不等于K-PCA或共享正交子空间。",
+      "status": "published",
+      "assumptions": [
+        "q∈R^m,k∈R^n独立，各有有限非中心二阶矩Sq=Eqqᵀ>0,Sk=Ekkᵀ>0；H固定",
+        "M为任意秩至多r的m×n实矩阵；0≤r≤min(m,n)为整数",
+        "目标是原始双线性分数均方误差，不是softmax、top-k或端到端任务损失"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "本条目显示的独立推导；非形式化证明",
+          "doc/results/math-weighted-bilinear-20261007/verify.py、raw.json与independent/：公开CPU开发验证，不含模型A/B"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "加权"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "加权"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "加权"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "分布",
+            "加权",
+            "可逆"
+          ]
+        }
+      ],
+      "score": 16
+    },
+    {
+      "id": "math.convex-support-reduction",
+      "version": 1,
+      "sha256": "9058ed02e646e728e2f365086ca0725852f6573f8317a6975cd80ccab00307aa",
+      "title": "有限凸输出的仿射秩支持约简与重新赋权边界",
+      "summary": "非负单位质量的固定加权输出可用至多仿射维数r+1个原点重新赋权表示；不保证原softmax子集或全query保真。",
+      "status": "published",
+      "assumptions": [
+        "非空有限v_i∈R^p；α_i≥0且Σα_i=1；固定目标z=Σα_i v_i；允许改变保留点的权重。",
+        "固定线性W只保证Wz；query-oblivious、原权重重归一化与在线成本均需另证。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "一般证明为非形式化数学推导；不是Lean。",
+          "agent_doc/results/math-convex-support-20261009：8个公开Fraction例、双后端结构检索、独立结果审查；不代表模型/GPU/e2e收益。"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "加权",
+            "平均"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "加权"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "加权",
+            "平均"
+          ]
+        }
+      ],
+      "score": 15
+    }
+  ]
+}

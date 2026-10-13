@@ -484,3 +484,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [MATH-113] 非均匀扩散度量：加权质量守恒、非负步长与广义谱稳定，普通和/欧氏范数/不连通平均反例；四个公开解析例，真实消费者待验证。见 [详情](task_details/MATH-113.md)。
 - [x] [RESULT-SEARCH-INVARIANT] 普通context资格缓存通过局部CPU收益、独立边界和集成回归验收；main代码提交056030d及28个交付文件已逐字节回读核验。持续优化任务保留。见 [详情](task_details/RESULT-SEARCH-INVARIANT.md)。
+
+- [MATH-114] 定常平均与可逆性边界：加权非扩张、详细平衡/自伴分别核对，四个公开拒用例；并发检索升级保留，真实Agent核/π证书待验证。见 [详情](task_details/MATH-114.md)。
