@@ -137,6 +137,29 @@ class RuntimeContracts(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, '^dependency cycle$'):
                 validate(p)
 
+    def test_deep_dag_resolves_dependencies_on_already_peeled_levels(self):
+        p = plan(*(task(str(i), [] if i == 0 else [str(i - 1)])
+                   for i in range(67)))
+        for node in p['tasks'][2:]:
+            node['depends_on'] += ['0', '1', '1']
+        original = copy.deepcopy(p)
+        validate(p)
+        self.assertEqual(p, original)
+        # A cycle after the removable prefix must still fail.
+        p['tasks'][2]['depends_on'].append('66')
+        with self.assertRaisesRegex(ValueError, '^dependency cycle$'):
+            validate(p)
+
+    def test_deep_dag_retains_exotic_hash_dependency_error(self):
+        class OddHash(str):
+            def __hash__(self):
+                return 0
+        p = plan(*(task(str(i), [] if i == 0 else [str(i - 1)])
+                   for i in range(67)))
+        p['tasks'][2]['depends_on'].append(OddHash('0'))
+        with self.assertRaisesRegex(ValueError, '^dependency cycle$'):
+            validate(p)
+
     def test_dependency_membership_preserves_invalid_input_error_order(self):
         p = plan(task('a'), task('b', [[]]))
         p['tasks'][1]['risk'] = None

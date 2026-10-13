@@ -72,12 +72,40 @@ def validate(plan):
                     or not number(wait.get('diagnose_after_seconds'), 1, wait['max_seconds'])):
                 raise ValueError('wait_policy requires bounded polls, elapsed time and diagnosis threshold')
     remaining, visited = {t['task_id']: set(t.get('depends_on', [])) for t in tasks}, set()
+    rounds = 0
     while remaining:
+        # Peel shallow graphs using the original scan. Only sparse deep graphs
+        # justify adjacency allocation; exotic hash/equality keeps legacy behavior.
+        if (rounds == 2 and len(remaining) >= 64
+                and sum(map(len, remaining.values())) <= 4 * len(remaining)
+                and all(type(i) is str for i in visited)
+                and all(type(i) is str and all(type(d) is str and
+                        (d in remaining or d in visited) for d in deps)
+                        for i, deps in remaining.items())):
+            residual = {i: deps - visited for i, deps in remaining.items()}
+            degree = {i: len(deps) for i, deps in residual.items()}
+            children = {i: [] for i in residual}
+            for i, deps in residual.items():
+                for d in deps:
+                    children[d].append(i)
+            ready = [i for i, count in degree.items() if count == 0]
+            seen = 0
+            while ready:
+                i = ready.pop()
+                seen += 1
+                for child in children[i]:
+                    degree[child] -= 1
+                    if degree[child] == 0:
+                        ready.append(child)
+            if seen != len(remaining):
+                raise ValueError('dependency cycle')
+            break
         ready = {i for i, deps in remaining.items() if deps <= visited}
         if not ready:
             raise ValueError('dependency cycle')
         visited |= ready
         remaining = {i: deps for i, deps in remaining.items() if i not in ready}
+        rounds += 1
     policy = plan.get('supervision', {})
     if not (number(policy.get('min_seconds'), 1, 86400)
             and number(policy.get('max_seconds'), policy['min_seconds'], 86400)
