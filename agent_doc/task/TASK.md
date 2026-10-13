@@ -461,3 +461,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [MATH-102] 复用已有二阶矩尾界：补充真实MSE、偏差与条件风险的阈值应用/拒用，四个公开手算；无生产或模型收益结论。见 [详情](task_details/MATH-102.md)。
 
 - [MATH-103] 既有阈值风险应用复核：三条公开查询两条首位、一条前三未命中；前提拒用与成本保存。本轮没有值得采用的新改进，模型/生产待验证。见 [详情](task_details/MATH-103.md)。
+
+- [MATH-104] 离散稳定性中英文导航：复用非正规瞬态/切换/完整状态知识，保留历史记录，核对公开中文查询发现；模型与生产收益未测。见 [详情](task_details/MATH-104.md)。
