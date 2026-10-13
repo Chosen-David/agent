@@ -1,0 +1,3089 @@
+{
+  "baseline_source": "def search(self, query, *, limit=5, max_scan=200, context=None):\n    _need(_text(query) and len(query) <= 2000, 'bounded nonempty query required')\n    _need(type(limit) is int and 1 <= limit <= 20, 'limit must be 1..20')\n    if context is not None:\n        _context(context)\n    names, partial = self._directories(max_scan)\n    tokens = _tokens(query)\n    hits, errors = [], []\n    for name in names:\n        try:\n            shown = self.show(name)\n            record = shown['record']\n            from .contamination import assert_not_revoked\n            assert_not_revoked(self.root, run_id=name, result_id=record.get('result_id'))\n            haystack = json.dumps({k: record.get(k) for k in\n                                  ('summary', 'run_id', 'result_id', 'producer_task_id', 'context')},\n                                 ensure_ascii=False).casefold()\n            score = sum(token in haystack for token in tokens)\n            exact = (context is not None and set(context) == set(CONTEXT_FIELDS) and\n                     not _unknown(context) and context == record['context'])\n            if exact:\n                score += 1000  # Matching frozen conditions outrank vocabulary overlap.\n            if score:\n                hits.append({'run_id': name, 'record_sha256': shown['record_ref']['sha256'],\n                             'record_path': shown['record_ref']['path'], 'summary': record['summary'],\n                             'origin': record['origin'], 'score': score,\n                             'match': 'exact-context' if exact else 'lexical',\n                             'stored_validation': record['validation_at_registration']['status'],\n                             'applicability': 'unchecked'})\n        except (OSError, ValueError, KeyError, TypeError) as exc:\n            errors.append({'run_id': name, 'error': str(exc)})\n    hits.sort(key=lambda h: (-h['score'], h['run_id']))\n    return {'schema_version': 'project-result-search/v1', 'query': query,\n            'status': 'candidates' if hits else 'incomplete' if partial or errors else 'no_hits',\n            'results': hits[:limit], 'strategy': 'lexical+exact-context' if context is not None else 'lexical',\n            'scanned': len(names), 'partial': partial or len(hits) > limit,\n            'errors': errors, 'authority': 'retrieval only; no applicability or acceptance proof'}\n",
+  "baseline_source_sha256": "6fee9a58435e0a7b18981c013f636b9e6c5d76060d624b323183bf52c691cc3c",
+  "candidate_helper": "def _plain_search_context(value):\n    pending = [value]\n    while pending:\n        item = pending.pop()\n        if type(item) is dict:\n            if any(type(k) is not str for k in item):\n                return False\n            pending.extend(item.values())\n        elif type(item) is list:\n            pending.extend(item)\n        elif type(item) not in (str, int, float, bool, type(None)):\n            return False\n    return True\n",
+  "candidate_source": "def search(self, query, *, limit=5, max_scan=200, context=None):\n    _need(_text(query) and len(query) <= 2000, 'bounded nonempty query required')\n    _need(type(limit) is int and 1 <= limit <= 20, 'limit must be 1..20')\n    if context is not None:\n        _context(context)\n    names, partial = self._directories(max_scan)\n    tokens = _tokens(query)\n    exact_eligible = None\n    context_checked = False\n    hits, errors = [], []\n    for name in names:\n        try:\n            shown = self.show(name)\n            record = shown['record']\n            from .contamination import assert_not_revoked\n            assert_not_revoked(self.root, run_id=name, result_id=record.get('result_id'))\n            haystack = json.dumps({k: record.get(k) for k in\n                                  ('summary', 'run_id', 'result_id', 'producer_task_id', 'context')},\n                                 ensure_ascii=False).casefold()\n            score = sum(token in haystack for token in tokens)\n            if not context_checked:\n                if type(self) is ResultStore and 'show' not in self.__dict__ and _plain_search_context(context):\n                    exact_eligible = (context is not None and set(context) == set(CONTEXT_FIELDS) and\n                                      not _unknown(context))\n                context_checked = True\n            exact = ((context is not None and set(context) == set(CONTEXT_FIELDS) and\n                      not _unknown(context) and context == record['context'])\n                     if exact_eligible is None else exact_eligible and context == record['context'])\n            if exact:\n                score += 1000  # Matching frozen conditions outrank vocabulary overlap.\n            if score:\n                hits.append({'run_id': name, 'record_sha256': shown['record_ref']['sha256'],\n                             'record_path': shown['record_ref']['path'], 'summary': record['summary'],\n                             'origin': record['origin'], 'score': score,\n                             'match': 'exact-context' if exact else 'lexical',\n                             'stored_validation': record['validation_at_registration']['status'],\n                             'applicability': 'unchecked'})\n        except (OSError, ValueError, KeyError, TypeError) as exc:\n            errors.append({'run_id': name, 'error': str(exc)})\n    hits.sort(key=lambda h: (-h['score'], h['run_id']))\n    return {'schema_version': 'project-result-search/v1', 'query': query,\n            'status': 'candidates' if hits else 'incomplete' if partial or errors else 'no_hits',\n            'results': hits[:limit], 'strategy': 'lexical+exact-context' if context is not None else 'lexical',\n            'scanned': len(names), 'partial': partial or len(hits) > limit,\n            'errors': errors, 'authority': 'retrieval only; no applicability or acceptance proof'}\n",
+  "candidate_source_sha256": "a280efe25002ea45687cd2956b0e8cba611309c51931e3141c4cf3abf2897228",
+  "cases": [
+    {
+      "context_json_bytes": 105460,
+      "context_sha256": "aebaaaa49266fa156f04d7d164aa1e451ac3884112e5ed9619906df31d868670",
+      "median_ms": {
+        "baseline": 159.341413,
+        "candidate": 93.720598
+      },
+      "name": "large-corpus",
+      "pairs": [
+        {
+          "ms": {
+            "baseline": 162.319311,
+            "candidate": 98.367992
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 161.21408,
+            "candidate": 97.329807
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 159.624945,
+            "candidate": 96.4359
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 158.446414,
+            "candidate": 93.61505
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 158.7825,
+            "candidate": 91.416907
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 158.292021,
+            "candidate": 91.97644
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 159.341413,
+            "candidate": 94.043345
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 158.479524,
+            "candidate": 93.720598
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 157.595492,
+            "candidate": 91.162514
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 164.213915,
+            "candidate": 101.236284
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 160.358661,
+            "candidate": 91.560734
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        }
+      ],
+      "reduction_fraction": 0.4118252359165411,
+      "result": {
+        "authority": "retrieval only; no applicability or acceptance proof",
+        "errors": [
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/agentchaos-probe-20261013-2359/record.json'",
+            "run_id": "agentchaos-probe-20261013-2359"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/agentchaos-reading-20261013-2259/record.json'",
+            "run_id": "agentchaos-reading-20261013-2259"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-bound-20261012-2221/record.json'",
+            "run_id": "artifact-bound-20261012-2221"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-equality-20261012/record.json'",
+            "run_id": "artifact-equality-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-localized-20261012/record.json'",
+            "run_id": "artifact-localized-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-unique-splice-20261012/record.json'",
+            "run_id": "artifact-unique-splice-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-api-20261013-1656/record.json'",
+            "run_id": "atomix-api-20261013-1656"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-boundary-20261013-1503/record.json'",
+            "run_id": "atomix-boundary-20261013-1503"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-wrapper-20261013-1804/record.json'",
+            "run_id": "atomix-wrapper-20261013-1804"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/causal-orchestration-20261008/record.json'",
+            "run_id": "causal-orchestration-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm-route-bind-integration-20261009/record.json'",
+            "run_id": "comm-route-bind-integration-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm20-20261009/record.json'",
+            "run_id": "comm20-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm20-20261009-r01-attempt1/record.json'",
+            "run_id": "comm20-20261009-r01-attempt1"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/communication-ledger-20261009/record.json'",
+            "run_id": "communication-ledger-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/concept-teaching-20261010/record.json'",
+            "run_id": "concept-teaching-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-20261011/record.json'",
+            "run_id": "contamination-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-integrated-20261011/record.json'",
+            "run_id": "contamination-integrated-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-release-20261011/record.json'",
+            "run_id": "contamination-release-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/dag-cycle-20261013-1601/record.json'",
+            "run_id": "dag-cycle-20261013-1601"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/dag-membership-20261013-0659/record.json'",
+            "run_id": "dag-membership-20261013-0659"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/exactly-once-complete-20261013-1301/record.json'",
+            "run_id": "exactly-once-complete-20261013-1301"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/figure-review-binding-20261008/record.json'",
+            "run_id": "figure-review-binding-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-freedman-20261008T0915Z/record.json'",
+            "run_id": "knowledge-freedman-20261008T0915Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-freedman-20261008T1215Z/record.json'",
+            "run_id": "knowledge-freedman-20261008T1215Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-mirror-repair-20261012-1856/record.json'",
+            "run_id": "knowledge-mirror-repair-20261012-1856"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-normal-mixture-20261008T1515Z/record.json'",
+            "run_id": "knowledge-normal-mixture-20261008T1515Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/mailbox-pagination-20261011/record.json'",
+            "run_id": "mailbox-pagination-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-allocation-20261008/record.json'",
+            "run_id": "math-allocation-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-burst-service-20261009/record.json'",
+            "run_id": "math-burst-service-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-completion-packet-20261009/record.json'",
+            "run_id": "math-completion-packet-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-condensation-residual-20261010/record.json'",
+            "run_id": "math-condensation-residual-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-conditioning-20261008/record.json'",
+            "run_id": "math-conditioning-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-coupling-repair-20261010/record.json'",
+            "run_id": "math-coupling-repair-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-coupling-repair-20261010-v2/record.json'",
+            "run_id": "math-coupling-repair-20261010-v2"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-factor-certificate-20261010/record.json'",
+            "run_id": "math-factor-certificate-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-geometry-20261007/record.json'",
+            "run_id": "math-geometry-20261007"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-gibbs-menu-20261010/record.json'",
+            "run_id": "math-gibbs-menu-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-input-policy-20261010/record.json'",
+            "run_id": "math-input-policy-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-linear-residual-20261008/record.json'",
+            "run_id": "math-linear-residual-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-mass-box-20261009/record.json'",
+            "run_id": "math-mass-box-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-propagation-20261008/record.json'",
+            "run_id": "math-propagation-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-rope-intertwiner-20261008/record.json'",
+            "run_id": "math-rope-intertwiner-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-sequence-tv-20261008/record.json'",
+            "run_id": "math-sequence-tv-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-singular-bilinear-20261008/record.json'",
+            "run_id": "math-singular-bilinear-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-singular-condensation-20261010/record.json'",
+            "run_id": "math-singular-condensation-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-softmax-kl-20261008/record.json'",
+            "run_id": "math-softmax-kl-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-softmax-merge-20261010/record.json'",
+            "run_id": "math-softmax-merge-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-structured-subspace-20261010/record.json'",
+            "run_id": "math-structured-subspace-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-support-feasibility-20261010/record.json'",
+            "run_id": "math-support-feasibility-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-weighted-bilinear-20261007/record.json'",
+            "run_id": "math-weighted-bilinear-20261007"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/opt-inplace-20261012/record.json'",
+            "run_id": "opt-inplace-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/paper-skill-links-20261009/record.json'",
+            "run_id": "paper-skill-links-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/project-doc-scope-20261008/record.json'",
+            "run_id": "project-doc-scope-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/readme-20261008/record.json'",
+            "run_id": "readme-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/recovery-agreement-reading-20261013-0756/record.json'",
+            "run_id": "recovery-agreement-reading-20261013-0756"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/result-search-invariant-20261014-0304/record.json'",
+            "run_id": "result-search-invariant-20261014-0304"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-adapter-20261013-1159/record.json'",
+            "run_id": "sentry-adapter-20261013-1159"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-complete-20261013-0956/record.json'",
+            "run_id": "sentry-complete-20261013-0956"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-reading-20261013-0902/record.json'",
+            "run_id": "sentry-reading-20261013-0902"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-source-20261013-1058/record.json'",
+            "run_id": "sentry-source-20261013-1058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-001-20261009/record.json'",
+            "run_id": "token-001-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-20261011/record.json'",
+            "run_id": "token-010-maintenance-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-cpu-20261011/record.json'",
+            "run_id": "token-010-maintenance-cpu-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-cpu-r2-20261011/record.json'",
+            "run_id": "token-010-maintenance-cpu-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-fifty-01-20261012/record.json'",
+            "run_id": "token-fifty-01-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-fifty-03-20261012/record.json'",
+            "run_id": "token-fifty-03-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-20261011/record.json'",
+            "run_id": "token-hourly-repair-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-r2-20261011/record.json'",
+            "run_id": "token-hourly-repair-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-r4-20261011/record.json'",
+            "run_id": "token-hourly-repair-r4-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-20261011/record.json'",
+            "run_id": "token-ten-1-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-r2-20261011/record.json'",
+            "run_id": "token-ten-1-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-r3-20261011/record.json'",
+            "run_id": "token-ten-1-r3-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-usage-unknown-20261011/record.json'",
+            "run_id": "token-usage-unknown-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-boundaries-20261013-2159/record.json'",
+            "run_id": "undobench-boundaries-20261013-2159"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-reading-20261013-1904/record.json'",
+            "run_id": "undobench-reading-20261013-1904"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-source-20261013-1959/record.json'",
+            "run_id": "undobench-source-20261013-1959"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/verified-tools-reading-20261013-1358/record.json'",
+            "run_id": "verified-tools-reading-20261013-1358"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/verifier-tax-reading-20261013-2058/record.json'",
+            "run_id": "verifier-tax-reading-20261013-2058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/vp-control-reading-20261014-0058/record.json'",
+            "run_id": "vp-control-reading-20261014-0058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/vp-control-source-20261014-0156/record.json'",
+            "run_id": "vp-control-source-20261014-0156"
+          }
+        ],
+        "partial": true,
+        "query": "result source context",
+        "results": [
+          {
+            "applicability": "unchecked",
+            "match": "exact-context",
+            "origin": "native",
+            "record_path": "agent_doc/results/combined-corpus-v4-20261007/record.json",
+            "record_sha256": "45f0d436e6aef137049abb9b013081a7238a23a3df5959a58f15d25d4e92d04e",
+            "run_id": "combined-corpus-v4-20261007",
+            "score": 1003,
+            "stored_validation": "pending",
+            "summary": "Minimal 013-to-integrated-v4 corpus adoption: exact remote corpus and plugin mirror, 80 published plus 2 excluded candidates, four reserved holdout metadata records preserved, ten targeted index tests, and twelve frozen AIK development cases on two backends in default/domain modes. Upstream new-card scientific results are provenance only; raw legacy retrieval scope is eight cases per backend, not 21. No new proofs, research, full catalog, model, production or performance claim."
+          },
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/advice-context-20261009/record.json",
+            "record_sha256": "52ac654513a845b8d39e08be1271fe6f89aa0dcd93225b984ea9638a4d3fae93",
+            "run_id": "advice-context-20261009",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "Task-scoped advice inventory, preserved global document/advice gates, metadata-only canonical task repair, public CPU regression/serialized size checks; no model/token/latency/deployment or SGLang claim"
+          },
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/advice-link-20261010/record.json",
+            "record_sha256": "6c3fdda70f477a7da4318d334820441debf03ae304bf64db80827a6f08c7c4cc",
+            "run_id": "advice-link-20261010",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "Advice inventory navigation CPU boundaries and frozen public SGLang Git text/metadata; no SGLang execution, model quality, token savings or scheduler deployment"
+          }
+        ],
+        "scanned": 223,
+        "schema_version": "project-result-search/v1",
+        "status": "candidates",
+        "strategy": "lexical+exact-context"
+      }
+    },
+    {
+      "context_json_bytes": 87995,
+      "context_sha256": "010b8c564eb2509aff7aed340b89d2704a3010ea151e0ddfccd20bbba43dc939",
+      "median_ms": {
+        "baseline": 149.295534,
+        "candidate": 91.496918
+      },
+      "name": "large-math",
+      "pairs": [
+        {
+          "ms": {
+            "baseline": 149.295534,
+            "candidate": 93.600867
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 150.072116,
+            "candidate": 91.320111
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 150.627913,
+            "candidate": 90.770793
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 148.719959,
+            "candidate": 91.428465
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 148.540057,
+            "candidate": 91.231919
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 153.299429,
+            "candidate": 91.141093
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 148.530883,
+            "candidate": 92.468112
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 148.965788,
+            "candidate": 91.496918
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 172.538381,
+            "candidate": 93.149598
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 167.396352,
+            "candidate": 102.82633
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 146.986726,
+            "candidate": 92.80526
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        }
+      ],
+      "reduction_fraction": 0.3871422972371029,
+      "result": {
+        "authority": "retrieval only; no applicability or acceptance proof",
+        "errors": [
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/agentchaos-probe-20261013-2359/record.json'",
+            "run_id": "agentchaos-probe-20261013-2359"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/agentchaos-reading-20261013-2259/record.json'",
+            "run_id": "agentchaos-reading-20261013-2259"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-bound-20261012-2221/record.json'",
+            "run_id": "artifact-bound-20261012-2221"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-equality-20261012/record.json'",
+            "run_id": "artifact-equality-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-localized-20261012/record.json'",
+            "run_id": "artifact-localized-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-unique-splice-20261012/record.json'",
+            "run_id": "artifact-unique-splice-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-api-20261013-1656/record.json'",
+            "run_id": "atomix-api-20261013-1656"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-boundary-20261013-1503/record.json'",
+            "run_id": "atomix-boundary-20261013-1503"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-wrapper-20261013-1804/record.json'",
+            "run_id": "atomix-wrapper-20261013-1804"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/causal-orchestration-20261008/record.json'",
+            "run_id": "causal-orchestration-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm-route-bind-integration-20261009/record.json'",
+            "run_id": "comm-route-bind-integration-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm20-20261009/record.json'",
+            "run_id": "comm20-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm20-20261009-r01-attempt1/record.json'",
+            "run_id": "comm20-20261009-r01-attempt1"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/communication-ledger-20261009/record.json'",
+            "run_id": "communication-ledger-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/concept-teaching-20261010/record.json'",
+            "run_id": "concept-teaching-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-20261011/record.json'",
+            "run_id": "contamination-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-integrated-20261011/record.json'",
+            "run_id": "contamination-integrated-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-release-20261011/record.json'",
+            "run_id": "contamination-release-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/dag-cycle-20261013-1601/record.json'",
+            "run_id": "dag-cycle-20261013-1601"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/dag-membership-20261013-0659/record.json'",
+            "run_id": "dag-membership-20261013-0659"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/exactly-once-complete-20261013-1301/record.json'",
+            "run_id": "exactly-once-complete-20261013-1301"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/figure-review-binding-20261008/record.json'",
+            "run_id": "figure-review-binding-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-freedman-20261008T0915Z/record.json'",
+            "run_id": "knowledge-freedman-20261008T0915Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-freedman-20261008T1215Z/record.json'",
+            "run_id": "knowledge-freedman-20261008T1215Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-mirror-repair-20261012-1856/record.json'",
+            "run_id": "knowledge-mirror-repair-20261012-1856"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-normal-mixture-20261008T1515Z/record.json'",
+            "run_id": "knowledge-normal-mixture-20261008T1515Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/mailbox-pagination-20261011/record.json'",
+            "run_id": "mailbox-pagination-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-allocation-20261008/record.json'",
+            "run_id": "math-allocation-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-burst-service-20261009/record.json'",
+            "run_id": "math-burst-service-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-completion-packet-20261009/record.json'",
+            "run_id": "math-completion-packet-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-condensation-residual-20261010/record.json'",
+            "run_id": "math-condensation-residual-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-conditioning-20261008/record.json'",
+            "run_id": "math-conditioning-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-coupling-repair-20261010/record.json'",
+            "run_id": "math-coupling-repair-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-coupling-repair-20261010-v2/record.json'",
+            "run_id": "math-coupling-repair-20261010-v2"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-factor-certificate-20261010/record.json'",
+            "run_id": "math-factor-certificate-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-geometry-20261007/record.json'",
+            "run_id": "math-geometry-20261007"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-gibbs-menu-20261010/record.json'",
+            "run_id": "math-gibbs-menu-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-input-policy-20261010/record.json'",
+            "run_id": "math-input-policy-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-linear-residual-20261008/record.json'",
+            "run_id": "math-linear-residual-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-mass-box-20261009/record.json'",
+            "run_id": "math-mass-box-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-propagation-20261008/record.json'",
+            "run_id": "math-propagation-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-rope-intertwiner-20261008/record.json'",
+            "run_id": "math-rope-intertwiner-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-sequence-tv-20261008/record.json'",
+            "run_id": "math-sequence-tv-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-singular-bilinear-20261008/record.json'",
+            "run_id": "math-singular-bilinear-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-singular-condensation-20261010/record.json'",
+            "run_id": "math-singular-condensation-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-softmax-kl-20261008/record.json'",
+            "run_id": "math-softmax-kl-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-softmax-merge-20261010/record.json'",
+            "run_id": "math-softmax-merge-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-structured-subspace-20261010/record.json'",
+            "run_id": "math-structured-subspace-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-support-feasibility-20261010/record.json'",
+            "run_id": "math-support-feasibility-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-weighted-bilinear-20261007/record.json'",
+            "run_id": "math-weighted-bilinear-20261007"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/opt-inplace-20261012/record.json'",
+            "run_id": "opt-inplace-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/paper-skill-links-20261009/record.json'",
+            "run_id": "paper-skill-links-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/project-doc-scope-20261008/record.json'",
+            "run_id": "project-doc-scope-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/readme-20261008/record.json'",
+            "run_id": "readme-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/recovery-agreement-reading-20261013-0756/record.json'",
+            "run_id": "recovery-agreement-reading-20261013-0756"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/result-search-invariant-20261014-0304/record.json'",
+            "run_id": "result-search-invariant-20261014-0304"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-adapter-20261013-1159/record.json'",
+            "run_id": "sentry-adapter-20261013-1159"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-complete-20261013-0956/record.json'",
+            "run_id": "sentry-complete-20261013-0956"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-reading-20261013-0902/record.json'",
+            "run_id": "sentry-reading-20261013-0902"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-source-20261013-1058/record.json'",
+            "run_id": "sentry-source-20261013-1058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-001-20261009/record.json'",
+            "run_id": "token-001-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-20261011/record.json'",
+            "run_id": "token-010-maintenance-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-cpu-20261011/record.json'",
+            "run_id": "token-010-maintenance-cpu-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-cpu-r2-20261011/record.json'",
+            "run_id": "token-010-maintenance-cpu-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-fifty-01-20261012/record.json'",
+            "run_id": "token-fifty-01-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-fifty-03-20261012/record.json'",
+            "run_id": "token-fifty-03-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-20261011/record.json'",
+            "run_id": "token-hourly-repair-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-r2-20261011/record.json'",
+            "run_id": "token-hourly-repair-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-r4-20261011/record.json'",
+            "run_id": "token-hourly-repair-r4-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-20261011/record.json'",
+            "run_id": "token-ten-1-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-r2-20261011/record.json'",
+            "run_id": "token-ten-1-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-r3-20261011/record.json'",
+            "run_id": "token-ten-1-r3-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-usage-unknown-20261011/record.json'",
+            "run_id": "token-usage-unknown-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-boundaries-20261013-2159/record.json'",
+            "run_id": "undobench-boundaries-20261013-2159"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-reading-20261013-1904/record.json'",
+            "run_id": "undobench-reading-20261013-1904"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-source-20261013-1959/record.json'",
+            "run_id": "undobench-source-20261013-1959"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/verified-tools-reading-20261013-1358/record.json'",
+            "run_id": "verified-tools-reading-20261013-1358"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/verifier-tax-reading-20261013-2058/record.json'",
+            "run_id": "verifier-tax-reading-20261013-2058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/vp-control-reading-20261014-0058/record.json'",
+            "run_id": "vp-control-reading-20261014-0058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/vp-control-source-20261014-0156/record.json'",
+            "run_id": "vp-control-source-20261014-0156"
+          }
+        ],
+        "partial": true,
+        "query": "result source context",
+        "results": [
+          {
+            "applicability": "unchecked",
+            "match": "exact-context",
+            "origin": "native",
+            "record_path": "agent_doc/results/math-inverse-update-20261009/record.json",
+            "record_sha256": "b300a4dc9a965cd4291d0c58f958989782d8cca7a2f1dd255324cb15110043e4",
+            "run_id": "math-inverse-update-20261009",
+            "score": 1003,
+            "stored_validation": "usable-with-scope",
+            "summary": "Exact low-rank inverse/solve update, SPD downdate boundary and one actual binary64 cancellation witness; public structure checks only, no model/GPU/e2e/token benefit"
+          },
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/advice-context-20261009/record.json",
+            "record_sha256": "52ac654513a845b8d39e08be1271fe6f89aa0dcd93225b984ea9638a4d3fae93",
+            "run_id": "advice-context-20261009",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "Task-scoped advice inventory, preserved global document/advice gates, metadata-only canonical task repair, public CPU regression/serialized size checks; no model/token/latency/deployment or SGLang claim"
+          },
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/advice-link-20261010/record.json",
+            "record_sha256": "6c3fdda70f477a7da4318d334820441debf03ae304bf64db80827a6f08c7c4cc",
+            "run_id": "advice-link-20261010",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "Advice inventory navigation CPU boundaries and frozen public SGLang Git text/metadata; no SGLang execution, model quality, token savings or scheduler deployment"
+          }
+        ],
+        "scanned": 223,
+        "schema_version": "project-result-search/v1",
+        "status": "candidates",
+        "strategy": "lexical+exact-context"
+      }
+    },
+    {
+      "context_json_bytes": 4637,
+      "context_sha256": "e73472844443f6ecb3ec7606a26cb1bef0e571242086055fbca6af9a73602147",
+      "median_ms": {
+        "baseline": 95.125596,
+        "candidate": 90.663742
+      },
+      "name": "medium-batch",
+      "pairs": [
+        {
+          "ms": {
+            "baseline": 95.125596,
+            "candidate": 89.315681
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 94.2718,
+            "candidate": 89.291724
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 93.939519,
+            "candidate": 90.259163
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 93.991817,
+            "candidate": 90.584434
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 95.534332,
+            "candidate": 89.161519
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 95.477637,
+            "candidate": 91.446993
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 93.416911,
+            "candidate": 90.886008
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 96.789483,
+            "candidate": 90.663742
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 97.097588,
+            "candidate": 91.99614
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 94.276877,
+            "candidate": 91.166289
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 95.275362,
+            "candidate": 93.806368
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        }
+      ],
+      "reduction_fraction": 0.046904873005999326,
+      "result": {
+        "authority": "retrieval only; no applicability or acceptance proof",
+        "errors": [
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/agentchaos-probe-20261013-2359/record.json'",
+            "run_id": "agentchaos-probe-20261013-2359"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/agentchaos-reading-20261013-2259/record.json'",
+            "run_id": "agentchaos-reading-20261013-2259"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-bound-20261012-2221/record.json'",
+            "run_id": "artifact-bound-20261012-2221"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-equality-20261012/record.json'",
+            "run_id": "artifact-equality-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-localized-20261012/record.json'",
+            "run_id": "artifact-localized-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-unique-splice-20261012/record.json'",
+            "run_id": "artifact-unique-splice-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-api-20261013-1656/record.json'",
+            "run_id": "atomix-api-20261013-1656"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-boundary-20261013-1503/record.json'",
+            "run_id": "atomix-boundary-20261013-1503"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-wrapper-20261013-1804/record.json'",
+            "run_id": "atomix-wrapper-20261013-1804"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/causal-orchestration-20261008/record.json'",
+            "run_id": "causal-orchestration-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm-route-bind-integration-20261009/record.json'",
+            "run_id": "comm-route-bind-integration-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm20-20261009/record.json'",
+            "run_id": "comm20-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm20-20261009-r01-attempt1/record.json'",
+            "run_id": "comm20-20261009-r01-attempt1"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/communication-ledger-20261009/record.json'",
+            "run_id": "communication-ledger-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/concept-teaching-20261010/record.json'",
+            "run_id": "concept-teaching-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-20261011/record.json'",
+            "run_id": "contamination-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-integrated-20261011/record.json'",
+            "run_id": "contamination-integrated-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-release-20261011/record.json'",
+            "run_id": "contamination-release-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/dag-cycle-20261013-1601/record.json'",
+            "run_id": "dag-cycle-20261013-1601"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/dag-membership-20261013-0659/record.json'",
+            "run_id": "dag-membership-20261013-0659"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/exactly-once-complete-20261013-1301/record.json'",
+            "run_id": "exactly-once-complete-20261013-1301"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/figure-review-binding-20261008/record.json'",
+            "run_id": "figure-review-binding-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-freedman-20261008T0915Z/record.json'",
+            "run_id": "knowledge-freedman-20261008T0915Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-freedman-20261008T1215Z/record.json'",
+            "run_id": "knowledge-freedman-20261008T1215Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-mirror-repair-20261012-1856/record.json'",
+            "run_id": "knowledge-mirror-repair-20261012-1856"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-normal-mixture-20261008T1515Z/record.json'",
+            "run_id": "knowledge-normal-mixture-20261008T1515Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/mailbox-pagination-20261011/record.json'",
+            "run_id": "mailbox-pagination-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-allocation-20261008/record.json'",
+            "run_id": "math-allocation-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-burst-service-20261009/record.json'",
+            "run_id": "math-burst-service-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-completion-packet-20261009/record.json'",
+            "run_id": "math-completion-packet-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-condensation-residual-20261010/record.json'",
+            "run_id": "math-condensation-residual-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-conditioning-20261008/record.json'",
+            "run_id": "math-conditioning-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-coupling-repair-20261010/record.json'",
+            "run_id": "math-coupling-repair-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-coupling-repair-20261010-v2/record.json'",
+            "run_id": "math-coupling-repair-20261010-v2"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-factor-certificate-20261010/record.json'",
+            "run_id": "math-factor-certificate-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-geometry-20261007/record.json'",
+            "run_id": "math-geometry-20261007"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-gibbs-menu-20261010/record.json'",
+            "run_id": "math-gibbs-menu-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-input-policy-20261010/record.json'",
+            "run_id": "math-input-policy-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-linear-residual-20261008/record.json'",
+            "run_id": "math-linear-residual-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-mass-box-20261009/record.json'",
+            "run_id": "math-mass-box-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-propagation-20261008/record.json'",
+            "run_id": "math-propagation-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-rope-intertwiner-20261008/record.json'",
+            "run_id": "math-rope-intertwiner-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-sequence-tv-20261008/record.json'",
+            "run_id": "math-sequence-tv-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-singular-bilinear-20261008/record.json'",
+            "run_id": "math-singular-bilinear-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-singular-condensation-20261010/record.json'",
+            "run_id": "math-singular-condensation-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-softmax-kl-20261008/record.json'",
+            "run_id": "math-softmax-kl-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-softmax-merge-20261010/record.json'",
+            "run_id": "math-softmax-merge-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-structured-subspace-20261010/record.json'",
+            "run_id": "math-structured-subspace-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-support-feasibility-20261010/record.json'",
+            "run_id": "math-support-feasibility-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-weighted-bilinear-20261007/record.json'",
+            "run_id": "math-weighted-bilinear-20261007"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/opt-inplace-20261012/record.json'",
+            "run_id": "opt-inplace-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/paper-skill-links-20261009/record.json'",
+            "run_id": "paper-skill-links-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/project-doc-scope-20261008/record.json'",
+            "run_id": "project-doc-scope-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/readme-20261008/record.json'",
+            "run_id": "readme-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/recovery-agreement-reading-20261013-0756/record.json'",
+            "run_id": "recovery-agreement-reading-20261013-0756"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/result-search-invariant-20261014-0304/record.json'",
+            "run_id": "result-search-invariant-20261014-0304"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-adapter-20261013-1159/record.json'",
+            "run_id": "sentry-adapter-20261013-1159"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-complete-20261013-0956/record.json'",
+            "run_id": "sentry-complete-20261013-0956"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-reading-20261013-0902/record.json'",
+            "run_id": "sentry-reading-20261013-0902"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-source-20261013-1058/record.json'",
+            "run_id": "sentry-source-20261013-1058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-001-20261009/record.json'",
+            "run_id": "token-001-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-20261011/record.json'",
+            "run_id": "token-010-maintenance-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-cpu-20261011/record.json'",
+            "run_id": "token-010-maintenance-cpu-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-cpu-r2-20261011/record.json'",
+            "run_id": "token-010-maintenance-cpu-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-fifty-01-20261012/record.json'",
+            "run_id": "token-fifty-01-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-fifty-03-20261012/record.json'",
+            "run_id": "token-fifty-03-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-20261011/record.json'",
+            "run_id": "token-hourly-repair-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-r2-20261011/record.json'",
+            "run_id": "token-hourly-repair-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-r4-20261011/record.json'",
+            "run_id": "token-hourly-repair-r4-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-20261011/record.json'",
+            "run_id": "token-ten-1-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-r2-20261011/record.json'",
+            "run_id": "token-ten-1-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-r3-20261011/record.json'",
+            "run_id": "token-ten-1-r3-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-usage-unknown-20261011/record.json'",
+            "run_id": "token-usage-unknown-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-boundaries-20261013-2159/record.json'",
+            "run_id": "undobench-boundaries-20261013-2159"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-reading-20261013-1904/record.json'",
+            "run_id": "undobench-reading-20261013-1904"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-source-20261013-1959/record.json'",
+            "run_id": "undobench-source-20261013-1959"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/verified-tools-reading-20261013-1358/record.json'",
+            "run_id": "verified-tools-reading-20261013-1358"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/verifier-tax-reading-20261013-2058/record.json'",
+            "run_id": "verifier-tax-reading-20261013-2058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/vp-control-reading-20261014-0058/record.json'",
+            "run_id": "vp-control-reading-20261014-0058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/vp-control-source-20261014-0156/record.json'",
+            "run_id": "vp-control-source-20261014-0156"
+          }
+        ],
+        "partial": true,
+        "query": "result source context",
+        "results": [
+          {
+            "applicability": "unchecked",
+            "match": "exact-context",
+            "origin": "native",
+            "record_path": "agent_doc/results/comm-batch-20261010/record.json",
+            "record_sha256": "b23365e2798cbe622381ca7469b432b75f1bfc7569858110f37a5338bad3476d",
+            "run_id": "comm-batch-20261010",
+            "score": 1002,
+            "stored_validation": "usable-with-scope",
+            "summary": "Frozen boundedatomicbatch syntheticSQLite public API;3shapes4paths31pairs root+independent;noLLM/network/token"
+          },
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/advice-context-20261009/record.json",
+            "record_sha256": "52ac654513a845b8d39e08be1271fe6f89aa0dcd93225b984ea9638a4d3fae93",
+            "run_id": "advice-context-20261009",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "Task-scoped advice inventory, preserved global document/advice gates, metadata-only canonical task repair, public CPU regression/serialized size checks; no model/token/latency/deployment or SGLang claim"
+          },
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/advice-link-20261010/record.json",
+            "record_sha256": "6c3fdda70f477a7da4318d334820441debf03ae304bf64db80827a6f08c7c4cc",
+            "run_id": "advice-link-20261010",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "Advice inventory navigation CPU boundaries and frozen public SGLang Git text/metadata; no SGLang execution, model quality, token savings or scheduler deployment"
+          }
+        ],
+        "scanned": 223,
+        "schema_version": "project-result-search/v1",
+        "status": "candidates",
+        "strategy": "lexical+exact-context"
+      }
+    },
+    {
+      "context_json_bytes": 4,
+      "context_sha256": "74234e98afe7498fb5daf1f36ac2d78acc339464f950703b8c019892f982b90b",
+      "median_ms": {
+        "baseline": 94.461825,
+        "candidate": 93.58276
+      },
+      "name": "none",
+      "pairs": [
+        {
+          "ms": {
+            "baseline": 94.077186,
+            "candidate": 101.69878
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 93.015896,
+            "candidate": 91.80364
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 92.297814,
+            "candidate": 92.173737
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 91.935548,
+            "candidate": 90.819877
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 90.438673,
+            "candidate": 91.713684
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 109.343365,
+            "candidate": 93.58276
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 103.800669,
+            "candidate": 103.07249
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 99.172644,
+            "candidate": 98.802837
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 94.461825,
+            "candidate": 93.415368
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 95.033927,
+            "candidate": 95.112536
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 99.877787,
+            "candidate": 96.051801
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        }
+      ],
+      "reduction_fraction": 0.009306034474773406,
+      "result": {
+        "authority": "retrieval only; no applicability or acceptance proof",
+        "errors": [
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/agentchaos-probe-20261013-2359/record.json'",
+            "run_id": "agentchaos-probe-20261013-2359"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/agentchaos-reading-20261013-2259/record.json'",
+            "run_id": "agentchaos-reading-20261013-2259"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-bound-20261012-2221/record.json'",
+            "run_id": "artifact-bound-20261012-2221"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-equality-20261012/record.json'",
+            "run_id": "artifact-equality-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-localized-20261012/record.json'",
+            "run_id": "artifact-localized-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-unique-splice-20261012/record.json'",
+            "run_id": "artifact-unique-splice-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-api-20261013-1656/record.json'",
+            "run_id": "atomix-api-20261013-1656"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-boundary-20261013-1503/record.json'",
+            "run_id": "atomix-boundary-20261013-1503"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-wrapper-20261013-1804/record.json'",
+            "run_id": "atomix-wrapper-20261013-1804"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/causal-orchestration-20261008/record.json'",
+            "run_id": "causal-orchestration-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm-route-bind-integration-20261009/record.json'",
+            "run_id": "comm-route-bind-integration-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm20-20261009/record.json'",
+            "run_id": "comm20-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm20-20261009-r01-attempt1/record.json'",
+            "run_id": "comm20-20261009-r01-attempt1"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/communication-ledger-20261009/record.json'",
+            "run_id": "communication-ledger-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/concept-teaching-20261010/record.json'",
+            "run_id": "concept-teaching-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-20261011/record.json'",
+            "run_id": "contamination-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-integrated-20261011/record.json'",
+            "run_id": "contamination-integrated-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-release-20261011/record.json'",
+            "run_id": "contamination-release-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/dag-cycle-20261013-1601/record.json'",
+            "run_id": "dag-cycle-20261013-1601"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/dag-membership-20261013-0659/record.json'",
+            "run_id": "dag-membership-20261013-0659"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/exactly-once-complete-20261013-1301/record.json'",
+            "run_id": "exactly-once-complete-20261013-1301"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/figure-review-binding-20261008/record.json'",
+            "run_id": "figure-review-binding-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-freedman-20261008T0915Z/record.json'",
+            "run_id": "knowledge-freedman-20261008T0915Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-freedman-20261008T1215Z/record.json'",
+            "run_id": "knowledge-freedman-20261008T1215Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-mirror-repair-20261012-1856/record.json'",
+            "run_id": "knowledge-mirror-repair-20261012-1856"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-normal-mixture-20261008T1515Z/record.json'",
+            "run_id": "knowledge-normal-mixture-20261008T1515Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/mailbox-pagination-20261011/record.json'",
+            "run_id": "mailbox-pagination-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-allocation-20261008/record.json'",
+            "run_id": "math-allocation-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-burst-service-20261009/record.json'",
+            "run_id": "math-burst-service-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-completion-packet-20261009/record.json'",
+            "run_id": "math-completion-packet-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-condensation-residual-20261010/record.json'",
+            "run_id": "math-condensation-residual-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-conditioning-20261008/record.json'",
+            "run_id": "math-conditioning-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-coupling-repair-20261010/record.json'",
+            "run_id": "math-coupling-repair-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-coupling-repair-20261010-v2/record.json'",
+            "run_id": "math-coupling-repair-20261010-v2"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-factor-certificate-20261010/record.json'",
+            "run_id": "math-factor-certificate-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-geometry-20261007/record.json'",
+            "run_id": "math-geometry-20261007"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-gibbs-menu-20261010/record.json'",
+            "run_id": "math-gibbs-menu-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-input-policy-20261010/record.json'",
+            "run_id": "math-input-policy-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-linear-residual-20261008/record.json'",
+            "run_id": "math-linear-residual-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-mass-box-20261009/record.json'",
+            "run_id": "math-mass-box-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-propagation-20261008/record.json'",
+            "run_id": "math-propagation-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-rope-intertwiner-20261008/record.json'",
+            "run_id": "math-rope-intertwiner-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-sequence-tv-20261008/record.json'",
+            "run_id": "math-sequence-tv-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-singular-bilinear-20261008/record.json'",
+            "run_id": "math-singular-bilinear-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-singular-condensation-20261010/record.json'",
+            "run_id": "math-singular-condensation-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-softmax-kl-20261008/record.json'",
+            "run_id": "math-softmax-kl-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-softmax-merge-20261010/record.json'",
+            "run_id": "math-softmax-merge-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-structured-subspace-20261010/record.json'",
+            "run_id": "math-structured-subspace-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-support-feasibility-20261010/record.json'",
+            "run_id": "math-support-feasibility-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-weighted-bilinear-20261007/record.json'",
+            "run_id": "math-weighted-bilinear-20261007"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/opt-inplace-20261012/record.json'",
+            "run_id": "opt-inplace-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/paper-skill-links-20261009/record.json'",
+            "run_id": "paper-skill-links-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/project-doc-scope-20261008/record.json'",
+            "run_id": "project-doc-scope-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/readme-20261008/record.json'",
+            "run_id": "readme-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/recovery-agreement-reading-20261013-0756/record.json'",
+            "run_id": "recovery-agreement-reading-20261013-0756"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/result-search-invariant-20261014-0304/record.json'",
+            "run_id": "result-search-invariant-20261014-0304"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-adapter-20261013-1159/record.json'",
+            "run_id": "sentry-adapter-20261013-1159"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-complete-20261013-0956/record.json'",
+            "run_id": "sentry-complete-20261013-0956"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-reading-20261013-0902/record.json'",
+            "run_id": "sentry-reading-20261013-0902"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-source-20261013-1058/record.json'",
+            "run_id": "sentry-source-20261013-1058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-001-20261009/record.json'",
+            "run_id": "token-001-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-20261011/record.json'",
+            "run_id": "token-010-maintenance-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-cpu-20261011/record.json'",
+            "run_id": "token-010-maintenance-cpu-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-cpu-r2-20261011/record.json'",
+            "run_id": "token-010-maintenance-cpu-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-fifty-01-20261012/record.json'",
+            "run_id": "token-fifty-01-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-fifty-03-20261012/record.json'",
+            "run_id": "token-fifty-03-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-20261011/record.json'",
+            "run_id": "token-hourly-repair-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-r2-20261011/record.json'",
+            "run_id": "token-hourly-repair-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-r4-20261011/record.json'",
+            "run_id": "token-hourly-repair-r4-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-20261011/record.json'",
+            "run_id": "token-ten-1-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-r2-20261011/record.json'",
+            "run_id": "token-ten-1-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-r3-20261011/record.json'",
+            "run_id": "token-ten-1-r3-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-usage-unknown-20261011/record.json'",
+            "run_id": "token-usage-unknown-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-boundaries-20261013-2159/record.json'",
+            "run_id": "undobench-boundaries-20261013-2159"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-reading-20261013-1904/record.json'",
+            "run_id": "undobench-reading-20261013-1904"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-source-20261013-1959/record.json'",
+            "run_id": "undobench-source-20261013-1959"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/verified-tools-reading-20261013-1358/record.json'",
+            "run_id": "verified-tools-reading-20261013-1358"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/verifier-tax-reading-20261013-2058/record.json'",
+            "run_id": "verifier-tax-reading-20261013-2058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/vp-control-reading-20261014-0058/record.json'",
+            "run_id": "vp-control-reading-20261014-0058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/vp-control-source-20261014-0156/record.json'",
+            "run_id": "vp-control-source-20261014-0156"
+          }
+        ],
+        "partial": true,
+        "query": "result source context",
+        "results": [
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/advice-context-20261009/record.json",
+            "record_sha256": "52ac654513a845b8d39e08be1271fe6f89aa0dcd93225b984ea9638a4d3fae93",
+            "run_id": "advice-context-20261009",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "Task-scoped advice inventory, preserved global document/advice gates, metadata-only canonical task repair, public CPU regression/serialized size checks; no model/token/latency/deployment or SGLang claim"
+          },
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/advice-link-20261010/record.json",
+            "record_sha256": "6c3fdda70f477a7da4318d334820441debf03ae304bf64db80827a6f08c7c4cc",
+            "run_id": "advice-link-20261010",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "Advice inventory navigation CPU boundaries and frozen public SGLang Git text/metadata; no SGLang execution, model quality, token savings or scheduler deployment"
+          },
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/cluster-planning-20261008/record.json",
+            "record_sha256": "f9ceab85461acd6aa706ae6249c782ad4395524fcdc1ca00ea968bea71f0f229",
+            "run_id": "cluster-planning-20261008",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance"
+          }
+        ],
+        "scanned": 223,
+        "schema_version": "project-result-search/v1",
+        "status": "candidates",
+        "strategy": "lexical"
+      }
+    },
+    {
+      "context_json_bytes": 2,
+      "context_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "median_ms": {
+        "baseline": 97.179852,
+        "candidate": 97.128263
+      },
+      "name": "incomplete",
+      "pairs": [
+        {
+          "ms": {
+            "baseline": 96.510653,
+            "candidate": 93.353955
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 98.846973,
+            "candidate": 95.517416
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 96.412625,
+            "candidate": 97.128263
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 98.698169,
+            "candidate": 96.372695
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 99.292664,
+            "candidate": 97.853316
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 94.759774,
+            "candidate": 101.88403
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 97.94132,
+            "candidate": 100.285051
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 97.179852,
+            "candidate": 98.206328
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 96.473508,
+            "candidate": 96.825448
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 98.404477,
+            "candidate": 97.774037
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 95.859807,
+            "candidate": 89.514301
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        }
+      ],
+      "reduction_fraction": 0.0005308610677858816,
+      "result": {
+        "authority": "retrieval only; no applicability or acceptance proof",
+        "errors": [
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/agentchaos-probe-20261013-2359/record.json'",
+            "run_id": "agentchaos-probe-20261013-2359"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/agentchaos-reading-20261013-2259/record.json'",
+            "run_id": "agentchaos-reading-20261013-2259"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-bound-20261012-2221/record.json'",
+            "run_id": "artifact-bound-20261012-2221"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-equality-20261012/record.json'",
+            "run_id": "artifact-equality-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-localized-20261012/record.json'",
+            "run_id": "artifact-localized-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-unique-splice-20261012/record.json'",
+            "run_id": "artifact-unique-splice-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-api-20261013-1656/record.json'",
+            "run_id": "atomix-api-20261013-1656"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-boundary-20261013-1503/record.json'",
+            "run_id": "atomix-boundary-20261013-1503"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-wrapper-20261013-1804/record.json'",
+            "run_id": "atomix-wrapper-20261013-1804"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/causal-orchestration-20261008/record.json'",
+            "run_id": "causal-orchestration-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm-route-bind-integration-20261009/record.json'",
+            "run_id": "comm-route-bind-integration-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm20-20261009/record.json'",
+            "run_id": "comm20-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm20-20261009-r01-attempt1/record.json'",
+            "run_id": "comm20-20261009-r01-attempt1"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/communication-ledger-20261009/record.json'",
+            "run_id": "communication-ledger-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/concept-teaching-20261010/record.json'",
+            "run_id": "concept-teaching-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-20261011/record.json'",
+            "run_id": "contamination-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-integrated-20261011/record.json'",
+            "run_id": "contamination-integrated-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-release-20261011/record.json'",
+            "run_id": "contamination-release-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/dag-cycle-20261013-1601/record.json'",
+            "run_id": "dag-cycle-20261013-1601"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/dag-membership-20261013-0659/record.json'",
+            "run_id": "dag-membership-20261013-0659"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/exactly-once-complete-20261013-1301/record.json'",
+            "run_id": "exactly-once-complete-20261013-1301"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/figure-review-binding-20261008/record.json'",
+            "run_id": "figure-review-binding-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-freedman-20261008T0915Z/record.json'",
+            "run_id": "knowledge-freedman-20261008T0915Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-freedman-20261008T1215Z/record.json'",
+            "run_id": "knowledge-freedman-20261008T1215Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-mirror-repair-20261012-1856/record.json'",
+            "run_id": "knowledge-mirror-repair-20261012-1856"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-normal-mixture-20261008T1515Z/record.json'",
+            "run_id": "knowledge-normal-mixture-20261008T1515Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/mailbox-pagination-20261011/record.json'",
+            "run_id": "mailbox-pagination-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-allocation-20261008/record.json'",
+            "run_id": "math-allocation-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-burst-service-20261009/record.json'",
+            "run_id": "math-burst-service-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-completion-packet-20261009/record.json'",
+            "run_id": "math-completion-packet-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-condensation-residual-20261010/record.json'",
+            "run_id": "math-condensation-residual-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-conditioning-20261008/record.json'",
+            "run_id": "math-conditioning-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-coupling-repair-20261010/record.json'",
+            "run_id": "math-coupling-repair-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-coupling-repair-20261010-v2/record.json'",
+            "run_id": "math-coupling-repair-20261010-v2"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-factor-certificate-20261010/record.json'",
+            "run_id": "math-factor-certificate-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-geometry-20261007/record.json'",
+            "run_id": "math-geometry-20261007"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-gibbs-menu-20261010/record.json'",
+            "run_id": "math-gibbs-menu-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-input-policy-20261010/record.json'",
+            "run_id": "math-input-policy-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-linear-residual-20261008/record.json'",
+            "run_id": "math-linear-residual-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-mass-box-20261009/record.json'",
+            "run_id": "math-mass-box-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-propagation-20261008/record.json'",
+            "run_id": "math-propagation-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-rope-intertwiner-20261008/record.json'",
+            "run_id": "math-rope-intertwiner-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-sequence-tv-20261008/record.json'",
+            "run_id": "math-sequence-tv-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-singular-bilinear-20261008/record.json'",
+            "run_id": "math-singular-bilinear-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-singular-condensation-20261010/record.json'",
+            "run_id": "math-singular-condensation-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-softmax-kl-20261008/record.json'",
+            "run_id": "math-softmax-kl-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-softmax-merge-20261010/record.json'",
+            "run_id": "math-softmax-merge-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-structured-subspace-20261010/record.json'",
+            "run_id": "math-structured-subspace-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-support-feasibility-20261010/record.json'",
+            "run_id": "math-support-feasibility-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-weighted-bilinear-20261007/record.json'",
+            "run_id": "math-weighted-bilinear-20261007"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/opt-inplace-20261012/record.json'",
+            "run_id": "opt-inplace-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/paper-skill-links-20261009/record.json'",
+            "run_id": "paper-skill-links-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/project-doc-scope-20261008/record.json'",
+            "run_id": "project-doc-scope-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/readme-20261008/record.json'",
+            "run_id": "readme-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/recovery-agreement-reading-20261013-0756/record.json'",
+            "run_id": "recovery-agreement-reading-20261013-0756"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/result-search-invariant-20261014-0304/record.json'",
+            "run_id": "result-search-invariant-20261014-0304"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-adapter-20261013-1159/record.json'",
+            "run_id": "sentry-adapter-20261013-1159"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-complete-20261013-0956/record.json'",
+            "run_id": "sentry-complete-20261013-0956"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-reading-20261013-0902/record.json'",
+            "run_id": "sentry-reading-20261013-0902"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-source-20261013-1058/record.json'",
+            "run_id": "sentry-source-20261013-1058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-001-20261009/record.json'",
+            "run_id": "token-001-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-20261011/record.json'",
+            "run_id": "token-010-maintenance-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-cpu-20261011/record.json'",
+            "run_id": "token-010-maintenance-cpu-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-cpu-r2-20261011/record.json'",
+            "run_id": "token-010-maintenance-cpu-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-fifty-01-20261012/record.json'",
+            "run_id": "token-fifty-01-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-fifty-03-20261012/record.json'",
+            "run_id": "token-fifty-03-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-20261011/record.json'",
+            "run_id": "token-hourly-repair-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-r2-20261011/record.json'",
+            "run_id": "token-hourly-repair-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-r4-20261011/record.json'",
+            "run_id": "token-hourly-repair-r4-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-20261011/record.json'",
+            "run_id": "token-ten-1-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-r2-20261011/record.json'",
+            "run_id": "token-ten-1-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-r3-20261011/record.json'",
+            "run_id": "token-ten-1-r3-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-usage-unknown-20261011/record.json'",
+            "run_id": "token-usage-unknown-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-boundaries-20261013-2159/record.json'",
+            "run_id": "undobench-boundaries-20261013-2159"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-reading-20261013-1904/record.json'",
+            "run_id": "undobench-reading-20261013-1904"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-source-20261013-1959/record.json'",
+            "run_id": "undobench-source-20261013-1959"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/verified-tools-reading-20261013-1358/record.json'",
+            "run_id": "verified-tools-reading-20261013-1358"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/verifier-tax-reading-20261013-2058/record.json'",
+            "run_id": "verifier-tax-reading-20261013-2058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/vp-control-reading-20261014-0058/record.json'",
+            "run_id": "vp-control-reading-20261014-0058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/vp-control-source-20261014-0156/record.json'",
+            "run_id": "vp-control-source-20261014-0156"
+          }
+        ],
+        "partial": true,
+        "query": "result source context",
+        "results": [
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/advice-context-20261009/record.json",
+            "record_sha256": "52ac654513a845b8d39e08be1271fe6f89aa0dcd93225b984ea9638a4d3fae93",
+            "run_id": "advice-context-20261009",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "Task-scoped advice inventory, preserved global document/advice gates, metadata-only canonical task repair, public CPU regression/serialized size checks; no model/token/latency/deployment or SGLang claim"
+          },
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/advice-link-20261010/record.json",
+            "record_sha256": "6c3fdda70f477a7da4318d334820441debf03ae304bf64db80827a6f08c7c4cc",
+            "run_id": "advice-link-20261010",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "Advice inventory navigation CPU boundaries and frozen public SGLang Git text/metadata; no SGLang execution, model quality, token savings or scheduler deployment"
+          },
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/cluster-planning-20261008/record.json",
+            "record_sha256": "f9ceab85461acd6aa706ae6249c782ad4395524fcdc1ca00ea968bea71f0f229",
+            "run_id": "cluster-planning-20261008",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance"
+          }
+        ],
+        "scanned": 223,
+        "schema_version": "project-result-search/v1",
+        "status": "candidates",
+        "strategy": "lexical+exact-context"
+      }
+    },
+    {
+      "context_json_bytes": 4578,
+      "context_sha256": "990ac270e03d8936175d53206c06d1acb5065a34d9e6b29043dfc58069a0d3ab",
+      "median_ms": {
+        "baseline": 92.106107,
+        "candidate": 91.113752
+      },
+      "name": "unknown",
+      "pairs": [
+        {
+          "ms": {
+            "baseline": 91.212099,
+            "candidate": 90.241777
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 91.194101,
+            "candidate": 90.936675
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 90.995172,
+            "candidate": 89.83913
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 90.123999,
+            "candidate": 91.067601
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 90.236919,
+            "candidate": 91.113752
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 92.106107,
+            "candidate": 90.700768
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 92.351756,
+            "candidate": 94.457294
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 93.619456,
+            "candidate": 91.670981
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 99.13013,
+            "candidate": 101.132908
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 97.029895,
+            "candidate": 102.997288
+          },
+          "order": [
+            "candidate",
+            "baseline"
+          ]
+        },
+        {
+          "ms": {
+            "baseline": 98.205106,
+            "candidate": 95.699671
+          },
+          "order": [
+            "baseline",
+            "candidate"
+          ]
+        }
+      ],
+      "reduction_fraction": 0.010774041291311875,
+      "result": {
+        "authority": "retrieval only; no applicability or acceptance proof",
+        "errors": [
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/agentchaos-probe-20261013-2359/record.json'",
+            "run_id": "agentchaos-probe-20261013-2359"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/agentchaos-reading-20261013-2259/record.json'",
+            "run_id": "agentchaos-reading-20261013-2259"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-bound-20261012-2221/record.json'",
+            "run_id": "artifact-bound-20261012-2221"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-equality-20261012/record.json'",
+            "run_id": "artifact-equality-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-localized-20261012/record.json'",
+            "run_id": "artifact-localized-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/artifact-unique-splice-20261012/record.json'",
+            "run_id": "artifact-unique-splice-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-api-20261013-1656/record.json'",
+            "run_id": "atomix-api-20261013-1656"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-boundary-20261013-1503/record.json'",
+            "run_id": "atomix-boundary-20261013-1503"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/atomix-wrapper-20261013-1804/record.json'",
+            "run_id": "atomix-wrapper-20261013-1804"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/causal-orchestration-20261008/record.json'",
+            "run_id": "causal-orchestration-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm-route-bind-integration-20261009/record.json'",
+            "run_id": "comm-route-bind-integration-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm20-20261009/record.json'",
+            "run_id": "comm20-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/comm20-20261009-r01-attempt1/record.json'",
+            "run_id": "comm20-20261009-r01-attempt1"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/communication-ledger-20261009/record.json'",
+            "run_id": "communication-ledger-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/concept-teaching-20261010/record.json'",
+            "run_id": "concept-teaching-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-20261011/record.json'",
+            "run_id": "contamination-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-integrated-20261011/record.json'",
+            "run_id": "contamination-integrated-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/contamination-release-20261011/record.json'",
+            "run_id": "contamination-release-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/dag-cycle-20261013-1601/record.json'",
+            "run_id": "dag-cycle-20261013-1601"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/dag-membership-20261013-0659/record.json'",
+            "run_id": "dag-membership-20261013-0659"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/exactly-once-complete-20261013-1301/record.json'",
+            "run_id": "exactly-once-complete-20261013-1301"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/figure-review-binding-20261008/record.json'",
+            "run_id": "figure-review-binding-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-freedman-20261008T0915Z/record.json'",
+            "run_id": "knowledge-freedman-20261008T0915Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-freedman-20261008T1215Z/record.json'",
+            "run_id": "knowledge-freedman-20261008T1215Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-mirror-repair-20261012-1856/record.json'",
+            "run_id": "knowledge-mirror-repair-20261012-1856"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/knowledge-normal-mixture-20261008T1515Z/record.json'",
+            "run_id": "knowledge-normal-mixture-20261008T1515Z"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/mailbox-pagination-20261011/record.json'",
+            "run_id": "mailbox-pagination-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-allocation-20261008/record.json'",
+            "run_id": "math-allocation-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-burst-service-20261009/record.json'",
+            "run_id": "math-burst-service-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-completion-packet-20261009/record.json'",
+            "run_id": "math-completion-packet-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-condensation-residual-20261010/record.json'",
+            "run_id": "math-condensation-residual-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-conditioning-20261008/record.json'",
+            "run_id": "math-conditioning-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-coupling-repair-20261010/record.json'",
+            "run_id": "math-coupling-repair-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-coupling-repair-20261010-v2/record.json'",
+            "run_id": "math-coupling-repair-20261010-v2"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-factor-certificate-20261010/record.json'",
+            "run_id": "math-factor-certificate-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-geometry-20261007/record.json'",
+            "run_id": "math-geometry-20261007"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-gibbs-menu-20261010/record.json'",
+            "run_id": "math-gibbs-menu-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-input-policy-20261010/record.json'",
+            "run_id": "math-input-policy-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-linear-residual-20261008/record.json'",
+            "run_id": "math-linear-residual-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-mass-box-20261009/record.json'",
+            "run_id": "math-mass-box-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-propagation-20261008/record.json'",
+            "run_id": "math-propagation-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-rope-intertwiner-20261008/record.json'",
+            "run_id": "math-rope-intertwiner-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-sequence-tv-20261008/record.json'",
+            "run_id": "math-sequence-tv-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-singular-bilinear-20261008/record.json'",
+            "run_id": "math-singular-bilinear-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-singular-condensation-20261010/record.json'",
+            "run_id": "math-singular-condensation-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-softmax-kl-20261008/record.json'",
+            "run_id": "math-softmax-kl-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-softmax-merge-20261010/record.json'",
+            "run_id": "math-softmax-merge-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-structured-subspace-20261010/record.json'",
+            "run_id": "math-structured-subspace-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-support-feasibility-20261010/record.json'",
+            "run_id": "math-support-feasibility-20261010"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/math-weighted-bilinear-20261007/record.json'",
+            "run_id": "math-weighted-bilinear-20261007"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/opt-inplace-20261012/record.json'",
+            "run_id": "opt-inplace-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/paper-skill-links-20261009/record.json'",
+            "run_id": "paper-skill-links-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/project-doc-scope-20261008/record.json'",
+            "run_id": "project-doc-scope-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/readme-20261008/record.json'",
+            "run_id": "readme-20261008"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/recovery-agreement-reading-20261013-0756/record.json'",
+            "run_id": "recovery-agreement-reading-20261013-0756"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/result-search-invariant-20261014-0304/record.json'",
+            "run_id": "result-search-invariant-20261014-0304"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-adapter-20261013-1159/record.json'",
+            "run_id": "sentry-adapter-20261013-1159"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-complete-20261013-0956/record.json'",
+            "run_id": "sentry-complete-20261013-0956"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-reading-20261013-0902/record.json'",
+            "run_id": "sentry-reading-20261013-0902"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/sentry-source-20261013-1058/record.json'",
+            "run_id": "sentry-source-20261013-1058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-001-20261009/record.json'",
+            "run_id": "token-001-20261009"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-20261011/record.json'",
+            "run_id": "token-010-maintenance-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-cpu-20261011/record.json'",
+            "run_id": "token-010-maintenance-cpu-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-010-maintenance-cpu-r2-20261011/record.json'",
+            "run_id": "token-010-maintenance-cpu-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-fifty-01-20261012/record.json'",
+            "run_id": "token-fifty-01-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-fifty-03-20261012/record.json'",
+            "run_id": "token-fifty-03-20261012"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-20261011/record.json'",
+            "run_id": "token-hourly-repair-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-r2-20261011/record.json'",
+            "run_id": "token-hourly-repair-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-hourly-repair-r4-20261011/record.json'",
+            "run_id": "token-hourly-repair-r4-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-20261011/record.json'",
+            "run_id": "token-ten-1-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-r2-20261011/record.json'",
+            "run_id": "token-ten-1-r2-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-ten-1-r3-20261011/record.json'",
+            "run_id": "token-ten-1-r3-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/token-usage-unknown-20261011/record.json'",
+            "run_id": "token-usage-unknown-20261011"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-boundaries-20261013-2159/record.json'",
+            "run_id": "undobench-boundaries-20261013-2159"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-reading-20261013-1904/record.json'",
+            "run_id": "undobench-reading-20261013-1904"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/undobench-source-20261013-1959/record.json'",
+            "run_id": "undobench-source-20261013-1959"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/verified-tools-reading-20261013-1358/record.json'",
+            "run_id": "verified-tools-reading-20261013-1358"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/verifier-tax-reading-20261013-2058/record.json'",
+            "run_id": "verifier-tax-reading-20261013-2058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/vp-control-reading-20261014-0058/record.json'",
+            "run_id": "vp-control-reading-20261014-0058"
+          },
+          {
+            "error": "[Errno 2] No such file or directory: '/workspace/scratch/88c3234ecfbc/agent-research-0756/agent_doc/results/vp-control-source-20261014-0156/record.json'",
+            "run_id": "vp-control-source-20261014-0156"
+          }
+        ],
+        "partial": true,
+        "query": "result source context",
+        "results": [
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/advice-context-20261009/record.json",
+            "record_sha256": "52ac654513a845b8d39e08be1271fe6f89aa0dcd93225b984ea9638a4d3fae93",
+            "run_id": "advice-context-20261009",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "Task-scoped advice inventory, preserved global document/advice gates, metadata-only canonical task repair, public CPU regression/serialized size checks; no model/token/latency/deployment or SGLang claim"
+          },
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/advice-link-20261010/record.json",
+            "record_sha256": "6c3fdda70f477a7da4318d334820441debf03ae304bf64db80827a6f08c7c4cc",
+            "run_id": "advice-link-20261010",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "Advice inventory navigation CPU boundaries and frozen public SGLang Git text/metadata; no SGLang execution, model quality, token savings or scheduler deployment"
+          },
+          {
+            "applicability": "unchecked",
+            "match": "lexical",
+            "origin": "native",
+            "record_path": "agent_doc/results/cluster-planning-20261008/record.json",
+            "record_sha256": "f9ceab85461acd6aa706ae6249c782ad4395524fcdc1ca00ea968bea71f0f229",
+            "run_id": "cluster-planning-20261008",
+            "score": 3,
+            "stored_validation": "usable-with-scope",
+            "summary": "cluster planner deterministic CPU fixtures, CLI and regression; no live GPU/network/token performance"
+          }
+        ],
+        "scanned": 223,
+        "schema_version": "project-result-search/v1",
+        "status": "candidates",
+        "strategy": "lexical+exact-context"
+      }
+    }
+  ],
+  "environment": {
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "python": "3.12.14"
+  },
+  "frozen_record_hashes": {
+    "agent_doc/results/advice-context-20261009/record.json": "52ac654513a845b8d39e08be1271fe6f89aa0dcd93225b984ea9638a4d3fae93",
+    "agent_doc/results/advice-link-20261010/record.json": "6c3fdda70f477a7da4318d334820441debf03ae304bf64db80827a6f08c7c4cc",
+    "agent_doc/results/cluster-planning-20261008/record.json": "f9ceab85461acd6aa706ae6249c782ad4395524fcdc1ca00ea968bea71f0f229",
+    "agent_doc/results/codex-pull-sync-20261007/record.json": "9eb8b7faf9e9a1fdd2fcb34bfc10f6380aa3fd4b7d857588f849418248de3391",
+    "agent_doc/results/combined-corpus-delta-v2-20261007/record.json": "f607a7134dc4fe8bf169bc13ce01b027222f63600b776552ba8cd5c5c150768d",
+    "agent_doc/results/combined-corpus-v3-20261007/record.json": "704081cc50902490704fa7a4c6ac765e5a54b25ee18b55703dbb3f44102bd0cd",
+    "agent_doc/results/combined-corpus-v4-20261007/record.json": "45f0d436e6aef137049abb9b013081a7238a23a3df5959a58f15d25d4e92d04e",
+    "agent_doc/results/combined-integration-v2-20261007/record.json": "618a0335386e8ed12e20fa75580a640a570820ff684f911b2a04d2e14f6f7f22",
+    "agent_doc/results/combined-integration-v3-20261007/record.json": "7529f274adb9816916e358eb15550bc61a6b000bc5aa4d3277e61900a641594b",
+    "agent_doc/results/combined-integration-v4-20261007/record.json": "c4a497016e8730d4f52c27ac3291842dd210e511370cf20b2d63a88d69f9c051",
+    "agent_doc/results/combined-integration-v5-20261007/record.json": "4d028c2be22dd89ab5e995cdabc39b5038f8a3a599cef01f82ec3a2047aa6ff6",
+    "agent_doc/results/comm-ack-confirm-20261009/record.json": "7bdea852ad7a7c4f89c6460af64a600f25f21dda2da57e2cb24485a9bb694a6b",
+    "agent_doc/results/comm-batch-20261010/record.json": "b23365e2798cbe622381ca7469b432b75f1bfc7569858110f37a5338bad3476d",
+    "agent_doc/results/comm-batch-integration-20261010/record.json": "1895fcf465a57bfea7dabe26d119d90601eb50ceffb272bd0bc848c698c85da8",
+    "agent_doc/results/comm-batch-reconciled-20261010/record.json": "2338f6c88601e38881c83e8f77031cca5b39aa2c9cea063a7a64a4484673880e",
+    "agent_doc/results/comm-confirm-20261009/record.json": "4600c0fd82c9822e8385d1f4e1f7e8188c6ede12b29aa04ff2d7fa50ff5b0637",
+    "agent_doc/results/comm-confirm-integration-20261009/record.json": "564a10d73de16a728d34ae2cd49e66ddf3fb7b9b331fd402b3c481be9cdd229b",
+    "agent_doc/results/comm-inbox-20261009/record.json": "6f89ed72aaefec62ff0d045bb5d53ce35ef615c86de1b388a5ff8e4fdd3c7318",
+    "agent_doc/results/comm-inbox-integration-20261009/record.json": "b7a2e338c68454642e4bee2493f18afdb05efedbb4440dd5ef1b3214a617c4d4",
+    "agent_doc/results/comm-order-20261009/record.json": "56c8660a347d07644fb336f286894e7e561520a0b00899813def174b242984e0",
+    "agent_doc/results/comm-pending-index-20261009/record.json": "cf695be251f4c55e82d6d35cea9e676321caa66ce45ca35a37a2e6349a29d34b",
+    "agent_doc/results/comm-pending-index-integration-20261009/record.json": "f3aaf0fbdfc5c316aa9cb9cf3671aed2939481f2965be36845b851df9499bf67",
+    "agent_doc/results/comm-route-bind-20261009/record.json": "bb170ddb35cff28009b5a237cbf04bc66a041e764805a9d1178b6d7d9d82f059",
+    "agent_doc/results/comm20-20261009-final-integration/record.json": "bc07a81e1e85352f74a0e906e60a684a830846f3eae2e7048125132ea3a0a055",
+    "agent_doc/results/comm20-20261009-r01/record.json": "9ae959d19a27346460e48777a25ed9faabc144499b137e505650d9315f045360",
+    "agent_doc/results/comm20-20261009-r02/record.json": "64983a7461f415c059fc2befd4238388551738746648bd97c57f998ee364691c",
+    "agent_doc/results/comm20-20261009-r03/record.json": "fee9a231b47832d7fa72ca679da0ed1abced8832707c53113f7b55efd6434f65",
+    "agent_doc/results/comm20-20261009-r04/record.json": "70313dd10fa6eb72101e2cec46e26d8af16885c7476b6bd5677f94c931abe953",
+    "agent_doc/results/comm20-20261009-r05/record.json": "2c49e80d74805ad242a830b8a3f8359064fd48e1d22b6271fa9f695c3e88b05e",
+    "agent_doc/results/comm20-20261009-r06/record.json": "57c2de1dcacee569531da912b4dcc2dff8d7538332ea55e9a6bf92eca215e969",
+    "agent_doc/results/comm20-20261009-r07/record.json": "9af8a7461272e87f7efc5cedd15863584022b91c95eb39d979008251e90c4d06",
+    "agent_doc/results/comm20-20261009-r08/record.json": "891af349928e06150dcb0445f3f424d73e476c7f72eb6f271a080eb2e6bb3361",
+    "agent_doc/results/comm20-20261009-r09/record.json": "51097eb13fc91fccb33dac7ede89d662f9d8cbd133d83bd12f636a87416d9c0f",
+    "agent_doc/results/comm20-20261009-r10/record.json": "f907c7fb6e35b8d6210ea697661c29f4ae53159f08426ec742024af3e5821142",
+    "agent_doc/results/comm20-20261009-r11/record.json": "01eac8e5d5ce0eaa8bc8f1e20fb67847d3438cdd1a9b287c2b289ed2ec7f66ef",
+    "agent_doc/results/comm20-20261009-r12/record.json": "3764a0741223ef09b69a4c9fb2ad16983ca31480c061897c1f3c67896be3dfe4",
+    "agent_doc/results/comm20-20261009-r13/record.json": "f37ccfbf9ac506d4b0d5c61a15441d45fbf25f13b10928a09ebc4c47d2e320b6",
+    "agent_doc/results/comm20-20261009-r14/record.json": "74c8872c9abc1cb17b5daf8c2abade81f1166e8dfe2ed9e80de811eeacfef838",
+    "agent_doc/results/comm20-20261009-r15/record.json": "d345bd4e61da7281661254fb0c9c39b84d1101cb8d96dab3c81c7fd4b07367d9",
+    "agent_doc/results/comm20-20261009-r16/record.json": "5e57aaaa882c177ef8b4243e8ee55c2945bf44ebe8daaa6a85c05cb515c8320d",
+    "agent_doc/results/comm20-20261009-r17/record.json": "46368c775b8f9911f9f1bde751e5b1614397d5bf98be63bd752322e11aab1711",
+    "agent_doc/results/comm20-20261009-r18/record.json": "735fa5a209d6b70221e36f46035ea0f60dddfa5d480c4ab299dd2c1faf556478",
+    "agent_doc/results/comm20-20261009-r19/record.json": "757fc15633d850a37483cbc34f2fd6702c3aa89b0433c7d2f0a66a6fec32c3b0",
+    "agent_doc/results/comm20-20261009-r20/record.json": "fcb2c8798ef95fcc899cc8786f2cb70dc577f8e30fcb57a36dffe137da903c99",
+    "agent_doc/results/corpus-fd9012-delta-20261007/record.json": "ea1c32a8db64a99f0913ff56d1e0e2ba557a1f70b6d8ee45e7444ca35269fbf3",
+    "agent_doc/results/dual-main-public-v2-20261007/record.json": "e9f8f2a4a4d8e3cd1487fefc0b2e38b293b8ae6892a3368aeda2072afa70ded7",
+    "agent_doc/results/final-delta-v6-20261007/record.json": "436828ed1533402fcdfed1c84413d48c15ebf083a45f1f8555f5bf248712e591",
+    "agent_doc/results/historical-aik-math-retrieval-20261007/record.json": "b88223bb376a1a8d3d18610ef3e6f57db6c2624a237f8dfa468f17e246b4b979",
+    "agent_doc/results/historical-vex-softmax-rope-20261007/record.json": "0c0583c911d293e971e796442a9dc7b48f2c7b8c7fa369a9a4685c0f8b0fa0e2",
+    "agent_doc/results/kernel-feedback-20261008/record.json": "635cf747693b4eda1048c94ecd793a40c13058b22953ae6af27901015be82b2a",
+    "agent_doc/results/math-adaptive-information-20261010/record.json": "7b811a2883e94e3d629cbe052fd64414910c153502cca1499b44335be83c4e80",
+    "agent_doc/results/math-adaptive-registration-20261012/record.json": "7ed925b679c19380261523e352bb93acfafe36f2bde9d16c03310ea6943bd06f",
+    "agent_doc/results/math-certificate-audit-20261013/record.json": "6e4f57cb4345b42e9fdb09d3840d2c83af5daf52556cf45f4f1682034da641e4",
+    "agent_doc/results/math-certificate-composition-20261011/record.json": "33a6965bf5d483cc289ff7799120f3ece5a7fa140957a1d68f9eec6e32169c6b",
+    "agent_doc/results/math-component-speedup-20261012/record.json": "773b8637ba51d1907475bc6af79825e8854431090e0b5dab44748d70565322eb",
+    "agent_doc/results/math-conditional-covariance-20261013/record.json": "426762d9fb3a5b85e22415d7747819543279c4c3a05b415f96680c5a4b9d8357",
+    "agent_doc/results/math-conditional-information-20261010/record.json": "df70d330b8ceff1a2400df49226c933e1f636fdb0bddd5a8f93107f6676f7a55",
+    "agent_doc/results/math-conditional-spending-20261013/record.json": "59aad1c5bcd0f2047e480e5c63572ae5a62906d9cabb9001b7c920dca2e2a8d6",
+    "agent_doc/results/math-convex-projection-20261009/record.json": "147646d6dfa07481e1684caee598af90c675835d8f64c1cf7b0c7b9e6b24e98c",
+    "agent_doc/results/math-convex-support-20261009/record.json": "b84dd1a4ea5676b487db2a8d487cd04a7228dbf4b9775f6f37fdf90b4e049a52",
+    "agent_doc/results/math-correlated-aggregation-20261012/record.json": "4857782a925d662b88cf00e0e62127e967c4d095c54a4e286122556e88ca5c6c",
+    "agent_doc/results/math-covariance-robust-20261012/record.json": "d948a346979faa3fb91112b090c26700e0baaf63488a88aee8a15d94dae4a4bc",
+    "agent_doc/results/math-critical-path-20261012/record.json": "66b69e4ebbfda78d5427374c12d5ac71a408caf9157019a1ebc6af86bc90863f",
+    "agent_doc/results/math-cyclic-audit-20261013/record.json": "348790cc4d2fb9328f05dd09c23a17f2b3e0027ca254e45874401779a1a18fb3",
+    "agent_doc/results/math-cyclic-filter-20261013/record.json": "5ebb3eb74ee45a4e1f4e8c1c0abe77caf4cccdcd7508355c2330b7ecea1d3c7a",
+    "agent_doc/results/math-discrete-lyapunov-20261009/record.json": "e978ae15c93e902f1cb712793eae3f3ca6528b3417ac72bd550935050db0efb9",
+    "agent_doc/results/math-fano-message-20261009/record.json": "8dcfb242e3f286962135b4875cdecd7b410d2d173a9dc2250e88d87dd93f163a",
+    "agent_doc/results/math-finite-error-routing-20261011/record.json": "ba679b49fb79345821a31cb0ef1633ffca78ec6d5ddc4caaa9c8d513d8b3717b",
+    "agent_doc/results/math-finite-horizon-witness-20261011/record.json": "a116f8a3767b82705bb08f06d5966f48eb9a0573d03e07fbc4892bdebc303a7e",
+    "agent_doc/results/math-first-failure-20261011/record.json": "a2ae91e09d257dd17d2a4ddc55b32de194a2d991c8699efdf8f77a0561b678d9",
+    "agent_doc/results/math-frank-wolfe-20261009/record.json": "ddf06745cf4d0fc15393fba2e7c28740f30bc23742e2add0a17c7c1388416439",
+    "agent_doc/results/math-gaussian-surrogate-20261013/record.json": "92d1b7df6eed5630cd7d2271140c7de5594bcb9214c7faa368364031d51a1687",
+    "agent_doc/results/math-generator-defect-20261012/record.json": "77f98c6510c2e5f5cb059394ee5cccf7a29f8335f6832292b6772475345eb85f",
+    "agent_doc/results/math-gpu-ranking-contract-20261008/record.json": "bef968d774c94cb02ed9ac1809b9138e3e6ad8b03dc97a16e4ad3e5bd0472b91",
+    "agent_doc/results/math-information-version-20261012/record.json": "daf61032604efcdb92283cd33073c9eab92537d668a73463484f9d57ae2910d9",
+    "agent_doc/results/math-input-output-energy-20261011/record.json": "4c85d0631d1d0a5734080b03caad9b9c5b03716c9100f38dbb75ba4eef51ce54",
+    "agent_doc/results/math-intertwiner-20261012/record.json": "53fb862bafc515df92ef140a4ca6971525a520f327f2b32622899be581eb66f7",
+    "agent_doc/results/math-inverse-update-20261009/record.json": "b300a4dc9a965cd4291d0c58f958989782d8cca7a2f1dd255324cb15110043e4",
+    "agent_doc/results/math-latency-audit-20261012/record.json": "16ff8357be987bb75794b123f81871306574c8369c3bf317975d740e89bb7e8c",
+    "agent_doc/results/math-linear-residual-20261008-v2/record.json": "c79ef14e801192bd0f1c68f72e4ff6d029630ec41584bb98316c28a622a901ed",
+    "agent_doc/results/math-local-tube-20261011/record.json": "3ec119c90a457672c16217b2b5ba40335c7bc0a94269e7702df7d7a3409b0162",
+    "agent_doc/results/math-logdet-diversity-20261010/record.json": "4769d4867a90d7a4dc51fa4a0019b66833ee9f048de1d6271fa6ccb435efae9b",
+    "agent_doc/results/math-logdet-registration-20261012/record.json": "557f364e0ea83ba47f68b4b7eb4e2d2464c1a58f99bd54a38bbc066cdf39d951",
+    "agent_doc/results/math-lyapunov-navigation-20261013/record.json": "3c20a0195797caf561ca7e28008643f97aa9e0829b899151a5fc9cad3e353edc",
+    "agent_doc/results/math-margin-audit-20261013/record.json": "2c911e51eb7bc294eab7d85267510da55272f83860e4e4c53e0a55771cab6075",
+    "agent_doc/results/math-marginal-contraction-20261010/record.json": "0b62a79e686e39bc3f3309659184ce3ee6b1ef775e36035258ffe5b7f3afa82d",
+    "agent_doc/results/math-mse-threshold-20261013/record.json": "f1a123e68a64453506fee0438b3afc72228c48f0ff404ee9eb65052c130dcf5a",
+    "agent_doc/results/math-packet-entry-20261009/record.json": "18e878e4915193fa21fb57901590bcbdfaa2ab63ce793a08bdb9b249fbe9df7d",
+    "agent_doc/results/math-paired-risk-20261008/record.json": "7ba95cfdd8a8cb639852f257b3952a49de20391585243a83e345618b96cf5bde",
+    "agent_doc/results/math-random-score-20261009/record.json": "3a6bcb34eb9882eead3ccaf36253d637707595440b8692fef51cbe733f64b19e",
+    "agent_doc/results/math-resolvent-witness-20261011/record.json": "bdac4e4d3b9beef534838786f51c1316959d44cf0b70ddfcaabafee4b6f40764",
+    "agent_doc/results/math-retrieval-bridge-20261011/record.json": "a2eb56db105f7888d1f845c73c4f2214924d4fa4952bfdfc7548e015ccd99892",
+    "agent_doc/results/math-ring-euler-20261014/record.json": "f8e1bee77d17c6f84361feb23a095b51c145d1be1b6f6075e7be464430d51249",
+    "agent_doc/results/math-robust-margin-20261013/record.json": "d0ff117d33389983f29a5376ce954684c3dcc44c4f3ae1a24c0384a837c4722c",
+    "agent_doc/results/math-rounding-20261008/record.json": "c90f9bd15a515ff82c5a72de736ff2661bd68fb255de653f033bd3e4dad2a48a",
+    "agent_doc/results/math-screening-20261008/record.json": "2cd23eb8b874345ac604b1f115eafb05b56b532142719b65be90507edf82f6bd",
+    "agent_doc/results/math-selection-20261008/record.json": "65038b64ce8a914819bcdbe42af0b74b32929708333bf1109d0206c4150126bb",
+    "agent_doc/results/math-selection-registration-20261013/record.json": "80cf1c9b785c5f8d904afc06f13fef21450bc6c0420928948757e8133aed5930",
+    "agent_doc/results/math-singular-bilinear-20261008-v2/record.json": "f09d2557ad3b8a438cd3d49b8c00b79f2747c782f6d964c5fe7e0cae5364b16c",
+    "agent_doc/results/math-softmax-20261007-v2/record.json": "4fc318cd66d96cc613102744f8c59c2de222711928183bb7e170db2eebcd45c8",
+    "agent_doc/results/math-state-aggregation-20261010/record.json": "c534672a2c800d73ed0d1372b13c3bdb635477e5900cc8a74c7f4644c0ac2aa9",
+    "agent_doc/results/math-submodular-guard-20261010/record.json": "9ed302c7062760beb0dad769b7a50fb244bf47d2eefdbdb86e439e10e3cd6f51",
+    "agent_doc/results/math-submodular-registration-20261012/record.json": "aa4ade8fa7401ef474b89976ab50720c0a80ff9169451b09f60bc0714724828d",
+    "agent_doc/results/math-switched-metrics-20261009/record.json": "b20e2ee0936df0d5fef8e4104baaef8edfa76f73ae97d8b1942f56de76ef2c09",
+    "agent_doc/results/math-symmetry-routing-20261012/record.json": "59b59f0e543bc622945ddbd2deead4262b0c8f29d765318eaacf1976b10fafd4",
+    "agent_doc/results/math-threshold-discovery-20261013/record.json": "a37f366c04a1600949f88f1ca4dae84323b9979e0d38eda13ace9300fad4ccb6",
+    "agent_doc/results/math-transport-output-20261009/record.json": "5faf4266619cd7aac6f9ea3fd96d8219c7a6f18648a6007368975ce5c9a49061",
+    "agent_doc/results/namespace-20261008/record.json": "092ad21da2eed03ed12b948185aa25119afe926cfdc994cf37da4d7e03c702f3",
+    "agent_doc/results/prior-result-store-cpu-20261007/record.json": "463e645a0b081b1fc9e3eebdb2d2b8e8e834abe397a4d7085820c9e76aec065e",
+    "agent_doc/results/project-scope-20261008/record.json": "d805941ac1adfeef6dd5444657afa4a4a8b7ff7c4074761877f00d3e23396904",
+    "agent_doc/results/rl-probability-20261008/record.json": "cdee6bbc207e40aac14f271718dfa45de6f374e791b5dbf9316ae9cf4cb34a8d",
+    "agent_doc/results/token-001b-control-20261009/record.json": "ff3ee44d428169814f1522906342cceb56fdf8fa3cb38d2567c905c405a0e9ba",
+    "agent_doc/results/token-002-scope-20261009/record.json": "de56246d329553a9b8cec8cf64e4b66618c37e24c4de93300e51f198f863d6cf",
+    "agent_doc/results/token-003-claims-20261010/record.json": "e66bf400d9e77968f8f0e5c3ea28059f219d2b0ff99b7426037ee2d7c1f6625a",
+    "agent_doc/results/token-003-deployment-20261010/record.json": "72ffa683bb14d3b89e8c9206ad3d5059cd6f9bc93599275bc365e0a493182950",
+    "agent_doc/results/token-004-context-20261010/record.json": "9a27e7acb96ddf9d7c95497d7a0ee83b8cb2b04ab51543a2fe36a86fa647cd47",
+    "agent_doc/results/token-005-inbox-20261010/record.json": "59263d26450e720eda7b5b71b93dae9f5441046f2a0960bf1bb97596d125ed7f",
+    "agent_doc/results/token-006-delta-20261010/record.json": "49c81ac45042d1572c5be7de3e8df51cf7b8d0992b6df6c0add728ff8214cfb0",
+    "agent_doc/results/token-006-lines-20261010/record.json": "e5cc5790d52d27158f5ea9e248c38a938bbd2c8af15fcdce59d9687838d3919b",
+    "agent_doc/results/token-007-skills-20261010/record.json": "405313cda1a580978a2112e370fca7e86f20c9cfcb9eaaef22367624fe370cdb",
+    "agent_doc/results/token-008-dispatch-20261010/record.json": "0cd207d8816a4b04c8dc8321c13de13db4ff76bc2913dd01d42d98cda46fb6ea",
+    "agent_doc/results/token-009-symbols-20261010/record.json": "b509933620de72d7bd78d6d66189825d794b373a63e4c44ac33180395887fb02",
+    "agent_doc/results/token-010-maintenance-cpu-r3-20261011/record.json": "be943635c94314dd16b575471a3c66f0ceedc497d7f8f5df28d8dc59fdaa09e3",
+    "agent_doc/results/token-fifty-01-r2-20261012/record.json": "578ddf3f087f3ab4f07d415860a9ac6d67e331c24183529aa0d692b8e1c5e355",
+    "agent_doc/results/token-fifty-02-20261012/record.json": "4be289e467216f304a48f4da1664e5cabde891704f1e2d4a556b83864bd76956",
+    "agent_doc/results/token-fifty-03-r2-20261012/record.json": "a744a4337c9826e22583a98e6cb89aef8352c423b9347d40ce61e5c7e8063e30",
+    "agent_doc/results/token-fifty-04-20261012/record.json": "591e14b07b4cf453d6228d862d46ee70d55586b41efc4bd81048766a96ba8719",
+    "agent_doc/results/token-fifty-05-20261012/record.json": "9f1b301326f5871bcfff8de504f09b050e9094eb2ac6aba4bd9564631b789ae0",
+    "agent_doc/results/token-fifty-06-20261012/record.json": "0efd01f4dafab75f7072324421befc7301337f45d1e28f4338c646aff3702b5b",
+    "agent_doc/results/token-five-1-20261011/record.json": "27a18e4605ade70e8a0b40516fba7ded9c53f7cb83ce16c1c13d7315a317330f",
+    "agent_doc/results/token-five-2-20261011/record.json": "b1beb9e65c44c83283ee2ba3753057e6160996a845722119de9f4edec11b0214",
+    "agent_doc/results/token-five-2-fixed-20261011/record.json": "b67ee555512317790667eb9de20fac11d1bae781cfbdf1084adadfd6bbe70999",
+    "agent_doc/results/token-five-3-20261011/record.json": "10973ae8d4e319b85e7e56fde9d4a8dfbec87eeb570e295b1fc02486714e95b3",
+    "agent_doc/results/token-five-4-20261011/record.json": "797071aa4ddfbce387578d70c99abc8195fe18c058bd3ef902b3a0ead4a2c5c8",
+    "agent_doc/results/token-five-5-20261011/record.json": "9db91b740db12316bd1febf0e5ba871eb764415a0893154613d73151061736e0",
+    "agent_doc/results/token-five-hourly-cpu-20261011/record.json": "594b286476e4ff0fe1791b77dd646712cca940abf923a1d823bde35b6af2bab3",
+    "agent_doc/results/token-hourly-repair-r3-20261011/record.json": "dbf0f1769d3d96ffa1f5cc529bce7bc3dec60b73a08714e44200e828f0c93099",
+    "agent_doc/results/token-hourly-repair-r5-20261011/record.json": "d372b88d9520bc7744ac94a923acc36f8ebaa5325619b93b5e09221a0e83f5f6",
+    "agent_doc/results/token-ten-1-r4-20261011/record.json": "a21ebdd30670dd6d6f43dcde59e9a95d08554aec80968ee6286be2ceeaaabdbf",
+    "agent_doc/results/token-ten-2-20261011/record.json": "e5cf9e4c0df018cf7f13ab187bda1d7b5e5efee8ddff7e1d356d5f65fb608ff8",
+    "agent_doc/results/token-ten-3-20261011/record.json": "a0628d1b377c5cc07a44d4459554b19643fa03df2f36f63a33891cb657605277",
+    "agent_doc/results/token-ten-4-20261011/record.json": "bc689a25b199916bd57069b0514ce19843d70eb2b75542dadf932d173a08ca86",
+    "agent_doc/results/token-ten-5-20261011/record.json": "82388169d5291d97b599ad03f934b6e06d48e44aab32ec74ec4317247f856139"
+  },
+  "main": "9c071f7c735eed861244951a150d456ffe27a4ef",
+  "module_sha256": "a6e9b855d5284ca91c311223b7e45523ed4062ff155848662c0697a1b82f0126",
+  "timer": "perf_counter_ns, full ResultStore.search, warm OS cache, serial alternating pairs"
+}

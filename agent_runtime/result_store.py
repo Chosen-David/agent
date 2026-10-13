@@ -176,6 +176,21 @@ def _unknown(value):
     return False
 
 
+def _plain_search_context(value):
+    pending = [value]
+    while pending:
+        item = pending.pop()
+        if type(item) is dict:
+            if any(type(k) is not str for k in item):
+                return False
+            pending.extend(item.values())
+        elif type(item) is list:
+            pending.extend(item)
+        elif type(item) not in (str, int, float, bool, type(None)):
+            return False
+    return True
+
+
 def _tokens(query):
     """Deterministic lexical search with CJK bigrams, not semantic retrieval."""
     tokens = []
@@ -322,6 +337,8 @@ class ResultStore:
             _context(context)
         names, partial = self._directories(max_scan)
         tokens = _tokens(query)
+        exact_eligible = None
+        context_checked = False
         hits, errors = [], []
         for name in names:
             try:
@@ -333,8 +350,14 @@ class ResultStore:
                                       ('summary', 'run_id', 'result_id', 'producer_task_id', 'context')},
                                      ensure_ascii=False).casefold()
                 score = sum(token in haystack for token in tokens)
-                exact = (context is not None and set(context) == set(CONTEXT_FIELDS) and
-                         not _unknown(context) and context == record['context'])
+                if not context_checked:
+                    if type(self) is ResultStore and 'show' not in self.__dict__ and _plain_search_context(context):
+                        exact_eligible = (context is not None and set(context) == set(CONTEXT_FIELDS) and
+                                          not _unknown(context))
+                    context_checked = True
+                exact = ((context is not None and set(context) == set(CONTEXT_FIELDS) and
+                          not _unknown(context) and context == record['context'])
+                         if exact_eligible is None else exact_eligible and context == record['context'])
                 if exact:
                     score += 1000  # Matching frozen conditions outrank vocabulary overlap.
                 if score:
