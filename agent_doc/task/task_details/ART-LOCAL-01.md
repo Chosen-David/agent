@@ -1,7 +1,8 @@
 # [ART-LOCAL-01] 局部文本差分只匹配真实变化区
 
 Task-ID: ART-LOCAL-01
-Date: 2026-10-12 Asia/Shanghai
+Date: 2026-10-12
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

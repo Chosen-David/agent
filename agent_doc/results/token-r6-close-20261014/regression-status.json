@@ -1,0 +1,39 @@
+{
+  "source_commit": "0f1383788fa31c759b8279fd5f7590a28420958f",
+  "unittest": {
+    "command": "python -m unittest discover -s tests -v",
+    "returncode": 0,
+    "run": 1182,
+    "passed": 1181,
+    "skipped": 1,
+    "skip_reason": "existing opt-in tmux/Unix socket runtime test"
+  },
+  "reader": {
+    "command": "python -m unittest discover -s apps/paper-reader/tests -v",
+    "run": 3,
+    "returncode": 0
+  },
+  "final_small_checks": [
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/sync_plugin_references.py",
+        "--check"
+      ],
+      "returncode": 0,
+      "log": "sync-final.log"
+    },
+    {
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+        "scripts/project_docs.py",
+        "--root",
+        ".",
+        "validate"
+      ],
+      "returncode": 2,
+      "log": "project-docs-final.log"
+    }
+  ],
+  "publication_allowed": false
+}

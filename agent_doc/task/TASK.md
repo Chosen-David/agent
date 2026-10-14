@@ -414,6 +414,8 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [MATH-87] Finite-error document discovery bridge; fixed-query structure checks, no model acceptance. ([detail](task_details/MATH-87.md))
 
+## 2026-10-12
+
 - [x] [MATH-88] Finite representation averaging and heterogeneous-role refusals; document-only, production deferred. ([detail](task_details/MATH-88.md))
 
 - [x] [MATH-89] Exact generator checks and word-length defect bounds; document-only, production deferred. ([detail](task_details/MATH-89.md))
@@ -440,55 +442,55 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [MATH-94] Frozen coverage/prerequisite candidate historical registration repaired; fixed-query discovery only. ([detail](task_details/MATH-94.md))
 
-- [MATH-95] 局部加速与整体耗时条件界：串行固定工作/额外开销推导及重叠、工作量变化反例；四个公开手算，仅文档检查，实际模型/性能未测。见 [详情](task_details/MATH-95.md)。
+- [ ] [MATH-95] 局部加速与整体耗时条件界：串行固定工作/额外开销推导及重叠、工作量变化反例；四个公开手算，仅文档检查，实际模型/性能未测。 ([详情](task_details/MATH-95.md))
 
-- [MATH-96] 固定依赖图单节点加速：最长路径归纳、路径切换与并列瓶颈反例；四个公开手算，资源/模型收益未验证。见 [详情](task_details/MATH-96.md)。
+- [ ] [MATH-96] 固定依赖图单节点加速：最长路径归纳、路径切换与并列瓶颈反例；四个公开手算，资源/模型收益未验证。 ([详情](task_details/MATH-96.md))
 
 - [x] [KNOW-MIRROR-01] 修复独立Skill知识状态副本漂移，独立安装与回归验证。 ([详情](task_details/KNOW-MIRROR-01.md))
 
-- [MATH-97] 既有耗时知识复核：三条公开问题已找到MATH95/96，记录前提路由与检索成本；本轮没有值得采用的新改进，模型验收仍待验证。见 [详情](task_details/MATH-97.md)。
+- [ ] [MATH-97] 既有耗时知识复核：三条公开问题已找到MATH95/96，记录前提路由与检索成本；本轮没有值得采用的新改进，模型验收仍待验证。 ([详情](task_details/MATH-97.md))
 
-- [MATH-98] 观测后信息增益候选历史登记：保留平均/后验路径的拒用边界，核对固定查询发现；模型与生产验收仍待验证。见 [详情](task_details/MATH-98.md)。
+- [ ] [MATH-98] 观测后信息增益候选历史登记：保留平均/后验路径的拒用边界，核对固定查询发现；模型与生产验收仍待验证。 ([详情](task_details/MATH-98.md))
 
-- [MATH-99] 固定集合信息候选历史版本绑定：v1导航改用哈希匹配快照，旧文件/v2记录保留；固定查询发现与身份检查，模型验收待验证。见 [详情](task_details/MATH-99.md)。
+- [ ] [MATH-99] 固定集合信息候选历史版本绑定：v1导航改用哈希匹配快照，旧文件/v2记录保留；固定查询发现与身份检查，模型验收待验证。 ([详情](task_details/MATH-99.md))
 
 ## 2026-10-13
 
-- [MATH-100] 中心化残差协方差与条件不确定性：一般律仅给平均界，联合高斯为固定条件协方差的充分条件；四个公开手算案例，模型验收待验证。见 [详情](task_details/MATH-100.md)。
+- [ ] [MATH-100] 中心化残差协方差与条件不确定性：一般律仅给平均界，联合高斯为固定条件协方差的充分条件；四个公开手算案例，模型验收待验证。 ([详情](task_details/MATH-100.md))
 
-- [MATH-101] 代理协方差与真实误差：正态边缘/合法协方差不足以保证条件校准；四个公开解析例，已有候选的检索缺口保留，模型收益未测。见 [详情](task_details/MATH-101.md)。
+- [ ] [MATH-101] 代理协方差与真实误差：正态边缘/合法协方差不足以保证条件校准；四个公开解析例，已有候选的检索缺口保留，模型收益未测。 ([详情](task_details/MATH-101.md))
 
-- [MATH-102] 复用已有二阶矩尾界：补充真实MSE、偏差与条件风险的阈值应用/拒用，四个公开手算；无生产或模型收益结论。见 [详情](task_details/MATH-102.md)。
+- [ ] [MATH-102] 复用已有二阶矩尾界：补充真实MSE、偏差与条件风险的阈值应用/拒用，四个公开手算；无生产或模型收益结论。 ([详情](task_details/MATH-102.md))
 
-- [MATH-103] 既有阈值风险应用复核：三条公开查询两条首位、一条前三未命中；前提拒用与成本保存。本轮没有值得采用的新改进，模型/生产待验证。见 [详情](task_details/MATH-103.md)。
+- [ ] [MATH-103] 既有阈值风险应用复核：三条公开查询两条首位、一条前三未命中；前提拒用与成本保存。本轮没有值得采用的新改进，模型/生产待验证。 ([详情](task_details/MATH-103.md))
 
-- [MATH-104] 离散稳定性中英文导航：复用非正规瞬态/切换/完整状态知识，保留历史记录，核对公开中文查询发现；模型与生产收益未测。见 [详情](task_details/MATH-104.md)。
+- [ ] [MATH-104] 离散稳定性中英文导航：复用非正规瞬态/切换/完整状态知识，保留历史记录，核对公开中文查询发现；模型与生产收益未测。 ([详情](task_details/MATH-104.md))
 
-- [MATH-105] 名义收缩与算子误差余量：共同范数充分界、非正规小扰动反例及加性偏移区别；四个公开解析例，真实误差证书/模型收益未测。见 [详情](task_details/MATH-105.md)。
+- [ ] [MATH-105] 名义收缩与算子误差余量：共同范数充分界、非正规小扰动反例及加性偏移区别；四个公开解析例，真实误差证书/模型收益未测。 ([详情](task_details/MATH-105.md))
 
-- [MATH-106] 既有稳定余量应用复核：三条公开查询两条前三未命中、一条第三；有限样本/原参考/持续偏移拒用保存，本轮没有值得采用的新改进。见 [详情](task_details/MATH-106.md)。
+- [ ] [MATH-106] 既有稳定余量应用复核：三条公开查询两条前三未命中、一条第三；有限样本/原参考/持续偏移拒用保存，本轮没有值得采用的新改进。 ([详情](task_details/MATH-106.md))
 
-- [MATH-107] 历史条件风险与可求和预算：可预测选择仍需真实条件证书，保存固定边际低风险但选中必败反例；四个公开解析例，Agent迁移待验证。见 [详情](task_details/MATH-107.md)。
+- [ ] [MATH-107] 历史条件风险与可求和预算：可预测选择仍需真实条件证书，保存固定边际低风险但选中必败反例；四个公开解析例，Agent迁移待验证。 ([详情](task_details/MATH-107.md))
 
-- [MATH-108] 既有校准证书组合复核：MATH82已覆盖外层置信与内层风险，保存四个公开解析核对及检索缺口；本轮没有值得采用的新改进。见 [详情](task_details/MATH-108.md)。
+- [ ] [MATH-108] 既有校准证书组合复核：MATH82已覆盖外层置信与内层风险，保存四个公开解析核对及检索缺口；本轮没有值得采用的新改进。 ([详情](task_details/MATH-108.md))
 
-- [MATH-109] 补齐有限菜单候选历史检索登记：三条相同公开查询找到原记录首位，旧证明和实验保留；仅词法结构检查，模型与生产待验证。见 [详情](task_details/MATH-109.md)。
+- [ ] [MATH-109] 补齐有限菜单候选历史检索登记：三条相同公开查询找到原记录首位，旧证明和实验保留；仅词法结构检查，模型与生产待验证。 ([详情](task_details/MATH-109.md))
 
-- [MATH-110] 周期移位与线性卷积应用：第一列核/Fourier谱展开，零填充与非线性拒用，环形差分解析核对；真实Agent迁移待验证。见 [详情](task_details/MATH-110.md)。
+- [ ] [MATH-110] 周期移位与线性卷积应用：第一列核/Fourier谱展开，零填充与非线性拒用，环形差分解析核对；真实Agent迁移待验证。 ([详情](task_details/MATH-110.md))
 
-- [MATH-111] 已有周期滤波前提审计：近似交换/单样本拒用、环形守恒及单槽边界，三条公开问题仅一条首位；没有值得采用的新改进，模型/生产待验证。见 [详情](task_details/MATH-111.md)。
+- [ ] [MATH-111] 已有周期滤波前提审计：近似交换/单样本拒用、环形守恒及单槽边界，三条公开问题仅一条首位；没有值得采用的新改进，模型/生产待验证。 ([详情](task_details/MATH-111.md))
 
 ## 2026-10-14
 
-- [MATH-112] 环形扩散离散更新：守恒、非负、谱稳定和端点振荡分开核验，专门时间误差界与四个公开解析例；真实数值/Agent迁移待验证。见 [详情](task_details/MATH-112.md)。
+- [ ] [MATH-112] 环形扩散离散更新：守恒、非负、谱稳定和端点振荡分开核验，专门时间误差界与四个公开解析例；真实数值/Agent迁移待验证。 ([详情](task_details/MATH-112.md))
 
-- [MATH-113] 非均匀扩散度量：加权质量守恒、非负步长与广义谱稳定，普通和/欧氏范数/不连通平均反例；四个公开解析例，真实消费者待验证。见 [详情](task_details/MATH-113.md)。
-- [x] [RESULT-SEARCH-INVARIANT] 普通context资格缓存通过局部CPU收益、独立边界和集成回归验收；main代码提交056030d及28个交付文件已逐字节回读核验。持续优化任务保留。见 [详情](task_details/RESULT-SEARCH-INVARIANT.md)。
+- [ ] [MATH-113] 非均匀扩散度量：加权质量守恒、非负步长与广义谱稳定，普通和/欧氏范数/不连通平均反例；四个公开解析例，真实消费者待验证。 ([详情](task_details/MATH-113.md))
+- [x] [RESULT-SEARCH-INVARIANT] 普通context资格缓存通过局部CPU收益、独立边界和集成回归验收；main代码提交056030d及28个交付文件已逐字节回读核验。持续优化任务保留。 ([详情](task_details/RESULT-SEARCH-INVARIANT.md))
 
-- [MATH-114] 定常平均与可逆性边界：加权非扩张、详细平衡/自伴分别核对，四个公开拒用例；并发检索升级保留，真实Agent核/π证书待验证。见 [详情](task_details/MATH-114.md)。
+- [ ] [MATH-114] 定常平均与可逆性边界：加权非扩张、详细平衡/自伴分别核对，四个公开拒用例；并发检索升级保留，真实Agent核/π证书待验证。 ([详情](task_details/MATH-114.md))
 
-- [MATH-115] 定常平均发现与拒用复核：三条公开查询目标第二/第二/第三，四例核对概率方向、加权量与不收敛；没有值得采用的新改进，模型/生产待验证。见 [详情](task_details/MATH-115.md)。
+- [ ] [MATH-115] 定常平均发现与拒用复核：三条公开查询目标第二/第二/第三，四例核对概率方向、加权量与不收敛；没有值得采用的新改进，模型/生产待验证。 ([详情](task_details/MATH-115.md))
 
-- [x] [KNOWLEDGE-FENCE] 知识索引fence合法性修正：固定案例11/16→16/16，115条语料输出不变，旧engine重建；独立验收通过、main代码1767f4a及29文件逐字节读回核验。见 [详情](task_details/KNOWLEDGE-FENCE.md)。
+- [x] [KNOWLEDGE-FENCE] 知识索引fence合法性修正：固定案例11/16→16/16，115条语料输出不变，旧engine重建；独立验收通过、main代码1767f4a及29文件逐字节读回核验。 ([详情](task_details/KNOWLEDGE-FENCE.md))
 
-- [MATH-116] 近似定常权重的放大与均值偏差界：低权重槽位的小绝对偏差反例，四个公开解析例；真实核/误差认证及模型验证待完成。见 [详情](task_details/MATH-116.md)。
+- [ ] [MATH-116] 近似定常权重的放大与均值偏差界：低权重槽位的小绝对偏差反例，四个公开解析例；真实核/误差认证及模型验证待完成。 ([详情](task_details/MATH-116.md))

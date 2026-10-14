@@ -1,5 +1,10 @@
 # RESULT-SEARCH-INVARIANT
 
+Task-ID: RESULT-SEARCH-INVARIANT
+Date: 2026-10-14
+
+## Plan
+
 目标：完整ResultStore.search的大查询context降低>=10%，保持全部返回、撤销与异常语义；控制场景退化<=10%。
 允许：现有检索入口兼容优化、有界CPU测试；用户授权验收后直接main。guide禁止写；不修改历史实验。
 方法：固定9c071f7基线、实际143records、六场景11对交替；producer→独立代码/数据验收→原地集成→回归→最终审核→普通发布读回。参见[报告](../../results/result-search-invariant-20261014-0304/report.md)。

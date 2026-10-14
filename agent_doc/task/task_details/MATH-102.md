@@ -1,7 +1,8 @@
 # [MATH-102] 真实均方误差与阈值失败概率
 
 Task-ID: MATH-102
-Date: 2026-10-13 Asia/Shanghai
+Date: 2026-10-13
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

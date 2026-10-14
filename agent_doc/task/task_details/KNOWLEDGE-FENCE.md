@@ -1,5 +1,10 @@
 # KNOWLEDGE-FENCE
 
+Task-ID: KNOWLEDGE-FENCE
+Date: 2026-10-14
+
+## Plan
+
 目标：修正既有知识索引“fenced code is not a heading”契约，保持接口、普通段落输出和源范围。T11持续优化的局部质量维护；不认证新Agent算法、模型收益或本轮十篇论文阅读。
 
 授权：两个knowledge_index.py镜像、知识索引回归、任务与本run证据；验收后普通推送main，无PR/强推；guide和旧实验不改。

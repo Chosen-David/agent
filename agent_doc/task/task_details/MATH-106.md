@@ -1,7 +1,8 @@
 # [MATH-106] 既有稳定余量应用前提与发现复核
 
 Task-ID: MATH-106
-Date: 2026-10-13 Asia/Shanghai
+Date: 2026-10-13
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

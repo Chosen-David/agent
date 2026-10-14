@@ -1,0 +1,80 @@
+{
+  "scope": "local synthetic lossless transport only; no LLM semantic QA or model costs",
+  "checks": [
+    "byte-exact-original",
+    "distant-fact-and-exact-reference-preserved",
+    "all-2048-ordered-IDs",
+    "missing-answer-marker-preserved",
+    "disk-reload-recovery",
+    "duplicate-retry-same-bytes",
+    "truncated-retry-refused",
+    "stale-version-refused",
+    "contradiction-and-explicit-revision-preserved"
+  ],
+  "all_checks_passed": true,
+  "input_sha256": {
+    "original": "dba2b653cb6085d979fd6be41f4cf4fe395c3881bdb801f3ec397cc72df15a43",
+    "revised": "b884b483d063259bf09b59c76c84e0201c3137e8176df3de3ec4b3605cd40a3c"
+  },
+  "input_bytes": 432269,
+  "source_characters": 432269,
+  "sizes": {
+    "full": {
+      "serialized_characters": 440814,
+      "serialized_utf8_bytes": 440814,
+      "provider_tokens": null
+    },
+    "dictionary": {
+      "serialized_characters": 155224,
+      "serialized_utf8_bytes": 155224,
+      "provider_tokens": null
+    }
+  },
+  "elapsed_ns_samples": {
+    "full": [
+      6840073,
+      7046541,
+      6853909,
+      6972282,
+      6880459,
+      8462862,
+      6853418,
+      6726158,
+      7019229,
+      6828902,
+      6853869
+    ],
+    "dictionary": [
+      9742267,
+      9426814,
+      10009429,
+      9613204,
+      9933546,
+      9631118,
+      9749871,
+      9686090,
+      9751404,
+      9844278,
+      9868283
+    ]
+  },
+  "median_elapsed_ns": {
+    "full": 6853909,
+    "dictionary": 9749871
+  },
+  "timing_scope": "encode + compact JSON serialization + fresh-bound restoration, including file reads/hashes; 1 warmup and 11 alternating pairs",
+  "provider_tokens": null,
+  "actual_cost": null,
+  "all_role_latency": null,
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "machine": "x86_64"
+  },
+  "limitations": [
+    "Python assertions check exact restoration and markers, not reasoning or citation correctness by a model",
+    "Fixture is synthetic, no production edge/hotspot attribution",
+    "Elapsed samples are local CPU overhead, not latency savings",
+    "Temporary absolute root is included in packets; same root used within each pair"
+  ]
+}

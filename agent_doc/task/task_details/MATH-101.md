@@ -1,7 +1,8 @@
 # [MATH-101] 代理协方差合法性与真实条件误差
 
 Task-ID: MATH-101
-Date: 2026-10-13 Asia/Shanghai
+Date: 2026-10-13
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

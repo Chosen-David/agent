@@ -1,7 +1,8 @@
 # [MATH-96] 固定依赖图的单节点耗时敏感性
 
 Task-ID: MATH-96
-Date: 2026-10-12 Asia/Shanghai
+Date: 2026-10-12
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

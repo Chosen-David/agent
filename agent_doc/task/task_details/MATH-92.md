@@ -1,7 +1,8 @@
 # [MATH-92] 协方差误差界与稳健汇总
 
 Task-ID: MATH-92
-Date: 2026-10-12 Asia/Shanghai
+Date: 2026-10-12
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

@@ -1,7 +1,8 @@
 # [MATH-104] 离散稳定性知识的中英文发现导航
 
 Task-ID: MATH-104
-Date: 2026-10-13 Asia/Shanghai
+Date: 2026-10-13
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

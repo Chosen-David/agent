@@ -1,7 +1,8 @@
 # [MATH-99] 固定集合信息候选的历史版本绑定
 
 Task-ID: MATH-99
-Date: 2026-10-12 Asia/Shanghai
+Date: 2026-10-12
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

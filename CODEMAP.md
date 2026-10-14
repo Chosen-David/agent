@@ -194,3 +194,5 @@ TOK-MAILBOX-PAGE: `agent_runtime/communication.py` inbox/inbox_index/CLI seek by
 TOK-FIFTY-05: artifact_context optional whole-packet token_counter chooses among existing complete codecs; CLI explicit --encoding; tests/test_artifact_token_selection.py; docs/token_optimization/artifact_token_selection.md. Default character behavior preserved.
 
 TOK-FIFTY-06: complete arbitrary-LF text line dictionary, exact nonconsecutive sharing with all ordered indexes; agent_runtime/text_dictionary.py, scripts/text_dictionary.py, tests/test_text_dictionary.py; docs/token_optimization/text_dictionary.md. No meeting closure/semantic omission.
+
+TOK-FIFTY R6 continuation: `agent_doc/results/token-r6-close-20261014/` preserves the recovered 16:00 candidate and failures; `agent_doc/results/token-r6-resume-20261014-1800/` records canonical TASK metadata repair, current regression and independent acceptance. Main is sole writer; runtime/parser unchanged, no new token mechanism.

@@ -1,7 +1,8 @@
 # [MATH-94] 覆盖贪心与前提互补候选的历史登记
 
 Task-ID: MATH-94
-Date: 2026-10-12 Asia/Shanghai
+Date: 2026-10-12
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

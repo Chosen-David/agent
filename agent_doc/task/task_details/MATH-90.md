@@ -1,7 +1,8 @@
 # [MATH-90] 角色换序知识的中文发现导航
 
 Task-ID: MATH-90
-Date: 2026-10-12 Asia/Shanghai
+Date: 2026-10-12
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

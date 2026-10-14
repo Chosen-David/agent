@@ -1,7 +1,8 @@
 # [MATH-88] 有限表示交织平均与异构角色拒用
 
 Task-ID: MATH-88
-Date: 2026-10-12 Asia/Shanghai
+Date: 2026-10-12
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

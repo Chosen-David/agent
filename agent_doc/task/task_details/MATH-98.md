@@ -1,7 +1,8 @@
 # [MATH-98] 观测后信息增益候选的历史登记
 
 Task-ID: MATH-98
-Date: 2026-10-12 Asia/Shanghai
+Date: 2026-10-12
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

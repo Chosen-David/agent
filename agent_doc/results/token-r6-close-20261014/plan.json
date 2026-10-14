@@ -1,0 +1,29 @@
+{
+  "schema_version": "bounded-continuation-plan/v1",
+  "run_id": "token-r6-close-20261014",
+  "task_refs": ["TOK-FIFTY"],
+  "base_commit": "0f1383788fa31c759b8279fd5f7590a28420958f",
+  "deadline": "2026-10-14T16:50:00Z",
+  "decision": "EXECUTE existing Round06 publication reconciliation only",
+  "prior_result": "token-fifty-06-20261012",
+  "reuse_decision": "verify_delta: preserve old native measurement and independently check immutable evidence, current source and remote publication; no new model invocation",
+  "single_writer": "/root",
+  "independent_reviewer": "/root/independent_review",
+  "allowed_writes": ["agent_doc/results/token-r6-close-20261014/", "agent_doc/task/task_details/TOK-FIFTY.md", "docs/token_optimization/fifty_rounds.md"],
+  "dag": [
+    {"id":"inspect", "action":"read original RPC and source/publication provenance"},
+    {"id":"cpu", "depends_on":["inspect"], "action":"fixed synthetic long-text transport cases; preserve raw time samples", "produces_data":true},
+    {"id":"verify_experiment_result", "depends_on":["cpu"], "owner":"/root/independent_review", "action":"independent code/input/raw-data and scoped claim review"},
+    {"id":"publish", "depends_on":["verify_experiment_result"], "action":"required regression, fetch/reconcile, independent final delta review, ordinary push and remote SHA/content/CI readback"}
+  ],
+  "criteria": {
+    "implementation":"No runtime changes. Check current codec and archived code including explicit newline-only differences. Any semantic mismatch blocks reuse of old measurement for current implementation.",
+    "reference_boundary":"Original UTF-8 bytes are independent restoration oracle. Cross-paragraph fact pair, exact IDs, contradictory revised fact with old binding rejected, absent-answer marker, complete ordered IDs, disk reload, duplicate retry and corrupted packet refusal must all hold. These are transport assertions, never model QA.",
+    "data_integrity":"Freeze 2048-issue long text and revised text, all tests, SHA references and plan before execution. Preserve old evidence. Native accounting deduplicates by observed thread/turn IDs; missing provider request IDs remain null.",
+    "numerical_sanity":"Counts nonnegative, cache subset of input, reasoning subset of output, total input+output. No tokens inferred from bytes/chars. All-actor cost/history/fanout unknown remains null.",
+    "measurement_validity":"One warmup and 11 alternating full/dictionary CPU pairs, encode+serialize+restore timed with perf_counter_ns, include source reads and hashes. Save all samples, no speed acceptance threshold or token/cash gain claim. Fixed workload; no GPU/model/backend dispatch.",
+    "reproducibility":"Independent reviewer reads source and raw artifacts, reruns fixed deterministic checks. Root runs four README basic checks. Existing optional skips disclosed; failures never waived or tests weakened. Review all publication file deltas before push."
+  },
+  "acceptance":"All applicable independent checks and mandatory regressions pass; historical 76ca7b1 delivery verified on remote main. Record 6/50 only as closure of existing Round06, 0 new optimizations this run. If blocked preserve candidate/logs/recovery durably.",
+  "limitations":["No new provider spend authorized", "No full author/figures/visualization/review trace available in selected evidence", "No long-document LLM quality, all-role token/cost or production latency claim", "No scheduler, knowledge corpus, DAC, SGLang, GPU, Claude, installation or paid calls"]
+}

@@ -1,7 +1,8 @@
 # [MATH-95] 局部加速与端到端耗时的条件界
 
 Task-ID: MATH-95
-Date: 2026-10-12 Asia/Shanghai
+Date: 2026-10-12
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

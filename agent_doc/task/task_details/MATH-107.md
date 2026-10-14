@@ -1,7 +1,8 @@
 # [MATH-107] 历史条件风险与可求和预算
 
 Task-ID: MATH-107
-Date: 2026-10-13 Asia/Shanghai
+Date: 2026-10-13
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

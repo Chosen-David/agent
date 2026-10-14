@@ -1,7 +1,8 @@
 # [MATH-93] 固定向量多样性候选的历史登记修复
 
 Task-ID: MATH-93
-Date: 2026-10-12 Asia/Shanghai
+Date: 2026-10-12
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

@@ -1,7 +1,8 @@
 # [MATH-97] 既有耗时知识的发现与前提路由复核
 
 Task-ID: MATH-97
-Date: 2026-10-12 Asia/Shanghai
+Date: 2026-10-12
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

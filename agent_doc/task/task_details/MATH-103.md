@@ -1,7 +1,8 @@
 # [MATH-103] 既有阈值风险应用的发现与拒用复核
 
 Task-ID: MATH-103
-Date: 2026-10-13 Asia/Shanghai
+Date: 2026-10-13
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

@@ -1,7 +1,8 @@
 # [MATH-100] 中心化残差协方差与观测后不确定性的边界
 
 Task-ID: MATH-100
-Date: 2026-10-13 Asia/Shanghai
+Date: 2026-10-13
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

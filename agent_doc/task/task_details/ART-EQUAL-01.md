@@ -1,7 +1,8 @@
 # [ART-EQUAL-01] 相同文本比较的无损 CPU 快路径
 
 Task-ID: ART-EQUAL-01
-Date: 2026-10-12 Asia/Shanghai
+Date: 2026-10-12
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

@@ -1,7 +1,8 @@
 # [MATH-105] 名义收缩与真实算子扰动余量
 
 Task-ID: MATH-105
-Date: 2026-10-13 Asia/Shanghai
+Date: 2026-10-13
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 

@@ -1,7 +1,8 @@
 # [MATH-89] 生成元检查与全局等变缺陷
 
 Task-ID: MATH-89
-Date: 2026-10-12 Asia/Shanghai
+Date: 2026-10-12
+Date-Timezone: Asia/Shanghai
 
 ## Plan
 
