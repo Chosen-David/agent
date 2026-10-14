@@ -1,0 +1,2512 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "optimize": 1,
+  "hashes": {
+    "agent_runtime/knowledge_index.py": "44d5bb19eaa1bb9f7527348d60eae2b3a13c2feb445d0bb35680949da4678058",
+    "plugins/research-assistant/skills/model-with-knowledge/scripts/knowledge_index.py": "44d5bb19eaa1bb9f7527348d60eae2b3a13c2feb445d0bb35680949da4678058",
+    "agent_doc/results/knowledge-fence-20261014-0705/baseline.py": "a10a2f2279b6be5a67cc759bbb7c53fed8dca92b46b12547641124af3cf17a60",
+    "agent_doc/results/knowledge-fence-20261014-0705/independent_probe.py": "a45fbd5bb07e7d5fcaea038e0c2d4129156b005da7ce1e49d5d500acf7c09d71"
+  },
+  "cases": [
+    {
+      "name": "```'language'",
+      "input": "# Root\n```lang\n```language\n## Hidden\n``` \t\n## Visible\n",
+      "input_sha256": "d4c6a0f918a5778e2129cc470f2562bf0a87345eeee820d766687191be83b794",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n```lang\n```language\n## Hidden\n``` \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n```lang\n```language\n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n``` \t\n## Visible\n"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n```lang\n```language\n## Hidden\n``` \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "```' # comment'",
+      "input": "# Root\n```lang\n``` # comment\n## Hidden\n``` \t\n## Visible\n",
+      "input_sha256": "7191f4b3fde150fad473899da3c65e0006b5aaa8b11379ddbe16dfc32270c1ee",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n```lang\n``` # comment\n## Hidden\n``` \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n```lang\n``` # comment\n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n``` \t\n## Visible\n"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n```lang\n``` # comment\n## Hidden\n``` \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "```'\\u2003'",
+      "input": "# Root\n```lang\n``` \n## Hidden\n``` \t\n## Visible\n",
+      "input_sha256": "1a747669e4e270171a68df4fa0b6d8ce5dfc37cb651a1b42e00e8a03ff76e6d4",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n```lang\n``` \n## Hidden\n``` \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n```lang\n``` \n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n``` \t\n## Visible\n"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n```lang\n``` \n## Hidden\n``` \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "```'\\xa0'",
+      "input": "# Root\n```lang\n``` \n## Hidden\n``` \t\n## Visible\n",
+      "input_sha256": "a92a393e920140667c3806a467a5b9a99805dcd493fa2990e131869c6c4d0d76",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n```lang\n``` \n## Hidden\n``` \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n```lang\n``` \n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n``` \t\n## Visible\n"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n```lang\n``` \n## Hidden\n``` \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "```'\\\\'",
+      "input": "# Root\n```lang\n```\\\n## Hidden\n``` \t\n## Visible\n",
+      "input_sha256": "0c2b8deadf0e0032f022f1e0368bfc32fbaea8efd27d55149d2586147194f36d",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n```lang\n```\\\n## Hidden\n``` \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n```lang\n```\\\n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n``` \t\n## Visible\n"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n```lang\n```\\\n## Hidden\n``` \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "```'`'",
+      "input": "# Root\n```lang\n````\n## Hidden\n``` \t\n## Visible\n",
+      "input_sha256": "9b7f79a601723e971f3d312d6d9b7ffe4481e70cf9205584ea1d2e9463dd652b",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n```lang\n````\n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n``` \t\n## Visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n```lang\n````\n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n``` \t\n## Visible\n"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n```lang\n````\n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n``` \t\n## Visible\n"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "~~~~'language'",
+      "input": "# Root\n~~~~lang\n~~~~language\n## Hidden\n~~~~ \t\n## Visible\n",
+      "input_sha256": "03234c5bcbdfec3f0a44c8477be702cb4fc20aab468d72531882930e445c5f37",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n~~~~lang\n~~~~language\n## Hidden\n~~~~ \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n~~~~lang\n~~~~language\n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n~~~~ \t\n## Visible\n"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n~~~~lang\n~~~~language\n## Hidden\n~~~~ \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "~~~~' # comment'",
+      "input": "# Root\n~~~~lang\n~~~~ # comment\n## Hidden\n~~~~ \t\n## Visible\n",
+      "input_sha256": "e961d39ac6e09b631ed3e816718f119b80f10bdb4c727b42a7d1e82d64bf89ef",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n~~~~lang\n~~~~ # comment\n## Hidden\n~~~~ \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n~~~~lang\n~~~~ # comment\n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n~~~~ \t\n## Visible\n"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n~~~~lang\n~~~~ # comment\n## Hidden\n~~~~ \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "~~~~'\\u2003'",
+      "input": "# Root\n~~~~lang\n~~~~ \n## Hidden\n~~~~ \t\n## Visible\n",
+      "input_sha256": "52d1baa07e6c6c996d9d49b83a9e9aebd71b268eaf794a047825bc1193a96387",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n~~~~lang\n~~~~ \n## Hidden\n~~~~ \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n~~~~lang\n~~~~ \n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n~~~~ \t\n## Visible\n"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n~~~~lang\n~~~~ \n## Hidden\n~~~~ \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "~~~~'\\xa0'",
+      "input": "# Root\n~~~~lang\n~~~~ \n## Hidden\n~~~~ \t\n## Visible\n",
+      "input_sha256": "e654c1cd31713028376baf0404a1cb77b760b680eceb4e50540e5d8f29c3602d",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n~~~~lang\n~~~~ \n## Hidden\n~~~~ \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n~~~~lang\n~~~~ \n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n~~~~ \t\n## Visible\n"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n~~~~lang\n~~~~ \n## Hidden\n~~~~ \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "~~~~'\\\\'",
+      "input": "# Root\n~~~~lang\n~~~~\\\n## Hidden\n~~~~ \t\n## Visible\n",
+      "input_sha256": "1450b8c8db643d8772bd472bb273bd1fab49d0918b7a0643f9fd99cbde5f683f",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n~~~~lang\n~~~~\\\n## Hidden\n~~~~ \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n~~~~lang\n~~~~\\\n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n~~~~ \t\n## Visible\n"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n~~~~lang\n~~~~\\\n## Hidden\n~~~~ \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "~~~~'`'",
+      "input": "# Root\n~~~~lang\n~~~~`\n## Hidden\n~~~~ \t\n## Visible\n",
+      "input_sha256": "1d304282f93a8965f671f375e6de476ef37b547a74ae2840c814c700e9b1c84d",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n~~~~lang\n~~~~`\n## Hidden\n~~~~ \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n~~~~lang\n~~~~`\n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n~~~~ \t\n## Visible\n"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n~~~~lang\n~~~~`\n## Hidden\n~~~~ \t\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 6,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "invalid_info_then_valid",
+      "input": "# Root\n````lang`x\n## Visible\n~~~`good\n# Hidden\n~~~\n# End",
+      "input_sha256": "ff02e0638b08f1842eb006773fffdab186061b7db2257d9d6ec51816fce44d89",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "# Root\n````lang`x\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 3,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n~~~`good\n# Hidden\n~~~\n"
+        },
+        {
+          "node": "s3",
+          "title": "End",
+          "level": 1,
+          "start_line": 7,
+          "parent": null,
+          "end_line": 7,
+          "text": "# End"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 7,
+          "text": "# Root\n````lang`x\n## Visible\n~~~`good\n# Hidden\n~~~\n# End"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "# Root\n````lang`x\n"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 3,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Visible\n~~~`good\n# Hidden\n~~~\n"
+        },
+        {
+          "node": "s3",
+          "title": "End",
+          "level": 1,
+          "start_line": 7,
+          "parent": null,
+          "end_line": 7,
+          "text": "# End"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "long_info_inside",
+      "input": "# Root\n```\n`````lang\n## Hidden\n````\n# End\n",
+      "input_sha256": "362ee1050b1465d3976af1a3984a73c9de64602dafa16ffd3bbc0a10d699e6f5",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n```\n`````lang\n## Hidden\n````\n"
+        },
+        {
+          "node": "s2",
+          "title": "End",
+          "level": 1,
+          "start_line": 6,
+          "parent": null,
+          "end_line": 6,
+          "text": "# End\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\n```\n`````lang\n"
+        },
+        {
+          "node": "s2",
+          "title": "Hidden",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 6,
+          "text": "## Hidden\n````\n# End\n"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Root\n```\n`````lang\n## Hidden\n````\n"
+        },
+        {
+          "node": "s2",
+          "title": "End",
+          "level": 1,
+          "start_line": 6,
+          "parent": null,
+          "end_line": 6,
+          "text": "# End\n"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "tabs_CR",
+      "input": "# Root\r~~~\r~~~ \t\r## Visible\r",
+      "input_sha256": "7710f71740405090de44cbe322f60215aae2bf1509c48db05ca328dac8456c68",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\r~~~\r~~~ \t\r"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 4,
+          "text": "## Visible\r"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\r~~~\r~~~ \t\r"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 4,
+          "text": "## Visible\r"
+        }
+      ],
+      "actual": [
+        {
+          "node": "s1",
+          "title": "Root",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Root\r~~~\r~~~ \t\r"
+        },
+        {
+          "node": "s2",
+          "title": "Visible",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 4,
+          "text": "## Visible\r"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "invalid_at_EOF",
+      "input": "```info`bad\n# Visible",
+      "input_sha256": "21a975b1e466fcd17cc17b5b3b8965bbd5247950fc98e21536b72dd79ee40c36",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 1,
+          "text": "```info`bad\n"
+        },
+        {
+          "node": "s1",
+          "title": "Visible",
+          "level": 1,
+          "start_line": 2,
+          "parent": null,
+          "end_line": 2,
+          "text": "# Visible"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "```info`bad\n# Visible"
+        }
+      ],
+      "actual": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 1,
+          "text": "```info`bad\n"
+        },
+        {
+          "node": "s1",
+          "title": "Visible",
+          "level": 1,
+          "start_line": 2,
+          "parent": null,
+          "end_line": 2,
+          "text": "# Visible"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "tilde_mixed_open",
+      "input": "~~~````\n# Hidden\n~~~\n# Visible",
+      "input_sha256": "7ec93cd40ebaa0a4bf1080a8b685e36b3dba09913a3996d95f0cdfb002add30d",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "~~~````\n# Hidden\n~~~\n"
+        },
+        {
+          "node": "s1",
+          "title": "Visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# Visible"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "~~~````\n# Hidden\n~~~\n"
+        },
+        {
+          "node": "s1",
+          "title": "Visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# Visible"
+        }
+      ],
+      "actual": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "~~~````\n# Hidden\n~~~\n"
+        },
+        {
+          "node": "s1",
+          "title": "Visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# Visible"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "two_mark_control",
+      "input": "``lang\n# Visible\n~~\n## Child",
+      "input_sha256": "5613432147e25c7a29c062f56fe88ca434f7b4eb1889cfb9f2f5891eae79593d",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 1,
+          "text": "``lang\n"
+        },
+        {
+          "node": "s1",
+          "title": "Visible",
+          "level": 1,
+          "start_line": 2,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Visible\n~~\n"
+        },
+        {
+          "node": "s2",
+          "title": "Child",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 4,
+          "text": "## Child"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 1,
+          "text": "``lang\n"
+        },
+        {
+          "node": "s1",
+          "title": "Visible",
+          "level": 1,
+          "start_line": 2,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Visible\n~~\n"
+        },
+        {
+          "node": "s2",
+          "title": "Child",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 4,
+          "text": "## Child"
+        }
+      ],
+      "actual": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 1,
+          "text": "``lang\n"
+        },
+        {
+          "node": "s1",
+          "title": "Visible",
+          "level": 1,
+          "start_line": 2,
+          "parent": null,
+          "end_line": 3,
+          "text": "# Visible\n~~\n"
+        },
+        {
+          "node": "s2",
+          "title": "Child",
+          "level": 2,
+          "start_line": 4,
+          "parent": "s1",
+          "end_line": 4,
+          "text": "## Child"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "4space_cannot_close",
+      "input": "~~~\n    ~~~\n# Hidden\n~~~\n# Visible",
+      "input_sha256": "0c65729f4fde41dae7f9e197d97802951bce561c70cef5b43682ac9c2c5bd462",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 4,
+          "text": "~~~\n    ~~~\n# Hidden\n~~~\n"
+        },
+        {
+          "node": "s1",
+          "title": "Visible",
+          "level": 1,
+          "start_line": 5,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Visible"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 4,
+          "text": "~~~\n    ~~~\n# Hidden\n~~~\n"
+        },
+        {
+          "node": "s1",
+          "title": "Visible",
+          "level": 1,
+          "start_line": 5,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Visible"
+        }
+      ],
+      "actual": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 4,
+          "text": "~~~\n    ~~~\n# Hidden\n~~~\n"
+        },
+        {
+          "node": "s1",
+          "title": "Visible",
+          "level": 1,
+          "start_line": 5,
+          "parent": null,
+          "end_line": 5,
+          "text": "# Visible"
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    },
+    {
+      "name": "empty",
+      "input": "",
+      "input_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 0,
+          "text": ""
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 0,
+          "text": ""
+        }
+      ],
+      "actual": [
+        {
+          "node": "intro",
+          "title": "Holdout",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 0,
+          "text": ""
+        }
+      ],
+      "passed": true,
+      "source_reassembled": true
+    }
+  ],
+  "passed": 20,
+  "total": 20,
+  "corpus": [
+    {
+      "id": "ai.speculative-decoding-cost-bound",
+      "sha256": "b292c27e53687be2f8f04ad8e19be77db1eb4a286b3218df6621fc97cd861c5f",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "2a0c2e5d899923d53945e1649d67eb78af262b0acfd963c8b49f4a18724d95f5",
+      "after_output_sha256": "2a0c2e5d899923d53945e1649d67eb78af262b0acfd963c8b49f4a18724d95f5"
+    },
+    {
+      "id": "ai.speculative-sampling-residual-exactness",
+      "sha256": "3014215db96bf6ed7a00d522bf68663e58c4d1e98bdc2b88efe85ccd1a012331",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "ae07cb4cbfe2f39f612d93869bcb9f091fe0e90ff70890ed97692aa58572e8c7",
+      "after_output_sha256": "ae07cb4cbfe2f39f612d93869bcb9f091fe0e90ff70890ed97692aa58572e8c7"
+    },
+    {
+      "id": "algo.car-lora-transfer",
+      "sha256": "3aeedda61964f7f257ac0690922bf260933615ab522b9ebe1548bc476ce59ca2",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "ff0f6fce7f8e3c508fbbc6838e6c62c3e988fbeecb090f19e9a37d7bcebd6a43",
+      "after_output_sha256": "ff0f6fce7f8e3c508fbbc6838e6c62c3e988fbeecb090f19e9a37d7bcebd6a43"
+    },
+    {
+      "id": "algo.dora-magnitude-direction",
+      "sha256": "b4352aff30610f932921c84670c7630fb2e1ec15dc588a048a52ea9faebe764b",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "5e9673496c225f57951b816a7e596b73ac813ce1693478b1ee06672a390dcd4b",
+      "after_output_sha256": "5e9673496c225f57951b816a7e596b73ac813ce1693478b1ee06672a390dcd4b"
+    },
+    {
+      "id": "algo.dpo-offline-preferences",
+      "sha256": "5edf0ba6d8dd82be84009ad7d2ae0c9ea7056203525dca1a29b13236e66980e8",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "582eed34028832e54ac31672ceec8d218d051ac38da57153ba1af6acca8c319c",
+      "after_output_sha256": "582eed34028832e54ac31672ceec8d218d051ac38da57153ba1af6acca8c319c"
+    },
+    {
+      "id": "algo.gqa-uptraining",
+      "sha256": "afa613bb382e1134717cd711bfb50ef426f015f5dd84ca2d304468ad97297bbf",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "e6504d4d842ccf40fa5e7aec46d7157167b2c44093b9f8f4898541ac58501967",
+      "after_output_sha256": "e6504d4d842ccf40fa5e7aec46d7157167b2c44093b9f8f4898541ac58501967"
+    },
+    {
+      "id": "algo.lora-intrinsic-rank",
+      "sha256": "3e894218cca78c85f76d603e76957ae185f43ebf65468ef742b18ecebe797a29",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "71ede7c3fa3d7e632a14b54d647f178084ffd7221ad75f48a3b0ea064db3a609",
+      "after_output_sha256": "71ede7c3fa3d7e632a14b54d647f178084ffd7221ad75f48a3b0ea064db3a609"
+    },
+    {
+      "id": "algo.nsa-native-training",
+      "sha256": "881e71e4805ef18c4c2aecab243aef639e51ada5c48e5e5894b8ae45e249cd13",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "b7c67053bb3ee00f39f557784d49ebde6f7ad9c37f4c56687155022761ae01c9",
+      "after_output_sha256": "b7c67053bb3ee00f39f557784d49ebde6f7ad9c37f4c56687155022761ae01c9"
+    },
+    {
+      "id": "algo.qlora-memory",
+      "sha256": "08684e7e9ae88964f84a9d275990341f2ed28dc78ae3fc3affeef8319d6eead3",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "675af84e3a3006b410162267fa17c85bb2e6bf02b604af7c6aa96d06ab134ce9",
+      "after_output_sha256": "675af84e3a3006b410162267fa17c85bb2e6bf02b604af7c6aa96d06ab134ce9"
+    },
+    {
+      "id": "algo.rl-entropy-numerical-control",
+      "sha256": "105a9ad56eb9c6cab2934173d3353e244c24b3696ff9b793782d11960b0a2651",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "7f24832c9fdf1a63f2085798d65d86c555c926ba89901d61945a23245e24db75",
+      "after_output_sha256": "7f24832c9fdf1a63f2085798d65d86c555c926ba89901d61945a23245e24db75"
+    },
+    {
+      "id": "algo.rl-sft-trajectory-concentration",
+      "sha256": "4c7afd59193e92088e409e2170dcae236c4dde6860807a4d1d16a32544552cd7",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "0eb80d2b37f9bec8c2f53b0719067f7441d27ed03d890dce2d77f0dd921a3c39",
+      "after_output_sha256": "0eb80d2b37f9bec8c2f53b0719067f7441d27ed03d890dce2d77f0dd921a3c39"
+    },
+    {
+      "id": "algo.rl-spurious-reward-regimes",
+      "sha256": "84b89bf957366dba328c3364c0be729843c630d02bbf04cfa7474b923ed1d744",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "14c9b981e32e7062fabc7ae61b3db00580b155a86a6f346a251d8f16526f80d5",
+      "after_output_sha256": "14c9b981e32e7062fabc7ae61b3db00580b155a86a6f346a251d8f16526f80d5"
+    },
+    {
+      "id": "algo.rs-grpo-exploration-tradeoff",
+      "sha256": "4bcbc5e18921b7de77871712bc26fa114b931c9291f5525a4f17d91926672d90",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "8effb6cfb1f3c0f7ab904949dd85db80b433e12a34aae3aa51b591fce7e79c6b",
+      "after_output_sha256": "8effb6cfb1f3c0f7ab904949dd85db80b433e12a34aae3aa51b591fce7e79c6b"
+    },
+    {
+      "id": "ds.dsu-connectivity",
+      "sha256": "fa46c241c4f909a508efe77816eaba0280225c1556d04170d8d5b358bd7bfea5",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "63eda281254445c542b900dc6723a2292389b310c38f803f98b7752c7f0930fb",
+      "after_output_sha256": "63eda281254445c542b900dc6723a2292389b310c38f803f98b7752c7f0930fb"
+    },
+    {
+      "id": "ds.faiss-exact-vector",
+      "sha256": "2ca159a814b69cd3984d49e5e71f494ac145b129ada2c6f0e5ae702064c35eb4",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "fb35b5f90f690f6d5c4b74893101340c9e976155d49a98771aea0684e21be42a",
+      "after_output_sha256": "fb35b5f90f690f6d5c4b74893101340c9e976155d49a98771aea0684e21be42a"
+    },
+    {
+      "id": "ds.fenwick-point-range",
+      "sha256": "24d263313d02178846ec626576642a0fc3fe733a9771966ff54fb2d7e97f9f13",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "a7ce387ecd9af8a9986515d63fddc7f714ff6e124538375496ff706495eb0542",
+      "after_output_sha256": "a7ce387ecd9af8a9986515d63fddc7f714ff6e124538375496ff706495eb0542"
+    },
+    {
+      "id": "ds.hnsw-recall-budget",
+      "sha256": "8f736520925598cd563890785a162bc50b45891506c859ab1685434dbd10d11c",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "f24df1bf2d94fc6f5903f2256898994da5f9a0cca3df5fd2d042175c35e8587d",
+      "after_output_sha256": "f24df1bf2d94fc6f5903f2256898994da5f9a0cca3df5fd2d042175c35e8587d"
+    },
+    {
+      "id": "ds.maxflow-matching",
+      "sha256": "68e82e8fe97179a2d7ce409b1e23b6bbaa2367f61601daff8854b8d1c8c8cee1",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "bfe9476b3ffeb055b1cda38edd0fe45394010be671a01ce1b4055ce9a08d72c7",
+      "after_output_sha256": "bfe9476b3ffeb055b1cda38edd0fe45394010be671a01ce1b4055ce9a08d72c7"
+    },
+    {
+      "id": "ds.segment-monoid",
+      "sha256": "704383602e286115a01d428c82e437c1815283ecf44e2b9001864387b1e3d51b",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "ce3060a36544c809a21fd4b1bf809062137a6ad1ddfbac7c1d4d96ccb1a1ddf5",
+      "after_output_sha256": "ce3060a36544c809a21fd4b1bf809062137a6ad1ddfbac7c1d4d96ccb1a1ddf5"
+    },
+    {
+      "id": "impl.flashattention-library",
+      "sha256": "8e7488a7d266860ab3e5987723de3a71ec87fdd1bb36a2ee09c2edca9bc56fa9",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "ed8a8c4148ecea0a54b5441abfc35eb21edc44f39a8abe451e4e39b544b28788",
+      "after_output_sha256": "ed8a8c4148ecea0a54b5441abfc35eb21edc44f39a8abe451e4e39b544b28788"
+    },
+    {
+      "id": "impl.flashinfer-plan-run",
+      "sha256": "6298cd56a7d5fd2353b0b73ddfaece642584620cc8c53f5ba302dd5957d7f5cf",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "068fcae5ca3c922bc1fa9e85ab2dcc7b6d23b0c65db8e856833032436890f25b",
+      "after_output_sha256": "068fcae5ca3c922bc1fa9e85ab2dcc7b6d23b0c65db8e856833032436890f25b"
+    },
+    {
+      "id": "impl.peft-lora-dora",
+      "sha256": "2818e0c1d148b85386a97b074a60766ab7c5dec373dd229a5ea36d19666988d8",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "9787b17edab6b463005e440172b3de6fef66e4e747b70d93709a4e2d26d869c8",
+      "after_output_sha256": "9787b17edab6b463005e440172b3de6fef66e4e747b70d93709a4e2d26d869c8"
+    },
+    {
+      "id": "infra.flashattention-io",
+      "sha256": "5699ccfeb1b8bc75fb1ad5f859efda45297ed41553b2332895df07b5334b70d9",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "0de2a742941f09b7203dc65b259725b37d531d413d017ae30638c10c374f51e8",
+      "after_output_sha256": "0de2a742941f09b7203dc65b259725b37d531d413d017ae30638c10c374f51e8"
+    },
+    {
+      "id": "infra.flashattention2-occupancy",
+      "sha256": "620704a3d3a0064e356bc7b64e1033555fb6236f85106b7a75948064654868cb",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "aea164e2af5b30d591093552b31176c947fbf8ca19726899f9e7cf26e75a30ad",
+      "after_output_sha256": "aea164e2af5b30d591093552b31176c947fbf8ca19726899f9e7cf26e75a30ad"
+    },
+    {
+      "id": "infra.flashattention4-blackwell",
+      "sha256": "936c5e8e279057b42036fe1cccdd5a2337060aed1173f33b9666f24da9dd6c50",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "0022cea2a75c1f05009ace88ad82578872c16f97c23079b1bb8b7e5257d08b6c",
+      "after_output_sha256": "0022cea2a75c1f05009ace88ad82578872c16f97c23079b1bb8b7e5257d08b6c"
+    },
+    {
+      "id": "infra.flashinfer-scheduling",
+      "sha256": "b2c5115a588c93b3bce8e56986069415fe37569aa887e25ee6cd2a8f425d5770",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "75803ba44f766928858ed10430a9937bea679799db83cf62399c145c36d0fe33",
+      "after_output_sha256": "75803ba44f766928858ed10430a9937bea679799db83cf62399c145c36d0fe33"
+    },
+    {
+      "id": "infra.h20-gemv-bandwidth-envelope",
+      "sha256": "edd4ed8b7696dbbe8f3e30c931dec26b80e2f310e13ae4c9d2513dcd9e6a76d1",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "8c3029620c9fb87e90669295041d52895fd322f9c0d4bbf73edd5fa57ab0dbb1",
+      "after_output_sha256": "8c3029620c9fb87e90669295041d52895fd322f9c0d4bbf73edd5fa57ab0dbb1"
+    },
+    {
+      "id": "infra.pagedattention-kv",
+      "sha256": "c722bfee22d00e0e8d2469cca633a9bb6735001381ae129f1c1958d4a9803c1f",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "15cdeea2fb2ae2e9d8433c5cf818b988c2ea11cb843291e366474131818936d4",
+      "after_output_sha256": "15cdeea2fb2ae2e9d8433c5cf818b988c2ea11cb843291e366474131818936d4"
+    },
+    {
+      "id": "infra.sm90-l2-cache-hints",
+      "sha256": "89b9e8a5f18e23e5b6a52fde48ad35dd78161474d4f0649562ed9226764bd6cc",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "f0f6982bfb525014b175f338a73d65be8dfca961dfab34069ed455c6fe1fa035",
+      "after_output_sha256": "f0f6982bfb525014b175f338a73d65be8dfca961dfab34069ed455c6fe1fa035"
+    },
+    {
+      "id": "infra.speculative-acceptance",
+      "sha256": "d713b2280b1b43dc109b635df3a522f92a5f3fc657dc719137402f8877c05b6a",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "e2b6f7e2f9b664ab50838e46fa66f35962d5306d36cd7448b4a9b25c17ceabf3",
+      "after_output_sha256": "e2b6f7e2f9b664ab50838e46fa66f35962d5306d36cd7448b4a9b25c17ceabf3"
+    },
+    {
+      "id": "math.alpha-spending-stopping",
+      "sha256": "54d4325ccdf1a12e50841ffc124dfa11fcf1dfbd0a254242fc916d8b5f573d06",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "a59f1dd31bfa318ca73c629210d252818d6370fe6d20f8bcee22db1cf272566f",
+      "after_output_sha256": "a59f1dd31bfa318ca73c629210d252818d6370fe6d20f8bcee22db1cf272566f"
+    },
+    {
+      "id": "math.attention-output-geometry",
+      "sha256": "6f0db44dfcc8ac8d472853f3defd3368003f14a39c325f9bad3d7a3afa089a0e",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "290f0e8868cc545b215c765a7b850903e009a3e53e342aa46de6e6513c85ebbd",
+      "after_output_sha256": "290f0e8868cc545b215c765a7b850903e009a3e53e342aa46de6e6513c85ebbd"
+    },
+    {
+      "id": "math.betting-test-martingale",
+      "sha256": "a082de859efe25ad7cef832d8c8433aaf0f72cd92399d6601c24eebe37cb5ca9",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "4b95ff4447f173a7dd067af1244e8e1e45e102026880208b888cc3e3bdef8b5b",
+      "after_output_sha256": "4b95ff4447f173a7dd067af1244e8e1e45e102026880208b888cc3e3bdef8b5b"
+    },
+    {
+      "id": "math.bilinear-quadratic-inertia",
+      "sha256": "3cf008fec876c92712f421a7b71c6bef6ef7fac2082ea651305658ddfc862dee",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "1e2c05f2112c3ad2c80c65421fc58d0d35f7a822b46099fdae4214f5ea943119",
+      "after_output_sha256": "1e2c05f2112c3ad2c80c65421fc58d0d35f7a822b46099fdae4214f5ea943119"
+    },
+    {
+      "id": "math.cauchy-schwarz",
+      "sha256": "348bb06707e13b217534f030e094e381c236c0fe3ee12e11d15a817733e9716c",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "3b19c081355b71233f2e1a8137022a4fc2d72cd6ca287db82fcab8e3c3f8c73b",
+      "after_output_sha256": "3b19c081355b71233f2e1a8137022a4fc2d72cd6ca287db82fcab8e3c3f8c73b"
+    },
+    {
+      "id": "math.centered-covariance-merge",
+      "sha256": "f9ebd428b6fd9f78ac667a6a2419e277c5d8ca1731d3e5357b25a9a62f7a9b28",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "b84d6fb23960a16ceb091df374488d152faf68766f37cdb478a14f746d1a61d4",
+      "after_output_sha256": "b84d6fb23960a16ceb091df374488d152faf68766f37cdb478a14f746d1a61d4"
+    },
+    {
+      "id": "math.contraction-residual-certificate",
+      "sha256": "409a639ae4936fa2f05c5e65d6b5c8113dc3ad01f08cefc1eae3eeab8ef6858b",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "265f5097474e87a1103af440681632eaf806bbee64e41332388087646351c4e1",
+      "after_output_sha256": "265f5097474e87a1103af440681632eaf806bbee64e41332388087646351c4e1"
+    },
+    {
+      "id": "math.convex-projection-certificate",
+      "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "009aa3143cebd7f835e704692fca7db2b7b212174ed35384ac5507a33f697a37",
+      "after_output_sha256": "009aa3143cebd7f835e704692fca7db2b7b212174ed35384ac5507a33f697a37"
+    },
+    {
+      "id": "math.convex-support-reduction",
+      "sha256": "9058ed02e646e728e2f365086ca0725852f6573f8317a6975cd80ccab00307aa",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "8e60b2eea8ccdc78440c62813fc393c1042b01d087daf7e49f0ab7e776ee8b18",
+      "after_output_sha256": "8e60b2eea8ccdc78440c62813fc393c1042b01d087daf7e49f0ab7e776ee8b18"
+    },
+    {
+      "id": "math.data-processing-task-sufficiency",
+      "sha256": "641a0326aa9b82681619e2f6d82e77ba2b7076def3d4f086ac3037144e54e6c4",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "0928b61129a80cd2b206bf611e37d6544055fd022a748d4becbd875f26d1d41a",
+      "after_output_sha256": "0928b61129a80cd2b206bf611e37d6544055fd022a748d4becbd875f26d1d41a"
+    },
+    {
+      "id": "math.dependent-mean-variance",
+      "sha256": "03813de91ef8891cba4b6bcf95b9cb878ed4475533d5c430e582376c51ff4302",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "bcf34d58b642b3c39c27529ef75cdc6db79db980530e2825e375f7163bb18bb4",
+      "after_output_sha256": "bcf34d58b642b3c39c27529ef75cdc6db79db980530e2825e375f7163bb18bb4"
+    },
+    {
+      "id": "math.descent-lyapunov-certificate",
+      "sha256": "bc544371ae176fca157dcb900c31780de1f47cbab1d128210e14dc578855691c",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "2aeca448c160b57fb1d6bb1b7bfd9c5d06103b4d37fab60612bead62782b57f0",
+      "after_output_sha256": "2aeca448c160b57fb1d6bb1b7bfd9c5d06103b4d37fab60612bead62782b57f0"
+    },
+    {
+      "id": "math.determinant-invertibility",
+      "sha256": "81a31f40f809444e9bc87a4a49bc8f21f8febd30a890d393895775b7508d7b9c",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "87fbb7464221658e0d9e9abe19fd30ccfd2d682de206f898655bd63b9b31f214",
+      "after_output_sha256": "87fbb7464221658e0d9e9abe19fd30ccfd2d682de206f898655bd63b9b31f214"
+    },
+    {
+      "id": "math.discrete-budget-allocation",
+      "sha256": "71cd29618df4439297c7b0d42f96e89230afeb5724aef660bfde2528d871e2dc",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "d0753f476c3029714d84f095f3a8247f29768999322e85084fdae55c0099b672",
+      "after_output_sha256": "d0753f476c3029714d84f095f3a8247f29768999322e85084fdae55c0099b672"
+    },
+    {
+      "id": "math.discrete-lyapunov",
+      "sha256": "008bae30d58fde0bd552a6fcda931e8e71a8ca9d9aeaa6dfa7d1e25dc4e2a7b5",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "ef0420b5e0da6aca66b45738bb2c99f77eb8afa48e941449d2bea1fe7c6babdc",
+      "after_output_sha256": "ef0420b5e0da6aca66b45738bb2c99f77eb8afa48e941449d2bea1fe7c6babdc"
+    },
+    {
+      "id": "math.dual-certificates",
+      "sha256": "d165577ff3bfb7ebc14ff33ccc66d3641cf4f9afdae532636099bfefc07ab708",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "e9c8b3c56cf2005d7463cf7180c081315831625f409d30a54473d636d87dc863",
+      "after_output_sha256": "e9c8b3c56cf2005d7463cf7180c081315831625f409d30a54473d636d87dc863"
+    },
+    {
+      "id": "math.eigenspace-gap-perturbation",
+      "sha256": "9737b6e1fb288bf682e23f1910f32aadc43421bd42821550a82e419303a7e292",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "88e991dcc35d8eed38f777cd7d122a8195d41683185e1a893e0994f10e8d940e",
+      "after_output_sha256": "88e991dcc35d8eed38f777cd7d122a8195d41683185e1a893e0994f10e8d940e"
+    },
+    {
+      "id": "math.fano-message-budget",
+      "sha256": "7efd6910745e07f3509e8cbebb9dbbc8991fb674a9ce827d0c7e091b52241348",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "98ca16aa1d08d983448e4d7170322be7b310fd9edee3a2ddb742c9e744ee5873",
+      "after_output_sha256": "98ca16aa1d08d983448e4d7170322be7b310fd9edee3a2ddb742c9e744ee5873"
+    },
+    {
+      "id": "math.finite-menu-selection",
+      "sha256": "12a6934e379b7392d9272dcec55abdbc148464d435ed4ae437955b0f5dfa85b8",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "f450eb89c17c6b440a6d29494642f887863351f1f2bd7e212f1c7c413113aedd",
+      "after_output_sha256": "f450eb89c17c6b440a6d29494642f887863351f1f2bd7e212f1c7c413113aedd"
+    },
+    {
+      "id": "math.floating-dot-enclosure",
+      "sha256": "e800ad6e5dbd1be9aa2de66da0e06933cccb84c41419668ae0550f4407db1bbb",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "06127746813ae3e82b123ccc1dd9d84403b24419ae9a9d1d78c195fc15af4461",
+      "after_output_sha256": "06127746813ae3e82b123ccc1dd9d84403b24419ae9a9d1d78c195fc15af4461"
+    },
+    {
+      "id": "math.frank-wolfe-output-solver",
+      "sha256": "90ccb92febf95e295600b4c33841f746e67541016cf440606642da83e5205ff5",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "f9ea75cefdc9e4d546b84d878d06689a7f390157bad8b316a2753a23bf0eca4e",
+      "after_output_sha256": "f9ea75cefdc9e4d546b84d878d06689a7f390157bad8b316a2753a23bf0eca4e"
+    },
+    {
+      "id": "math.freedman-variance-budget",
+      "sha256": "1fa401c6307800e52301c08f3a4528f5c0587d30c0a712c1d74512b807e65e8b",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "00a9763d01acdd169567b3d763783a36e055c20eee26eb62f7a8c4534721f3f9",
+      "after_output_sha256": "00a9763d01acdd169567b3d763783a36e055c20eee26eb62f7a8c4534721f3f9"
+    },
+    {
+      "id": "math.gaussian-projection-score",
+      "sha256": "7eace52e6bbbf50bae1163a405bc9a2cd6ff8118ee7da6d599dc8f12cb3d130c",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "4613c7c89a51ab89f29ea9264be291d2dec5a0d005457caecd04a8788ea30abb",
+      "after_output_sha256": "4613c7c89a51ab89f29ea9264be291d2dec5a0d005457caecd04a8788ea30abb"
+    },
+    {
+      "id": "math.gaussian-quadratic-energy",
+      "sha256": "3580b149aab06433446fe8734f10b71e7e50455df4dec80b8b0bfa68e4ba9b3f",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "b6ee93f1d0f13c2f6579d0e89c2f8866387ed3d3e571e3b57a681a4d0ab164e1",
+      "after_output_sha256": "b6ee93f1d0f13c2f6579d0e89c2f8866387ed3d3e571e3b57a681a4d0ab164e1"
+    },
+    {
+      "id": "math.generalized-hermitian-eigenproblem",
+      "sha256": "cc93bd1de8feef3ce79b514f4f8989e453eb904c1b6e479770fdf2ff10869881",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "f079fe15eeef477694a281340cf90853bef94e4e89a0b35f421318dd2a0d5676",
+      "after_output_sha256": "f079fe15eeef477694a281340cf90853bef94e4e89a0b35f421318dd2a0d5676"
+    },
+    {
+      "id": "math.hermitian-spectral-schur",
+      "sha256": "d9b71b5d13923136c8fec1a36a6eaff3fc0be781c6f1ba5cd46aa7166fe363c1",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "5d5e4f81fea539df3610db8a7dfa995216c1d80f43eeebdc73c69211ec8c6ac0",
+      "after_output_sha256": "5d5e4f81fea539df3610db8a7dfa995216c1d80f43eeebdc73c69211ec8c6ac0"
+    },
+    {
+      "id": "math.hoeffding-bounded-mean",
+      "sha256": "5da6b4040a6e6a838eb37d080b36b230e91ffc22d752146b888604f77a3aea0a",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "80b6598c51d1559bceb67384c1b84e84605b20ec138f6a63ec372676de065635",
+      "after_output_sha256": "80b6598c51d1559bceb67384c1b84e84605b20ec138f6a63ec372676de065635"
+    },
+    {
+      "id": "math.jordan-generalized-eigenspaces",
+      "sha256": "76c80e786705bf5133ff8fdcd25f1f7e0cda48a3a6829b847e3292423864892b",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "884596b07ab9049db889ed424570dbba95fce71445288d2843c907183ba8a65f",
+      "after_output_sha256": "884596b07ab9049db889ed424570dbba95fce71445288d2843c907183ba8a65f"
+    },
+    {
+      "id": "math.krylov-minimal-polynomial",
+      "sha256": "f535738133829d3d6293a39591ac8b4b0f5212e70930c94b9035a4f1822490e4",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "2f88e10332fa881add0b77a039c285e2c229d712a439119b349478d460bfd6c4",
+      "after_output_sha256": "2f88e10332fa881add0b77a039c285e2c229d712a439119b349478d460bfd6c4"
+    },
+    {
+      "id": "math.linear-prediction-residual",
+      "sha256": "749b0f08d599bcc73f35f564583281dd3c4761c3f31b44ac1b75d1e356186ba3",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "b57094102a90637cadb4ae4feaa1adae11d7f2dd58f5f3fde6e18074393813be",
+      "after_output_sha256": "b57094102a90637cadb4ae4feaa1adae11d7f2dd58f5f3fde6e18074393813be"
+    },
+    {
+      "id": "math.linear-solve-backward-error",
+      "sha256": "645ea6d72081673b2c4eb48976ecd5ad5b8afcb5078b7e6f3d87b1046971913d",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "2d340ef9a03762a8f087a0680f3a78976f58fa9aec15ab529885e61b5f8b1b0e",
+      "after_output_sha256": "2d340ef9a03762a8f087a0680f3a78976f58fa9aec15ab529885e61b5f8b1b0e"
+    },
+    {
+      "id": "math.linear-system-stability",
+      "sha256": "caacac2221436b3cd671b9a307f8598e8481af537400839a430f5558bd04b4a4",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "26fbc4e92016069a5e6e766d08faf1ca5fc1e80a01b08ea7af6034a842840251",
+      "after_output_sha256": "26fbc4e92016069a5e6e766d08faf1ca5fc1e80a01b08ea7af6034a842840251"
+    },
+    {
+      "id": "math.low-rank-inverse-update",
+      "sha256": "fbaf3c9e5191feb0b59b298cf348fc90ef66d40b6c21aa47e083a11d977c01a0",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "b5697b576f1b2e1037a2b2e78f390cc4028cf582e5420c33678bceed81b5a040",
+      "after_output_sha256": "b5697b576f1b2e1037a2b2e78f390cc4028cf582e5420c33678bceed81b5a040"
+    },
+    {
+      "id": "math.low-rank-svd",
+      "sha256": "a62b7eb5702662d678165acad4d439826ac79260bc083dda8b8f7763681621b8",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "fe8ea9510137f775c03eb1e3389b4c97554b121d651e8c465e3f3bdab01fbf30",
+      "after_output_sha256": "fe8ea9510137f775c03eb1e3389b4c97554b121d651e8c465e3f3bdab01fbf30"
+    },
+    {
+      "id": "math.matrix-bernstein-covariance",
+      "sha256": "a19353e007cec5fe3973b23bb156448d7ecc123aa596540a9c17eec835c6c4a9",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "8482c685168c2eff39bedb7a79435a9984bdbf8dea78f72963c698c16fb20b2d",
+      "after_output_sha256": "8482c685168c2eff39bedb7a79435a9984bdbf8dea78f72963c698c16fb20b2d"
+    },
+    {
+      "id": "math.matrix-function-jordan-calculus",
+      "sha256": "8d0aad81af2b3408f16e15d19b342aaaa2664d6e220d66c00e4a6db2344e9d92",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "eb9d40d045ebd56edf492c8104ba95e8fce8946ae463756cacb4df3223edb9c1",
+      "after_output_sha256": "eb9d40d045ebd56edf492c8104ba95e8fce8946ae463756cacb4df3223edb9c1"
+    },
+    {
+      "id": "math.matrix-rank-factorization",
+      "sha256": "1848652baa846cc40389f639ed242373746ba135800c7b432b4c45107998121e",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "b88b9ba31b8acb7b281cdacde52119f2d9c8e3621f66378deefd2eed0f37ca39",
+      "after_output_sha256": "b88b9ba31b8acb7b281cdacde52119f2d9c8e3621f66378deefd2eed0f37ca39"
+    },
+    {
+      "id": "math.minimal-polynomial-primary-decomposition",
+      "sha256": "1989efdc3960475d81576b1344e9b5555c92d5936e568c498c01a5d0476b8c8d",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "b5674687f100303564ef196d48a32dce25188a1af5322e7b23aed38412f3d58e",
+      "after_output_sha256": "b5674687f100303564ef196d48a32dce25188a1af5322e7b23aed38412f3d58e"
+    },
+    {
+      "id": "math.moore-penrose-pseudoinverse",
+      "sha256": "2b3f966f028760e73ffd2b1162f41cd88c0351b5798238fa0223665576ccdb82",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "ac64ca63f79de466f14f42e5eabf023f22b1a71c4a5b06af0de0c0963a56d115",
+      "after_output_sha256": "ac64ca63f79de466f14f42e5eabf023f22b1a71c4a5b06af0de0c0963a56d115"
+    },
+    {
+      "id": "math.normal-mixture-boundary",
+      "sha256": "918e3c4c11706109d08a36c4bedec42ed25774285aa0a7db19f76078d25d730e",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "0d19a976b4271e61781e20a429c1402de6c4cff280947933b813035a9f5ed360",
+      "after_output_sha256": "0d19a976b4271e61781e20a429c1402de6c4cff280947933b813035a9f5ed360"
+    },
+    {
+      "id": "math.orthogonal-projection-qr",
+      "sha256": "3eff040b2613cd46350e9605cfa5c7b748e5a3bdb6bb0c173724f722d00225e8",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "4a2928a56d0ffa413296496651f11343708c73807a05d5b2e8aa9aa11e7bd6cb",
+      "after_output_sha256": "4a2928a56d0ffa413296496651f11343708c73807a05d5b2e8aa9aa11e7bd6cb"
+    },
+    {
+      "id": "math.packetized-completion",
+      "sha256": "8d5b2f66aa5b36d31e4c5046eea243386b27f8927669ed045e29ad72d026e76d",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "16fca45cec107a6bcb4a0b6de13554923626ce442218b7a4a1a3d7191c41a13b",
+      "after_output_sha256": "16fca45cec107a6bcb4a0b6de13554923626ce442218b7a4a1a3d7191c41a13b"
+    },
+    {
+      "id": "math.paired-bilinear-risk",
+      "sha256": "0afa7f23f4b80cf3865ab01cd8d33296885bd2e093898f3b878ec27609824c8b",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "1b4fc30c4839277c8839b96c70300dadc623832e90dac52f3324882738b7f337",
+      "after_output_sha256": "1b4fc30c4839277c8839b96c70300dadc623832e90dac52f3324882738b7f337"
+    },
+    {
+      "id": "math.perturbation-propagation",
+      "sha256": "2d6cdb1a0fa413d3dc37caa0e64ba20e517f6c71d82cc05bf626806bca010381",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "25adcdf976f3686f8f7b32b87138db1750679eac18964539eb484caabe3167ad",
+      "after_output_sha256": "25adcdf976f3686f8f7b32b87138db1750679eac18964539eb484caabe3167ad"
+    },
+    {
+      "id": "math.polynomial-euclidean-calculus",
+      "sha256": "1167380cd964528df6454d9c29f7671fd28e43fe476daff6762f251c6737e835",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "99819e0c59f3031fee7e63918a80bb02156c923c0eecb12d30c89f6f51255292",
+      "after_output_sha256": "99819e0c59f3031fee7e63918a80bb02156c923c0eecb12d30c89f6f51255292"
+    },
+    {
+      "id": "math.rank-nullity-quotient",
+      "sha256": "8aca11b2697e73664732ce26ad7b1afcc118f452e800eb9652648ac136c9cc4c",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "cdcb0f9f6b760a6d03f238f3b8fcb0068c890bcf728b64db630cc3b50ae5d04e",
+      "after_output_sha256": "cdcb0f9f6b760a6d03f238f3b8fcb0068c890bcf728b64db630cc3b50ae5d04e"
+    },
+    {
+      "id": "math.rational-canonical-cyclic",
+      "sha256": "9a01426cc3ecbddfcd03fb58f2696b12a09b7b38f7a7f5c2b3415717eeb7746e",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "ed4662de6541b4a4c4cc84558d731e614bad6db78911bb00b4cd0247428b996f",
+      "after_output_sha256": "ed4662de6541b4a4c4cc84558d731e614bad6db78911bb00b4cd0247428b996f"
+    },
+    {
+      "id": "math.residual-interval-screening",
+      "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "761212613c112566d1895bbfdd1d0bde1648bacc61b2a26bf5f66b6f94229f43",
+      "after_output_sha256": "761212613c112566d1895bbfdd1d0bde1648bacc61b2a26bf5f66b6f94229f43"
+    },
+    {
+      "id": "math.reynolds-projection",
+      "sha256": "cb53f2b6e98118357083d4d8b99cd7e89faa531cb00695d11c0252a22a6d904b",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "ec1872b67595bbeeeefe38856f2c9023df12ec31d65f52e8f679e6763d20b9eb",
+      "after_output_sha256": "ec1872b67595bbeeeefe38856f2c9023df12ec31d65f52e8f679e6763d20b9eb"
+    },
+    {
+      "id": "math.rotation-intertwiner",
+      "sha256": "e7f20395508e5e0772b1fe0abaa690e7443df62e0d451e743c25ce1b5a6bc408",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "7d1cd8661766a8f0e2df2293d68eb77d6b0f2f10efd6663b1d3b69bdda4ce4e1",
+      "after_output_sha256": "7d1cd8661766a8f0e2df2293d68eb77d6b0f2f10efd6663b1d3b69bdda4ce4e1"
+    },
+    {
+      "id": "math.schur-complement-block-elimination",
+      "sha256": "c5ba8bd8f24ad71922d6b9c90cb7e8d1f525ca6dfa209d73edffc323e98cfaca",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "59d56251725c5a76b03ed52563df37ed0afc1a2765768aec5deb8f83b488ad7f",
+      "after_output_sha256": "59d56251725c5a76b03ed52563df37ed0afc1a2765768aec5deb8f83b488ad7f"
+    },
+    {
+      "id": "math.score-difference-bound",
+      "sha256": "32f15976d97e494614c2ccef88a7d832f107bdce0747c8373969964435856209",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "4e367315915b0c0f6a43641f192bb8caab84ab0d97d7771a404534ea785dedd1",
+      "after_output_sha256": "4e367315915b0c0f6a43641f192bb8caab84ab0d97d7771a404534ea785dedd1"
+    },
+    {
+      "id": "math.sequence-tv-coupling",
+      "sha256": "75e1ab13038e752606d28e3673543793e77c2430af58a68002bf48642141c924",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "ab7dfdf9c3e4acc01f1187e34e0313a417663d17f3e4189b651e0055cdf86e9f",
+      "after_output_sha256": "ab7dfdf9c3e4acc01f1187e34e0313a417663d17f3e4189b651e0055cdf86e9f"
+    },
+    {
+      "id": "math.similarity-invariants",
+      "sha256": "b996c58a57eca839ca01d2ba30b2cc7891a8ee50a88bd916127f8f614acd41d2",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "2f564b6e8ebd0a53a8f0d4ca271712431fa7477a8b1dcaf05ccb0bab2f2ae349",
+      "after_output_sha256": "2f564b6e8ebd0a53a8f0d4ca271712431fa7477a8b1dcaf05ccb0bab2f2ae349"
+    },
+    {
+      "id": "math.singular-support-bilinear-low-rank",
+      "sha256": "60301c861c559bba11a030e7fe98e8a789ede04777b62cadad8cdfa5b5b79cd2",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "83a9adefb013dffe862388209d7cdee6c9819cc3aeaf9d4331cd9155de296588",
+      "after_output_sha256": "83a9adefb013dffe862388209d7cdee6c9819cc3aeaf9d4331cd9155de296588"
+    },
+    {
+      "id": "math.softmax-barycenter-error",
+      "sha256": "269f488663b18bde24bac5f9d15121d5b589d06c0b1e16b2ad82430d6de5f160",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "7707ffc251b2fd68684b4e75da28241d848fe58d5d6cefd869090c7d63caf513",
+      "after_output_sha256": "7707ffc251b2fd68684b4e75da28241d848fe58d5d6cefd869090c7d63caf513"
+    },
+    {
+      "id": "math.softmax-kl-fisher",
+      "sha256": "e8b5926cdfdd48d44a5b6c6e03ae4ee71ba1aade837c3d2f96beed5a36c9d7f9",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "c4b1f9b645c0ece6db702487577f49aa895051fe5cc7ab6cfb24288ce47cce5d",
+      "after_output_sha256": "c4b1f9b645c0ece6db702487577f49aa895051fe5cc7ab6cfb24288ce47cce5d"
+    },
+    {
+      "id": "math.support-conditioning",
+      "sha256": "4358cbb6785d8b709037d448a5738354be5134ce8f64127931430f3d39f186fd",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "40d7e700b5893e1fe39acaa17059cd5bb1b8a63b219e0caee079ffc34030e9ac",
+      "after_output_sha256": "40d7e700b5893e1fe39acaa17059cd5bb1b8a63b219e0caee079ffc34030e9ac"
+    },
+    {
+      "id": "math.switched-quadratic-metrics",
+      "sha256": "a57da1333252b7b5d30b2cb7575df4d499cd9298af6f1fd24df2e72c9aed512f",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "5600b118107ed2e92031812fe50207c70b70e5fa97807b00d5214b43e8df5f90",
+      "after_output_sha256": "5600b118107ed2e92031812fe50207c70b70e5fa97807b00d5214b43e8df5f90"
+    },
+    {
+      "id": "math.sylvester-equation-separation",
+      "sha256": "9998d62b29367f882d31c69a01a011f80cd71963c8c973cf6ca1a6791fe8b3c8",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "a0a68ce8f50187ca5de0eddd2ee8b276daba7a83ef70cb94c3e5e1ab97b1b7ba",
+      "after_output_sha256": "a0a68ce8f50187ca5de0eddd2ee8b276daba7a83ef70cb94c3e5e1ab97b1b7ba"
+    },
+    {
+      "id": "math.symmetry-quotient",
+      "sha256": "b6f49f38838a976fdf42589d923d818119438b749049a6a69104449afabf2e57",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "977fb33b561deab73b35bfc12dbd10daf6fd1700e68805e6530e626ae7e90dc8",
+      "after_output_sha256": "977fb33b561deab73b35bfc12dbd10daf6fd1700e68805e6530e626ae7e90dc8"
+    },
+    {
+      "id": "math.tensor-kronecker-calculus",
+      "sha256": "90d909119aaebb1f06718ace57dabdd49ecee66372b4ca93ecbbbc81884d33d1",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "16f42ddda908e33acec61e92a783e7e32d104d7b0b45cdf43ddcbe7094bd9282",
+      "after_output_sha256": "16f42ddda908e33acec61e92a783e7e32d104d7b0b45cdf43ddcbe7094bd9282"
+    },
+    {
+      "id": "math.topk-margin",
+      "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "50b66c0d07e4ba322f07b3e75b886402a2fb36c079dfaeb93236b6c70ccb1f8b",
+      "after_output_sha256": "50b66c0d07e4ba322f07b3e75b886402a2fb36c079dfaeb93236b6c70ccb1f8b"
+    },
+    {
+      "id": "math.transport-output-certificate",
+      "sha256": "1dc9f61ffab81211a5bdf24539cbf75692cbe32652b3ec0520f5bc9cf6a98f5f",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "425d904b88bd2f7787d0088d3518e82b57b8667d183b1e485bbf5e4df526a5b0",
+      "after_output_sha256": "425d904b88bd2f7787d0088d3518e82b57b8667d183b1e485bbf5e4df526a5b0"
+    },
+    {
+      "id": "math.weighted-bilinear-low-rank",
+      "sha256": "549a1742c25c27651996e6b8680c6f2177213f5d46a77cb0d41384d4b1e769a4",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "62ba2b2d1c468aaf56714a3a8495554fc73ff045cc74d9677e349fab36b0cc2c",
+      "after_output_sha256": "62ba2b2d1c468aaf56714a3a8495554fc73ff045cc74d9677e349fab36b0cc2c"
+    },
+    {
+      "id": "neuro.anesthesia-temporal-isolation",
+      "sha256": "e8b3675e15215b3ff071b0ee01d37786419f999d5b68e6ab74fda68fcadfeb9b",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "4ac38f7b2827ffa79433649493ade7736d6687d0685fbc7f234f22f3a652a62f",
+      "after_output_sha256": "4ac38f7b2827ffa79433649493ade7736d6687d0685fbc7f234f22f3a652a62f"
+    },
+    {
+      "id": "neuro.avian-pallium-convergence",
+      "sha256": "255132c5eaa78612c285ea800673d4a5c4b0a930721c0986cc36ad6912a52eee",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "e6e07964aeb11fd7a97db8321ca9d356006d2ef2ec9e91937ca10107f8a77ba8",
+      "after_output_sha256": "e6e07964aeb11fd7a97db8321ca9d356006d2ef2ec9e91937ca10107f8a77ba8"
+    },
+    {
+      "id": "neuro.bumblebee-social-diffusion",
+      "sha256": "edd525eb72e80a9ceb4841f92017806307463c9d46cd174f6e97880eb6cfb1a0",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "55bf5efb32f6bfb7d505a75547b1c2edd7145a7be4489be9ae7ae6aefcfc26a3",
+      "after_output_sha256": "55bf5efb32f6bfb7d505a75547b1c2edd7145a7be4489be9ae7ae6aefcfc26a3"
+    },
+    {
+      "id": "neuro.cephalopod-arm-segmentation",
+      "sha256": "c8c4a248bafa4f1251b2dbe5db91eb2dc8420e0bad5276c6844998f81a76f82e",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "f5129a64ca2b0eb0e2a2a6008213a140fd122c50e77b21de07c476d96fb95cdb",
+      "after_output_sha256": "f5129a64ca2b0eb0e2a2a6008213a140fd122c50e77b21de07c476d96fb95cdb"
+    },
+    {
+      "id": "neuro.consciousness-adversarial-predictions",
+      "sha256": "0fe6f1de9dde415b15737e22d5f8bbeda4ea7b8664ca616a5a108c001ebc9061",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "d0d4ed5fbadbb863f6b66c4dace101c596c21a0b058a11e8d56ba29cdf6b9623",
+      "after_output_sha256": "d0d4ed5fbadbb863f6b66c4dace101c596c21a0b058a11e8d56ba29cdf6b9623"
+    },
+    {
+      "id": "neuro.flywire-structural-limits",
+      "sha256": "32609930a6747a1bc0087f69270899925d5d511273d1516e3125bf9bb7174bb2",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "4f4dbfc36dbe55c626f7bc09d85d56638375dac9bdea47263e1b5a185e9f76d8",
+      "after_output_sha256": "4f4dbfc36dbe55c626f7bc09d85d56638375dac9bdea47263e1b5a185e9f76d8"
+    },
+    {
+      "id": "neuro.mammal-integration-anesthesia",
+      "sha256": "09b4f6772af3eb553e80176bb5c4379d2bce13dcbf41b89757e51b82ad7185c0",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "e1d6655595db5861a32bb8fb1ea5877c3f3ba255511deb86f7eca802ac2a6311",
+      "after_output_sha256": "e1d6655595db5861a32bb8fb1ea5877c3f3ba255511deb86f7eca802ac2a6311"
+    },
+    {
+      "id": "neuro.mouse-like-to-like-wiring",
+      "sha256": "2e7f51aeb59924bceef867f90c896b928b4f4da8cf80377a89ae95c3f1ca7d1b",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "967f7c80d7aae94b51ec989c51aaed4ecdd011357f82418fcde925ae55366aa4",
+      "after_output_sha256": "967f7c80d7aae94b51ec989c51aaed4ecdd011357f82418fcde925ae55366aa4"
+    },
+    {
+      "id": "neuro.octopus-sleep-state-boundary",
+      "sha256": "679713108b5446ab4e934dba2e63ba4b81536e89479d29da80de7c581d16dcf6",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "c1975b05478846db653f047916672ac5485d5cc1f090c855b9a2e0c8a71480e2",
+      "after_output_sha256": "c1975b05478846db653f047916672ac5485d5cc1f090c855b9a2e0c8a71480e2"
+    },
+    {
+      "id": "neuro.salamander-cell-type-homology",
+      "sha256": "bafb42c44535c0d240c4955919b2641d028b145a5535ac7b9b16d01cf2c735f2",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "0f47525966bf9745d9cb1d6517f71445e5068035661d2bb3d49f37b81f4d2b17",
+      "after_output_sha256": "0f47525966bf9745d9cb1d6517f71445e5068035661d2bb3d49f37b81f4d2b17"
+    },
+    {
+      "id": "neuro.spider-rem-like-state",
+      "sha256": "c2e7e2ba10e10b7b68b638ca5679907c0cfe63692026345c5a260925b9fe8898",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "3b1bf370afe13ad122fefe2e5ec3a4672870ff8de481e768a3656e914cf1efd6",
+      "after_output_sha256": "3b1bf370afe13ad122fefe2e5ec3a4672870ff8de481e768a3656e914cf1efd6"
+    },
+    {
+      "id": "neuro.worm-extrasynaptic-propagation",
+      "sha256": "9467b35c7aea7298ef699e033da1194b500661420e3e7178edf1646537a861e7",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "765801d66c63dcb856736a47b8886be0b81e2e6c0e244caf59a3813465683870",
+      "after_output_sha256": "765801d66c63dcb856736a47b8886be0b81e2e6c0e244caf59a3813465683870"
+    },
+    {
+      "id": "neuro.zapbench-forecasting-controls",
+      "sha256": "fcb669a94ce2b9a6cbc0b4aecad3b229349b0712e540dcdd5743ae2b3555dabc",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "0d0b6e5fad796a6ee5b68ae28f714638fd36a4ba820599e634eca37eb7bc381d",
+      "after_output_sha256": "0d0b6e5fad796a6ee5b68ae28f714638fd36a4ba820599e634eca37eb7bc381d"
+    },
+    {
+      "id": "neuro.zebrafish-modular-memory",
+      "sha256": "8c2c20b234cd89c8610a6c2bd3de672710608911affbe6501e60c9899594619c",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "351a5c963176e3fdfbc90006c9e479a853e41f83990325f19508f1144a5d0f67",
+      "after_output_sha256": "351a5c963176e3fdfbc90006c9e479a853e41f83990325f19508f1144a5d0f67"
+    },
+    {
+      "id": "physics.dimensionless",
+      "sha256": "06d0c7f8b08727194bb340cae3dc9e31e2606e38a1b59a668b36430311f97dd3",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "af64807d7734e33fcd99fc3013e0790f116bbea1ce4b9020630880f907da7407",
+      "after_output_sha256": "af64807d7734e33fcd99fc3013e0790f116bbea1ce4b9020630880f907da7407"
+    },
+    {
+      "id": "physics.noether-invariants",
+      "sha256": "99b6271d2b9541456921ec84a50a189dc8b231bfe174184036ab75034807859c",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "136869d1e5514f118381dcd7fb3db21d3410a832fe2f8e2067aef316c43942fa",
+      "after_output_sha256": "136869d1e5514f118381dcd7fb3db21d3410a832fe2f8e2067aef316c43942fa"
+    },
+    {
+      "id": "prob.conformal-policy-control",
+      "sha256": "c80d9008b17bdac2f9c77995c4c490c476f7d72aba816e513ce395b41cdfb304",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "95de7dd691837b0055020457144a7710274854e46b678d4efde942b65cedf50d",
+      "after_output_sha256": "95de7dd691837b0055020457144a7710274854e46b678d4efde942b65cedf50d"
+    },
+    {
+      "id": "prob.horizon-aware-betting",
+      "sha256": "b8d4b79081e1971b88210e6d3cf57deff4657e1a17370acd72bc0a5549abbf18",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "0f0b9c26b90e058934103e2c9cd85216c0d11fc4f301fa4576f98389c729e1ac",
+      "after_output_sha256": "0f0b9c26b90e058934103e2c9cd85216c0d11fc4f301fa4576f98389c729e1ac"
+    },
+    {
+      "id": "prob.self-normalized-dimension-barrier",
+      "sha256": "396aa263a1f4db2ae80ab07152c3f1e5cbaa10a49cf4817480cc5a86a88c4fda",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "8a54191ec69ba2f7ecb4c20031db0183e541846cf34f361394afd322a2c33323",
+      "after_output_sha256": "8a54191ec69ba2f7ecb4c20031db0183e541846cf34f361394afd322a2c33323"
+    },
+    {
+      "id": "prob.vector-variance-aware-concentration",
+      "sha256": "a39d6f473786b20228fd60342b0f364b39b7e396b45cb8a537e9e776054ff974",
+      "equal": true,
+      "source_reassembled": true,
+      "before_output_sha256": "2ee87ad8aa64ce209a16558d24c0b694950d06fd79564892a48015a42295fbe0",
+      "after_output_sha256": "2ee87ad8aa64ce209a16558d24c0b694950d06fd79564892a48015a42295fbe0"
+    }
+  ],
+  "corpus_equal": 115,
+  "corpus_total": 115,
+  "cache": {
+    "old_engine": "fts5-porter-alias-first-section-v4",
+    "new_engine": "fts5-porter-alias-first-section-v5",
+    "old_build": {
+      "backend": "sqlite-fts5-rrf-v1",
+      "snapshot": "7cce7a1d4ad51c19b8b218bd06097f3492e238419960e9ff30b29f34e4a865ab",
+      "indexed": 110,
+      "engine_version": "fts5-porter-alias-first-section-v4",
+      "engine_changed": true,
+      "updated": 110,
+      "removed": 0,
+      "unchanged": 0
+    },
+    "rejected": true,
+    "error": "stale index engine; run index to update",
+    "rebuild": {
+      "backend": "sqlite-fts5-rrf-v1",
+      "snapshot": "7cce7a1d4ad51c19b8b218bd06097f3492e238419960e9ff30b29f34e4a865ab",
+      "indexed": 110,
+      "engine_version": "fts5-porter-alias-first-section-v5",
+      "engine_changed": true,
+      "updated": 110,
+      "removed": 0,
+      "unchanged": 0
+    },
+    "noop": {
+      "backend": "sqlite-fts5-rrf-v1",
+      "snapshot": "7cce7a1d4ad51c19b8b218bd06097f3492e238419960e9ff30b29f34e4a865ab",
+      "indexed": 110,
+      "engine_version": "fts5-porter-alias-first-section-v5",
+      "engine_changed": false,
+      "updated": 0,
+      "removed": 0,
+      "unchanged": 110
+    },
+    "before_chunks": [
+      [
+        "s1",
+        "svd 截断",
+        "svd frobenius eckart young mirsky rank approximation 截断 的最 最优 优低 低秩 秩近 近似 谱范 范数 数和 范数 数下 下的 的低 低秩 秩近 近似 不直 直接 接保 保证 证下 下游 游排 排序 序或 或加 加速 矩阵 阵压 压缩 奇异 异值 低秩 秩误 误差",
+        "svd 截断"
+      ],
+      [
+        "s2",
+        "命题",
+        "svd frobenius 截断 的最 最优 优低 低秩 秩近 近似 谱范 范数 数和 范数 数下 下的 的低 低秩 秩近 近似 不直 直接 接保 保证 证下 下游 游排 排序 序或 或加 加速",
+        "a u vt r a_r rank b r a_r a b 2 a b f r 1 frobenius r min m n 命题 奇异 异值 值按 按降 降序 序排 排列 保留 留前 项得 得到 在 中 最小 小化 和 谱范 范数 数残 残差 差为 残差 差平 平方 方为 为尾 尾部 部奇 奇异 异值 值平 平方 方和 时残 残差 差为 为零 最优 优解 解不 不一 一定 定唯 唯一"
+      ],
+      [
+        "s3",
+        "证明 明线 线索",
+        "svd frobenius 截断 的最 最优 优低 低秩 秩近 近似 谱范 范数 数和 范数 数下 下的 的低 低秩 秩近 近似 不直 直接 接保 保证 证下 下游 游排 排序 序或 或加 加速",
+        "r b r 1 x bx 0 a b 2 ax 2 r 1 a_r frobenius 证明 明线 线索 正交 交变 变换 换不 不改 改变 变这 这两 两种 种范 范数 谱范 范数 数下 对任 任意 意秩 秩至 至多 的 前 个右 右奇 奇异 异向 向量 量张 张成 成的 的空 空间 间中 中存 存在 在单 单位 满足 故 达到 到该 该界 这里 里只 只展 展开 开谱 谱范 范数 数证 证明 结论 论依 依来 来源 源核 核对 不声 声称 称完 完整 整形 形式 式化 化验 验证"
+      ],
+      [
+        "s4",
+        "实例 例与 与边 边界",
+        "svd frobenius 截断 的最 最优 优低 低秩 秩近 近似 谱范 范数 数和 范数 数下 下的 的低 低秩 秩近 近似 不直 直接 接保 保证 证下 下游 游排 排序 序或 或加 加速",
+        "a diag 5 2 0 1 r 2 frobenius 0 1 top-k 实例 例与 与边 边界 谱 残差 差均 均为 这不 不是 是逐 逐元 元素 素最 最大 大误 误差 差目 目标 标的 的最 最优 优性 性定 定理 也不 不保 保证 证截 截断 断前 前后 相同 是否 否加 加速 速还 还取 取决 决于 于分 分解 解成 成本 复用 用次 次数 矩阵 阵尺 尺寸 寸和 和具 具体 体实 实现 必须 须实 实测"
+      ],
+      [
+        "s5",
+        "cacheroot",
+        "svd frobenius 截断 的最 最优 优低 低秩 秩近 近似 谱范 范数 数和 范数 数下 下的 的低 低秩 秩近 近似 不直 直接 接保 保证 证下 下游 游排 排序 序或 或加 加速",
+        "cacheroot lang misleading"
+      ],
+      [
+        "s6",
+        "cachehiddenunique",
+        "svd frobenius 截断 的最 最优 优低 低秩 秩近 近似 谱范 范数 数和 范数 数下 下的 的低 低秩 秩近 近似 不直 直接 接保 保证 证下 下游 游排 排序 序或 或加 加速",
+        "cachehiddenunique cachevisibleunique"
+      ]
+    ],
+    "after_chunks": [
+      [
+        "s1",
+        "svd 截断",
+        "svd frobenius eckart young mirsky rank approximation 截断 的最 最优 优低 低秩 秩近 近似 谱范 范数 数和 范数 数下 下的 的低 低秩 秩近 近似 不直 直接 接保 保证 证下 下游 游排 排序 序或 或加 加速 矩阵 阵压 压缩 奇异 异值 低秩 秩误 误差",
+        "svd 截断"
+      ],
+      [
+        "s2",
+        "命题",
+        "svd frobenius 截断 的最 最优 优低 低秩 秩近 近似 谱范 范数 数和 范数 数下 下的 的低 低秩 秩近 近似 不直 直接 接保 保证 证下 下游 游排 排序 序或 或加 加速",
+        "a u vt r a_r rank b r a_r a b 2 a b f r 1 frobenius r min m n 命题 奇异 异值 值按 按降 降序 序排 排列 保留 留前 项得 得到 在 中 最小 小化 和 谱范 范数 数残 残差 差为 残差 差平 平方 方为 为尾 尾部 部奇 奇异 异值 值平 平方 方和 时残 残差 差为 为零 最优 优解 解不 不一 一定 定唯 唯一"
+      ],
+      [
+        "s3",
+        "证明 明线 线索",
+        "svd frobenius 截断 的最 最优 优低 低秩 秩近 近似 谱范 范数 数和 范数 数下 下的 的低 低秩 秩近 近似 不直 直接 接保 保证 证下 下游 游排 排序 序或 或加 加速",
+        "r b r 1 x bx 0 a b 2 ax 2 r 1 a_r frobenius 证明 明线 线索 正交 交变 变换 换不 不改 改变 变这 这两 两种 种范 范数 谱范 范数 数下 对任 任意 意秩 秩至 至多 的 前 个右 右奇 奇异 异向 向量 量张 张成 成的 的空 空间 间中 中存 存在 在单 单位 满足 故 达到 到该 该界 这里 里只 只展 展开 开谱 谱范 范数 数证 证明 结论 论依 依来 来源 源核 核对 不声 声称 称完 完整 整形 形式 式化 化验 验证"
+      ],
+      [
+        "s4",
+        "实例 例与 与边 边界",
+        "svd frobenius 截断 的最 最优 优低 低秩 秩近 近似 谱范 范数 数和 范数 数下 下的 的低 低秩 秩近 近似 不直 直接 接保 保证 证下 下游 游排 排序 序或 或加 加速",
+        "a diag 5 2 0 1 r 2 frobenius 0 1 top-k 实例 例与 与边 边界 谱 残差 差均 均为 这不 不是 是逐 逐元 元素 素最 最大 大误 误差 差目 目标 标的 的最 最优 优性 性定 定理 也不 不保 保证 证截 截断 断前 前后 相同 是否 否加 加速 速还 还取 取决 决于 于分 分解 解成 成本 复用 用次 次数 矩阵 阵尺 尺寸 寸和 和具 具体 体实 实现 必须 须实 实测"
+      ],
+      [
+        "s5",
+        "cacheroot",
+        "svd frobenius 截断 的最 最优 优低 低秩 秩近 近似 谱范 范数 数和 范数 数下 下的 的低 低秩 秩近 近似 不直 直接 接保 保证 证下 下游 游排 排序 序或 或加 加速",
+        "cacheroot lang misleading cachehiddenunique"
+      ],
+      [
+        "s6",
+        "cachevisibleunique",
+        "svd frobenius 截断 的最 最优 优低 低秩 秩近 近似 谱范 范数 数和 范数 数下 下的 的低 低秩 秩近 近似 不直 直接 接保 保证 证下 下游 游排 排序 序或 或加 加速",
+        "cachevisibleunique"
+      ]
+    ],
+    "source_snapshot": "7cce7a1d4ad51c19b8b218bd06097f3492e238419960e9ff30b29f34e4a865ab",
+    "old_sections": [
+      {
+        "node": "s1",
+        "title": "截断 SVD",
+        "level": 1,
+        "start_line": 1,
+        "parent": null,
+        "end_line": 2,
+        "text": "# 截断 SVD\n\n"
+      },
+      {
+        "node": "s2",
+        "title": "命题",
+        "level": 2,
+        "start_line": 3,
+        "parent": "s1",
+        "end_line": 8,
+        "text": "## 命题\nA=UΣVᵀ，奇异值按降序排列；保留前 r 项得到 A_r。\n在 rank(B)≤r 中，A_r 最小化 ‖A−B‖₂ 和 ‖A−B‖F。\n谱范数残差为 σ_(r+1)，Frobenius 残差平方为尾部奇异值平方和。\nr=min(m,n) 时残差为零。最优解不一定唯一。\n\n"
+      },
+      {
+        "node": "s3",
+        "title": "证明线索",
+        "level": 2,
+        "start_line": 9,
+        "parent": "s1",
+        "end_line": 14,
+        "text": "## 证明线索\n正交变换不改变这两种范数。谱范数下，对任意秩至多 r 的 B，\n前 r+1 个右奇异向量张成的空间中存在单位 x 满足 Bx=0，故\n‖A−B‖₂≥‖Ax‖₂≥σ_(r+1)；A_r 达到该界。\n这里只展开谱范数证明，Frobenius 结论依来源核对；不声称完整形式化验证。\n\n"
+      },
+      {
+        "node": "s4",
+        "title": "实例与边界",
+        "level": 2,
+        "start_line": 15,
+        "parent": "s1",
+        "end_line": 19,
+        "text": "## 实例与边界\nA=diag(5,2,0.1)，r=2，谱/Frobenius 残差均为 0.1。\n这不是逐元素最大误差目标的最优性定理，也不保证截断前后 Top-k 相同。\n是否加速还取决于分解成本、复用次数、矩阵尺寸和具体实现，必须实测。\n\n"
+      },
+      {
+        "node": "s5",
+        "title": "CacheRoot",
+        "level": 1,
+        "start_line": 20,
+        "parent": null,
+        "end_line": 22,
+        "text": "# CacheRoot\n```lang\n``` misleading\n"
+      },
+      {
+        "node": "s6",
+        "title": "CacheHiddenUnique",
+        "level": 1,
+        "start_line": 23,
+        "parent": null,
+        "end_line": 25,
+        "text": "# CacheHiddenUnique\n```\n# CacheVisibleUnique\n"
+      }
+    ],
+    "new_sections": [
+      {
+        "node": "s1",
+        "title": "截断 SVD",
+        "level": 1,
+        "start_line": 1,
+        "parent": null,
+        "end_line": 2,
+        "text": "# 截断 SVD\n\n"
+      },
+      {
+        "node": "s2",
+        "title": "命题",
+        "level": 2,
+        "start_line": 3,
+        "parent": "s1",
+        "end_line": 8,
+        "text": "## 命题\nA=UΣVᵀ，奇异值按降序排列；保留前 r 项得到 A_r。\n在 rank(B)≤r 中，A_r 最小化 ‖A−B‖₂ 和 ‖A−B‖F。\n谱范数残差为 σ_(r+1)，Frobenius 残差平方为尾部奇异值平方和。\nr=min(m,n) 时残差为零。最优解不一定唯一。\n\n"
+      },
+      {
+        "node": "s3",
+        "title": "证明线索",
+        "level": 2,
+        "start_line": 9,
+        "parent": "s1",
+        "end_line": 14,
+        "text": "## 证明线索\n正交变换不改变这两种范数。谱范数下，对任意秩至多 r 的 B，\n前 r+1 个右奇异向量张成的空间中存在单位 x 满足 Bx=0，故\n‖A−B‖₂≥‖Ax‖₂≥σ_(r+1)；A_r 达到该界。\n这里只展开谱范数证明，Frobenius 结论依来源核对；不声称完整形式化验证。\n\n"
+      },
+      {
+        "node": "s4",
+        "title": "实例与边界",
+        "level": 2,
+        "start_line": 15,
+        "parent": "s1",
+        "end_line": 19,
+        "text": "## 实例与边界\nA=diag(5,2,0.1)，r=2，谱/Frobenius 残差均为 0.1。\n这不是逐元素最大误差目标的最优性定理，也不保证截断前后 Top-k 相同。\n是否加速还取决于分解成本、复用次数、矩阵尺寸和具体实现，必须实测。\n\n"
+      },
+      {
+        "node": "s5",
+        "title": "CacheRoot",
+        "level": 1,
+        "start_line": 20,
+        "parent": null,
+        "end_line": 24,
+        "text": "# CacheRoot\n```lang\n``` misleading\n# CacheHiddenUnique\n```\n"
+      },
+      {
+        "node": "s6",
+        "title": "CacheVisibleUnique",
+        "level": 1,
+        "start_line": 25,
+        "parent": null,
+        "end_line": 25,
+        "text": "# CacheVisibleUnique\n"
+      }
+    ],
+    "passed": true
+  },
+  "all_pass": true,
+  "original_local_raw": {
+    "filename": "independent-raw-O.json",
+    "sha256": "13237424c911a5abc0dc09a5fa7183dccc8b8bb8be8dfe0b9cbc931c922b59b0",
+    "bytes": 1303344,
+    "publication": "retained locally; excluded from published delivery"
+  },
+  "output_hash_encoding": "UTF-8 JSON ensure_ascii=False sort_keys=True separators comma/colon, no trailing newline"
+}

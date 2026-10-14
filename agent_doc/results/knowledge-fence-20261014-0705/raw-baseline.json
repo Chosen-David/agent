@@ -1,0 +1,994 @@
+{
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "optimized": 0,
+  "cases": [
+    {
+      "name": "backtick_info_closer",
+      "input_sha256": "ea456efafc8ef7495224d922cb5e432bb51479f715104b1278901eab452b3dc1",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 4,
+          "text": "```py\n``` text\n# hidden\n```\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 5,
+          "parent": null,
+          "end_line": 5,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "```py\n``` text\n"
+        },
+        {
+          "node": "s1",
+          "title": "hidden",
+          "level": 1,
+          "start_line": 3,
+          "parent": null,
+          "end_line": 5,
+          "text": "# hidden\n```\n# visible\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "```py\n``` text\n"
+        },
+        {
+          "node": "s1",
+          "title": "hidden",
+          "level": 1,
+          "start_line": 3,
+          "parent": null,
+          "end_line": 5,
+          "text": "# hidden\n```\n# visible\n"
+        }
+      ],
+      "baseline_pass": false,
+      "candidate_pass": false
+    },
+    {
+      "name": "tilde_info_closer",
+      "input_sha256": "937098fd6b8445335d1ec8e90299101c5695a990c8902f0096f918354c794e8c",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 4,
+          "text": "~~~py\n~~~ text\n# hidden\n~~~\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 5,
+          "parent": null,
+          "end_line": 5,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "~~~py\n~~~ text\n"
+        },
+        {
+          "node": "s1",
+          "title": "hidden",
+          "level": 1,
+          "start_line": 3,
+          "parent": null,
+          "end_line": 5,
+          "text": "# hidden\n~~~\n# visible\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "~~~py\n~~~ text\n"
+        },
+        {
+          "node": "s1",
+          "title": "hidden",
+          "level": 1,
+          "start_line": 3,
+          "parent": null,
+          "end_line": 5,
+          "text": "# hidden\n~~~\n# visible\n"
+        }
+      ],
+      "baseline_pass": false,
+      "candidate_pass": false
+    },
+    {
+      "name": "invalid_backtick_info",
+      "input_sha256": "ab6bfa21e31bc3a5fc54e98756073c16b415934501b389742f8d506270c66fd8",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 1,
+          "text": "```py`bad\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 2,
+          "parent": null,
+          "end_line": 2,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "```py`bad\n# visible\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "```py`bad\n# visible\n"
+        }
+      ],
+      "baseline_pass": false,
+      "candidate_pass": false
+    },
+    {
+      "name": "tilde_backtick_info",
+      "input_sha256": "0c84933bb187722c8d3912cdf94ce5865e0108222dc370bd4a7121bd9f811cc9",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "~~~py`ok\n# hidden\n~~~\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "~~~py`ok\n# hidden\n~~~\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "~~~py`ok\n# hidden\n~~~\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline_pass": true,
+      "candidate_pass": true
+    },
+    {
+      "name": "ordinary",
+      "input_sha256": "263ae624e96a0185221661840b36e49b4bb21dc3bef6f30531f107e84083aafa",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "```py\n# hidden\n```\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "```py\n# hidden\n```\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "```py\n# hidden\n```\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline_pass": true,
+      "candidate_pass": true
+    },
+    {
+      "name": "long_closer",
+      "input_sha256": "c715e990e2386909ce3aa30c18d44815af730fb4ca21916ca039f0362af66616",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "```\n# hidden\n`````\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "```\n# hidden\n`````\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "```\n# hidden\n`````\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline_pass": true,
+      "candidate_pass": true
+    },
+    {
+      "name": "short_closer",
+      "input_sha256": "695ef63115d08794bfeb60e5bd4bd8523648c1a7012b3b8361471f51ab528ee7",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 4,
+          "text": "````\n```\n# hidden\n````\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 5,
+          "parent": null,
+          "end_line": 5,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 4,
+          "text": "````\n```\n# hidden\n````\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 5,
+          "parent": null,
+          "end_line": 5,
+          "text": "# visible\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 4,
+          "text": "````\n```\n# hidden\n````\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 5,
+          "parent": null,
+          "end_line": 5,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline_pass": true,
+      "candidate_pass": true
+    },
+    {
+      "name": "different_character",
+      "input_sha256": "ca2f3ce77850a3d72f0398d1920622d79209733d6e1766f4eee2d60e16e749a6",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 4,
+          "text": "```\n~~~\n# hidden\n```\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 5,
+          "parent": null,
+          "end_line": 5,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 4,
+          "text": "```\n~~~\n# hidden\n```\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 5,
+          "parent": null,
+          "end_line": 5,
+          "text": "# visible\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 4,
+          "text": "```\n~~~\n# hidden\n```\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 5,
+          "parent": null,
+          "end_line": 5,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline_pass": true,
+      "candidate_pass": true
+    },
+    {
+      "name": "ascii_suffix",
+      "input_sha256": "1e43750fddaaffd02242c98a0fc7da41759e535fd9fce43a1dfecbcb0cd90836",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "```\n# hidden\n``` \t\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "```\n# hidden\n``` \t\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "```\n# hidden\n``` \t\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline_pass": true,
+      "candidate_pass": true
+    },
+    {
+      "name": "unicode_suffix",
+      "input_sha256": "39a372c3a19927d6fa8ec06874c8997aab0506adea007ad1c01fb5968fd8a5cb",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 4,
+          "text": "```\n``` \n# hidden\n```\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 5,
+          "parent": null,
+          "end_line": 5,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "```\n``` \n"
+        },
+        {
+          "node": "s1",
+          "title": "hidden",
+          "level": 1,
+          "start_line": 3,
+          "parent": null,
+          "end_line": 5,
+          "text": "# hidden\n```\n# visible\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "```\n``` \n"
+        },
+        {
+          "node": "s1",
+          "title": "hidden",
+          "level": 1,
+          "start_line": 3,
+          "parent": null,
+          "end_line": 5,
+          "text": "# hidden\n```\n# visible\n"
+        }
+      ],
+      "baseline_pass": false,
+      "candidate_pass": false
+    },
+    {
+      "name": "crlf",
+      "input_sha256": "44b5bbde5aa37efea31f7ec5da818e776185860420575906ad24ad783cb8e9ee",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 4,
+          "text": "```py\r\n``` info\r\n# hidden\r\n```\t\r\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 5,
+          "parent": null,
+          "end_line": 5,
+          "text": "# visible\r\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "```py\r\n``` info\r\n"
+        },
+        {
+          "node": "s1",
+          "title": "hidden",
+          "level": 1,
+          "start_line": 3,
+          "parent": null,
+          "end_line": 5,
+          "text": "# hidden\r\n```\t\r\n# visible\r\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "```py\r\n``` info\r\n"
+        },
+        {
+          "node": "s1",
+          "title": "hidden",
+          "level": 1,
+          "start_line": 3,
+          "parent": null,
+          "end_line": 5,
+          "text": "# hidden\r\n```\t\r\n# visible\r\n"
+        }
+      ],
+      "baseline_pass": false,
+      "candidate_pass": false
+    },
+    {
+      "name": "unclosed",
+      "input_sha256": "6f6d71361ba6155f183603eaa144d38f73bc750c1c3b701096235f8c7ab94e94",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "```\n# hidden\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "```\n# hidden\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 2,
+          "text": "```\n# hidden\n"
+        }
+      ],
+      "baseline_pass": true,
+      "candidate_pass": true
+    },
+    {
+      "name": "three_space",
+      "input_sha256": "6f8b1e9065afe0210adabbe53da9f8d0788a833e56e11287bf9396d02af9f1cf",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "   ~~~py\n# hidden\n   ~~~\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "   ~~~py\n# hidden\n   ~~~\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "   ~~~py\n# hidden\n   ~~~\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 4,
+          "parent": null,
+          "end_line": 4,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline_pass": true,
+      "candidate_pass": true
+    },
+    {
+      "name": "four_space",
+      "input_sha256": "868a281d3c9eeda1c4f460562b0c47a0577278ba8bd0d28a0bb07442c136ecc0",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 1,
+          "text": "    ```\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 2,
+          "parent": null,
+          "end_line": 2,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 1,
+          "text": "    ```\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 2,
+          "parent": null,
+          "end_line": 2,
+          "text": "# visible\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 1,
+          "text": "    ```\n"
+        },
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 2,
+          "parent": null,
+          "end_line": 2,
+          "text": "# visible\n"
+        }
+      ],
+      "baseline_pass": true,
+      "candidate_pass": true
+    },
+    {
+      "name": "eof_close",
+      "input_sha256": "3f7f41d96e7308fe397e5aa6b3010a99315a964f2bd3bc14af0127643ee11ce8",
+      "expected": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "```\n# hidden\n```"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "```\n# hidden\n```"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "intro",
+          "title": "Fixture",
+          "level": 0,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 3,
+          "text": "```\n# hidden\n```"
+        }
+      ],
+      "baseline_pass": true,
+      "candidate_pass": true
+    },
+    {
+      "name": "plain_tree",
+      "input_sha256": "ade1793c01aa5e2e9c0b981d3cb6daf45343b10f74e3b2dac33c1ebc2c67d0e9",
+      "expected": [
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 1,
+          "text": "# visible\n"
+        },
+        {
+          "node": "s2",
+          "title": "child",
+          "level": 2,
+          "start_line": 2,
+          "parent": "s1",
+          "end_line": 3,
+          "text": "## child\nbody\n"
+        }
+      ],
+      "baseline": [
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 1,
+          "text": "# visible\n"
+        },
+        {
+          "node": "s2",
+          "title": "child",
+          "level": 2,
+          "start_line": 2,
+          "parent": "s1",
+          "end_line": 3,
+          "text": "## child\nbody\n"
+        }
+      ],
+      "candidate": [
+        {
+          "node": "s1",
+          "title": "visible",
+          "level": 1,
+          "start_line": 1,
+          "parent": null,
+          "end_line": 1,
+          "text": "# visible\n"
+        },
+        {
+          "node": "s2",
+          "title": "child",
+          "level": 2,
+          "start_line": 2,
+          "parent": "s1",
+          "end_line": 3,
+          "text": "## child\nbody\n"
+        }
+      ],
+      "baseline_pass": true,
+      "candidate_pass": true
+    }
+  ],
+  "baseline_pass": 11,
+  "candidate_pass": 11,
+  "corpus_records": 115,
+  "corpus_changed": []
+}

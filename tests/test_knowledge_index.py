@@ -152,6 +152,39 @@ class IndexTests(unittest.TestCase):
             self.assertEqual(actual, ''.join(original[node['start_line']-1:node['end_line']]))
         with self.assertRaises(KnowledgeError): navigate(self.store,'math.topk-margin','bad')
 
+    def test_fence_info_lines_do_not_expose_code_headings(self):
+        for marker in ('```', '~~~'):
+            for suffix in (' info', '\u00a0'):
+                content=f'# A\n{marker}py\n{marker}{suffix}\n# hidden\n{marker}\t \n# B\n'
+                with self.subTest(marker=marker, suffix=suffix):
+                    nodes=sections({'title':'Test', 'content':content})
+                    self.assertEqual([n['title'] for n in nodes], ['A', 'B'])
+                    self.assertEqual([(n['start_line'],n['end_line']) for n in nodes], [(1,5),(6,6)])
+                    self.assertEqual(''.join(n['text'] for n in nodes),content)
+
+    def test_backtick_info_invalid_but_tilde_info_accepts_backticks(self):
+        nodes=sections({'title':'Test','content':'```py`bad\n# visible\n'})
+        self.assertEqual([n['title'] for n in nodes],['Test','visible'])
+        nodes=sections({'title':'Test','content':'~~~py`valid\r\n# hidden\r\n~~~\r\n# visible\r\n'})
+        self.assertEqual([n['title'] for n in nodes],['Test','visible'])
+        self.assertEqual(nodes[-1]['start_line'],4)
+
+    def test_v4_cached_sections_are_rebuilt_without_source_changes(self):
+        from agent_runtime import knowledge_index as module
+        # Build a genuine v4-shaped stale cache, then exercise public rejection
+        # and rebuild against the unchanged corpus and its pinned snapshot.
+        snapshot=self.store.snapshot
+        with patch.object(module,'ENGINE_VERSION','fts5-porter-alias-first-section-v4'):
+            build_index(self.store,self.db)
+        with self.assertRaisesRegex(KnowledgeError,'stale index engine'):
+            indexed_search(self.store,self.db,'topk')
+        rebuilt=build_index(self.store,self.db)
+        self.assertTrue(rebuilt['engine_changed'])
+        self.assertEqual(rebuilt['updated'],self.published_count)
+        self.assertEqual(build_index(self.store,self.db)['unchanged'],self.published_count)
+        self.assertEqual(self.store.snapshot,snapshot)
+        self.assertTrue(indexed_search(self.store,self.db,'topk')['results'])
+
     def draft(self):
         d=json.loads((self.root/'entries/math.cauchy-schwarz.json').read_text())
         d.update(id='math.import-example',status='candidate',requires=[],relations=[])

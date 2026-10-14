@@ -488,3 +488,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [MATH-114] 定常平均与可逆性边界：加权非扩张、详细平衡/自伴分别核对，四个公开拒用例；并发检索升级保留，真实Agent核/π证书待验证。见 [详情](task_details/MATH-114.md)。
 
 - [MATH-115] 定常平均发现与拒用复核：三条公开查询目标第二/第二/第三，四例核对概率方向、加权量与不收敛；没有值得采用的新改进，模型/生产待验证。见 [详情](task_details/MATH-115.md)。
+
+- [ ] [KNOWLEDGE-FENCE] 知识索引fence合法性修正：固定案例11/16→16/16，115条语料输出不变，旧engine重建；独立验收与main读回后闭环。见 [详情](task_details/KNOWLEDGE-FENCE.md)。

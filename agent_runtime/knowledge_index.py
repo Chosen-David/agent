@@ -20,7 +20,7 @@ else:
     from project_docs import guard_write_path
 
 INDEX_VERSION = '1'
-ENGINE_VERSION = 'fts5-porter-alias-first-section-v4'
+ENGINE_VERSION = 'fts5-porter-alias-first-section-v5'
 
 
 def sections(record):
@@ -31,9 +31,14 @@ def sections(record):
         marker = re.match(r'^ {0,3}(`{3,}|~{3,})', line)
         if marker:
             mark = marker.group(1)
+            tail = line[marker.end():].rstrip('\r\n')
             if fence is None:
-                fence = mark
-            elif mark[0] == fence[0] and len(mark) >= len(fence):
+                # Backtick info strings cannot contain a backtick.
+                if mark[0] == '~' or '`' not in tail:
+                    fence = mark
+            elif (mark[0] == fence[0] and len(mark) >= len(fence)
+                  and not tail.strip(' \t')):
+                # A closer permits only ASCII spaces/tabs after its marker.
                 fence = None
             continue
         if fence:
