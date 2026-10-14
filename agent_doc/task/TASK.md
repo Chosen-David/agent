@@ -489,4 +489,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [MATH-115] 定常平均发现与拒用复核：三条公开查询目标第二/第二/第三，四例核对概率方向、加权量与不收敛；没有值得采用的新改进，模型/生产待验证。见 [详情](task_details/MATH-115.md)。
 
-- [ ] [KNOWLEDGE-FENCE] 知识索引fence合法性修正：固定案例11/16→16/16，115条语料输出不变，旧engine重建；独立验收与main读回后闭环。见 [详情](task_details/KNOWLEDGE-FENCE.md)。
+- [x] [KNOWLEDGE-FENCE] 知识索引fence合法性修正：固定案例11/16→16/16，115条语料输出不变，旧engine重建；独立验收通过、main代码1767f4a及29文件逐字节读回核验。见 [详情](task_details/KNOWLEDGE-FENCE.md)。
