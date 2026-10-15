@@ -1,3 +1,5 @@
+MEM-SCOPE-02: `MemoryLedger.list` 在已有mixed-status路径中先按精确scope筛ID再装配；`scripts/bench_memory_retrieval.py` 以固定Git基线/JSON配置执行同入口配对计时，结果与独立复核位于 `agent_doc/results/memory-scope02-20261016/`。主AI独占实现与任务，独立上下文只写独立证据；不代表模型KV接入。
+
 MEM-STORAGE-01: `python -m agent_runtime.project_memory list` → `MemoryLedger.list` 延迟装配请求状态的完整记忆；`tests/test_memory_retrieval.py` 覆盖元数据/依赖/异常锁及旧路径兼容。`agent_doc/results/memory-storage-20261015/` 保存12篇论文的定向阅读、配对基准/负结果与独立验收。主AI维护实现和任务；独立上下文只写复核证据。收益仅限合成温缓存SQLite检索，真实模型KV与任务质量尚待接入验证。
 
 Round04 complete coordinate arithmetic transport: `agent_runtime/grid_context.py`, CLI `scripts/grid_context.py`, boundaries `tests/test_grid_context.py`, scope `docs/token_optimization/grid_context.md`. Exact nonzero constant-step grid values and metadata; current-source restoration, no scientific acceptance.

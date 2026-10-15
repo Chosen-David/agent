@@ -1,0 +1,25 @@
+# Short host-output captures, not full logs. No benchmark overlaps these checks.
+# Baseline structural case (current f872 list AST, same module globals):
+FAIL: test_scoped_fastpath_hydrates_only_matching_status_and_scope
+AssertionError: Lists differ: ['m03', 'm07', 'm11', 'm15'] != ['m15']
+Ran 1 test in 0.015s
+FAILED (failures=1)
+
+$ python -m unittest tests.test_memory_retrieval tests.test_project_memory
+Ran 27 tests in 0.668s
+OK
+
+$ python -m unittest discover -s tests
+Ran 1194 tests in 68.029s
+OK (skipped=8)
+
+$ python -m unittest discover -s apps/paper-reader/tests
+Ran 3 tests in 1.580s
+OK
+
+$ python scripts/project_docs.py --root /workspace/scratch/88c3234ecfbc/agent-memory validate
+# exit_code=0; output starts:
+{
+  "schema_version": "project-documents/v1",
+  "layout": "canonical"
+# snapshot continues; omitted here, this is explicitly only a short capture.

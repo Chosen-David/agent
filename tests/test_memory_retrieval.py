@@ -3,6 +3,7 @@ import json
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from agent_runtime.project_memory import MemoryError, MemoryLedger
@@ -113,6 +114,69 @@ class MemoryRetrievalTests(unittest.TestCase):
         with self.ledger._connect(write=True) as db:
             db.execute("UPDATE entries SET scope='[]' WHERE id='m14'")
         self.assertEqual(self.ledger.list(), eager(self.ledger))
+
+    def test_scoped_fastpath_hydrates_only_matching_status_and_scope(self):
+        with self.ledger._connect(write=True) as db:
+            db.execute('UPDATE entries SET scope=? WHERE id=?', ('["T1"]', 'm15'))
+        expected = eager(self.ledger, scope='T1')
+        with patch.object(MemoryLedger, '_get', wraps=MemoryLedger._get) as get:
+            self.assertEqual(self.ledger.list(scope='T1'), expected)
+            self.assertEqual([c.args[1] for c in get.call_args_list], ['m15'])
+
+    def test_membership_errors_follow_all_metadata_decoding(self):
+        # m00 sorts first and is active; valid JSON null is not iterable. A
+        # later JSON syntax error must still be raised before membership.
+        with self.ledger._connect(write=True) as db:
+            db.execute("UPDATE entries SET status='active',scope='null' WHERE id='m00'")
+            db.execute("UPDATE entries SET scope='bad-json' WHERE id='m14'")
+        for call in (lambda: eager(self.ledger, scope='T1'),
+                     lambda: self.ledger.list(scope='T1')):
+            with self.assertRaises(json.JSONDecodeError):
+                call()
+        with self.ledger._connect(write=True) as db:
+            db.execute("UPDATE entries SET scope='[]' WHERE id='m14'")
+            db.execute('INSERT INTO document_dependencies VALUES(?,?)', ('m14', 'bad-json'))
+        for call in (lambda: eager(self.ledger, scope='T1'),
+                     lambda: self.ledger.list(scope='T1')):
+            with self.assertRaises(json.JSONDecodeError):
+                call()
+        with self.ledger._connect(write=True) as db:
+            db.execute('DELETE FROM document_dependencies')
+        for call in (lambda: eager(self.ledger, scope='T1'),
+                     lambda: self.ledger.list(scope='T1')):
+            with self.assertRaises(TypeError):
+                call()
+
+    def test_decoded_membership_semantics_and_status_short_circuit(self):
+        class Scope(str):
+            pass
+        for raw in ('null', '7', 'true', '"T10"', '{"T1":1}', '["T1", "T10"]'):
+            for status in ('active', 'candidate'):
+                with self.subTest(raw=raw, status=status):
+                    with self.ledger._connect(write=True) as db:
+                        db.execute('UPDATE entries SET scope=?,status=? WHERE id=?',
+                                   (raw, status, 'm15'))
+                    for scope in ('T1', 'T10', 'T', '', None, Scope('T1'), 1):
+                        answers = []
+                        for call in (eager, lambda ledger, **kw: ledger.list(**kw)):
+                            try:
+                                answers.append(('value', call(self.ledger, scope=scope)))
+                            except Exception as exc:
+                                answers.append(('error', type(exc), str(exc)))
+                        self.assertEqual(*answers)
+
+    def test_scoped_decoder_failure_releases_reader_even_with_traceback(self):
+        with self.ledger._connect(write=True) as db:
+            db.execute("UPDATE entries SET scope='bad-json' WHERE id='m14'")
+        failure = None
+        try:
+            self.ledger.list(scope='T1')
+        except json.JSONDecodeError as exc:
+            failure = exc
+        self.assertIsNotNone(failure)
+        with self.ledger._connect(write=True) as db:
+            db.execute("UPDATE entries SET scope='[]' WHERE id='m14'")
+        self.assertEqual(self.ledger.list(scope='T1'), eager(self.ledger, scope='T1'))
 
 
 if __name__ == '__main__':

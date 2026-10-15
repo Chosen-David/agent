@@ -281,19 +281,37 @@ class MemoryLedger:
                 # substitute for Python decoding (BLOB/UTF-8/depth semantics).
                 documents = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' "
                                        "AND name='document_dependencies'").fetchone()
+                scoped = type(scope) is str
+                identity = ',e.id,e.status' if scoped else ''
                 if documents:
                     metadata = db.execute(
-                        'SELECT e.scope,d.entry_id,d.snapshot FROM entries e '
+                        'SELECT e.scope,d.entry_id,d.snapshot' + identity + ' FROM entries e '
                         'LEFT JOIN document_dependencies d ON d.entry_id=e.id '
                         'ORDER BY e.created_at,e.id').fetchall()
                 else:
-                    metadata = db.execute('SELECT scope,NULL,NULL FROM entries ORDER BY created_at,id').fetchall()
-                for entry_scope, document_id, snapshot in metadata:
-                    json.loads(entry_scope)
-                    if document_id is not None:
-                        json.loads(snapshot)
-                rows = db.execute('SELECT id FROM entries WHERE status=? ORDER BY created_at,id',
-                                  (status,)).fetchall()
+                    identity = ',id,status' if scoped else ''
+                    metadata = db.execute('SELECT scope,NULL,NULL' + identity +
+                                          ' FROM entries ORDER BY created_at,id').fetchall()
+                if scoped:
+                    decoded = []
+                    for entry_scope, document_id, snapshot, entry_id, entry_status in metadata:
+                        parsed_scope = json.loads(entry_scope)
+                        if document_id is not None:
+                            json.loads(snapshot)
+                        decoded.append((entry_id, entry_status, parsed_scope))
+                    # Complete *all* JSON decoding before membership: a selected
+                    # null scope must not hide a later malformed JSON error.
+                    # Preserve Python membership and status short-circuiting,
+                    # not SQL LIKE/json_each (strings/dicts differ from arrays).
+                    rows = [(entry_id,) for entry_id, entry_status, parsed_scope in decoded
+                            if entry_status == status and scope in parsed_scope]
+                else:
+                    for entry_scope, document_id, snapshot in metadata:
+                        json.loads(entry_scope)
+                        if document_id is not None:
+                            json.loads(snapshot)
+                    rows = db.execute('SELECT id FROM entries WHERE status=? ORDER BY created_at,id',
+                                      (status,)).fetchall()
             else:
                 rows = db.execute('SELECT id FROM entries ORDER BY created_at,id').fetchall()
             values = [self._get(db, r[0]) for r in rows]
