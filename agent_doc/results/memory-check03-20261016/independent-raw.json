@@ -1,0 +1,1005 @@
+{
+  "scope": "full check entry, warm local SQLite, synthetic, no model/KV",
+  "config": {
+    "baseline_revision": "9b6cc775a900f2c0d26d97f88de5622129eec014",
+    "baseline_source_sha256": "914229446d705343ef71d81c79b20b7119652a376aa180e9eff54e83a7d1d450",
+    "operation": "check",
+    "seed": 1603,
+    "repeats": 21,
+    "aggregation": "one minus ratio of after/before medians; all raw pairs retained",
+    "acceptance": {
+      "large_min_reduction": 0.2,
+      "control_max_regression": 0.15
+    },
+    "cases": [
+      {
+        "name": "many-roots-small-content",
+        "entries": 512,
+        "active": 512,
+        "content_bytes": 128,
+        "match_every": 1,
+        "scope": null,
+        "refs_count": 512,
+        "refs_offset": 0,
+        "dependency_shape": "none"
+      },
+      {
+        "name": "many-roots-large-content",
+        "entries": 512,
+        "active": 512,
+        "content_bytes": 8192,
+        "match_every": 1,
+        "scope": null,
+        "refs_count": 512,
+        "refs_offset": 0,
+        "dependency_shape": "none"
+      },
+      {
+        "name": "one-root-control",
+        "entries": 8,
+        "active": 8,
+        "content_bytes": 128,
+        "match_every": 1,
+        "scope": null,
+        "refs_count": 1,
+        "refs_offset": 0,
+        "dependency_shape": "none"
+      },
+      {
+        "name": "small-batch-control",
+        "entries": 8,
+        "active": 8,
+        "content_bytes": 128,
+        "match_every": 1,
+        "scope": null,
+        "refs_count": 8,
+        "refs_offset": 0,
+        "dependency_shape": "none"
+      },
+      {
+        "name": "deep-chain-control",
+        "entries": 128,
+        "active": 128,
+        "content_bytes": 128,
+        "match_every": 1,
+        "scope": null,
+        "refs_count": 1,
+        "refs_offset": 127,
+        "dependency_shape": "chain"
+      },
+      {
+        "name": "shared-parent-control",
+        "entries": 128,
+        "active": 128,
+        "content_bytes": 128,
+        "match_every": 1,
+        "scope": null,
+        "refs_count": 32,
+        "refs_offset": 96,
+        "dependency_shape": "star"
+      }
+    ]
+  },
+  "baseline_source_sha256": "914229446d705343ef71d81c79b20b7119652a376aa180e9eff54e83a7d1d450",
+  "candidate_source_sha256": "b9f939410eee1e7c7477982ff9b0a1c95bd7d952ec706b5b179707d0d598ccf6",
+  "environment": {
+    "python": "3.12.14",
+    "compiler": "Clang 22.1.3 ",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "sqlite": "3.53.1"
+  },
+  "cases": [
+    {
+      "name": "many-roots-small-content",
+      "entries": 512,
+      "active": 512,
+      "content_bytes": 128,
+      "match_every": 1,
+      "scope": null,
+      "refs_count": 512,
+      "refs_offset": 0,
+      "dependency_shape": "none",
+      "database_sha256": "eb505f6088f2745576cb3b9eacebd043aa06ef5995d659e23c31b2e6f338d605",
+      "returned": 512,
+      "samples": {
+        "before_ms": [
+          9.557368,
+          9.058186,
+          9.040791,
+          9.541043,
+          9.470388,
+          8.262294,
+          8.346669,
+          8.796597,
+          8.131871,
+          8.628908,
+          9.866307,
+          8.59023,
+          9.398582,
+          8.388001,
+          9.630296,
+          8.707595,
+          8.561889,
+          8.62963,
+          8.948634,
+          9.847208,
+          15.958016
+        ],
+        "after_ms": [
+          4.980428,
+          4.674564,
+          4.720753,
+          4.674965,
+          5.322186,
+          6.292968,
+          4.666853,
+          5.95737,
+          5.022791,
+          4.761883,
+          4.676337,
+          5.798995,
+          5.285011,
+          5.40575,
+          4.643538,
+          5.769892,
+          5.241136,
+          6.061915,
+          11.758137,
+          4.849794,
+          5.013668
+        ]
+      },
+      "orders": [
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ]
+      ],
+      "median": {
+        "before_ms": 8.948634,
+        "after_ms": 5.022791
+      },
+      "reduction": 0.4387086341893076
+    },
+    {
+      "name": "many-roots-large-content",
+      "entries": 512,
+      "active": 512,
+      "content_bytes": 8192,
+      "match_every": 1,
+      "scope": null,
+      "refs_count": 512,
+      "refs_offset": 0,
+      "dependency_shape": "none",
+      "database_sha256": "4273e8310c892392ab4b1f1f5cbf83c7d6e4d02742893657462d37c3835ffccd",
+      "returned": 512,
+      "samples": {
+        "before_ms": [
+          13.125799,
+          12.660617,
+          13.433295,
+          13.194221,
+          25.384119,
+          16.180417,
+          13.468558,
+          15.386647,
+          13.90044,
+          12.867836,
+          12.034437,
+          12.033586,
+          12.795077,
+          14.238992,
+          12.056521,
+          12.084592,
+          13.183003,
+          12.491547,
+          13.07339,
+          13.050887,
+          12.022359
+        ],
+        "after_ms": [
+          9.926416,
+          9.181389,
+          8.7447,
+          7.00046,
+          12.417867,
+          8.060424,
+          11.682614,
+          7.436347,
+          7.02806,
+          9.868861,
+          6.380939,
+          6.635898,
+          7.802802,
+          8.753263,
+          7.873185,
+          6.596199,
+          7.940937,
+          8.190337,
+          7.773688,
+          8.549181,
+          7.123322
+        ]
+      },
+      "orders": [
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ]
+      ],
+      "median": {
+        "before_ms": 13.07339,
+        "after_ms": 7.940937
+      },
+      "reduction": 0.39258776797754824
+    },
+    {
+      "name": "one-root-control",
+      "entries": 8,
+      "active": 8,
+      "content_bytes": 128,
+      "match_every": 1,
+      "scope": null,
+      "refs_count": 1,
+      "refs_offset": 0,
+      "dependency_shape": "none",
+      "database_sha256": "02ca56cb6d9bf5c87e43e4ab72cb4eef49a544cbdd809a643a01c832a1552f55",
+      "returned": 1,
+      "samples": {
+        "before_ms": [
+          0.488937,
+          0.298784,
+          0.347086,
+          0.245405,
+          0.271634,
+          0.391391,
+          0.230853,
+          0.303972,
+          0.218615,
+          0.261629,
+          0.326055,
+          0.254207,
+          0.278774,
+          0.32303,
+          0.221649,
+          0.275769,
+          0.223091,
+          0.325544,
+          0.226917,
+          0.272585,
+          0.246186
+        ],
+        "after_ms": [
+          0.239466,
+          0.359384,
+          0.371762,
+          0.251794,
+          0.451441,
+          0.240407,
+          0.295869,
+          0.24247,
+          0.217513,
+          0.212275,
+          0.320756,
+          0.273707,
+          0.224554,
+          0.246497,
+          0.211755,
+          0.219887,
+          0.358813,
+          0.281858,
+          0.239836,
+          0.222221,
+          0.234178
+        ]
+      },
+      "orders": [
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ]
+      ],
+      "median": {
+        "before_ms": 0.272585,
+        "after_ms": 0.24247
+      },
+      "reduction": 0.11047930003485162
+    },
+    {
+      "name": "small-batch-control",
+      "entries": 8,
+      "active": 8,
+      "content_bytes": 128,
+      "match_every": 1,
+      "scope": null,
+      "refs_count": 8,
+      "refs_offset": 0,
+      "dependency_shape": "none",
+      "database_sha256": "02ca56cb6d9bf5c87e43e4ab72cb4eef49a544cbdd809a643a01c832a1552f55",
+      "returned": 8,
+      "samples": {
+        "before_ms": [
+          0.491701,
+          0.427645,
+          0.332094,
+          0.346524,
+          0.414486,
+          0.582165,
+          0.418772,
+          0.337011,
+          0.318564,
+          0.315488,
+          0.402948,
+          0.426554,
+          0.479623,
+          0.593962,
+          0.452502,
+          0.389378,
+          0.555345,
+          0.496117,
+          0.344152,
+          0.34313,
+          0.513252
+        ],
+        "after_ms": [
+          0.310942,
+          0.363921,
+          0.306255,
+          0.27578,
+          0.293536,
+          0.341317,
+          0.409248,
+          0.354677,
+          0.295529,
+          0.307346,
+          0.346735,
+          0.389419,
+          0.777475,
+          0.331132,
+          0.291634,
+          0.345333,
+          0.392182,
+          0.408116,
+          0.315278,
+          0.396529,
+          0.453614
+        ]
+      },
+      "orders": [
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ]
+      ],
+      "median": {
+        "before_ms": 0.418772,
+        "after_ms": 0.345333
+      },
+      "reduction": 0.17536750308043514
+    },
+    {
+      "name": "deep-chain-control",
+      "entries": 128,
+      "active": 128,
+      "content_bytes": 128,
+      "match_every": 1,
+      "scope": null,
+      "refs_count": 1,
+      "refs_offset": 127,
+      "dependency_shape": "chain",
+      "database_sha256": "62879e7a950226b23d3b5682274a1436d72647d6dca540432a764d7928b3a189",
+      "returned": 1,
+      "samples": {
+        "before_ms": [
+          1.499568,
+          1.357467,
+          1.515932,
+          1.461,
+          1.334442,
+          1.901766,
+          1.608129,
+          1.784971,
+          1.370726,
+          1.513228,
+          1.460139,
+          1.486208,
+          1.500969,
+          1.336195,
+          1.747246,
+          1.314183,
+          1.831911,
+          1.499568,
+          1.51442,
+          1.408743,
+          1.465507
+        ],
+        "after_ms": [
+          1.640267,
+          1.948755,
+          1.395363,
+          1.948335,
+          1.516383,
+          1.623703,
+          1.413039,
+          1.498546,
+          1.482783,
+          1.42061,
+          1.715609,
+          1.741567,
+          1.363155,
+          1.422704,
+          1.364356,
+          9.666149,
+          1.791422,
+          1.512757,
+          1.594418,
+          1.63596,
+          1.535501
+        ]
+      },
+      "orders": [
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ]
+      ],
+      "median": {
+        "before_ms": 1.499568,
+        "after_ms": 1.535501
+      },
+      "reduction": -0.023962234456856857
+    },
+    {
+      "name": "shared-parent-control",
+      "entries": 128,
+      "active": 128,
+      "content_bytes": 128,
+      "match_every": 1,
+      "scope": null,
+      "refs_count": 32,
+      "refs_offset": 96,
+      "dependency_shape": "star",
+      "database_sha256": "f9bea632ce449065499f56826959afdbda3281bdbf47e9f5fab048b86124429e",
+      "returned": 32,
+      "samples": {
+        "before_ms": [
+          0.753099,
+          0.847659,
+          0.923312,
+          1.205752,
+          0.806168,
+          0.848991,
+          0.931604,
+          0.881039,
+          0.941979,
+          0.903442,
+          0.8816,
+          1.374512,
+          0.975499,
+          0.920438,
+          0.844434,
+          1.077661,
+          0.797404,
+          0.890663,
+          0.731877,
+          0.722273,
+          0.771847
+        ],
+        "after_ms": [
+          0.618799,
+          0.696615,
+          0.574513,
+          0.937443,
+          0.630477,
+          0.648103,
+          0.587834,
+          0.576527,
+          0.575435,
+          0.576466,
+          0.620142,
+          0.618228,
+          0.589115,
+          0.658137,
+          0.803994,
+          0.581474,
+          0.526262,
+          0.537469,
+          0.483688,
+          0.625088,
+          0.520964
+        ]
+      },
+      "orders": [
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "after_ms",
+          "before_ms"
+        ],
+        [
+          "before_ms",
+          "after_ms"
+        ]
+      ],
+      "median": {
+        "before_ms": 0.8816,
+        "after_ms": 0.589115
+      },
+      "reduction": 0.3317661070780399
+    }
+  ]
+}

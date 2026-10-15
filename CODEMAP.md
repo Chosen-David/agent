@@ -1,3 +1,5 @@
+MEM-CHECK-03: `MemoryLedger.check`/任务有效性门复用本事务已校验请求根，不跨调用缓存或保留全部祖先；`scripts/bench_memory_retrieval.py` 兼容list并新增check配对配置。`tests/test_memory_check.py` 与 `agent_doc/results/memory-check03-20261016/` 保存回归、4306独立差分与两次CPU测量；主AI独占实现，独立上下文只写审查，不代表模型KV/QA收益。
+
 MEM-SCOPE-02: `MemoryLedger.list` 在已有mixed-status路径中先按精确scope筛ID再装配；`scripts/bench_memory_retrieval.py` 以固定Git基线/JSON配置执行同入口配对计时，结果与独立复核位于 `agent_doc/results/memory-scope02-20261016/`。主AI独占实现与任务，独立上下文只写独立证据；不代表模型KV接入。
 
 MEM-STORAGE-01: `python -m agent_runtime.project_memory list` → `MemoryLedger.list` 延迟装配请求状态的完整记忆；`tests/test_memory_retrieval.py` 覆盖元数据/依赖/异常锁及旧路径兼容。`agent_doc/results/memory-storage-20261015/` 保存12篇论文的定向阅读、配对基准/负结果与独立验收。主AI维护实现和任务；独立上下文只写复核证据。收益仅限合成温缓存SQLite检索，真实模型KV与任务质量尚待接入验证。

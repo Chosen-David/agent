@@ -139,6 +139,8 @@ class MemoryLedger:
         if not refs:
             raise MemoryError('memory refs must be nonempty')
         checked = set()
+        requested = set(refs)
+        roots = {}
         def visit(entry_id):
             if entry_id in checked:
                 return
@@ -153,11 +155,16 @@ class MemoryLedger:
                 except (OSError, ValueError) as exc:
                     raise MemoryError(f'memory {entry_id} has stale project document dependencies: {exc}') from exc
             checked.add(entry_id)
+            # Reuse only requested roots from this validated traversal. The
+            # caller already owns one transaction; do not rehydrate them at
+            # return, retain every ancestor, or cache across future checks.
+            if entry_id in requested:
+                roots[entry_id] = entry
             for parent in entry['deps']:
                 visit(parent)
         for ref in refs:
             visit(ref)
-        return [MemoryLedger._get(db, ref) for ref in refs]
+        return [roots[ref] for ref in refs]
 
     @staticmethod
     def _insert(db, entry_id, kind, content, source, deps, scope, evidence, document_refs=None, root=None):

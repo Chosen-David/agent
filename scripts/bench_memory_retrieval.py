@@ -1,4 +1,4 @@
-"""Paired MemoryLedger.list benchmark against a pinned Git source, synthetic only."""
+"""Paired MemoryLedger list/check benchmark against pinned Git, synthetic only."""
 import argparse
 import hashlib
 import json
@@ -16,6 +16,9 @@ from agent_runtime.project_memory import MemoryLedger
 
 
 def benchmark(config):
+    operation = config.get('operation', 'list')
+    if operation not in ('list', 'check'):
+        raise ValueError('unsupported memory benchmark operation')
     revision = config['baseline_revision']
     if not re.fullmatch('[0-9a-f]{40}', revision):
         raise ValueError('baseline must be an exact Git commit')
@@ -43,13 +46,30 @@ def benchmark(config):
                                 '["T1"]' if i % case['match_every'] == 0 else '["T10"]',
                                 'verified', 'active' if i < case['active'] else 'stale',
                                 '2026-10-16'))
+                shape = case.get('dependency_shape', 'none')
+                if shape not in ('none', 'chain', 'star'):
+                    raise ValueError('unsupported dependency fixture')
+                if shape != 'none':
+                    for i in range(1, case['entries']):
+                        parent = i - 1 if shape == 'chain' else 0
+                        db.execute('INSERT INTO dependencies VALUES(?,?)',
+                                   (f'm{i:06}', f'm{parent:06}'))
             digest = hashlib.sha256(after.path.read_bytes()).hexdigest()
-            kwargs = {'status': 'active', 'scope': case['scope']}
-            expected = before.list(**kwargs)
-            if after.list(**kwargs) != expected:
+            if operation == 'check':
+                offset, count = case['refs_offset'], case['refs_count']
+                if not (type(offset) is int and type(count) is int and
+                        offset >= 0 and count > 0 and offset + count <= case['active']):
+                    raise ValueError('check fixture requires nonempty active refs')
+                refs = [f'm{i:06}' for i in range(offset, offset + count)]
+                calls = {'before_ms': lambda: before.check(refs),
+                         'after_ms': lambda: after.check(refs)}
+            else:
+                kwargs = {'status': 'active', 'scope': case['scope']}
+                calls = {'before_ms': lambda: before.list(**kwargs),
+                         'after_ms': lambda: after.list(**kwargs)}
+            expected = calls['before_ms']()
+            if calls['after_ms']() != expected:
                 raise ValueError('packet mismatch before timing')
-            calls = {'before_ms': lambda: before.list(**kwargs),
-                     'after_ms': lambda: after.list(**kwargs)}
             for fn in calls.values():
                 fn()
             samples = {key: [] for key in calls}
@@ -71,7 +91,7 @@ def benchmark(config):
             cases.append(dict(case, database_sha256=digest, returned=len(expected),
                               samples=samples, orders=orders, median=med,
                               reduction=1 - med['after_ms'] / med['before_ms']))
-    return {'scope': 'full list entry, warm local SQLite, synthetic, no model/KV',
+    return {'scope': f'full {operation} entry, warm local SQLite, synthetic, no model/KV',
             'config': config, 'baseline_source_sha256': before_hash,
             'candidate_source_sha256': hashlib.sha256(
                 (root / 'agent_runtime/project_memory.py').read_bytes()).hexdigest(),

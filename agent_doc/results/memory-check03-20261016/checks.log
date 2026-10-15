@@ -1,0 +1,40 @@
+Before: python -m unittest tests.test_memory_check -v
+Ran 6 tests in 0.046s
+FAILED (failures=1)
+Actual get order: leaf,a,parent,b,leaf,parent,a
+Expected get order: leaf,a,parent,b
+
+After: python -m unittest tests.test_memory_check tests.test_project_memory tests.test_memory_retrieval -v
+Ran 33 tests in 0.628s
+OK
+
+python -O -m unittest tests.test_memory_check tests.test_project_memory tests.test_memory_retrieval -v
+Ran 33 tests in 0.630s
+OK
+
+python -m unittest discover -s tests -v
+Ran 1200 tests in 66.639s
+OK (skipped=8)
+
+python -m unittest discover -s apps/paper-reader/tests -v
+Ran 3 tests in 1.583s
+OK
+
+python scripts/project_docs.py --root PROJECT_ROOT validate
+exit0; canonical index and MEM-CHECK-03 detail resolved.
+
+Independent:4306 differential,5 freshness,3 structural,12 raw-case checks passed.
+Independent targeted regression:33 passed. Details/commands in independent-review.md.
+
+Additional document invocation diagnostics (not hidden as passing commands):
+python -m unittest tests.test_project_docs -v
+FAILED(errors=1): nonexistent module name; corrected to actual document modules.
+Document modules without PYTHONPATH=tests:. ran65,errors=1: namespace test's
+existing top-level import test_result_validation was unavailable under that invocation.
+Full discovery above already includes that directory on sys.path; final targeted
+invocation uses PYTHONPATH=tests:. and actual module names. Raw diagnostics remain
+in private run logs; no production source changed to conceal invocation errors.
+
+PYTHONPATH=tests:. python -m unittest tests.test_agent_doc_namespace tests.test_project_docs_workflow tests.test_project_docs_init tests.test_project_docs_acceptance -v
+Ran 74 tests in 0.838s
+OK
