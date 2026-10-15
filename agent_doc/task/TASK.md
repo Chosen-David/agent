@@ -498,3 +498,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-15
 
 - [ ] [MEM-STORAGE-01] Agent 记忆与 KV 存储优化：12 篇论文方法/实验核对；首阶段 SQLite 历史检索延迟装配通过局部独立验收，真实模型 KV 接入和任务质量仍待验证。 ([详情](task_details/MEM-STORAGE-01.md))
+
+- [x] [MEM-STORAGE-REG] 补齐已发布记忆实验的历史检索登记，两条具体查询可发现；保留unknown验收及宽泛查询负结果，不新增推理性能主张。 ([详情](task_details/MEM-STORAGE-REG.md))
