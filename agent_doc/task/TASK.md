@@ -506,3 +506,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MEM-SCOPE-02] 历史记忆按scope延迟装配：两场景耗时下降60.94%/67.35%，独立复测与1366差分通过；控制退化在预定门槛内。真实模型KV未验。 ([详情](task_details/MEM-SCOPE-02.md))
 
 - [x] [MEM-CHECK-03] 同事务复用已校验请求根：两场景CPU耗时下降44.79%/36.06%，独立4306差分与复测通过；发布回读单独闭环，非模型KV收益。 ([详情](task_details/MEM-CHECK-03.md))
+
+- [x] [MEM-CHECK-04] 迭代依赖校验释放祖先内容：合成深链Python峰值下降97.35%，独立7733差分和复测通过，解除1200层递归失败；非模型KV收益。 ([详情](task_details/MEM-CHECK-04.md))

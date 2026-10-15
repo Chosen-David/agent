@@ -1,0 +1,28 @@
+{
+  "task": "MEM-CHECK-04",
+  "parent": "MEM-STORAGE-01",
+  "baseline": "2d7ddc46b13b24ecc0c3611b1d8dcb63df7e6b10",
+  "decision": "independent manual plan review conditionally adopt; revisions below frozen before source edit or measurements",
+  "revision": "Explicit stack holds dependency iterators, not eagerly reversed full graph frontier. Drop local non-request entry after storing iterator; preserve lazy DFS ordering.",
+  "hypothesis": "Recursive _check retains full non-root entry dictionaries while visiting parents; iterative DFS can drop these sooner, reducing Python peak allocations and avoiding interpreter recursion depth without cross-call caching.",
+  "primary_gate": "full check() Python tracemalloc peak reduction >=70% on a 256-node chain with 16KiB content/node",
+  "latency_guard": "untraced complete-call median regression <=15% in 21 paired randomized AB trials, primary and small/shallow/multi-root/branch controls",
+  "invariants": ["same refs validation","same DFS visitation/error order","same checked-before-parent behavior","same status/document/dependency freshness checks","same requested-root order/content","same SQLite transaction/schema","no cross-call cache"],
+  "correctness": "baseline differential results/errors/order plus freshness and long-chain reliability; baseline RecursionError outside recursion depth is explicitly separate from ordinary equality",
+  "resource": "bounded temporary synthetic SQLite on CPU; no model/API/GPU/dependency installation",
+  "scope": "Python traced peak is not RSS, SQLite native memory, GPU/KV or inference speed; traced timings not used for latency",
+  "supervision": "manual host plan/result contexts only; tmux/managed ReviewSession unavailable from prior exact environment; no background service claimed",
+  "prior_result_search": {"queries":["MemoryLedger check ancestor peak memory recursive deep chain","memory traversal iterative dependency validation"],"scanned":200,"partial":true,"errors":60,"candidate":"memory-check03-20261016","reuse":"method/compatibility context only; no new metric reuse"},
+  "fixtures": [
+    {"id":"deep_payload","shape":"chain","nodes":256,"content_bytes":16384,"roots":[255]},
+    {"id":"small","shape":"independent","nodes":1,"content_bytes":128,"roots":[0]},
+    {"id":"chain64","shape":"chain","nodes":64,"content_bytes":128,"roots":[63]},
+    {"id":"wide","shape":"one root 512 depends on 0..511","nodes":513,"content_bytes":256,"roots":[512]},
+    {"id":"multi_roots","shape":"independent","nodes":128,"content_bytes":512,"roots":"all in descending order"},
+    {"id":"layered","shape":"32 levels width4, each level depends on all4 preceding level","nodes":128,"content_bytes":256,"roots":[127,126,125,124]},
+    {"id":"deep_short","shape":"chain","nodes":256,"content_bytes":64,"roots":[255]}
+  ],
+  "measurement": {"seed":41016,"wall_pairs":21,"warmup_each":3,"gc":"collect before each timed call in both arms, collection outside timer","summary":"ratio of per-arm medians for each case, not average and not min","traced_pairs":7,"traced_scope":"start tracemalloc before full check and stop only after transaction close/return; build/equality and GC outside; independent of wall samples","input":"fixed stable IDs, canonical fixture spec hash and actual deterministic SQL payload hash; no randomized result selection"},
+  "candidate_budget": "one iterator-frame candidate, <=30 minutes CPU probing/review then save checkpoint if not ready; no repeated tuning to overcome gate",
+  "stop": "gate fails => retain baseline or save unadopted candidate/negative result; no publication without independent code/data verification and final regression"
+}

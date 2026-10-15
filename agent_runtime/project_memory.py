@@ -141,9 +141,18 @@ class MemoryLedger:
         checked = set()
         requested = set(refs)
         roots = {}
-        def visit(entry_id):
+        # Keep the recursive DFS order without retaining full ancestor contents
+        # or depending on Python's recursion limit. Iterators keep wide graphs
+        # lazy, just like the former per-entry for loop.
+        frames = [iter(refs)]
+        while frames:
+            try:
+                entry_id = next(frames[-1])
+            except StopIteration:
+                frames.pop()
+                continue
             if entry_id in checked:
-                return
+                continue
             entry = MemoryLedger._get(db, entry_id)
             if entry['status'] != 'active':
                 raise MemoryError(f'memory {entry_id} is {entry["status"]}; reconciliation required')
@@ -160,10 +169,9 @@ class MemoryLedger:
             # return, retain every ancestor, or cache across future checks.
             if entry_id in requested:
                 roots[entry_id] = entry
-            for parent in entry['deps']:
-                visit(parent)
-        for ref in refs:
-            visit(ref)
+            frames.append(iter(entry['deps']))
+            # Only requested roots need full hydration after their own checks.
+            del entry
         return [roots[ref] for ref in refs]
 
     @staticmethod

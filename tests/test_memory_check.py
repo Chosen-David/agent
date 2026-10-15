@@ -75,6 +75,28 @@ class MemoryCheckTests(unittest.TestCase):
         with self.assertRaisesRegex(MemoryError, 'no such table: dependencies'):
             self.ledger.check(['leaf'])
 
+    def test_deep_chain_does_not_depend_on_python_recursion_limit(self):
+        # Bulk-load a valid synthetic history; timing add() would test a
+        # different operation and repeat validation of every partial chain.
+        with self.ledger._connect(write=True) as db:
+            for i in range(1200):
+                name = f'deep{i:04d}'
+                db.execute('INSERT INTO entries VALUES(?,?,?,?,?,?,?,?)',
+                           (name, 'claim', 'payload', 'synthetic', '[]',
+                            'verified', 'active', '2026-10-16'))
+                if i:
+                    db.execute('INSERT INTO dependencies VALUES(?,?)',
+                               (name, f'deep{i-1:04d}'))
+        self.assertEqual(self.ledger.check(['deep1199'])[0]['id'], 'deep1199')
+
+    def test_first_error_keeps_lazy_depth_first_order(self):
+        with self.ledger._connect(write=True) as db:
+            db.execute("UPDATE entries SET status='stale' WHERE id IN ('parent','b')")
+        with patch.object(MemoryLedger, '_get', wraps=MemoryLedger._get) as get:
+            with self.assertRaisesRegex(MemoryError, 'memory parent is stale'):
+                self.ledger.check(['leaf', 'b'])
+        self.assertEqual([c.args[1] for c in get.call_args_list], ['leaf', 'a', 'parent'])
+
 
 if __name__ == '__main__':
     unittest.main()

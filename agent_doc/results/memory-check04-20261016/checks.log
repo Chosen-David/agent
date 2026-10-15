@@ -1,0 +1,28 @@
+Baseline exact git source 2d7ddc46b13b24ecc0c3611b1d8dcb63df7e6b10 loaded
+with __package__=agent_runtime; new test_memory_check.py executed against it:
+Ran 8 tests in 0.077s
+FAILED (errors=1): test_deep_chain_does_not_depend_on_python_recursion_limit
+RecursionError: maximum recursion depth exceeded
+
+Candidate: python -m unittest discover -s tests -p 'test_memory*.py' -v
+Ran 20 tests in 0.305s
+OK
+
+Candidate: python -m unittest discover -s tests -v
+Ran 1202 tests in 66.563s
+OK (skipped=8)
+
+Candidate: python -O -m unittest discover -s tests -p 'test_memory*.py' -v
+Ran 20 tests in 0.411s
+OK
+
+Candidate: python -m unittest discover -s apps/paper-reader/tests -v
+Ran 3 tests in 1.582s
+OK
+
+Independent: 7733 result/error/_get order differential cases;
+4 document event-order cases; 1024/1200 depth reliability;
+7 fixture/input hashes and all randomized orders independently rebuilt.
+Primary and independent 21-pair wall / 7-pair trace both fixed gates passed.
+See raw-primary.json, raw-independent.json, independent-review.md.
+Synthetic CPU SQLite only; no GPU/model/QA/TTFT verification.
