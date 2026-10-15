@@ -265,7 +265,37 @@ class MemoryLedger:
         if status not in ('active', 'candidate', 'stale', 'superseded', 'all'):
             raise MemoryError('unknown status')
         with self._connect() as db:
-            rows = db.execute('SELECT id FROM entries ORDER BY created_at,id').fetchall()
+            filtered = (type(self) is MemoryLedger and type(status) is str and status != 'all'
+                        and db.execute('SELECT 1 FROM entries WHERE status<>? LIMIT 1',
+                                       (status,)).fetchone())
+            if filtered:
+                try:
+                    db.execute('SELECT child,parent FROM dependencies LIMIT 0')
+                except sqlite3.OperationalError:
+                    # Preserve legacy failures even if no requested-status row
+                    # exists, rather than hiding a missing dependency table.
+                    filtered = False
+            if filtered:
+                # Decode all JSON metadata first, preserving failures even on
+                # excluded historical entries. SQLite json_valid is not a
+                # substitute for Python decoding (BLOB/UTF-8/depth semantics).
+                documents = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' "
+                                       "AND name='document_dependencies'").fetchone()
+                if documents:
+                    metadata = db.execute(
+                        'SELECT e.scope,d.entry_id,d.snapshot FROM entries e '
+                        'LEFT JOIN document_dependencies d ON d.entry_id=e.id '
+                        'ORDER BY e.created_at,e.id').fetchall()
+                else:
+                    metadata = db.execute('SELECT scope,NULL,NULL FROM entries ORDER BY created_at,id').fetchall()
+                for entry_scope, document_id, snapshot in metadata:
+                    json.loads(entry_scope)
+                    if document_id is not None:
+                        json.loads(snapshot)
+                rows = db.execute('SELECT id FROM entries WHERE status=? ORDER BY created_at,id',
+                                  (status,)).fetchall()
+            else:
+                rows = db.execute('SELECT id FROM entries ORDER BY created_at,id').fetchall()
             values = [self._get(db, r[0]) for r in rows]
             return [v for v in values if (status == 'all' or v['status'] == status)
                     and (scope is None or scope in v['scope'])]

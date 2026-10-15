@@ -1,3 +1,5 @@
+MEM-STORAGE-01: `python -m agent_runtime.project_memory list` → `MemoryLedger.list` 延迟装配请求状态的完整记忆；`tests/test_memory_retrieval.py` 覆盖元数据/依赖/异常锁及旧路径兼容。`agent_doc/results/memory-storage-20261015/` 保存12篇论文的定向阅读、配对基准/负结果与独立验收。主AI维护实现和任务；独立上下文只写复核证据。收益仅限合成温缓存SQLite检索，真实模型KV与任务质量尚待接入验证。
+
 Round04 complete coordinate arithmetic transport: `agent_runtime/grid_context.py`, CLI `scripts/grid_context.py`, boundaries `tests/test_grid_context.py`, scope `docs/token_optimization/grid_context.md`. Exact nonzero constant-step grid values and metadata; current-source restoration, no scientific acceptance.
 
 Round03 path value transport: `agent_runtime/reference_context.py`, `scripts/reference_context.py`, `tests/test_reference_context.py`, `docs/token_optimization/reference_context.md`; complete collection, directory-prefix reconstruction, no artifact validity authority.

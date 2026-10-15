@@ -494,3 +494,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [KNOWLEDGE-FENCE] 知识索引fence合法性修正：固定案例11/16→16/16，115条语料输出不变，旧engine重建；独立验收通过、main代码1767f4a及29文件逐字节读回核验。 ([详情](task_details/KNOWLEDGE-FENCE.md))
 
 - [ ] [MATH-116] 近似定常权重的放大与均值偏差界：低权重槽位的小绝对偏差反例，四个公开解析例；真实核/误差认证及模型验证待完成。 ([详情](task_details/MATH-116.md))
+
+## 2026-10-15
+
+- [ ] [MEM-STORAGE-01] Agent 记忆与 KV 存储优化：12 篇论文方法/实验核对；首阶段 SQLite 历史检索延迟装配通过局部独立验收，真实模型 KV 接入和任务质量仍待验证。 ([详情](task_details/MEM-STORAGE-01.md))
