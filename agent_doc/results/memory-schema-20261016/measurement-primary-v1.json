@@ -1,0 +1,968 @@
+{
+  "plan": {
+    "issue_id": "MEM-CHECK-SCHEMA-06",
+    "parent": "MEM-STORAGE-01",
+    "baseline": "06ed701b30fc6f83c554f1f240b1f05122d387e3",
+    "scope": "Only Chosen-David/agent; TwoLevel paused and must not be published",
+    "decision": "bounded same-goal candidate; independent static plan review before source changes; manual workflow, not managed DAG/ReviewSession",
+    "hypothesis": "Repeated sqlite_master existence queries for document_dependencies are redundant inside an owned read transaction; preserve every node hydration/status/document/dependency check and every handoff validation phase.",
+    "implementation_boundary": "Shared hydration and DFS engine with per-call tri-state schema flag only on built-in public check path. Keep _get and _check signatures and default uncached semantics. Fallback for subclass/overridden _get,_check,_connect or document validator; require genuine sqlite3 connection and standard factories/in_transaction. Direct external _check and insertion remain uncached to preserve same-connection DDL behavior.",
+    "rejected_alternatives": [
+      "single handoff closure traversal reduces freshness opportunities",
+      "skip ancestor content hydration changes malformed UTF-8/error behavior",
+      "cross-call schema caches can become stale"
+    ],
+    "primary_acceptance": "At least 10% lower median complete check wall in BOTH 512-node present-empty-document-table chain and 512-node legacy-no-document-table chain; complete outputs equal. No control regresses more than 15%.",
+    "timing": {
+      "seed": 61016,
+      "pairs": 21,
+      "warmup_per_arm": 3,
+      "ordering": "seeded randomized AB/BA within pairs",
+      "scope": "complete public check including paths, connection/transaction, full hydration, validations and return; setup, equality and GC outside timer",
+      "batch_per_sample": 5
+    },
+    "fixtures": [
+      {
+        "id": "chain512",
+        "nodes": 512,
+        "shape": "chain",
+        "content_bytes": 128,
+        "document_table": true,
+        "roots": "leaf"
+      },
+      {
+        "id": "legacy512",
+        "nodes": 512,
+        "shape": "chain",
+        "content_bytes": 128,
+        "document_table": false,
+        "roots": "leaf"
+      },
+      {
+        "id": "one",
+        "nodes": 1,
+        "shape": "independent",
+        "content_bytes": 128,
+        "document_table": true,
+        "roots": "all"
+      },
+      {
+        "id": "wide64",
+        "nodes": 65,
+        "shape": "64 parents + leaf",
+        "content_bytes": 128,
+        "document_table": true,
+        "roots": "leaf"
+      },
+      {
+        "id": "roots128",
+        "nodes": 128,
+        "shape": "independent",
+        "content_bytes": 128,
+        "document_table": true,
+        "roots": "all descending"
+      }
+    ],
+    "correctness": "Frozen baseline complete result or exception class/message/order; unknown/inactive/malformed scope/document metadata/UTF-8, missing tables, deep/shared graphs, fresh mutable objects, document edits and correction between calls, overrides, direct autocommit/same-connection schema change. Trace optimized native path separately because _get wrappers must force compatibility fallback.",
+    "prior_result_review": "prior-search.json: memory-check03 plus unrelated corpus/token hits, scanned200 partialtrue errors60. Old check03/04 evidence is history/contracts only, not this candidate's measurements. Knowledge hits must be assessed separately; no generic theorem transfer.",
+    "resource": "one local CPU, temporary synthetic SQLite, no models/API/GPU/new paid resources; at most two candidates and 30 minutes before checkpoint",
+    "publication_gate": "Only reliable measured gain plus independent code/data review and appropriate full regressions; fresh fetch and exact staged-file push/readback. Otherwise retain negative result privately; never claim KV/QA/TTFT benefit."
+  },
+  "baseline_source_sha256": "2f2b7b9c439333438be982a8200d0ed213352c76707d2b07454b113855821e98",
+  "candidate_source_sha256": "a888edab68893e076c7018a9976162a281ab507a9a5dbbc33cf0c6450ae0c52a",
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "sqlite": "3.53.1"
+  },
+  "cases": [
+    {
+      "fixture": {
+        "id": "chain512",
+        "nodes": 512,
+        "shape": "chain",
+        "content_bytes": 128,
+        "document_table": true,
+        "roots": "leaf"
+      },
+      "refs": [
+        "n0511"
+      ],
+      "input_sha256": "1bc4a5444a0fc139a9aa23b7ce1256c38f5e8d788a272cac9482c53997bcc1c2",
+      "sqlite_sha256": "079cfd6e5049fc7bb2a2d15ca0ed9e62f7ae334bd16f0eb8bb1fed0e0e10e741",
+      "samples_ns_per_complete_check": {
+        "before": [
+          4356500.2,
+          4383036.4,
+          4374256.6,
+          4799561.2,
+          4521379.4,
+          4525031.0,
+          4476620.8,
+          4499164.4,
+          4503817.2,
+          4572060.8,
+          4444953.6,
+          4452891.4,
+          4907994.6,
+          4571149.4,
+          4485257.8,
+          4382673.0,
+          4364910.6,
+          4369787.8,
+          4320464.4,
+          4317964.8,
+          4512107.8
+        ],
+        "after": [
+          3838513.6,
+          3939684.2,
+          3879212.2,
+          5641377.4,
+          3627604.0,
+          3767387.6,
+          3799884.2,
+          3738943.4,
+          3990894.2,
+          3811070.8,
+          3776689.8,
+          3781116.2,
+          3924175.2,
+          3689229.4,
+          3762400.4,
+          3705251.4,
+          3683429.0,
+          5615933.6,
+          3731620.8,
+          3712544.4,
+          3742831.4
+        ]
+      },
+      "order": [
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ]
+      ],
+      "reduction": 0.15635253269609073,
+      "outputs_equal": true,
+      "database_unchanged": true
+    },
+    {
+      "fixture": {
+        "id": "legacy512",
+        "nodes": 512,
+        "shape": "chain",
+        "content_bytes": 128,
+        "document_table": false,
+        "roots": "leaf"
+      },
+      "refs": [
+        "n0511"
+      ],
+      "input_sha256": "1bc4a5444a0fc139a9aa23b7ce1256c38f5e8d788a272cac9482c53997bcc1c2",
+      "sqlite_sha256": "62ee5ebb3cc28a9487ae3679db8b16276ac90dc66a2a26bd69c8b764bcd2523f",
+      "samples_ns_per_complete_check": {
+        "before": [
+          3772860.0,
+          3895947.2,
+          3945893.2,
+          3809254.2,
+          4547766.6,
+          3885299.0,
+          3828913.4,
+          3814916.6,
+          3905126.6,
+          3879594.8,
+          4563079.4,
+          3882483.2,
+          4061992.2,
+          3870285.0,
+          4037497.6,
+          3845674.4,
+          3907852.8,
+          3821945.0,
+          3866663.6,
+          3840320.4,
+          3742629.2
+        ],
+        "after": [
+          3405181.2,
+          3310348.0,
+          3258360.6,
+          3377297.6,
+          3525482.0,
+          3441871.6,
+          3463708.2,
+          3507581.4,
+          3417217.0,
+          3477266.2,
+          3458736.8,
+          3305370.6,
+          3383354.6,
+          3452822.0,
+          3512518.6,
+          3322510.2,
+          3750504.6,
+          3899446.2,
+          3374301.2,
+          3688388.2,
+          3290096.0
+        ]
+      },
+      "order": [
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ]
+      ],
+      "reduction": 0.11282704059712623,
+      "outputs_equal": true,
+      "database_unchanged": true
+    },
+    {
+      "fixture": {
+        "id": "one",
+        "nodes": 1,
+        "shape": "independent",
+        "content_bytes": 128,
+        "document_table": true,
+        "roots": "all"
+      },
+      "refs": [
+        "n0000"
+      ],
+      "input_sha256": "bcec1bbc3a9f5929d8c0b4f0349dee56b58a70fdcf34ad1ba075206520c47836",
+      "sqlite_sha256": "e751e37b76d0d2ff608f177920598b403e68129a8fb8c6ff5050372a895ddf64",
+      "samples_ns_per_complete_check": {
+        "before": [
+          264114.8,
+          267824.4,
+          271039.0,
+          260727.8,
+          268669.6,
+          250310.2,
+          256924.0,
+          263393.8,
+          260713.8,
+          249395.0,
+          252637.8,
+          249751.4,
+          252175.0,
+          253078.4,
+          252982.2,
+          262254.0,
+          262162.0,
+          252255.4,
+          254526.6,
+          251792.6,
+          265400.8
+        ],
+        "after": [
+          290486.0,
+          283631.8,
+          252435.6,
+          252247.2,
+          251075.4,
+          258412.4,
+          252585.8,
+          256980.2,
+          257963.6,
+          256289.2,
+          252074.8,
+          259396.0,
+          268815.8,
+          261088.2,
+          260812.0,
+          263051.4,
+          251810.6,
+          254354.4,
+          255149.6,
+          262015.8,
+          253837.6
+        ]
+      },
+      "order": [
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ]
+      ],
+      "reduction": -0.0002187417290717697,
+      "outputs_equal": true,
+      "database_unchanged": true
+    },
+    {
+      "fixture": {
+        "id": "wide64",
+        "nodes": 65,
+        "shape": "64 parents + leaf",
+        "content_bytes": 128,
+        "document_table": true,
+        "roots": "leaf"
+      },
+      "refs": [
+        "n0064"
+      ],
+      "input_sha256": "65160f6c31bde090343d27e257ae5ceda2a3cb3e4a382d657aca2b20dbf02b6a",
+      "sqlite_sha256": "d16c792ddcd7ef4dbda270b96ee5de57b9b33af68189c3f9f7a446b3cf51045e",
+      "samples_ns_per_complete_check": {
+        "before": [
+          890839.0,
+          807398.8,
+          790415.6,
+          771427.4,
+          797334.0,
+          803613.4,
+          919411.6,
+          971615.4,
+          797250.0,
+          774852.6,
+          822549.6,
+          801734.4,
+          805061.4,
+          777079.8,
+          813698.4,
+          797063.6,
+          769292.4,
+          791823.8,
+          775505.6,
+          891720.4,
+          790674.2
+        ],
+        "after": [
+          721475.2,
+          754694.4,
+          712081.2,
+          715067.8,
+          714036.0,
+          741218.4,
+          691102.0,
+          875880.8,
+          779948.2,
+          808809.2,
+          715388.2,
+          691020.0,
+          721104.8,
+          689653.8,
+          719065.6,
+          761769.2,
+          698911.6,
+          795182.8,
+          801077.6,
+          691923.2,
+          704922.6
+        ]
+      },
+      "order": [
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ]
+      ],
+      "reduction": 0.09816262695432532,
+      "outputs_equal": true,
+      "database_unchanged": true
+    },
+    {
+      "fixture": {
+        "id": "roots128",
+        "nodes": 128,
+        "shape": "independent",
+        "content_bytes": 128,
+        "document_table": true,
+        "roots": "all descending"
+      },
+      "refs": [
+        "n0127",
+        "n0126",
+        "n0125",
+        "n0124",
+        "n0123",
+        "n0122",
+        "n0121",
+        "n0120",
+        "n0119",
+        "n0118",
+        "n0117",
+        "n0116",
+        "n0115",
+        "n0114",
+        "n0113",
+        "n0112",
+        "n0111",
+        "n0110",
+        "n0109",
+        "n0108",
+        "n0107",
+        "n0106",
+        "n0105",
+        "n0104",
+        "n0103",
+        "n0102",
+        "n0101",
+        "n0100",
+        "n0099",
+        "n0098",
+        "n0097",
+        "n0096",
+        "n0095",
+        "n0094",
+        "n0093",
+        "n0092",
+        "n0091",
+        "n0090",
+        "n0089",
+        "n0088",
+        "n0087",
+        "n0086",
+        "n0085",
+        "n0084",
+        "n0083",
+        "n0082",
+        "n0081",
+        "n0080",
+        "n0079",
+        "n0078",
+        "n0077",
+        "n0076",
+        "n0075",
+        "n0074",
+        "n0073",
+        "n0072",
+        "n0071",
+        "n0070",
+        "n0069",
+        "n0068",
+        "n0067",
+        "n0066",
+        "n0065",
+        "n0064",
+        "n0063",
+        "n0062",
+        "n0061",
+        "n0060",
+        "n0059",
+        "n0058",
+        "n0057",
+        "n0056",
+        "n0055",
+        "n0054",
+        "n0053",
+        "n0052",
+        "n0051",
+        "n0050",
+        "n0049",
+        "n0048",
+        "n0047",
+        "n0046",
+        "n0045",
+        "n0044",
+        "n0043",
+        "n0042",
+        "n0041",
+        "n0040",
+        "n0039",
+        "n0038",
+        "n0037",
+        "n0036",
+        "n0035",
+        "n0034",
+        "n0033",
+        "n0032",
+        "n0031",
+        "n0030",
+        "n0029",
+        "n0028",
+        "n0027",
+        "n0026",
+        "n0025",
+        "n0024",
+        "n0023",
+        "n0022",
+        "n0021",
+        "n0020",
+        "n0019",
+        "n0018",
+        "n0017",
+        "n0016",
+        "n0015",
+        "n0014",
+        "n0013",
+        "n0012",
+        "n0011",
+        "n0010",
+        "n0009",
+        "n0008",
+        "n0007",
+        "n0006",
+        "n0005",
+        "n0004",
+        "n0003",
+        "n0002",
+        "n0001",
+        "n0000"
+      ],
+      "input_sha256": "a91b143cc17d579af3d422cb1758411855233cbfdd57aabd194ce7e140154b94",
+      "sqlite_sha256": "ae2f571eb4f937c90c95aaa095f47d601a7e6ace039bf9e68718634afeebb790",
+      "samples_ns_per_complete_check": {
+        "before": [
+          1325253.2,
+          1360417.6,
+          2919146.2,
+          1333151.0,
+          1288901.2,
+          1371996.6,
+          1361331.0,
+          1492650.2,
+          1320754.6,
+          1336039.4,
+          1322060.6,
+          2996018.4,
+          1290792.0,
+          1692563.6,
+          1290597.8,
+          1519604.4,
+          1333463.6,
+          1281306.0,
+          2589037.2,
+          1281606.2,
+          1493451.4
+        ],
+        "after": [
+          1176361.8,
+          1197787.8,
+          1127284.8,
+          1171176.2,
+          4085859.6,
+          1124891.2,
+          1515448.0,
+          1151621.0,
+          1174571.2,
+          1163634.8,
+          1146345.2,
+          1133512.0,
+          1131719.4,
+          2272712.6,
+          1130866.0,
+          1435120.6,
+          1128292.2,
+          1179911.0,
+          1202929.4,
+          1119156.6,
+          1204291.4
+        ]
+      },
+      "order": [
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "before",
+          "after"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ],
+        [
+          "after",
+          "before"
+        ]
+      ],
+      "reduction": 0.12339695970043996,
+      "outputs_equal": true,
+      "database_unchanged": true
+    }
+  ],
+  "performance_gate": true
+}

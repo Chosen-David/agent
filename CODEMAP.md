@@ -1,5 +1,7 @@
 MEM-SCOPE-05: `MemoryLedger.list` 对同状态、原始scope不同的库先筛scope再装配；uniform scope保留旧路径。`tests/test_memory_retrieval.py` 覆盖同状态/错误顺序/保守fallback；同入口基准和独立证据在 `agent_doc/results/memory-scope05-20261016/`。非模型KV。
 
+MEM-CHECK-SCHEMA-06: `MemoryLedger.check` → `_walk` → `_read_entry` 仅在自有普通事务内共享一次schema存在性判定；完整祖先/文档校验保留，自定义入口和直接`_get/_check`回退。`tests/test_memory_schema_check.py`覆盖原生路径/覆盖/factory/DDL；`agent_doc/results/memory-schema-20261016/`保存冻结measure.py、329差分、负结果及独立复测。主AI维护实现/任务，独立角色只写审查；消费者为handoff记忆门禁和MEM-STORAGE-01，仅合成CPU收益。
+
 MEM-CHECK-04: `MemoryLedger._check` 用依赖迭代器帧保留DFS顺序，释放非请求祖先内容并消除Python递归深度限制；`scripts/bench_memory_check.py` 按冻结JSON执行完整check的独立wall/tracemalloc配对，`tests/test_memory_check.py` 覆盖深链/错误顺序。证据在 `agent_doc/results/memory-check04-20261016/`，仅合成CPU账本收益，非模型KV。
 
 MEM-CHECK-03: `MemoryLedger.check`/任务有效性门复用本事务已校验请求根，不跨调用缓存或保留全部祖先；`scripts/bench_memory_retrieval.py` 兼容list并新增check配对配置。`tests/test_memory_check.py` 与 `agent_doc/results/memory-check03-20261016/` 保存回归、4306独立差分与两次CPU测量；主AI独占实现，独立上下文只写审查，不代表模型KV/QA收益。

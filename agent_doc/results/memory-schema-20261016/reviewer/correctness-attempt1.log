@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 131, in _connect
+    yield db
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/.agent-runs/memory-schema-20261016/reviewer/independent_check.py", line 30, in <module>
+    with ledger._connect(write=True) as db:db.executescript(sql)
+                                           ^^^^^^^^^^^^^^^^^^^^^
+sqlite3.IntegrityError: FOREIGN KEY constraint failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/.agent-runs/memory-schema-20261016/reviewer/independent_check.py", line 30, in <module>
+    with ledger._connect(write=True) as db:db.executescript(sql)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 136, in _connect
+    raise MemoryError(f'project memory ledger unavailable: {exc}') from exc
+agent_runtime.project_memory.MemoryError: project memory ledger unavailable: FOREIGN KEY constraint failed

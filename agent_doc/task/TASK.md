@@ -510,3 +510,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MEM-CHECK-04] 迭代依赖校验释放祖先内容：合成深链Python峰值下降97.35%，独立7733差分和复测通过，解除1200层递归失败；非模型KV收益。 ([详情](task_details/MEM-CHECK-04.md))
 
 - [x] [MEM-SCOPE-05] 全active异scope延迟装配：主测耗时下降74.69%/65.75%，独立10098项检查和同协议复测通过；保留首版负结果，仅本地记忆收益，发布单独回读。 ([详情](task_details/MEM-SCOPE-05.md))
+
+- [x] [MEM-CHECK-SCHEMA-06] 单次遍历复用schema判定：长链主测下降15.01%/12.16%，独立329差分及复测通过；保留两版兼容性负结果，模型KV未验。 ([详情](task_details/MEM-CHECK-SCHEMA-06.md))
