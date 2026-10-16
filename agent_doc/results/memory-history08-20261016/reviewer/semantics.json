@@ -1,0 +1,142 @@
+{
+  "checks": [
+    {
+      "case": "sequence_and_audit",
+      "negative_gapped_out_of_order": true,
+      "backwards_timestamps_preserved": true,
+      "complete_packets_equal": true,
+      "stale_and_document_binding_preserved": true,
+      "physical_unchanged": true,
+      "metadata": {
+        "schema": "CREATE INDEX memory_events_entry ON events(entry_id)",
+        "index_list": [
+          [
+            0,
+            "memory_events_entry",
+            0,
+            "c",
+            0
+          ]
+        ],
+        "xinfo": [
+          [
+            0,
+            1,
+            "entry_id",
+            0,
+            "BINARY",
+            1
+          ],
+          [
+            1,
+            -1,
+            null,
+            0,
+            "BINARY",
+            0
+          ]
+        ],
+        "eqp": [
+          [
+            4,
+            0,
+            62,
+            "SEARCH events USING INDEX memory_events_entry (entry_id=?)"
+          ]
+        ]
+      }
+    },
+    {
+      "case": "rollback",
+      "arm": 0,
+      "preinsert": true,
+      "postwrite": true,
+      "history_and_superseded": true
+    },
+    {
+      "case": "rollback",
+      "arm": 1,
+      "preinsert": true,
+      "postwrite": true,
+      "history_and_superseded": true
+    },
+    {
+      "case": "hydration_errors",
+      "cases": [
+        {
+          "case": "unknown",
+          "outcome": {
+            "error": "MemoryError",
+            "message": "unknown memory ID: missing"
+          }
+        },
+        {
+          "case": "scope",
+          "outcome": {
+            "error": "JSONDecodeError",
+            "message": "Expecting value: line 1 column 1 (char 0)"
+          }
+        },
+        {
+          "case": "document",
+          "outcome": {
+            "error": "JSONDecodeError",
+            "message": "Expecting value: line 1 column 1 (char 0)"
+          }
+        },
+        {
+          "case": "event_utf8",
+          "outcome": {
+            "error": "MemoryError",
+            "message": "project memory ledger unavailable: Could not decode to UTF-8 column 'reason' with text '\ufffd'"
+          }
+        },
+        {
+          "case": "other_event_utf8",
+          "outcome": {
+            "value": {
+              "entry": {
+                "id": "a",
+                "kind": "claim",
+                "content": "a",
+                "source": "s",
+                "scope": [],
+                "evidence": "verified",
+                "status": "active",
+                "created_at": "<clock>",
+                "document_refs": null,
+                "deps": []
+              },
+              "events": [
+                {
+                  "sequence": 1,
+                  "entry_id": "a",
+                  "action": "created",
+                  "reason": "verified",
+                  "source": "s",
+                  "related_id": null,
+                  "created_at": "<clock>"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "case": "missing_events",
+          "outcome": {
+            "error": "MemoryError",
+            "message": "project memory ledger unavailable: no such table: events"
+          }
+        },
+        {
+          "case": "unknown_and_missing_events",
+          "outcome": {
+            "error": "MemoryError",
+            "message": "unknown memory ID: missing"
+          }
+        }
+      ]
+    }
+  ],
+  "all_passed": true
+}

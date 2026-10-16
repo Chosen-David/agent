@@ -94,6 +94,8 @@ class MemoryLedger:
                         action TEXT NOT NULL, reason TEXT NOT NULL, source TEXT NOT NULL,
                         related_id TEXT, created_at TEXT NOT NULL DEFAULT
                             (strftime('%Y-%m-%dT%H:%M:%fZ','now')));
+                    CREATE INDEX IF NOT EXISTS memory_events_entry
+                        ON events(entry_id);
                 ''')
 
     def _validate_paths(self):

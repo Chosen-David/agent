@@ -1,0 +1,11 @@
+# History index diagnostic: pre-result static review
+
+Manual independent source/harness review only, not result acceptance or managed approval. Scope is Agent public MemoryLedger.history/CLI history audit; no internal runtime consumer was found in inspected source. The source is unchanged from baseline c854e274fea7e72a574bf1377d7f38679832812d; identities in static-bindings.json.
+
+The actual harness matches six frozen fixtures, exact calls, 21 paired seed81601 AB/BA orders and three warmup pairs, fresh copies per arm, identical input verification and complete API timer. Instance construction, copy, DDL and snapshots/equality are outside timing; API contains paths/connection/transaction/hydration/events/commit/return. Input preflight warms both arms, so cold disk claims are excluded. One-time index connect/execute/commit/close and bytes are recorded separately. No candidate tuning or threshold change is permitted.
+
+Clock normalization affects only new revision/new-entry and event sequences after seeded maximum; old timestamps remain checked and other state/output fields compare exactly. History requires exact event packet order plus unchanged complete logical state and per-arm physical DB bytes. Correct fixture asserts exact 15 descendants, statuses and unrelated-node preservation. Separate active-c rollback fixture correctly exercises both lineage rejection and postwrite event failure (the prior unrelated round oracle error is not repeated).
+
+The events schema uses sequence INTEGER PRIMARY KEY AUTOINCREMENT, hence sequence aliases rowid. An entry_id secondary index implicitly carries rowid, but history SELECT * is not covered by it. Baseline rowid scan already yields sequence order without a mandatory sort; actual EQP/index_xinfo still require result inspection. SQL explicitly retains ORDER BY sequence, independent of insertion timestamps.
+
+No blocking static issue identified. Producer is currently measuring; reviewer has performed no test or timing. Numerical gates (both 50000-event primaries >=30%, each control <=15% regression), data validity, real sequence-gap/negative/timestamp order boundaries, independent reproduction and final acceptance remain pending. A diagnostic pass would authorize no implementation/migration/publication by itself.

@@ -1,0 +1,81 @@
+{
+  "source_sha256": "3ab5bf98029e56ed98f1702bc0ee0fba19ef1176284fe440705b04b073d0422c",
+  "baseline_sha256": "7df8e23ecee946e996b828fb702258e03dabe2306b42c63a3daadf15008d950e",
+  "two_line_ddl_only": true,
+  "checks": [
+    {
+      "case": "actual_schema_upgrade",
+      "nonempty_documents_exact": true,
+      "old_clocks_and_sequence_exact": true,
+      "legacy_reads_no_migration": true,
+      "repeat_physical_and_logical_idempotent": true,
+      "sequence_negative_gaps_backwards_clock_exact": true,
+      "index": {
+        "list": [
+          [
+            0,
+            "memory_events_entry",
+            0,
+            "c",
+            0
+          ]
+        ],
+        "info": [
+          [
+            0,
+            1,
+            "entry_id"
+          ]
+        ],
+        "xinfo": [
+          [
+            0,
+            1,
+            "entry_id",
+            0,
+            "BINARY",
+            1
+          ],
+          [
+            1,
+            -1,
+            null,
+            0,
+            "BINARY",
+            0
+          ]
+        ]
+      },
+      "diagnostic_entire_schema_equivalent": true,
+      "eqp": [
+        [
+          4,
+          0,
+          62,
+          "SEARCH events USING INDEX memory_events_entry (entry_id=?)"
+        ]
+      ]
+    },
+    {
+      "case": "business_rollback",
+      "normal_add_no_index_install": true,
+      "preinsert_and_postwrite_rollback": true,
+      "superseded_protection": true,
+      "document_refs_preserved": true
+    },
+    {
+      "case": "cli_and_same_names",
+      "failed_add_installs_without_business_mutation": true,
+      "wrong_column_index_preserved": true,
+      "index_on_other_table_preserved": true,
+      "table_collision_preserves_business_state": true
+    },
+    {
+      "case": "real_cli",
+      "independent_module_globals": true,
+      "stable_packet_equal": true,
+      "returned_clock_matches_db": true
+    }
+  ],
+  "all_passed": true
+}
