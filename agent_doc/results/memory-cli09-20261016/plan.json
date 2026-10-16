@@ -1,0 +1,18 @@
+{
+  "issue": "MEM-CLI-09",
+  "base": "9e2064bf534a4438aa6132d55920c8d1574f5aa2",
+  "goal": "Malformed document snapshot files at memory CLI return structured failure, not uncaught decode traceback; business rows unchanged",
+  "candidate": "Catch JSONDecodeError/UnicodeDecodeError narrowly around file read/decode only; do not catch errors from database hydration",
+  "acceptance": [
+    "test-first failure for malformed JSON and invalid UTF8 for add/correct",
+    "structured stderr JSON error and exit2; no stdout; no new/revised rows or events",
+    "valid snapshot CLI behavior unchanged",
+    "unexpected internal decode errors continue propagating",
+    "memory targeted, full repo and Reader tests",
+    "independent plan then result review"
+  ],
+  "budget": "20 minutes local CPU; no model/API/GPU; no performance claim",
+  "paper_basis": "Existing read TallyMem evidence-access contract motivates preserving source evidence and distinguishing execution failure; not a paper reproduction or new algorithm",
+  "scope": "memory CLI only; no model KV backend architecture",
+  "parent": "MEM-STORAGE-01"
+}

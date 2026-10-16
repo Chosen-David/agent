@@ -1,0 +1,171 @@
+test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) ... 
+  test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='add', payload=b'{broken') ... ERROR
+  test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='add', payload=b'\xff') ... ERROR
+  test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='add', payload=b'') ... ERROR
+  test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='add', payload=b'{"a":}') ... ERROR
+  test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='correct', payload=b'{broken') ... ERROR
+  test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='correct', payload=b'\xff') ... ERROR
+  test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='correct', payload=b'') ... ERROR
+  test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='correct', payload=b'{"a":}') ... ERROR
+test_internal_json_decode_error_not_relabelled_as_input_error (test_memory_cli_input.MemoryCliInputTests.test_internal_json_decode_error_not_relabelled_as_input_error) ... ok
+test_missing_snapshot_file_stays_structured (test_memory_cli_input.MemoryCliInputTests.test_missing_snapshot_file_stays_structured) ... ok
+test_valid_bound_snapshot_add_and_correct (test_memory_cli_input.MemoryCliInputTests.test_valid_bound_snapshot_add_and_correct) ... ok
+
+======================================================================
+ERROR: test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='add', payload=b'{broken')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_cli_input.py", line 44, in test_bad_external_snapshot_is_structured_and_preserves_business_state
+    code = main(self.args(command))
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 438, in main
+    json.loads(Path(args.document_refs).read_text()) if args.document_refs else None)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 354, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+
+======================================================================
+ERROR: test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='add', payload=b'\xff')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_cli_input.py", line 44, in test_bad_external_snapshot_is_structured_and_preserves_business_state
+    code = main(self.args(command))
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 438, in main
+    json.loads(Path(args.document_refs).read_text()) if args.document_refs else None)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1028, in read_text
+    return f.read()
+           ^^^^^^^^
+  File "<frozen codecs>", line 322, in decode
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+
+======================================================================
+ERROR: test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='add', payload=b'')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_cli_input.py", line 44, in test_bad_external_snapshot_is_structured_and_preserves_business_state
+    code = main(self.args(command))
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 438, in main
+    json.loads(Path(args.document_refs).read_text()) if args.document_refs else None)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+======================================================================
+ERROR: test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='add', payload=b'{"a":}')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_cli_input.py", line 44, in test_bad_external_snapshot_is_structured_and_preserves_business_state
+    code = main(self.args(command))
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 438, in main
+    json.loads(Path(args.document_refs).read_text()) if args.document_refs else None)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 6 (char 5)
+
+======================================================================
+ERROR: test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='correct', payload=b'{broken')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_cli_input.py", line 44, in test_bad_external_snapshot_is_structured_and_preserves_business_state
+    code = main(self.args(command))
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 441, in main
+    json.loads(Path(args.document_refs).read_text()) if args.document_refs else None)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 354, in raw_decode
+    obj, end = self.scan_once(s, idx)
+               ^^^^^^^^^^^^^^^^^^^^^^
+json.decoder.JSONDecodeError: Expecting property name enclosed in double quotes: line 1 column 2 (char 1)
+
+======================================================================
+ERROR: test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='correct', payload=b'\xff')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_cli_input.py", line 44, in test_bad_external_snapshot_is_structured_and_preserves_business_state
+    code = main(self.args(command))
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 441, in main
+    json.loads(Path(args.document_refs).read_text()) if args.document_refs else None)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1028, in read_text
+    return f.read()
+           ^^^^^^^^
+  File "<frozen codecs>", line 322, in decode
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 0: invalid start byte
+
+======================================================================
+ERROR: test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='correct', payload=b'')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_cli_input.py", line 44, in test_bad_external_snapshot_is_structured_and_preserves_business_state
+    code = main(self.args(command))
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 441, in main
+    json.loads(Path(args.document_refs).read_text()) if args.document_refs else None)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+======================================================================
+ERROR: test_bad_external_snapshot_is_structured_and_preserves_business_state (test_memory_cli_input.MemoryCliInputTests.test_bad_external_snapshot_is_structured_and_preserves_business_state) (command='correct', payload=b'{"a":}')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_cli_input.py", line 44, in test_bad_external_snapshot_is_structured_and_preserves_business_state
+    code = main(self.args(command))
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 441, in main
+    json.loads(Path(args.document_refs).read_text()) if args.document_refs else None)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/__init__.py", line 346, in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 338, in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/json/decoder.py", line 356, in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+json.decoder.JSONDecodeError: Expecting value: line 1 column 6 (char 5)
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.039s
+
+FAILED (errors=8)

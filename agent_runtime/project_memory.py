@@ -401,6 +401,15 @@ def check_task_memory(root, task):
     return MemoryLedger(root).check(refs)
 
 
+def _load_document_refs(path):
+    if not path:
+        return None
+    try:
+        return json.loads(Path(path).read_text())
+    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
+        raise MemoryError('document_refs file must contain valid JSON text') from exc
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', required=True)
@@ -435,10 +444,10 @@ def main(argv=None):
         ledger = MemoryLedger(args.root, create=args.command == 'add')
         if args.command == 'add':
             result = ledger.add(args.id, args.kind, args.content, args.source, args.dep, args.scope, args.evidence,
-                                json.loads(Path(args.document_refs).read_text()) if args.document_refs else None)
+                                _load_document_refs(args.document_refs))
         elif args.command == 'correct':
             result = ledger.correct(args.id, args.new_id, args.content, args.source, args.reason, args.dep,
-                                    json.loads(Path(args.document_refs).read_text()) if args.document_refs else None)
+                                    _load_document_refs(args.document_refs))
         elif args.command == 'accept':
             result = ledger.accept(args.id, args.new_id, args.source, args.reason)
         elif args.command == 'list':
