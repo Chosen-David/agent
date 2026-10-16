@@ -1,0 +1,62 @@
+{
+  "task": "MEM-STORAGE-01",
+  "candidate": "MEM-REVERSE-INDEX-PROBE-07",
+  "baseline": "a73bf13424bdd789284eeac6d5664bea5d104574",
+  "decision": "Diagnostic schema experiment only; no production source/schema edit authorized by this plan. Later implementation/migration requires independent plan reconciliation.",
+  "hypothesis": "A persistent dependencies(parent,child) covering index may avoid per-query automatic index construction for descendant lookup. Do not assume missing permanent index means repeated full scans. Inspect real EXPLAIN QUERY PLAN and automatic_index pragma first.",
+  "arms": "Same source; two fresh copies of identical deterministic synthetic ledger per pair. Candidate copy gets CREATE INDEX memory_dependencies_parent ON dependencies(parent,child) outside API timer; separately record one-time index creation wall/file growth. No destructive changes outside temporary fixtures.",
+  "fixtures": [
+    {
+      "id": "impact_sparse5000",
+      "nodes": 5000,
+      "chain": 16,
+      "op": "impact"
+    },
+    {
+      "id": "correct_sparse5000",
+      "nodes": 5000,
+      "chain": 16,
+      "op": "correct"
+    },
+    {
+      "id": "impact_tiny16",
+      "nodes": 16,
+      "chain": 16,
+      "op": "impact"
+    },
+    {
+      "id": "correct_wide512",
+      "nodes": 513,
+      "wide": 512,
+      "op": "correct"
+    },
+    {
+      "id": "add_existing5000",
+      "nodes": 5000,
+      "chain": 16,
+      "op": "add",
+      "dep": "n00000"
+    }
+  ],
+  "seed_graph": "Rows n00000.. ascending, 128B content, constant existing created_at, active+verified, scope[]; first chain nodes link i to i-1; remaining nodes form disjoint chains of at most16. Wide case links every nonroot to root. Public add/insert validation tested separately if implementation follows; bulk fixture seeding only controls setup cost, does not claim ingestion speed.",
+  "timing": "21 randomized AB/BA pairs seed71406, 3 warmups per arm on separate fresh copies; one complete public API call per sample including path/connection/transaction/all hydration/updates/commit/return. Copy/setup/DDL/equality outside timer symmetrically. No cache answer reuse; correction/add each starts fresh DB. No other parent test/timing while measuring.",
+  "gates": "Both sparse5000 primary median wall reductions >=20%; each other control regression<=15%. If fail, preserve negative and no source change. Diagnostic pass is not production acceptance or general speed claim.",
+  "equality": "Impact complete packet exact and DB bytes unchanged per arm. Correct/add stable output, entries/dependencies/document bindings/events equal excluding only newly generated created_at clock fields; record excluded timestamps separately, require nonempty SQLite time format and old timestamps unchanged. Index changes only schema and DB physical bytes; graph input hash must match. Check deterministic invalidation/history/rollback with independent validation before any conclusions.",
+  "resources": "One local CPU measurement process; 20 minutes, one fixed schema candidate, no GPU/API/model/paid resources, no extra optimization revision. Parent owns files and private lock. Manual plan/result review; no managed ReviewSession, tmux host or automatic trust claim.",
+  "prior": "prior-search scanned200/partialtrue/errors59 unrelated corpus; knowledge actual hits maxflow capacity network, FAISS exact vectors, HNSW approximate vectors: all assumptions mismatch SQLite dependency reachability. SQLite official optoverview section14 read; previous12-paper/MemForest history only.",
+  "independent_validation": "Separate plan reviewer before diagnostic, then actual source/harness/data/reference/numerical/measurement/reproducibility review. New data remain pending until review. No downstream code/report publication without acceptance and separate implementation plan.",
+  "version": 2,
+  "supersedes": "plan.json; retained unchanged",
+  "exact_calls": {
+    "impact": "ledger.impact(\"n00000\")",
+    "correct": "ledger.correct(\"n00000\", \"revision\", \"corrected\", \"synthetic:user\", \"fixture correction\")",
+    "add": "ledger.add(\"new-entry\", \"claim\", \"new\", \"synthetic:experiment\", deps=[\"n00000\"], evidence=\"verified\")",
+    "expected_descendants": {
+      "sparse5000": 15,
+      "tiny16": 15,
+      "wide512": 512
+    }
+  },
+  "ddl": "Measure sqlite connect + CREATE INDEX + commit + close wall separately, file bytes before/after. Index is sole logical/schema arm difference; source unmodified.",
+  "timestamp_rule": "Only created_at of entry IDs revision/new-entry and event sequence > seeded max may be normalized; validate SQLite UTC format, store raw; all prior timestamps must stay byte-equal. Normalize only these exact row identities in database snapshots and matching returned new entry."
+}

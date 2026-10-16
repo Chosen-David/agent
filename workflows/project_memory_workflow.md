@@ -19,6 +19,8 @@
 
 仓库完整 checkout 中可运行 `python -m agent_runtime.project_memory --help`；默认账本为项目 `.agent-memory/memory.sqlite3`，应私有持久保存、备份，不自动提交公共 Git。`add` 添加不可变条目，`correct` 事务更正并标记后代，`accept` 用新 revision 接受 candidate，`list` 默认只取 active，`impact/history/check` 用于审计和验收。具体参数以 `--help` 为准。
 
+`MemoryLedger(root, create=True)` 初始化时幂等建立 `(parent, child)` 反向依赖索引；已有账本可用同一 Python 入口升级，条目和事件保持不变。现有 CLI `add` 也执行初始化，因此可能在后续添加校验失败前完成索引升级；没有单独的 CLI `init` 命令。普通读取不自动升级旧库。首次建索引需要额外时间、磁盘和写锁，失败时保留原账本并排查权限/空间，不删除重建。`IF NOT EXISTS` 保留未知同名索引，不验证或修复其结构；此类自定义 schema 不在索引性能保证范围内。
+
 任务声明非空 `memory_refs` 后，`ReportingHandler` 在执行前、验收与旧结果复核时检查，缺库、失效或未知引用阻断该任务；其他任务继续。没有声明引用的旧任务保留兼容行为，**不保证自动发现隐藏依赖**。代码门禁不判断自然语言是否真的反映用户意图，也不替代独立验收。
 
 插件单独安装而没有 Python runtime 时仍执行同一记录/纠错规则，以项目 manifest 保存 ID、status、source、deps 和更正；明确机器门禁未安装。不要让插件假装调用不存在的脚本，真实路径由主 AI 在 setup 后提供。

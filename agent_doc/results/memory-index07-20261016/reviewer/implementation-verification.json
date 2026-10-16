@@ -1,0 +1,148 @@
+{
+  "source_sha256": "7df8e23ecee946e996b828fb702258e03dabe2306b42c63a3daadf15008d950e",
+  "baseline_sha256": "6daa9f90425763bfc03287b4a68d3dee3dde36068115d9f4791112c50ad65580",
+  "only_two_line_ddl_delta": true,
+  "checks": [
+    {
+      "case": "nonempty_documents_upgrade",
+      "logical_state_exact": true,
+      "legacy_read_no_migration": true,
+      "repeat_idempotent": true,
+      "index": {
+        "list": [
+          [
+            0,
+            "memory_dependencies_parent",
+            0,
+            "c",
+            0
+          ],
+          [
+            1,
+            "sqlite_autoindex_dependencies_1",
+            1,
+            "pk",
+            0
+          ]
+        ],
+        "info": [
+          [
+            0,
+            1,
+            "parent"
+          ],
+          [
+            1,
+            0,
+            "child"
+          ]
+        ],
+        "xinfo": [
+          [
+            0,
+            1,
+            "parent",
+            0,
+            "BINARY",
+            1
+          ],
+          [
+            1,
+            0,
+            "child",
+            0,
+            "BINARY",
+            1
+          ],
+          [
+            2,
+            -1,
+            null,
+            0,
+            "BINARY",
+            0
+          ]
+        ]
+      },
+      "schema_delta": [
+        [
+          "index",
+          "memory_dependencies_parent",
+          "dependencies",
+          "CREATE INDEX memory_dependencies_parent\n                        ON dependencies(parent, child)"
+        ]
+      ],
+      "diagnostic_schema_equivalent": true,
+      "eqp": [
+        [
+          2,
+          0,
+          0,
+          "CO-ROUTINE affected"
+        ],
+        [
+          6,
+          2,
+          0,
+          "SETUP"
+        ],
+        [
+          8,
+          6,
+          56,
+          "SEARCH dependencies USING COVERING INDEX memory_dependencies_parent (parent=?)"
+        ],
+        [
+          27,
+          2,
+          0,
+          "RECURSIVE STEP"
+        ],
+        [
+          29,
+          27,
+          216,
+          "SCAN a"
+        ],
+        [
+          30,
+          27,
+          56,
+          "SEARCH d USING COVERING INDEX memory_dependencies_parent (parent=?)"
+        ],
+        [
+          45,
+          0,
+          219,
+          "SCAN affected"
+        ],
+        [
+          52,
+          0,
+          0,
+          "USE TEMP B-TREE FOR ORDER BY"
+        ]
+      ]
+    },
+    {
+      "case": "production_api_and_failure",
+      "python_add_no_index_install": true,
+      "postmutation_rollback": true,
+      "lineage_rollback": true,
+      "normal_correction_preserves_history_and_document_snapshot": true,
+      "failed_cli_add_installs_index_without_rows": true
+    },
+    {
+      "case": "same_name_boundaries",
+      "wrong_column_index_preserved": true,
+      "index_on_another_table_preserved": true,
+      "table_collision_fails_preserving_business_rows": true
+    },
+    {
+      "case": "real_cli_globals",
+      "distinct_module_globals": true,
+      "stable_output_equal": true,
+      "returned_clock_matches_database": true
+    }
+  ]
+}

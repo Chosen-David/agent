@@ -1,0 +1,54 @@
+test_cli_add_uses_existing_initialization_upgrade (test_memory_reverse_index.ReverseIndexTests.test_cli_add_uses_existing_initialization_upgrade) ... FAIL
+test_legacy_reads_do_not_migrate_and_explicit_upgrade_is_idempotent (test_memory_reverse_index.ReverseIndexTests.test_legacy_reads_do_not_migrate_and_explicit_upgrade_is_idempotent) ... FAIL
+test_new_database_has_nonunique_parent_child_index (test_memory_reverse_index.ReverseIndexTests.test_new_database_has_nonunique_parent_child_index) ... FAIL
+test_unknown_same_named_index_is_not_rebuilt (test_memory_reverse_index.ReverseIndexTests.test_unknown_same_named_index_is_not_rebuilt) ... ok
+
+======================================================================
+FAIL: test_cli_add_uses_existing_initialization_upgrade (test_memory_reverse_index.ReverseIndexTests.test_cli_add_uses_existing_initialization_upgrade)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_reverse_index.py", line 62, in test_cli_add_uses_existing_initialization_upgrade
+    self.assertEqual(self.index_columns(), ['parent', 'child'])
+AssertionError: Lists differ: [] != ['parent', 'child']
+
+Second list contains 2 additional elements.
+First extra element 0:
+'parent'
+
+- []
++ ['parent', 'child']
+
+======================================================================
+FAIL: test_legacy_reads_do_not_migrate_and_explicit_upgrade_is_idempotent (test_memory_reverse_index.ReverseIndexTests.test_legacy_reads_do_not_migrate_and_explicit_upgrade_is_idempotent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_reverse_index.py", line 53, in test_legacy_reads_do_not_migrate_and_explicit_upgrade_is_idempotent
+    self.assertEqual(self.index_columns(), ['parent', 'child'])
+AssertionError: Lists differ: [] != ['parent', 'child']
+
+Second list contains 2 additional elements.
+First extra element 0:
+'parent'
+
+- []
++ ['parent', 'child']
+
+======================================================================
+FAIL: test_new_database_has_nonunique_parent_child_index (test_memory_reverse_index.ReverseIndexTests.test_new_database_has_nonunique_parent_child_index)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_reverse_index.py", line 37, in test_new_database_has_nonunique_parent_child_index
+    self.assertEqual(self.index_columns(), ['parent', 'child'])
+AssertionError: Lists differ: [] != ['parent', 'child']
+
+Second list contains 2 additional elements.
+First extra element 0:
+'parent'
+
+- []
++ ['parent', 'child']
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.014s
+
+FAILED (failures=3)

@@ -84,6 +84,8 @@ class MemoryLedger:
                         child TEXT NOT NULL REFERENCES entries(id),
                         parent TEXT NOT NULL REFERENCES entries(id),
                         PRIMARY KEY(child, parent));
+                    CREATE INDEX IF NOT EXISTS memory_dependencies_parent
+                        ON dependencies(parent, child);
                     CREATE TABLE IF NOT EXISTS document_dependencies (
                         entry_id TEXT PRIMARY KEY REFERENCES entries(id), snapshot TEXT NOT NULL);
                     CREATE TABLE IF NOT EXISTS events (
