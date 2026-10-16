@@ -10,6 +10,8 @@ from pathlib import Path
 
 from .knowledge import KnowledgeStore, check_handoff_knowledge
 from .project_memory import MemoryLedger, _ids
+
+_BUILTIN_MEMORY_LEDGER = MemoryLedger
 from .handoff_encoding import FORMAT as CLAIM_TABLE_FORMAT, encode_claims_table
 from scripts.validate_handoff import validate
 
@@ -274,7 +276,15 @@ def basis_context(root, record, request, *, known_knowledge_refs=(), known_memor
         ledger = MemoryLedger(root)
         if known_memory_ids:
             ledger.check(known_memory_ids)
-        pending = {dep for entry in memory_entries.values() for dep in entry['deps']}
+        # Built-in immutable-state closure is hydrated once in one read
+        # transaction. Customized ledgers retain observable per-level checks.
+        closure = (ledger._context_closure(sorted(memory_entries))
+                   if any(entry['deps'] for entry in memory_entries.values())
+                   and MemoryLedger is _BUILTIN_MEMORY_LEDGER else None)
+        if closure is not None:
+            memory_entries = {entry['id']: entry for entry in closure}
+        pending = (set() if closure is not None else
+                   {dep for entry in memory_entries.values() for dep in entry['deps']})
         while pending:
             entries = ledger.check(sorted(pending))
             memory_entries.update((entry['id'], entry) for entry in entries)

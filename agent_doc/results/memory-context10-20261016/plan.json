@@ -1,0 +1,18 @@
+{
+  "id": "MEM-CONTEXT-10",
+  "base": "4a19ee121eb283a5364bf8fff4aa146c8f5deec8",
+  "goal": "Remove repeated ancestor walks while packaging complete memory context, preserving full entries/ref/dependency content, sort and stale checks",
+  "baseline_path": "handoff_basis.basis_context pending loop calls ledger.check each ancestor generation (repeated recursive validation)",
+  "candidate": "Add validated memory closure API using existing iterative walk in one read transaction; context uses full validated closure without per-generation rewalk. Keep existing check return contract and default peak behavior. No approximate selection or content trimming.",
+  "acceptance": [
+    "Complete decoded and serialized payload, reuse IDs, invalidation/errors match baseline on immutable same state",
+    "tests include chain,diamond,shared ancestors,known IDs,stale/docs corruption and unchanged check semantics",
+    "21 paired warm CPU same-input-hash end-to-end basis_context timings;3warmups;shuffle seed81610",
+    "Primary deep chain96 and branch/shared graph under max_chars200000: median reduction>=25%; small/no-memory controls regression<=15% each",
+    "Independent plan and result/measurement verification; full repo and Reader tests before release"
+  ],
+  "resources": "20min local CPU phase; no GPU/model/API; no installed supervisor available",
+  "scope": "real basis_context CPU serialization only, not LLM KV/quality/TTFT",
+  "parent": "MEM-STORAGE-01",
+  "literature": "ATR2609.08015 recorded-closure localization; invalidation-contract distinction between validity/compliance. No paper replication or semantic invalidation weakening."
+}

@@ -157,7 +157,7 @@ class MemoryLedger:
         return MemoryLedger._walk(db, refs, root)
 
     @staticmethod
-    def _walk(db, refs, root=None, schema_state=None):
+    def _walk(db, refs, root=None, schema_state=None, *, include_dependencies=False):
         refs = _ids(refs, 'memory refs')
         if not refs:
             raise MemoryError('memory refs must be nonempty')
@@ -188,15 +188,14 @@ class MemoryLedger:
                 except (OSError, ValueError) as exc:
                     raise MemoryError(f'memory {entry_id} has stale project document dependencies: {exc}') from exc
             checked.add(entry_id)
-            # Reuse only requested roots from this validated traversal. The
-            # caller already owns one transaction; do not rehydrate them at
-            # return, retain every ancestor, or cache across future checks.
-            if entry_id in requested:
+            # Ordinary checks retain requested roots only. Context packing
+            # explicitly needs every validated entry for its complete payload.
+            if include_dependencies or entry_id in requested:
                 roots[entry_id] = entry
             frames.append(iter(entry['deps']))
-            # Only requested roots need full hydration after their own checks.
+            # Drop the local reference; retained output is owned by roots.
             del entry
-        return [roots[ref] for ref in refs]
+        return list(roots.values()) if include_dependencies else [roots[ref] for ref in refs]
 
     @staticmethod
     def _insert(db, entry_id, kind, content, source, deps, scope, evidence, document_refs=None, root=None):
@@ -311,6 +310,26 @@ class MemoryLedger:
                 return MemoryLedger._walk(db, refs, self.root, [])
             return self._check(db, refs, self.root)
 
+    def _context_closure(self, refs):
+        """Private built-in context path; None requests legacy per-level checks.
+
+        Complete entries are required for the payload. Ordinary check still
+        retains only its requested roots. No state survives this transaction.
+        """
+        if (type(self) is not MemoryLedger
+                or any(k in self.__dict__ for k in ('check', '_check', '_get', '_connect'))
+                or MemoryLedger.check is not _BUILTIN_PUBLIC_CHECK
+                or MemoryLedger._get is not _BUILTIN_GET
+                or MemoryLedger._check is not _BUILTIN_CHECK
+                or MemoryLedger._walk is not _BUILTIN_WALK
+                or MemoryLedger._connect is not _BUILTIN_CONNECT
+                or check_document_refs is not _BUILTIN_DOCUMENT_CHECK
+                or sqlite3.connect is not _BUILTIN_SQLITE_CONNECT
+                or sqlite3.Row is not _BUILTIN_SQLITE_ROW):
+            return None
+        with self._connect() as db:
+            return MemoryLedger._walk(db, refs, self.root, include_dependencies=True)
+
     def list(self, status='active', scope=None):
         """Retrieval defaults to current accepted entries, never candidates or stale history."""
         if status not in ('active', 'candidate', 'stale', 'superseded', 'all'):
@@ -386,6 +405,8 @@ class MemoryLedger:
 
 
 _BUILTIN_GET = MemoryLedger._get
+_BUILTIN_PUBLIC_CHECK = MemoryLedger.check
+_BUILTIN_WALK = MemoryLedger._walk
 _BUILTIN_CHECK = MemoryLedger._check
 _BUILTIN_CONNECT = MemoryLedger._connect
 _BUILTIN_DOCUMENT_CHECK = check_document_refs
