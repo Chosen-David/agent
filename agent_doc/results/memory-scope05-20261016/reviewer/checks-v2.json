@@ -1,0 +1,329 @@
+{
+  "scope": "API-valid packets and isolated metadata/legacy-schema cases; bounded synthetic warm-local data",
+  "reference": "ab8a368746233996cb39233036a1631de1d911f2",
+  "reference_sha256": "c3f41593b64b09d2af190d9ddcb64bbf784720083f4b718a5bdaf5318109f159",
+  "candidate_sha256": "2f2b7b9c439333438be982a8200d0ed213352c76707d2b07454b113855821e98",
+  "counts": {
+    "valid-field-matrix": 4608,
+    "mixed-status": 1920,
+    "isolated-metadata": 2880,
+    "writer-after-retained-error-or-return": 72,
+    "decode-before-membership": 2,
+    "isolated-legacy-schema": 480,
+    "ledger-subclass-fallback": 120,
+    "structural-hydration": 4,
+    "public-api-before-correction": 5,
+    "freshness": 1,
+    "public-api-after-correction": 5,
+    "raw-guard-null-blob-logic": 1
+  },
+  "total_checks": 10098,
+  "failures": [],
+  "exploratory_excluded": [
+    {
+      "case": "invalid UTF8 unselected content; excluded before tests",
+      "before": "('error', 'MemoryError', \"project memory ledger unavailable: Could not decode to UTF-8 column 'content' with text '\ufffd'\")",
+      "after": "('value', [{'id': 'r001', 'kind': 'claim', 'content': 'payload-1payload-1', 'source': 'independent', 'scope': ['T1'], 'evidence': 'verified', 'status': 'active', 'created_at': 'fixed-tie', 'document_refs': None, 'deps': ['r000']}, {'id': 'r003', 'kind': 'claim', 'content': 'payload-3payload-3payload-3payload-3', 'source': 'independent', 'scope': ['T1'], 'evidence': 'verified', 'status': 'active', 'created_at': 'fixed-tie', 'document_refs': None, 'deps': ['r002']}])"
+    }
+  ],
+  "raw_integrity": [
+    {
+      "path": "raw-primary-v2.json",
+      "sha256": "96b717f71c27803207cf93fb2d156f511b137466705e00ebbf2ea79f1d365180",
+      "cases": [
+        {
+          "name": "all-active-scope-small",
+          "returned": 20,
+          "before_ms": 16.034304,
+          "after_ms": 4.058911,
+          "reduction": 0.7468607929598939,
+          "gate": true,
+          "before_first": 11,
+          "minmax_ms": {
+            "before_ms": [
+              15.588921,
+              19.590287
+            ],
+            "after_ms": [
+              3.918202,
+              6.310006
+            ]
+          }
+        },
+        {
+          "name": "all-active-scope-large",
+          "returned": 20,
+          "before_ms": 29.320253,
+          "after_ms": 10.04149,
+          "reduction": 0.6575237601121655,
+          "gate": true,
+          "before_first": 12,
+          "minmax_ms": {
+            "before_ms": [
+              27.786825,
+              32.096008
+            ],
+            "after_ms": [
+              9.078469,
+              13.578435
+            ]
+          }
+        },
+        {
+          "name": "all-active-all-match",
+          "returned": 2000,
+          "before_ms": 16.760623,
+          "after_ms": 16.974421,
+          "reduction": -0.012755969751243823,
+          "gate": true,
+          "before_first": 11,
+          "minmax_ms": {
+            "before_ms": [
+              15.759386,
+              24.618438
+            ],
+            "after_ms": [
+              16.138399,
+              23.830778
+            ]
+          }
+        },
+        {
+          "name": "all-active-no-scope",
+          "returned": 2000,
+          "before_ms": 17.390157,
+          "after_ms": 17.596535,
+          "reduction": -0.011867517929826654,
+          "gate": true,
+          "before_first": 8,
+          "minmax_ms": {
+            "before_ms": [
+              16.709397,
+              21.963744
+            ],
+            "after_ms": [
+              16.436361,
+              25.207724
+            ]
+          }
+        },
+        {
+          "name": "tiny-all-match",
+          "returned": 8,
+          "before_ms": 0.295409,
+          "after_ms": 0.290242,
+          "reduction": 0.017491003997846977,
+          "gate": true,
+          "before_first": 12,
+          "minmax_ms": {
+            "before_ms": [
+              0.261668,
+              0.684307
+            ],
+            "after_ms": [
+              0.267036,
+              0.777535
+            ]
+          }
+        },
+        {
+          "name": "mixed-scope-sparse",
+          "returned": 10,
+          "before_ms": 3.859354,
+          "after_ms": 3.828789,
+          "reduction": 0.007919719206893272,
+          "gate": true,
+          "before_first": 9,
+          "minmax_ms": {
+            "before_ms": [
+              3.694849,
+              5.925134
+            ],
+            "after_ms": [
+              3.702121,
+              4.103126
+            ]
+          }
+        },
+        {
+          "name": "mixed-no-scope",
+          "returned": 1000,
+          "before_ms": 11.89875,
+          "after_ms": 11.817468,
+          "reduction": 0.006831137724550906,
+          "gate": true,
+          "before_first": 11,
+          "minmax_ms": {
+            "before_ms": [
+              10.998211,
+              18.200652
+            ],
+            "after_ms": [
+              11.010349,
+              14.978955
+            ]
+          }
+        }
+      ],
+      "all_gates": true,
+      "environment": {
+        "python": "3.12.14",
+        "compiler": "Clang 22.1.3 ",
+        "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+        "sqlite": "3.53.1"
+      }
+    },
+    {
+      "path": "reviewer/raw-independent-v2.json",
+      "sha256": "ebed6d71af00497bbb3075a89fdff0f216555add04bd5e0fd0900d094a2ec2fb",
+      "cases": [
+        {
+          "name": "all-active-scope-small",
+          "returned": 20,
+          "before_ms": 16.356241,
+          "after_ms": 4.073231,
+          "reduction": 0.7509677804331693,
+          "gate": true,
+          "before_first": 11,
+          "minmax_ms": {
+            "before_ms": [
+              15.608109,
+              18.654154
+            ],
+            "after_ms": [
+              3.981756,
+              6.803568
+            ]
+          }
+        },
+        {
+          "name": "all-active-scope-large",
+          "returned": 20,
+          "before_ms": 31.609342,
+          "after_ms": 11.002417,
+          "reduction": 0.6519251492169625,
+          "gate": true,
+          "before_first": 12,
+          "minmax_ms": {
+            "before_ms": [
+              29.025523,
+              34.149877
+            ],
+            "after_ms": [
+              9.660913,
+              15.027597
+            ]
+          }
+        },
+        {
+          "name": "all-active-all-match",
+          "returned": 2000,
+          "before_ms": 17.017209,
+          "after_ms": 17.154463,
+          "reduction": -0.008065599946501134,
+          "gate": true,
+          "before_first": 11,
+          "minmax_ms": {
+            "before_ms": [
+              16.235136,
+              29.621211
+            ],
+            "after_ms": [
+              16.292662,
+              23.91857
+            ]
+          }
+        },
+        {
+          "name": "all-active-no-scope",
+          "returned": 2000,
+          "before_ms": 17.167131,
+          "after_ms": 17.16681,
+          "reduction": 1.8698523358340324e-05,
+          "gate": true,
+          "before_first": 8,
+          "minmax_ms": {
+            "before_ms": [
+              16.517696,
+              21.065692
+            ],
+            "after_ms": [
+              16.687638,
+              22.557989
+            ]
+          }
+        },
+        {
+          "name": "tiny-all-match",
+          "returned": 8,
+          "before_ms": 0.296311,
+          "after_ms": 0.300226,
+          "reduction": -0.013212469331209453,
+          "gate": true,
+          "before_first": 12,
+          "minmax_ms": {
+            "before_ms": [
+              0.264913,
+              0.710947
+            ],
+            "after_ms": [
+              0.267418,
+              0.413384
+            ]
+          }
+        },
+        {
+          "name": "mixed-scope-sparse",
+          "returned": 10,
+          "before_ms": 3.801266,
+          "after_ms": 3.923118,
+          "reduction": -0.03205563620120255,
+          "gate": true,
+          "before_first": 9,
+          "minmax_ms": {
+            "before_ms": [
+              3.717923,
+              6.559464
+            ],
+            "after_ms": [
+              3.712665,
+              4.119359
+            ]
+          }
+        },
+        {
+          "name": "mixed-no-scope",
+          "returned": 1000,
+          "before_ms": 11.338302,
+          "after_ms": 11.327295,
+          "reduction": 0.0009707802808569532,
+          "gate": true,
+          "before_first": 11,
+          "minmax_ms": {
+            "before_ms": [
+              10.899291,
+              14.56165
+            ],
+            "after_ms": [
+              10.823428,
+              15.935852
+            ]
+          }
+        }
+      ],
+      "all_gates": true,
+      "environment": {
+        "python": "3.12.14",
+        "compiler": "Clang 22.1.3 ",
+        "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+        "sqlite": "3.53.1"
+      }
+    }
+  ],
+  "hashes": {
+    "agent_runtime/project_memory.py": "2f2b7b9c439333438be982a8200d0ed213352c76707d2b07454b113855821e98",
+    "tests/test_memory_retrieval.py": "1bf7745339740cb4a896467f1691a304eb88debba40a755282bb1f9734d66ebd",
+    "scripts/bench_memory_retrieval.py": "7de92aba6e41d3424352b586f7335faeae754a8b24d415e3a0ffb04a525d5d65",
+    ".agent-runs/memory-scope05-20261016/config.json": "7d04df14f3fdccb957cc801a502a23a6418ddf99f5e96b8d4d9f3c2bda0ee550"
+  }
+}

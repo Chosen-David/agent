@@ -281,8 +281,14 @@ class MemoryLedger:
             raise MemoryError('unknown status')
         with self._connect() as db:
             filtered = (type(self) is MemoryLedger and type(status) is str and status != 'all'
-                        and db.execute('SELECT 1 FROM entries WHERE status<>? LIMIT 1',
-                                       (status,)).fetchone())
+                        and (db.execute('SELECT 1 FROM entries WHERE status<>? LIMIT 1',
+                                        (status,)).fetchone() or
+                             (type(scope) is str and db.execute(
+                                 'SELECT 1 FROM entries WHERE scope IS NOT '
+                                 '(SELECT scope FROM entries LIMIT 1) LIMIT 1').fetchone())))
+            # Uniform scopes cannot discriminate among valid rows. Keep the
+            # original path there to avoid decoding all metadata twice when
+            # every row matches; raw SQL equality is only a routing guard.
             if filtered:
                 try:
                     db.execute('SELECT child,parent FROM dependencies LIMIT 0')

@@ -123,6 +123,44 @@ class MemoryRetrievalTests(unittest.TestCase):
             self.assertEqual(self.ledger.list(scope='T1'), expected)
             self.assertEqual([c.args[1] for c in get.call_args_list], ['m15'])
 
+    def test_homogeneous_status_scope_hydrates_only_matches(self):
+        for status in ('active', 'candidate', 'stale', 'superseded'):
+            with self.subTest(status=status):
+                with self.ledger._connect(write=True) as db:
+                    db.execute('UPDATE entries SET status=?,scope=?', (status, '["other"]'))
+                    db.execute('UPDATE entries SET scope=? WHERE id=?', ('["target"]', 'm15'))
+                expected = eager(self.ledger, status, 'target')
+                with patch.object(MemoryLedger, '_get', wraps=MemoryLedger._get) as get:
+                    self.assertEqual(self.ledger.list(status, 'target'), expected)
+                    self.assertEqual([c.args[1] for c in get.call_args_list], ['m15'])
+
+    def test_homogeneous_scope_preserves_decode_before_membership_errors(self):
+        with self.ledger._connect(write=True) as db:
+            db.execute("UPDATE entries SET status='active',scope='[]'")
+            db.execute("UPDATE entries SET scope='null' WHERE id='m00'")
+            db.execute("UPDATE entries SET scope='bad-json' WHERE id='m15'")
+        for call in (lambda: eager(self.ledger, scope='target'),
+                     lambda: self.ledger.list(scope='target')):
+            with self.assertRaises(json.JSONDecodeError):
+                call()
+        with self.ledger._connect(write=True) as db:
+            db.execute("UPDATE entries SET scope='[]' WHERE id='m15'")
+        for call in (lambda: eager(self.ledger, scope='target'),
+                     lambda: self.ledger.list(scope='target')):
+            with self.assertRaises(TypeError):
+                call()
+
+    def test_uniform_scope_keeps_conservative_eager_fallback(self):
+        for scope in ('target', 'absent'):
+            with self.subTest(scope=scope):
+                with self.ledger._connect(write=True) as db:
+                    db.execute("UPDATE entries SET status='active',scope='[\"target\"]'")
+                expected = eager(self.ledger, scope=scope)
+                with patch.object(MemoryLedger, '_get', wraps=MemoryLedger._get) as get:
+                    self.assertEqual(self.ledger.list(scope=scope), expected)
+                    self.assertEqual([c.args[1] for c in get.call_args_list],
+                                     [f'm{i:02}' for i in range(16)])
+
     def test_membership_errors_follow_all_metadata_decoding(self):
         # m00 sorts first and is active; valid JSON null is not iterable. A
         # later JSON syntax error must still be raised before membership.

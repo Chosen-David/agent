@@ -1,0 +1,38 @@
+Producer execution, 2026-10-16. Manual CPU validation; not model/GPU evidence.
+Baseline: ab8a368746233996cb39233036a1631de1d911f2
+Source v2 candidate: 2f2b7b9c439333438be982a8200d0ed213352c76707d2b07454b113855821e98
+
+python -m unittest tests.test_memory_retrieval.MemoryRetrievalTests.test_homogeneous_status_scope_hydrates_only_matches
+Before source edit:
+Ran 1 test in 0.027s
+FAILED (failures=4)
+
+python -m unittest tests.test_memory_retrieval tests.test_project_memory tests.test_memory_check
+Candidate1: Ran 37 tests in 0.765s, OK
+Candidate2: Ran 38 tests in 0.738s, OK
+
+python -O -m unittest tests.test_memory_retrieval tests.test_project_memory tests.test_memory_check
+Ran 38 tests in 0.750s
+OK
+
+PYTHONPATH=. python scripts/bench_memory_retrieval.py --config .agent-runs/memory-scope05-20261016/config.json --output .agent-runs/memory-scope05-20261016/raw-primary.json
+Candidate1: all-active-all-match reduction=-0.15966026014906998; rejected (>15% regression).
+All 7 cases x 21 pairs retained in raw-primary.json.
+
+PYTHONPATH=. python scripts/bench_memory_retrieval.py --config .agent-runs/memory-scope05-20261016/config.json --output .agent-runs/memory-scope05-20261016/raw-primary-v2.json
+Candidate2: raw data pending independent acceptance at production time.
+All 7 cases x 21 pairs retained in raw-primary-v2.json.
+
+python -m unittest discover -s tests
+Ran 1205 tests in 63.164s
+OK (skipped=8)
+
+python -m unittest discover -s apps/paper-reader/tests
+Ran 3 tests in 1.569s
+OK
+
+python scripts/project_docs.py --root /workspace/scratch/88c3234ecfbc/agent-memory validate
+exit0; canonical project documents valid
+
+git diff --check
+exit0

@@ -1,0 +1,15 @@
+diff --git a/agent_runtime/project_memory.py b/agent_runtime/project_memory.py
+index bbf9a68..fd3f9ca 100644
+--- a/agent_runtime/project_memory.py
++++ b/agent_runtime/project_memory.py
+@@ -281,8 +281,8 @@ class MemoryLedger:
+             raise MemoryError('unknown status')
+         with self._connect() as db:
+             filtered = (type(self) is MemoryLedger and type(status) is str and status != 'all'
+-                        and db.execute('SELECT 1 FROM entries WHERE status<>? LIMIT 1',
+-                                       (status,)).fetchone())
++                        and (db.execute('SELECT 1 FROM entries WHERE status<>? LIMIT 1',
++                                        (status,)).fetchone() or type(scope) is str))
+             if filtered:
+                 try:
+                     db.execute('SELECT child,parent FROM dependencies LIMIT 0')
