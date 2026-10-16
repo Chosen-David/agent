@@ -1,0 +1,17 @@
+{
+  "id": "MEM-REVISION-11",
+  "parent": "MEM-STORAGE-01",
+  "base": "38d84ccddec9a820c0e0da2fee4dd511aa346abd",
+  "goal": "Public correction API validates dependency container/elements before set lineage check, returning MemoryError for malformed refs instead of escaping TypeError",
+  "hypothesis": "_revise set(deps) precedes shared _ids validation; None/int/nested list/dict raises TypeError; add/check reject these as MemoryError",
+  "candidate": "Normalize deps with existing _ids immediately before set(deps), after unchanged source/reason/current-old/descendant validation; no broad catch or internal corruption suppression",
+  "acceptance": [
+    "Baseline malformed public correct input failures preserved",
+    "All malformed dependency cases raise MemoryError and exact business rows/events unchanged",
+    "Valid list/tuple correction and candidate acceptance identical; duplicate/missing/lineage rejection remains",
+    "Independent plan/result source and integration review; full repo/Reader and -O tests before direct main CAS/readback"
+  ],
+  "resources": "bounded20min localPython/SQLite; no model/GPU/endpoint/install; no performance claim",
+  "metric": "malformed-reference contract compliance count; not speed/QA/KV inference",
+  "research": "Previous source-linked invalidation reading reinforces rejecting malformed dependency edges; no paper result reproduction"
+}

@@ -1,0 +1,84 @@
+test_candidate_acceptance_preserves_dependency_and_content (test_memory_revision_inputs.MemoryRevisionInputTests.test_candidate_acceptance_preserves_dependency_and_content) ... ok
+test_duplicate_missing_and_invalidated_dependencies_still_rejected (test_memory_revision_inputs.MemoryRevisionInputTests.test_duplicate_missing_and_invalidated_dependencies_still_rejected) ... ok
+test_malformed_dependencies_raise_memory_error_without_writes (test_memory_revision_inputs.MemoryRevisionInputTests.test_malformed_dependencies_raise_memory_error_without_writes) ... 
+  test_malformed_dependencies_raise_memory_error_without_writes (test_memory_revision_inputs.MemoryRevisionInputTests.test_malformed_dependencies_raise_memory_error_without_writes) (deps=None) ... ERROR
+  test_malformed_dependencies_raise_memory_error_without_writes (test_memory_revision_inputs.MemoryRevisionInputTests.test_malformed_dependencies_raise_memory_error_without_writes) (deps=1) ... ERROR
+  test_malformed_dependencies_raise_memory_error_without_writes (test_memory_revision_inputs.MemoryRevisionInputTests.test_malformed_dependencies_raise_memory_error_without_writes) (deps=[[]]) ... ERROR
+  test_malformed_dependencies_raise_memory_error_without_writes (test_memory_revision_inputs.MemoryRevisionInputTests.test_malformed_dependencies_raise_memory_error_without_writes) (deps=[{}]) ... ERROR
+  test_malformed_dependencies_raise_memory_error_without_writes (test_memory_revision_inputs.MemoryRevisionInputTests.test_malformed_dependencies_raise_memory_error_without_writes) (deps=['child', {}]) ... ERROR
+test_valid_list_and_tuple_dependencies_correct_and_invalidate (test_memory_revision_inputs.MemoryRevisionInputTests.test_valid_list_and_tuple_dependencies_correct_and_invalidate) ... ok
+
+======================================================================
+ERROR: test_malformed_dependencies_raise_memory_error_without_writes (test_memory_revision_inputs.MemoryRevisionInputTests.test_malformed_dependencies_raise_memory_error_without_writes) (deps=None)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_revision_inputs.py", line 27, in test_malformed_dependencies_raise_memory_error_without_writes
+    self.ledger.correct('old', 'new', 'new', 'user', 'reason', deps=deps)
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 291, in correct
+    return self._revise(old_id, new_id, content, source, reason, deps=deps, document_refs=document_refs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 266, in _revise
+    if set(deps) & {old_id, *affected}:
+       ^^^^^^^^^
+TypeError: 'NoneType' object is not iterable
+
+======================================================================
+ERROR: test_malformed_dependencies_raise_memory_error_without_writes (test_memory_revision_inputs.MemoryRevisionInputTests.test_malformed_dependencies_raise_memory_error_without_writes) (deps=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_revision_inputs.py", line 27, in test_malformed_dependencies_raise_memory_error_without_writes
+    self.ledger.correct('old', 'new', 'new', 'user', 'reason', deps=deps)
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 291, in correct
+    return self._revise(old_id, new_id, content, source, reason, deps=deps, document_refs=document_refs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 266, in _revise
+    if set(deps) & {old_id, *affected}:
+       ^^^^^^^^^
+TypeError: 'int' object is not iterable
+
+======================================================================
+ERROR: test_malformed_dependencies_raise_memory_error_without_writes (test_memory_revision_inputs.MemoryRevisionInputTests.test_malformed_dependencies_raise_memory_error_without_writes) (deps=[[]])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_revision_inputs.py", line 27, in test_malformed_dependencies_raise_memory_error_without_writes
+    self.ledger.correct('old', 'new', 'new', 'user', 'reason', deps=deps)
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 291, in correct
+    return self._revise(old_id, new_id, content, source, reason, deps=deps, document_refs=document_refs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 266, in _revise
+    if set(deps) & {old_id, *affected}:
+       ^^^^^^^^^
+TypeError: unhashable type: 'list'
+
+======================================================================
+ERROR: test_malformed_dependencies_raise_memory_error_without_writes (test_memory_revision_inputs.MemoryRevisionInputTests.test_malformed_dependencies_raise_memory_error_without_writes) (deps=[{}])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_revision_inputs.py", line 27, in test_malformed_dependencies_raise_memory_error_without_writes
+    self.ledger.correct('old', 'new', 'new', 'user', 'reason', deps=deps)
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 291, in correct
+    return self._revise(old_id, new_id, content, source, reason, deps=deps, document_refs=document_refs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 266, in _revise
+    if set(deps) & {old_id, *affected}:
+       ^^^^^^^^^
+TypeError: unhashable type: 'dict'
+
+======================================================================
+ERROR: test_malformed_dependencies_raise_memory_error_without_writes (test_memory_revision_inputs.MemoryRevisionInputTests.test_malformed_dependencies_raise_memory_error_without_writes) (deps=['child', {}])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_memory_revision_inputs.py", line 27, in test_malformed_dependencies_raise_memory_error_without_writes
+    self.ledger.correct('old', 'new', 'new', 'user', 'reason', deps=deps)
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 291, in correct
+    return self._revise(old_id, new_id, content, source, reason, deps=deps, document_refs=document_refs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/agent_runtime/project_memory.py", line 266, in _revise
+    if set(deps) & {old_id, *affected}:
+       ^^^^^^^^^
+TypeError: unhashable type: 'dict'
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.023s
+
+FAILED (errors=5)

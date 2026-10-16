@@ -79,3 +79,9 @@ Date: 2026-10-15
   WAL并发边界、完整回归见[证据](../../results/memory-context10-20261016/report.md)。
   只证明本地CPU完整context打包；全次调用仍多事务，峰值RSS/模型KV/QA/TTFT未测。
   父任务保持打开，提交/推送仅在最终检查通过后进行并实际回读远端。
+
+- 2026-10-17：MEM-REVISION-11在记忆修正的集合谱系检查前校验deps，5个非法输入
+  由泄漏TypeError改为约定MemoryError；四张业务表保持原样，原来已具备的事务回滚不冒称
+  新收益。普通/-O4专项通过；多参数非法诊断顺序变化及独立/完整回归见
+  [证据](../../results/memory-revision11-20261017/report.md)。仅API可靠性，未新增速度/内存/
+  模型KV/QA/TTFT结论，父任务继续打开；仅最终验收后发布并实际读回。

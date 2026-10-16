@@ -1,0 +1,170 @@
+{
+  "checks": [
+    {
+      "case": "invalid:None",
+      "baseline": "TypeError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:1",
+      "baseline": "TypeError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:1.5",
+      "baseline": "TypeError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:True",
+      "baseline": "TypeError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:[[]]",
+      "baseline": "TypeError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:[{}]",
+      "baseline": "TypeError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:['child', {}]",
+      "baseline": "TypeError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:set()",
+      "baseline": "MemoryError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:{}",
+      "baseline": "MemoryError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:'raw'",
+      "baseline": "MemoryError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:b'raw'",
+      "baseline": "MemoryError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:[None]",
+      "baseline": "MemoryError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:[1]",
+      "baseline": "MemoryError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:['bad space']",
+      "baseline": "MemoryError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "invalid:['raw', 'raw']",
+      "baseline": "MemoryError",
+      "candidate": "MemoryError",
+      "rollback": true
+    },
+    {
+      "case": "control:[]",
+      "exact_semantics_without_generated_timestamps": true,
+      "outcome": "success"
+    },
+    {
+      "case": "control:()",
+      "exact_semantics_without_generated_timestamps": true,
+      "outcome": "success"
+    },
+    {
+      "case": "control:['raw']",
+      "exact_semantics_without_generated_timestamps": true,
+      "outcome": "success"
+    },
+    {
+      "case": "control:('raw',)",
+      "exact_semantics_without_generated_timestamps": true,
+      "outcome": "success"
+    },
+    {
+      "case": "control:['missing']",
+      "exact_semantics_without_generated_timestamps": true,
+      "outcome": "MemoryError"
+    },
+    {
+      "case": "control:['old']",
+      "exact_semantics_without_generated_timestamps": true,
+      "outcome": "MemoryError"
+    },
+    {
+      "case": "control:['child']",
+      "exact_semantics_without_generated_timestamps": true,
+      "outcome": "MemoryError"
+    },
+    {
+      "case": "control:['grand']",
+      "exact_semantics_without_generated_timestamps": true,
+      "outcome": "MemoryError"
+    },
+    {
+      "case": "control:['new']",
+      "exact_semantics_without_generated_timestamps": true,
+      "outcome": "MemoryError"
+    },
+    {
+      "case": "control:['candidate']",
+      "exact_semantics_without_generated_timestamps": true,
+      "outcome": "MemoryError"
+    },
+    {
+      "case": "precedence:{'source': ''}",
+      "exact_error": "source must be nonempty text",
+      "rollback": true
+    },
+    {
+      "case": "precedence:{'reason': ''}",
+      "exact_error": "reason must be nonempty text",
+      "rollback": true
+    },
+    {
+      "case": "precedence:{'old_id': 'absent'}",
+      "exact_error": "unknown memory ID: absent",
+      "rollback": true
+    },
+    {
+      "case": "accept-and-superseded-precedence",
+      "both_versions": true
+    },
+    {
+      "case": "internal-TypeError-unmasked-and-rollback",
+      "passed": true
+    }
+  ],
+  "count": 30,
+  "source_sha256": "9da1501aca98ad326f23d20482160519e817fba4945b080b99513aa9b4c88dd3",
+  "scope": "manual independent public Python API + real SQLite; invalid rows exact; valid comparisons exclude generated created_at timestamps and sort entry lists by ID because fixture generation times differ; no performance/model/GPU claim"
+}

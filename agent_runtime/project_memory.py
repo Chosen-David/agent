@@ -262,6 +262,8 @@ class MemoryLedger:
             if accept and old['status'] != 'candidate':
                 raise MemoryError('accept requires a candidate memory')
             affected = self._descendants(db, old_id)
+            # Validate before hashing: malformed refs follow the public error contract.
+            deps = _ids(deps, 'deps')
             # A revision may not re-use any of the evidence it invalidates.
             if set(deps) & {old_id, *affected}:
                 raise MemoryError('revision depends on its invalidated lineage')
