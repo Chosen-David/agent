@@ -185,6 +185,34 @@ def check_handoff_basis(root, record, request):
             'scope': 'declared identity, dependencies and premise records; scientific applicability unchecked'}
 
 
+def _claim_descendants(graph, bad):
+    """Preserve shallow/custom scans; traverse ordinary deep sparse graphs once."""
+    rounds = 0
+    while True:
+        expanded = bad | {cid for cid, c in graph.items() if set(c['depends_on']) & bad}
+        if expanded == bad:
+            return bad
+        bad = expanded
+        rounds += 1
+        if (rounds == 2 and len(graph) >= 64
+                and all(type(cid) is str and type(c) is dict
+                        and type(c['depends_on']) in (list, tuple)
+                        and all(type(p) is str for p in c['depends_on'])
+                        for cid, c in graph.items())
+                and sum(len(c['depends_on']) for c in graph.values()) <= 4 * len(graph)):
+            children = {cid: [] for cid in graph}
+            for cid, claim in graph.items():
+                for parent in claim['depends_on']:
+                    children[parent].append(cid)
+            pending = list(bad)
+            while pending:
+                for child in children[pending.pop()]:
+                    if child not in bad:
+                        bad.add(child)
+                        pending.append(child)
+            return bad
+
+
 def basis_impact(root, record, request):
     """Recheck stored basis, propagating faults to local claim descendants only.
 
@@ -232,11 +260,7 @@ def basis_impact(root, record, request):
                      'claim artifact changed')
         except (ValueError, OSError):
             bad.add(cid)
-    while True:
-        expanded = bad | {cid for cid, c in graph.items() if set(c['depends_on']) & bad}
-        if expanded == bad:
-            break
-        bad = expanded
+    bad = _claim_descendants(graph, bad)
     return {'stale': True, 'claim_ids': sorted(bad), 'reasons': reasons,
             'scope': 'declared local claim DAG and project memory dependency closure'}
 
