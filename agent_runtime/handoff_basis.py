@@ -46,6 +46,43 @@ def make_token_counter(encoding):
     return counter
 
 
+def _valid_claim_residual(graph, pending):
+    """Fast success only; legacy validation owns every failure diagnostic."""
+    # Screen the whole graph before any extra hashing or semantic comparisons.
+    # Custom mappings, dependency iterators and str subclasses keep legacy calls.
+    if not all(type(cid) is str and type(claim) is dict
+               and type(claim['status']) is str
+               and type(claim['depends_on']) in (list, tuple)
+               and all(type(parent) is str for parent in claim['depends_on'])
+               for cid, claim in graph.items()):
+        return False
+    if sum(len(graph[cid]['depends_on']) for cid in pending) > 4 * len(pending):
+        return False
+    degree = {}
+    children = {cid: [] for cid in pending}
+    for cid in pending:
+        claim = graph[cid]
+        count = 0
+        for parent in claim['depends_on']:
+            if (parent not in graph or (claim['status'] == 'supported'
+                    and graph[parent]['status'] != 'supported')):
+                return False
+            if parent in pending:
+                count += 1
+                children[parent].append(cid)
+        degree[cid] = count
+    ready = [cid for cid, count in degree.items() if count == 0]
+    seen = 0
+    while ready:
+        cid = ready.pop()
+        seen += 1
+        for child in children[cid]:
+            degree[child] -= 1
+            if degree[child] == 0:
+                ready.append(child)
+    return seen == len(pending)
+
+
 def claim_graph(record):
     """Check local claim DAG, reference scope, and observable premise records."""
     claims = record.get('evidence_claims', [])
@@ -83,7 +120,12 @@ def claim_graph(record):
         graph[claim['id']] = claim
     # Iterative topological check also bounds stack depth for untrusted records.
     pending = set(graph)
+    rounds = 0
     while pending:
+        # Two legacy waves finish shallow graphs without adjacency allocation.
+        # Only a sufficiently large, sparse residual justifies the extra space.
+        if rounds == 2 and len(pending) >= 64 and _valid_claim_residual(graph, pending):
+            break
         ready = {cid for cid in pending if not (set(graph[cid]['depends_on']) & pending)}
         _require(bool(ready), 'cyclic claim dependencies')
         for cid in ready:
@@ -93,6 +135,7 @@ def claim_graph(record):
                 _require(all(graph[p]['status'] == 'supported' for p in parents),
                          'supported claim depends on unsupported claim')
         pending -= ready
+        rounds += 1
     return graph
 
 

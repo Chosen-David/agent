@@ -1,0 +1,104 @@
+{
+  "task_id": "MEM-STORAGE-01",
+  "candidate_id": "MEM-CLAIM-12",
+  "base": "4e4199d789812c6964329c02231733472d65a700",
+  "scope": "Local CPU handoff claim graph validation; no model KV/QA/TTFT claims",
+  "authorization": "User continuous Agent improvement and direct main publication after verification; no other repositories",
+  "supervision": "Manual host execution; no managed DAG, tmux monitor, ReviewSession or service claimed",
+  "hypothesis": "claim_graph repeated pending scans are quadratic for deep chains; a valid-graph linear topological pass can reduce complete entry-point latency",
+  "proposal": "Keep first two legacy waves. At third wave attempt linear valid-residual Kahn only with >=64 pending nodes, total pending raw dependency count<=4*pending nodes, exact built-in str IDs/parents/status, exact dict claims, exact list/tuple parents. Check exact types over entire graph before any extra parent hashing/semantic inspection. Reject fast path on unknown parent, unsupported supported-parent edge or cycle; continue unchanged legacy loop. No shared generalized graph abstraction.",
+  "prior_search": "/tmp/agent-claim-prior-search.json; 223 scanned, partial=true, 65 errors; six lexical hits not accepted for new performance claim; independent source inspection found agent_doc/results/dag-cycle-20261013-1601/report.md despite missing record; do not reuse its timing as claim_graph data. Eager Kahn star regression21.29% motivates two-wave shallow filter and dense guard.",
+  "references": [
+    "AGENTS.md",
+    "prompts/decision_review.md",
+    "workflows/project_document_workflow.md",
+    "agent_doc/task/TASK.md",
+    "agent_doc/task/task_details/MEM-STORAGE-01.md",
+    "agent_doc/guide/GUIDE.md"
+  ],
+  "dag": [
+    {
+      "id": "plan-review",
+      "owner": "independent fresh context",
+      "depends_on": [],
+      "done_when": "intent, guide, assumptions, prior results, acceptance, risk, resources reviewed; no blockers"
+    },
+    {
+      "id": "producer",
+      "owner": "root",
+      "depends_on": [
+        "plan-review"
+      ],
+      "done_when": "baseline snapshot, algorithm/candidate, permanent regressions and paired raw observations frozen"
+    },
+    {
+      "id": "verify_experiment_result",
+      "owner": "independent fresh context",
+      "depends_on": [
+        "producer"
+      ],
+      "done_when": "actual code and raw data review, independent graph reference and paired measurement; usable-with-scope"
+    },
+    {
+      "id": "integration",
+      "owner": "root",
+      "depends_on": [
+        "verify_experiment_result"
+      ],
+      "done_when": "full unittest/Reader and relevant -O pass; final source unchanged"
+    },
+    {
+      "id": "publication",
+      "owner": "root",
+      "depends_on": [
+        "integration"
+      ],
+      "done_when": "owned files/archive/checkpoint reviewed, fresh fetch and atomic nonforce main update, remote SHA/tree/content readback"
+    }
+  ],
+  "performance": {
+    "entry": "claim_graph(record), all schema/graph checks included",
+    "workloads": [
+      "512-node chain",
+      "256-node shared layered DAG",
+      "8-node chain",
+      "empty",
+      "512-node star",
+      "256-node dense DAG"
+    ],
+    "pairs": 21,
+    "warmups": 3,
+    "alternating_order": true,
+    "unit": "ms",
+    "primary": "median complete call latency reduction >=25% in 512 chain",
+    "controls": "Each non-primary workload (shared layered DAG, small chain, empty, star, dense DAG) median regression <=15%; any violation rejects candidate. Independent replay must also pass.",
+    "inputs": "public synthetic, canonical hash and fixed seed; object output identity/serialization parity",
+    "batching": {
+      "chain512": 1,
+      "shared256": 1,
+      "small8": 100,
+      "empty": 1000,
+      "star512": 1,
+      "dense256": 1
+    },
+    "samples": "Elapsed perf_counter_ns/batch; one pair contains separate baseline/candidate batched full calls. No construction/serialization inside time; inputs unchanged, no cached results. 3 warmup batches then21 alternating pairs."
+  },
+  "correctness": [
+    "empty, singleton, deep chain beyond recursion depth, broad DAG and duplicate dependencies",
+    "cycle/self-cycle, disconnected cycle, unknown parents, unsupported edges, malformed fields and multi-error differential parity",
+    "no mutation, full returned graph and object identity; plain and subclass container controls",
+    "independent generated graph/reference checks; run focused tests then full suite",
+    "residual63/64/65 eligibility boundaries and density threshold",
+    "exotic string/hash/list/dict subclasses retain legacy without extra observable operations; never normalize custom inputs",
+    "multi-error same-process exception type/message differential; cycle fallback exact legacy checks"
+  ],
+  "resources": {
+    "CPU": "local existing Python only",
+    "GPU": "none used",
+    "paid": "none",
+    "max_candidate_iterations": 2,
+    "stop": "validation failure, insufficient reliable performance gain or interface change required"
+  },
+  "publication_constraints": "No PR/branch, force push, guide edits, large logs or private data. Record scoped Chinese report and parent Progress. No new public result without independent acceptance.",
+  "version": 3
+}
