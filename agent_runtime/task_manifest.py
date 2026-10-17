@@ -286,6 +286,14 @@ class ReportingHandler:
             dispatched_task['prior_result_search'] = copy.deepcopy(self._prior_searches[search_key])
         if context is not None and hasattr(context, 'current') and not context.current():
             return Outcome('blocked', 'claim no longer current after prior-result lookup')
+        # Lookup and host callbacks may outlive or invalidate the initial checks.
+        # Recheck declared inputs before starting work; this does not make the
+        # final check and an external action one atomic operation.
+        try:
+            check_task_memory(self.root, task)
+            check_task_knowledge(self.root, task)
+        except (OSError, ValueError) as exc:
+            return Outcome('blocked', f'pre-dispatch memory/knowledge reconciliation required: {exc}')
         outcome = self.handler.run(dispatched_task, context)
         try:
             check_task_results(self.root, task, self.result_verifier)

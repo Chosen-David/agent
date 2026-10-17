@@ -1,0 +1,52 @@
+test_current_false_retains_claim_gate (test_dispatch_freshness.DispatchFreshnessTests.test_current_false_retains_claim_gate) ... ok
+test_empty_refs_do_not_require_stores (test_dispatch_freshness.DispatchFreshnessTests.test_empty_refs_do_not_require_stores) ... ok
+test_knowledge_changed_during_current_callback (test_dispatch_freshness.DispatchFreshnessTests.test_knowledge_changed_during_current_callback) ... FAIL
+test_knowledge_changed_during_lookup (test_dispatch_freshness.DispatchFreshnessTests.test_knowledge_changed_during_lookup) ... FAIL
+test_memory_corrected_during_current_callback (test_dispatch_freshness.DispatchFreshnessTests.test_memory_corrected_during_current_callback) ... FAIL
+test_memory_corrected_during_lookup (test_dispatch_freshness.DispatchFreshnessTests.test_memory_corrected_during_lookup) ... FAIL
+test_unchanged_memory_complete_and_verify (test_dispatch_freshness.DispatchFreshnessTests.test_unchanged_memory_complete_and_verify) ... ok
+
+======================================================================
+FAIL: test_knowledge_changed_during_current_callback (test_dispatch_freshness.DispatchFreshnessTests.test_knowledge_changed_during_current_callback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 95, in test_knowledge_changed_during_current_callback
+    self.run_after_change(self.knowledge_change(), 'current')
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 81, in run_after_change
+    self.assertEqual(self.base.calls, 0, 'invalidated inputs must block before handler work')
+AssertionError: 1 != 0 : invalidated inputs must block before handler work
+
+======================================================================
+FAIL: test_knowledge_changed_during_lookup (test_dispatch_freshness.DispatchFreshnessTests.test_knowledge_changed_during_lookup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 92, in test_knowledge_changed_during_lookup
+    self.run_after_change(self.knowledge_change(), 'lookup')
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 81, in run_after_change
+    self.assertEqual(self.base.calls, 0, 'invalidated inputs must block before handler work')
+AssertionError: 1 != 0 : invalidated inputs must block before handler work
+
+======================================================================
+FAIL: test_memory_corrected_during_current_callback (test_dispatch_freshness.DispatchFreshnessTests.test_memory_corrected_during_current_callback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 89, in test_memory_corrected_during_current_callback
+    self.run_after_change(self.memory_change(), 'current')
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 81, in run_after_change
+    self.assertEqual(self.base.calls, 0, 'invalidated inputs must block before handler work')
+AssertionError: 1 != 0 : invalidated inputs must block before handler work
+
+======================================================================
+FAIL: test_memory_corrected_during_lookup (test_dispatch_freshness.DispatchFreshnessTests.test_memory_corrected_during_lookup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 86, in test_memory_corrected_during_lookup
+    self.run_after_change(self.memory_change(), 'lookup')
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 81, in run_after_change
+    self.assertEqual(self.base.calls, 0, 'invalidated inputs must block before handler work')
+AssertionError: 1 != 0 : invalidated inputs must block before handler work
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.476s
+
+FAILED (failures=4)

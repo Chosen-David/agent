@@ -103,3 +103,10 @@ Date: 2026-10-15
   及全库1246运行/8跳过、Reader3通过；[完整证据](../../results/memory-impact14-20261017/report.md)。
   前置完整入口发现性基线不当候选对照；旧SQL负结果及补充oracle错误保留。
   父任务仍未完成：实际模型KV/QA/完整TTFT未测，发布以最终远端SHA和文件读回为准。
+
+- 2026-10-17：MEM-DISPATCH-17修复ReportingHandler在历史结果检索与宿主current
+  回调期间引用失效后仍启动handler的间隙；派发前复查声明memory/knowledge。
+  修前7项中4项证明handler错误调用1次，修后普通/-O7项通过；独立重放与额外4项
+  通过，全库1253运行/8跳过、Reader3通过。[证据](../../results/memory-dispatch17-20261017/report.md)。
+  只修复确定性回调间隙，不保证最终校验与外部动作原子；新增读取成本未测速，
+  无模型KV/QA/TTFT收益结论。父任务保持开放，发布以实际远端回读闭环。
