@@ -44,7 +44,8 @@ def short_appserver_usage(events, thread_id, turn_id):
     snapshot = snapshots[-1]
     last, total = snapshot.get('last', {}), snapshot.get('total', {})
     keys = ('inputTokens', 'cachedInputTokens', 'outputTokens', 'totalTokens', 'reasoningOutputTokens')
-    if any(type(last.get(k)) is not int or last[k] < 0 for k in keys):
+    if any(type(counts.get(k)) is not int or counts[k] < 0
+           for counts in (last, total) for k in keys):
         raise ValueError('missing/noninteger server token usage')
     if any(total.get(k) != last[k] for k in keys):
         raise ValueError('cumulative history on purported fresh thread')

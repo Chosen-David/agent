@@ -115,6 +115,40 @@ class AppServerUsageTests(unittest.TestCase):
         events=self.events(); events.insert(2,events[2])
         self.assertEqual(self.parse(events)['total_tokens'],120)
 
+    def test_equal_floating_cumulative_counts_are_rejected(self):
+        for key in self.events()[2]['params']['tokenUsage']['total']:
+            with self.subTest(key=key):
+                events=self.events()
+                total=events[2]['params']['tokenUsage']['total']
+                total[key]=float(total[key])
+                with self.assertRaises(ValueError):
+                    self.parse(json.loads(json.dumps(events)))
+
+    def test_equal_boolean_cumulative_counts_are_rejected(self):
+        for counts in ((0,0,0,0,0),(1,1,1,2,1)):
+            keys=('inputTokens','cachedInputTokens','outputTokens','totalTokens','reasoningOutputTokens')
+            usage=dict(zip(keys,counts))
+            for key,value in usage.items():
+                if value not in (0,1):
+                    continue
+                with self.subTest(counts=counts,key=key):
+                    events=self.events()
+                    events[2]['params']['tokenUsage']={'last':dict(usage),'total':dict(usage)}
+                    events[2]['params']['tokenUsage']['total'][key]=bool(value)
+                    with self.assertRaises(ValueError):
+                        self.parse(json.loads(json.dumps(events)))
+
+    def test_zero_integer_counts_retain_complete_output(self):
+        events=self.events()
+        for bucket in ('last','total'):
+            events[2]['params']['tokenUsage'][bucket]=dict.fromkeys(
+                events[2]['params']['tokenUsage'][bucket],0)
+        actual=self.parse(json.loads(json.dumps(events)))
+        expected=self.parse(self.events())
+        for key in ('input_tokens','cached_input_tokens','output_tokens','total_tokens','reasoning_output_tokens'):
+            expected[key]=0
+        self.assertEqual(actual,expected)
+
     def test_prior_turn_failures_tools_and_inconsistent_total_are_rejected(self):
         for change in ('prior','failure','tools','sum','duplicate'):
             events=self.events()

@@ -512,3 +512,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [MEM-SCOPE-05] 全active异scope延迟装配：主测耗时下降74.69%/65.75%，独立10098项检查和同协议复测通过；保留首版负结果，仅本地记忆收益，发布单独回读。 ([详情](task_details/MEM-SCOPE-05.md))
 
 - [x] [MEM-CHECK-SCHEMA-06] 单次遍历复用schema判定：长链主测下降15.01%/12.16%，独立329差分及复测通过；保留两版兼容性负结果，模型KV未验。 ([详情](task_details/MEM-CHECK-SCHEMA-06.md))
+
+## 2026-10-18
+
+- [x] [TOKEN-TOTAL-18] app-server累计token计数严格整数校验：修前14个非法子场景接受、修后拒绝；合法完整输出不变，独立复核及全库1256/8跳过、Reader3通过，无推理性能结论。 ([详情](task_details/TOKEN-TOTAL-18.md))
