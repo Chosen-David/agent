@@ -1,0 +1,12 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "FTS-SECTION-22 local SQLite whole indexed_search exact output and wall latency; manual independent review only",
+  "criteria": {
+    "implementation": {"procedure": "Inspect actual candidate, mirror and CLI path", "acceptance": "Only excerpt selection changed; mirror exact; same schema and semantics", "allow_not_applicable": false},
+    "reference_boundary": {"procedure": "Compare full JSON against frozen de05d95c module on all fixtures and boundaries", "acceptance": "Every output equal; one-tokenization test and existing errors preserved", "allow_not_applicable": false},
+    "data_integrity": {"procedure": "Check all raw samples, source/dependency/input/seed hashes and fixed protocol", "acceptance": "No missing sample or changed input/code; all seven pairs retained", "allow_not_applicable": false},
+    "numerical_sanity": {"procedure": "Recompute medians, ranges and ratios from raw positive finite milliseconds", "acceptance": "1/2 section 512-word cases >=15% faster; all others candidate <=max(1.15*baseline,baseline+0.5ms)", "allow_not_applicable": false},
+    "measurement_validity": {"procedure": "Inspect whole-call timing, warm pair, five calls per sample and seven alternating AB/BA pairs", "acceptance": "Same store/DB/query/options; construction/load outside timing for both; no asymmetric cache; all cases reported", "allow_not_applicable": false},
+    "reproducibility": {"procedure": "Independent fresh-context reviewer reruns real corpus and synthetic1/2/256 sections", "acceptance": "Full parity and frozen per-case performance thresholds pass; otherwise block adoption", "allow_not_applicable": false}
+  }
+}

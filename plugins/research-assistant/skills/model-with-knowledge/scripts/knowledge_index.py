@@ -7,6 +7,7 @@ it is not dense semantic retrieval or a learned reranker.
 from __future__ import annotations
 
 import json
+from heapq import nsmallest
 from pathlib import Path
 import re
 import sqlite3
@@ -201,9 +202,11 @@ def indexed_search(store, path, query, *, domain=None, structure=None, limit=5):
         results=[]
         for kid in sorted(scores,key=lambda k:(-scores[k],k))[:limit]:
             d=store.get(kid)
-            ranked_sections=sorted(sections(d),key=lambda n:(-len(terms&_terms(n['text']+' '+n['title'])),n['start_line']))
+            # Score once; retain the exact top-two order without sorting every section.
+            scored=((len(terms&_terms(n['text']+' '+n['title'])),n) for n in sections(d))
+            ranked_sections=nsmallest(2,scored,key=lambda item:(-item[0],item[1]['start_line']))
             excerpts=[{k:n[k] for k in ('node','title','start_line','end_line')} | {'excerpt':n['text'][:900]}
-                      for n in ranked_sections[:2] if terms&_terms(n['text']+' '+n['title'])]
+                      for overlap,n in ranked_sections if overlap]
             results.append({**store.ref(kid),'title':d['title'],'summary':d['summary'],
                             'status':d['status'],'assumptions':d['assumptions'],'verification':d['verification'],
                             'matches':reasons[kid],'score':scores[kid],'sections':excerpts})
