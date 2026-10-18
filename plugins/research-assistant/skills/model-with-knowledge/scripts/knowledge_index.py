@@ -130,10 +130,15 @@ def build_index(store, path, *, rebuild=False):
         changed=[kid for kid,h in current.items() if rebuild or old.get(kid)!=h]
         removed=sorted(set(old)-set(current))
         with con:
-            for kid in set(changed)|set(removed):
-                con.execute('DELETE FROM docs WHERE id=?',(kid,))
-                con.execute('DELETE FROM chunks WHERE id=?',(kid,))
-                con.execute('DELETE FROM entries WHERE id=?',(kid,))
+            # FTS id columns are UNINDEXED: one scan per bounded batch instead
+            # of one scan per ID. Keep all deletes before original-order inserts
+            # so rowids, ranking ties and transaction rollback stay unchanged.
+            deleted = list(set(changed) | set(removed))
+            for offset in range(0, len(deleted), 128):
+                batch = deleted[offset:offset + 128]
+                placeholders = ','.join('?' for _ in batch)
+                for table in ('docs', 'chunks', 'entries'):
+                    con.execute(f'DELETE FROM {table} WHERE id IN ({placeholders})', batch)
             for kid in changed:
                 d=store.records[kid]
                 context=' '.join([d['summary'],*d['aliases'],*d['domains'],*d['structures'],*d['assumptions']])

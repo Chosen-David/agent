@@ -1,0 +1,102 @@
+Command: python -m agent_runtime.knowledge --root knowledge search 'SQLite incremental deletion batching transaction' --limit 3
+Exit: 0
+Disposition: reject all three hits as SQLite optimization justification; unrelated conditions. No knowledge_refs adopted.
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "ds.dsu-connectivity",
+      "version": 1,
+      "sha256": "fa46c241c4f909a508efe77816eaba0280225c1556d04170d8d5b358bd7bfea5",
+      "title": "DSU：增量连通与不可删除边界",
+      "summary": "ACL DSU 用按大小合并与路径压缩支持增量连通；均摊 O(α(n))，不能处理删除边或有向可达性。",
+      "status": "published",
+      "assumptions": [
+        "operation: incremental undirected connectivity",
+        "updates: insert-only",
+        "concurrency: single writer"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.dsu-connectivity"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "incremental"
+          ]
+        }
+      ],
+      "score": 1
+    },
+    {
+      "id": "math.convex-projection-certificate",
+      "version": 1,
+      "sha256": "bf9c9ea760c9514f18844fbd00a7eaf1647eadc00499fcee7d6c16823d943a0c",
+      "title": "选定凸输出的投影、误差下界与残差间隙证书",
+      "summary": "有限value凸包的平方误差投影以可行性和全顶点残差max认证；P−2g≤最优误差≤P，g=0 iff投影。",
+      "status": "published",
+      "assumptions": [
+        "非空有限v_i∈R^p和固定已知z；Euclidean平方误差；C=conv{v_i}，允许改变权重但β≥0且Σβ=1。",
+        "候选y必须属于C；h_C(r)=max_i r·v_i遍历C的全部给定点；只对明确选定value集合给界。",
+        "固定线性W可对Wv和Wz使用结论；只保真W输出，不保证raw输出、全部query或模型e2e。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "精确展开/凸性证明人工审核，不是Lean或浮点数值证书。",
+          "agent_doc/results/math-convex-projection-20261009：12公开Fraction例、6结构检索、定向回归及独立六域验收；无模型/GPU实测。"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "sqlite"
+          ]
+        }
+      ],
+      "score": 1
+    },
+    {
+      "id": "math.fano-message-budget",
+      "version": 1,
+      "sha256": "7efd6910745e07f3509e8cbebb9dbbc8991fb674a9ce827d0c7e091b52241348",
+      "title": "条件 Fano 与有限消息辨别容量",
+      "summary": "有限标签任务的消息字母容量限制辨别成功率；条件熵与错误概率给必要界。旁信息、长度及检索输出须计入观察，不能由 token 数推断任务质量。",
+      "status": "published",
+      "assumptions": [
+        "Y∈{1,…,M}, M≥2；所有熵与互信息用 log2；M=1单独处理",
+        "接收者只观察T,Z；随机解码独立于Y给定T,Z，否则相关随机性计入Z",
+        "每个给定Z的合法消息支持数至多C；先验及旁信息分布明确",
+        "固定B-bit/固定n-token格式才直接给2^B/V^n消息界；变长、时间、检索和工具输出另计"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-fano-message-20261009/verify.py",
+          "agent_doc/results/math-fano-message-20261009/raw.json",
+          "agent_doc/results/math-fano-message-20261009/retrieval.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "sqlite"
+          ]
+        }
+      ],
+      "score": 1
+    }
+  ]
+}

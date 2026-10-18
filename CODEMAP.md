@@ -208,3 +208,5 @@ TOK-FIFTY-05: artifact_context optional whole-packet token_counter chooses among
 TOK-FIFTY-06: complete arbitrary-LF text line dictionary, exact nonconsecutive sharing with all ordered indexes; agent_runtime/text_dictionary.py, scripts/text_dictionary.py, tests/test_text_dictionary.py; docs/token_optimization/text_dictionary.md. No meeting closure/semantic omission.
 
 TOK-FIFTY R6 continuation: `agent_doc/results/token-r6-close-20261014/` preserves the recovered 16:00 candidate and failures; `agent_doc/results/token-r6-resume-20261014-1800/` records canonical TASK metadata repair, current regression and independent acceptance. Main is sole writer; runtime/parser unchanged, no new token mechanism.
+
+FTS-BATCH-21: `agent_runtime/knowledge_index.py` and model-with-knowledge mirror batch exact ID deletions; `scripts/benchmark_knowledge_index.py` pins the baseline and paired full-index updates; `tests/test_knowledge_index_batch.py` guards statement count and multi-batch rollback. Evidence: `agent_doc/results/fts-batch21-20261018/`; local SQLite maintenance only, no model-quality/token-cost claim.

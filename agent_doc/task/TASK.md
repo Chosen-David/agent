@@ -523,3 +523,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-18 telemetry follow-up
 
 - [x] [TOKEN-IDENTITY-20] Reject unidentifiable app-server usage; independent boundary checks passed, publication subject to final regression. ([detail](task_details/TOKEN-IDENTITY-20.md))
+- [x] [FTS-BATCH-21] Exact batched knowledge-index updates: 33 paired cases and independent verification passed; 1271 tests (8 skipped), Reader 3 passed. ([detail](task_details/FTS-BATCH-21.md))
