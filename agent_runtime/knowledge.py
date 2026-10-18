@@ -221,6 +221,9 @@ class KnowledgeStore:
         _require(_text(query) and len(query) <= 2000, 'query must contain 1..2000 characters')
         _require(type(limit) is int and 1 <= limit <= 20, 'limit must be 1..20')
         terms = _terms(query)
+        if not terms:
+            return {'schema_version': 1, 'snapshot': self.snapshot, 'backend': 'files-lexical-v1',
+                    'applicability': 'unchecked', 'results': []}
         rows = []
         for kid, d in self.records.items():
             if d['status'] != 'published' and not include_unpublished:
