@@ -28,3 +28,4 @@ DAG：独立计划复核 → 实现/差分/配对测量 → 独立代码数据�
 - 必要回归实际执行：`python -m unittest discover -s tests -v`，1281项/107.737s，OK（8 skipped）；`python -m unittest discover -s apps/paper-reader/tests -v`，3项/1.626s，OK。专项4项通过；插件镜像字节一致，`sync_plugin_references.py --check`通过。
 - 发布前fetch仍为基线5b1765cb1e228dff27794ca067171fd2f31c0d3a。实现与有界验收完成，待main原子发布及远端SHA/关键内容回读；主控负责收尾。native受管路径与真实LLM端到端效果仍未验证，不作为本轮验收。
 - 初次发布因大批原始日志被安全检查拒绝；不重试原payload。改为仅公开实现、测试/复现脚本、简报与短日志；大批样本/逐项日志留本地，报告明确第三方无法仅凭公开简报复算统计。结果索引仅登记实际公开文件，不授予自动复用。源码与测量数据不改动。
+- 发布闭环：缩减为18文件/576行；含raw的未发布旧commit不在新增历史中。CLI普通push因缺Username失败，已连接GitHub接口以expected_sha=5b1765cb、force=false原子更新main至[766e56e79da9828cfafecea678ebd1ef4585c0b3](https://github.com/Chosen-David/agent/commit/766e56e79da9828cfafecea678ebd1ef4585c0b3)。再次fetch及API回读一致，远端tree=5e573ad7a96afcecccd4edc28ac65f86fc2ee857与本地已验证内容一致，完整diff为零；关键预算分支与公开文件清单已读回。此有界任务完成，后续真实任务/模型指标仍须独立验证；持续优化任务不停止。
