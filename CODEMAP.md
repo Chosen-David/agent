@@ -214,3 +214,5 @@ FTS-BATCH-21: `agent_runtime/knowledge_index.py` and model-with-knowledge mirror
 FTS-SECTION-22: main-owned `agent_runtime/knowledge_index.py` and mirrored plugin score excerpts once and select exact top-two; `scripts/benchmark_knowledge_search.py` / `tests/test_knowledge_excerpt_selection.py` preserve full search outputs. Producer and independent evidence: `agent_doc/results/fts-section22-20261019/report.md`; scoped long-section synthetic latency only, no general real-corpus/LLM gain claim.
 
 TERMS-CLASS-27: `scripts/benchmark_term_classes.py`, `tests/test_knowledge_term_classes.py`, `agent_doc/results/terms-class27/`: exact token-class projection and paired complete-search evidence.
+
+CONTEXT-BUDGET-28: `agent_runtime/knowledge.py::KnowledgeStore.context` and standalone mirror reject complete bundles exceeding the entry budget before payload assembly; `tests/test_knowledge_context_budget.py`, `scripts/benchmark_context_budget.py`, `agent_doc/results/context-budget28/` bind exact-output and CPU evidence. No LLM quality claim.

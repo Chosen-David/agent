@@ -301,6 +301,12 @@ class KnowledgeStore:
                 continue
             entry = self.get(kid)
             keys = [ref['id'] for ref in entry['knowledge_refs'] if ref['id'] not in selected]
+            # A complete bundle cannot fit even before payload materialization.
+            # Keep seed/closure validation above and continue to later candidates.
+            if len(selected)+len(keys) > max_entries:
+                skipped.append({'id':kid, 'reason':'complete prerequisite bundle exceeds context budget',
+                                'selection_reason':reason})
+                continue
             bundle = []
             for key in keys:
                 d = self.get(key)
