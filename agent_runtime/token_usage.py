@@ -3,6 +3,8 @@ import json
 
 def short_appserver_usage(events, thread_id, turn_id):
     """Account one fresh no-tool RPC turn; never sum cumulative updates."""
+    if any(not isinstance(identity, str) or not identity for identity in (thread_id, turn_id)):
+        raise ValueError('nonempty thread and turn identities are required')
     starts = []
     completed = []
     snapshots = []

@@ -1,5 +1,7 @@
 """Single current no-tool turn accounting on fresh or inherited threads."""
 def current_turn_usage(events,thread_id,turn_id):
+    if any(not isinstance(identity, str) or not identity for identity in (thread_id, turn_id)):
+        raise ValueError('nonempty thread and turn identities are required')
     starts=[];ends=[];snapshots=[];done=False
     allowed={'userMessage','agentMessage','reasoning'}
     for e in events:

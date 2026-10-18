@@ -518,3 +518,8 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [TOKEN-TOTAL-18] app-server累计token计数严格整数校验：修前14个非法子场景接受、修后拒绝；合法完整输出不变，独立复核及全库1256/8跳过、Reader3通过，无推理性能结论。 ([详情](task_details/TOKEN-TOTAL-18.md))
 
 - [x] [MEM-DISPATCH-DOC-19] 宿主current回调后的文档新鲜性核验：修前5项失效文档仍启动，修后专项/独立检查及全库1264项（8跳过）、Reader3通过。无推理性能结论。 ([详情](task_details/MEM-DISPATCH-DOC-19.md))
+
+
+## 2026-10-18 telemetry follow-up
+
+- [x] [TOKEN-IDENTITY-20] Reject unidentifiable app-server usage; independent boundary checks passed, publication subject to final regression. ([detail](task_details/TOKEN-IDENTITY-20.md))
