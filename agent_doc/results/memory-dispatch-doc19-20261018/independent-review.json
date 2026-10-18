@@ -1,0 +1,123 @@
+{
+  "status": "usable-with-scope",
+  "reviewer": "doc_dispatch_review19",
+  "review_type": "manual independent source and CPU-fixture result verification; not managed ReviewSession or runtime verifier backend",
+  "requirement": "MEM-DISPATCH-DOC-19",
+  "base_revision": "b58836816ff178abce4028348b7d3de3f21a31c7",
+  "scope": "ReportingHandler.run rejects explicitly bound project-document changes made by deterministic current() callbacks before invoking the handler, preserving tested legacy/canonical/Progress/current-False behavior.",
+  "source_bindings": [
+    {
+      "path": "agent_runtime/task_manifest.py",
+      "sha256": "b9ec8f8881e26265fec368570bfb2b9fde2aed01ae6643ee0dab7f4543cd0e41"
+    },
+    {
+      "path": "tests/test_dispatch_freshness.py",
+      "sha256": "620eb4fda1dec3385112d1f521ee2fad028b98ccfea17f342163281a8e23d33d"
+    },
+    {
+      "path": "agent_runtime/project_docs.py",
+      "sha256": "a2712d093f4012350f6654401a15aa1d22e442d6993482025996b63183477a57"
+    }
+  ],
+  "evidence_bindings": [
+    {
+      "path": ".agent-runs/memory-memscope-20261018-2000/plan.md",
+      "sha256": "7df909d1da6133bf624499d7ca6ef84261bbb93b53c175a371b5b1033d74d57c"
+    },
+    {
+      "path": ".agent-runs/memory-memscope-20261018-2000/before.log",
+      "sha256": "62596f669e1a981664b557aad6844cdb1c0e8a00baf0dd7a0ae4fc934af92a18"
+    },
+    {
+      "path": ".agent-runs/memory-memscope-20261018-2000/before-v2.log",
+      "sha256": "9bbe0e726e41310532a937f8a9d70e469cd04f92b779a9ab0546a8be8c683717"
+    },
+    {
+      "path": ".agent-runs/memory-memscope-20261018-2000/after.log",
+      "sha256": "c7e5ee40601e5cfc0c800bebfb0f1c9f26ce04511c4cf854873d1ef2faa926d8"
+    },
+    {
+      "path": ".agent-runs/memory-memscope-20261018-2000/after-O.log",
+      "sha256": "8f30765aaf0d6f7dd81b0ab00bc7091a31461dce20847a234a7899c444532680"
+    },
+    {
+      "path": ".agent-runs/memory-memscope-20261018-2000/independent-cases.py",
+      "sha256": "08aaddfc335fac834ff2e76571eeb3fec3d33bf96d1b60b2f65227b7e5ac37ce"
+    },
+    {
+      "path": ".agent-runs/memory-memscope-20261018-2000/independent-runner.py",
+      "sha256": "a6a6114ae53bba43a007daefaffa0222855e58995c25304ad97d029d7da951ca"
+    },
+    {
+      "path": ".agent-runs/memory-memscope-20261018-2000/independent-baseline.log",
+      "sha256": "15201278ca5d3f5be0bebdbc2e7118537dae39d1adb1232d0a5a05d87bd67ba0"
+    },
+    {
+      "path": ".agent-runs/memory-memscope-20261018-2000/independent-candidate.log",
+      "sha256": "a0113102cb48ae8a17321e553ca277ee016423889e953828c6262ce24d5d9fdf"
+    },
+    {
+      "path": ".agent-runs/memory-memscope-20261018-2000/independent-candidate-O.log",
+      "sha256": "9fd0c8e2c4d734c27db88c5e28836cdebb82099c92acdab5d6df56b45d10f18a"
+    }
+  ],
+  "environment": {
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.39"
+  },
+  "commands": [
+    "python .agent-runs/memory-memscope-20261018-2000/independent-runner.py --baseline",
+    "python .agent-runs/memory-memscope-20261018-2000/independent-runner.py",
+    "python -O .agent-runs/memory-memscope-20261018-2000/independent-runner.py"
+  ],
+  "observations": {
+    "producer_initial_baseline": "14 tests; 5 expected failures plus 1 fixture error caused by reusing one temp root for active legacy and canonical indexes; retained, not used as clean acceptance evidence",
+    "producer_corrected_baseline": "15 tests; 5 handler-call failures, zero errors",
+    "producer_candidate": "15/15 normal and optimized pass",
+    "independent_baseline": "21 tests; 8 failures, zero errors; every failing assertion demonstrates handler called once instead of zero",
+    "independent_candidate": "21/21 normal and optimized pass; same 15 producer cases plus 6 independently authored cases",
+    "additional_cases": [
+      "current False plus deleted bound document retains claim gate and zero calls",
+      "legacy TASK present but no document_refs retains legacy compatibility",
+      "changed explicitly adopted advice blocks before handler",
+      "unadopted advice change remains allowed",
+      "canonical detail deletion blocks before handler",
+      "bound legacy invalid UTF-8 blocks before handler"
+    ]
+  },
+  "checks": {
+    "implementation": {
+      "verdict": "pass",
+      "reason": "Read ReportingHandler.run, document snapshot/check semantics, production/test diff. Existing validator added after current and memory/knowledge checks, immediately before handler; exception and current-False semantics retained."
+    },
+    "reference_boundary": {
+      "verdict": "pass",
+      "reason": "Independent fixtures use real documents/snapshots and direct handler-call oracle, not outcome alone. Both invalidation and compatibility boundaries tested."
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "Read all supplied raw logs and independent outputs; retained fixture error distinguished from corrected baseline; frozen source/test hashes match before reporting."
+    },
+    "numerical_sanity": {
+      "verdict": "not_applicable",
+      "reason": "Reliability behavior only, no numerical algorithm or metric; exact integer call counts checked."
+    },
+    "measurement_validity": {
+      "verdict": "not_applicable",
+      "reason": "No performance claim; elapsed unittest timings are incidental and not compared."
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "Actual baseline source loaded from git show into an isolated interpreter module; no production source rewrite. Independent candidate rerun with normal and optimized interpreters."
+    }
+  },
+  "blocking_findings": [],
+  "limitations": [
+    "Only the deterministic callback invalidation window and listed fixtures are accepted; arbitrary concurrent changes after the final check remain a TOCTOU gap.",
+    "Extra project document traversal/read/hash cost is unmeasured.",
+    "No guide fixture written; guide-mutation case not executed. Existing guide checking follows reused validator, not independent runtime coverage here.",
+    "No live model/GPU/KV/QA/TTFT or performance claims.",
+    "Full repository and Reader regression remain main-agent gates after this scoped review; not included in this acceptance.",
+    "Parent MEM-STORAGE-01 remains open; this is a bounded reliability repair."
+  ]
+}

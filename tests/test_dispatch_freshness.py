@@ -10,6 +10,7 @@ from agent_runtime import task_manifest
 from agent_runtime.core import Outcome
 from agent_runtime.knowledge import KnowledgeStore
 from agent_runtime.project_memory import MemoryLedger
+from agent_runtime.project_docs import snapshot_project_docs
 
 
 class DispatchFreshnessTests(unittest.TestCase):
@@ -118,6 +119,80 @@ class DispatchFreshnessTests(unittest.TestCase):
         self.assertEqual(outcome.status, 'pending')
         self.assertEqual(self.base.calls, 1)
         self.assertFalse((self.root / '.agent-memory').exists())
+
+    def bind_documents(self, canonical=False):
+        if canonical:
+            index = self.root / 'agent_doc/task/TASK.md'
+            detail = self.root / 'agent_doc/task/task_details/T1.md'
+            detail.parent.mkdir(parents=True)
+            index.write_text('# Tasks\n\n## 2026-10-18\n\n'
+                             '- [ ] [T1] Work ([details](task_details/T1.md))\n')
+            detail.write_text('# T1\n\nTask-ID: T1\nDate: 2026-10-18\n\n'
+                              '## Plan\n\nOriginal requirement.\n\n## Progress\n')
+            self.task['task_refs'] = ['T1']
+        else:
+            index = self.root / 'TASK.md'
+            index.write_text('- [ ] [T1] Original requirement\n')
+            detail = None
+        self.task['document_refs'] = snapshot_project_docs(self.root)
+        return index, detail
+
+    def test_legacy_task_changed_during_current_callback(self):
+        index, _ = self.bind_documents()
+        self.run_after_change(lambda: index.write_text('- [ ] [T1] Changed requirement\n'),
+                              'current')
+
+    def test_legacy_task_deleted_during_current_callback(self):
+        index, _ = self.bind_documents()
+        self.run_after_change(index.unlink, 'current')
+
+    def test_canonical_index_changed_during_current_callback(self):
+        index, _ = self.bind_documents(canonical=True)
+        self.run_after_change(lambda: index.write_text(index.read_text().replace('Work', 'New work')),
+                              'current')
+
+    def test_canonical_plan_changed_during_current_callback(self):
+        _, detail = self.bind_documents(canonical=True)
+        self.run_after_change(lambda: detail.write_text(detail.read_text().replace('Original', 'New')),
+                              'current')
+
+    def test_progress_append_during_current_callback_remains_allowed(self):
+        _, detail = self.bind_documents(canonical=True)
+
+        class Context:
+            def current(self):
+                with detail.open('a') as stream:
+                    stream.write('\nObserved progress only.\n')
+                return True
+
+        outcome = self.wrapper.run(self.task, Context())
+        self.assertEqual(outcome.status, 'pending')
+        self.assertEqual(self.base.calls, 1)
+
+    def assert_unchanged_documents_complete(self, canonical):
+        self.bind_documents(canonical=canonical)
+        self.base.status = 'complete'
+        outcome = self.wrapper.run(self.task, None)
+        self.assertEqual(outcome.status, 'complete')
+        self.assertEqual(self.base.calls, 1)
+        self.assertTrue(self.wrapper.verify(self.task, outcome.evidence))
+
+    def test_unchanged_legacy_documents_complete_and_verify(self):
+        self.assert_unchanged_documents_complete(False)
+
+    def test_unchanged_canonical_documents_complete_and_verify(self):
+        self.assert_unchanged_documents_complete(True)
+
+    def test_cached_lookup_still_rechecks_documents_after_current(self):
+        index, _ = self.bind_documents()
+        outcome = self.wrapper.run(self.task, None)
+        self.assertEqual(outcome.status, 'pending')
+        self.assertEqual(self.base.calls, 1)
+        self.base.calls = 0
+        with patch.object(task_manifest, '_prior_result_search',
+                          side_effect=AssertionError('cached lookup must not rerun')):
+            self.run_after_change(lambda: index.write_text('- [ ] [T1] Changed requirement\n'),
+                                  'current')
 
 
 if __name__ == '__main__':

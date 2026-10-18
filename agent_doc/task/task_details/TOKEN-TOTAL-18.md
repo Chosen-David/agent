@@ -1,5 +1,8 @@
 # TOKEN-TOTAL-18：app-server累计用量的严格类型检查
 
+Task-ID: TOKEN-TOTAL-18
+Date: 2026-10-18
+
 ## Plan
 
 在Agent已有授权范围修复short_appserver_usage累计total字段的等值非整数绕过。

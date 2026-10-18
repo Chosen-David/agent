@@ -292,8 +292,9 @@ class ReportingHandler:
         try:
             check_task_memory(self.root, task)
             check_task_knowledge(self.root, task)
+            check_task_documents(self.root, task)
         except (OSError, ValueError) as exc:
-            return Outcome('blocked', f'pre-dispatch memory/knowledge reconciliation required: {exc}')
+            return Outcome('blocked', f'pre-dispatch document/memory/knowledge reconciliation required: {exc}')
         outcome = self.handler.run(dispatched_task, context)
         try:
             check_task_results(self.root, task, self.result_verifier)

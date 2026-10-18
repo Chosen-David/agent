@@ -1,0 +1,100 @@
+test_cached_lookup_still_rechecks_documents_after_current (independent_loaded_0.DispatchFreshnessTests.test_cached_lookup_still_rechecks_documents_after_current) ... FAIL
+test_canonical_index_changed_during_current_callback (independent_loaded_0.DispatchFreshnessTests.test_canonical_index_changed_during_current_callback) ... FAIL
+test_canonical_plan_changed_during_current_callback (independent_loaded_0.DispatchFreshnessTests.test_canonical_plan_changed_during_current_callback) ... FAIL
+test_current_false_retains_claim_gate (independent_loaded_0.DispatchFreshnessTests.test_current_false_retains_claim_gate) ... ok
+test_empty_refs_do_not_require_stores (independent_loaded_0.DispatchFreshnessTests.test_empty_refs_do_not_require_stores) ... ok
+test_knowledge_changed_during_current_callback (independent_loaded_0.DispatchFreshnessTests.test_knowledge_changed_during_current_callback) ... ok
+test_knowledge_changed_during_lookup (independent_loaded_0.DispatchFreshnessTests.test_knowledge_changed_during_lookup) ... ok
+test_legacy_task_changed_during_current_callback (independent_loaded_0.DispatchFreshnessTests.test_legacy_task_changed_during_current_callback) ... FAIL
+test_legacy_task_deleted_during_current_callback (independent_loaded_0.DispatchFreshnessTests.test_legacy_task_deleted_during_current_callback) ... FAIL
+test_memory_corrected_during_current_callback (independent_loaded_0.DispatchFreshnessTests.test_memory_corrected_during_current_callback) ... ok
+test_memory_corrected_during_lookup (independent_loaded_0.DispatchFreshnessTests.test_memory_corrected_during_lookup) ... ok
+test_progress_append_during_current_callback_remains_allowed (independent_loaded_0.DispatchFreshnessTests.test_progress_append_during_current_callback_remains_allowed) ... ok
+test_unchanged_canonical_documents_complete_and_verify (independent_loaded_0.DispatchFreshnessTests.test_unchanged_canonical_documents_complete_and_verify) ... ok
+test_unchanged_legacy_documents_complete_and_verify (independent_loaded_0.DispatchFreshnessTests.test_unchanged_legacy_documents_complete_and_verify) ... ok
+test_unchanged_memory_complete_and_verify (independent_loaded_0.DispatchFreshnessTests.test_unchanged_memory_complete_and_verify) ... ok
+test_adopted_advice_change_stops_handler (independent_loaded_1.IndependentDocumentCases.test_adopted_advice_change_stops_handler) ... FAIL
+test_bound_legacy_invalid_utf8_stops_handler (independent_loaded_1.IndependentDocumentCases.test_bound_legacy_invalid_utf8_stops_handler) ... FAIL
+test_canonical_detail_deleted_stops_handler (independent_loaded_1.IndependentDocumentCases.test_canonical_detail_deleted_stops_handler) ... FAIL
+test_false_current_keeps_priority_even_with_deleted_document (independent_loaded_1.IndependentDocumentCases.test_false_current_keeps_priority_even_with_deleted_document) ... ok
+test_legacy_file_without_declared_refs_keeps_compatibility (independent_loaded_1.IndependentDocumentCases.test_legacy_file_without_declared_refs_keeps_compatibility) ... ok
+test_unadopted_advice_change_remains_allowed (independent_loaded_1.IndependentDocumentCases.test_unadopted_advice_change_remains_allowed) ... ok
+
+======================================================================
+FAIL: test_cached_lookup_still_rechecks_documents_after_current (independent_loaded_0.DispatchFreshnessTests.test_cached_lookup_still_rechecks_documents_after_current)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 194, in test_cached_lookup_still_rechecks_documents_after_current
+    self.run_after_change(lambda: index.write_text('- [ ] [T1] Changed requirement\n'),
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 82, in run_after_change
+    self.assertEqual(self.base.calls, 0, 'invalidated inputs must block before handler work')
+AssertionError: 1 != 0 : invalidated inputs must block before handler work
+
+======================================================================
+FAIL: test_canonical_index_changed_during_current_callback (independent_loaded_0.DispatchFreshnessTests.test_canonical_index_changed_during_current_callback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 151, in test_canonical_index_changed_during_current_callback
+    self.run_after_change(lambda: index.write_text(index.read_text().replace('Work', 'New work')),
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 82, in run_after_change
+    self.assertEqual(self.base.calls, 0, 'invalidated inputs must block before handler work')
+AssertionError: 1 != 0 : invalidated inputs must block before handler work
+
+======================================================================
+FAIL: test_canonical_plan_changed_during_current_callback (independent_loaded_0.DispatchFreshnessTests.test_canonical_plan_changed_during_current_callback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 156, in test_canonical_plan_changed_during_current_callback
+    self.run_after_change(lambda: detail.write_text(detail.read_text().replace('Original', 'New')),
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 82, in run_after_change
+    self.assertEqual(self.base.calls, 0, 'invalidated inputs must block before handler work')
+AssertionError: 1 != 0 : invalidated inputs must block before handler work
+
+======================================================================
+FAIL: test_legacy_task_changed_during_current_callback (independent_loaded_0.DispatchFreshnessTests.test_legacy_task_changed_during_current_callback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 142, in test_legacy_task_changed_during_current_callback
+    self.run_after_change(lambda: index.write_text('- [ ] [T1] Changed requirement\n'),
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 82, in run_after_change
+    self.assertEqual(self.base.calls, 0, 'invalidated inputs must block before handler work')
+AssertionError: 1 != 0 : invalidated inputs must block before handler work
+
+======================================================================
+FAIL: test_legacy_task_deleted_during_current_callback (independent_loaded_0.DispatchFreshnessTests.test_legacy_task_deleted_during_current_callback)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 147, in test_legacy_task_deleted_during_current_callback
+    self.run_after_change(index.unlink, 'current')
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/tests/test_dispatch_freshness.py", line 82, in run_after_change
+    self.assertEqual(self.base.calls, 0, 'invalidated inputs must block before handler work')
+AssertionError: 1 != 0 : invalidated inputs must block before handler work
+
+======================================================================
+FAIL: test_adopted_advice_change_stops_handler (independent_loaded_1.IndependentDocumentCases.test_adopted_advice_change_stops_handler)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/.agent-runs/memory-memscope-20261018-2000/independent-cases.py", line 54, in test_adopted_advice_change_stops_handler
+    self.assertEqual(self.counter.calls, 0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_bound_legacy_invalid_utf8_stops_handler (independent_loaded_1.IndependentDocumentCases.test_bound_legacy_invalid_utf8_stops_handler)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/.agent-runs/memory-memscope-20261018-2000/independent-cases.py", line 84, in test_bound_legacy_invalid_utf8_stops_handler
+    self.assertEqual(self.counter.calls, 0)
+AssertionError: 1 != 0
+
+======================================================================
+FAIL: test_canonical_detail_deleted_stops_handler (independent_loaded_1.IndependentDocumentCases.test_canonical_detail_deleted_stops_handler)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/88c3234ecfbc/agent-memory/.agent-runs/memory-memscope-20261018-2000/independent-cases.py", line 76, in test_canonical_detail_deleted_stops_handler
+    self.assertEqual(self.counter.calls, 0)
+AssertionError: 1 != 0
+
+----------------------------------------------------------------------
+Ran 21 tests in 0.518s
+
+FAILED (failures=8)
