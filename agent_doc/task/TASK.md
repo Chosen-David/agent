@@ -529,4 +529,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [FTS-SECTION-22] Exact excerpt selection: scoped long-section latency gain independently reproduced; 1273 tests (8 skipped), Reader 3 passed; publication/readback main-owned. ([detail](task_details/FTS-SECTION-22.md))
 
-- [x] [LEXICAL-EMPTY-23] 空词查询跳过扫描；独立复测及144差分通过，全库1276/8跳过、Reader3通过，发布回读由主控闭环。 ([详情](task_details/LEXICAL-EMPTY-23.md))
+- [x] [LEXICAL-EMPTY-23] 空词查询跳过扫描；独立复测及144差分通过，全库1276/8跳过、Reader3通过，发布回读由主控闭环。 ([详情](task_details/LEXICAL-EMPTY-23.md))
+- [x] [TERMS-CLASS-27] Exact query-class projection: independent hot-search latency -27.76%; 1277 tests (8 skipped), Reader3 passed; publication/readback main-owned. ([detail](task_details/TERMS-CLASS-27.md))

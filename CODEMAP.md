@@ -212,3 +212,5 @@ TOK-FIFTY R6 continuation: `agent_doc/results/token-r6-close-20261014/` preserve
 FTS-BATCH-21: `agent_runtime/knowledge_index.py` and model-with-knowledge mirror batch exact ID deletions; `scripts/benchmark_knowledge_index.py` pins the baseline and paired full-index updates; `tests/test_knowledge_index_batch.py` guards statement count and multi-batch rollback. Evidence: `agent_doc/results/fts-batch21-20261018/`; local SQLite maintenance only, no model-quality/token-cost claim.
 
 FTS-SECTION-22: main-owned `agent_runtime/knowledge_index.py` and mirrored plugin score excerpts once and select exact top-two; `scripts/benchmark_knowledge_search.py` / `tests/test_knowledge_excerpt_selection.py` preserve full search outputs. Producer and independent evidence: `agent_doc/results/fts-section22-20261019/report.md`; scoped long-section synthetic latency only, no general real-corpus/LLM gain claim.
+
+TERMS-CLASS-27: `scripts/benchmark_term_classes.py`, `tests/test_knowledge_term_classes.py`, `agent_doc/results/terms-class27/`: exact token-class projection and paired complete-search evidence.

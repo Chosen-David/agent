@@ -172,6 +172,8 @@ def indexed_search(store, path, query, *, domain=None, structure=None, limit=5):
         _require(meta.get('engine_version')==ENGINE_VERSION, 'stale index engine; run index to update')
         _require(meta.get('snapshot')==store.snapshot, 'stale knowledge index; run index to update')
         terms=_terms(query)
+        classes=dict(ascii_words=any(t.isascii() for t in terms),
+                     cjk=any(not t.isascii() for t in terms))
         if not terms:
             return {'schema_version':1,'snapshot':store.snapshot,'backend':'sqlite-fts5-rrf-v1','applicability':'unchecked','results':[]}
         # Terms are bound data, not raw FTS syntax; input cannot inject SQL/MATCH.
@@ -191,7 +193,7 @@ def indexed_search(store, path, query, *, domain=None, structure=None, limit=5):
         structural=[]
         for kid in allowed:
             d=store.records[kid]
-            overlap=terms&_terms(' '.join([*d['aliases'],*d['structures'],d['title']]))
+            overlap=terms&_terms(' '.join([*d['aliases'],*d['structures'],d['title']]), **classes)
             if overlap: structural.append((len(overlap),kid))
         ranks.append([kid for score,kid in sorted(structural,key=lambda x:(-x[0],x[1]))[:max(50,limit*5)]])
         scores={};reasons={}
@@ -203,7 +205,7 @@ def indexed_search(store, path, query, *, domain=None, structure=None, limit=5):
         for kid in sorted(scores,key=lambda k:(-scores[k],k))[:limit]:
             d=store.get(kid)
             # Score once; retain the exact top-two order without sorting every section.
-            scored=((len(terms&_terms(n['text']+' '+n['title'])),n) for n in sections(d))
+            scored=((len(terms&_terms(n['text']+' '+n['title'], **classes)),n) for n in sections(d))
             ranked_sections=nsmallest(2,scored,key=lambda item:(-item[0],item[1]['start_line']))
             excerpts=[{k:n[k] for k in ('node','title','start_line','end_line')} | {'excerpt':n['text'][:900]}
                       for overlap,n in ranked_sections if overlap]
