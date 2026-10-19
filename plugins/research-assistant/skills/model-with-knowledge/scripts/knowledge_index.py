@@ -21,7 +21,7 @@ else:
     from project_docs import guard_write_path
 
 INDEX_VERSION = '1'
-ENGINE_VERSION = 'fts5-porter-alias-first-section-v5'
+ENGINE_VERSION = 'fts5-porter-alias-first-section-v6'
 
 
 def sections(record):
@@ -44,13 +44,16 @@ def sections(record):
             continue
         if fence:
             continue
-        match = re.match(r'^ {0,3}(#{1,6})\s+(.+?)\s*#*\s*$', line)
+        match = re.match(r'^ {0,3}(#{1,6})(?=[ \t]|$)(.*)$', line.rstrip('\r\n'))
         if not match:
             continue
+        # Closing hashes need ASCII whitespace before them; C# and escaped
+        # hashes are literal raw title content. Empty ATX headings are valid.
+        title = re.sub(r'(?<=[ \t])#+[ \t]*$', '', match.group(2)).strip(' \t')
         level = len(match.group(1))
         while stack and stack[-1]['level'] >= level:
             stack.pop()
-        node = {'node': 's' + str(len(headings)+1), 'title': match.group(2),
+        node = {'node': 's' + str(len(headings)+1), 'title': title,
                 'level': level, 'start_line': number,
                 'parent': stack[-1]['node'] if stack else None}
         headings.append(node)

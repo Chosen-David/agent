@@ -1,0 +1,38 @@
+Producer raw short log excerpts (not a complete stdout archive)
+
+Before production changes:
+$ python -m unittest discover -s tests -p test_knowledge_atx.py -v
+Ran 2 tests in 0.016s
+FAILED (failures=40)
+
+v1:
+$ python -m unittest discover -s tests -v
+Ran 1303 tests in 91.586s
+OK (skipped=8)
+v1 not published: suffix-regex long-whitespace repeated-scan risk.
+
+v2:
+$ python -m unittest discover -s tests -p test_knowledge_atx.py -v
+Ran 3 tests in 0.002s
+OK
+$ python -O -m unittest discover -s tests -p test_knowledge_atx.py -v
+Ran 3 tests in 0.002s
+OK
+$ python -m unittest discover -s tests -v
+Ran 1304 tests in 92.403s
+OK (skipped=8)
+$ python -m unittest discover -s apps/paper-reader/tests -v
+Ran 3 tests in 1.586s
+OK
+
+$ python agent_doc/results/atx-boundary62/probe.py --output agent_doc/results/atx-boundary62/raw-v2.json
+{"baseline_pass": 33, "candidate_pass": 72, "total": 72, "corpus_count": 115}
+corpus_changed 0 stale_error stale index engine; run index to update
+$ python -O agent_doc/results/atx-boundary62/probe.py --output agent_doc/results/atx-boundary62/raw-v2-O.json
+{"baseline_pass": 33, "candidate_pass": 72, "total": 72, "corpus_count": 115}
+corpus_changed 0 stale_error stale index engine; run index to update
+
+git diff --check: exit 0, no output.
+Final canonical and standalone source SHA256:
+ab45ef3d0a9005741951a1e8c114366533338c861373cbdd78ac1efd41558a8c
+No model/GPU/latency benchmark. unittest duration is not a speed comparison.

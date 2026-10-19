@@ -1,3 +1,5 @@
+ATX-BOUNDARY-62: 知识CLI tree/section/search/index → `knowledge_index.sections` → 原始ATX标题/范围与SQLite chunks；修正标记分隔/空标题并升级引擎v6，standalone镜像同步。`tests/test_knowledge_atx.py`、`agent_doc/results/atx-boundary62/` 保存固定矩阵、真实旧引擎迁移、独立验收；主AI独占实现/任务，审核者只写证据。非完整Markdown/模型质量/速度主张。
+
 INGEST-SCOPE-58: `knowledge_ingest.ingest` → 仅暂存完整 entries 子树供 `KnowledgeStore` 校验；不复制根目录索引/缓存/附件，保留原校验和rename。`tests/test_knowledge_ingest_scope.py` 与 `agent_doc/results/ingest-scope58/` 保存旧失败、复制负载、完整导入配对负结果及独立审核。主AI实现/报告，独立审查者验收；不宣称普遍wall提速或模型质量收益。
 
 READ-BOUNDARY-56: `KnowledgeStore._read` 与 `knowledge_ingest.ingest` → `_read_utf8_bounded`；stat 后按实际字节预算+1探测并先拒绝再解码，保留 universal newline。`tests/test_knowledge_read_boundary.py` 覆盖四入口竞态、UTF-8、hash 和独立插件，`agent_doc/results/read-boundary56/` 保存修前失败、配对输入哈希、十篇阅读及独立审核。仅应用层读取边界，不证明原子快照/总内存/模型质量。

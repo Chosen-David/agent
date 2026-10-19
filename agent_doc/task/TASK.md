@@ -542,3 +542,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 - [x] [CONTEXT-BUDGET-28] 完整依赖包预算前置判断：独立复测16门槛通过，全库1281（8跳过）/Reader3通过；766e56e7已发布main并回读同tree，原始大日志仅留本地。 ([详情](task_details/CONTEXT-BUDGET-28.md))
 - [x] [CONTENT-COPY-60] 正文复用减少JSON编解码：主场景CPU装配耗时下降16.77%，全库1301项（8跳过）/Reader3及独立验收通过；发布回读另核。([详情](task_details/CONTENT-COPY-60.md))
+
+## 2026-10-20
+
+- [x] [ATX-BOUNDARY-62] 原始标题边界33/72→72/72，独立37212边界/115语料及真实旧缓存迁移通过；全库1304（8跳过）/Reader3，发布回读另核，无模型/速度主张。([详情](task_details/ATX-BOUNDARY-62.md))
