@@ -28,8 +28,8 @@ def _read(root, name):
 
 def _span(text):
     # Ambiguous repeated/quoted markers never establish a shared global scope.
-    starts = [i for i in range(len(text)) if text.startswith(MARKER, i)
-              and (i == 0 or text[i-1] == '\n')]
+    starts = [match.start() for match in
+              re.finditer('^' + re.escape(MARKER), text, re.MULTILINE)]
     if len(starts) != 1:
         return None
     start = starts[0]
