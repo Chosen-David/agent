@@ -1,0 +1,101 @@
+{
+  "reviewer": "/root/ingest58_review",
+  "checks": [
+    "baseline/current/consumer/harness hashes and exact plugin mirror",
+    "all three profiles, 48 timed observations including warmups, hashes/order/medians/logical sums",
+    "independent old/new record/ref/provenance oracle and nested nonrecord attachment; exact byte-difference oracle",
+    "independent root dangling-link/FIFO failure-before success-after; no root scandir",
+    "independent unchanged entries symlink/FIFO refusal",
+    "isolated python -I plugin entrypoint accepts unrelated dangling link",
+    "independent rerun all seven focused tests including mutation fence"
+  ],
+  "profiles": [
+    {
+      "name": "plain",
+      "medians_ms": {
+        "before": 152.440482,
+        "after": 181.760385
+      },
+      "ranges_ms": {
+        "before": [
+          143.096708,
+          212.321391
+        ],
+        "after": [
+          136.429228,
+          206.927654
+        ]
+      },
+      "logical_bytes": {
+        "before": 902199,
+        "after": 707292
+      }
+    },
+    {
+      "name": "root-attachment-16MiB",
+      "medians_ms": {
+        "before": 162.132385,
+        "after": 166.060706
+      },
+      "ranges_ms": {
+        "before": [
+          137.710099,
+          180.637804
+        ],
+        "after": [
+          129.805824,
+          209.251159
+        ]
+      },
+      "logical_bytes": {
+        "before": 17679415,
+        "after": 707292
+      }
+    },
+    {
+      "name": "root-sqlite-index",
+      "medians_ms": {
+        "before": 171.307428,
+        "after": 157.828079
+      },
+      "ranges_ms": {
+        "before": [
+          167.689894,
+          211.107738
+        ],
+        "after": [
+          146.781577,
+          180.312632
+        ]
+      },
+      "logical_bytes": {
+        "before": 4453431,
+        "after": 707292
+      }
+    }
+  ],
+  "corpus_entries": 115,
+  "independent_copy_bytes": {
+    "before": 910408,
+    "after": 707309,
+    "avoided": 203099
+  },
+  "focused_rerun": "test_corpus_change_during_staging_still_prevents_commit (test_knowledge_ingest_scope.IngestScopeTests.test_corpus_change_during_staging_still_prevents_commit) ... ok\ntest_entry_fifo_is_not_silently_filtered (test_knowledge_ingest_scope.IngestScopeTests.test_entry_fifo_is_not_silently_filtered) ... ok\ntest_invalid_dependency_and_duplicate_leave_corpus_unchanged (test_knowledge_ingest_scope.IngestScopeTests.test_invalid_dependency_and_duplicate_leave_corpus_unchanged) ... ok\ntest_invalid_entry_subtree_is_still_rejected (test_knowledge_ingest_scope.IngestScopeTests.test_invalid_entry_subtree_is_still_rejected) ... ok\ntest_root_artifacts_are_not_copied_and_entries_attachments_remain (test_knowledge_ingest_scope.IngestScopeTests.test_root_artifacts_are_not_copied_and_entries_attachments_remain) ... ok\ntest_unrelated_dangling_link_does_not_break_import (test_knowledge_ingest_scope.IngestScopeTests.test_unrelated_dangling_link_does_not_break_import) ... ok\ntest_unrelated_fifo_does_not_break_import (test_knowledge_ingest_scope.IngestScopeTests.test_unrelated_fifo_does_not_break_import) ... ok\n\n----------------------------------------------------------------------\nRan 7 tests in 2.192s\n\nOK\n",
+  "artifact_hashes": {
+    "agent_runtime/knowledge_ingest.py": "9e56a59b94feae3ae95bcfcd04aff9752fbbdb8b219b9bb0ec2344d95c58e7c8",
+    "agent_runtime/knowledge.py": "9ee261d0e5ab8c803bc12a524308d783bdf18a259ce4c2ed06b0ca53f2c56770",
+    "agent_runtime/knowledge_index.py": "b010e46ba26fdb07ed7653c37b43acc9a2bf90217325da6484bcbd3e2b0d9bd9",
+    "agent_runtime/project_docs.py": "a2712d093f4012350f6654401a15aa1d22e442d6993482025996b63183477a57",
+    "agent_runtime/knowledge_reuse.py": "1849dd50105b1ab741407a4ec76b804ef90675f724191bab0dd7e30f7685f9b7",
+    "tests/test_knowledge_ingest_scope.py": "9ccdf7296ff5468ded3b3217365bbd1801c5a19374c9cebaa556b7263b281544",
+    "plugins/research-assistant/skills/model-with-knowledge/scripts/knowledge_ingest.py": "9e56a59b94feae3ae95bcfcd04aff9752fbbdb8b219b9bb0ec2344d95c58e7c8",
+    "agent_doc/results/ingest-scope58/measurements.json": "48860533c7b1c4ace43a942bf9747be46b7f4e25befc1267fa4757a37d4dbd04",
+    "agent_doc/results/ingest-scope58/measure.py": "a3187018a0965e0b1dc195ee5261715445663e0f50502fa416a6b6f58b489574",
+    "agent_doc/results/ingest-scope58/plan_v1.md": "b9ed2eda610c8001d9b2542702ff24d295e613ebaafc5bd92b09b5d7846935f2",
+    "agent_doc/results/ingest-scope58/after.log": "4511ea93734ad0e50177af02c110536e7a19b86115cfefd78cbce17176b566c4",
+    "agent_doc/results/ingest-scope58/before.log": "bda584073583a05ce899b4db1194e2260e3328cb984b316d9736e9a4f6502312",
+    "agent_doc/results/ingest-scope58/independent_checks.py": "2922c25304896ea93f830ed228885328608e661c39671403c480fe4d544aa12e"
+  },
+  "status": "pass"
+}
+

@@ -1,3 +1,5 @@
+INGEST-SCOPE-58: `knowledge_ingest.ingest` → 仅暂存完整 entries 子树供 `KnowledgeStore` 校验；不复制根目录索引/缓存/附件，保留原校验和rename。`tests/test_knowledge_ingest_scope.py` 与 `agent_doc/results/ingest-scope58/` 保存旧失败、复制负载、完整导入配对负结果及独立审核。主AI实现/报告，独立审查者验收；不宣称普遍wall提速或模型质量收益。
+
 READ-BOUNDARY-56: `KnowledgeStore._read` 与 `knowledge_ingest.ingest` → `_read_utf8_bounded`；stat 后按实际字节预算+1探测并先拒绝再解码，保留 universal newline。`tests/test_knowledge_read_boundary.py` 覆盖四入口竞态、UTF-8、hash 和独立插件，`agent_doc/results/read-boundary56/` 保存修前失败、配对输入哈希、十篇阅读及独立审核。仅应用层读取边界，不证明原子快照/总内存/模型质量。
 
 CONTEXT-METADATA-35: `KnowledgeStore.context/related` → 私有 `_metadata` 只读依赖/关系，最终入包仍经原 `get` 隔离；自定义 get 回退。主AI维护实现/镜像/任务，独立审查者只写验收证据。`tests/test_knowledge_metadata.py`、固定基线 `scripts/benchmark_context_metadata.py --production` 与 `agent_doc/results/context-metadata35/` 覆盖源码身份、预算/钩子/污染、配对wall及Python跟踪峰值。仅合法JSON语料的CPU装配收益，非LLM质量/token/端到端提升。

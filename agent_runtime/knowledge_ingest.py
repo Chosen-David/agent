@@ -34,7 +34,9 @@ def ingest(root, metadata_path, body_path):
     # Validate the combined corpus in isolation before touching canonical entries.
     with tempfile.TemporaryDirectory(prefix='knowledge-ingest-') as tmp:
         stage=Path(tmp)/'knowledge'
-        shutil.copytree(store.root,stage)
+        # Only entries participates in KnowledgeStore validation. Root-local
+        # indexes, caches and other artifacts are not part of this snapshot.
+        shutil.copytree(store.root/'entries',stage/'entries')
         folder=stage/'entries'/d['id']
         _require(not folder.exists(), 'import path collision')
         folder.mkdir()
