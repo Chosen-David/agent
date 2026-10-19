@@ -1,3 +1,5 @@
+READ-BOUNDARY-56: `KnowledgeStore._read` 与 `knowledge_ingest.ingest` → `_read_utf8_bounded`；stat 后按实际字节预算+1探测并先拒绝再解码，保留 universal newline。`tests/test_knowledge_read_boundary.py` 覆盖四入口竞态、UTF-8、hash 和独立插件，`agent_doc/results/read-boundary56/` 保存修前失败、配对输入哈希、十篇阅读及独立审核。仅应用层读取边界，不证明原子快照/总内存/模型质量。
+
 CONTEXT-METADATA-35: `KnowledgeStore.context/related` → 私有 `_metadata` 只读依赖/关系，最终入包仍经原 `get` 隔离；自定义 get 回退。主AI维护实现/镜像/任务，独立审查者只写验收证据。`tests/test_knowledge_metadata.py`、固定基线 `scripts/benchmark_context_metadata.py --production` 与 `agent_doc/results/context-metadata35/` 覆盖源码身份、预算/钩子/污染、配对wall及Python跟踪峰值。仅合法JSON语料的CPU装配收益，非LLM质量/token/端到端提升。
 
 MEM-SCOPE-05: `MemoryLedger.list` 对同状态、原始scope不同的库先筛scope再装配；uniform scope保留旧路径。`tests/test_memory_retrieval.py` 覆盖同状态/错误顺序/保守fallback；同入口基准和独立证据在 `agent_doc/results/memory-scope05-20261016/`。非模型KV。

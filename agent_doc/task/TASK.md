@@ -2,6 +2,8 @@
 
 ## 2026-10-19
 
+- [x] [READ-BOUNDARY-56] 实际读取字节边界修复及独立验收完成：超限接受8/8→0/8，1290项回归（8skip）/Reader3通过，十篇正文阅读；发布回读另核。([详情](task_details/READ-BOUNDARY-56.md))
+
 - [x] [CONTEXT-METADATA-35] 元数据路径集成及独立验收完成；生产目标CPU装配6.680→3.609ms，16场景门槛/1285项回归（8skip）/Reader3通过，发布回读单独确认，不外推端到端。([详情](task_details/CONTEXT-METADATA-35.md))
 
 ## 2026-10-10

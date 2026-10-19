@@ -10,10 +10,10 @@ import shutil
 import tempfile
 
 if __package__:
-    from .knowledge import KnowledgeStore, _json, _require, MAX_BYTES
+    from .knowledge import KnowledgeStore, _json, _require, MAX_BYTES, _read_utf8_bounded
     from .project_docs import guard_write_path
 else:
-    from knowledge import KnowledgeStore, _json, _require, MAX_BYTES
+    from knowledge import KnowledgeStore, _json, _require, MAX_BYTES, _read_utf8_bounded
     from project_docs import guard_write_path
 
 
@@ -24,7 +24,7 @@ def ingest(root, metadata_path, body_path):
         path=Path(path)
         _require(path.is_file() and not path.is_symlink(), 'import requires regular local files')
         _require(path.stat().st_size<=MAX_BYTES, 'import exceeds byte budget')
-        return path.read_text(encoding='utf-8')
+        return _read_utf8_bounded(path, MAX_BYTES, 'import exceeds byte budget')
     raw=read(metadata_path);body=read(body_path)
     d=_json(raw)
     KnowledgeStore._validate(d)

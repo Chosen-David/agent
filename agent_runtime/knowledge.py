@@ -37,6 +37,18 @@ def _require(ok, message):
         raise KnowledgeError(message)
 
 
+def _read_utf8_bounded(path, max_bytes, message):
+    """Bound the returned byte buffer, then match read_text's newline semantics.
+
+    One extra byte detects overflow after the caller's stat precheck. Buffered
+    I/O may read ahead internally; this is not an atomic filesystem snapshot.
+    """
+    with path.open('rb') as stream:
+        raw = stream.read(max_bytes + 1)
+    _require(len(raw) <= max_bytes, message)
+    return raw.decode('utf-8').replace('\r\n', '\n').replace('\r', '\n')
+
+
 def _text(value):
     return isinstance(value, str) and bool(value.strip())
 
@@ -117,7 +129,7 @@ class KnowledgeStore:
                  'path outside corpus: ' + str(path))
         _require(path.is_file(), 'missing entry file: ' + str(path))
         _require(path.stat().st_size <= MAX_BYTES, 'entry exceeds byte budget')
-        return path.read_text(encoding='utf-8')
+        return _read_utf8_bounded(path, MAX_BYTES, 'entry exceeds byte budget')
 
     @staticmethod
     def _validate(d):

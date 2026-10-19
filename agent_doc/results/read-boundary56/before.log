@@ -1,0 +1,108 @@
+test_growing_invalid_utf8_is_budget_error_before_decode (test_knowledge_read_boundary.ReadBoundaryTests.test_growing_invalid_utf8_is_budget_error_before_decode) ... ERROR
+test_isolated_plugin_ingest_and_byte_identity (test_knowledge_read_boundary.ReadBoundaryTests.test_isolated_plugin_ingest_and_byte_identity) ... ok
+test_normal_ingest_newlines_provenance_and_snapshot (test_knowledge_read_boundary.ReadBoundaryTests.test_normal_ingest_newlines_provenance_and_snapshot) ... ok
+test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) ... 
+  test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='store_metadata', growth=1) ... FAIL
+  test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='store_metadata', growth=4096) ... FAIL
+  test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='store_body', growth=1) ... FAIL
+  test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='store_body', growth=4096) ... FAIL
+  test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='ingest_metadata', growth=1) ... FAIL
+  test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='ingest_metadata', growth=4096) ... FAIL
+  test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='ingest_body', growth=1) ... FAIL
+  test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='ingest_body', growth=4096) ... FAIL
+test_text_and_exact_byte_limit_compatibility (test_knowledge_read_boundary.ReadBoundaryTests.test_text_and_exact_byte_limit_compatibility) ... ok
+
+======================================================================
+ERROR: test_growing_invalid_utf8_is_budget_error_before_decode (test_knowledge_read_boundary.ReadBoundaryTests.test_growing_invalid_utf8_is_budget_error_before_decode)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit-56/tests/test_knowledge_read_boundary.py", line 122, in test_growing_invalid_utf8_is_budget_error_before_decode
+    self.store._read(target)
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit-56/agent_runtime/knowledge.py", line 120, in _read
+    return path.read_text(encoding='utf-8')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1028, in read_text
+    return f.read()
+           ^^^^^^^^
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit-56/tests/test_knowledge_read_boundary.py", line 52, in read
+    result = self.stream.read(size)
+             ^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen codecs>", line 322, in decode
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xff in position 1048576: invalid start byte
+
+======================================================================
+FAIL: test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='store_metadata', growth=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit-56/tests/test_knowledge_read_boundary.py", line 92, in test_post_stat_growth_all_four_entrypoints
+    with self.assertRaisesRegex(KnowledgeError, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: KnowledgeError not raised
+
+======================================================================
+FAIL: test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='store_metadata', growth=4096)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit-56/tests/test_knowledge_read_boundary.py", line 92, in test_post_stat_growth_all_four_entrypoints
+    with self.assertRaisesRegex(KnowledgeError, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: KnowledgeError not raised
+
+======================================================================
+FAIL: test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='store_body', growth=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit-56/tests/test_knowledge_read_boundary.py", line 92, in test_post_stat_growth_all_four_entrypoints
+    with self.assertRaisesRegex(KnowledgeError, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: KnowledgeError not raised
+
+======================================================================
+FAIL: test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='store_body', growth=4096)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit-56/tests/test_knowledge_read_boundary.py", line 92, in test_post_stat_growth_all_four_entrypoints
+    with self.assertRaisesRegex(KnowledgeError, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: KnowledgeError not raised
+
+======================================================================
+FAIL: test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='ingest_metadata', growth=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit-56/tests/test_knowledge_read_boundary.py", line 92, in test_post_stat_growth_all_four_entrypoints
+    with self.assertRaisesRegex(KnowledgeError, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: KnowledgeError not raised
+
+======================================================================
+FAIL: test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='ingest_metadata', growth=4096)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit-56/tests/test_knowledge_read_boundary.py", line 92, in test_post_stat_growth_all_four_entrypoints
+    with self.assertRaisesRegex(KnowledgeError, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: KnowledgeError not raised
+
+======================================================================
+FAIL: test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='ingest_body', growth=1)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit-56/tests/test_knowledge_read_boundary.py", line 92, in test_post_stat_growth_all_four_entrypoints
+    with self.assertRaisesRegex(KnowledgeError, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: KnowledgeError not raised
+
+======================================================================
+FAIL: test_post_stat_growth_all_four_entrypoints (test_knowledge_read_boundary.ReadBoundaryTests.test_post_stat_growth_all_four_entrypoints) (entry='ingest_body', growth=4096)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit-56/tests/test_knowledge_read_boundary.py", line 92, in test_post_stat_growth_all_four_entrypoints
+    with self.assertRaisesRegex(KnowledgeError, error):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: KnowledgeError not raised
+
+----------------------------------------------------------------------
+Ran 5 tests in 1.480s
+
+FAILED (failures=8, errors=1)
