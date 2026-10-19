@@ -540,4 +540,5 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [LEXICAL-EMPTY-23] 空词查询跳过扫描；独立复测及144差分通过，全库1276/8跳过、Reader3通过，发布回读由主控闭环。 ([详情](task_details/LEXICAL-EMPTY-23.md))
 - [x] [TERMS-CLASS-27] Exact query-class projection: independent hot-search latency -27.76%; 1277 tests (8 skipped), Reader3 passed; publication/readback main-owned. ([detail](task_details/TERMS-CLASS-27.md))
 
-- [x] [CONTEXT-BUDGET-28] 完整依赖包预算前置判断：独立复测16门槛通过，全库1281（8跳过）/Reader3通过；766e56e7已发布main并回读同tree，原始大日志仅留本地。 ([详情](task_details/CONTEXT-BUDGET-28.md))
+- [x] [CONTEXT-BUDGET-28] 完整依赖包预算前置判断：独立复测16门槛通过，全库1281（8跳过）/Reader3通过；766e56e7已发布main并回读同tree，原始大日志仅留本地。 ([详情](task_details/CONTEXT-BUDGET-28.md))
+- [x] [CONTENT-COPY-60] 正文复用减少JSON编解码：主场景CPU装配耗时下降16.77%，全库1301项（8跳过）/Reader3及独立验收通过；发布回读另核。([详情](task_details/CONTENT-COPY-60.md))

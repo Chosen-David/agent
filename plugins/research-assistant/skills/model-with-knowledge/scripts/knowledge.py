@@ -218,7 +218,14 @@ class KnowledgeStore:
         d = self.records[kid]
         _require(include_unpublished or d['status'] == 'published', 'entry is not published: ' + kid)
         # Return an isolated value so a consumer cannot mutate the pinned snapshot.
-        out = json.loads(json.dumps(d))
+        body = d.get('content') if type(d) is dict else None
+        if (type(d) is dict and type(body) is str
+                and all(type(k) is str and k.isascii() for k in d)
+                and not re.search(r'[\ud800-\udfff]', body)):
+            metadata = json.loads(json.dumps({k: v for k, v in d.items() if k != 'content'}))
+            out = {k: body if k == 'content' else metadata[k] for k in d}
+        else:
+            out = json.loads(json.dumps(d))
         closure, pending = set(), [kid]
         while pending:
             key = pending.pop()

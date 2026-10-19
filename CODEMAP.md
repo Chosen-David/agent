@@ -222,3 +222,4 @@ FTS-SECTION-22: main-owned `agent_runtime/knowledge_index.py` and mirrored plugi
 TERMS-CLASS-27: `scripts/benchmark_term_classes.py`, `tests/test_knowledge_term_classes.py`, `agent_doc/results/terms-class27/`: exact token-class projection and paired complete-search evidence.
 
 CONTEXT-BUDGET-28: `agent_runtime/knowledge.py::KnowledgeStore.context` and standalone mirror reject complete bundles exceeding the entry budget before payload assembly; `tests/test_knowledge_context_budget.py`, `scripts/benchmark_context_budget.py`, `agent_doc/results/context-budget28/` bind exact-output and CPU evidence. No LLM quality claim.
+CONTENT-COPY-60: `KnowledgeStore.get` → 复用合法不可变正文，仅JSON复制元数据；特殊字符串/非标准外键回退。`tests/test_knowledge_content_copy.py` 和 `agent_doc/results/content-copy60/` 记录边界、固定基线配对CPU测量及独立审核。非模型推理收益。
