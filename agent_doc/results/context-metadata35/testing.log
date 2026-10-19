@@ -1,0 +1,36 @@
+CONTEXT-METADATA-35 / Python 3.12.14 / Linux x86_64 / 2026-10-19
+Short verbatim unittest summaries; complete logs retained locally, not committed.
+
+BEFORE: python -m unittest tests.test_knowledge_metadata -v
+Ran 4 tests in 0.201s
+FAILED (failures=2)
+Both failures: AssertionError: payload copied
+Shell ended with tail, so no original unittest shell exit receipt retained.
+
+AFTER: python -m unittest tests.test_knowledge_metadata tests.test_knowledge_context_budget -v
+Ran 8 tests in 0.289s
+OK
+
+PRODUCTION: PYTHONHASHSEED=0 timeout 120 python scripts/benchmark_context_metadata.py --production --out agent_doc/results/context-metadata35/production1
+{"accepted": true, "cases": 16}
+Observed exit_code=0
+
+FULL: timeout 300 python -m unittest discover -s tests -v
+Ran 1285 tests in 129.903s
+OK (skipped=8)
+Observed exit_code=0
+7 crossfeature-viz skips require matplotlib/numpy/Pillow/PyMuPDF/Noto Sans CJK; 1 managed-supervisor real-tmux skip requires opt-in working tmux/Unix sockets. No added skip.
+
+READER: timeout 60 python -m unittest discover -s apps/paper-reader/tests -v
+Ran 3 tests in 1.598s
+OK
+Observed exit_code=0
+
+python scripts/sync_plugin_references.py --check: exit_code=0, no stdout
+cmp agent_runtime/knowledge.py plugins/research-assistant/skills/model-with-knowledge/scripts/knowledge.py: exit_code=0
+git -c core.whitespace=cr-at-eol diff --check: exit_code=0
+Original source CRLF retained; default whitespace check treats added CR as whitespace. No measured source renormalization.
+
+Independent candidate correctness: 1505 checks / 110 published IDs, observed exit_code=0.
+Independent integration correctness: 1505 checks / 110 published IDs / 243 bindings, observed exit_code=0; see review.md. integration-verification.json remains local and is not included in this publication.
+Independent candidate performance full raw+complete marker verified; original shell exit status not retained.

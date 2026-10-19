@@ -1,4 +1,8 @@
-# Project tasks
+# Project tasks
+
+## 2026-10-19
+
+- [x] [CONTEXT-METADATA-35] 元数据路径集成及独立验收完成；生产目标CPU装配6.680→3.609ms，16场景门槛/1285项回归（8skip）/Reader3通过，发布回读单独确认，不外推端到端。([详情](task_details/CONTEXT-METADATA-35.md))
 
 ## 2026-10-10
 

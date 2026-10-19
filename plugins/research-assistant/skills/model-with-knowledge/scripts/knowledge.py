@@ -217,6 +217,23 @@ class KnowledgeStore:
         out['knowledge_refs'] = [self.ref(key) for key in sorted(closure)]
         return out
 
+    def _metadata(self, kid):
+        # Preserve custom public get hooks rather than bypassing subclasses.
+        if getattr(self.get, '__func__', None) is not KnowledgeStore.get:
+            return self.get(kid)
+        self.ref(kid)
+        d = self.records[kid]
+        _require(d['status'] == 'published', 'entry is not published: ' + kid)
+        closure, pending = set(), [kid]
+        while pending:
+            key = pending.pop()
+            if key in closure:
+                continue
+            closure.add(key)
+            pending.extend(dep['id'] for dep in self.records[key]['requires'])
+        refs = [self.ref(key) for key in sorted(closure)]
+        return {'requires': d['requires'], 'relations': d['relations'], 'knowledge_refs': refs}
+
     def search(self, query, *, domain=None, structure=None, limit=5, include_unpublished=False):
         _require(_text(query) and len(query) <= 2000, 'query must contain 1..2000 characters')
         _require(type(limit) is int and 1 <= limit <= 20, 'limit must be 1..20')
@@ -253,7 +270,7 @@ class KnowledgeStore:
 
     def related(self, kid, *, limit=20):
         _require(type(limit) is int and 1 <= limit <= 20, 'limit must be 1..20')
-        d = self.get(kid)
+        d = self._metadata(kid)
         edges = [{'type': 'prerequisite', **x} for x in d['requires']] + d['relations']
         results, seen = [], set()
         def add(source, edge, direction):
@@ -299,7 +316,7 @@ class KnowledgeStore:
         for kid, reason in requested:
             if kid in selected:
                 continue
-            entry = self.get(kid)
+            entry = self._metadata(kid)
             keys = [ref['id'] for ref in entry['knowledge_refs'] if ref['id'] not in selected]
             # A complete bundle cannot fit even before payload materialization.
             # Keep seed/closure validation above and continue to later candidates.
