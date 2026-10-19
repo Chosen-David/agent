@@ -1,5 +1,9 @@
 # Project tasks
 
+## 2026-10-20
+
+- [x] [PROMPT-READ-67] 提示词超限拒绝改为有界读取；独立兼容/分配检查、全库1307项（8跳过）及Reader3通过，发布另核。([详情](task_details/PROMPT-READ-67.md))
+
 ## 2026-10-19
 
 - [x] [INGEST-SCOPE-58] 导入暂存仅复制entries，修复无关特殊文件导致失败；1297项回归/Reader3及独立验收通过，复制负载下降但不宣称wall提速，发布另核。([详情](task_details/INGEST-SCOPE-58.md))

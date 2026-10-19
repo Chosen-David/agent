@@ -18,7 +18,9 @@ def _read(root, name):
             raise ValueError('prompt symlink is not a trusted entry: ' + name)
     if not path.is_file() or not path.resolve().is_relative_to(root):
         raise ValueError('prompt must be a regular project file: ' + name)
-    raw = path.read_bytes()
+    # One extra byte detects overflow without loading the entire rejected file.
+    with path.open('rb') as source:
+        raw = source.read(1000001)
     if len(raw) > 1000000:
         raise ValueError('prompt source exceeds byte limit')
     return raw.decode('utf-8'), hashlib.sha256(raw).hexdigest()
