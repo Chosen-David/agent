@@ -1,0 +1,80 @@
+test_cli_returns_structured_results_with_deep_record (tests.test_result_search_depth.ResultSearchDepthTests.test_cli_returns_structured_results_with_deep_record) ... 
+  test_cli_returns_structured_results_with_deep_record (tests.test_result_search_depth.ResultSearchDepthTests.test_cli_returns_structured_results_with_deep_record) (flags=[]) ... FAIL
+  test_cli_returns_structured_results_with_deep_record (tests.test_result_search_depth.ResultSearchDepthTests.test_cli_returns_structured_results_with_deep_record) (flags=['-O']) ... FAIL
+test_custom_show_recursion_error_is_not_swallowed (tests.test_result_search_depth.ResultSearchDepthTests.test_custom_show_recursion_error_is_not_swallowed) ... ok
+test_deep_records_do_not_hide_good_neighbor_or_modify_files (tests.test_result_search_depth.ResultSearchDepthTests.test_deep_records_do_not_hide_good_neighbor_or_modify_files) ... FAIL
+test_direct_show_still_raises_recursion_error (tests.test_result_search_depth.ResultSearchDepthTests.test_direct_show_still_raises_recursion_error) ... FAIL
+test_invalid_caller_context_is_not_a_record_error (tests.test_result_search_depth.ResultSearchDepthTests.test_invalid_caller_context_is_not_a_record_error) ... FAIL
+test_only_deep_records_are_incomplete_not_no_hits (tests.test_result_search_depth.ResultSearchDepthTests.test_only_deep_records_are_incomplete_not_no_hits) ... FAIL
+test_unrelated_errors_are_not_swallowed (tests.test_result_search_depth.ResultSearchDepthTests.test_unrelated_errors_are_not_swallowed) ... ok
+
+======================================================================
+FAIL: test_cli_returns_structured_results_with_deep_record (tests.test_result_search_depth.ResultSearchDepthTests.test_cli_returns_structured_results_with_deep_record) (flags=[])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/c/Users/WI/Desktop/home_work/AI_LLM/agent/tests/test_result_search_depth.py", line 70, in test_cli_returns_structured_results_with_deep_record
+    self.assert_isolated(json.loads(result.stdout), ['bad'], ['good'])
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/WI/Desktop/home_work/AI_LLM/agent/tests/test_result_search_depth.py", line 46, in assert_isolated
+    self.assertTrue(all('recursion' in error['error'].lower() for error in result['errors']))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_cli_returns_structured_results_with_deep_record (tests.test_result_search_depth.ResultSearchDepthTests.test_cli_returns_structured_results_with_deep_record) (flags=['-O'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/c/Users/WI/Desktop/home_work/AI_LLM/agent/tests/test_result_search_depth.py", line 70, in test_cli_returns_structured_results_with_deep_record
+    self.assert_isolated(json.loads(result.stdout), ['bad'], ['good'])
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/WI/Desktop/home_work/AI_LLM/agent/tests/test_result_search_depth.py", line 46, in assert_isolated
+    self.assertTrue(all('recursion' in error['error'].lower() for error in result['errors']))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_deep_records_do_not_hide_good_neighbor_or_modify_files (tests.test_result_search_depth.ResultSearchDepthTests.test_deep_records_do_not_hide_good_neighbor_or_modify_files)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/c/Users/WI/Desktop/home_work/AI_LLM/agent/tests/test_result_search_depth.py", line 53, in test_deep_records_do_not_hide_good_neighbor_or_modify_files
+    self.assert_isolated(self.store.search('needle'), ['a-bad', 'z-bad'], ['middle'])
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/WI/Desktop/home_work/AI_LLM/agent/tests/test_result_search_depth.py", line 46, in assert_isolated
+    self.assertTrue(all('recursion' in error['error'].lower() for error in result['errors']))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_direct_show_still_raises_recursion_error (tests.test_result_search_depth.ResultSearchDepthTests.test_direct_show_still_raises_recursion_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/c/Users/WI/Desktop/home_work/AI_LLM/agent/tests/test_result_search_depth.py", line 74, in test_direct_show_still_raises_recursion_error
+    with self.assertRaises(RecursionError) as original:
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+AssertionError: RecursionError not raised
+
+======================================================================
+FAIL: test_invalid_caller_context_is_not_a_record_error (tests.test_result_search_depth.ResultSearchDepthTests.test_invalid_caller_context_is_not_a_record_error)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/c/Users/WI/Desktop/home_work/AI_LLM/agent/tests/test_result_search_depth.py", line 86, in test_invalid_caller_context_is_not_a_record_error
+    with self.assertRaises(RecursionError):
+         ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+AssertionError: RecursionError not raised
+
+======================================================================
+FAIL: test_only_deep_records_are_incomplete_not_no_hits (tests.test_result_search_depth.ResultSearchDepthTests.test_only_deep_records_are_incomplete_not_no_hits)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/mnt/c/Users/WI/Desktop/home_work/AI_LLM/agent/tests/test_result_search_depth.py", line 59, in test_only_deep_records_are_incomplete_not_no_hits
+    self.assert_isolated(self.store.search('needle'), ['bad'], [])
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/c/Users/WI/Desktop/home_work/AI_LLM/agent/tests/test_result_search_depth.py", line 46, in assert_isolated
+    self.assertTrue(all('recursion' in error['error'].lower() for error in result['errors']))
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 7 tests in 1.182s
+
+FAILED (failures=6)

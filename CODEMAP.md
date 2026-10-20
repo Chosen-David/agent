@@ -231,3 +231,5 @@ CONTEXT-BUDGET-28: `agent_runtime/knowledge.py::KnowledgeStore.context` and stan
 CONTENT-COPY-60: `KnowledgeStore.get` → 复用合法不可变正文，仅JSON复制元数据；特殊字符串/非标准外键回退。`tests/test_knowledge_content_copy.py` 和 `agent_doc/results/content-copy60/` 记录边界、固定基线配对CPU测量及独立审核。非模型推理收益。
 
 SEARCH-DEPTH-93: `agent_runtime/result_store.py` 隔离存储JSON解码深度错误；`tests/test_result_search_depth.py` 与 `agent_doc/results/search93/` 记录真实文件/API/CLI边界。仅可靠性，不是性能或模型质量改进。
+
+MEM-INDEX-96: `project_memory.main(index/storage)` → `MemoryLedger.index/storage`；显式整条分页、项目/过滤/完整条目快照及只读SQL存储统计，原文单一账本存储。`tests/test_memory_index.py` 与 `agent_doc/results/memory-index96-20261020/` 记录独立导航/失效/预算/存储检查及完整输出字节对照。仅导航，非token/CPU/KV/QA收益；root为实现/任务唯一作者，独立verifier只写independent产物。

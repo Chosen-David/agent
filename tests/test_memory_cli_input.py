@@ -1,5 +1,5 @@
 """Memory CLI file decoding errors stay structured; internal errors stay visible."""
-from contextlib import redirect_stderr, redirect_stdout
+from contextlib import closing, redirect_stderr, redirect_stdout
 import io
 import json
 from pathlib import Path
@@ -22,7 +22,7 @@ class MemoryCliInputTests(unittest.TestCase):
         self.file = self.root / 'snapshot.json'
 
     def rows(self):
-        with sqlite3.connect(self.ledger.path) as db:
+        with closing(sqlite3.connect(self.ledger.path)) as db:
             return {t: db.execute('SELECT * FROM ' + t + ' ORDER BY rowid').fetchall()
                     for t in ('entries', 'dependencies', 'document_dependencies', 'events', 'sqlite_sequence')}
 
@@ -97,6 +97,6 @@ class MemoryCliInputTests(unittest.TestCase):
         self.assertIn('error', json.loads(err.getvalue()))
         ledger = MemoryLedger(fresh)
         self.assertEqual(ledger.list('all'), [])
-        with sqlite3.connect(ledger.path) as db:
+        with closing(sqlite3.connect(ledger.path)) as db:
             self.assertEqual(db.execute('SELECT count(*) FROM events').fetchone()[0], 0)
             self.assertTrue(db.execute("SELECT 1 FROM sqlite_master WHERE name='memory_events_entry'").fetchone())

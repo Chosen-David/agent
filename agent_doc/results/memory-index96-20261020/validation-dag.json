@@ -1,0 +1,110 @@
+{
+  "tasks": [
+    {
+      "task_id": "produce-bytes",
+      "owner": "/root",
+      "task_type": "experiment",
+      "produces_data": true,
+      "experiment_result": {
+        "result_id": "memory-index96-bytes-20261020",
+        "producer_task_id": "produce-bytes",
+        "producer_actor": "/root",
+        "manifest_path": "agent_doc/results/memory-index96-20261020/manifest-bytes.json",
+        "validation_plan": {
+          "path": "agent_doc/results/memory-index96-20261020/validation_plan.json",
+          "sha256": "d0115cfad688851cf487ceb3819e8d6b5d5901738391a3c43fdd707dc89c4916"
+        },
+        "scope": "MEM-INDEX-96 explicit CLI navigation and SQL storage observations on local synthetic SQLite fixtures; UTF-8 output bytes only, no token/quality/latency or KV claims"
+      },
+      "depends_on": []
+    },
+    {
+      "task_id": "verify-bytes",
+      "owner": "/root/memory_index_verifier",
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "memory-index96-bytes-20261020",
+        "producer_task_id": "produce-bytes",
+        "producer_actor": "/root",
+        "manifest_path": "agent_doc/results/memory-index96-20261020/manifest-bytes.json",
+        "validation_plan": {
+          "path": "agent_doc/results/memory-index96-20261020/validation_plan.json",
+          "sha256": "d0115cfad688851cf487ceb3819e8d6b5d5901738391a3c43fdd707dc89c4916"
+        },
+        "scope": "MEM-INDEX-96 explicit CLI navigation and SQL storage observations on local synthetic SQLite fixtures; UTF-8 output bytes only, no token/quality/latency or KV claims"
+      },
+      "depends_on": [
+        "produce-bytes"
+      ]
+    },
+    {
+      "task_id": "produce-tokens",
+      "owner": "/root",
+      "task_type": "experiment",
+      "produces_data": true,
+      "experiment_result": {
+        "result_id": "memory-index96-tokens-20261020",
+        "producer_task_id": "produce-tokens",
+        "producer_actor": "/root",
+        "manifest_path": "agent_doc/results/memory-index96-20261020/manifest-tokens.json",
+        "validation_plan": {
+          "path": "agent_doc/results/memory-index96-20261020/validation_plan-tokens-v2.json",
+          "sha256": "18cc5cdcedfbc62595c4da4151437cf6d26a667da769904d00f35c2def60aa43"
+        },
+        "scope": "MEM-INDEX-96 supplemental exact local o200k_base CLI payload tokens in the same six synthetic navigation/read scopes; no total model-token, cash, quality, latency or KV claim"
+      },
+      "depends_on": []
+    },
+    {
+      "task_id": "verify-tokens",
+      "owner": "/root/memory_index_verifier",
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "memory-index96-tokens-20261020",
+        "producer_task_id": "produce-tokens",
+        "producer_actor": "/root",
+        "manifest_path": "agent_doc/results/memory-index96-20261020/manifest-tokens.json",
+        "validation_plan": {
+          "path": "agent_doc/results/memory-index96-20261020/validation_plan-tokens-v2.json",
+          "sha256": "18cc5cdcedfbc62595c4da4151437cf6d26a667da769904d00f35c2def60aa43"
+        },
+        "scope": "MEM-INDEX-96 supplemental exact local o200k_base CLI payload tokens in the same six synthetic navigation/read scopes; no total model-token, cash, quality, latency or KV claim"
+      },
+      "depends_on": [
+        "produce-tokens"
+      ]
+    },
+    {
+      "task_id": "report-and-publication",
+      "owner": "/root",
+      "depends_on": [
+        "verify-bytes",
+        "verify-tokens"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "memory-index96-bytes-20261020",
+          "producer_task_id": "produce-bytes",
+          "producer_actor": "/root",
+          "manifest_path": "agent_doc/results/memory-index96-20261020/manifest-bytes.json",
+          "validation_plan": {
+            "path": "agent_doc/results/memory-index96-20261020/validation_plan.json",
+            "sha256": "d0115cfad688851cf487ceb3819e8d6b5d5901738391a3c43fdd707dc89c4916"
+          },
+          "scope": "MEM-INDEX-96 explicit CLI navigation and SQL storage observations on local synthetic SQLite fixtures; UTF-8 output bytes only, no token/quality/latency or KV claims"
+        },
+        {
+          "result_id": "memory-index96-tokens-20261020",
+          "producer_task_id": "produce-tokens",
+          "producer_actor": "/root",
+          "manifest_path": "agent_doc/results/memory-index96-20261020/manifest-tokens.json",
+          "validation_plan": {
+            "path": "agent_doc/results/memory-index96-20261020/validation_plan-tokens-v2.json",
+            "sha256": "18cc5cdcedfbc62595c4da4151437cf6d26a667da769904d00f35c2def60aa43"
+          },
+          "scope": "MEM-INDEX-96 supplemental exact local o200k_base CLI payload tokens in the same six synthetic navigation/read scopes; no total model-token, cash, quality, latency or KV claim"
+        }
+      ]
+    }
+  ]
+}

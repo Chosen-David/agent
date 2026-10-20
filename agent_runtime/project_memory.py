@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -39,6 +40,17 @@ def _ids(values, field):
                 for v in values) or len(set(values)) != len(values)):
         raise MemoryError(f'{field} must contain unique stable IDs')
     return list(values)
+
+
+def _index_json(value):
+    """One canonical wire encoding for snapshot identities and CLI budgets."""
+    try:
+        text = json.dumps(value, ensure_ascii=False, sort_keys=True,
+                          separators=(',', ':'), allow_nan=False)
+        text.encode('utf-8')
+        return text
+    except (TypeError, ValueError, UnicodeError, RecursionError) as exc:
+        raise MemoryError('memory index requires valid finite UTF-8 JSON') from exc
 
 
 def _read_entry(db, entry_id, schema_state=None):
@@ -404,6 +416,86 @@ class MemoryLedger:
             return [v for v in values if (status == 'all' or v['status'] == status)
                     and (scope is None or scope in v['scope'])]
 
+    def index(self, status='active', scope=None, *, limit=20, after_id=None,
+              expected_snapshot=None, max_chars=20000):
+        """Bounded navigation, never acceptance or a persistent already-read cache.
+
+        Reuses list's full read/error semantics. Every page hashes the complete
+        selected snapshot, including omitted bodies. It saves wire content only;
+        it does not reduce database reads or replace check's dependency gate.
+        """
+        if type(limit) is not int or not 1 <= limit <= 100:
+            raise MemoryError('index limit must be 1..100')
+        if type(max_chars) is not int or not 256 <= max_chars <= 200000:
+            raise MemoryError('index max_chars must be 256..200000')
+        if scope is not None and type(scope) is not str:
+            raise MemoryError('index scope must be text or None')
+        if expected_snapshot is not None and (type(expected_snapshot) is not str or
+                re.fullmatch('[0-9a-f]{64}', expected_snapshot) is None):
+            raise MemoryError('exact index snapshot SHA256 required')
+        if after_id is not None:
+            _ids([after_id], 'after_id')
+            if expected_snapshot is None:
+                raise MemoryError('continuation requires index snapshot')
+        entries = self.list(status, scope)
+        binding = {'project_root': str(self.root), 'filter': {'status': status, 'scope': scope}}
+        digest = hashlib.sha256(_index_json(binding).encode('utf-8'))
+        projections = []
+        for entry in entries:
+            entry_hash = hashlib.sha256(_index_json(entry).encode('utf-8')).hexdigest()
+            digest.update(b'\n' + entry_hash.encode('ascii'))
+            content = entry['content']
+            item = {key: value for key, value in entry.items() if key != 'content'}
+            item.update(content_sha256=hashlib.sha256(content.encode('utf-8')).hexdigest(),
+                        content_chars=len(content), entry_sha256=entry_hash)
+            projections.append(item)
+        snapshot = digest.hexdigest()
+        if expected_snapshot is not None and expected_snapshot != snapshot:
+            raise MemoryError('memory index changed; restart from first page')
+        start = 0
+        if after_id is not None:
+            positions = {entry['id']: i for i, entry in enumerate(entries)}
+            if after_id not in positions:
+                raise MemoryError('index cursor is not in selected snapshot')
+            start = positions[after_id] + 1
+        packet = {'schema_version': 'memory-index/v1', **binding, 'snapshot': snapshot,
+                  'total_entries': len(entries), 'start': start, 'entries': [],
+                  'next_after_id': None, 'partial': start < len(entries),
+                  'scope': 'navigation only; content omitted; read required bodies and dependencies '
+                           'through current memory checks before use; no validity or completeness proof'}
+        for item in projections[start:start + limit]:
+            candidate = dict(packet, entries=packet['entries'] + [item])
+            more = start + len(candidate['entries']) < len(entries)
+            candidate.update(partial=more, next_after_id=item['id'] if more else None)
+            if len(_index_json(candidate)) + len(os.linesep) > max_chars:
+                if not packet['entries']:
+                    raise MemoryError('complete memory index entry exceeds budget; increase max_chars')
+                break
+            packet = candidate
+        if len(_index_json(packet)) + len(os.linesep) > max_chars:
+            raise MemoryError('memory index envelope exceeds budget')
+        return packet
+
+    def storage(self):
+        """Observe logical SQLite allocation; never compact or delete the ledger."""
+        with self._connect() as db:
+            page_size = db.execute('PRAGMA page_size').fetchone()[0]
+            page_count = db.execute('PRAGMA page_count').fetchone()[0]
+            free_pages = db.execute('PRAGMA freelist_count').fetchone()[0]
+            counts = dict(db.execute('SELECT status,count(*) FROM entries GROUP BY status'))
+            journal = db.execute('PRAGMA journal_mode').fetchone()[0]
+            indexes = [row[0] for row in db.execute(
+                "SELECT name FROM sqlite_master WHERE type='index' ORDER BY name")]
+            return {'schema_version': 'memory-storage/v1', 'project_root': str(self.root),
+                    'path': '.agent-memory/memory.sqlite3', 'main_file_bytes': self.path.stat().st_size,
+                    'page_size_bytes': page_size, 'page_count': page_count, 'free_pages': free_pages,
+                    'logical_bytes': page_count * page_size,
+                    'freelist_bytes': free_pages * page_size, 'entries_by_status': counts,
+                    'indexes': indexes, 'journal_mode': journal,
+                    'scope': 'read-only SQL observations; main-file size excludes WAL/SHM and backups; '
+                             'concurrent file stat is not a transactional disk-usage measurement; '
+                             'freelist bytes are reusable SQLite pages, not permission to delete evidence'}
+
     def history(self, entry_id):
         with self._connect() as db:
             return {'entry': self._get(db, entry_id), 'events': [dict(r) for r in db.execute(
@@ -468,6 +560,14 @@ def main(argv=None):
     listing = sub.add_parser('list')
     listing.add_argument('--status', default='active', choices=('active', 'candidate', 'stale', 'superseded', 'all'))
     listing.add_argument('--scope')
+    index = sub.add_parser('index', help='bounded content-free navigation; use check before consuming evidence')
+    index.add_argument('--status', default='active', choices=('active', 'candidate', 'stale', 'superseded', 'all'))
+    index.add_argument('--scope')
+    index.add_argument('--limit', type=int, default=20)
+    index.add_argument('--after-id')
+    index.add_argument('--snapshot')
+    index.add_argument('--max-chars', type=int, default=20000)
+    sub.add_parser('storage', help='observe SQLite allocation without compaction or deletion')
     sub.add_parser('check').add_argument('refs', nargs='+')
     for command in ('history', 'impact'):
         sub.add_parser(command).add_argument('id')
@@ -486,9 +586,15 @@ def main(argv=None):
             result = ledger.list(args.status, args.scope)
         elif args.command == 'check':
             result = ledger.check(args.refs)
+        elif args.command == 'index':
+            result = ledger.index(args.status, args.scope, limit=args.limit, after_id=args.after_id,
+                                  expected_snapshot=args.snapshot, max_chars=args.max_chars)
+        elif args.command == 'storage':
+            result = ledger.storage()
         else:
             result = getattr(ledger, args.command)(args.id)
-        print(json.dumps(result, ensure_ascii=False, indent=2))
+        print(_index_json(result) if args.command == 'index' else
+              json.dumps(result, ensure_ascii=False, indent=2))
         return 0
     except (MemoryError, OSError) as exc:
         print(json.dumps({'error': str(exc)}, ensure_ascii=False), file=sys.stderr)

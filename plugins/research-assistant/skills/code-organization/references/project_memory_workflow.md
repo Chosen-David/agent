@@ -23,6 +23,19 @@
 
 `MemoryLedger(root, create=True)` 初始化时幂等建立 `(parent, child)` 反向依赖索引；已有账本可用同一 Python 入口升级，条目和事件保持不变。现有 CLI `add` 也执行初始化，因此可能在后续添加校验失败前完成索引升级；没有单独的 CLI `init` 命令。普通读取不自动升级旧库。首次建索引需要额外时间、磁盘和写锁，失败时保留原账本并排查权限/空间，不删除重建。`IF NOT EXISTS` 保留未知同名索引，不验证或修复其结构；此类自定义 schema 不在索引性能保证范围内。
 
+浏览记忆时，完整 checkout 可先用显式分页目录，避免把无关正文反复装入模型上下文：
+
+```bash
+python -m agent_runtime.project_memory --root /absolute/project index --scope TASK_ID --limit 20 --max-chars 20000
+python -m agent_runtime.project_memory --root /absolute/project index --scope TASK_ID --after-id LAST_ID --snapshot EXACT_SNAPSHOT_SHA256
+python -m agent_runtime.project_memory --root /absolute/project check REQUIRED_ID
+python -m agent_runtime.project_memory --root /absolute/project storage
+```
+
+`index` 默认只列 active，保留顺序及全部非content元数据，附正文/完整条目SHA；scope是精确成员过滤。它只供导航：来源、deps、状态标记和哈希均不授信，不可凭目录回答需要正文的事实。实际消费继续走 `check` 或 `basis_context` 的当前依赖/文档门禁；`history` 用于包含失效条目的审计。后续页必须带原snapshot，项目/过滤条件/完整所选条目变化拒绝继续，应重新查首页；`partial` 和 `next_after_id` 表示尚有页。所有页、必要正文与后续调用都计成本，完整阅读或短条目可能更贵，不默认节省总tokens。
+
+每次目录仍执行完整list筛选与快照重算，不宣称减少数据库读取/CPU；字符硬上限包含完整compact JSON及换行，只保留整条元数据，首条放不下即报错。原文保留在现有私有账本，不新增持久摘要或跨上下文“已读”缓存。`storage` 仅执行观察SQL，报告主文件大小、逻辑页/空闲页、状态计数及索引名；主文件stat不含WAL/SHM/备份，且不与并发写入构成原子磁盘计量。SQLite读连接可能有自身日志/SHM生命周期副作用，不能把逻辑空闲页当可删除证据或已回收磁盘。工具不执行VACUUM、删cache、删记忆或后台维护。纯Skill包没有runtime时不假称这些CLI已安装。
+
 同一初始化还建立 `events(entry_id)` 历史索引，避免单条记忆的审计查询扫描全部无关事件。`history` 仍返回完整条目与按 `sequence` 排列的完整事件，不按时间戳重排、不截断历史。索引增加写入和存储成本；旧库升级、失败 CLI `add` 的初始化副作用及同名索引边界与上段相同。此优化只涉及账本历史读取，不代表模型 KV cache 或任务质量提升。
 
 任务声明非空 `memory_refs` 后，`ReportingHandler` 在执行前、验收与旧结果复核时检查，缺库、失效或未知引用阻断该任务；其他任务继续。没有声明引用的旧任务保留兼容行为，**不保证自动发现隐藏依赖**。代码门禁不判断自然语言是否真的反映用户意图，也不替代独立验收。

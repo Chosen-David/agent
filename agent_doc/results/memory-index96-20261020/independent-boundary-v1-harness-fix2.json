@@ -1,0 +1,129 @@
+{
+  "python": "3.12.0 (tags/v3.12.0:0fb18b0, Oct  2 2023, 13:03:39) [MSC v.1935 64 bit (AMD64)]",
+  "sqlite": "3.42.0",
+  "label": "v1-harness-fix2",
+  "checks": [
+    {
+      "name": "independent_sql_properties",
+      "verdict": "pass",
+      "observations": {
+        "oracle_pagination_combinations": 180,
+        "mutation_fields": 6,
+        "trust_gate": "navigation listed active child; check refused stale ancestry"
+      }
+    },
+    {
+      "name": "actual_pipe_hard_character_budget",
+      "verdict": "pass",
+      "observations": {
+        "default_wire_chars": 811,
+        "default_wire_bytes": 811,
+        "newline_suffix_hex": "0d0a",
+        "requested_cap": 810,
+        "limited_exit": 2,
+        "limited_chars": 0,
+        "limited_stderr": "{\"error\": \"complete memory index entry exceeds budget; increase max_chars\"}\r\n"
+      }
+    },
+    {
+      "name": "storage_wal_physical_observations",
+      "verdict": "pass",
+      "observations": [
+        {
+          "live_writer": true,
+          "before": {
+            "memory.sqlite3": {
+              "bytes": 45056,
+              "sha256": "2c4043ed7be8ae5a80df884ec354b9c11eea3e66a0a45f4548af477fdd007f62"
+            },
+            "memory.sqlite3-shm": {
+              "bytes": 32768,
+              "sha256": "4e3dfe95582ec272e5bc9b4b40636835e30f71748e01cebcd6770b216ebb81a7"
+            },
+            "memory.sqlite3-wal": {
+              "bytes": 8272,
+              "sha256": "82d7de882110579c5eae24da2c2bf8b2c2234fe5832a79c1a95a31745b485ac3"
+            }
+          },
+          "after": {
+            "memory.sqlite3": {
+              "bytes": 45056,
+              "sha256": "2c4043ed7be8ae5a80df884ec354b9c11eea3e66a0a45f4548af477fdd007f62"
+            },
+            "memory.sqlite3-shm": {
+              "bytes": 32768,
+              "sha256": "e8012e650bedea4f869a05db0fafe6d5c1f5c7126cb620ba84b0b5adbd8d23e7"
+            },
+            "memory.sqlite3-wal": {
+              "bytes": 8272,
+              "sha256": "82d7de882110579c5eae24da2c2bf8b2c2234fe5832a79c1a95a31745b485ac3"
+            }
+          },
+          "state": {
+            "schema_version": "memory-storage/v1",
+            "project_root": "C:\\Users\\WI\\AppData\\Local\\Temp\\tmpk02_kd77",
+            "path": ".agent-memory/memory.sqlite3",
+            "main_file_bytes": 45056,
+            "page_size_bytes": 4096,
+            "page_count": 11,
+            "free_pages": 0,
+            "logical_bytes": 45056,
+            "freelist_bytes": 0,
+            "entries_by_status": {
+              "active": 1
+            },
+            "indexes": [
+              "memory_dependencies_parent",
+              "memory_events_entry",
+              "sqlite_autoindex_dependencies_1",
+              "sqlite_autoindex_document_dependencies_1",
+              "sqlite_autoindex_entries_1"
+            ],
+            "journal_mode": "wal",
+            "scope": "read-only SQL observations; main-file size excludes WAL/SHM and backups; concurrent file stat is not a transactional disk-usage measurement; freelist bytes are reusable SQLite pages, not permission to delete evidence"
+          },
+          "files_identical": false
+        },
+        {
+          "live_writer": false,
+          "before": {
+            "memory.sqlite3": {
+              "bytes": 45056,
+              "sha256": "2d7275db654c85d8254a566605deaf5617c29d0947369947e7dfa77495762670"
+            }
+          },
+          "after": {
+            "memory.sqlite3": {
+              "bytes": 45056,
+              "sha256": "2d7275db654c85d8254a566605deaf5617c29d0947369947e7dfa77495762670"
+            }
+          },
+          "state": {
+            "schema_version": "memory-storage/v1",
+            "project_root": "C:\\Users\\WI\\AppData\\Local\\Temp\\tmpksawn1zg",
+            "path": ".agent-memory/memory.sqlite3",
+            "main_file_bytes": 45056,
+            "page_size_bytes": 4096,
+            "page_count": 11,
+            "free_pages": 0,
+            "logical_bytes": 45056,
+            "freelist_bytes": 0,
+            "entries_by_status": {
+              "active": 1
+            },
+            "indexes": [
+              "memory_dependencies_parent",
+              "memory_events_entry",
+              "sqlite_autoindex_dependencies_1",
+              "sqlite_autoindex_document_dependencies_1",
+              "sqlite_autoindex_entries_1"
+            ],
+            "journal_mode": "wal",
+            "scope": "read-only SQL observations; main-file size excludes WAL/SHM and backups; concurrent file stat is not a transactional disk-usage measurement; freelist bytes are reusable SQLite pages, not permission to delete evidence"
+          },
+          "files_identical": true
+        }
+      ]
+    }
+  ]
+}

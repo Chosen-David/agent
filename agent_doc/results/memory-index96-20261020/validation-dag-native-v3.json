@@ -1,0 +1,110 @@
+{
+  "tasks": [
+    {
+      "task_id": "produce-native-bytes",
+      "owner": "/root",
+      "task_type": "experiment",
+      "produces_data": true,
+      "experiment_result": {
+        "result_id": "memory-index96-native-v3-bytes-20261020",
+        "producer_task_id": "produce-native-bytes",
+        "producer_actor": "/root",
+        "manifest_path": "agent_doc/results/memory-index96-20261020/manifest-native-v3-bytes.json",
+        "validation_plan": {
+          "path": "agent_doc/results/memory-index96-20261020/validation_plan-native-v3.json",
+          "sha256": "00ce24b9874b4dfc180c0906b87fa6a8bd7e2f4fb1a7613bb4e69fdcd7259ce4"
+        },
+        "scope": "MEM-INDEX-96 v3 native UTF-8 binary subprocess stdout bytes and local o200k_base text tokens across six synthetic navigation/read scopes; no total model-token, cash, quality, CPU, latency or KV claim"
+      },
+      "depends_on": []
+    },
+    {
+      "task_id": "verify-native-bytes",
+      "owner": "/root/memory_index_verifier",
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "memory-index96-native-v3-bytes-20261020",
+        "producer_task_id": "produce-native-bytes",
+        "producer_actor": "/root",
+        "manifest_path": "agent_doc/results/memory-index96-20261020/manifest-native-v3-bytes.json",
+        "validation_plan": {
+          "path": "agent_doc/results/memory-index96-20261020/validation_plan-native-v3.json",
+          "sha256": "00ce24b9874b4dfc180c0906b87fa6a8bd7e2f4fb1a7613bb4e69fdcd7259ce4"
+        },
+        "scope": "MEM-INDEX-96 v3 native UTF-8 binary subprocess stdout bytes and local o200k_base text tokens across six synthetic navigation/read scopes; no total model-token, cash, quality, CPU, latency or KV claim"
+      },
+      "depends_on": [
+        "produce-native-bytes"
+      ]
+    },
+    {
+      "task_id": "produce-native-tokens",
+      "owner": "/root",
+      "task_type": "experiment",
+      "produces_data": true,
+      "experiment_result": {
+        "result_id": "memory-index96-native-v3-tokens-20261020",
+        "producer_task_id": "produce-native-tokens",
+        "producer_actor": "/root",
+        "manifest_path": "agent_doc/results/memory-index96-20261020/manifest-native-v3-tokens.json",
+        "validation_plan": {
+          "path": "agent_doc/results/memory-index96-20261020/validation_plan-native-v3.json",
+          "sha256": "00ce24b9874b4dfc180c0906b87fa6a8bd7e2f4fb1a7613bb4e69fdcd7259ce4"
+        },
+        "scope": "MEM-INDEX-96 v3 native UTF-8 binary subprocess stdout bytes and local o200k_base text tokens across six synthetic navigation/read scopes; no total model-token, cash, quality, CPU, latency or KV claim"
+      },
+      "depends_on": []
+    },
+    {
+      "task_id": "verify-native-tokens",
+      "owner": "/root/memory_index_verifier",
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "memory-index96-native-v3-tokens-20261020",
+        "producer_task_id": "produce-native-tokens",
+        "producer_actor": "/root",
+        "manifest_path": "agent_doc/results/memory-index96-20261020/manifest-native-v3-tokens.json",
+        "validation_plan": {
+          "path": "agent_doc/results/memory-index96-20261020/validation_plan-native-v3.json",
+          "sha256": "00ce24b9874b4dfc180c0906b87fa6a8bd7e2f4fb1a7613bb4e69fdcd7259ce4"
+        },
+        "scope": "MEM-INDEX-96 v3 native UTF-8 binary subprocess stdout bytes and local o200k_base text tokens across six synthetic navigation/read scopes; no total model-token, cash, quality, CPU, latency or KV claim"
+      },
+      "depends_on": [
+        "produce-native-tokens"
+      ]
+    },
+    {
+      "task_id": "report-and-publication-native-v3",
+      "owner": "/root",
+      "depends_on": [
+        "verify-native-bytes",
+        "verify-native-tokens"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "memory-index96-native-v3-bytes-20261020",
+          "producer_task_id": "produce-native-bytes",
+          "producer_actor": "/root",
+          "manifest_path": "agent_doc/results/memory-index96-20261020/manifest-native-v3-bytes.json",
+          "validation_plan": {
+            "path": "agent_doc/results/memory-index96-20261020/validation_plan-native-v3.json",
+            "sha256": "00ce24b9874b4dfc180c0906b87fa6a8bd7e2f4fb1a7613bb4e69fdcd7259ce4"
+          },
+          "scope": "MEM-INDEX-96 v3 native UTF-8 binary subprocess stdout bytes and local o200k_base text tokens across six synthetic navigation/read scopes; no total model-token, cash, quality, CPU, latency or KV claim"
+        },
+        {
+          "result_id": "memory-index96-native-v3-tokens-20261020",
+          "producer_task_id": "produce-native-tokens",
+          "producer_actor": "/root",
+          "manifest_path": "agent_doc/results/memory-index96-20261020/manifest-native-v3-tokens.json",
+          "validation_plan": {
+            "path": "agent_doc/results/memory-index96-20261020/validation_plan-native-v3.json",
+            "sha256": "00ce24b9874b4dfc180c0906b87fa6a8bd7e2f4fb1a7613bb4e69fdcd7259ce4"
+          },
+          "scope": "MEM-INDEX-96 v3 native UTF-8 binary subprocess stdout bytes and local o200k_base text tokens across six synthetic navigation/read scopes; no total model-token, cash, quality, CPU, latency or KV claim"
+        }
+      ]
+    }
+  ]
+}
