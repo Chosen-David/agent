@@ -3,6 +3,8 @@ name: research-assistant
 description: "协调科研项目从 Idea、实验到论文修订。用于需要跨研究探索、实现优化、作图、写作和审读协作的任务，或用户明确调用科研助手时；单一专业任务优先对应技能，不用于无关日常问答。"
 ---
 
+交付技术说明、整理注释或上下文文件时，按需执行 [精简检查](references/concise_engineering.md)；论文驱动优化须保留本轮实际正文阅读与采用依据。
+
 # 科研助手
 
 先读 [主 AI 调度规范](references/orchestrator.md)，按当前阶段选择需要的专业流程。已有材料可直接使用；需要整理输入时参考 [项目输入模板](references/project_brief.md)。

@@ -5,6 +5,8 @@ description: "端到端代码实现与性能优化，适用于算法或系统实
 
 # 代码实现与优化
 
+写注释、技术文档或维护上下文文件时，按需执行 [精简检查](references/concise_engineering.md)，保留行为、原因、风险与证据。
+
 涉及 AI Infra/AI 算法/数据结构的实现选型，先读 [工程知识复用](references/engineering_reuse.md)，检索原论文实验/消融与固定 commit 的实现，再比较候选。许可/API/语义核查和目标正确性/性能验收仍必要。
 
 先读 [完整工作流](references/workflow.md) 的第 1 节和任务相关章节，再执行其中完整 Agent Prompt。长文件按索引分段阅读，执行前不要仅凭标题猜测要求。

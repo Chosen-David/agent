@@ -2,6 +2,10 @@
 
 ## 2026-10-20
 
+- [ ] [CONCISE-98] 精简Skill与CLAUDE入口修复通过范围验收；正文阅读2/10，批次未完成，发布回读另核。([详情](task_details/CONCISE-98.md))
+
+- [ ] [RESULT-TIME-97] 结果时间UTC越界隔离；修前API/CLI复现、窄来源修复与独立验证后发布。([详情](task_details/RESULT-TIME-97.md))
+
 - [x] [RESULT-FD-95] 结果读取/哈希/登记fd释放：独立普通/-O各38场景泄漏12→0、专项各103通过，全库1339通过/8skip、Reader3通过；发布回读另核，不主张吞吐提速。([详情](task_details/RESULT-FD-95.md))
 
 - [x] [SEARCH-DEPTH-93] 深层JSON单记录错误隔离：专项普通/-O各94项、全库1338项（8skip）及Reader3通过，独立基线对照验收；发布回读另核。([详情](task_details/SEARCH-DEPTH-93.md))

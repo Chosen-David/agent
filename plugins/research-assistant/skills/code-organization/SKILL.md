@@ -1,9 +1,11 @@
 ---
 name: code-organization
-description: "管理项目文件并组织代码仓库。用于文件散落、跨 Agent 产物交接、任务开始前规划输出目录、逐任务文件登记、轮次收官和 CODEMAP 维护。以项目 agent_doc/task/TASK.md 为唯一任务入口，协助主 AI 协调生产者与消费者，核对引用/版本/数据归属；保护运行中路径，不自动删除文件。"
+description: "管理项目文件并组织代码仓库。用于文件散落、跨 Agent 产物交接、输出目录规划、任务登记、CODEMAP维护，以及AI文档精简和AGENTS.md/CLAUDE.md整理。以项目 agent_doc/task/TASK.md 为唯一任务入口，协助主 AI 协调生产者与消费者，核对引用/版本/数据归属；保护运行中路径，不自动删除文件。"
 ---
 
 # 文件管理与代码组织
+
+整理AI文档、AGENTS.md或CLAUDE.md时，按需执行 [精简检查](references/concise_engineering.md)：单源规则、有效路径、明确作用域，不改历史证据或人类指南。
 
 读取 [组织流程](references/workflow.md) 与 [执行与验收](references/execution.md)。沿用 `code-organization` 角色名，兼容既有调用；同时承担文件管理 Agent 职责。
 
