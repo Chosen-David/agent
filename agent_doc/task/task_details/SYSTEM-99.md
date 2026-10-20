@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 19
+Version: 21
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -72,7 +72,27 @@ publication须拒绝任务读取与已冻结候选树身份不一致。保留公
 通过后才发布。阶段O不
 处理剩余27个历史目录、真实宿主/多轮质量或usage/费用，仍不是整轮完成。
 
+阶段P（CHAIN-RESULT-CATALOG-WAVE4）：Version21继续阶段N剩余27个缺record目录，只登记15个可由
+现有`register_history`完整冻结的独立JSON/状态型历史包，共347个已跟踪普通原文件；目录名
+和`path<TAB>sha256`清单分别固定为
+`ee2c6faf0dde61b1101ebe5a5a64e5ee1aee9eb6f4ecf9b922149779c7ce56ed`、
+`ea734d8c1b47b8350e86b5c07508a89087682ffe1c5a91cc7f3a9bb4397daeee`。
+失败、blocked、preflight/registration rejected均保留原义，只生成unknown历史索引；内部重复
+producer ID不能覆盖顶层目录身份。排除已被v2记录引用的math-linear失败包、活动/纯计划/父容器、
+混合身份和超过64文件的目录。独立方案审核后才写入；验收要求错误27→12且partial/剩余错误可见、
+15个show/search/decide均不授信、347原件不变、定向/全库/Reader/同步及独立结果复核通过。
+精确summary与正式search/show/decide参数固定在catalog-wave4-plan.md；发布前main漂移则重算并
+升级版本。不改runtime/schema/guide，不解决真实宿主、任务质量或费用，阶段提交不算整轮完成。
+
 ## Progress
+
+Version21阶段P经两路独立分类与方案退回修订后，登记15个JSON/状态型历史包；347个原文件
+清单与基线不变，15条record保持unknown且不调用verifier。固定查询扫描252目录，缺record错误
+27→12并保留partial/剩余错误；15个show/search/decide均通过。定向46、全库1406
+（1398通过/8跳过）、Reader3和同步检查通过；调用脚本的PYTHONPATH遗漏与错误字段名失败已
+原样说明并修正重跑。[阶段证据](../../results/system99/stage-p.md)经
+[独立验收](../../results/system99/independent-stage-p.md)接受usable-with-scope；剩余12目录、
+真实宿主/多轮质量、usage/费用及其它artifact边界继续open，本阶段不算整轮完成。
 
 Version19阶段O以真实临时文件固定TASK双读竞态：绑定OLD摘要的计划曾接受瞬时NEW任务ID，
 文件读取后恢复OLD。修复后prepare、validate与publication freeze均从一次至多1 MiB的普通文件
