@@ -1,5 +1,6 @@
 # READ-BOUNDARY-56：知识读取实际字节边界
 
+Task-ID: READ-BOUNDARY-56
 Date: 2026-10-19
 
 ## Plan

@@ -1,5 +1,8 @@
 # CONTENT-COPY-60
 
+Task-ID: CONTENT-COPY-60
+Date: 2026-10-19
+
 ## Plan
 
 保持 get 输出JSON值、键序、元数据隔离、筛选和预算；复用合法不可变正文。基线4bdb071f5dc9b83c36cdc1b36df5a28a1a1f7823。固定候选计划、集成计划、历史检索与研究记录见 ../../results/content-copy60/。主控负责源码/镜像/测试/任务；独立审核者负责计划和结果审核。仅本地CPU、无付费模型/GPU；没有托管常驻宿主，未声称部署监督器。

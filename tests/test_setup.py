@@ -17,6 +17,19 @@ class SetupTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         self.target = Path(self.tmp.name)
 
+    def test_generated_entry_uses_initialized_project_document_root(self):
+        ordinary = self.target / 'doc/notes.md'
+        ordinary.parent.mkdir()
+        ordinary.write_bytes(b'Ordinary project docs remain separate.\r\n')
+        setup.install(self.target)
+        text = (self.target / 'CLAUDE.md').read_text()
+        self.assertIn('Project A/agent_doc', text)
+        self.assertNotIn('Project A/doc', text)
+        self.assertNotIn('工作流库的 doc', text)
+        self.assertTrue((self.target / 'agent_doc/task/TASK.md').is_file())
+        self.assertEqual(ordinary.read_bytes(), b'Ordinary project docs remain separate.\r\n')
+        self.assertEqual(setup.check(self.target)['status'], 'configured')
+
     def test_install_full_catalog_and_preserve_existing_project_rules(self):
         (self.target / 'CLAUDE.md').write_text('# Project rules\nKeep my instructions.\n')
         result = setup.install(self.target)

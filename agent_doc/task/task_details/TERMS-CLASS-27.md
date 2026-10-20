@@ -1,5 +1,8 @@
 # TERMS-CLASS-27: 查询词类裁剪
 
+Task-ID: TERMS-CLASS-27
+Date: 2026-10-19
+
 ## Plan
 
 授权：用户持续优化 Agent、验证后直推 main；EXECUTE。基线 a5a13c2aea4165d0d3aebcd6c99ca0135a6efdbb。独立检出，无他人改动；人类 guide 不修改。

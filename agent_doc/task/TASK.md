@@ -2,37 +2,39 @@
 
 ## 2026-10-20
 
-- [x] [MEM-INDEX-96] 分页目录/快照失效/存储观察已独立验收并发布；长文单条读取载荷54147→6116 tokens，全库未全绿，非总token收益。([详情](task_details/MEM-INDEX-96.md))
+- [ ] [SYSTEM-99] 系统级改进批次：入口、任务/恢复、协作、记忆、上下文与真实任务质量全面验收；小修复与小时唤醒仅为检查点。 ([详情](task_details/SYSTEM-99.md))
 
-- [ ] [CONCISE-98] 精简Skill与CLAUDE入口修复通过范围验收；正文阅读2/10，批次未完成，发布回读另核。([详情](task_details/CONCISE-98.md))
+- [x] [MEM-INDEX-96] 分页目录/快照失效/存储观察已独立验收并发布；长文单条读取载荷54147→6116 tokens，全库未全绿，非总token收益。 ([详情](task_details/MEM-INDEX-96.md))
 
-- [ ] [RESULT-TIME-97] 结果时间UTC越界隔离；修前API/CLI复现、窄来源修复与独立验证后发布。([详情](task_details/RESULT-TIME-97.md))
+- [ ] [CONCISE-98] 精简Skill与CLAUDE入口修复通过范围验收；正文阅读2/10，批次未完成，发布回读另核。 ([详情](task_details/CONCISE-98.md))
 
-- [x] [RESULT-FD-95] 结果读取/哈希/登记fd释放：独立普通/-O各38场景泄漏12→0、专项各103通过，全库1339通过/8skip、Reader3通过；发布回读另核，不主张吞吐提速。([详情](task_details/RESULT-FD-95.md))
+- [ ] [RESULT-TIME-97] 结果时间UTC越界隔离；修前API/CLI复现、窄来源修复与独立验证后发布。 ([详情](task_details/RESULT-TIME-97.md))
 
-- [x] [SEARCH-DEPTH-93] 深层JSON单记录错误隔离：专项普通/-O各94项、全库1338项（8skip）及Reader3通过，独立基线对照验收；发布回读另核。([详情](task_details/SEARCH-DEPTH-93.md))
+- [x] [RESULT-FD-95] 结果读取/哈希/登记fd释放：独立普通/-O各38场景泄漏12→0、专项各103通过，全库1339通过/8skip、Reader3通过；发布回读另核，不主张吞吐提速。 ([详情](task_details/RESULT-FD-95.md))
 
-- [x] [VALIDATION-FD-87] 显示回执异常fd泄漏修复：独立20组配对泄漏12→0，专项/-O各32项、全库1331项（8skip）及Reader3通过；失败文件规则不变，发布回读另核。([详情](task_details/VALIDATION-FD-87.md))
+- [x] [SEARCH-DEPTH-93] 深层JSON单记录错误隔离：专项普通/-O各94项、全库1338项（8skip）及Reader3通过，独立基线对照验收；发布回读另核。 ([详情](task_details/SEARCH-DEPTH-93.md))
 
-- [x] [CHECK-HELPER-85] 公开记忆校验自定义读取器兼容：修前两项错误修复，专项/-O各62项、全库1323项（8skip）及Reader3通过；独立复核接受，发布回读另核。([详情](task_details/CHECK-HELPER-85.md))
+- [x] [VALIDATION-FD-87] 显示回执异常fd泄漏修复：独立20组配对泄漏12→0，专项/-O各32项、全库1331项（8skip）及Reader3通过；失败文件规则不变，发布回读另核。 ([详情](task_details/VALIDATION-FD-87.md))
 
-- [x] [CONTEXT-SCHEMA-83] 保留自定义读取器兼容的事务内schema复用；256/512节点串行装配改善6.07%/7.62%，独立门槛及1321项回归（8skip）通过，发布另核。([详情](task_details/CONTEXT-SCHEMA-83.md))
+- [x] [CHECK-HELPER-85] 公开记忆校验自定义读取器兼容：修前两项错误修复，专项/-O各62项、全库1323项（8skip）及Reader3通过；独立复核接受，发布回读另核。 ([详情](task_details/CHECK-HELPER-85.md))
 
-- [x] [ARTIFACT-FD-77] 修复目录读取拒绝及构造失败的fd泄漏；独立22组13→0泄漏，专项45项、全库1318项（8skip）及Reader3通过；发布另核。([详情](task_details/ARTIFACT-FD-77.md))
+- [x] [CONTEXT-SCHEMA-83] 保留自定义读取器兼容的事务内schema复用；256/512节点串行装配改善6.07%/7.62%，独立门槛及1321项回归（8skip）通过，发布另核。 ([详情](task_details/CONTEXT-SCHEMA-83.md))
 
-- [x] [ARTIFACT-READ-76] 小文件派发Python分配峰值降低99.9368%；增长回退非退化、独立验收、全库1314项（8skip）/Reader3通过，发布另核；目录fd泄漏待单独修复。([详情](task_details/ARTIFACT-READ-76.md))
+- [x] [ARTIFACT-FD-77] 修复目录读取拒绝及构造失败的fd泄漏；独立22组13→0泄漏，专项45项、全库1318项（8skip）及Reader3通过；发布另核。 ([详情](task_details/ARTIFACT-FD-77.md))
 
-- [x] [PROMPT-SCAN-69] 精确行首匹配降低完整提示词装配CPU开销69.90%；全库1310项（8skip）/Reader3及独立差分/性能复测通过，发布另核。([详情](task_details/PROMPT-SCAN-69.md))
+- [x] [ARTIFACT-READ-76] 小文件派发Python分配峰值降低99.9368%；增长回退非退化、独立验收、全库1314项（8skip）/Reader3通过，发布另核；目录fd泄漏待单独修复。 ([详情](task_details/ARTIFACT-READ-76.md))
 
-- [x] [PROMPT-READ-67] 提示词超限拒绝改为有界读取；独立兼容/分配检查、全库1307项（8跳过）及Reader3通过，发布另核。([详情](task_details/PROMPT-READ-67.md))
+- [x] [PROMPT-SCAN-69] 精确行首匹配降低完整提示词装配CPU开销69.90%；全库1310项（8skip）/Reader3及独立差分/性能复测通过，发布另核。 ([详情](task_details/PROMPT-SCAN-69.md))
+
+- [x] [PROMPT-READ-67] 提示词超限拒绝改为有界读取；独立兼容/分配检查、全库1307项（8跳过）及Reader3通过，发布另核。 ([详情](task_details/PROMPT-READ-67.md))
 
 ## 2026-10-19
 
-- [x] [INGEST-SCOPE-58] 导入暂存仅复制entries，修复无关特殊文件导致失败；1297项回归/Reader3及独立验收通过，复制负载下降但不宣称wall提速，发布另核。([详情](task_details/INGEST-SCOPE-58.md))
+- [x] [INGEST-SCOPE-58] 导入暂存仅复制entries，修复无关特殊文件导致失败；1297项回归/Reader3及独立验收通过，复制负载下降但不宣称wall提速，发布另核。 ([详情](task_details/INGEST-SCOPE-58.md))
 
-- [x] [READ-BOUNDARY-56] 实际读取字节边界修复及独立验收完成：超限接受8/8→0/8，1290项回归（8skip）/Reader3通过，十篇正文阅读；发布回读另核。([详情](task_details/READ-BOUNDARY-56.md))
+- [x] [READ-BOUNDARY-56] 实际读取字节边界修复及独立验收完成：超限接受8/8→0/8，1290项回归（8skip）/Reader3通过，十篇正文阅读；发布回读另核。 ([详情](task_details/READ-BOUNDARY-56.md))
 
-- [x] [CONTEXT-METADATA-35] 元数据路径集成及独立验收完成；生产目标CPU装配6.680→3.609ms，16场景门槛/1285项回归（8skip）/Reader3通过，发布回读单独确认，不外推端到端。([详情](task_details/CONTEXT-METADATA-35.md))
+- [x] [CONTEXT-METADATA-35] 元数据路径集成及独立验收完成；生产目标CPU装配6.680→3.609ms，16场景门槛/1285项回归（8skip）/Reader3通过，发布回读单独确认，不外推端到端。 ([详情](task_details/CONTEXT-METADATA-35.md))
 
 ## 2026-10-10
 
@@ -567,8 +569,8 @@ AI-maintained concise index; implementation and evidence live in linked details.
 - [x] [TERMS-CLASS-27] Exact query-class projection: independent hot-search latency -27.76%; 1277 tests (8 skipped), Reader3 passed; publication/readback main-owned. ([detail](task_details/TERMS-CLASS-27.md))
 
 - [x] [CONTEXT-BUDGET-28] 完整依赖包预算前置判断：独立复测16门槛通过，全库1281（8跳过）/Reader3通过；766e56e7已发布main并回读同tree，原始大日志仅留本地。 ([详情](task_details/CONTEXT-BUDGET-28.md))
-- [x] [CONTENT-COPY-60] 正文复用减少JSON编解码：主场景CPU装配耗时下降16.77%，全库1301项（8跳过）/Reader3及独立验收通过；发布回读另核。([详情](task_details/CONTENT-COPY-60.md))
+- [x] [CONTENT-COPY-60] 正文复用减少JSON编解码：主场景CPU装配耗时下降16.77%，全库1301项（8跳过）/Reader3及独立验收通过；发布回读另核。 ([详情](task_details/CONTENT-COPY-60.md))
 
 ## 2026-10-20
 
-- [x] [ATX-BOUNDARY-62] 原始标题边界33/72→72/72，独立37212边界/115语料及真实旧缓存迁移通过；全库1304（8跳过）/Reader3，发布回读另核，无模型/速度主张。([详情](task_details/ATX-BOUNDARY-62.md))
+- [x] [ATX-BOUNDARY-62] 原始标题边界33/72→72/72，独立37212边界/115语料及真实旧缓存迁移通过；全库1304（8跳过）/Reader3，发布回读另核，无模型/速度主张。 ([详情](task_details/ATX-BOUNDARY-62.md))
