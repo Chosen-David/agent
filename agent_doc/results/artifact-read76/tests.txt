@@ -1,0 +1,27 @@
+Execution log extracts (independent acceptance is separate).
+
+Before implementation:
+python -m unittest tests.test_result_read_allocation -v
+Ran 4 tests in 0.086s
+FAILED (failures=1)
+AssertionError: 16782929 not less than 1048576
+
+After implementation:
+python -m unittest tests.test_result_read_allocation tests.test_dispatch_context tests.test_result_validation tests.test_result_gate_acceptance -v
+Ran 41 tests in 1.905s
+OK
+
+python -m unittest discover -s tests -v
+Ran 1314 tests in 87.469s
+OK (skipped=8)
+Full private log SHA256: ea23b44bb7f27c5e7924c57e019bbf0d790d712445984cae90c92a002664ce92
+
+python -m unittest discover -s apps/paper-reader/tests -v
+Ran 3 tests in 1.578s
+OK
+Full log SHA256: 42cd32abcf4f7073b2b92a3bc6b68a4d49b1966a2aade2c42e55f3a0e46917e1
+
+Tests ran serially. Durations are unittest diagnostics, not performance comparisons.
+The first benchmark attempt aborted on the separately loaded baseline exception
+class. Its partial observations were not used. The harness now catches ValueError
+and checks the exact original class name/message; raw.json is the complete rerun.

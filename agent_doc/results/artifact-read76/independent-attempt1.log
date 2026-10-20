@@ -1,0 +1,10 @@
+Command: PYTHONDONTWRITEBYTECODE=1 python agent_doc/results/artifact-read76/independent_probe.py
+Exit: 1. Before allocation measurements.
+AssertionError: ('path:directory', [('IsADirectoryError', '[Errno 21] Is a directory: 3'), ('IsADirectoryError', '[Errno 21] Is a directory: 4')])
+
+Diagnosis: both baseline and candidate call os.fdopen on an opened directory and
+raise identically except for the descriptor embedded in the message. That
+preexisting error path leaves the descriptor open, so consecutive calls receive
+different numbers. The independent harness was repaired to track and reclaim
+its own open descriptors after semantic calls, without production changes or
+weakening the exact-message assertion. This is not a candidate-specific bug.

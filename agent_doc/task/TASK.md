@@ -2,6 +2,8 @@
 
 ## 2026-10-20
 
+- [x] [ARTIFACT-READ-76] 小文件派发Python分配峰值降低99.9368%；增长回退非退化、独立验收、全库1314项（8skip）/Reader3通过，发布另核；目录fd泄漏待单独修复。([详情](task_details/ARTIFACT-READ-76.md))
+
 - [x] [PROMPT-SCAN-69] 精确行首匹配降低完整提示词装配CPU开销69.90%；全库1310项（8skip）/Reader3及独立差分/性能复测通过，发布另核。([详情](task_details/PROMPT-SCAN-69.md))
 
 - [x] [PROMPT-READ-67] 提示词超限拒绝改为有界读取；独立兼容/分配检查、全库1307项（8跳过）及Reader3通过，发布另核。([详情](task_details/PROMPT-READ-67.md))

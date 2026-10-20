@@ -1,0 +1,843 @@
+{
+  "reviewer": "/root/artifact76_verify",
+  "baseline_commit": "a55a3d14d8ebf0f840c4bdd9477562fdc369fe44",
+  "baseline_source_sha256": "0c583d8fab12fcfaa4c7482ac4b696da687f5c9b1733459eb32dd2a6413610f4",
+  "candidate_source_sha256": "430f3a421a8b2b305cdb8da916f4ac8fdf8c977131449c49310e1bb69a69661d",
+  "probe_sha256": "26855e2bbc7e8c9d02e17d09ce43f2c96469c4c498193206bd7913b2213783d3",
+  "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+  "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+  "cpu_count": 9,
+  "command": [
+    "python",
+    "agent_doc/results/artifact-read76/independent_probe.py"
+  ],
+  "warmups": 2,
+  "repeats": 5,
+  "unit": "tracemalloc peak bytes",
+  "semantic": [
+    {
+      "case": "path:",
+      "equal": true,
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "nonempty relative artifact path required"
+      }
+    },
+    {
+      "case": "path:../blob",
+      "equal": true,
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "artifact path outside project"
+      }
+    },
+    {
+      "case": "path:/tmp/independent-read76-jn3q95nr/blob",
+      "equal": true,
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "artifact path outside project"
+      }
+    },
+    {
+      "case": "path:link",
+      "equal": true,
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "artifact path must not contain symlinks"
+      }
+    },
+    {
+      "case": "path:parent-link/blob",
+      "equal": true,
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "artifact path must not contain symlinks"
+      }
+    },
+    {
+      "case": "path:fifo",
+      "equal": true,
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "artifact must be a regular file"
+      }
+    },
+    {
+      "case": "path:directory",
+      "equal": true,
+      "outcome": {
+        "status": "IsADirectoryError",
+        "message": "[Errno 21] Is a directory: 3"
+      }
+    },
+    {
+      "case": "path:missing",
+      "equal": true,
+      "outcome": {
+        "status": "FileNotFoundError",
+        "message": "[Errno 2] No such file or directory: '/tmp/independent-read76-jn3q95nr/missing'"
+      }
+    },
+    {
+      "case": "bound:672098eecaca353d3dee05da38b00e81d3dede461ea74c33d9d3cea60ae9a500",
+      "equal": true,
+      "outcome": {
+        "status": "ok",
+        "bytes": 5,
+        "sha256": "672098eecaca353d3dee05da38b00e81d3dede461ea74c33d9d3cea60ae9a500"
+      }
+    },
+    {
+      "case": "bound:0000000000000000000000000000000000000000000000000000000000000000",
+      "equal": true,
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "stale artifact: blob"
+      }
+    },
+    {
+      "case": "legacy:valid",
+      "equal": true,
+      "outcome": {
+        "status": "ok",
+        "bytes": 8,
+        "sha256": "88a3be042675654ce1123f12bae6b7648356f9174cff56ae6a8e71e361e85a3d"
+      }
+    },
+    {
+      "case": "legacy:stale",
+      "equal": true,
+      "outcome": {
+        "status": "ValueError",
+        "message": "relocated historical result bytes changed"
+      }
+    },
+    {
+      "case": "legacy:symlink",
+      "equal": true,
+      "outcome": {
+        "status": "ValueError",
+        "message": "legacy result relocation must not contain symlinks"
+      }
+    },
+    {
+      "case": "legacy:collision",
+      "equal": true,
+      "outcome": {
+        "status": "ValueError",
+        "message": "legacy result relocation collision; reconcile original and moved paths"
+      }
+    },
+    {
+      "case": "nonseekable:binary",
+      "equal": true,
+      "outcome": {
+        "status": "ok",
+        "bytes": 5,
+        "sha256": "672098eecaca353d3dee05da38b00e81d3dede461ea74c33d9d3cea60ae9a500"
+      }
+    }
+  ],
+  "allocation": [
+    {
+      "case": "stable",
+      "initial_size": 0,
+      "final_size": 0,
+      "initial_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "input_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "baseline": [
+        16784692,
+        16784692,
+        16784692,
+        16784692,
+        16784692
+      ],
+      "candidate": [
+        7444,
+        7444,
+        7444,
+        7444,
+        7444
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ratio": 0.0004434993504795918
+    },
+    {
+      "case": "stable",
+      "initial_size": 2,
+      "final_size": 2,
+      "initial_sha256": "b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2",
+      "input_sha256": "b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2",
+      "baseline": [
+        16784692,
+        16784692,
+        16784692,
+        16784692,
+        16784692
+      ],
+      "candidate": [
+        7446,
+        7446,
+        7446,
+        7446,
+        7446
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 2,
+        "sha256": "b413f47d13ee2fe6c845b2ee141af81de858df4ec549a58b7970bb96645bc8d2"
+      },
+      "ratio": 0.00044361850667262763
+    },
+    {
+      "case": "stable",
+      "initial_size": 17,
+      "final_size": 17,
+      "initial_sha256": "3e5718fea51a8f3f5baca61c77afab473c1810f8b9db330273b4011ce92c787e",
+      "input_sha256": "3e5718fea51a8f3f5baca61c77afab473c1810f8b9db330273b4011ce92c787e",
+      "baseline": [
+        16784692,
+        16784692,
+        16784692,
+        16784692,
+        16784692
+      ],
+      "candidate": [
+        7461,
+        7461,
+        7461,
+        7461,
+        7461
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 17,
+        "sha256": "3e5718fea51a8f3f5baca61c77afab473c1810f8b9db330273b4011ce92c787e"
+      },
+      "ratio": 0.00044451217812039684
+    },
+    {
+      "case": "stable",
+      "initial_size": 65534,
+      "final_size": 65534,
+      "initial_sha256": "0bfe5d2e3f8e0be5f7370af59077e83aee6aed4d0d75a24323bca2050f038b99",
+      "input_sha256": "0bfe5d2e3f8e0be5f7370af59077e83aee6aed4d0d75a24323bca2050f038b99",
+      "baseline": [
+        16784752,
+        16784752,
+        16784752,
+        16784752,
+        16784752
+      ],
+      "candidate": [
+        73070,
+        73070,
+        73070,
+        73070,
+        73070
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 65534,
+        "sha256": "0bfe5d2e3f8e0be5f7370af59077e83aee6aed4d0d75a24323bca2050f038b99"
+      },
+      "ratio": 0.004353355950686671
+    },
+    {
+      "case": "stable",
+      "initial_size": 65535,
+      "final_size": 65535,
+      "initial_sha256": "5f1bf999bcba5e05d4c34a13710d2e4bff005877874dcce49ac87af61076231e",
+      "input_sha256": "5f1bf999bcba5e05d4c34a13710d2e4bff005877874dcce49ac87af61076231e",
+      "baseline": [
+        16784752,
+        16784752,
+        16784752,
+        16784752,
+        16784752
+      ],
+      "candidate": [
+        73071,
+        73071,
+        73071,
+        73071,
+        73071
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 65535,
+        "sha256": "5f1bf999bcba5e05d4c34a13710d2e4bff005877874dcce49ac87af61076231e"
+      },
+      "ratio": 0.0043534155285702165
+    },
+    {
+      "case": "stable",
+      "initial_size": 65536,
+      "final_size": 65536,
+      "initial_sha256": "7daca2095d0438260fa849183dfc67faa459fdf4936e1bc91eec6b281b27e4c2",
+      "input_sha256": "7daca2095d0438260fa849183dfc67faa459fdf4936e1bc91eec6b281b27e4c2",
+      "baseline": [
+        16784752,
+        16784752,
+        16784752,
+        16784752,
+        16784752
+      ],
+      "candidate": [
+        16784752,
+        16784752,
+        16784752,
+        16784752,
+        16784752
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 65536,
+        "sha256": "7daca2095d0438260fa849183dfc67faa459fdf4936e1bc91eec6b281b27e4c2"
+      },
+      "ratio": 1.0
+    },
+    {
+      "case": "stable",
+      "initial_size": 1048576,
+      "final_size": 1048576,
+      "initial_sha256": "fbbab289f7f94b25736c58be46a994c441fd02552cc6022352e3d86d2fab7c83",
+      "input_sha256": "fbbab289f7f94b25736c58be46a994c441fd02552cc6022352e3d86d2fab7c83",
+      "baseline": [
+        16784784,
+        16784784,
+        16784784,
+        16784784,
+        16784784
+      ],
+      "candidate": [
+        16784784,
+        16784784,
+        16784784,
+        16784784,
+        16784784
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 1048576,
+        "sha256": "fbbab289f7f94b25736c58be46a994c441fd02552cc6022352e3d86d2fab7c83"
+      },
+      "ratio": 1.0
+    },
+    {
+      "case": "stable",
+      "initial_size": 16777216,
+      "final_size": 16777216,
+      "initial_sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1",
+      "input_sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1",
+      "baseline": [
+        16784784,
+        16784784,
+        16784784,
+        16784784,
+        16784784
+      ],
+      "candidate": [
+        16784784,
+        16784784,
+        16784784,
+        16784784,
+        16784784
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 16777216,
+        "sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1"
+      },
+      "ratio": 1.0
+    },
+    {
+      "case": "stable",
+      "initial_size": 16777217,
+      "final_size": 16777217,
+      "initial_sha256": "94a8ba1341747e2adc81d6d0b4cc2306595034bec4499ed4674562adbae940e8",
+      "input_sha256": "94a8ba1341747e2adc81d6d0b4cc2306595034bec4499ed4674562adbae940e8",
+      "baseline": [
+        7834,
+        7834,
+        7834,
+        7834,
+        7834
+      ],
+      "candidate": [
+        7842,
+        7842,
+        7842,
+        7842,
+        7842
+      ],
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "artifact exceeds 16 MiB bound; use bounded shard manifests"
+      },
+      "ratio": 1.0010211896859842
+    },
+    {
+      "case": "growth",
+      "initial_size": 0,
+      "final_size": 16777216,
+      "initial_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "input_sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1",
+      "baseline": [
+        16784840,
+        16784840,
+        16784840,
+        16784840,
+        16784840
+      ],
+      "candidate": [
+        16784840,
+        16784840,
+        16784840,
+        16784840,
+        16784840
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 16777216,
+        "sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1"
+      },
+      "ratio": 1.0
+    },
+    {
+      "case": "growth",
+      "initial_size": 0,
+      "final_size": 16777217,
+      "initial_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "input_sha256": "94a8ba1341747e2adc81d6d0b4cc2306595034bec4499ed4674562adbae940e8",
+      "baseline": [
+        16784840,
+        16784840,
+        16784840,
+        16784840,
+        16784840
+      ],
+      "candidate": [
+        16784840,
+        16784840,
+        16784840,
+        16784840,
+        16784840
+      ],
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "artifact grew beyond verification bound"
+      },
+      "ratio": 1.0
+    },
+    {
+      "case": "growth",
+      "initial_size": 1,
+      "final_size": 16777216,
+      "initial_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "input_sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1",
+      "baseline": [
+        16784840,
+        16784840,
+        16784840,
+        16784840,
+        16784840
+      ],
+      "candidate": [
+        16784840,
+        16784840,
+        16784840,
+        16784840,
+        16784840
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 16777216,
+        "sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1"
+      },
+      "ratio": 1.0
+    },
+    {
+      "case": "growth",
+      "initial_size": 1,
+      "final_size": 16777217,
+      "initial_sha256": "6e340b9cffb37a989ca544e6bb780a2c78901d3fb33738768511a30617afa01d",
+      "input_sha256": "94a8ba1341747e2adc81d6d0b4cc2306595034bec4499ed4674562adbae940e8",
+      "baseline": [
+        16784840,
+        16784840,
+        16784840,
+        16784840,
+        16784840
+      ],
+      "candidate": [
+        16784840,
+        16784840,
+        16784840,
+        16784840,
+        16784840
+      ],
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "artifact grew beyond verification bound"
+      },
+      "ratio": 1.0
+    },
+    {
+      "case": "growth",
+      "initial_size": 37,
+      "final_size": 16777216,
+      "initial_sha256": "f4d285f47a1e4959a445ea6528e5df3efab041fa15aad94db1e2600b3f395518",
+      "input_sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1",
+      "baseline": [
+        16784840,
+        16784840,
+        16784840,
+        16784840,
+        16784840
+      ],
+      "candidate": [
+        16784840,
+        16784840,
+        16784840,
+        16784840,
+        16784840
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 16777216,
+        "sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1"
+      },
+      "ratio": 1.0
+    },
+    {
+      "case": "growth",
+      "initial_size": 37,
+      "final_size": 16777217,
+      "initial_sha256": "f4d285f47a1e4959a445ea6528e5df3efab041fa15aad94db1e2600b3f395518",
+      "input_sha256": "94a8ba1341747e2adc81d6d0b4cc2306595034bec4499ed4674562adbae940e8",
+      "baseline": [
+        16784840,
+        16784840,
+        16784840,
+        16784840,
+        16784840
+      ],
+      "candidate": [
+        16784840,
+        16784840,
+        16784840,
+        16784840,
+        16784840
+      ],
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "artifact grew beyond verification bound"
+      },
+      "ratio": 1.0
+    },
+    {
+      "case": "growth",
+      "initial_size": 65535,
+      "final_size": 16777216,
+      "initial_sha256": "5f1bf999bcba5e05d4c34a13710d2e4bff005877874dcce49ac87af61076231e",
+      "input_sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1",
+      "baseline": [
+        16784872,
+        16784872,
+        16784872,
+        16784872,
+        16784872
+      ],
+      "candidate": [
+        16784904,
+        16784904,
+        16784904,
+        16784904,
+        16784904
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 16777216,
+        "sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1"
+      },
+      "ratio": 1.0000019064786434
+    },
+    {
+      "case": "growth",
+      "initial_size": 65535,
+      "final_size": 16777217,
+      "initial_sha256": "5f1bf999bcba5e05d4c34a13710d2e4bff005877874dcce49ac87af61076231e",
+      "input_sha256": "94a8ba1341747e2adc81d6d0b4cc2306595034bec4499ed4674562adbae940e8",
+      "baseline": [
+        16784872,
+        16784872,
+        16784872,
+        16784872,
+        16784872
+      ],
+      "candidate": [
+        16784904,
+        16784904,
+        16784904,
+        16784904,
+        16784904
+      ],
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "artifact grew beyond verification bound"
+      },
+      "ratio": 1.0000019064786434
+    },
+    {
+      "case": "growth",
+      "initial_size": 65536,
+      "final_size": 16777216,
+      "initial_sha256": "7daca2095d0438260fa849183dfc67faa459fdf4936e1bc91eec6b281b27e4c2",
+      "input_sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1",
+      "baseline": [
+        16784872,
+        16784872,
+        16784872,
+        16784872,
+        16784872
+      ],
+      "candidate": [
+        16784872,
+        16784872,
+        16784872,
+        16784872,
+        16784872
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 16777216,
+        "sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1"
+      },
+      "ratio": 1.0
+    },
+    {
+      "case": "growth",
+      "initial_size": 65536,
+      "final_size": 16777217,
+      "initial_sha256": "7daca2095d0438260fa849183dfc67faa459fdf4936e1bc91eec6b281b27e4c2",
+      "input_sha256": "94a8ba1341747e2adc81d6d0b4cc2306595034bec4499ed4674562adbae940e8",
+      "baseline": [
+        16784872,
+        16784872,
+        16784872,
+        16784872,
+        16784872
+      ],
+      "candidate": [
+        16784872,
+        16784872,
+        16784872,
+        16784872,
+        16784872
+      ],
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "artifact grew beyond verification bound"
+      },
+      "ratio": 1.0
+    },
+    {
+      "case": "growth",
+      "initial_size": 8388608,
+      "final_size": 16777216,
+      "initial_sha256": "7d212b9c884f5c77896de960ae17cc341cda43b14d6a971f34ca29ebd4badf7f",
+      "input_sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1",
+      "baseline": [
+        16784904,
+        16784904,
+        16784904,
+        16784904,
+        16784904
+      ],
+      "candidate": [
+        16784904,
+        16784904,
+        16784904,
+        16784904,
+        16784904
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 16777216,
+        "sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1"
+      },
+      "ratio": 1.0
+    },
+    {
+      "case": "growth",
+      "initial_size": 8388608,
+      "final_size": 16777217,
+      "initial_sha256": "7d212b9c884f5c77896de960ae17cc341cda43b14d6a971f34ca29ebd4badf7f",
+      "input_sha256": "94a8ba1341747e2adc81d6d0b4cc2306595034bec4499ed4674562adbae940e8",
+      "baseline": [
+        16784904,
+        16784904,
+        16784904,
+        16784904,
+        16784904
+      ],
+      "candidate": [
+        16784904,
+        16784904,
+        16784904,
+        16784904,
+        16784904
+      ],
+      "outcome": {
+        "status": "ResultValidationError",
+        "message": "artifact grew beyond verification bound"
+      },
+      "ratio": 1.0
+    },
+    {
+      "case": "shrink",
+      "initial_size": 65534,
+      "final_size": 17,
+      "initial_sha256": "0bfe5d2e3f8e0be5f7370af59077e83aee6aed4d0d75a24323bca2050f038b99",
+      "input_sha256": "3e5718fea51a8f3f5baca61c77afab473c1810f8b9db330273b4011ce92c787e",
+      "baseline": [
+        16784844,
+        16784844,
+        16784844,
+        16784844,
+        16784844
+      ],
+      "candidate": [
+        73162,
+        73162,
+        73162,
+        73162,
+        73162
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 17,
+        "sha256": "3e5718fea51a8f3f5baca61c77afab473c1810f8b9db330273b4011ce92c787e"
+      },
+      "ratio": 0.0043588132245971425
+    },
+    {
+      "case": "shrink",
+      "initial_size": 16777216,
+      "final_size": 0,
+      "initial_sha256": "341aacac661ccb210720bedaa9ead5d668fe5ea41a73532fc147c71e34040df1",
+      "input_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "baseline": [
+        16784876,
+        16784876,
+        16784876,
+        16784876,
+        16784876
+      ],
+      "candidate": [
+        16784876,
+        16784876,
+        16784876,
+        16784876,
+        16784876
+      ],
+      "outcome": {
+        "status": "ok",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "ratio": 1.0
+    }
+  ],
+  "nonseekable_calls": [
+    [
+      "read",
+      16777217
+    ],
+    [
+      "read",
+      16777217
+    ]
+  ],
+  "seek_failure": {
+    "outcome": {
+      "status": "OSError",
+      "message": "held-out seek failure"
+    },
+    "calls": [
+      [
+        "read",
+        2
+      ],
+      [
+        "seek",
+        0
+      ]
+    ],
+    "scope": "new explicit failure path, not baseline equivalence claim"
+  },
+  "large_read_calls": [
+    [
+      "read",
+      16777217
+    ]
+  ],
+  "producer_request_sha256_recomputed": "2ca2ea6269da32457053ae5ae0f05667b6c065e1fb149c171840d40c323149a3",
+  "producer_packet_sha256_recomputed": "991e6ecc16ae881994706b11d746f5dd550f9cdd6fd5f5734708a4b7135ee83e",
+  "dispatch": {
+    "baseline": [
+      16787810,
+      16787810,
+      16787810,
+      16787810,
+      16787810
+    ],
+    "candidate": [
+      10612,
+      10612,
+      10612,
+      10612,
+      10612
+    ],
+    "request_sha256": "f488397a0175d5ca022eba1d47c3e7cdcf9aefabe7b0bda06a29cd84a97ce73e",
+    "input_hashes": [
+      {
+        "path": "agent_doc/guide/GUIDE.md",
+        "sha256": "0c04739649284179c6e00b384e40fc1ecc1505a04f0a810c77f40867b3d3d67a"
+      },
+      {
+        "path": "brief.json",
+        "sha256": "862d5a3c93534c7df94f41845c2e20fbc00214281aea4f1acd3b3ff3725fe355"
+      }
+    ],
+    "ratio": 0.0006321253337987505,
+    "reduction_percent": 99.93678746662013,
+    "normalized_packet_sha256": "5e17befe3a2b52ff12ce221a56a5e8fa2711a3344ce3cf9154825ce5e7ac3087",
+    "packet_equal": true
+  },
+  "producer_integrity": "all 17 rows, 5 pairs, medians, payload/code/input/output/request hashes verified",
+  "artifact_hashes": {
+    "agent_runtime/result_validation.py": "430f3a421a8b2b305cdb8da916f4ac8fdf8c977131449c49310e1bb69a69661d",
+    "agent_runtime/dispatch_context.py": "149045c05981030b0467de6638a414cce9ff1c3557ef196554c4c9a9830f6783",
+    "agent_runtime/legacy_result_paths.py": "b82622cd42e0824f4e6d064e2c4e9a6cea464e0761ec7c0b32adfc5e86751525",
+    "tests/test_result_read_allocation.py": "42b86e1d73c17080ca6e471b203d2f5c78c61b1b7421d255ddfdb5268efd127c",
+    "tests/test_dispatch_context.py": "065a6665ec68f7d6c4b644041df19bfe64139c06e310204cba894fcbbf7d1062",
+    "scripts/benchmark_artifact_read.py": "66f931203c1d3d15aa0af9be93987bac01f1875408a2e1f9fcbb3530d812a5f1",
+    "agent_doc/results/artifact-read76/plan.md": "3040dad85e1cd7f4c2f93b925e6bc12be3e3851a7941cc234d4480e027d6dcb4",
+    "agent_doc/results/artifact-read76/plan-v2.md": "4d5d9af9ad68bc570dcd704c0ea2e934fbddc871b486560173019b9c6cebbd47",
+    "agent_doc/results/artifact-read76/review-plan.md": "89254d638f7c0e198fed24acaf6bbeb5730a884c9afe1c665278ef1b67a4ffb6",
+    "agent_doc/results/artifact-read76/raw.json": "27fee4396da30930220aa7f25fccab2de62c3e8ed43fce68d4e719735acb8d5a",
+    "agent_doc/results/artifact-read76/before.log": "00271635bce8332163d4583fb22ac13d848f6c69a3960ebf43260b51c50435a3",
+    "agent_doc/results/artifact-read76/after.log": "3d9e5451c979e37b8b27c50cbb54bd7e284b98a70e55cb0a6b08d027d16034d5",
+    "agent_doc/results/artifact-read76/full-tests.log": "ea23b44bb7f27c5e7924c57e019bbf0d790d712445984cae90c92a002664ce92",
+    "agent_doc/results/artifact-read76/reader-tests.log": "42cd32abcf4f7073b2b92a3bc6b68a4d49b1966a2aade2c42e55f3a0e46917e1",
+    "agent_doc/results/artifact-read76/independent_probe.py": "26855e2bbc7e8c9d02e17d09ce43f2c96469c4c498193206bd7913b2213783d3"
+  },
+  "all_checks_passed": true
+}

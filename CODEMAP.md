@@ -1,3 +1,5 @@
+ARTIFACT-READ-76: `prepare_dispatch` → `result_validation._bound/_bytes`；小于64KiB的可seek文件按size+1探测，增长时释放探测结果再有界重读。`tests/test_result_read_allocation.py`、`scripts/benchmark_artifact_read.py`、`agent_doc/results/artifact-read76/` 覆盖完整派发Python分配、增长非退化与独立语义复核。主AI维护实现/任务，独立审查者只写证据；不宣称wall/RSS/模型质量收益，目录fd泄漏另列待办。
+
 ATX-BOUNDARY-62: 知识CLI tree/section/search/index → `knowledge_index.sections` → 原始ATX标题/范围与SQLite chunks；修正标记分隔/空标题并升级引擎v6，standalone镜像同步。`tests/test_knowledge_atx.py`、`agent_doc/results/atx-boundary62/` 保存固定矩阵、真实旧引擎迁移、独立验收；主AI独占实现/任务，审核者只写证据。非完整Markdown/模型质量/速度主张。
 
 INGEST-SCOPE-58: `knowledge_ingest.ingest` → 仅暂存完整 entries 子树供 `KnowledgeStore` 校验；不复制根目录索引/缓存/附件，保留原校验和rename。`tests/test_knowledge_ingest_scope.py` 与 `agent_doc/results/ingest-scope58/` 保存旧失败、复制负载、完整导入配对负结果及独立审核。主AI实现/报告，独立审查者验收；不宣称普遍wall提速或模型质量收益。

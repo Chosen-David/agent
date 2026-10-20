@@ -66,7 +66,19 @@ def _bytes(root, value):
         info = os.fstat(stream.fileno())
         _need(stat.S_ISREG(info.st_mode), 'artifact must be a regular file')
         _need(info.st_size <= LIMIT, 'artifact exceeds 16 MiB bound; use bounded shard manifests')
-        data = stream.read(LIMIT + 1)
+        if info.st_size < 64 * 1024 and stream.seekable():
+            # A max-bound read can allocate 16 MiB even for a tiny artifact.
+            # The extra byte detects growth; fstat is not a snapshot guarantee.
+            initial = info.st_size + 1
+            data = stream.read(initial)
+            if len(data) == initial:
+                # Discard the probe before rereading: concatenating a prefix
+                # and remainder doubles peak memory when the file has grown.
+                del data
+                stream.seek(0)
+                data = stream.read(LIMIT + 1)
+        else:
+            data = stream.read(LIMIT + 1)
     _need(len(data) <= LIMIT, 'artifact grew beyond verification bound')
     check_relocated_digest(data, relocated_digest)
     return data
