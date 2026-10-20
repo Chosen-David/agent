@@ -67,10 +67,14 @@ def write_validation_context(root, result, relative_directory):
     except FileExistsError:
         _need(_bytes(root, relative) == data, 'existing context record changed; preserve and repair')
     else:
-        with os.fdopen(fd, 'wb') as stream:
-            stream.write(data)
-            stream.flush()
-            os.fsync(stream.fileno())
+        # Keep ownership even if constructing/entering the stream fails.
+        try:
+            with os.fdopen(fd, 'wb', closefd=False) as stream:
+                stream.write(data)
+                stream.flush()
+                os.fsync(stream.fileno())
+        finally:
+            os.close(fd)
     display = deepcopy(result)
     hidden = {}
     if display['proof'] is not None:

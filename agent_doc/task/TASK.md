@@ -2,6 +2,8 @@
 
 ## 2026-10-20
 
+- [x] [VALIDATION-FD-87] 显示回执异常fd泄漏修复：独立20组配对泄漏12→0，专项/-O各32项、全库1331项（8skip）及Reader3通过；失败文件规则不变，发布回读另核。([详情](task_details/VALIDATION-FD-87.md))
+
 - [x] [CHECK-HELPER-85] 公开记忆校验自定义读取器兼容：修前两项错误修复，专项/-O各62项、全库1323项（8skip）及Reader3通过；独立复核接受，发布回读另核。([详情](task_details/CHECK-HELPER-85.md))
 
 - [x] [CONTEXT-SCHEMA-83] 保留自定义读取器兼容的事务内schema复用；256/512节点串行装配改善6.07%/7.62%，独立门槛及1321项回归（8skip）通过，发布另核。([详情](task_details/CONTEXT-SCHEMA-83.md))

@@ -1,0 +1,46 @@
+test_constructor_failure_closes_fd (tests.test_validation_write_fd.ValidationWriteFDTests.test_constructor_failure_closes_fd) ... FAIL
+test_context_entry_failure_closes_fd (tests.test_validation_write_fd.ValidationWriteFDTests.test_context_entry_failure_closes_fd) ... FAIL
+test_failed_open_does_not_close_unowned_fd (tests.test_validation_write_fd.ValidationWriteFDTests.test_failed_open_does_not_close_unowned_fd) ... ok
+test_flush_failure_closes_fd (tests.test_validation_write_fd.ValidationWriteFDTests.test_flush_failure_closes_fd) ... ok
+test_fsync_failure_closes_fd (tests.test_validation_write_fd.ValidationWriteFDTests.test_fsync_failure_closes_fd) ... ok
+test_interrupted_constructor_closes_fd (tests.test_validation_write_fd.ValidationWriteFDTests.test_interrupted_constructor_closes_fd) ... FAIL
+test_success_closes_fd_and_roundtrips (tests.test_validation_write_fd.ValidationWriteFDTests.test_success_closes_fd_and_roundtrips) ... ok
+test_write_failure_closes_fd (tests.test_validation_write_fd.ValidationWriteFDTests.test_write_failure_closes_fd) ... ok
+
+======================================================================
+FAIL: test_constructor_failure_closes_fd (tests.test_validation_write_fd.ValidationWriteFDTests.test_constructor_failure_closes_fd)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit87/tests/test_validation_write_fd.py", line 91, in test_constructor_failure_closes_fd
+    self.exercise('construct', OSError('constructor failure'))
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit87/tests/test_validation_write_fd.py", line 73, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_context_entry_failure_closes_fd (tests.test_validation_write_fd.ValidationWriteFDTests.test_context_entry_failure_closes_fd)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit87/tests/test_validation_write_fd.py", line 97, in test_context_entry_failure_closes_fd
+    self.exercise('enter', RuntimeError('enter failure'))
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit87/tests/test_validation_write_fd.py", line 73, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_interrupted_constructor_closes_fd (tests.test_validation_write_fd.ValidationWriteFDTests.test_interrupted_constructor_closes_fd)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit87/tests/test_validation_write_fd.py", line 94, in test_interrupted_constructor_closes_fd
+    self.exercise('construct', KeyboardInterrupt('interrupted constructor'))
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit87/tests/test_validation_write_fd.py", line 73, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.016s
+
+FAILED (failures=3)
