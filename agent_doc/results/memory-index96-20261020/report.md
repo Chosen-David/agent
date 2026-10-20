@@ -31,4 +31,4 @@ python -m agent_runtime.project_memory --root ABSOLUTE_PROJECT_ROOT storage
 
 文件与数据均归本run；原始raw保持pending标签，接受记录独立保存。`artifact-index.json`登记文件/owner/哈希，`.gitattributes`保护证据字节；依赖和tokenizer cache位于ignored `.agent-runs/`，私有记忆不进公共Git。原有json_context/progress/.gitattributes改动已保留，不纳入本轮发布。未新建监督器、定时器或模型KV服务；父任务MEM-STORAGE-01及持续优化目标保持未完成。
 
-发布状态：独立范围验收完成，等待普通main发布及远端读回；发布后追加实际SHA和安装结果，不提前声明成功。
+发布已核对：[a48f70a](https://github.com/Chosen-David/agent/commit/a48f70a156c94b155e760dbf27be21b02182db6b)，tree 319eb6e77b32e9f1d17eaa73837178fc0c33a6b5与完整暂存候选一致；普通expected-parent更新后，Git fetch/HEAD及连接器独立读回相同SHA。两个结果绑定仍有效，setup及--check成功，16 skills/525 files（模型发现/遵循未实测）。详细回执见publication.json；持续目标和上列测试限制保留。

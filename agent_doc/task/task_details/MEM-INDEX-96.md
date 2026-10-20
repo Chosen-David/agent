@@ -32,3 +32,5 @@ v1 / EXECUTE: 用户要求持续优化 agent 库，对齐远端，精读 agent i
 
 - 最终独立上下文/root/memory_index_verifier完成verify_experiment_result，两个native-v3合同通过六域usable-with-scope；宿主按实际调用身份与固定review SHA核验并显式注入inspect_result，accepted-native-v3-bytes/tokens.json记录结果。长正文24条目录+1正文载荷54147→6116 o200k tokens，非总model token；短文/全读反增保留。全库1357项6fail/1error/12skip，已独立确认基线同6fail，Reader原生UTF8 core2/app3及新远端精简规则3项通过；不声称全库通过。详细report/failure-history列原始证据与归档限制。
 - 已整合并核对origin/main=dcc10b1；安装同步因本轮Skill引用未提交而按保护规则blocked，原安装保留，待发布后同步。原始三个json_context文件逐字节与stash一致；progress JSON值/.gitattributes内容仅正规换行差异，原改动保留不提交。等待普通发布与独立远端回读，父任务持续保持未完成。
+
+- 发布闭环：feature main a48f70a156c94b155e760dbf27be21b02182db6b，tree319eb6e77b32e9f1d17eaa73837178fc0c33a6b5与完整暂存候选相同；GitHub普通带expected-parent更新、native fetch/HEAD及独立连接器读回确认。post-publication两个_snapshot绑定有效。setup_codex及--check均configured，16技能/525文件、9更新；不宣称运行中的模型已热加载。publication.json记录局部完成与全库/持续任务未完成边界。

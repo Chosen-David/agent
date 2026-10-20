@@ -2,7 +2,7 @@
 
 ## 2026-10-20
 
-- [ ] [MEM-INDEX-96] 记忆分页目录、快照失效及只读存储统计；独立验收后普通发布，token总量待实测。([详情](task_details/MEM-INDEX-96.md))
+- [x] [MEM-INDEX-96] 分页目录/快照失效/存储观察已独立验收并发布；长文单条读取载荷54147→6116 tokens，全库未全绿，非总token收益。([详情](task_details/MEM-INDEX-96.md))
 
 - [ ] [CONCISE-98] 精简Skill与CLAUDE入口修复通过范围验收；正文阅读2/10，批次未完成，发布回读另核。([详情](task_details/CONCISE-98.md))
 
