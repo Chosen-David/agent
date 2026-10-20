@@ -2,6 +2,8 @@
 
 ## 2026-10-20
 
+- [x] [RESULT-FD-95] 结果读取/哈希/登记fd释放：独立普通/-O各38场景泄漏12→0、专项各103通过，全库1339通过/8skip、Reader3通过；发布回读另核，不主张吞吐提速。([详情](task_details/RESULT-FD-95.md))
+
 - [x] [SEARCH-DEPTH-93] 深层JSON单记录错误隔离：专项普通/-O各94项、全库1338项（8skip）及Reader3通过，独立基线对照验收；发布回读另核。([详情](task_details/SEARCH-DEPTH-93.md))
 
 - [x] [VALIDATION-FD-87] 显示回执异常fd泄漏修复：独立20组配对泄漏12→0，专项/-O各32项、全库1331项（8skip）及Reader3通过；失败文件规则不变，发布回读另核。([详情](task_details/VALIDATION-FD-87.md))

@@ -1,0 +1,157 @@
+test_interrupted_constructor_closes_fd (test_result_store_fd.ResultStoreFDTests.test_interrupted_constructor_closes_fd) ... 
+  test_interrupted_constructor_closes_fd (test_result_store_fd.ResultStoreFDTests.test_interrupted_constructor_closes_fd) (action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f7cf3060>) ... FAIL
+  test_interrupted_constructor_closes_fd (test_result_store_fd.ResultStoreFDTests.test_interrupted_constructor_closes_fd) (action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f78b9580>) ... FAIL
+  test_interrupted_constructor_closes_fd (test_result_store_fd.ResultStoreFDTests.test_interrupted_constructor_closes_fd) (action=<function ResultStoreFDTests.test_interrupted_constructor_closes_fd.<locals>.<lambda> at 0x7fc2f78b9620>) ... FAIL
+test_read_construction_and_entry_failures_close_fd (test_result_store_fd.ResultStoreFDTests.test_read_construction_and_entry_failures_close_fd) ... 
+  test_read_construction_and_entry_failures_close_fd (test_result_store_fd.ResultStoreFDTests.test_read_construction_and_entry_failures_close_fd) (phase='construct', action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f78b99e0>) ... FAIL
+  test_read_construction_and_entry_failures_close_fd (test_result_store_fd.ResultStoreFDTests.test_read_construction_and_entry_failures_close_fd) (phase='construct', action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f78b9940>) ... FAIL
+  test_read_construction_and_entry_failures_close_fd (test_result_store_fd.ResultStoreFDTests.test_read_construction_and_entry_failures_close_fd) (phase='enter', action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f78ba980>) ... FAIL
+  test_read_construction_and_entry_failures_close_fd (test_result_store_fd.ResultStoreFDTests.test_read_construction_and_entry_failures_close_fd) (phase='enter', action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f78bb4c0>) ... FAIL
+test_read_open_failure_does_not_close_unowned_fd (test_result_store_fd.ResultStoreFDTests.test_read_open_failure_does_not_close_unowned_fd) ... ok
+test_read_stat_and_read_failures_close_fd (test_result_store_fd.ResultStoreFDTests.test_read_stat_and_read_failures_close_fd) ... ok
+test_read_success_and_stale_hash_preserve_contract (test_result_store_fd.ResultStoreFDTests.test_read_success_and_stale_hash_preserve_contract) ... ok
+test_real_directory_rejection_closes_each_read_fd (test_result_store_fd.ResultStoreFDTests.test_real_directory_rejection_closes_each_read_fd) ... 
+  test_real_directory_rejection_closes_each_read_fd (test_result_store_fd.ResultStoreFDTests.test_real_directory_rejection_closes_each_read_fd) (action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f7cf3100>) ... FAIL
+  test_real_directory_rejection_closes_each_read_fd (test_result_store_fd.ResultStoreFDTests.test_real_directory_rejection_closes_each_read_fd) (action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f78bad40>) ... FAIL
+test_registration_roundtrip_and_immutable_record (test_result_store_fd.ResultStoreFDTests.test_registration_roundtrip_and_immutable_record) ... ok
+test_save_failures_close_fd_without_publishing (test_result_store_fd.ResultStoreFDTests.test_save_failures_close_fd_without_publishing) ... 
+  test_save_failures_close_fd_without_publishing (test_result_store_fd.ResultStoreFDTests.test_save_failures_close_fd_without_publishing) (phase='construct') ... FAIL
+  test_save_failures_close_fd_without_publishing (test_result_store_fd.ResultStoreFDTests.test_save_failures_close_fd_without_publishing) (phase='enter') ... FAIL
+test_search_repeated_bad_directory_does_not_leak (test_result_store_fd.ResultStoreFDTests.test_search_repeated_bad_directory_does_not_leak) ... FAIL
+
+======================================================================
+FAIL: test_interrupted_constructor_closes_fd (test_result_store_fd.ResultStoreFDTests.test_interrupted_constructor_closes_fd) (action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f7cf3060>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 151, in test_interrupted_constructor_closes_fd
+    self.exercise(action, 'construct', KeyboardInterrupt('interrupted'))
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 85, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_interrupted_constructor_closes_fd (test_result_store_fd.ResultStoreFDTests.test_interrupted_constructor_closes_fd) (action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f78b9580>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 151, in test_interrupted_constructor_closes_fd
+    self.exercise(action, 'construct', KeyboardInterrupt('interrupted'))
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 85, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_interrupted_constructor_closes_fd (test_result_store_fd.ResultStoreFDTests.test_interrupted_constructor_closes_fd) (action=<function ResultStoreFDTests.test_interrupted_constructor_closes_fd.<locals>.<lambda> at 0x7fc2f78b9620>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 151, in test_interrupted_constructor_closes_fd
+    self.exercise(action, 'construct', KeyboardInterrupt('interrupted'))
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 85, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_read_construction_and_entry_failures_close_fd (test_result_store_fd.ResultStoreFDTests.test_read_construction_and_entry_failures_close_fd) (phase='construct', action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f78b99e0>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 116, in test_read_construction_and_entry_failures_close_fd
+    self.exercise(action, phase, RuntimeError(phase))
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 85, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_read_construction_and_entry_failures_close_fd (test_result_store_fd.ResultStoreFDTests.test_read_construction_and_entry_failures_close_fd) (phase='construct', action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f78b9940>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 116, in test_read_construction_and_entry_failures_close_fd
+    self.exercise(action, phase, RuntimeError(phase))
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 85, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_read_construction_and_entry_failures_close_fd (test_result_store_fd.ResultStoreFDTests.test_read_construction_and_entry_failures_close_fd) (phase='enter', action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f78ba980>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 116, in test_read_construction_and_entry_failures_close_fd
+    self.exercise(action, phase, RuntimeError(phase))
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 85, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_read_construction_and_entry_failures_close_fd (test_result_store_fd.ResultStoreFDTests.test_read_construction_and_entry_failures_close_fd) (phase='enter', action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f78bb4c0>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 116, in test_read_construction_and_entry_failures_close_fd
+    self.exercise(action, phase, RuntimeError(phase))
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 85, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_real_directory_rejection_closes_each_read_fd (test_result_store_fd.ResultStoreFDTests.test_real_directory_rejection_closes_each_read_fd) (action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f7cf3100>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 110, in test_real_directory_rejection_closes_each_read_fd
+    self.exercise(action, error=IsADirectoryError())
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 85, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_real_directory_rejection_closes_each_read_fd (test_result_store_fd.ResultStoreFDTests.test_real_directory_rejection_closes_each_read_fd) (action=<function ResultStoreFDTests.readers.<locals>.<lambda> at 0x7fc2f78bad40>)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 110, in test_real_directory_rejection_closes_each_read_fd
+    self.exercise(action, error=IsADirectoryError())
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 85, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_save_failures_close_fd_without_publishing (test_result_store_fd.ResultStoreFDTests.test_save_failures_close_fd_without_publishing) (phase='construct')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 144, in test_save_failures_close_fd_without_publishing
+    self.exercise(lambda: self.store._save({'run_id': run_id}),
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 85, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_save_failures_close_fd_without_publishing (test_result_store_fd.ResultStoreFDTests.test_save_failures_close_fd_without_publishing) (phase='enter')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 144, in test_save_failures_close_fd_without_publishing
+    self.exercise(lambda: self.store._save({'run_id': run_id}),
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 85, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+======================================================================
+FAIL: test_search_repeated_bad_directory_does_not_leak (test_result_store_fd.ResultStoreFDTests.test_search_repeated_bad_directory_does_not_leak)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 171, in test_search_repeated_bad_directory_does_not_leak
+    self.exercise(search)
+  File "/workspace/scratch/6416f20dc59b/agent-audit95/tests/test_result_store_fd.py", line 85, in exercise
+    with self.assertRaises(OSError) as caught:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: OSError not raised
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.027s
+
+FAILED (failures=12)

@@ -69,11 +69,15 @@ def _read(root, value, limit=METADATA_LIMIT):
     read_path, relocated_digest = legacy_read_binding(root, value)
     path = _path(root, read_path)
     fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
-    with os.fdopen(fd, 'rb') as stream:
-        info = os.fstat(stream.fileno())
-        _need(stat.S_ISREG(info.st_mode), 'result input must be a regular file')
-        _need(info.st_size <= limit, 'result input exceeds read bound')
-        data = stream.read(limit + 1)
+    try:
+        # Keep ownership even if constructing/entering the stream fails.
+        with os.fdopen(fd, 'rb', closefd=False) as stream:
+            info = os.fstat(stream.fileno())
+            _need(stat.S_ISREG(info.st_mode), 'result input must be a regular file')
+            _need(info.st_size <= limit, 'result input exceeds read bound')
+            data = stream.read(limit + 1)
+    finally:
+        os.close(fd)
     _need(len(data) <= limit, 'result input grew beyond read bound')
     check_relocated_digest(data, relocated_digest)
     return data
@@ -107,16 +111,19 @@ def _check_ref(root, ref):
     _ref(ref)
     read_path, relocated_digest = legacy_read_binding(root, ref['path'])
     path = _path(root, read_path)
-    fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
     digest, size = hashlib.sha256(), 0
-    with os.fdopen(fd, 'rb') as stream:
-        info = os.fstat(stream.fileno())
-        _need(stat.S_ISREG(info.st_mode), 'artifact must be a regular file')
-        _need(info.st_size <= ARTIFACT_LIMIT, 'artifact exceeds 256 MiB; use bounded shard manifests')
-        while block := stream.read(1024 * 1024):
-            size += len(block)
-            _need(size <= ARTIFACT_LIMIT, 'artifact grew beyond hash bound')
-            digest.update(block)
+    fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
+    try:
+        with os.fdopen(fd, 'rb', closefd=False) as stream:
+            info = os.fstat(stream.fileno())
+            _need(stat.S_ISREG(info.st_mode), 'artifact must be a regular file')
+            _need(info.st_size <= ARTIFACT_LIMIT, 'artifact exceeds 256 MiB; use bounded shard manifests')
+            while block := stream.read(1024 * 1024):
+                size += len(block)
+                _need(size <= ARTIFACT_LIMIT, 'artifact grew beyond hash bound')
+                digest.update(block)
+    finally:
+        os.close(fd)
     _need(digest.hexdigest() == ref['sha256'], 'stale artifact: ' + ref['path'])
     _need(relocated_digest_matches(digest.hexdigest(), relocated_digest),
           'relocated historical result bytes changed')
@@ -269,10 +276,13 @@ class ResultStore:
         target.parent.mkdir(parents=True, exist_ok=True)
         fd, temporary = tempfile.mkstemp(prefix='.record-', dir=target.parent)
         try:
-            with os.fdopen(fd, 'wb') as stream:
-                stream.write(raw)
-                stream.flush()
-                os.fsync(stream.fileno())
+            try:
+                with os.fdopen(fd, 'wb', closefd=False) as stream:
+                    stream.write(raw)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+            finally:
+                os.close(fd)
             assert_ai_writable(self.supplied_root, self._record_path(run_id))
             # Atomic publication without replacing another writer's history.
             os.link(temporary, target, follow_symlinks=False)
