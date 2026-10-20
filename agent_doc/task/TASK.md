@@ -2,6 +2,8 @@
 
 ## 2026-10-20
 
+- [x] [CHECK-HELPER-85] 公开记忆校验自定义读取器兼容：修前两项错误修复，专项/-O各62项、全库1323项（8skip）及Reader3通过；独立复核接受，发布回读另核。([详情](task_details/CHECK-HELPER-85.md))
+
 - [x] [CONTEXT-SCHEMA-83] 保留自定义读取器兼容的事务内schema复用；256/512节点串行装配改善6.07%/7.62%，独立门槛及1321项回归（8skip）通过，发布另核。([详情](task_details/CONTEXT-SCHEMA-83.md))
 
 - [x] [ARTIFACT-FD-77] 修复目录读取拒绝及构造失败的fd泄漏；独立22组13→0泄漏，专项45项、全库1318项（8skip）及Reader3通过；发布另核。([详情](task_details/ARTIFACT-FD-77.md))

@@ -305,6 +305,7 @@ class MemoryLedger:
                     and MemoryLedger._get is _BUILTIN_GET
                     and MemoryLedger._check is _BUILTIN_CHECK
                     and MemoryLedger._connect is _BUILTIN_CONNECT
+                    and _read_entry is _BUILTIN_READ_ENTRY
                     and check_document_refs is _BUILTIN_DOCUMENT_CHECK
                     and sqlite3.connect is _BUILTIN_SQLITE_CONNECT
                     and type(db) is sqlite3.Connection and db.in_transaction

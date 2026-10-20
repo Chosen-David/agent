@@ -1,0 +1,57 @@
+test_reader_ddl_between_nodes_observes_fresh_schema (test_memory_check_reader.PublicCheckReaderTests.test_reader_ddl_between_nodes_observes_fresh_schema) ... ERROR
+test_two_argument_reader_keeps_call_contract (test_memory_check_reader.PublicCheckReaderTests.test_two_argument_reader_keeps_call_contract) ... ERROR
+
+======================================================================
+ERROR: test_reader_ddl_between_nodes_observes_fresh_schema (test_memory_check_reader.PublicCheckReaderTests.test_reader_ddl_between_nodes_observes_fresh_schema)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit85/agent_runtime/project_memory.py", line 135, in _connect
+    yield db
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit85/agent_runtime/project_memory.py", line 312, in check
+    return MemoryLedger._walk(db, refs, self.root, [])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit85/agent_runtime/project_memory.py", line 180, in _walk
+    else _read_entry(db, entry_id, schema_state))
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit85/tests/test_memory_check_reader.py", line 34, in read
+    entry = original(db, ref, schema_state)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit85/agent_runtime/project_memory.py", line 61, in _read_entry
+    binding = db.execute('SELECT snapshot FROM document_dependencies WHERE entry_id=?', (entry_id,)).fetchone()
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such table: document_dependencies
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit85/tests/test_memory_check_reader.py", line 39, in test_reader_ddl_between_nodes_observes_fresh_schema
+    result = self.ledger.check(['leaf'])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit85/agent_runtime/project_memory.py", line 300, in check
+    with self._connect() as db:
+         ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 158, in __exit__
+    self.gen.throw(value)
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit85/agent_runtime/project_memory.py", line 140, in _connect
+    raise MemoryError(f'project memory ledger unavailable: {exc}') from exc
+agent_runtime.project_memory.MemoryError: project memory ledger unavailable: no such table: document_dependencies
+
+======================================================================
+ERROR: test_two_argument_reader_keeps_call_contract (test_memory_check_reader.PublicCheckReaderTests.test_two_argument_reader_keeps_call_contract)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit85/tests/test_memory_check_reader.py", line 25, in test_two_argument_reader_keeps_call_contract
+    result = self.ledger.check(['leaf'])
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit85/agent_runtime/project_memory.py", line 312, in check
+    return MemoryLedger._walk(db, refs, self.root, [])
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/5d3e4236a5b4/agent-audit85/agent_runtime/project_memory.py", line 180, in _walk
+    else _read_entry(db, entry_id, schema_state))
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: PublicCheckReaderTests.test_two_argument_reader_keeps_call_contract.<locals>.read() takes 2 positional arguments but 3 were given
+
+----------------------------------------------------------------------
+Ran 2 tests in 0.040s
+
+FAILED (errors=2)

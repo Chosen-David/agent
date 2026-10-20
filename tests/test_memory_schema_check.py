@@ -1,5 +1,6 @@
 """Traversal-local schema reuse must preserve hydration and validity gates."""
 import json
+import sys
 from contextlib import contextmanager
 from pathlib import Path
 import tempfile
@@ -19,11 +20,15 @@ class MemorySchemaTests(unittest.TestCase):
     def trace_check(self, refs):
         trace = []
         original = memory._read_entry
-        def read(db, *args, **kwargs):
-            db.set_trace_callback(trace.append)
-            return original(db, *args, **kwargs)
-        with patch.object(memory, '_read_entry', side_effect=read):
+        def profile(frame, event, arg):
+            if event == 'call' and frame.f_code is original.__code__:
+                frame.f_locals['db'].set_trace_callback(trace.append)
+        previous = sys.getprofile()
+        try:
+            sys.setprofile(profile)
             result = self.ledger.check(refs)
+        finally:
+            sys.setprofile(previous)
         return result, trace
 
     @staticmethod
