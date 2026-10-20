@@ -400,11 +400,27 @@ class Engine:
             for node in state['tasks'].values():
                 if node.get('reason_kind') == 'plan_review' and not node.get('requires_reconciliation'):
                     node.update(status='todo', reason_kind=None, reason=None)
-            if state['status'] in ('done', 'cancelled'):
+            if state['status'] == 'cancelled':
                 return state
             if db.execute('SELECT 1 FROM events WHERE chain_id=? AND event_id=?', (run_id, event_id)).fetchone():
                 return state
             db.execute('INSERT INTO events VALUES (?,?,?)', (run_id, event_id, now))
+            if state['status'] == 'done':
+                completed = {key for key, node in state['tasks'].items() if node['status'] == 'done'}
+                self._check_done(plan, state)
+                invalidated = []
+                for key in completed:
+                    node = state['tasks'][key]
+                    if node['status'] == 'failed':
+                        node.update(status='blocked', reason_kind='terminal_evidence', requires_reconciliation=True)
+                        invalidated.append(key)
+                # A new observation can invalidate historical completion, but
+                # cannot replay effects or silently restore their acceptance.
+                self._summary(plan, state)
+                self.store.save(db, run_id, state)
+                self.store.log(db, run_id, now, 'terminal_check',
+                               {'event_id': event_id, 'invalidated': sorted(invalidated)})
+                return state
             self._check_done(plan, state)
             for task in plan['tasks']:
                 node = state['tasks'][task['task_id']]

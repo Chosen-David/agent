@@ -147,3 +147,79 @@
 非阻断补强：新测试可直接断言普通 `doc/notes.md` 的原始 bytes，避免以后文本比较掩盖行尾改写；当前两行文案修复本身不应进入该文件的任何写入路径。现有 repeat install、用户文本、本地修改保留、冲突预检与卸载归属测试继续执行，不因“只是文案”免除实际生成产物回归。
 
 修后可声明生成入口说明已统一且本地安装契约通过；真实 Claude 新会话是否发现/加载入口仍未验证。阶段 B 没有改变阶段 A 的正式宿主阻塞、历史哈希处理和系统级整批未完成状态。此次仅阅读与追加审查，未运行安装测试、修改 setup/TASK、执行终态核心变更或签发正式回执。
+
+## CHAIN-TERMINAL 下一阶段方案评审（2026-10-20，恢复同一 SYSTEM-99）
+
+最新授权已明确恢复 Agent，而非继续 TwoLevel；上轮暂停不再是本阶段阻塞。技术决定：**revise，保留修复方向，补齐终态专用转换和事件/恢复边界后冻结实施**。本意见不影响已经验收的 A/B 检查点，也不授权改写活跃链、取消、调度或正式审核权限。
+
+固定读取 HEAD `ec5edaa2dbd6f997ef060681dad61c25d2bcd7ec`；core.py SHA `ebb82f1b5f2529f7ebf89ba64a2e61dc3938ef437b9ce9d20c7cb49dc677b158`，task_supervisor.py SHA `dfba7e71bad618ecc3f08a41214dbc840a5ab5f124449f533d2b9f43a5652660`，test_task_runtime.py SHA `4819c53745f2f1299f5829bd9ac5e5543c41f842ce7bd6a140b98d3b5b367589`。实际阅读 tick/_check_done/_summary/reconcile、Store持久化/取消、portable CLI、LocalScheduler、ManagedEngine及worker完成分支、ReportingHandler.verify和现有runtime/managed/plan-review相关测试。
+
+本次新只读结果查询 `portable terminal evidence tick`：199扫描、partial=true、66错误；三个词法候选为advice-context、ATX边界、旧corpus-delta，不覆盖该完全终态路径，不复用为本阶段正确性证据。当前有直接源码及本批独立CHAIN探针，既有局部完成依赖失效测试可作兼容对照；没有当前修复后的数据。本次未运行测试、服务或实验，仅核对接口与追加本文。
+
+### 七项
+
+| 项目 | 判定 | 依据 |
+| --- | --- | --- |
+| intent | pass | 可信新tick后不把历史done当当前有效，并保留已发生作用/不自动重放，符合声明用途。 |
+| guide | pass | 同SYSTEM-99有界可靠性修复，guide只读、不扩大宿主授权。 |
+| assumptions | pass | done快返确在证据复核之前；managed worker另有_check_done，不能把portable缺口外推为managed一定误发最终报告。 |
+| prior_results | pass | 已有具体探针与实际源码，旧局部链/审核撤销测试只提供兼容边界，不冒充完全终态修后结果。 |
+| acceptance | fail | 仅“调用_check_done并_summary”不能达到要求的blocked/reconciliation；需固定下述持久化、闭包、重复事件与恢复负控。 |
+| risk | fail | 若直接改通用_check_done为blocked，会改变活跃链既有failed语义；若只移快返，可能误进入后续claim或无可用reconcile路径。 |
+| resources | pass | 本地CPU/临时SQLite与文件足够；无需外部模型、服务或付费，实际host门禁继续独立有效。 |
+
+### Blocking F-T1：不能把通用证据失效语义一并改掉
+
+`_check_done` 当前遇到handler缺失、verify=False或异常时，将原done节点标failed；其依赖闭包也标failed。`_summary`不会凭此生成requires_reconciliation；`reconcile`又只接受blocked节点。因此，只移动done快返会得到failed而不是目标状态。直接改变通用_check_done则影响现有 `test_changed_upstream_proof_prevents_downstream_dispatch` 和 `test_invalid_proof_propagates_through_completed_dependency_closure`，这些active链仍须保持原failed/后继blocked语义。
+
+最小兼容办法是把新行为限在**进入本次事务时整体status为done**的分支：沿用原_check_done完成实际verify及非拓扑依赖闭包；仅将本次终态复核中由done失效的节点转为blocked并设置requires_reconciliation。保持已有evidence、attempts、dispatches、next_at、claim_cursor及作用信息；保留具体失效原因，不能清空原证据或伪造新proof。已有plan_review_after_effect原因/标志不应被普通证据原因覆盖。
+
+无需必须新增公共参数；可以在terminal分支记录原done ID并对本次失效节点做局部转换，或给私有_check_done增加默认保持原行为的显式终态模式。二者选一即可，不重复实现verify/闭包，不全局改变active/failed/cancelled策略。随后_summary、save、审计记录并立即return，**不进入claim/retry处理**。
+
+验收：根证明失效与其已经完成的传递消费者均blocked/requires_reconciliation，非拓扑排序也一致；独立无关done节点保持done。反复新tick、重启Store/Engine或proof恢复本身均不自动清标志、不run。显式reconcile仍要求当前审核、权限、非取消、已done依赖和新证据；需要按依赖顺序恢复，各节点不重放旧副作用。
+
+### Blocking F-T2：固定事件顺序和观测范围
+
+在保留当前顶层 `_review_plan` 的前提下：cancelled仍原样快返；已登记event仍快返，不因该修复重跑证据检查、递增attempts或增加同event审计；只有新事件进入终态复核。新终态事件应与其复核后的state在同一SQLite事务中登记/保存，以便重复event和崩溃后重放可判定。全done且证据仍有效时仍done，副作用次数不变。
+
+本阶段不是让Store.snapshot/CLI status自行认证，也不使停止的monitor自动继续poll。LocalScheduler当前遇到done会停止且不调用tick；本方案只保证**实际收到可信新tick**后的当前状态。不要声称所有终态读取、所有后台唤醒都新增了验证能力；不为覆盖这个缺口自动重新arm已停止monitor。
+
+顶层审核撤销原本就会在终态快返之前blocked。它的恢复/撤销策略不得因本补丁被关闭或伪造批准；继续现有独立审核回归。managed worker使用通用_check_done并另行publish/final-report：若本阶段采用terminal局部转换，它原有failed结果语义保持，不必顺带改worker。若决定统一managed状态语义，则应另外明确范围和测试，不藏进本portable补丁。
+
+### 实施前冻结的必需负控
+
+1. **真正完全完成**：单节点、链/菱形依赖全部done（含逆拓扑列表）后verify变False；新tick返回且SQLite重开仍为blocked/requires_reconciliation。不能只复用尚有todo后继的旧测试。
+2. **真实产物与错误**：固定ArtifactHandler原哈希文件完成后改字节；另测handler缺失、verify抛异常。均保留原evidence，不崩溃、不运行actor。至少一例使用非幂等计数器证明不同事件/重启不重放。
+3. **正控与去重**：有效done收到新event继续done；已处理的原完成event和新终态event重复均不新增claims/attempts、事件行或重复观测。handler.verify计数需区分原完成阶段本来就有的调用；顶层review调用仍遵循既有门禁，不用“verify未调用”误断言所有检查都没调用。
+4. **取消优先**：先cancelled再使proof坏/verify会抛错，新event保持cancelled且不调用handler.verify/run；不恢复取消、不重新arm、不清除取消原因。
+5. **闭包与隔离**：失效根的所有已完成后继被围栏，无关完成支线不改；多个同时失效、非拓扑输入不漏节点。原active局部完成的failed/后继blocked两项回归原断言保持。
+6. **不可自行痊愈**：proof恢复有效后多个新event仍blocked；Store/Engine重建也不解除requires_reconciliation。未授权/空证据/取消下reconcile拒绝，合法显式reconcile成功但actor次数仍不增加。
+7. **生产入口与门禁**：portable CLI真实init/tick在临时项目文件上证明新状态被持久化，status仅回读该状态；测试可显式legacy fixture但不能把生产计划降级。独立双主缺认证/撤销/作用fencing回归及managed worker完成/失败/取消现有回归保留，不启动真实服务。
+8. **保存修前失败与新合同**：冻结原core字节/测试输入/预期、保留失败输出；将所选终态专用方法和验收写入同一SYSTEM-99稳定详情及版本/run（主控维护），实现后再做独立代码/数据复验、全库/Reader。无性能主张，测试通过数不充当模型质量或整批完成。
+
+返修最小接受条件：明确采用F-T1的terminal-only处理和F-T2的事件/观测边界，并固定上述负控；不需要设计新调度器、改存储schema或安装真实host。待核对新版后再给技术approve；本次revise不是授权先实现未冻结的替代。只追加本文件，未触源码、TASK、测试或旧证据。
+
+### CHAIN-TERMINAL Version4 返修复核（2026-10-20）
+
+技术决定：**approve，限当前整体done、顶层审核仍有效、收到可信新event的portable终态复核路径**。F-T1/F-T2规划阻断已关闭。实现/测试结果尚未验收，不是正式host认证或整批完成；保护计划先被撤销、随后恢复审核时的旧终态恢复策略仍单列open，不把本补丁宣称为其修复。
+
+固定读取HEAD `68e883e986c97ffbfc96602e96baafef46880e4d`：canonical SYSTEM-99 Version4文件 SHA `1bee647bec0bbacb4fa78b1f5efb0cce5a0ed2cb17305f3185da039cc27d2048`；新tests/test_terminal_revalidation.py SHA `8a9712b5574a96ce3ea1d61e7581158f9b169c32a1913e3461203c6ab00463cb`；terminal-before-v2.log SHA `e9dac9abac08d584dbb4aee35d683d0fd030bca0d80ca67afc456ad6b7189f1a`。core仍为上述未改SHA，尚无生产修复。
+
+已读完整六项新测试与修前日志：6个test methods、8个失败（False/missing/exception为三个子例），失效观察均是旧done/未新增verify，而非加载或fixture错误。当前测试包含真实ArtifactHandler/SQLite、文件恢复仍需显式reconcile、非幂等逆序菱形及多节点失效、无关支线、有效新事件/SQL事件数、重复/取消verify计数和真实portable CLI。CLI的显式legacy只限定合成fixture，未将本项目生产计划降级。未在本次复核重新执行这些测试。
+
+采纳的方法为terminal分支记录原done ID，沿用_check_done；仅该次变failed的完成节点转blocked并持久requires_reconciliation，随后_summary/save/log并return。顶层review照旧；cancelled早返、已处理event早返，新event先原子登记；active/managed通用_check_done的failed语义保持。该方法恰好关闭“只移快返仍failed”与“通用语义扩大”两项问题，也保留原plan_review_after_effect标志，不需改schema或权限。
+
+| 七项 | v4判定 | 关闭依据 |
+| --- | --- | --- |
+| intent / guide | pass / pass | 同一SYSTEM-99窄可靠性目标，人类guide和当前授权边界不变。 |
+| assumptions | pass | 明确原done/新event/当前审核有效三个条件；撤销后恢复和自动monitor观察未冒领。 |
+| prior_results | pass | 使用具体修前失败和已读源码，旧非本范围数据仍不复用。 |
+| acceptance | pass | 六项可执行回归连到真实输出、闭包、持久化、去重与取消；原active/managed/双主回归继续是硬门槛。 |
+| risk | pass | terminal-only转换、无claim、无证据清空、不自行解除reconciliation；旧通用语义保持。 |
+| resources | pass | 本地CPU/临时文件及SQLite，无外部服务、付费或模型后端扩展。 |
+
+后续独立结果验收的非阻断补强：首个restart helper目前重建Engine而复用无连接状态的Store包装器，SQLite连接本身每个事务都重开；可显式重建Store以把“完整Store重建”也直接写进测试。对具备当前有效review的保护fixture，可再验证一次完成后handler证据失效进入同一新分支，避免把legacy CLI负控当成所有受保护入口实测；该CPU fixture不等于真实host批准。非法reconcile/active失效/managed final-report的既有测试须继续原断言，不为本补丁修改预期。
+
+本批准允许主控按Version4已授权窄方案实施并产出待验数据；任何改成通用_check_done语义、恢复审核策略、scheduler自动重arm或其他副作用恢复的新取舍须另审。只追加本文，未写源/TASK/测试、未执行外部服务或发布。
+
+Version4同范围补强回读：restart现已显式`Store(self.db_path)`后重建Engine，源码只增加Store导入和该重建；新测试SHA `0e5a62242ef9600db8ee64bb5b35381d3a19062af199a524a684e7518cf55c21`、新增保留red日志terminal-before-v3.log SHA `2d7a4f29c651264b8ad1cbddf3aa2be598b18cda290eb873a3deaf3b095e6222`，尾部仍6项/8失败（0.385s），core仍未改。此修改不变更方法/阈值，本阶段技术approve继续适用，以此测试版本进入后续独立结果验收，旧v2日志不覆盖。
