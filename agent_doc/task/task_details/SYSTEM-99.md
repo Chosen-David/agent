@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 17
+Version: 18
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -46,6 +46,19 @@ v3并发整合：最新main8587b781新增MEM-INDEX-96和记忆目录功能；保
 阶段L（CHAIN-MANIFEST-SNAPSHOT）：通信consume_handoff在envelope哈希检查后重新读取manifest，临时真实文件反例已返回并存储消息哈希不匹配的替换内容。仅把严格JSON加载扩展为可选expected_sha256校验，哈希和解析同一次读取的原字节；消费时传入不可变event引用，不靠再查一次路径修补ABA。保留重复键/非有限数/UTF-8、原consumer契约、所有refs检查、ACK独立和basis不可变性，不新增schema或OS安全边界。先冻结替换/ABA/读取后替换及普通编码负控，保存修前失败；独审方案后修复，独立代码/数据验收后才发布。全部本地临时CPU夹具，无模型/GPU/部署或性能收益主张；其它artifact读取不因此获得事务快照，host仍须消费前检查，批次仍open。
 
 阶段M（CHAIN-RESULT-CATALOG-WAVE2）：继续阶段D已确认的历史结果可发现性缺口，仅批量登记当前81个缺record目录中可无歧义冻结的一组：顶层叶目录、含直接report.md/report_by_gpt.md/report.json/README.md、1..64个全部已跟踪普通文件且record仍不存在。当前固定43目录、618原文件/6108516字节，排序名称清单SHA256为d81fad885eadd022fa3e7243db383eaab98f0af4f91e56cf86273b28f8b3dbc5，排序`path<TAB>sha256`清单SHA256为a11c31a0d039645ff711e13b61a75576693b85285a2f2ab2ae9db4a9c6b9c3d4；准确清单和生成规则见catalog-wave2-plan.md。每目录只经现有register_history新增record.json，summary仅为run_id与报告首个H1，避免公共治理词污染词法排名；信任限制由origin/validation/trust_note结构字段表达。全部原文件逐项path/hash引用并须与49bd760基线blob一致，context空、measured_at空、contract空、validation unknown，不从旧pass/fail标题推断当前状态。先独审固定方案；首写前一次性重查全部冲突、普通文件/跟踪状态/数量/hash、summary和预期record大小。逐record写入非批量原子：中断续接只接受字段/refs/unknown状态与冻结输入完全一致的既有record，任何差异停止整批，不覆盖；提交前必须恰有43个新record。验收要求43原目录原字节不变、43 records可show且各自run_id查询可发现、题名特征查询不被公共治理词淹没、正式查询错误81→38并保持partial/errors可见；全部43执行decide_run只能verify_delta/unknown且verifier总调用0。18个嵌套报告、15个无标准报告、5个>64文件目录继续分型，不用空壳record消除错误。无runtime/schema/guide/旧报告修改、无模型/GPU/性能主张；阶段提交仍不算整批完成。
+
+阶段N（CHAIN-RESULT-CATALOG-WAVE3）：继续分型阶段M剩余38目录，只登记11个具有单一顶层
+Markdown报告、子树无独立报告或不同run身份且整树不超过64个已跟踪普通文件的历史目录。
+固定358原文件/3349153字节；目录名清单SHA256为
+4b9183b865b80a59978819cb20b7abc6733de18dcb1cd4619ed8b374bbbe7c11，排序
+`path<TAB>sha256`清单SHA256为
+cd94f4498658227686e55ce913690ea40dd8e5b6e10e3274782aa3203a2fc370；完整规则见
+catalog-wave3-plan.md。每目录仅新增unknown历史record，summary严格取顶层首个H1，整树原件
+逐项绑定且不得修改。旧失败/无效题名必须保留；comm20父目录因包含另一个已登记run而排除。
+先独审Version18和固定方案，写前fetch重算；验收要求错误38→27、11个show/search/decide
+及358原件hash成立、
+verifier调用0、定向/全库/Reader/同步和独立结果审核通过。JSON-only、多运行/嵌套报告、
+超64文件、纯计划/失败尝试及活动中的system99继续显式open；无模型质量、token或性能主张。
 
 ## Progress
 
@@ -136,3 +149,12 @@ Reader3及同步通过；[阶段证据](../../results/system99/stage-m.md)经
 [独立验收](../../results/system99/independent-stage-m.md)接受usable-with-scope。
 没有旧结论复用、模型质量或性能收益；剩余38目录、真实宿主/多轮任务质量、usage/费用、
 其它artifact全局快照继续open，本阶段仍不是整轮完成。
+
+Version18阶段N方案经独审发现 `comm20-20261009` 内嵌另一已登记run后两次返修，最终只登记
+11个单一顶层Markdown报告目录。358原文件/3349153字节与基线blob一致，11条unknown历史
+record逐项绑定且不改旧失败/无效题名；正式查询缺record错误38→27并保留partial和剩余错误。
+11个show/search/decide成立，均为verify_delta/unknown且verifier调用0；定向46、全库1396
+（1388通过/8跳过）、Reader3及同步通过。[阶段证据](../../results/system99/stage-n.md)经
+[独立验收](../../results/system99/independent-stage-n.md)接受usable-with-scope；独审另跑80项
+定向测试。27个未登记目录、真实宿主/多轮质量、usage/费用及其它artifact快照仍open，整批
+继续未完成。
