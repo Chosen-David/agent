@@ -18,7 +18,10 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _load_json(path: Path):
+def _load_json(path: Path, *, expected_sha256: str | None = None):
+    data = path.read_bytes()
+    if expected_sha256 is not None and hashlib.sha256(data).hexdigest() != expected_sha256:
+        raise ValueError('sha256 mismatch: JSON snapshot')
     def pairs(items):
         result = {}
         for key, value in items:
@@ -28,7 +31,7 @@ def _load_json(path: Path):
         return result
     def constant(value):
         raise ValueError(f"non-finite JSON number: {value}")
-    return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=pairs,
+    return json.loads(data.decode('utf-8'), object_pairs_hook=pairs,
                       parse_constant=constant)
 
 

@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 13
+Version: 15
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -40,6 +40,10 @@ v3并发整合：最新main8587b781新增MEM-INDEX-96和记忆目录功能；保
 阶段J的Version11在执行前独审被revise：runner仅传CLI -C而未设OS cwd、漏查override指令、超时清理可能超90秒。Version12仅修这三项：OS cwd与-C同一空目录，祖先及HOME/CODEX_HOME的AGENTS/override存在就不调用；预留10秒做finally自有进程组清理与回收，实测超预算/未回收为失败，不承诺操作系统硬实时。原v11/runner留私有快照，无模型调用。全局provider隐藏指令仍不能认证为空，probe只验连通性。
 
 阶段J的Version12复审另发现默认SIGTERM会跳过finally；Version13仅增加可捕获SIGTERM/SIGINT的受控取消记录与清理，Popen完成赋值前延迟抛出避免启动窗口丢归属，清理期间忽略重复可捕获取消。不宣称SIGKILL/宿主关机可恢复。先补纯Python取消自测，再独审新hash，未获approve不做真实调用。
+
+阶段K（CHAIN-BACKEND-DIAGNOSIS）：承接J无事件超时，只调用已有CLI的doctor健康诊断，不重试模型请求或回答阶段I。固定一次`/opt/codex/bin/codex --no-daemon doctor --json`、空OS cwd、stdin DEVNULL、30秒执行及10秒自有进程组清理预算。先独审实际runner/方案及七域，批准后执行；raw输出0600私有保留，广告“redacted”不当隐私认证，仅按白名单披露check ID/status和通用解释。沿用受控SIGTERM/SIGINT清理，不宣称SIGKILL/关机或所有后代已回收。不得改全局config/auth、启服务/付费资源/调用模型；异常或超时保留且不盲重试。结果经独立六域核验，只说明本次诊断状态，不能推断模型可调用/usage/成本/部署或质量。已有检索partial/81errors的旧语料不作为当前诊断验收，批次仍open。
+
+阶段L（CHAIN-MANIFEST-SNAPSHOT）：通信consume_handoff在envelope哈希检查后重新读取manifest，临时真实文件反例已返回并存储消息哈希不匹配的替换内容。仅把严格JSON加载扩展为可选expected_sha256校验，哈希和解析同一次读取的原字节；消费时传入不可变event引用，不靠再查一次路径修补ABA。保留重复键/非有限数/UTF-8、原consumer契约、所有refs检查、ACK独立和basis不可变性，不新增schema或OS安全边界。先冻结替换/ABA/读取后替换及普通编码负控，保存修前失败；独审方案后修复，独立代码/数据验收后才发布。全部本地临时CPU夹具，无模型/GPU/部署或性能收益主张；其它artifact读取不因此获得事务快照，host仍须消费前检查，批次仍open。
 
 ## Progress
 
@@ -111,3 +115,13 @@ namespace未知仍inconclusive；[失败记录](../../results/system99/stage-j.m
 只接受失败/unknown，不当后端可用、部署或模型收益。无手动重试或生产改动。
 同批正文16篇，但真实宿主、多轮任务质量、完整更正/异议/依赖召回、历史登记
 覆盖和总成本仍open。下次先诊断启动接口，不重复旧失败探针或另起优化批次。
+
+阶段K唯一doctor诊断6.09秒返回，21项报告16 ok/5 warning，独审仅接受
+诊断观测；raw私有，J根因/模型可调用性仍unknown，未重试模型请求。
+Version15阶段L发现并修复消费manifest双读竞态：原消息哈希与实际解析
+字节绑定，物理替换/ABA原反例由接受转拒绝，ACK与任务契约不放宽。
+[阶段证据](../../results/system99/stage-l.md)：新回归普通/-O各4、交接70、
+通信45、更正链1、全库1396（1388通过/8跳过）、Reader3和同步通过。
+[独立验收](../../results/system99/independent-stage-l.md)接受有限完整性范围，
+普通发布及回读尚待收尾，不标整轮完成；正文阅读补第17篇，
+真实宿主/多轮质量/成本、其它artifact全局快照和历史登记覆盖继续open。

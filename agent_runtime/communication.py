@@ -356,7 +356,8 @@ class Mailbox:
                            'artifacts': refs, 'checks': [], 'tasks': []}, self.root)
         if errors:
             raise ValueError('; '.join(errors))
-        record = _load_json(self.root / ref['path'])
+        # Bind the parsed snapshot, not an earlier read of the same pathname.
+        record = _load_json(self.root / ref['path'], expected_sha256=ref['sha256'])
         errors = validate(record, self.root, require_complete,
                           expected_input_version=self.plan['input_version'], consumer_request=request)
         if isinstance(record, dict) and (record.get('run_id') != self.run_id or record.get('role') != event['sender']):
