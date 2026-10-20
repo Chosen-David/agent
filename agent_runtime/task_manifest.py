@@ -20,8 +20,11 @@ from .result_validation import check_task_results, validate_result_plan
 from .result_store import ResultStore, check_task_reuse, register_task_result
 from .project_docs import (CANONICAL_TASK, assert_ai_writable, check_document_refs,
                            check_task_documents, guard_write_path, parse_requirements,
-                           project_root_for_task, resolve_task_file, snapshot_project_docs,
+                           project_root_for_task, regular_bytes, resolve_task_file, snapshot_project_docs,
                            task_document_refs, validate_advice_assessments, validate_guide_reviews)
+
+
+TASK_SOURCE_LIMIT = 1024 * 1024
 
 
 def digest(path):
@@ -47,9 +50,21 @@ def atomic_json(path, value):
 
 def requirements(path):
     """Read stable IDs; canonical index additionally binds dates and details."""
+    return task_source_snapshot(path)['items']
+
+
+def task_source_snapshot(path, root=None):
+    """Bind parsed requirements and identity to one bounded raw-file snapshot."""
     path = Path(path)
-    return parse_requirements(path.read_text(encoding='utf-8'),
-                              canonical=path.parts[-3:] == ('agent_doc', 'task', 'TASK.md'))
+    root = Path(root).resolve() if root is not None else project_root_for_task(path)
+    raw = regular_bytes(root, path, max_bytes=TASK_SOURCE_LIMIT)
+    try:
+        text = raw.decode('utf-8')
+    except UnicodeDecodeError as exc:
+        raise ValueError('TASK.md must contain valid UTF-8') from exc
+    return {'items': parse_requirements(
+                text, canonical=path.parts[-3:] == ('agent_doc', 'task', 'TASK.md')),
+            'sha256': hashlib.sha256(raw).hexdigest()}
 
 
 
@@ -129,8 +144,13 @@ def prepare(task_file, run_id, mode, authorization_reference, *, review_required
     task_file = Path(task_file)
     root = task_file.resolve() if task_file.is_dir() else project_root_for_task(task_file)
     task_file = resolve_task_file(root)
-    items = requirements(task_file)
+    task_snapshot = task_source_snapshot(task_file, root)
+    items = task_snapshot['items']
     documents = snapshot_project_docs(root)
+    expected_task_ref = {'path': task_file.relative_to(root).as_posix(),
+                         'sha256': task_snapshot['sha256']}
+    if documents.get('task_index') != expected_task_ref:
+        raise ValueError('TASK.md changed while preparing the draft; retry from one current version')
     result_store = ResultStore(root)
     return {
         'schema_version': 'task-dag/v1', 'run_id': run_id,
@@ -140,7 +160,7 @@ def prepare(task_file, run_id, mode, authorization_reference, *, review_required
                             'evidence_refs': []}} if review_required else {}),
         'user_goal': 'Complete all TASK.md requirements with reportable evidence',
         'authorization_reference': authorization_reference,
-        'task_source': {'path': str(task_file), 'sha256': digest(task_file), 'mode': mode},
+        'task_source': {'path': str(task_file), 'sha256': task_snapshot['sha256'], 'mode': mode},
         'project_documents': documents, 'guide_reviews': [], 'advice_assessments': [],
         'supervision': {'min_seconds': 30, 'max_seconds': 300,
                         'rationale': 'Main AI must refine ETA, risk and cadence before starting'},
@@ -168,9 +188,12 @@ def validate_contract(plan, root, *, check_adopted_advice=True, required_task_re
     path = (root / source['path']).resolve()
     if path != resolve_task_file(root):
         raise ValueError('the single task source must be agent_doc/task/TASK.md (legacy project-root TASK.md only before migration)')
-    if not path.is_relative_to(root) or digest(path) != source['sha256']:
+    if not path.is_relative_to(root):
         raise ValueError('TASK.md missing, changed or outside project; reconcile and version the plan')
-    items = requirements(path)
+    task_snapshot = task_source_snapshot(path, root)
+    if task_snapshot['sha256'] != source['sha256']:
+        raise ValueError('TASK.md missing, changed or outside project; reconcile and version the plan')
+    items = task_snapshot['items']
     documents = plan.get('project_documents')
     if documents is None:
         # Legacy serialized runs may only resume without new guide/advice inputs.
@@ -178,6 +201,10 @@ def validate_contract(plan, root, *, check_adopted_advice=True, required_task_re
         if current['layout'] != 'legacy' or current['guides'] or current['advice']:
             raise ValueError('project document binding missing; explicitly replan legacy run')
     else:
+        expected_task_ref = {'path': path.relative_to(root).as_posix(),
+                             'sha256': task_snapshot['sha256']}
+        if documents.get('task_index') != expected_task_ref:
+            raise ValueError('task source and project document snapshots differ; reconcile and version the plan')
         binding = documents if check_adopted_advice else {**documents, 'adopted_advice': {}}
         current = check_document_refs(root, binding)
         if set(documents['task_details']) != set(current['task_details']):

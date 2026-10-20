@@ -101,13 +101,21 @@ def _relative(root, path):
     return path
 
 
-def regular_bytes(root, path):
+def regular_bytes(root, path, *, max_bytes=None):
     path = _relative(root, path)
+    if max_bytes is not None and (type(max_bytes) is not int or max_bytes < 0):
+        raise DocumentError('document byte bound must be a nonnegative integer')
     fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
     with os.fdopen(fd, 'rb') as stream:
-        if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+        info = os.fstat(stream.fileno())
+        if not stat.S_ISREG(info.st_mode):
             raise DocumentError('document must be a regular file')
-        return stream.read()
+        if max_bytes is not None and info.st_size > max_bytes:
+            raise DocumentError(f'document exceeds {max_bytes} byte bound')
+        data = stream.read() if max_bytes is None else stream.read(max_bytes + 1)
+        if max_bytes is not None and len(data) > max_bytes:
+            raise DocumentError(f'document exceeds {max_bytes} byte bound')
+        return data
 
 
 def parse_requirements(text, *, canonical=False):

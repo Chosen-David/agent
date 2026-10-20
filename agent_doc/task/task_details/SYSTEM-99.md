@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 18
+Version: 19
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -60,7 +60,30 @@ catalog-wave3-plan.md。每目录仅新增unknown历史record，summary严格取
 verifier调用0、定向/全库/Reader/同步和独立结果审核通过。JSON-only、多运行/嵌套报告、
 超64文件、纯计划/失败尝试及活动中的system99继续显式open；无模型质量、token或性能主张。
 
+阶段O（CHAIN-TASK-SNAPSHOT）：任务契约当前先由 `digest(path)` 读取TASK原字节，再由
+`requirements(path)` 按同一路径二次读取并解析；真实临时文件在两次读取之间替换、解析后恢复的
+确定性反例，使绑定原文件SHA的计划接受了替换文件中的不同任务ID。仅将prepare/validate及
+publication freeze的任务索引摘要与解析绑定到各自一次有界普通文件读取；validate必须从同一
+原字节同时校验SHA和解析任务，prepare还须拒绝其任务快照与project-documents快照不一致，
+publication须拒绝任务读取与已冻结候选树身份不一致。保留公开`requirements`
+兼容、canonical/legacy解析、guide/advice/task-detail门禁及错误闭合，不宣称跨多文件事务或对抗
+恶意OS写者。先保存修前接受日志并独审Version19方案；修后覆盖真实替换/ABA、无效UTF-8、
+非普通文件、prepare中间变化、publication中间变化及原回归，全库/Reader/同步和独立结果复核
+通过后才发布。阶段O不
+处理剩余27个历史目录、真实宿主/多轮质量或usage/费用，仍不是整轮完成。
+
 ## Progress
+
+Version19阶段O以真实临时文件固定TASK双读竞态：绑定OLD摘要的计划曾接受瞬时NEW任务ID，
+文件读取后恢复OLD。修复后prepare、validate与publication freeze均从一次至多1 MiB的普通文件
+原字节同时取得SHA/UTF-8文本/任务项，并把task source、project-documents及发布候选树身份交叉
+核对；修前反例现拒绝且不再二次Path读取。读取后替换、A→B→A、非法编码、超限、目录/FIFO/
+符号链接及恰好1 MiB边界均有回归。生成的research-assistant项目文档引用已同步。定向174、
+独审前补验40、`-O`定向125、全库1406（1398通过/8跳过）、Reader2和同步通过；
+[阶段证据](../../results/system99/stage-o.md)经
+[独立验收](../../results/system99/independent-stage-o.md)接受usable-with-scope。无模型质量、
+token、性能或跨多文件事务主张；27个未登记目录、真实宿主/多轮质量、usage/费用和其它artifact
+读取边界继续open，本检查点不计整轮完成。
 
 基线dcc10b10537a3b410a25f6ef3f2c842a3c1777b4，已fetch同步，独占协作锁。发现315项任务的16行不合格式；空格内存归一后另有5份详情不合身份/边界；实际validate失败，新增三项入口回归修前均error。已生成阶段A独立审查请求。task_context已有接口，避免重复实现。尚无代码修复或整批验收完成。
 

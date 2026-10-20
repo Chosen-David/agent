@@ -11,8 +11,10 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 from agent_runtime.project_memory import MemoryLedger
+import agent_runtime.publication as publication
 from agent_runtime.publication import PublicationError, PublicationLedger, local_remote_reader
 
 
@@ -121,6 +123,42 @@ class PublicationTests(unittest.TestCase):
                         {'app.py': ['T1'], 'TASK.md': ['T1']}, {'app.py': ['T1', 'T1']}):
             with self.subTest(mapping=mapping), self.assertRaises(PublicationError):
                 self.freeze(mapping)
+        self.assertFalse(self.state.exists())
+
+    def test_freeze_rejects_task_identity_changed_after_candidate_snapshot(self):
+        original_snapshot = publication.task_source_snapshot
+        task = self.root / 'TASK.md'
+        original = task.read_bytes()
+
+        def transient_snapshot(path, root):
+            task.write_text('- [ ] [OTHER] transient ownership\n')
+            try:
+                return original_snapshot(path, root)
+            finally:
+                task.write_bytes(original)
+
+        with patch.object(publication, 'task_source_snapshot', transient_snapshot):
+            with self.assertRaisesRegex(PublicationError, 'changed while freezing'):
+                self.freeze()
+        self.assertEqual(task.read_bytes(), original)
+        self.assertFalse(self.state.exists())
+
+    def test_freeze_rejects_task_and_document_snapshots_from_different_versions(self):
+        original_snapshot = publication.snapshot_project_docs
+        task = self.root / 'TASK.md'
+        original = task.read_bytes()
+
+        def transient_documents(root):
+            task.write_text('- [ ] [OTHER] transient project documents\n')
+            try:
+                return original_snapshot(root)
+            finally:
+                task.write_bytes(original)
+
+        with patch.object(publication, 'snapshot_project_docs', transient_documents):
+            with self.assertRaisesRegex(PublicationError, 'project documents'):
+                self.freeze()
+        self.assertEqual(task.read_bytes(), original)
         self.assertFalse(self.state.exists())
 
     def test_add_and_delete_changes_need_ownership(self):

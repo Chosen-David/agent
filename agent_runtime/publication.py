@@ -17,7 +17,7 @@ import subprocess
 import time
 
 from .project_memory import check_task_memory
-from .task_manifest import atomic_json, requirements
+from .task_manifest import atomic_json, task_source_snapshot
 from .project_docs import (assert_ai_writable, check_document_refs, resolve_task_file,
                            snapshot_project_docs)
 
@@ -188,16 +188,26 @@ class PublicationLedger:
                 assert_ai_writable(self.root, name)
             except ValueError as exc:
                 raise PublicationError('human guide changes cannot be included in an AI publication: ' + name) from exc
-        ids = {item['id'] for item in requirements(task_file)}
+        try:
+            task_snapshot = task_source_snapshot(task_file, self.root)
+        except (OSError, ValueError) as exc:
+            raise PublicationError('cannot bind publication TASK snapshot: ' + str(exc)) from exc
+        if task_snapshot['sha256'] != candidate['files'][task_relative]['sha256']:
+            raise PublicationError('TASK changed while freezing candidate ownership')
+        ids = {item['id'] for item in task_snapshot['items']}
         if not changed or not isinstance(file_task_refs, dict) or set(file_task_refs) != set(changed):
             raise PublicationError('every changed file needs exact TASK ownership; no omitted or extra paths')
         for refs in file_task_refs.values():
             if (not isinstance(refs, list) or not refs or any(not isinstance(r, str) or r not in ids for r in refs)
                     or len(set(refs)) != len(refs)):
                 raise PublicationError('file ownership requires existing stable TASK IDs')
+        documents = snapshot_project_docs(self.root)
+        expected_task_ref = {'path': task_relative, 'sha256': task_snapshot['sha256']}
+        if documents.get('task_index') != expected_task_ref:
+            raise PublicationError('TASK changed while freezing project documents')
         candidate.update(base_commit=base, file_task_refs=copy.deepcopy(file_task_refs),
-                         task_path=task_relative, task_sha256=_hash(_regular_bytes(task_file)),
-                         project_documents=snapshot_project_docs(self.root))
+                         task_path=task_relative, task_sha256=task_snapshot['sha256'],
+                         project_documents=documents)
         self._plan_review(candidate)
         candidate['reviewed_plan'] = copy.deepcopy(self.plan)
         return self._save({'schema_version': 'publication/v1', 'scope': scope, 'candidate': candidate,
