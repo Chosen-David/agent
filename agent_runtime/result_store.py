@@ -33,6 +33,10 @@ class ResultStoreError(ValueError):
     pass
 
 
+class _ResultJSONDepthError(RecursionError):
+    """Decoder-origin depth error; unrelated runtime recursion must propagate."""
+
+
 def _need(condition, message):
     if not condition:
         raise ResultStoreError(message)
@@ -84,7 +88,10 @@ def _json(data):
         return value
     def reject(value):
         raise ResultStoreError('nonfinite JSON value: ' + value)
-    value = json.loads(data, object_pairs_hook=pairs, parse_constant=reject)
+    try:
+        value = json.loads(data, object_pairs_hook=pairs, parse_constant=reject)
+    except RecursionError as exc:
+        raise _ResultJSONDepthError(str(exc)) from exc
     _need(isinstance(value, dict), 'JSON object required')
     return value
 
@@ -367,7 +374,7 @@ class ResultStore:
                                  'match': 'exact-context' if exact else 'lexical',
                                  'stored_validation': record['validation_at_registration']['status'],
                                  'applicability': 'unchecked'})
-            except (OSError, ValueError, KeyError, TypeError) as exc:
+            except (OSError, ValueError, KeyError, TypeError, _ResultJSONDepthError) as exc:
                 errors.append({'run_id': name, 'error': str(exc)})
         hits.sort(key=lambda h: (-h['score'], h['run_id']))
         return {'schema_version': 'project-result-search/v1', 'query': query,

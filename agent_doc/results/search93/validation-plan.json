@@ -1,0 +1,12 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "SEARCH-DEPTH-93: per-record result-search error isolation for over-deep on-disk JSON, CPython local CPU only; no speed or model-quality claim",
+  "criteria": {
+    "implementation": {"procedure": "Review actual ResultStore.search/show/CLI path and minimal diff; independently rerun real temporary-file cases.", "acceptance": "A deep record is excluded and reported without aborting unaffected retrieval; no global parser, budget, recursion-limit or trust change.", "allow_not_applicable": false},
+    "reference_boundary": {"procedure": "List and dictionary nesting above interpreter limit, good neighboring record, all-bad/unmatched search, ordinary nesting, direct show and caller-context errors, unrelated RuntimeError/SystemExit.", "acceptance": "All declared isolation cases pass; ordinary output matches frozen baseline and unrelated exceptions retain propagation.", "allow_not_applicable": false},
+    "data_integrity": {"procedure": "Preserve baseline failures, fixture hashes, source SHA, commands and raw regression logs; hash inputs before/after search.", "acceptance": "Bounded real files, matching identities and unchanged bytes; no omitted failures or unrelated checkpoint publication.", "allow_not_applicable": false},
+    "numerical_sanity": {"procedure": "Check pass-count numerator/denominator and bytes versus METADATA_LIMIT.", "acceptance": "Report deterministic case counts, not inferred request success rates; each deep fixture below byte bound.", "allow_not_applicable": false},
+    "measurement_validity": {"procedure": "No timing experiment; correctness pass counts only.", "acceptance": "No latency, throughput, token, memory or model-quality benefit asserted.", "allow_not_applicable": true},
+    "reproducibility": {"procedure": "Normal and optimized Python focused tests, full repository suite and Reader; independent frozen-baseline/candidate reproduction.", "acceptance": "Applicable regressions pass and independent review records exact limitations before publication.", "allow_not_applicable": false}
+  }
+}

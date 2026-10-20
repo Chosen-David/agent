@@ -2,6 +2,8 @@
 
 ## 2026-10-20
 
+- [x] [SEARCH-DEPTH-93] 深层JSON单记录错误隔离：专项普通/-O各94项、全库1338项（8skip）及Reader3通过，独立基线对照验收；发布回读另核。([详情](task_details/SEARCH-DEPTH-93.md))
+
 - [x] [VALIDATION-FD-87] 显示回执异常fd泄漏修复：独立20组配对泄漏12→0，专项/-O各32项、全库1331项（8skip）及Reader3通过；失败文件规则不变，发布回读另核。([详情](task_details/VALIDATION-FD-87.md))
 
 - [x] [CHECK-HELPER-85] 公开记忆校验自定义读取器兼容：修前两项错误修复，专项/-O各62项、全库1323项（8skip）及Reader3通过；独立复核接受，发布回读另核。([详情](task_details/CHECK-HELPER-85.md))
