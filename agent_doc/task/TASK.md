@@ -2,6 +2,8 @@
 
 ## 2026-10-20
 
+- [x] [CONTEXT-SCHEMA-83] 保留自定义读取器兼容的事务内schema复用；256/512节点串行装配改善6.07%/7.62%，独立门槛及1321项回归（8skip）通过，发布另核。([详情](task_details/CONTEXT-SCHEMA-83.md))
+
 - [x] [ARTIFACT-FD-77] 修复目录读取拒绝及构造失败的fd泄漏；独立22组13→0泄漏，专项45项、全库1318项（8skip）及Reader3通过；发布另核。([详情](task_details/ARTIFACT-FD-77.md))
 
 - [x] [ARTIFACT-READ-76] 小文件派发Python分配峰值降低99.9368%；增长回退非退化、独立验收、全库1314项（8skip）/Reader3通过，发布另核；目录fd泄漏待单独修复。([详情](task_details/ARTIFACT-READ-76.md))

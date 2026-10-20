@@ -330,7 +330,14 @@ class MemoryLedger:
                 or sqlite3.Row is not _BUILTIN_SQLITE_ROW):
             return None
         with self._connect() as db:
-            return MemoryLedger._walk(db, refs, self.root, include_dependencies=True)
+            # The helper is an observable extension point: custom readers may
+            # take only two arguments or change schema within this transaction.
+            schema_state = ([] if _read_entry is _BUILTIN_READ_ENTRY
+                            and type(db) is sqlite3.Connection and db.in_transaction
+                            and db.row_factory is _BUILTIN_SQLITE_ROW
+                            and db.text_factory is str else None)
+            return MemoryLedger._walk(db, refs, self.root, schema_state,
+                                      include_dependencies=True)
 
     def list(self, status='active', scope=None):
         """Retrieval defaults to current accepted entries, never candidates or stale history."""
@@ -407,6 +414,7 @@ class MemoryLedger:
 
 
 _BUILTIN_GET = MemoryLedger._get
+_BUILTIN_READ_ENTRY = _read_entry
 _BUILTIN_PUBLIC_CHECK = MemoryLedger.check
 _BUILTIN_WALK = MemoryLedger._walk
 _BUILTIN_CHECK = MemoryLedger._check
