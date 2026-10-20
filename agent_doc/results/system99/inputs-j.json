@@ -1,0 +1,65 @@
+{
+  "plan": {
+    "task_id": "SYSTEM-99",
+    "phase": "J-capability-only",
+    "plan_version": 13,
+    "decision": "pending independent Plan13 review after Plan12 SIGTERM cleanup revise; no model call yet",
+    "purpose": "Distinguish installed/logged-in CLI from an actually callable existing-account backend; not a quality retry of phase I",
+    "existing_resource": "/opt/codex/bin/codex 0.159.2; login status classified logged_in via ChatGPT; no new account/API key/service",
+    "maximum_cli_invocations": 1,
+    "wall_timeout_seconds": 90,
+    "cancellation": "SIGTERM/SIGINT set cancellation and enter finally; defer exception until own Popen is assigned, ignore further catchable cancellation during owned-group cleanup; SIGKILL/host shutdown not handled",
+    "prompt": "Return exactly the JSON object {\"status\":\"ack\"}. Do not use tools, read files, access the network, change files, or start agents. This is only an authorized connectivity check, not a project task or deployment.",
+    "argv": [
+      "/opt/codex/bin/codex",
+      "--no-daemon",
+      "-a",
+      "never",
+      "exec",
+      "--ignore-user-config",
+      "--ephemeral",
+      "--json",
+      "--skip-git-repo-check",
+      "-s",
+      "read-only",
+      "-C",
+      "ISOLATED_EMPTY_DIRECTORY",
+      "-"
+    ],
+    "conditions": [
+      "do not alter global config/auth",
+      "no bypass flags or new services",
+      "fresh empty OS cwd and CLI -C outside repositories; abort before invocation if ancestor or HOME/CODEX_HOME AGENTS.md/AGENTS.override.md exists; this does not authenticate all provider injected instructions",
+      "stdin is exact frozen prompt, not files or inherited conversation",
+      "private raw stdout/stderr may contain reasoning; publish only sanitized metadata/final answer/hash",
+      "reserve ten of ninety seconds for owned-group termination/reaping in finally, including errors; report observed budget overruns or unreaped leader as failure, no hard realtime OS guarantee",
+      "no manual retry; CLI-internal transport retries retained if visible",
+      "unrequested tool use or failed/missing ack is failure or inconclusive"
+    ],
+    "acceptance": [
+      "independent check actual argv/stdin/exit/final response and raw event types",
+      "reported usage is only this check, not project task cost",
+      "installation/auth alone not success",
+      "provider exact model/version remains unknown unless emitted",
+      "successful ack is callable backend only, not repository host adapter, tmux supervisor, multistage recovery or model quality"
+    ],
+    "dag": [
+      "freeze -> independent seven-domain review -> one bounded owned invocation -> independent six-domain result verification -> scoped report"
+    ]
+  },
+  "runner_source_utf8": "\"\"\"One bounded existing-account CLI call; raw event logs stay private.\"\"\"\nimport hashlib\nimport json\nimport os\nfrom pathlib import Path\nimport signal\nimport subprocess\nimport tempfile\nimport time\n\nclass ProbeCancelled(Exception):\n    pass\n\nlaunching = True\ncancel_signal = None\ndef request_cancel(signum, frame):\n    global cancel_signal\n    cancel_signal = signum\n    if not launching:\n        raise ProbeCancelled()\n\nroot = Path(__file__).resolve().parent\nplan_path = root / 'backend-probe-plan.json'\nplan_raw = plan_path.read_bytes()\nplan = json.loads(plan_raw)\nout = root / 'backend-j'\nout.mkdir(exist_ok=False)\nprompt = plan['prompt'].encode('utf-8')\n(out / 'stdin.txt').write_bytes(prompt)\nsummary = {'plan_sha256': hashlib.sha256(plan_raw).hexdigest(),\n           'stdin_sha256': hashlib.sha256(prompt).hexdigest(),\n           'stdin_bytes': len(prompt), 'manual_invocations': 1,\n           'timeout': False}\nwith tempfile.TemporaryDirectory(prefix='system99-backend-', dir='/tmp') as cwd:\n    homes = [Path.home(), Path(os.environ.get('CODEX_HOME', str(Path.home() / '.codex')))]\n    summary['ancestor_AGENTS_present'] = [str(p / name)\n        for p in [Path(cwd), *Path(cwd).parents, *homes]\n        for name in ['AGENTS.md', 'AGENTS.override.md']\n        if (p / name).exists()]\n    if summary['ancestor_AGENTS_present']:\n        raise RuntimeError('unexpected ancestor instructions; do not invoke')\n    argv = [cwd if x == 'ISOLATED_EMPTY_DIRECTORY' else x for x in plan['argv']]\n    summary['argv'] = argv\n    (out / 'invocation.json').write_text(json.dumps(summary, indent=2) + '\\n')\n    paths = [out / 'stdout-private.jsonl', out / 'stderr-private.log']\n    handles = [os.fdopen(os.open(p, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600), 'wb')\n               for p in paths]\n    started = time.monotonic()\n    deadline = started + plan['wall_timeout_seconds']\n    proc = None\n    old_handlers = {s: signal.signal(s, request_cancel) for s in (signal.SIGTERM, signal.SIGINT)}\n    try:\n        proc = subprocess.Popen(argv, stdin=subprocess.PIPE, stdout=handles[0],\n                                stderr=handles[1], start_new_session=True, cwd=cwd)\n        summary['owned_pid'] = proc.pid\n        launching = False\n        if cancel_signal is not None:\n            raise ProbeCancelled()\n        try:\n            proc.communicate(prompt, timeout=max(0, deadline - time.monotonic() - 10))\n        except subprocess.TimeoutExpired:\n            summary['timeout'] = True\n    except BaseException as exc:\n        summary['invocation_exception_type'] = type(exc).__name__\n    finally:\n        for s in old_handlers:\n            signal.signal(s, signal.SIG_IGN)\n        summary['cancel_signal'] = cancel_signal\n        if proc is not None:\n            # Only this newly-created process group; cleanup also runs on errors.\n            try:\n                os.killpg(proc.pid, signal.SIGTERM)\n            except ProcessLookupError:\n                pass\n            try:\n                proc.wait(timeout=min(5, max(0, deadline - time.monotonic())))\n            except subprocess.TimeoutExpired:\n                pass\n            try:\n                os.killpg(proc.pid, signal.SIGKILL)\n            except ProcessLookupError:\n                pass\n            try:\n                proc.wait(timeout=max(0, deadline - time.monotonic()))\n            except subprocess.TimeoutExpired:\n                summary['cleanup_unreaped'] = True\n            summary['returncode'] = proc.returncode\n        for h in handles:\n            h.close()\n        for s, handler in old_handlers.items():\n            signal.signal(s, handler)\n    summary['wall_seconds_diagnostic_only'] = time.monotonic() - started\n    summary['wall_budget_exceeded'] = summary['wall_seconds_diagnostic_only'] > plan['wall_timeout_seconds']\nsummary['raw_artifacts'] = [{'path': str(p), 'sha256': hashlib.sha256(p.read_bytes()).hexdigest(),\n                             'bytes': p.stat().st_size} for p in paths]\nevents, parse_errors = [], 0\nfor line in paths[0].read_bytes().splitlines():\n    try:\n        events.append(json.loads(line))\n    except (ValueError, UnicodeError):\n        parse_errors += 1\nsummary['jsonl_parse_errors'] = parse_errors\nsummary['event_types'] = [e.get('type') for e in events]\nsummary['item_types'] = [e['item'].get('type') for e in events if isinstance(e.get('item'), dict)]\nsummary['usage'] = [e['usage'] for e in events if e.get('type') == 'turn.completed'\n                    and isinstance(e.get('usage'), dict)]\ntexts = [e['item'].get('text') for e in events if isinstance(e.get('item'), dict)\n         and e['item'].get('type') == 'agent_message']\nsummary['final_agent_messages'] = len(texts)\nsummary['exact_ack'] = False\nif len(texts) == 1:\n    summary['final_sha256'] = hashlib.sha256(texts[0].encode()).hexdigest()\n    try:\n        summary['exact_ack'] = json.loads(texts[0]) == {'status': 'ack'}\n    except ValueError:\n        pass\n(out / 'summary-private.json').write_text(json.dumps(summary, indent=2) + '\\n')\nprint(json.dumps({k: summary.get(k) for k in ['returncode', 'timeout', 'event_types',\n      'item_types', 'jsonl_parse_errors', 'final_agent_messages', 'exact_ack', 'usage']}, indent=2))\n",
+  "runner_sha256": "be0335c00220ac2282a3b0449a444481da66452b73bb1f8b0203ae0d862db6b4",
+  "capabilities": {
+    "PATH_commands": {
+      "codex": null,
+      "claude": null,
+      "tmux": null
+    },
+    "known_runtime_binary_exists": true,
+    "version_rc": 0,
+    "version": "codex-cli 0.159.2",
+    "auth_rc": 0,
+    "auth_class": "logged_in"
+  },
+  "privacy": "Raw stdout/stderr may contain reasoning and remain private. Public source is an audit snapshot; reconstruct inside an ignored private folder before executing, never auto-run from a report."
+}

@@ -1,0 +1,248 @@
+{
+  "arm1": {
+    "answers": [
+      {
+        "id": "R1",
+        "answer": "假定计划审核仍有效：新可信tick重新验证已完成证据，A失效后，B沿依赖闭包失效；两者最终均为blocked，reason_kind=terminal_evidence、requires_reconciliation=true，链为blocked，旧证据保留。恢复原文件再tick不会自动重新done，也不会重放动作。合法恢复需可信宿主显式reconcile：当前计划审核有效、非取消且节点blocked、提供非空证据和宿主reference、handler存在、当前授权通过、全部依赖done且handler.verify通过；应先恢复A再恢复B。取消后禁止reconcile，tick也不会恢复执行。",
+        "source_functions": [
+          "agent_runtime.core.Engine.tick",
+          "agent_runtime.core.Engine._check_done",
+          "agent_runtime.core.Engine._summary",
+          "agent_runtime.core.Engine.reconcile",
+          "agent_runtime.core.Store.cancel",
+          "agent_runtime.core.ArtifactHandler.verify"
+        ]
+      },
+      {
+        "id": "R2",
+        "answer": "不会只提供S：选择集合还包含全部candidate/rejected、required_claim_ids及递归祖先，因此至少保留S、C、R、P及各自完整声明、前提和所需依据。消费者必需引用、知识前置闭包、记忆依赖闭包及指定artifact引用仍须保留；artifact仅传引用而非文件正文。完整序列化内容超字符或token预算直接拒绝，不截断。无token_counter时tokens为null，不能以字符冒充token；设置token硬限必须有实际可信计数器，并满足消费者tokenizer绑定。known_memory_ids只是可信宿主对当前消费者上下文已持有依据的提示，仍检查新鲜性，不能证明其它会话已读。",
+        "source_functions": [
+          "agent_runtime.handoff_basis.basis_context",
+          "agent_runtime.handoff_basis.check_handoff_basis",
+          "agent_runtime.handoff_basis.claim_graph",
+          "agent_runtime.handoff_basis.make_token_counter",
+          "MemoryLedger.check",
+          "MemoryLedger._context_closure",
+          "check_handoff_knowledge"
+        ],
+        "limitations": "只跟踪已声明依赖；不验证科学适用性或语义相关性。usage仅计精确序列化payload，不含工具封装及模型输出。MemoryLedger等依赖实现未包含在本包。"
+      },
+      {
+        "id": "R3",
+        "answer": "当前用户明确决定及宿主安全/实际权限优先；在这些边界内，来源核实的人类guide是最高项目规划依据，advice只是待评估材料，不授予权限。冲突未解决不得adopt/adapt；应记录reject/defer或提出调整建议及理由、恢复条件，需要guide修改时交人类发布。AI不得修改整个guide目录中的文件，仅可创建空目录。减上下文不能删除当前取消、异议、候选/拒用依据或权限边界；可做保持完整依据的引用去重，预算不足应拒绝。只有仓库工作流和CPU测试、缺可信host adapter时必须报告能力缺口/blocked，不能宣称多模型或tmux监督已部署；真实独立调用、认证接口及监督ID和匹配live readback才支持相应运行声明。",
+        "source_functions": [],
+        "source_documents": [
+          "prompts/orchestrator.md：项目文档治理、动态能力选择、监督与tmux条款",
+          "prompts/decision_review.md：决策门禁及授权边界",
+          "SOURCE AGENTS.md：项目文档权威、监督及测试证据限制",
+          "workflows/project_document_workflow.md：权威、写入边界与事实来源；运行时、更新与恢复",
+          "workflows/dual_main_workflow.md：两个主入口、不可变审核对象、证据等级"
+        ]
+      }
+    ],
+    "limitations": [
+      "仅对授权资料包作静态阅读；未执行项目、测试、包内命令或网络访问，未写文件、未读取其它文件。",
+      "首次合并输出发生可见截断：工具报告original token count 43688，外层另报告26027；该次输出不能作为完整阅读证据。",
+      "随后在同一会话逐块补齐阅读下列全部字符范围，每块不超过12000字符且未出现可见截断。此记录不构成provider完整输入认证。"
+    ],
+    "read_record": {
+      "file": "/workspace/scratch/5d3e4236a5b4/agent-system99/.agent-runs/system99/pilot-i/native-1.txt",
+      "method": "read_bytes后UTF-8解码，未归一化CRLF；范围为从0开始的字符半开区间",
+      "bytes": 173627,
+      "characters": 114107,
+      "raw_bytes_sha256": "cb5f2e118a7a60632664a4b6c45167a0e354538775800aa15142b3eefbf1e915",
+      "supplementary_chunks": [
+        {
+          "range": [
+            0,
+            12000
+          ],
+          "sha256": "830696ad557b9aa386dbd3ac8796e7ddb6f279eacd5f75f6a5b4cac34dd37807"
+        },
+        {
+          "range": [
+            12000,
+            24000
+          ],
+          "sha256": "b7def974a9fd7c14e0801383c7bacf0348192c9eed45c613f3bd19e3e49af633"
+        },
+        {
+          "range": [
+            24000,
+            36000
+          ],
+          "sha256": "bd8ac43a2b79f879177ab82f336e97b8645ba59684ef1d3d8c74300593b8e11e"
+        },
+        {
+          "range": [
+            36000,
+            48000
+          ],
+          "sha256": "de982ddde93b2fcdd93f5f00b6df8283f010f42cb6eacc656f6e730e1f582090"
+        },
+        {
+          "range": [
+            48000,
+            60000
+          ],
+          "sha256": "61440f7aafa38d204a7335a2cd5bf7fb91f62a80050bb9609534d91726719e7c"
+        },
+        {
+          "range": [
+            60000,
+            72000
+          ],
+          "sha256": "9a8a9e7dcd5fb678b1cbf0c21c22902ca35db60d34005206dd02f4a07a254187"
+        },
+        {
+          "range": [
+            72000,
+            84000
+          ],
+          "sha256": "4557a366fc89bbe97e540cc22bc7923acb8c19fc784b64a8e1c91260b93755c4"
+        },
+        {
+          "range": [
+            84000,
+            96000
+          ],
+          "sha256": "6b286ea3767051a386b86487eff57cb00fa79d3a621ebc7282128e759d592f26"
+        },
+        {
+          "range": [
+            96000,
+            108000
+          ],
+          "sha256": "66a7906de4a07d72e0398bfb40c9480e05acc78f93dccb145396d3050fc5c31e"
+        },
+        {
+          "range": [
+            108000,
+            114107
+          ],
+          "sha256": "555d6f3fe6eb68ea1dd0cc04eb7c358dbdd14f89ed6a67014ed2f44773bb95b2"
+        }
+      ],
+      "chunk_hash_encoding": "对应原始解码字符片段重新编码为UTF-8",
+      "supplementary_visible_truncation": false
+    }
+  },
+  "arm2": {
+    "answers": [
+      {
+        "id": "R1",
+        "answer": "新可信tick会重新验证done证据：A失效先变failed，依赖闭包使B也变failed；终态检查随后将二者标为blocked、reason_kind=terminal_evidence、requires_reconciliation=true，链变blocked。恢复文件再tick不会自动done或重放动作。须按依赖顺序显式reconcile A、B：审核有效、宿主授权、依赖done、证据通过handler.verify，并提供非空证据与宿主reference。取消后不能reconcile。",
+        "source_functions": [
+          "agent_runtime.core.Engine.tick",
+          "agent_runtime.core.Engine._check_done",
+          "agent_runtime.core.Engine._summary",
+          "agent_runtime.core.Engine.reconcile",
+          "agent_runtime.core.Store.cancel"
+        ]
+      },
+      {
+        "id": "R2",
+        "answer": "不会只提供S。必须保留所选S、required_claim_ids、全部candidate C和rejected R，以及这些claim的完整祖先闭包，因此保留P；同时保留关联依据、消费者必需引用和指定artifact引用，展开所需knowledge及memory依赖。超字符或token预算会报错，不截断。没有token_counter时token数未知，token硬预算不能以字符数代替。known_memory_ids仅是可信宿主关于当前消费者上下文已持有依据的提示，仍校验新鲜性，不证明其它会话已读。",
+        "source_functions": [
+          "agent_runtime.handoff_basis.basis_context",
+          "agent_runtime.handoff_basis.check_handoff_basis",
+          "agent_runtime.handoff_basis.claim_graph",
+          "agent_runtime.handoff_basis.make_token_counter"
+        ]
+      },
+      {
+        "id": "R3",
+        "answer": "当前用户明确决定、宿主安全与实际权限始终优先；在此边界内，来源经核实的人类guide是最高项目规划依据。AI advice不是授权，须核验并记录adopt/adapt/reject/defer及理由；与guide冲突未解决不得采纳，可在advice提出修改建议，由人类发布guide。AI不得修改guide目录任何文件。缩减上下文不能删去当前取消、异议或权限边界；claim选择保留candidate/rejected及依赖。只有工作流和CPU测试、缺可信host adapter，不能宣称已部署独立多模型或tmux监督；须报告缺口，真实调用、隔离上下文、授权、监督ID及live readback等分别验证。",
+        "source_functions": [
+          "workflows/project_document_workflow.md：权威、写入边界与事实来源；运行时、更新与恢复",
+          "workflows/dual_main_workflow.md：两个主入口；完整checkout的可执行接入；证据等级",
+          "prompts/orchestrator.md：自动任务链与定时监督",
+          "agent_runtime.handoff_basis.basis_context"
+        ]
+      }
+    ],
+    "limitations": [
+      "仅静态阅读指定资料包，未执行项目、联网、读取其它文件或验证宿主部署。",
+      "handoff检查只覆盖声明的身份、引用、依赖及前提记录，不证明科学适用性；basis_context提供artifact引用而非文件正文。"
+    ],
+    "reading": {
+      "file": "/workspace/scratch/5d3e4236a5b4/agent-system99/.agent-runs/system99/pilot-i/native-2.txt",
+      "method": "原始bytes读取后UTF-8解码，未归一化CRLF；范围为零起点、右端不含。",
+      "bytes_read": [
+        0,
+        153381
+      ],
+      "characters_reviewed": [
+        0,
+        106165
+      ],
+      "sha256_raw_bytes": "d16371d81eb745cad3e6aefa3957a49bc6fda49e4bb419a7738f64c01520ee09",
+      "chunks_sha256_utf8": [
+        {
+          "range": [
+            0,
+            12000
+          ],
+          "sha256": "9cfb597149700e77a6b5014dac57485bb23ff72d8f3d5f5583664d91fe2c7976"
+        },
+        {
+          "range": [
+            12000,
+            24000
+          ],
+          "sha256": "75f64c98d4c417084f678b07a330921e4cc305aaf1e63cc9713a4317c37c8b71"
+        },
+        {
+          "range": [
+            24000,
+            36000
+          ],
+          "sha256": "b909e0131eef249aae9ff844ba3943958c836b7d6ae2fb6d359899947a420ec1"
+        },
+        {
+          "range": [
+            36000,
+            48000
+          ],
+          "sha256": "ef7cc591b16d34c8fa2b856ca1851ab43f5226ed3d3292e4b040c0325d7f215d"
+        },
+        {
+          "range": [
+            48000,
+            60000
+          ],
+          "sha256": "cd66427a2d64013e8983e7a4f6be70c22709011753130069dc65d57f17e41d69"
+        },
+        {
+          "range": [
+            60000,
+            72000
+          ],
+          "sha256": "206d9ab7ddba4255d3124ce25c26d30630369637614f26d7f58f163fb1d2f6e9"
+        },
+        {
+          "range": [
+            72000,
+            84000
+          ],
+          "sha256": "8571837bcdc5242befb53efa07df7b34fb355b952c6d94f1f7a40749bc6df68a"
+        },
+        {
+          "range": [
+            84000,
+            96000
+          ],
+          "sha256": "5d2581aab207fc0e512a22775070d7ad460a76e9f53bc1c9afea8ffbbab6dffd"
+        },
+        {
+          "range": [
+            96000,
+            106165
+          ],
+          "sha256": "ff3ca5d54fe569aa3f3ea0408bb024f9e154316df137b9f8ff9d3758e1c97f46"
+        }
+      ],
+      "visible_truncation": "无；全部连续分块已完整显示并阅读。"
+    }
+  }
+}

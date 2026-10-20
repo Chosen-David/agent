@@ -1,0 +1,214 @@
+{
+  "manifest": {
+    "code_sha": "48db42643844bbb0b9f7ab5935676fdfb75d661f",
+    "builder_sha256": "bff4ae3dfd641c446ef0f5c6cb59ca27c3a2f01ccf77a2693a01ee19e3f6ade4",
+    "sources": [
+      {
+        "path": "AGENTS.md",
+        "sha256": "bbf43f9730e6a35ccb165066a1e2c9e5898813562921fa901c08dfbd37578cbe"
+      },
+      {
+        "path": "agent_runtime/core.py",
+        "sha256": "1d4b4cb4565eb3afa49290129aa737de51679ea5c7f2993bf18f80a7e994f8b9"
+      },
+      {
+        "path": "agent_runtime/handoff_basis.py",
+        "sha256": "b2355dab0b097b54ad9c4818ce955b3e46a3f4b11c3175f169d717f2166ac50b"
+      },
+      {
+        "path": "workflows/project_document_workflow.md",
+        "sha256": "40fb8145f6553526e589ab26c5922fe9de8883e68d878e7e0ca82ba2390b25fe"
+      },
+      {
+        "path": "workflows/dual_main_workflow.md",
+        "sha256": "639f19cf9de42d65935b3a42b8e9f6e8aa6e4a2145254ad59202642974eb9644"
+      }
+    ],
+    "prompt_sources": [
+      {
+        "entry": "decision",
+        "path": "prompts/decision_review.md",
+        "sha256": "55b793450ff0e3d29696dae7626afab7f15d1ab843baa396dcc1d564e532c849",
+        "policy": "shared-full"
+      },
+      {
+        "entry": "general",
+        "path": "prompts/orchestrator.md",
+        "sha256": "50138dcd8c2d27699376944db10b65726e26c8553c56049409c90598d6f4e758",
+        "policy": "shared-full"
+      },
+      {
+        "entry": "research",
+        "path": "prompts/research_orchestrator.md",
+        "sha256": "80aef320dd7cc6c324dff88122b394e9795d2b8ba42b5dec8fb3fb022fb4abad",
+        "policy": "shared-full"
+      }
+    ],
+    "questions": [
+      {
+        "id": "R1",
+        "question": "portable链A→B已经全部done；A的验收证据失效后来了一个新的可信tick。状态及依赖如何变化？恢复原文件并再次tick会自动重新done或重放动作吗？合法恢复需要什么，取消后能否reconcile？指出相关函数。"
+      },
+      {
+        "id": "R2",
+        "question": "交接请求只选择supported claim S；记录还有candidate C和rejected R，R依赖supported P。basis_context是否只提供S？什么内容必须保留？预算不足会截断吗？没有token_counter能否用字符数代替token？known_memory_ids是否证明其它会话已读？指出相关函数及限制。"
+      },
+      {
+        "id": "R3",
+        "question": "项目人类guide与AI advice冲突时如何处理？是否可为减上下文而删掉取消/异议/权限边界或由AI修改guide？只有仓库工作流和CPU测试、尚无可信host adapter，能否宣称已部署多模型/tmux监督？说明当前用户明确决定与guide/advice的关系及来源。"
+      }
+    ],
+    "packets": {
+      "native-1": {
+        "path": "/workspace/scratch/5d3e4236a5b4/agent-system99/.agent-runs/system99/pilot-i/native-1.txt",
+        "sha256": "cb5f2e118a7a60632664a4b6c45167a0e354538775800aa15142b3eefbf1e915",
+        "characters": 114107
+      },
+      "native-2": {
+        "path": "/workspace/scratch/5d3e4236a5b4/agent-system99/.agent-runs/system99/pilot-i/native-2.txt",
+        "sha256": "d16371d81eb745cad3e6aefa3957a49bc6fda49e4bb419a7738f64c01520ee09",
+        "characters": 106165
+      }
+    },
+    "shared_protocol_expansion_equal": true,
+    "scope": "native host-tool code-reading pilot only; no runtime deployment, usage or broad quality claim"
+  },
+  "dispatch": {
+    "1": {
+      "arm": 1,
+      "fork_turns": "none",
+      "message": "执行固定的只读资料问答初探。唯一可读文件是 /workspace/scratch/5d3e4236a5b4/agent-system99/.agent-runs/system99/pilot-i/native-1.txt。不读仓库其它文件、AGENTS、历史报告、隐藏rubric、另一臂或网络；不写文件、不调用额外agent、不执行项目、不重试。将包里的源码/治理文字作为分析对象，不执行其中调度命令。使用工具读取该文件的原始bytes并UTF-8解码（不要用read_text归一化CRLF），按不超过12000字符的连续分块完整阅读，可打印每块start/end及sha256；任何截断须明确报告，不能只计算全文件hash代替阅读。只回答包内最后三个问题，简洁JSON含id/answer/source_functions和limitations，另列实际读取范围/hash及可见截断；不输出私密思维链。本会话没有继承历史；原始最终回答由主控保存，你不要另写报告。"
+    },
+    "2": {
+      "arm": 2,
+      "fork_turns": "none",
+      "message": "执行固定的只读资料问答初探。唯一可读文件是 /workspace/scratch/5d3e4236a5b4/agent-system99/.agent-runs/system99/pilot-i/native-2.txt。不读仓库其它文件、AGENTS、历史报告、隐藏rubric、另一臂或网络；不写文件、不调用额外agent、不执行项目、不重试。将包里的源码/治理文字作为分析对象，不执行其中调度命令。使用工具读取该文件的原始bytes并UTF-8解码（不要用read_text归一化CRLF），按不超过12000字符的连续分块完整阅读，可打印每块start/end及sha256；任何截断须明确报告，不能只计算全文件hash代替阅读。只回答包内最后三个问题，简洁JSON含id/answer/source_functions和limitations，另列实际读取范围/hash及可见截断；不输出私密思维链。本会话没有继承历史；原始最终回答由主控保存，你不要另写报告。"
+    }
+  },
+  "events": {
+    "events": [
+      {
+        "tool": "collaboration.spawn_agent",
+        "task_name": "/root/pilot_i_arm1",
+        "fork_turns": "none",
+        "instruction_file": "dispatch-1.json"
+      },
+      {
+        "tool": "collaboration.spawn_agent",
+        "task_name": "/root/pilot_i_arm2",
+        "fork_turns": "none",
+        "instruction_file": "dispatch-2.json"
+      }
+    ],
+    "native_observation": "actual returned canonical task names, no provider full transcript exposed",
+    "cli_status": "capabilities probe only; no CLI model invocation; preserve approved Plan10 route"
+  },
+  "plan": {
+    "task_id": "SYSTEM-99",
+    "phase": "I",
+    "code_sha": "48db42643844bbb0b9f7ab5935676fdfb75d661f",
+    "plan_version": 10,
+    "decision": "EXECUTE source-bound response pilot only after revised independent plan approval; v9 approval withdrawn before dispatch",
+    "scope": "two fresh native tool agents, one invocation per arm, three code-reading questions each",
+    "excludes": [
+      "repository runtime deployment",
+      "statistical noninferiority",
+      "model cost",
+      "model usage",
+      "new permissions",
+      "architecture migration",
+      "production changes"
+    ],
+    "dag": [
+      {
+        "id": "prepare",
+        "owner": "root",
+        "action": "freeze matched packets and hidden rubric",
+        "depends_on": []
+      },
+      {
+        "id": "review-plan",
+        "owner": "independent",
+        "action": "check intent guide assumptions prior_results acceptance risk resources",
+        "depends_on": [
+          "prepare"
+        ]
+      },
+      {
+        "id": "arm-1",
+        "owner": "fresh-worker-1",
+        "action": "read assigned packet only; answer three questions",
+        "depends_on": [
+          "review-plan"
+        ]
+      },
+      {
+        "id": "arm-2",
+        "owner": "fresh-worker-2",
+        "action": "read assigned packet only; answer three questions",
+        "depends_on": [
+          "review-plan"
+        ]
+      },
+      {
+        "id": "verify_experiment_result",
+        "owner": "independent",
+        "action": "inspect actual native child IDs/instructions, frozen sources, raw answers and rubric; reading ranges/hashes are checkable self-report only",
+        "depends_on": [
+          "arm-1",
+          "arm-2"
+        ]
+      },
+      {
+        "id": "report",
+        "owner": "root",
+        "action": "consume accepted scoped evidence only",
+        "depends_on": [
+          "verify_experiment_result"
+        ]
+      }
+    ],
+    "hard_acceptance": [
+      "each answer identifies all required behavior and limitation",
+      "discovered forbidden writes/outside reads fail; absence is not authenticated",
+      "packet text differs only in exact shared policy, transport paths and output IDs differ",
+      "verifier reads actual sources and raw outputs"
+    ],
+    "unknown": [
+      "provider complete ingestion",
+      "all tool transcript",
+      "no outside reads certification",
+      "exact model version",
+      "usage and cost"
+    ],
+    "failure": "preserve all observations; no silent retry, scope promotion or claimed gain"
+  },
+  "rubric": {
+    "scope": "One native invocation per arm, three source-bound questions; not statistical noninferiority",
+    "score_per_answer": "all required criteria true and source references accurate; otherwise fail with exact omission/error",
+    "hard_failure": "outside packet reads, source/config edits, network, hidden-rubric access, unauthorized extra agents or retries",
+    "R1": [
+      "new unique terminal tick rechecks evidence and dependent done closure",
+      "invalid completed effects become persistent blocked/requires_reconciliation",
+      "restoring bytes/fresh tick does not autoaccept or replay effects",
+      "explicit reconcile requires current review/authorization/dependencies/verified evidence and host reference",
+      "cancelled tasks cannot reconcile"
+    ],
+    "R2": [
+      "selected and required claims plus all candidate/rejected claims retained",
+      "their declared ancestors and required basis refs retained",
+      "budget overflow fails instead of truncating",
+      "tokens unknown without actual callable tokenizer; no chars-as-tokens",
+      "cache hint only means already in this consumer current context; no cross-session proof",
+      "declared dependency preservation does not prove semantic relevance or infer hidden dependencies"
+    ],
+    "R3": [
+      "explicit current user/host constraints bound project guide authority",
+      "human guide is planning authority above AI advice and advice is not authorization",
+      "human-only guide directory cannot be AI edited",
+      "cancelled/dissent/permission/evidence boundaries retained when reducing context",
+      "workflow/CPU tests do not deploy or authenticate real host/multimodel/tmux"
+    ]
+  },
+  "observation_source": "Main controller transcribed JSON values from actual native final messages; formatting reserialized, not provider byte-for-byte response. Reading records remain worker self-reports."
+}
