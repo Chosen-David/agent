@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 4
+Version: 5
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -22,6 +22,10 @@ v3并发整合：最新main8587b781新增MEM-INDEX-96和记忆目录功能；保
 后续阶段：结果可发现登记、portable终态证据有效性、真实协作/更正/恢复审查，按确认问题版本化补方案再实现。检索/存储微基准不代替真实模型任务质量；受限后端或质量/成本关键数据未验证则整批保持未完成。阶段性发布是可恢复检查点，不计完成轮次，不以加文档/Skill数量代替能力。
 
 阶段C（CHAIN-TERMINAL）：仅portable done的新可信事件重验当前完成证据及依赖闭包，失效的已执行节点blocked并需显式reconcile，保存旧evidence/attempts，不进入claim或自动重放；恢复原文件不能自动取消reconciliation。active链原failed语义、cancelled、重复事件及managed worker契约保留。验收使用真实临时文件篡改、重启、无关支线、缺失/异常verifier、恢复与取消负控；保护计划撤销后的终态处理须单独补证。先保存修前失败、独立计划审查后实现，独立结果验收后可发布阶段检查点。
+
+阶段D（CHAIN-RESULT-CATALOG）：按catalog-plan登记代表性result-fd95，唯一旧目录新增record.json；14旧文件/失败/独审原字节不变，register_history保留unknown、contract=None、context={}、measured_at=None，不补造缺失私有日志。先查正式查询缺record/无候选，修后两种名称均可发现；show精确14 refs，decide仍拒绝自动复用。登记完整性独审后方可发布，整体覆盖后续分批处理，不能将82缺record全称损坏或自动授信。
+
+阶段E（CHAIN-REVIEW-RESTORE）：保护链完成后，顶层审核拒绝必须将已done节点持久blocked/requires_reconciliation，沿用_check_done已有plan_review_after_effect语义；保留证据/计数，不清既有围栏。认证恢复、重复wake和重启不能自行接受旧完成状态；显式reconcile仍验当前认证/授权/依赖/证据，取消不可恢复。只补顶层异常分支，不改审核认证/预算、事件去重、active失效规则或managed接口。先修前失败，独立计划审核后实施；单节点/完成子集/全完成、混合DAG、撤销与取消/恢复/权限/事务持久化、原C及双主/受管兼容回归并独审；无真实宿主或模型质量主张。
 
 ## Progress
 
@@ -46,3 +50,7 @@ v3并发整合：最新main8587b781新增MEM-INDEX-96和记忆目录功能；保
 阶段C Version4已独立approve后实现，最终6项修前8失败保留。修后专项74项、全库1372项（1364执行通过/8跳过）、Reader3通过，独立结果复核收尾中。Version4使先前CLI草稿只作固定历史证据，不当当前派发方案；当前无生产start、审核恢复或模型质量主张。结果登记覆盖另由同批catalog-plan只读调查推进，不新增竞争TASK。
 
 阶段C独立回执usable-with-scope已回读：83项（82通过/1跳过）及额外当前有效保护/事务回滚/双独立根负控通过；原active/managed语义保留。仅当前有效审核的新可信tick有保证，终态审核撤销恢复仍open。阶段C普通发布准备中，整批继续未完成。
+
+阶段C已发布并回读main9ab9becde217b74c50464155ab675dee9f422a60；本次fetch未变。Version5独立approve后完成D/E：[阶段证据](../../results/system99/stage-de.md)。result-fd95仅增不授信record，14旧文件与50c1ca1逐字节一致；两种正式名称查询0→1命中，decide仍unknown/verify_delta且不调用verifier，其余81个缺登记目录未处理。审核撤销后的旧done加持久恢复围栏，修前5项4失败1通过，修后专项79、-O新回归5、全库1377（1369通过/8跳过）、Reader4及同步通过；独立结果复核进行中，不宣称真实宿主验收。新增Chubby正文固定版本/章节/局限，同批累计11篇；整批仍open，查询漂移、通信/记忆到真实消费者、模型质量/总成本及跨宿主验证继续未完成。
+
+阶段D/E独立验收已接受usable-with-scope：109项108通过/1真实tmux跳过、Reader4/同步通过，另补原围栏不覆盖、事务回滚、旧core固定失败、登记不可覆盖/不授信负控；全库日志与原字节独立核算，未独立重跑全库。仅本地CPU边界成立，普通发布及远端回读准备中；整批未完成。

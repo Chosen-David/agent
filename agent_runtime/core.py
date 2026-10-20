@@ -387,7 +387,11 @@ class Engine:
                 if state['status'] != 'cancelled':
                     state['status'] = 'blocked'
                     for node in state['tasks'].values():
-                        if not node.get('requires_reconciliation') and (node['status'] == 'todo' or
+                        if node['status'] == 'done':
+                            node.update(status='blocked', reason_kind='plan_review_after_effect',
+                                        requires_reconciliation=True,
+                                        reason='review invalid after effect; explicit reconciliation required: ' + str(exc))
+                        elif not node.get('requires_reconciliation') and (node['status'] == 'todo' or
                                 (node['status'] == 'blocked' and node.get('reason_kind') == 'plan_review')):
                             node.update(status='blocked', reason_kind='plan_review', reason=str(exc))
                     state['plan_review_error'] = str(exc)

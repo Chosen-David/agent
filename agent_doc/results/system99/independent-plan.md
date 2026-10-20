@@ -223,3 +223,48 @@
 本批准允许主控按Version4已授权窄方案实施并产出待验数据；任何改成通用_check_done语义、恢复审核策略、scheduler自动重arm或其他副作用恢复的新取舍须另审。只追加本文，未写源/TASK/测试、未执行外部服务或发布。
 
 Version4同范围补强回读：restart现已显式`Store(self.db_path)`后重建Engine，源码只增加Store导入和该重建；新测试SHA `0e5a62242ef9600db8ee64bb5b35381d3a19062af199a524a684e7518cf55c21`、新增保留red日志terminal-before-v3.log SHA `2d7a4f29c651264b8ad1cbddf3aa2be598b18cda290eb873a3deaf3b095e6222`，尾部仍6项/8失败（0.385s），core仍未改。此修改不变更方法/阈值，本阶段技术approve继续适用，以此测试版本进入后续独立结果验收，旧v2日志不覆盖。
+
+## Version5 阶段 D/E 计划审查（2026-10-20）
+
+技术决定：**approve，仅下述最小范围**；D登记完整性与E行为结果仍须独立验收，不能据此宣称旧数据可复用或SYSTEM-99完成。本次只读核对，未登记、改源/TASK或运行测试。
+
+基线HEAD `9ab9becde217b74c50464155ab675dee9f422a60`。已读Version5、catalog-plan、register_history/_save/show/search/decide_run、顶层tick审核异常与既有_check_done/reconcile，以及最终五项恢复测试/修前日志。
+
+| 固定对象 | SHA-256 |
+| --- | --- |
+| SYSTEM-99 Version5文件 | `20ecdb4db8556fb1bc8041394a5fca91a0223198407cdf8490db8484c2721acc` |
+| catalog-plan.md | `00a8684f43bd5991d11c599d955c3c4b3d2aecd5716da9acc55e7013b566650a` |
+| 当前core.py（E尚未改） | `a0796fc805336f2044b94ccbd69ff1ce0e5706788d8defc9d35cfa3fd5e1f8ca` |
+| result_store.py（D不改） | `6ef04bd8497e196dd728bc480afba11f192c29c43282b663aa410db3afdfefaf` |
+| test_completed_review_recovery.py | `0043ccf5606aad06ee18e72432864d00cc391e68062c2359b52053cde40b4875` |
+| review-restore-before-v3.log | `43366e5fe987b772bfc32021c8be9b08f0ef4cdbd55459d654b39edc72347a52` |
+
+| 七域 | 判断 | 关键依据 |
+| --- | --- | --- |
+| intent | pass | D恢复来源可发现性而不授信；E围栏已发生作用，补上C明确未覆盖的审核撤销恢复。 |
+| guide | pass | 同SYSTEM-99，guide只读，root独占写入；不新增权限/服务。 |
+| assumptions | pass | D API允许既有历史目录一次新增只读引用record；E顶层目前漏掉done节点，而_check_done已有对应围栏语义。 |
+| prior_results | pass | 实际读取两份新查询：均252扫描/82错误；撤销查询partial=true有5旧候选，catalog查询partial=false/0候选。旧pass不复用；D原件只作追溯。 |
+| acceptance | pass | D明确14refs/unknown/不自动reuse及重复拒绝；E最终5方法覆盖全完成、完成前缀、混合DAG、重建/权限/取消，原兼容门槛保留。 |
+| risk | pass | D不改14原件或补私有日志；E只补顶层done围栏，不改认证/预算/事件顺序或doing副作用处理。 |
+| resources | pass | 单record与本地CPU/临时SQLite即可；无外部模型、付费或真实host质量主张。 |
+
+### D：最小登记与不授信负控
+
+独立重算catalog表中14个普通非链接文件：151668 bytes、最大33536 bytes，所有SHA匹配且逐字节等于`50c1ca1e`原提交；当前record确实不存在。按表顺序的完整refs紧凑JSON SHA为 `1ce7e78cdb8303a7b92f6bb135004930993c55a6996bec959b41134745333820`。私有full.log当前缺失，保留历史声明但不得纳入已读取refs。
+
+批准只经register_history新增`result-fd95/record.json`：origin=historical-external-reference、contract=None、context={}、measured_at=None、validation unknown/proof=None，registered_at取真实登记时刻。既有历史目录与run名用于索引原件，不冒充新实测；不改旧审核/manifest，也不导出当前源码伪装当年执行树。
+
+结果验收须重查同名/大小写冲突和14字节，精确show及两种正式名称查询由0→同一record候选；只要求该目录缺record错误消失，不让总错误数或候选排序充当验收。无契约decide保持verify_delta/unknown/proofNone/不自动skip，即便传入verifier spy也不调用。重复登记拒绝；坏ref/变更ref/大小写冲突负控只在自有临时fixture，不破坏本库原件。若写前已有record或原件变化，停该登记分支核对，不覆盖。
+
+### E：补已完成作用的持久围栏
+
+批准在顶层review异常事务内，对**任何链状态中的已done节点**补与_check_done一致的blocked、plan_review_after_effect、requires_reconciliation及恢复说明；原evidence/attempts/dispatches/next_at保留。其余todo/原plan_review临时阻塞处理照旧；已有terminal_evidence等围栏不清除。不要只判断整体done，否则漏掉mixed中的完成前缀。
+
+恢复认证后，独立未开始支线可按原授权运行，依赖被围栏完成节点的后继仍等显式reconcile；不能为了“不自愈”冻结所有独立工作。doing的租约/已执行outcome、取消、原C终态观测和active证据failed语义不顺带改变。顶层review原本优先于事件去重，重复拒绝可再次认证/记录但不得重放actor；不要挪event消费次序来掩盖撤销。
+
+最终red已读：5方法、4 assertion failures、1取消正控通过、0 errors；v2的fixture错误保留但不计生产缺陷。mixed fixture三个节点绑定同一R1要求、各有独立report/output，并实际通过程序审核；不是删scope/改legacy绕过。
+
+修后硬负控：恢复认证+重复wake+Store/Engine重建仍需reconcile；全完成和完成子集均保留原作用，mixed后继不抢跑；未授权/空证据/取消恢复拒绝，合法按依赖恢复不增加非幂等actor次数。补核已有围栏不被替换、事务写失败不留半状态；原C、双主/预算/作用fencing、active和managed回归原断言继续。独立结果验收不得以CPUHost测试替代真实模型认证。
+
+两阶段各保留准确新产物/日志与旧失败；D改变查询响应后，旧受保护派发不能偷偷刷新其prior_result_search，本阶段不实现查询漂移“优化”。登记覆盖、真实消费者恢复/模型质量/跨机缺口继续open。本审查无blocking finding；只追加本文，不写源/TASK/旧结果或登记record。
