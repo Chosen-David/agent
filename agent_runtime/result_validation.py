@@ -62,23 +62,27 @@ def _bytes(root, value):
     read_path, relocated_digest = legacy_read_binding(root, value)
     path = _path(root, read_path)
     fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NONBLOCK', 0) | getattr(os, 'O_NOFOLLOW', 0))
-    with os.fdopen(fd, 'rb') as stream:
-        info = os.fstat(stream.fileno())
-        _need(stat.S_ISREG(info.st_mode), 'artifact must be a regular file')
-        _need(info.st_size <= LIMIT, 'artifact exceeds 16 MiB bound; use bounded shard manifests')
-        if info.st_size < 64 * 1024 and stream.seekable():
-            # A max-bound read can allocate 16 MiB even for a tiny artifact.
-            # The extra byte detects growth; fstat is not a snapshot guarantee.
-            initial = info.st_size + 1
-            data = stream.read(initial)
-            if len(data) == initial:
-                # Discard the probe before rereading: concatenating a prefix
-                # and remainder doubles peak memory when the file has grown.
-                del data
-                stream.seek(0)
+    try:
+        # Retain ownership even if fdopen fails before entering its context.
+        with os.fdopen(fd, 'rb', closefd=False) as stream:
+            info = os.fstat(stream.fileno())
+            _need(stat.S_ISREG(info.st_mode), 'artifact must be a regular file')
+            _need(info.st_size <= LIMIT, 'artifact exceeds 16 MiB bound; use bounded shard manifests')
+            if info.st_size < 64 * 1024 and stream.seekable():
+                # A max-bound read can allocate 16 MiB even for a tiny artifact.
+                # The extra byte detects growth; fstat is not a snapshot guarantee.
+                initial = info.st_size + 1
+                data = stream.read(initial)
+                if len(data) == initial:
+                    # Discard the probe before rereading: concatenating a prefix
+                    # and remainder doubles peak memory when the file has grown.
+                    del data
+                    stream.seek(0)
+                    data = stream.read(LIMIT + 1)
+            else:
                 data = stream.read(LIMIT + 1)
-        else:
-            data = stream.read(LIMIT + 1)
+    finally:
+        os.close(fd)
     _need(len(data) <= LIMIT, 'artifact grew beyond verification bound')
     check_relocated_digest(data, relocated_digest)
     return data

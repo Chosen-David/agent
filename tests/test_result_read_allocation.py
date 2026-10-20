@@ -58,8 +58,8 @@ class ResultReadAllocationTests(unittest.TestCase):
         real_fdopen = os.fdopen
         calls = []
         class Stream:
-            def __init__(self, fd, mode):
-                self.raw = real_fdopen(fd, mode)
+            def __init__(self, fd, mode, **kwargs):
+                self.raw = real_fdopen(fd, mode, **kwargs)
             def __enter__(self):
                 return self
             def __exit__(self, *args):
