@@ -63,6 +63,45 @@ def _prior_result_search(store, query):
                 'errors': [{'error': str(exc)}], 'authority': 'lookup failed; no absence or reuse claim'}
 
 
+def _prior_search_comparison(reviewed, observed):
+    """Only exhaustive v1 scans may differ in count; never replace reviewed input."""
+    def encoded(value):
+        return json.dumps(value, sort_keys=True, ensure_ascii=False, allow_nan=False)
+    try:
+        if reviewed == observed and encoded(reviewed) == encoded(observed):
+            return 'same'
+        keys = {'schema_version', 'query', 'status', 'results', 'strategy',
+                'scanned', 'partial', 'errors', 'authority'}
+        hit_keys = {'run_id', 'record_sha256', 'record_path', 'summary', 'origin',
+                    'score', 'match', 'stored_validation', 'applicability'}
+        for search in (reviewed, observed):
+            if (type(search) is not dict or set(search) != keys
+                    or search['schema_version'] != 'project-result-search/v1'
+                    or search['strategy'] != 'lexical' or search['partial'] is not False
+                    or type(search['errors']) is not list or search['errors']
+                    or type(search['query']) is not str or not search['query'].strip()
+                    or len(search['query']) > 2000
+                    or search['authority'] != 'retrieval only; no applicability or acceptance proof'
+                    or type(search['scanned']) is not int or not 0 <= search['scanned'] <= 200
+                    or type(search['results']) is not list
+                    or not len(search['results']) <= min(5, search['scanned'])
+                    or search['status'] != ('candidates' if search['results'] else 'no_hits')):
+                return None
+            for hit in search['results']:
+                if (type(hit) is not dict or set(hit) != hit_keys
+                        or any(type(hit[k]) is not str or not hit[k] for k in hit_keys - {'score'})
+                        or type(hit['score']) is not int or hit['score'] <= 0
+                        or hit['match'] != 'lexical' or hit['applicability'] != 'unchecked'
+                        or len(hit['record_sha256']) != 64
+                        or any(c not in '0123456789abcdef' for c in hit['record_sha256'])):
+                    return None
+        old = {k: v for k, v in reviewed.items() if k != 'scanned'}
+        new = {k: v for k, v in observed.items() if k != 'scanned'}
+        return 'scan-only' if encoded(old) == encoded(new) else None
+    except (TypeError, ValueError, RecursionError):
+        return None
+
+
 def _review_prior_candidates(task, search):
     """Rationale is required before repeating data work; it is not acceptance."""
     producer = (task.get('experiment_result') is not None or task.get('produces_data') is True
@@ -280,8 +319,16 @@ class ReportingHandler:
             # Do not replace a reviewed adapter input with unreviewed observations.
             producer = (task.get('experiment_result') is not None or task.get('produces_data') is True
                         or task.get('task_type') == 'experiment' or task.get('result_reuse') is not None)
-            if producer and task.get('prior_result_search') != self._prior_searches[search_key]:
-                return Outcome('blocked', 'prior-result evidence changed after main review; versioned replan required')
+            if producer:
+                old, current = task.get('prior_result_search'), self._prior_searches[search_key]
+                comparison = _prior_search_comparison(old, current)
+                if comparison is None:
+                    return Outcome('blocked', 'prior-result evidence changed after main review; versioned replan required')
+                if comparison == 'scan-only':
+                    with context.store.transaction() as db:
+                        context.store.log(db, context.run_id, context.clock(), 'prior_result_scan_only',
+                                          {'task_id': task['task_id'], 'reviewed_scanned': old['scanned'],
+                                           'observed_scanned': current['scanned']})
         else:
             dispatched_task['prior_result_search'] = copy.deepcopy(self._prior_searches[search_key])
         if context is not None and hasattr(context, 'current') and not context.current():

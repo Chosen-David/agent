@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 5
+Version: 6
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -26,6 +26,8 @@ v3并发整合：最新main8587b781新增MEM-INDEX-96和记忆目录功能；保
 阶段D（CHAIN-RESULT-CATALOG）：按catalog-plan登记代表性result-fd95，唯一旧目录新增record.json；14旧文件/失败/独审原字节不变，register_history保留unknown、contract=None、context={}、measured_at=None，不补造缺失私有日志。先查正式查询缺record/无候选，修后两种名称均可发现；show精确14 refs，decide仍拒绝自动复用。登记完整性独审后方可发布，整体覆盖后续分批处理，不能将82缺record全称损坏或自动授信。
 
 阶段E（CHAIN-REVIEW-RESTORE）：保护链完成后，顶层审核拒绝必须将已done节点持久blocked/requires_reconciliation，沿用_check_done已有plan_review_after_effect语义；保留证据/计数，不清既有围栏。认证恢复、重复wake和重启不能自行接受旧完成状态；显式reconcile仍验当前认证/授权/依赖/证据，取消不可恢复。只补顶层异常分支，不改审核认证/预算、事件去重、active失效规则或managed接口。先修前失败，独立计划审核后实施；单节点/完成子集/全完成、混合DAG、撤销与取消/恢复/权限/事务持久化、原C及双主/受管兼容回归并独审；无真实宿主或模型质量主张。
+
+阶段F（CHAIN-SEARCH-DRIFT）：仅允许已知v1完整字段、合法类型、默认有界扫描、partial=false/errors=[]且除scanned外逐字段完全相等的实时查询统计差异；完整计划哈希、原task和handler收到的prior_result_search均不改变，日志保留实际新查询及纯扫描差异分类。不忽略候选/哈希/排序/分数/状态/未知字段/查询策略或缺口变化，不放宽partial/错误响应，不自动复用或重审核。固定修前双生产者中央登记→各自独立算术gate→后继真实派发/重启反例及负控，独立方案审核后才实现；验证原有门禁、全库/Reader及独立结果，模型/部署/速度仍未知。
 
 ## Progress
 
@@ -54,3 +56,13 @@ v3并发整合：最新main8587b781新增MEM-INDEX-96和记忆目录功能；保
 阶段C已发布并回读main9ab9becde217b74c50464155ab675dee9f422a60；本次fetch未变。Version5独立approve后完成D/E：[阶段证据](../../results/system99/stage-de.md)。result-fd95仅增不授信record，14旧文件与50c1ca1逐字节一致；两种正式名称查询0→1命中，decide仍unknown/verify_delta且不调用verifier，其余81个缺登记目录未处理。审核撤销后的旧done加持久恢复围栏，修前5项4失败1通过，修后专项79、-O新回归5、全库1377（1369通过/8跳过）、Reader4及同步通过；独立结果复核进行中，不宣称真实宿主验收。新增Chubby正文固定版本/章节/局限，同批累计11篇；整批仍open，查询漂移、通信/记忆到真实消费者、模型质量/总成本及跨宿主验证继续未完成。
 
 阶段D/E独立验收已接受usable-with-scope：109项108通过/1真实tmux跳过、Reader4/同步通过，另补原围栏不覆盖、事务回滚、旧core固定失败、登记不可覆盖/不授信负控；全库日志与原字节独立核算，未独立重跑全库。仅本地CPU边界成立，普通发布及远端回读准备中；整批未完成。
+
+阶段D/E已发布main789697f并回读。Version6阶段F完成纯scanned统计误阻塞修复：
+保护CPU链A→独立gate→B→独立gate由B不派发恢复四节点完成；整个原task、
+planSHA/回执不变，候选/缺口/unknown变化及日志失败继续阻塞。修前最终8项2失败；
+修后14项、专项106、-O14、全库1391（1383通过/8跳过）、Reader应用3及同步通过。
+[阶段证据](../../results/system99/stage-f.md)与[最终独审](../../results/system99/independent-stage-f-final.md)
+绑定最终SHA，先前测试fixture错误与候选记录保留；仅有界CPU验收，普通发布收尾。
+新增PlanFence正文固定v2/章节/消融/局限，同一未结束批次累计12篇。
+下一步仍为通信/记忆更正到已完成消费者的恢复、登记覆盖与实际上下文/任务质量；
+真实Claude/多模型/tmux/SSH后端及质量/总成本缺口仍open，不计一轮完成。
