@@ -11,6 +11,7 @@ from heapq import nsmallest
 from pathlib import Path
 import re
 import sqlite3
+import stat
 import unicodedata
 
 if __package__:
@@ -79,9 +80,19 @@ def _tokenize(text):
     return ' '.join(words)
 
 
+def _index_alias(path):
+    try:
+        info = path.lstat()
+    except FileNotFoundError:
+        return False
+    return (stat.S_ISLNK(info.st_mode) or
+            bool(getattr(info, 'st_file_attributes', 0) & getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 1024)))
+
+
 def _connect(path, readonly=False):
     path = Path(path).absolute()
-    _require(not any(p.is_symlink() for p in (path, *path.parents)), 'index path traverses symlink')
+    _require(not any(_index_alias(p) for p in (path, *path.parents)), 'index path traverses symlink or reparse point')
+    _require(not path.exists() or path.is_file(), 'index must be a regular file')
     if readonly:
         _require(path.is_file(), 'knowledge index missing; run index first')
         con = sqlite3.connect(path.as_uri()+'?mode=ro', uri=True, timeout=10)
