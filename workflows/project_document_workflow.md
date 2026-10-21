@@ -41,7 +41,7 @@
 
 启动/恢复、委派前、收到用户或指南更新、每项结果后及最终汇报前，依次核对：当前授权 → 人类指南及版本 → 唯一任务清单 → 本次 task_refs 对应详情 → 相关建议及处理结果 → agent_doc/results/ 已有数据检索与适用性核对 → 运行状态/证据。先查当前项目根，不将安装目录当目标项目。
 
-续跑/导航时不必每次重读所有详情全文：先取廉价导航摘要（索引行 + 各详情 `Status`/`Owner`/`### 摘要`/有界 `## Progress` 末尾），判断该看哪个、下一步由谁继续；只有真正推进某个任务时才打开那份详情全文。可调用 `agent_runtime.project_docs.task_navigation(root)` 或 `python -m agent_runtime.project_docs --root ABSOLUTE_PROJECT_ROOT nav`。摘要里的 `Status`/`Owner` 仅作派生态，不替代受管账本与独立验收。
+续跑/导航时不必每次重读所有详情全文：默认先取未勾选索引项的廉价导航摘要（索引行 + 对应详情的 `Status`/`Owner`/`### 摘要`/有界 `## Progress` 文档首尾片段），据此选择要打开的详情；只有真正推进某个任务时才读那份详情全文。可调用 `agent_runtime.project_docs.task_navigation(root)` 或 `python -m agent_runtime.project_docs --root ABSOLUTE_PROJECT_ROOT nav`。这里的“未勾选”只是索引选择，不等于受管账本 active 状态；输出显式报告总数、选中数和省略的已勾选数，被省略详情不会由默认视图验证。历史详情同时存在进度置顶和尾部追加，首尾片段只表示文档位置，不承诺哪边较新；没有结构化摘要/状态时必须打开详情确认当前状态与下一步。需要核对历史更正、异议、依赖或全部详情时，显式传 `include_checked=True` / `--include-checked` 并按需提高字符预算，或使用完整 snapshot/delta 流程。摘要里的 `Status`/`Owner` 仅作派生态，不替代完整文档审计、受管账本与独立验收。
 
 总清单格式：
 

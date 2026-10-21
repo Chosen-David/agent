@@ -241,16 +241,25 @@ def _plan_section(text, name):
     return body.strip() or None
 
 
-def _progress_tail(text, limit):
+def _progress_edges(text, limit):
+    """Bounded document-order edges without inferring chronological order."""
     text = text.strip()
     if len(text) <= limit:
-        return text
-    return '…(earlier progress omitted)…\n' + text[-limit:]
+        return {'start': text, 'end': None, 'truncated': False}
+    start_chars = (limit + 1) // 2
+    end_chars = limit - start_chars
+    return {'start': text[:start_chars], 'end': text[-end_chars:], 'truncated': True}
 
 
-def task_navigation(root, *, max_chars=12000, progress_tail_chars=400):
-    """Cheap resume/navigation digest: index rows plus each detail's derived
-    Status/Owner, `### 摘要` and a bounded `## Progress` tail.
+def task_navigation(root, *, max_chars=12000, progress_chars=64,
+                    include_checked=False, progress_tail_chars=None):
+    """Cheap resume/navigation digest for unchecked index rows by default.
+
+    Each selected row carries its detail's derived Status/Owner, `### 摘要`
+    and bounded document-order edges of `## Progress`.  The edges deliberately
+    make no chronological claim because existing details use both prepend and
+    append conventions.  ``include_checked`` opts into historical rows; callers
+    will usually also need a larger ``max_chars`` budget.
 
     Mirrors the tiered "capabilities (read-only minimal) vs full freeze" loading
     pattern: the main AI resumes/navigates from this digest and opens only the
@@ -264,11 +273,20 @@ def task_navigation(root, *, max_chars=12000, progress_tail_chars=400):
         raise DocumentError('task navigation requires the canonical task index')
     if type(max_chars) is not int or not 1 <= max_chars <= 200000:
         raise DocumentError('invalid navigation character budget')
-    if type(progress_tail_chars) is not int or not 1 <= progress_tail_chars <= 100000:
-        raise DocumentError('invalid progress tail bound')
+    if progress_tail_chars is not None:
+        if progress_chars != 64:
+            raise DocumentError('use only one progress character bound')
+        progress_chars = progress_tail_chars
+    if type(progress_chars) is not int or not 2 <= progress_chars <= 100000:
+        raise DocumentError('invalid progress character bound')
+    if type(include_checked) is not bool:
+        raise DocumentError('include_checked must be a boolean')
     items = parse_requirements(regular_bytes(root, index).decode('utf-8'), canonical=True)
+    selected = items if include_checked else [item for item in items if not item['checked']]
     tasks = []
-    for item in items:
+    # Filter from the canonical index before opening details.  The default
+    # digest intentionally does not validate omitted checked detail files.
+    for item in selected:
         rel = f'agent_doc/task/{item["detail"]}'
         text = regular_bytes(root, rel).decode('utf-8').replace('\r\n', '\n')
         planning, progress = split_detail(text)
@@ -280,12 +298,18 @@ def task_navigation(root, *, max_chars=12000, progress_tail_chars=400):
                       'status': _field_once(planning, 'Status'),
                       'owner': _field_once(planning, 'Owner'),
                       'summary': _plan_section(planning, '摘要'),
-                      'progress_tail': _progress_tail(progress, progress_tail_chars),
+                      'progress_edges': _progress_edges(progress, progress_chars),
                       'detail': item['detail']})
-    digest = {'schema_version': 'task-navigation/v1', 'project_root': str(root),
-              'task_index': index.relative_to(root).as_posix(), 'tasks': tasks,
-              'scope': 'derived navigation digest; Status/Owner/summary are non-authoritative '
-                       'and do not replace ledger state or independent verification'}
+    digest = {'schema_version': 'task-navigation/v2', 'project_root': str(root),
+              'task_index': index.relative_to(root).as_posix(),
+              'selection': 'all' if include_checked else 'unchecked',
+              'total_tasks': len(items), 'selected_tasks': len(selected),
+              'omitted_checked_tasks': 0 if include_checked else len(items) - len(selected),
+              'tasks': tasks,
+              'scope': 'derived navigation digest; unchecked is an index selection, not managed '
+                       'active state; omitted checked details are not validated; Status/Owner/summary '
+                       'do not replace ledger state, full document audit or independent verification; '
+                       'progress edges are document positions with no newer/older guarantee'}
     serialized = json.dumps(digest, ensure_ascii=False, separators=(',', ':'))
     if len(serialized) > max_chars:
         raise DocumentError('task navigation exceeds character budget; narrow the digest')
@@ -689,7 +713,9 @@ def main(argv=None):
     sub.add_parser('validate')
     nav = sub.add_parser('nav')
     nav.add_argument('--max-chars', type=int, default=12000)
-    nav.add_argument('--progress-tail-chars', type=int, default=400)
+    nav.add_argument('--progress-chars', '--progress-tail-chars', dest='progress_chars',
+                     type=int, default=64)
+    nav.add_argument('--include-checked', action='store_true')
     action = sub.add_parser('migrate')
     action.add_argument('--date', required=True)
     sub.add_parser('guard-write').add_argument('paths', nargs='+')
@@ -703,10 +729,17 @@ def main(argv=None):
             result = {'allowed': [str(assert_ai_writable(args.root, path)) for path in args.paths]}
         elif args.command == 'nav':
             result = task_navigation(args.root, max_chars=args.max_chars,
-                                     progress_tail_chars=args.progress_tail_chars)
+                                     progress_chars=args.progress_chars,
+                                     include_checked=args.include_checked)
         else:
             result = snapshot_project_docs(args.root)
-        print(json.dumps(result, ensure_ascii=False, indent=2))
+        # Navigation's compact serialization is the measured context payload;
+        # pretty-printing it would silently exceed the checked character budget.
+        if args.command == 'nav':
+            rendered = json.dumps(result, ensure_ascii=False, separators=(',', ':'))
+        else:
+            rendered = json.dumps(result, ensure_ascii=False, indent=2)
+        print(rendered)
         return 0
     except (OSError, ValueError) as exc:
         print(json.dumps({'error': str(exc)}, ensure_ascii=False))

@@ -1,6 +1,8 @@
 """Summary-first task navigation digest; derived fields are non-authoritative."""
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -57,8 +59,12 @@ class TaskNavigationTests(unittest.TestCase):
 
     def test_digest_carries_index_and_derived_fields_not_plan_bodies(self):
         nav = task_navigation(self.root)
-        self.assertEqual(nav['schema_version'], 'task-navigation/v1')
+        self.assertEqual(nav['schema_version'], 'task-navigation/v2')
         self.assertEqual(nav['task_index'], 'agent_doc/task/TASK.md')
+        self.assertEqual(nav['selection'], 'unchecked')
+        self.assertEqual(nav['total_tasks'], 1)
+        self.assertEqual(nav['selected_tasks'], 1)
+        self.assertEqual(nav['omitted_checked_tasks'], 0)
         self.assertEqual(len(nav['tasks']), 1)
         task = nav['tasks'][0]
         self.assertEqual(task['id'], 'T1')
@@ -71,7 +77,8 @@ class TaskNavigationTests(unittest.TestCase):
         # The digest stops at the next plan heading; other plan bodies stay out.
         self.assertNotIn('目标与验收', task['summary'])
         self.assertNotIn('实现方法', task['summary'])
-        self.assertIn('Waiting on independent verify', task['progress_tail'])
+        edges = task['progress_edges']
+        self.assertIn('Waiting on independent verify', (edges['start'] or '') + (edges['end'] or ''))
 
     def test_missing_summary_is_none_and_budget_fails_closed(self):
         detail = self.root / 'agent_doc/task/task_details/T1.md'
@@ -101,14 +108,103 @@ class TaskNavigationTests(unittest.TestCase):
         with self.assertRaisesRegex(DocumentError, 'canonical TASK.md'):
             task_navigation(self.root)
 
-    def test_progress_tail_is_bounded(self):
+    def test_progress_edges_are_bounded_without_time_claim(self):
         detail = self.root / 'agent_doc/task/task_details/T1.md'
         detail.write_text(DETAIL.replace(
             '- Waiting on independent verify.',
             '- Waiting on independent verify.\n' + '- detail ' * 200))
-        tail = task_navigation(self.root, progress_tail_chars=80)['tasks'][0]['progress_tail']
-        self.assertLessEqual(len(tail), 80 + len('…(earlier progress omitted)…\n'))
-        self.assertIn('…(earlier progress omitted)…', tail)
+        task = task_navigation(self.root, progress_chars=80)['tasks'][0]
+        edges = task['progress_edges']
+        self.assertTrue(edges['truncated'])
+        self.assertEqual(len(edges['start']) + len(edges['end']), 80)
+        self.assertNotIn('earlier', json.dumps(task))
+        # The compatibility alias has the same neutral document-edge behavior.
+        alias = task_navigation(self.root, progress_tail_chars=80)['tasks'][0]['progress_edges']
+        self.assertEqual(alias, edges)
+        with self.assertRaisesRegex(DocumentError, 'only one'):
+            task_navigation(self.root, progress_chars=40, progress_tail_chars=40)
+
+    def test_prepend_and_append_progress_are_document_edges_not_recency(self):
+        detail = self.root / 'agent_doc/task/task_details/T1.md'
+        for first, last in (('NEW-PREPENDED', 'OLD-AT-END'),
+                            ('OLD-AT-START', 'NEW-APPENDED')):
+            detail.write_text(DETAIL.replace(
+                '### 进度与证据\n\n- 2026-10-07 wired the widget.\n\n'
+                '### 阻塞与下一步\n\n- Waiting on independent verify.',
+                first + '\n' + ('middle-' * 40) + '\n' + last))
+            task = task_navigation(self.root, progress_chars=40)['tasks'][0]
+            self.assertIn(first, task['progress_edges']['start'])
+            self.assertIn(last, task['progress_edges']['end'])
+            self.assertIn('no newer/older guarantee', task_navigation(self.root)['scope'])
+
+    def test_default_filters_checked_rows_before_opening_details(self):
+        index = self.root / 'agent_doc/task/TASK.md'
+        index.write_text(
+            '# Project tasks\n\n## 2026-10-07\n\n'
+            '- [x] [T1] Build a widget ([详情](task_details/T1.md))\n'
+            '- [ ] [T2] Verify a widget ([详情](task_details/T2.md))\n')
+        details = self.root / 'agent_doc/task/task_details'
+        # A malformed checked detail is outside the default unchecked view.
+        (details / 'T1.md').write_text(DETAIL.replace('Task-ID: T1', 'Task-ID: WRONG'))
+        (details / 'T2.md').write_text(
+            DETAIL.replace('[T1] Build a widget', '[T2] Verify a widget')
+                  .replace('Task-ID: T1', 'Task-ID: T2'))
+        nav = task_navigation(self.root)
+        self.assertEqual([task['id'] for task in nav['tasks']], ['T2'])
+        self.assertEqual((nav['total_tasks'], nav['selected_tasks'], nav['omitted_checked_tasks']),
+                         (2, 1, 1))
+        with self.assertRaisesRegex(DocumentError, 'identity/date'):
+            task_navigation(self.root, include_checked=True)
+
+    def test_many_checked_rows_are_explicitly_omitted_and_full_view_is_opt_in(self):
+        details = self.root / 'agent_doc/task/task_details'
+        rows = []
+        for number in range(60):
+            task_id = f'T{number:02d}'
+            checked = number >= 3
+            rows.append(f'- [{"x" if checked else " "}] [{task_id}] Task {number} '
+                        f'([详情](task_details/{task_id}.md))')
+            (details / f'{task_id}.md').write_text(
+                DETAIL.replace('[T1] Build a widget', f'[{task_id}] Task {number}')
+                      .replace('Task-ID: T1', f'Task-ID: {task_id}')
+                      .replace('wired the widget.', 'progress ' * 80))
+        (self.root / 'agent_doc/task/TASK.md').write_text(
+            '# Project tasks\n\n## 2026-10-07\n\n' + '\n'.join(rows) + '\n')
+        nav = task_navigation(self.root)
+        self.assertEqual([task['id'] for task in nav['tasks']], ['T00', 'T01', 'T02'])
+        self.assertEqual((nav['total_tasks'], nav['selected_tasks'], nav['omitted_checked_tasks']),
+                         (60, 3, 57))
+        with self.assertRaisesRegex(DocumentError, 'character budget'):
+            task_navigation(self.root, include_checked=True)
+        full = task_navigation(self.root, include_checked=True, max_chars=200000)
+        self.assertEqual(full['selection'], 'all')
+        self.assertEqual((full['selected_tasks'], full['omitted_checked_tasks']), (60, 0))
+
+    def test_zero_unchecked_and_include_checked_type(self):
+        index = self.root / 'agent_doc/task/TASK.md'
+        index.write_text(index.read_text().replace('- [ ] [T1]', '- [x] [T1]'))
+        nav = task_navigation(self.root)
+        self.assertEqual(nav['tasks'], [])
+        self.assertEqual((nav['total_tasks'], nav['selected_tasks'], nav['omitted_checked_tasks']),
+                         (1, 0, 1))
+        with self.assertRaisesRegex(DocumentError, 'boolean'):
+            task_navigation(self.root, include_checked=1)
+
+    def test_cli_include_checked_is_explicit(self):
+        index = self.root / 'agent_doc/task/TASK.md'
+        index.write_text(index.read_text().replace('- [ ] [T1]', '- [x] [T1]'))
+        default = subprocess.run(
+            [sys.executable, '-m', 'agent_runtime.project_docs', '--root', str(self.root), 'nav'],
+            cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True)
+        self.assertEqual(default.returncode, 0, default.stderr + default.stdout)
+        self.assertEqual(json.loads(default.stdout)['selected_tasks'], 0)
+        self.assertLessEqual(len(default.stdout.rstrip('\n')), 12000)
+        full = subprocess.run(
+            [sys.executable, '-m', 'agent_runtime.project_docs', '--root', str(self.root), 'nav',
+             '--include-checked', '--max-chars', '200000'],
+            cwd=Path(__file__).resolve().parents[1], capture_output=True, text=True)
+        self.assertEqual(full.returncode, 0, full.stderr + full.stdout)
+        self.assertEqual(json.loads(full.stdout)['selected_tasks'], 1)
 
 
 class DocumentDeltaTests(unittest.TestCase):

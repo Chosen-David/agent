@@ -32,7 +32,7 @@
 
 ## 摘要优先导航（减少重复读取）
 
-续跑/派发前不必每次重读所有 detail 全文。先取一份廉价导航摘要：索引行 + 每个 detail 的 `Status`/`Owner`/`### 摘要`/有界的 `## Progress` 末尾，用于判断“该看哪个、下一步由谁继续”；只有真正推进某个任务时才打开那份 detail 全文。可调用 `agent_runtime.project_docs.task_navigation(root)`，或命令行 `python -m agent_runtime.project_docs --root . nav`。这是“只读最小视图 vs 完整冻结”的分层加载：摘要里的 `Status`/`Owner` 仅作派生态，不替代受管账本与独立验收。
+续跑/派发前不必每次重读所有 detail 全文。默认先取未勾选索引项的廉价导航摘要：索引行 + 对应 detail 的 `Status`/`Owner`/`### 摘要`/有界的 `## Progress` 文档首尾片段，用于选择该打开哪个详情；筛选在读取详情前完成。可调用 `agent_runtime.project_docs.task_navigation(root)`，或命令行 `python -m agent_runtime.project_docs --root . nav`。输出显式报告总数、选中数和省略的已勾选数；“未勾选”只是索引选择，不等于受管 active 状态。既有详情同时存在进度置顶和尾部追加，首尾片段只表示文档位置，不承诺哪边较新；没有结构化摘要/状态时须打开详情确认当前状态与下一步。需要核对历史更正、异议、依赖或全部详情时，使用 `include_checked=True` / `--include-checked`（并按需提高字符预算）或完整 snapshot/delta。默认摘要不会验证省略的详情，也不替代受管账本、完整文档审计与独立验收。
 
 结果引用准确的 run ID、路径和适用范围；未通过独立验证的数据不能写成已可消费的结论。详情目录只放已登记的任务文件，职责说明集中在本 README，避免被严格任务索引校验识别为孤立任务。
 
