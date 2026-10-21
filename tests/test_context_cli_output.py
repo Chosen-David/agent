@@ -69,6 +69,20 @@ class ContextCliOutputTests(unittest.TestCase):
         self.assertEqual(packet['records'][0]['text'], text.splitlines(keepends=True)[0])
         self.assertEqual(packet['omitted_records'], 1)
 
+    def test_log_encodings_restore_exact_lines_with_complete_packet_limits(self):
+        from agent_runtime.log_context import restore_log_lines
+        text = 'header \U00010000\r\nERROR "quoted"\r\ntail\r\n'
+        sha = self.source('run.log', text)
+        args = ['--path', 'run.log', '--sha256', sha, '--head', '3', '--tail', '0']
+        for encoding in ('lines', 'chunks', 'runs'):
+            with self.subTest(encoding=encoding):
+                packet = self.boundary('log_context.py', [*args, '--encoding', encoding])
+                self.assertEqual(''.join(row['text'] for row in restore_log_lines(packet)), text)
+        bad = self.cli('log_context.py', ['--path', 'run.log', '--sha256', '0' * 64])
+        self.assertEqual(bad.returncode, 2)
+        self.assertEqual(bad.stdout, b'')
+        self.assertNotIn(b'Traceback', bad.stderr)
+
 
 if __name__ == '__main__':
     unittest.main()
