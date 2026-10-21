@@ -35,7 +35,7 @@ class MemoryOutputTests(unittest.TestCase):
 
     def test_utf8_default_compact_pretty_and_exact_character_limits(self):
         self.seed(2)
-        for command in (('list',), ('check', 'm0', 'm1'), ('history', 'm0'), ('impact', 'm0')):
+        for command in (('list',), ('check', 'm0', 'm1'), ('history', 'm0'), ('impact', 'm0'), ('storage',)):
             with self.subTest(command=command):
                 before = self.files()
                 full = self.cli(*command)
@@ -135,6 +135,21 @@ class MemoryOutputTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(json.loads(result.stdout)['content'], content)
         self.assertEqual(self.ledger.check(['large'])[0]['content'], content)
+
+    def test_large_schema_inventory_is_bounded_without_dropping_index_names(self):
+        self.seed()
+        with self.ledger._connect(write=True) as db:
+            for n in range(300):
+                name = f'fixture_{n}_' + 'x' * 70
+                db.execute(f'CREATE INDEX "{name}" ON events(entry_id)')
+        before = self.files()
+        denied = self.cli('storage')
+        self.assertEqual(denied.returncode, 2)
+        self.assertEqual(denied.stdout, b'')
+        full = self.cli('storage', '--max-chars', '200000')
+        self.assertEqual(full.returncode, 0, full.stderr)
+        self.assertEqual(json.loads(full.stdout), self.ledger.storage())
+        self.assertEqual(self.files(), before)
 
 
 if __name__ == '__main__':

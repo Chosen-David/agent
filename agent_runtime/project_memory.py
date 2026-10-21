@@ -17,7 +17,8 @@ import sqlite3
 import stat
 import sys
 
-from .context_serialization import render_context
+from .context_serialization import (ContextBudgetError, configure_utf8_output,
+                                    render_cli_context, render_context)
 from .project_docs import DocumentError, check_document_refs, guard_write_path
 from .external_json import load_json
 
@@ -562,9 +563,7 @@ def _load_document_refs(path):
 
 
 def main(argv=None):
-    for stream in (sys.stdout, sys.stderr):
-        if hasattr(stream, 'reconfigure'):
-            stream.reconfigure(encoding='utf-8')
+    configure_utf8_output()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', required=True)
     formatting = parser.add_mutually_exclusive_group()
@@ -604,7 +603,8 @@ def main(argv=None):
     index.add_argument('--after-id')
     index.add_argument('--snapshot')
     index.add_argument('--max-chars', type=int, default=20000)
-    sub.add_parser('storage', help='observe SQLite allocation without compaction or deletion')
+    storage = sub.add_parser('storage', help='observe SQLite allocation without compaction or deletion')
+    storage.add_argument('--max-chars', type=int, default=20000)
     checking = sub.add_parser('check')
     checking.add_argument('refs', nargs='+')
     checking.add_argument('--max-chars', type=int, default=20000)
@@ -614,7 +614,7 @@ def main(argv=None):
         reading.add_argument('--max-chars', type=int, default=20000)
     args = parser.parse_args(argv)
     try:
-        bounded_read = args.command in ('list', 'history', 'impact', 'check')
+        bounded_read = args.command in ('list', 'history', 'impact', 'check', 'storage')
         if bounded_read and not 256 <= args.max_chars <= 200000:
             raise MemoryError('read max_chars must be 256..200000')
         document_refs = (_load_document_refs(args.document_refs)
@@ -642,14 +642,15 @@ def main(argv=None):
         else:
             result = getattr(ledger, args.command)(args.id)
         compact = bounded_read if args.compact is None else args.compact
-        output = (_index_json(result) if args.command == 'index' else
-                  (render_context(result, compact=True) if compact else json.dumps(result, ensure_ascii=False, indent=2)))
-        # Text stdout translates every formatting LF on Windows, not only the
-        # final print newline. JSON string bodies already escape CR/LF.
-        output_chars = len(output) + output.count('\n') * (len(os.linesep) - 1) + len(os.linesep)
-        if bounded_read and output_chars > args.max_chars:
-            raise MemoryError('complete memory response exceeds max_chars; use index, filter scope/status, '
-                              'check fewer IDs, or explicitly increase --max-chars (up to 200000)')
+        if bounded_read:
+            try:
+                output = render_cli_context(result, compact=compact, indent=2, max_chars=args.max_chars)
+            except ContextBudgetError as exc:
+                raise MemoryError('complete memory response exceeds max_chars; use index, filter scope/status, '
+                                  'check fewer IDs, or explicitly increase --max-chars (up to 200000)') from exc
+        else:
+            output = (_index_json(result) if args.command == 'index' else
+                      (render_context(result, compact=True) if compact else json.dumps(result, ensure_ascii=False, indent=2)))
         print(output)
         return 0
     except (DocumentError, MemoryError, OSError) as exc:
