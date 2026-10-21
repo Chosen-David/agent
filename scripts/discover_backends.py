@@ -18,6 +18,7 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from agent_runtime.context_serialization import render_context
 from agent_runtime.external_json import ExternalJSONError, load_json
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -113,7 +114,9 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--registry", type=Path, default=DEFAULT_REGISTRY)
     parser.add_argument("--only", action="append", default=[], help="backend id; repeatable")
-    parser.add_argument("--pretty", action="store_true")
+    formatting = parser.add_mutually_exclusive_group()
+    formatting.add_argument("--pretty", action="store_true")
+    formatting.add_argument("--compact", action="store_true", help="preserve all JSON fields without formatting whitespace")
     args = parser.parse_args()
     data = validate_registry(load_json(args.registry, max_bytes=1024 * 1024))
     selected = data["backends"]
@@ -128,7 +131,7 @@ def main() -> int:
         "schema_version": data["schema_version"],
         "backends": [probe_backend(item) for item in selected],
     }
-    print(json.dumps(result, ensure_ascii=False, indent=2 if args.pretty else None))
+    print((render_context(result, compact=True) if args.compact else json.dumps(result, ensure_ascii=False, indent=2 if args.pretty else None)))
     return 0
 
 
