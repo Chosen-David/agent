@@ -1,11 +1,14 @@
 """Explicit, versioned document tools. No installation on import or ordinary setup."""
 from contextlib import contextmanager
 import argparse
+import ctypes
+import errno
 import hashlib
 import json
 import os
 from pathlib import Path
 import platform
+import shutil
 import stat
 import subprocess
 import sys
@@ -27,6 +30,7 @@ LOCK = REPO / 'config/documents-linux-cp312-v1.json'
 ADAPTER = Path(__file__).with_name('documents_adapter.py')
 MARKER = 'agent-documents-root/v1'
 OUTPUT_LIMIT = 8 * 1024 * 1024
+RENAME_NOREPLACE = 1
 
 
 class DocumentsUnavailable(RuntimeError):
@@ -124,44 +128,126 @@ def load_profile():
     return profile, digest(raw)
 
 
-def run_adapter(python, operation, payload, output_dir):
+def _rename_noreplace(parent_fd, source, target):
+    """Publish one directory without replacing a concurrent target."""
+    libc = ctypes.CDLL(None, use_errno=True)
+    try:
+        renameat2 = libc.renameat2
+    except AttributeError as exc:
+        raise DocumentsUnavailable('atomic no-replace directory publication is unavailable') from exc
+    renameat2.argtypes = (ctypes.c_int, ctypes.c_char_p, ctypes.c_int,
+                          ctypes.c_char_p, ctypes.c_uint)
+    renameat2.restype = ctypes.c_int
+    if renameat2(parent_fd, os.fsencode(source), parent_fd, os.fsencode(target),
+                 RENAME_NOREPLACE) == 0:
+        return
+    error = ctypes.get_errno()
+    if error in (errno.EEXIST, errno.ENOTEMPTY):
+        raise ValueError('output-dir was claimed concurrently')
+    if error in (errno.ENOSYS, errno.EINVAL, errno.EOPNOTSUPP):
+        raise DocumentsUnavailable('atomic no-replace directory publication is unavailable')
+    raise OSError(error, os.strerror(error), target)
+
+
+def _remove_stage(parent_fd, name, identity):
+    """Remove only the staging directory created by this invocation."""
+    flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW
+    try:
+        fd = os.open(name, flags, dir_fd=parent_fd)
+    except FileNotFoundError:
+        return
+    except OSError as exc:
+        raise DocumentsUnavailable('staging identity changed; manual recovery required') from exc
+    try:
+        observed = os.fstat(fd)
+    finally:
+        os.close(fd)
+    if (observed.st_dev, observed.st_ino) != identity:
+        raise DocumentsUnavailable('staging identity changed; manual recovery required')
+    shutil.rmtree(name, dir_fd=parent_fd)
+
+
+@contextmanager
+def _adapter_output(output_dir, publish):
     output_dir = safe_path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix='documents-call-') as temp:
-        temp = Path(temp)
-        request = temp / 'input.json'
-        request.write_text(json.dumps(payload), encoding='utf-8')
-        stdout, stderr = temp / 'stdout', temp / 'stderr'
-        with stdout.open('wb') as out, stderr.open('wb') as err:
-            process = subprocess.Popen([str(python), '-I', str(ADAPTER), operation,
-                                        str(request), str(output_dir)], stdin=subprocess.DEVNULL,
-                                       stdout=out, stderr=err, start_new_session=True,
-                                       env={k: v for k, v in os.environ.items()
-                                            if not k.startswith(('PYTHON', 'PIP_'))})
-            deadline = time.monotonic() + 60
-            try:
-                while process.poll() is None:
-                    if stdout.stat().st_size > OUTPUT_LIMIT or stderr.stat().st_size > OUTPUT_LIMIT:
-                        raise ValueError('adapter output exceeds 8 MiB')
-                    if time.monotonic() >= deadline:
-                        raise DocumentsUnavailable('adapter timeout after 60 seconds')
-                    time.sleep(0.02)
-            finally:
-                if process.poll() is None:
-                    process.kill()
-                process.wait()
-        if stdout.stat().st_size > OUTPUT_LIMIT or stderr.stat().st_size > OUTPUT_LIMIT:
-            raise ValueError('adapter output exceeds 8 MiB')
-        if process.returncode != 0:
-            if process.returncode == 3:
-                failure = strict_json(regular_bytes(stdout, max_bytes=OUTPUT_LIMIT))
-                raise ValueError(failure.get('error', 'invalid document input'))
-            raise DocumentsUnavailable('adapter failed: ' + stderr.read_text(errors='replace')[:2000] +
-                             stdout.read_text(errors='replace')[:2000])
-        result = strict_json(regular_bytes(stdout, max_bytes=OUTPUT_LIMIT))
-        if result.get('schema_version') != 'documents-result/v1' or result.get('status') != 'ok':
-            raise ValueError('adapter did not return a successful result')
-        return result
+    parent_fd = None
+    stage_name = None
+    stage_identity = None
+    published = False
+    try:
+        if publish:
+            parent = safe_path(output_dir.parent)
+            parent.mkdir(parents=True, exist_ok=True)
+            parent = safe_path(parent)
+            if output_dir.exists() or output_dir.is_symlink():
+                raise ValueError('output-dir must be a new dedicated directory')
+            parent_fd = os.open(parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+            staging = Path(tempfile.mkdtemp(prefix=f'.{output_dir.name}.staging-', dir=parent))
+            stage_name = staging.name
+            observed = os.stat(stage_name, dir_fd=parent_fd, follow_symlinks=False)
+            if not stat.S_ISDIR(observed.st_mode):
+                raise DocumentsUnavailable('staging directory identity is invalid')
+            stage_identity = (observed.st_dev, observed.st_ino)
+            adapter_output = staging
+
+            def commit():
+                nonlocal published
+                _rename_noreplace(parent_fd, stage_name, output_dir.name)
+                published = True
+        else:
+            output_dir.mkdir(parents=True, exist_ok=True)
+            adapter_output = output_dir
+
+            def commit():
+                return None
+        yield adapter_output, commit
+    finally:
+        try:
+            if publish and not published and stage_name is not None:
+                _remove_stage(parent_fd, stage_name, stage_identity)
+        finally:
+            if parent_fd is not None:
+                os.close(parent_fd)
+
+
+def run_adapter(python, operation, payload, output_dir, *, publish=False):
+    with _adapter_output(output_dir, publish) as (adapter_output, commit):
+        with tempfile.TemporaryDirectory(prefix='documents-call-') as temp:
+            temp = Path(temp)
+            request = temp / 'input.json'
+            request.write_text(json.dumps(payload), encoding='utf-8')
+            stdout, stderr = temp / 'stdout', temp / 'stderr'
+            with stdout.open('wb') as out, stderr.open('wb') as err:
+                process = subprocess.Popen([str(python), '-I', str(ADAPTER), operation,
+                                            str(request), str(adapter_output)], stdin=subprocess.DEVNULL,
+                                           stdout=out, stderr=err, start_new_session=True,
+                                           env={k: v for k, v in os.environ.items()
+                                                if not k.startswith(('PYTHON', 'PIP_'))})
+                deadline = time.monotonic() + 60
+                try:
+                    while process.poll() is None:
+                        if stdout.stat().st_size > OUTPUT_LIMIT or stderr.stat().st_size > OUTPUT_LIMIT:
+                            raise ValueError('adapter output exceeds 8 MiB')
+                        if time.monotonic() >= deadline:
+                            raise DocumentsUnavailable('adapter timeout after 60 seconds')
+                        time.sleep(0.02)
+                finally:
+                    if process.poll() is None:
+                        process.kill()
+                    process.wait()
+            if stdout.stat().st_size > OUTPUT_LIMIT or stderr.stat().st_size > OUTPUT_LIMIT:
+                raise ValueError('adapter output exceeds 8 MiB')
+            if process.returncode != 0:
+                if process.returncode == 3:
+                    failure = strict_json(regular_bytes(stdout, max_bytes=OUTPUT_LIMIT))
+                    raise ValueError(failure.get('error', 'invalid document input'))
+                raise DocumentsUnavailable('adapter failed: ' + stderr.read_text(errors='replace')[:2000] +
+                                 stdout.read_text(errors='replace')[:2000])
+            result = strict_json(regular_bytes(stdout, max_bytes=OUTPUT_LIMIT))
+            if result.get('schema_version') != 'documents-result/v1' or result.get('status') != 'ok':
+                raise ValueError('adapter did not return a successful result')
+            commit()
+            return result
 
 
 def smoke(python):
@@ -299,7 +385,8 @@ def main(argv=None):
                         payload = dict(slides=strict_json(raw))
                     else:
                         payload = dict(text=raw.decode('utf-8', errors='strict'))
-                    value = run_adapter(root / version / 'bin/python', args.command, payload, args.output_dir)
+                    value = run_adapter(root / version / 'bin/python', args.command, payload,
+                                        args.output_dir, publish=True)
         if args.command in ('install', 'probe'):
             value = dict(schema_version='documents-result/v1', status='ok',
                          operation=args.command, result=value)

@@ -46,13 +46,16 @@ python -m agent_runtime.documents --root /absolute/dedicated/documents-env \
 ```
 
 `slides.json` 是1–64项数组，每项精确为 `{"title":"标题","body":"正文"}`；每页两字段合计最多
-16000 UTF-8字节。输出目录必须不存在，避免覆盖原产物。PDF上限16MiB、1000页，每次选1–16页；
+16000 UTF-8字节。输出目录必须不存在，避免覆盖原产物。公开操作先写同父目录的私有暂存目录，
+全部成功后用 Linux `renameat2(RENAME_NOREPLACE)` 原子发布；非法输入、超时或适配器失败不会留下
+半成品目标，同一路径可修正输入后重试。并发创建的空或非空目标均不覆盖；平台/文件系统不支持
+no-replace 原子发布时明确返回 `unavailable`，不降级到会覆盖目标的 rename。PDF上限16MiB、1000页，每次选1–16页；
 渲染前检查页面尺寸，每页最长边2000像素、总像素不超过400万，提取文本总量不超过1MiB。
 Markdown输入最多1MiB，禁用原始HTML；HTML输出不是浏览器沙箱，交互/无障碍/视觉质量需另验。
 LaTeX输入最多64KiB，逐字符转义反斜线、花括号及特殊字符后填入固定严格模板。
 首版 `latex_compile=unavailable`；没有自带 TeX 发行版或隐式下载引擎。
 
-解析在自有子进程执行，60秒墙钟、50秒CPU、1GiB地址空间；输出通过临时文件观察，超过8MiB
+解析在自有子进程执行，60秒墙钟、50秒CPU、1GiB地址空间；stdout/stderr通过临时文件观察，超过8MiB
 拒绝并回收子进程，单文件OS上限64MiB。原生PDF解析器不构成安全沙箱，不能据此接收任意敌意文件。
 JSON输出统一使用 `documents-result/v1`；成功为 `status=ok`、退出0，能力不可用为
 `unavailable`、退出2，非法输入为 `invalid`、退出3。安装的 `result.status` 为

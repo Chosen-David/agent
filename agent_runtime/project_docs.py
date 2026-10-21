@@ -17,7 +17,10 @@ import stat
 import tempfile
 from urllib.parse import urlsplit
 
-from .context_serialization import render_context
+if __package__:
+    from .context_serialization import render_context
+else:
+    from context_serialization import render_context
 CANONICAL_TASK = 'agent_doc/task/TASK.md'
 DOCUMENT_DIRECTORIES = ('agent_doc/task/task_details', 'agent_doc/advice', 'agent_doc/guide', 'agent_doc/results')
 TASK_PATTERN = re.compile(r'^\s*[-*+] \[([ xX])\] \[([A-Za-z0-9][A-Za-z0-9_.-]*)\] (.+)$')
