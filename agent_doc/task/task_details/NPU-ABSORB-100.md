@@ -40,7 +40,9 @@ Owner: main-ai
   专项 test_status_verifies_worker_process_identity_against_pid_reuse 及全部 managed_supervisor 11 项通过。
 - 阶段B（统一 artifact 索引）：新增 agent_runtime/artifact_index.py（build_artifact_index + diff_artifact_index），
   确定性分类 + required 缺失/匹配 + 哈希级对称 diff；tests/test_artifact_index.py 9 项通过。
+- 阶段C（结构化 intake）：新增 agent_runtime/intake.py（build_intake + apply_intake），
+  ≤5 选项补问 schema + 答案重注入 + 完整性重检；tests/test_intake.py 7 项通过。
 
 ### 阻塞与下一步
 
-- 继续阶段C（结构化 intake），再阶段D（next 尾注）。
+- 继续阶段D（next 尾注）。
