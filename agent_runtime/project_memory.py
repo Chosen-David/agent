@@ -17,6 +17,7 @@ import sqlite3
 import stat
 import sys
 
+from .context_serialization import render_context
 from .project_docs import DocumentError, check_document_refs, guard_write_path
 from .external_json import load_json
 
@@ -538,6 +539,7 @@ def _load_document_refs(path):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', required=True)
+    parser.add_argument('--compact', action='store_true', help='preserve all JSON fields without formatting whitespace')
     sub = parser.add_subparsers(dest='command', required=True)
     add = sub.add_parser('add')
     add.add_argument('--id', required=True)
@@ -599,7 +601,7 @@ def main(argv=None):
         else:
             result = getattr(ledger, args.command)(args.id)
         print(_index_json(result) if args.command == 'index' else
-              json.dumps(result, ensure_ascii=False, indent=2))
+              (render_context(result, compact=True) if args.compact else json.dumps(result, ensure_ascii=False, indent=2)))
         return 0
     except (DocumentError, MemoryError, OSError) as exc:
         print(json.dumps({'error': str(exc)}, ensure_ascii=False), file=sys.stderr)
