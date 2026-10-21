@@ -49,3 +49,21 @@ python -m agent_runtime.project_memory --root /absolute/project storage
 评测同时记录首次验收、最终验收、正确改错、错误修复、弃答/未决、成本（可观测才填）与负结果；固定停止规则，不用“历史某次正确”或知道标准答案后选择最佳轮次替代最终交付。涉及性能的收益必须由同条件对照支持；只增加提示语不能证明推理能力提升。
 
 新指令先按 [结果检索与复用](result_reuse_workflow.md) 查询共享 `agent_doc/results/`：项目记忆只帮助找到实际数据/版本，不能以摘要替代当前独立代码与数据验证。纠正意图/条件后核对适用范围，优先最小必要复验；明确复现或新主张验收仍执行，历史观测不改写。
+
+
+## 有界原文导航与存储格式
+
+完整 checkout 中先显式筛选当前任务，长摘要按需展开：
+
+```bash
+python scripts/project_docs.py --root /absolute/project nav --task-id TASK_ID --summary-chars 240 --limit 5 --max-chars 12000
+python scripts/markdown_context.py --root /absolute/project --path agent_doc/task/task_details/TASK_ID.md --sha256 EXACT_SHA256 outline --limit 20
+python scripts/markdown_context.py --root /absolute/project --path agent_doc/task/task_details/TASK_ID.md --sha256 EXACT_SHA256 read --section SECTION_ID --mandatory GLOBAL_SECTION_ID
+python scripts/storage_inventory.py --root /absolute/project --max-entries 10000 --top 10
+```
+
+任务页续读须带 `--after-id` 与 `--snapshot`；Markdown 页使用相同参数，源 SHA 同时绑定原文。任何源变化均重查首页。Markdown 章节是当前标题至下一标题的原始块，父标题不隐含其所有子块；preamble 自动保留，必要全局章节由调用者用 `--mandatory` 明确指定。预算不足拒绝整包，不裁剪原文。可选 `--max-tokens N --tokenizer ENCODING` 用指定 tokenizer 校验完整成功输出含原生换行；无 tokenizer 时不把字符当 token。摘要、目录及缓存均不取代 Plan/guide/依赖与当前证据门禁。
+
+新增证据可显式使用 `validate_experiment_result.py --context-dir agent_doc/results/RUN --context-compact-storage` 或 `result_store.py --compact-storage register ...` 保存紧凑 JSON。完整字段保留；stdout 的 `--compact` 独立控制显示，默认存储格式不变。格式变化影响原始字节 SHA，须使用新记录身份并重绑证据，不改写旧的不可变记录；restore/当前独立验收继续执行。不要将所有历史 memory/Markdown 无差别重写成摘要或删除过期记录。
+
+存储盘点只读元数据，含隐藏缓存与 memory/WAL/SHM 文件的可见逻辑大小；上界溢出拒绝，链接不跟随。它不提供原子磁盘快照、可回收字节数或删除授权。局部输出缩短不证明整轮 token、费用或任务质量改善；必要原文、全部页面及重试都计成本。纯 Skill 安装不含 runtime 时不得假称上述命令可用。

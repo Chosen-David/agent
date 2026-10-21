@@ -110,22 +110,51 @@ def regular_bytes(root, path, *, max_bytes=None):
     if max_bytes is not None and (type(max_bytes) is not int or max_bytes < 0):
         raise DocumentError('document byte bound must be a nonnegative integer')
     fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
-    with os.fdopen(fd, 'rb') as stream:
-        info = os.fstat(stream.fileno())
-        if not stat.S_ISREG(info.st_mode):
-            raise DocumentError('document must be a regular file')
-        if max_bytes is not None and info.st_size > max_bytes:
-            raise DocumentError(f'document exceeds {max_bytes} byte bound')
-        data = stream.read() if max_bytes is None else stream.read(max_bytes + 1)
-        if max_bytes is not None and len(data) > max_bytes:
-            raise DocumentError(f'document exceeds {max_bytes} byte bound')
-        return data
+    try:
+        with os.fdopen(fd, 'rb', closefd=False) as stream:
+            info = os.fstat(stream.fileno())
+            if not stat.S_ISREG(info.st_mode):
+                raise DocumentError('document must be a regular file')
+            if max_bytes is not None and info.st_size > max_bytes:
+                raise DocumentError(f'document exceeds {max_bytes} byte bound')
+            data = stream.read() if max_bytes is None else stream.read(max_bytes + 1)
+            if max_bytes is not None and len(data) > max_bytes:
+                raise DocumentError(f'document exceeds {max_bytes} byte bound')
+            return data
+    finally:
+        os.close(fd)
+
+
+def regular_digest(root, path, *, max_bytes=None):
+    """Hash exact regular-file bytes with bounded scratch space and growth checks."""
+    path = _relative(root, path)
+    if max_bytes is not None and (type(max_bytes) is not int or max_bytes < 0):
+        raise DocumentError('document byte bound must be a nonnegative integer')
+    fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
+    try:
+        with os.fdopen(fd, 'rb', closefd=False) as stream:
+            info = os.fstat(fd)
+            if not stat.S_ISREG(info.st_mode):
+                raise DocumentError('document must be a regular file')
+            if max_bytes is not None and info.st_size > max_bytes:
+                raise DocumentError('document exceeds byte bound')
+            digest, size = hashlib.sha256(), 0
+            while True:
+                chunk = stream.read(65536 if max_bytes is None else min(65536, max_bytes-size+1))
+                if not chunk:
+                    return digest.hexdigest(), size
+                size += len(chunk)
+                if max_bytes is not None and size > max_bytes:
+                    raise DocumentError('document exceeds byte bound')
+                digest.update(chunk)
+    finally:
+        os.close(fd)
 
 
 def parse_requirements(text, *, canonical=False):
     """Stable IDs outside fences; canonical records bind date and detail path."""
     items, fence, date = [], None, None
-    for line in text.splitlines():
+    for line in physical_lines(text):
         marker = re.match(r'(`{3,}|~{3,})', line.lstrip())
         if marker:
             token = marker.group(1)
@@ -165,7 +194,7 @@ def resolve_task_file(root):
             # Root pointer may remain for old links; it may not contain tasks.
             text = regular_bytes(root, legacy).decode('utf-8')
             if any(TASK_PATTERN.match(line) or re.match(r'^\s*[-*+] \[[ xX]\]', line)
-                   for line in text.splitlines()):
+                   for line in physical_lines(text)):
                 raise DocumentError('dual active TASK.md lists; migrate/reconcile before execution')
         return canonical
     if legacy.exists():
@@ -180,7 +209,7 @@ def project_root_for_task(task_file):
     return path.parent
 
 
-def _inventory(root, directory):
+def _inventory(root, directory, *, hashes=True):
     path = _relative(root, directory)
     if not path.exists():
         return {}
@@ -192,7 +221,8 @@ def _inventory(root, directory):
             _relative(root, Path(parent) / name)
         for name in files:
             item = Path(parent) / name
-            result[item.relative_to(root).as_posix()] = hashlib.sha256(regular_bytes(root, item)).hexdigest()
+            item = _relative(root, item)
+            result[item.relative_to(root).as_posix()] = regular_digest(root, item)[0] if hashes else None
     return dict(sorted(result.items()))
 
 
@@ -205,7 +235,7 @@ def snapshot_project_docs(root):
     details = {}
     if canonical:
         expected = {f'agent_doc/task/{item["detail"]}' for item in items}
-        actual = set(_inventory(root, 'agent_doc/task/task_details'))
+        actual = set(_inventory(root, 'agent_doc/task/task_details', hashes=False))
         if actual != expected:
             raise DocumentError('task detail/index mismatch: missing or orphan detail files')
         for item in items:
@@ -213,8 +243,8 @@ def snapshot_project_docs(root):
             data = regular_bytes(root, rel)
             text = data.decode('utf-8').replace('\r\n', '\n')
             planning, _ = split_detail(text)
-            if (re.findall(r'^Task-ID: (.+)$', planning, re.M) != [item['id']] or
-                    re.findall(r'^Date: (.+)$', planning, re.M) != [item['date']]):
+            if (_field_values(planning, 'Task-ID') != [item['id']] or
+                    _field_values(planning, 'Date') != [item['date']]):
                 raise DocumentError('task detail identity/date must match TASK.md: ' + item['id'])
             details[item['id']] = {'path': rel, 'sha256': hashlib.sha256(planning.encode('utf-8')).hexdigest()}
     return {'schema_version': 'project-documents/v1', 'layout': 'canonical' if canonical else 'legacy',
@@ -223,9 +253,14 @@ def snapshot_project_docs(root):
             'advice': _inventory(root, 'agent_doc/advice'), 'adopted_advice': {}}
 
 
+def _field_values(text, name):
+    prefix = name + ': '
+    return [line[len(prefix):] for _, _, line in outside_fences(text) if line.startswith(prefix)]
+
+
 def _field_once(text, name):
     """One optional non-authoritative derived field; multiple copies are ambiguous."""
-    matches = re.findall(r'^' + re.escape(name) + r': (.*)$', text, re.M)
+    matches = _field_values(text, name)
     if len(matches) > 1:
         raise DocumentError('detail has multiple ' + name + ' fields')
     if not matches:
@@ -235,14 +270,14 @@ def _field_once(text, name):
 
 def _plan_section(text, name):
     """Body of one `### name` plan section, stopping at the next heading."""
-    header = re.compile(r'^### ' + re.escape(name) + r'[ \t]*$', re.M)
-    match = header.search(text)
-    if match is None:
-        return None
-    rest = text[match.end():]
-    stop = re.search(r'^#{2,3} ', rest, re.M)
-    body = rest if stop is None else rest[:stop.start()]
-    return body.strip() or None
+    start = None
+    for a, b, line in outside_fences(text):
+        if start is None:
+            if line.rstrip(' \t') == '### ' + name:
+                start = b
+        elif re.match(r'^#{2,3} ', line):
+            return text[start:a].strip() or None
+    return text[start:].strip() or None if start is not None else None
 
 
 def _progress_edges(text, limit):
@@ -256,7 +291,8 @@ def _progress_edges(text, limit):
 
 
 def task_navigation(root, *, max_chars=12000, progress_chars=64,
-                    include_checked=False, progress_tail_chars=None):
+                    include_checked=False, progress_tail_chars=None, task_ids=None, summary_chars=None,
+                    limit=None, after_id=None, expected_snapshot=None):
     """Cheap resume/navigation digest for unchecked index rows by default.
 
     Each selected row carries its detail's derived Status/Owner, `### 摘要`
@@ -285,17 +321,36 @@ def task_navigation(root, *, max_chars=12000, progress_chars=64,
         raise DocumentError('invalid progress character bound')
     if type(include_checked) is not bool:
         raise DocumentError('include_checked must be a boolean')
-    items = parse_requirements(regular_bytes(root, index).decode('utf-8'), canonical=True)
+    if summary_chars is not None and (type(summary_chars) is not int or not 0 <= summary_chars <= 100000):
+        raise DocumentError('invalid summary bound')
+    index_raw = regular_bytes(root, index)
+    items = parse_requirements(index_raw.decode('utf-8'), canonical=True)
     selected = items if include_checked else [item for item in items if not item['checked']]
+    if task_ids is not None:
+        if (not isinstance(task_ids, (list, tuple)) or not task_ids or
+                any(type(x) is not str for x in task_ids) or len(set(task_ids)) != len(task_ids) or
+                not set(task_ids) <= {x['id'] for x in selected}):
+            raise DocumentError('task_ids must select unique available tasks')
+        selected = [item for item in selected if item['id'] in task_ids]
+    if limit is not None and (type(limit) is not int or not 1 <= limit <= 1000):
+        raise DocumentError('invalid task page limit')
+    if after_id is not None and (limit is None or expected_snapshot is None):
+        raise DocumentError('task continuation requires limit and snapshot')
+    if expected_snapshot is not None and (type(expected_snapshot) is not str or re.fullmatch('[0-9a-f]{64}', expected_snapshot) is None):
+        raise DocumentError('invalid task snapshot')
+    source_digest = hashlib.sha256(index_raw)
     tasks = []
     # Filter from the canonical index before opening details.  The default
     # digest intentionally does not validate omitted checked detail files.
     for item in selected:
         rel = f'agent_doc/task/{item["detail"]}'
         text = regular_bytes(root, rel).decode('utf-8').replace('\r\n', '\n')
+        detail_raw = text.encode('utf-8')
+        source_digest.update(len(detail_raw).to_bytes(8, 'big'))
+        source_digest.update(detail_raw)
         planning, progress = split_detail(text)
-        if (re.findall(r'^Task-ID: (.+)$', planning, re.M) != [item['id']] or
-                re.findall(r'^Date: (.+)$', planning, re.M) != [item['date']]):
+        if (_field_values(planning, 'Task-ID') != [item['id']] or
+                _field_values(planning, 'Date') != [item['date']]):
             raise DocumentError('task detail identity/date must match TASK.md: ' + item['id'])
         tasks.append({'id': item['id'], 'title': item['title'], 'date': item['date'],
                       'checked': item['checked'],
@@ -304,18 +359,41 @@ def task_navigation(root, *, max_chars=12000, progress_chars=64,
                       'summary': _plan_section(planning, '摘要'),
                       'progress_edges': _progress_edges(progress, progress_chars),
                       'detail': item['detail']})
+    if summary_chars is not None:
+        for task in tasks:
+            summary = task['summary']
+            if summary is not None:
+                task['summary_source'] = {'chars': len(summary), 'sha256': hashlib.sha256(summary.encode('utf-8')).hexdigest(), 'truncated': len(summary) > summary_chars}
+                task['summary'] = summary[:summary_chars]
     digest = {'schema_version': 'task-navigation/v2', 'project_root': str(root),
               'task_index': index.relative_to(root).as_posix(),
               'selection': 'all' if include_checked else 'unchecked',
               'total_tasks': len(items), 'selected_tasks': len(selected),
-              'omitted_checked_tasks': 0 if include_checked else len(items) - len(selected),
+              'omitted_checked_tasks': 0 if include_checked else sum(item['checked'] for item in items),
               'tasks': tasks,
               'scope': 'derived navigation digest; unchecked is an index selection, not managed '
                        'active state; omitted checked details are not validated; Status/Owner/summary '
                        'do not replace ledger state, full document audit or independent verification; '
                        'progress edges are document positions with no newer/older guarantee'}
+    if limit is not None:
+        source_digest.update(json.dumps({'ids': [t['id'] for t in tasks], 'summary_chars': summary_chars, 'progress_chars': progress_chars}, sort_keys=True).encode())
+        snapshot = source_digest.hexdigest()
+        if expected_snapshot is not None and expected_snapshot != snapshot:
+            raise DocumentError('task snapshot changed; restart navigation')
+        start = 0
+        if after_id is not None:
+            position = next((i for i, t in enumerate(tasks) if t['id'] == after_id), None)
+            if position is None:
+                raise DocumentError('task cursor outside selection')
+            start = position + 1
+        page = tasks[start:start + limit]
+        more = start + len(page) < len(tasks)
+        digest.update(snapshot=snapshot, start=start, tasks=page, partial=more,
+                      next_after_id=page[-1]['id'] if more and page else None)
+    elif expected_snapshot is not None:
+        raise DocumentError('snapshot requires task pagination')
     serialized = json.dumps(digest, ensure_ascii=False, separators=(',', ':'))
-    if len(serialized) > max_chars:
+    if len(serialized) + len(os.linesep) > max_chars:
         raise DocumentError('task navigation exceeds character budget; narrow the digest')
     return digest
 
@@ -418,14 +496,37 @@ def validate_advice_assessments(snapshot, assessments, task_ids):
 
 
 
+def physical_lines(text, *, keepends=False):
+    """Markdown source lines end only at LF, CRLF or CR."""
+    lines = [line for line in re.findall(r'[^\r\n]*(?:\r\n|\r|\n|$)', text) if line]
+    return lines if keepends else [line.rstrip('\r\n') for line in lines]
+
+
+def outside_fences(text):
+    """Yield literal line offsets outside CommonMark-style fenced examples."""
+    offset, fence = 0, None
+    for raw in physical_lines(text, keepends=True):
+        line = raw.rstrip('\r\n')
+        marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', line)
+        if marker:
+            token, tail = marker.groups()
+            if fence is None and (token[0] != '`' or '`' not in tail):
+                fence = token
+            elif fence and token[0] == fence[0] and len(token) >= len(fence) and not tail.strip(' \t'):
+                fence = None
+        elif fence is None:
+            yield offset, offset + len(raw), line
+        offset += len(raw)
+
+
 def split_detail(text):
     """Only the Progress suffix is mutable runtime output; Plan is required."""
-    boundaries = list(re.finditer(r'^## Progress(?:\n|$)', text, re.M))
+    boundaries = [(a, b) for a, b, line in outside_fences(text) if line == '## Progress']
     if len(boundaries) != 1:
         raise DocumentError('detail requires exactly one ## Progress boundary')
     boundary = boundaries[0]
-    planning, progress = text[:boundary.start()], text[boundary.end():]
-    if len(re.findall(r'^## Plan$', planning, re.M)) != 1:
+    planning, progress = text[:boundary[0]], text[boundary[1]:]
+    if sum(line == '## Plan' for _, _, line in outside_fences(planning)) != 1:
         raise DocumentError('detail requires one stable ## Plan section before ## Progress')
     return planning, progress
 
@@ -497,7 +598,7 @@ def write_task_progress(root, task_id, progress, *, expected_plan_sha256):
         raise DocumentError('task planning version changed; progress update rejected')
     path = detail['path']
     planning, _ = split_detail(regular_bytes(root, path).decode('utf-8').replace('\r\n', '\n'))
-    if not isinstance(progress, str) or re.search(r'^## Progress$', progress, re.M):
+    if not isinstance(progress, str) or any(line == '## Progress' for _, _, line in outside_fences(progress)):
         raise DocumentError('progress must not add another planning boundary')
     atomic_write(root, path, (planning + '## Progress\n' + progress).encode('utf-8'))
     return snapshot_project_docs(root)
@@ -581,13 +682,17 @@ def atomic_write(root, path, data):
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, temporary = tempfile.mkstemp(prefix=path.name + '.', dir=path.parent)
     try:
-        with os.fdopen(fd, 'wb') as stream:
+        with os.fdopen(fd, 'wb', closefd=False) as stream:
             stream.write(data)
             stream.flush()
             os.fsync(stream.fileno())
+        os.close(fd)
+        fd = None
         assert_ai_writable(root, path)
         os.replace(temporary, path)
     finally:
+        if fd is not None:
+            os.close(fd)
         if os.path.exists(temporary):
             os.unlink(temporary)
 
@@ -603,7 +708,7 @@ def migrate(root, date):
     legacy = _relative(root, 'TASK.md')
     canonical = _relative(root, CANONICAL_TASK)
     if canonical.exists() and legacy.exists() and not any(TASK_PATTERN.match(line)
-            for line in regular_bytes(root, legacy).decode('utf-8').splitlines()):
+            for line in physical_lines(regular_bytes(root, legacy).decode('utf-8'))):
         return snapshot_project_docs(root)
     raw = regular_bytes(root, legacy)
     text = raw.decode('utf-8')
@@ -616,7 +721,7 @@ def migrate(root, date):
                          indent=2) + '\n').encode('utf-8')}
     # Each requirement keeps its original block; all other historical context
     # remains byte-exact in the content-addressed source archive.
-    lines = text.splitlines(keepends=True)
+    lines = physical_lines(text, keepends=True)
     blocks, dates, task_lines, sections = {}, {}, {}, [(1, date)]
     current, current_date = None, date
     fence = None
@@ -721,6 +826,11 @@ def main(argv=None):
     nav.add_argument('--progress-chars', '--progress-tail-chars', dest='progress_chars',
                      type=int, default=64)
     nav.add_argument('--include-checked', action='store_true')
+    nav.add_argument('--task-id', dest='task_ids', action='append')
+    nav.add_argument('--summary-chars', type=int)
+    nav.add_argument('--limit', type=int)
+    nav.add_argument('--after-id')
+    nav.add_argument('--snapshot', dest='expected_snapshot')
     action = sub.add_parser('migrate')
     action.add_argument('--date', required=True)
     sub.add_parser('guard-write').add_argument('paths', nargs='+')
@@ -735,7 +845,7 @@ def main(argv=None):
         elif args.command == 'nav':
             result = task_navigation(args.root, max_chars=args.max_chars,
                                      progress_chars=args.progress_chars,
-                                     include_checked=args.include_checked)
+                                     include_checked=args.include_checked, task_ids=args.task_ids, summary_chars=args.summary_chars, limit=args.limit, after_id=args.after_id, expected_snapshot=args.expected_snapshot)
         else:
             result = snapshot_project_docs(args.root)
         # Navigation's compact serialization is the measured context payload;

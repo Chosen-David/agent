@@ -23,13 +23,19 @@ def read_bound(root, path, *, max_bytes=2 * 1024 * 1024):
         raise ValueError('required regular source is missing')
     # _safe also checks every parent for Windows junctions.
     fd = os.open(source, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
-    with os.fdopen(fd, 'rb') as stream:
-        if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
-            raise ValueError('required source is not regular')
-        data = stream.read(max_bytes + 1)
-    if len(data) > max_bytes:
-        raise ValueError('source exceeds budget; no partial context')
-    return data
+    try:
+        with os.fdopen(fd, 'rb', closefd=False) as stream:
+            info = os.fstat(stream.fileno())
+            if info.st_size > max_bytes:
+                raise ValueError('source exceeds budget; no partial context')
+            if not stat.S_ISREG(info.st_mode):
+                raise ValueError('required source is not regular')
+            data = stream.read(max_bytes + 1)
+        if len(data) > max_bytes:
+            raise ValueError('source exceeds budget; no partial context')
+        return data
+    finally:
+        os.close(fd)
 
 
 def maintenance_observer(root, run_id, tracked_paths, external):

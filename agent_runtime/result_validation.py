@@ -18,7 +18,7 @@ import stat
 
 from .core import Outcome
 from .external_json import strict_json
-from .legacy_result_paths import legacy_read_binding, check_relocated_digest
+from .legacy_result_paths import legacy_read_binding, check_relocated_digest, relocated_digest_matches
 
 CHECKS = ('implementation', 'reference_boundary', 'data_integrity',
           'numerical_sanity', 'measurement_validity', 'reproducibility')
@@ -59,7 +59,10 @@ def _path(root, value):
     return path
 
 
-def _bytes(root, value):
+def _bytes(root, value, *, max_bytes=None):
+    if max_bytes is None:
+        max_bytes = LIMIT
+    _need(type(max_bytes) is int and 0 <= max_bytes <= LIMIT, 'invalid verification byte bound')
     read_path, relocated_digest = legacy_read_binding(root, value)
     path = _path(root, read_path)
     fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NONBLOCK', 0) | getattr(os, 'O_NOFOLLOW', 0))
@@ -68,7 +71,8 @@ def _bytes(root, value):
         with os.fdopen(fd, 'rb', closefd=False) as stream:
             info = os.fstat(stream.fileno())
             _need(stat.S_ISREG(info.st_mode), 'artifact must be a regular file')
-            _need(info.st_size <= LIMIT, 'artifact exceeds 16 MiB bound; use bounded shard manifests')
+            _need(info.st_size <= max_bytes, 'artifact exceeds 16 MiB bound; use bounded shard manifests'
+                  if max_bytes == LIMIT else f'artifact exceeds {max_bytes} byte bound')
             if info.st_size < 64 * 1024 and stream.seekable():
                 # A max-bound read can allocate 16 MiB even for a tiny artifact.
                 # The extra byte detects growth; fstat is not a snapshot guarantee.
@@ -79,12 +83,12 @@ def _bytes(root, value):
                     # and remainder doubles peak memory when the file has grown.
                     del data
                     stream.seek(0)
-                    data = stream.read(LIMIT + 1)
+                    data = stream.read(max_bytes + 1)
             else:
-                data = stream.read(LIMIT + 1)
+                data = stream.read(max_bytes + 1)
     finally:
         os.close(fd)
-    _need(len(data) <= LIMIT, 'artifact grew beyond verification bound')
+    _need(len(data) <= max_bytes, 'artifact grew beyond verification bound')
     check_relocated_digest(data, relocated_digest)
     return data
 
@@ -114,11 +118,34 @@ def _ref(value):
     return value
 
 
-def _bound(root, ref):
+def _bound(root, ref, *, max_bytes=None):
     _ref(ref)
-    data = _bytes(root, ref['path'])
+    data = _bytes(root, ref['path'], max_bytes=max_bytes)
     _need(hashlib.sha256(data).hexdigest() == ref['sha256'], 'stale artifact: ' + ref['path'])
     return data
+
+
+def _hash_bound(root, ref):
+    """Fresh digest verification with bounded scratch; never acceptance caching."""
+    _ref(ref)
+    read_path, relocated_digest = legacy_read_binding(root, ref['path'])
+    path = _path(root, read_path)
+    fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NONBLOCK', 0) | getattr(os, 'O_NOFOLLOW', 0))
+    try:
+        with os.fdopen(fd, 'rb', closefd=False) as stream:
+            info = os.fstat(fd)
+            _need(stat.S_ISREG(info.st_mode), 'artifact must be a regular file')
+            _need(info.st_size <= LIMIT, 'artifact exceeds verification byte bound')
+            digest, size = hashlib.sha256(), 0
+            while block := stream.read(min(65536, LIMIT-size+1)):
+                size += len(block)
+                _need(size <= LIMIT, 'artifact grew beyond verification bound')
+                digest.update(block)
+    finally:
+        os.close(fd)
+    actual = digest.hexdigest()
+    _need(actual == ref['sha256'], 'stale artifact: ' + ref['path'])
+    _need(relocated_digest_matches(actual, relocated_digest), 'relocated historical result bytes changed')
 
 
 def validate_contract(contract):
@@ -169,28 +196,42 @@ def validate_result_plan(plan):
             seen.add(ref['result_id'])
     _need(set(producers) == set(gates), 'every experiment needs exactly one independent post-data gate')
 
-    def ancestors(task_id, seen=None):
-        seen = set() if seen is None else seen
+    # Per-validation bitsets share ancestry without recursive traversal or sets per producer.
+    bits = {task_id: 1 << i for i, task_id in enumerate(by_id)}
+    children = {task_id: [] for task_id in by_id}
+    pending_counts, masks = {}, {}
+    for task_id, task in by_id.items():
+        deps = set(task.get('depends_on', []))
+        _need(deps <= by_id.keys(), 'unknown result dependency')
+        pending_counts[task_id] = len(deps)
+        for dep in deps:
+            children[dep].append(task_id)
+    ready = [key for key, count in pending_counts.items() if count == 0]
+    while ready:
+        task_id = ready.pop()
+        mask = 0
         for dep in by_id[task_id].get('depends_on', []):
-            _need(dep in by_id, 'unknown result dependency')
-            if dep not in seen:
-                seen.add(dep)
-                ancestors(dep, seen)
-        return seen
+            mask |= masks[dep] | bits[dep]
+        masks[task_id] = mask
+        for child in children[task_id]:
+            pending_counts[child] -= 1
+            if pending_counts[child] == 0:
+                ready.append(child)
+    _need(len(masks) == len(by_id), 'cyclic result dependency')
 
     for result_id, producer in producers.items():
         gate, contract = gates[result_id], producer['experiment_result']
         _need(gate['result_validation'] == contract, 'producer/gate contract mismatch')
         _need(producer['task_id'] in gate.get('depends_on', []), 'verification must follow data production')
         for task in tasks:
-            upstream = ancestors(task['task_id'])
+            upstream = masks[task['task_id']]
             refs = task.get('required_result_refs', [])
             relevant = [r for r in refs if r['result_id'] == result_id]
-            if producer['task_id'] in upstream and task['task_id'] != gate['task_id']:
-                _need(gate['task_id'] in upstream and relevant == [contract],
+            if bool(bits[producer['task_id']] & upstream) and task['task_id'] != gate['task_id']:
+                _need(bool(bits[gate['task_id']] & upstream) and relevant == [contract],
                       'data consumer must depend on verification and bind its result contract')
             if relevant:
-                _need(relevant == [contract] and gate['task_id'] in upstream,
+                _need(relevant == [contract] and bool(bits[gate['task_id']] & upstream),
                       'consumer result reference lacks matching gate dependency')
     for task in tasks:
         _need(all(r['result_id'] in producers for r in task.get('required_result_refs', [])),
@@ -237,7 +278,8 @@ def _snapshot(root, contract):
             _ref(ref)
             _need(ref['path'] != contract['manifest_path'], 'manifest cannot be its own evidence')
             _need(ref['path'] not in bindings or bindings[ref['path']] == ref['sha256'], 'contradictory artifact hash')
-            _bound(root, ref)
+            if ref['path'] not in bindings:
+                _hash_bound(root, ref)
             bindings[ref['path']] = ref['sha256']
     metrics = manifest.get('metrics')
     _need(isinstance(metrics, list) and metrics, 'nonempty named metrics with units required')
@@ -246,7 +288,7 @@ def _snapshot(root, contract):
         _need(isinstance(metric, dict) and _text(metric.get('name')) and _text(metric.get('unit')),
               'metric name/unit required (use dimensionless explicitly)')
         value = metric.get('value')
-        _need(type(value) in (int, float) and math.isfinite(value), 'metric must be finite numeric data')
+        _need((type(value) is int or type(value) is float and math.isfinite(value)), 'metric must be finite numeric data')
         _need(metric['name'] not in names, 'duplicate metric name')
         names.add(metric['name'])
     proof = {'result_id': contract['result_id'], 'manifest_path': contract['manifest_path'],

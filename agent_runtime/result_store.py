@@ -14,6 +14,7 @@ import errno
 import hashlib
 import json
 import math
+from bisect import insort
 import os
 from pathlib import Path
 import re
@@ -80,7 +81,15 @@ def _read(root, value, limit=METADATA_LIMIT):
             info = os.fstat(stream.fileno())
             _need(stat.S_ISREG(info.st_mode), 'result input must be a regular file')
             _need(info.st_size <= limit, 'result input exceeds read bound')
-            data = stream.read(limit + 1)
+            if info.st_size < 65536 and getattr(stream, 'seekable', lambda: False)():
+                initial = info.st_size + 1
+                data = stream.read(initial)
+                if len(data) == initial:
+                    del data
+                    stream.seek(0)
+                    data = stream.read(limit + 1)
+            else:
+                data = stream.read(limit + 1)
     finally:
         os.close(fd)
     _need(len(data) <= limit, 'result input grew beyond read bound')
@@ -132,7 +141,8 @@ def _check_ref(root, ref):
             info = os.fstat(stream.fileno())
             _need(stat.S_ISREG(info.st_mode), 'artifact must be a regular file')
             _need(info.st_size <= ARTIFACT_LIMIT, 'artifact exceeds 256 MiB; use bounded shard manifests')
-            while block := stream.read(1024 * 1024):
+            chunk_size = min(65536, max(1, info.st_size + 1))
+            while block := stream.read(chunk_size):
                 size += len(block)
                 _need(size <= ARTIFACT_LIMIT, 'artifact grew beyond hash bound')
                 digest.update(block)
@@ -143,6 +153,18 @@ def _check_ref(root, ref):
           'relocated historical result bytes changed')
 
 
+def _lexical_score(value, tokens):
+    """Exact full-JSON substring score using bounded cross-chunk tails."""
+    found, tail = set(), ''
+    overlap = max((len(token) for token in tokens), default=1) - 1
+    for piece in json.JSONEncoder(ensure_ascii=False).iterencode(value):
+        for offset in range(0, len(piece), 65536):
+            window = tail + piece[offset:offset+65536].casefold()
+            found.update(token for token in tokens if token in window)
+            tail = window[-overlap:] if overlap else ''
+    return len(found)
+
+
 def _timestamp(value):
     _need(_text(value), 'timezone-aware ISO8601 time required')
     try:
@@ -150,7 +172,10 @@ def _timestamp(value):
     except ValueError as exc:
         raise ResultStoreError('invalid ISO8601 time') from exc
     _need(instant.tzinfo is not None, 'timestamp must include timezone')
-    return instant.astimezone(dt.timezone.utc)
+    try:
+        return instant.astimezone(dt.timezone.utc)
+    except (ValueError, OverflowError) as exc:
+        raise ResultStoreError('ISO8601 time outside UTC range') from exc
 
 
 def result_context(manifest):
@@ -292,7 +317,9 @@ def _unlock_registry_fd(fd, platform=None):
 
 class ResultStore:
     """No directory is created by construction, show, search or decision support."""
-    def __init__(self, root):
+    def __init__(self, root, *, compact_storage=False):
+        _need(type(compact_storage) is bool, 'compact_storage must be boolean')
+        self.compact_storage = compact_storage
         self.supplied_root = Path(os.path.abspath(root))
         self.root = self.supplied_root.resolve()
 
@@ -340,7 +367,7 @@ class ResultStore:
         run_id = _identifier(record['run_id'])
         # Check lexical root before resolving it; never alias writes into guide.
         target = assert_ai_writable(self.supplied_root, self._record_path(run_id))
-        raw = (json.dumps(record, indent=2, ensure_ascii=False, allow_nan=False) + '\n').encode()
+        raw = (json.dumps(record, indent=None if self.compact_storage else 2, separators=(',', ':') if self.compact_storage else None, ensure_ascii=False, allow_nan=False) + '\n').encode()
         _need(len(raw) <= METADATA_LIMIT, 'record exceeds metadata bound')
         with _registry_lock(self.supplied_root):
             names, partial, entry_count = self._directories(DIRECTORY_ENTRY_LIMIT)
@@ -437,17 +464,20 @@ class ResultStore:
         tokens = _tokens(query)
         exact_eligible = None
         context_checked = False
-        hits, errors = [], []
+        hits, errors, hit_count = [], [], 0
         for name in names:
             try:
                 shown = self.show(name)
                 record = shown['record']
                 from .contamination import assert_not_revoked
                 assert_not_revoked(self.root, run_id=name, result_id=record.get('result_id'))
-                haystack = json.dumps({k: record.get(k) for k in
-                                      ('summary', 'run_id', 'result_id', 'producer_task_id', 'context')},
-                                     ensure_ascii=False).casefold()
-                score = sum(token in haystack for token in tokens)
+                searchable = {k: record.get(k) for k in
+                              ('summary', 'run_id', 'result_id', 'producer_task_id', 'context')}
+                if type(self) is ResultStore and 'show' not in self.__dict__:
+                    score = _lexical_score(searchable, tokens)
+                else:
+                    haystack = json.dumps(searchable, ensure_ascii=False).casefold()
+                    score = sum(token in haystack for token in tokens)
                 if not context_checked:
                     if type(self) is ResultStore and 'show' not in self.__dict__ and _plain_search_context(context):
                         exact_eligible = (context is not None and set(context) == set(CONTEXT_FIELDS) and
@@ -459,19 +489,22 @@ class ResultStore:
                 if exact:
                     score += 1000  # Matching frozen conditions outrank vocabulary overlap.
                 if score:
-                    hits.append({'run_id': name, 'record_sha256': shown['record_ref']['sha256'],
+                    hit_count += 1
+                    insort(hits, {'run_id': name, 'record_sha256': shown['record_ref']['sha256'],
                                  'record_path': shown['record_ref']['path'], 'summary': record['summary'],
                                  'origin': record['origin'], 'score': score,
                                  'match': 'exact-context' if exact else 'lexical',
                                  'stored_validation': record['validation_at_registration']['status'],
-                                 'applicability': 'unchecked'})
+                                 'applicability': 'unchecked'}, key=lambda hit: (-hit['score'], hit['run_id']))
+                    if len(hits) > limit:
+                        hits.pop()
             except (OSError, ValueError, KeyError, TypeError, _ResultJSONDepthError) as exc:
                 errors.append({'run_id': name, 'error': str(exc)})
         hits.sort(key=lambda h: (-h['score'], h['run_id']))
         return {'schema_version': 'project-result-search/v1', 'query': query,
                 'status': 'candidates' if hits else 'incomplete' if partial or errors else 'no_hits',
                 'results': hits[:limit], 'strategy': 'lexical+exact-context' if context is not None else 'lexical',
-                'scanned': len(names), 'partial': partial or len(hits) > limit,
+                'scanned': len(names), 'partial': partial or hit_count > limit,
                 'errors': errors, 'authority': 'retrieval only; no applicability or acceptance proof'}
 
     def decide_run(self, run_id, context, *, verifier=None, explicit_reproduction=False,

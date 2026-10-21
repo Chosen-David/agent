@@ -23,7 +23,10 @@ def main():
     parser.add_argument('--contract', required=True, help='controller-owned result contract JSON')
     parser.add_argument('--verifier-adapter', help='explicitly trusted host Python file exporting verify(root, manifest, plan)')
     parser.add_argument('--context-dir', help='opt-in recoverable display; project-relative agent_doc/results/<run_id>/ directory')
+    parser.add_argument('--context-compact-storage', action='store_true')
     args = parser.parse_args()
+    if args.context_compact_storage and not args.context_dir:
+        parser.error('context-compact-storage requires context-dir')
     contract = load_json(args.contract)
     if not isinstance(contract, dict):
         raise ValueError('result contract must be a JSON object')
@@ -37,7 +40,7 @@ def main():
     display = result
     if args.context_dir:
         from agent_runtime.validation_context import write_validation_context
-        display = write_validation_context(args.root, result, args.context_dir)
+        display = write_validation_context(args.root, result, args.context_dir, compact_storage=args.context_compact_storage)
     print((render_context(display, compact=True) if args.compact else json.dumps(display, ensure_ascii=False, indent=2, allow_nan=False)))
     return 0 if result['status'] == 'usable-with-scope' else 2
 

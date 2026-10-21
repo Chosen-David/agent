@@ -27,6 +27,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', required=True)
     parser.add_argument('--compact', action='store_true', help='preserve all JSON fields without formatting whitespace')
+    parser.add_argument('--compact-storage', action='store_true', help='compact new immutable registry records; independent of stdout formatting')
     subs = parser.add_subparsers(dest='command', required=True)
     for name in ('search', 'decide'):
         command = subs.add_parser(name)
@@ -47,7 +48,7 @@ def main(argv=None):
     subs.add_parser('register-history').add_argument('--record', required=True)
     subs.add_parser('context').add_argument('--contract', required=True)
     args = parser.parse_args(argv)
-    store = ResultStore(args.root)
+    store = ResultStore(args.root, compact_storage=args.compact_storage)
     try:
         if args.command == 'search':
             result = store.search(args.query, limit=args.limit, max_scan=args.max_scan)

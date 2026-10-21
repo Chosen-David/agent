@@ -41,18 +41,19 @@ def _directory(root, relative):
     return root, _path(root, relative)
 
 
-def write_validation_context(root, result, relative_directory):
+def write_validation_context(root, result, relative_directory, *, compact_storage=False):
     """Persist complete observed JSON and return only a display projection.
 
     Host must invoke the normal live result gate first. This function does not
     authenticate its argument, authorize reuse, truncate failures, or infer that
     omitted details are irrelevant to a later task. Restore them when needed.
     """
+    _need(type(compact_storage) is bool, 'compact_storage must be boolean')
     _shape(result)
     supplied_root = Path(root)
     root, directory = _directory(root, relative_directory)
     record = {'schema_version': 'validation-context-record/v1', 'project_root': str(root), 'result': result}
-    data = (json.dumps(record, ensure_ascii=False, indent=2, allow_nan=False) + '\n').encode('utf-8')
+    data = (json.dumps(record, ensure_ascii=False, indent=None if compact_storage else 2, separators=(',', ':') if compact_storage else None, allow_nan=False) + '\n').encode('utf-8')
     _need(len(data) <= LIMIT, 'complete inspection exceeds storage bound; never truncate')
     digest = hashlib.sha256(data).hexdigest()
     relative = (Path(relative_directory) / ('validation-' + digest + '.json')).as_posix()

@@ -15,18 +15,18 @@ import unicodedata
 
 if __package__:
     from .knowledge import KnowledgeError, _require, _terms, _text
-    from .project_docs import guard_write_path
+    from .project_docs import guard_write_path, physical_lines
 else:
     from knowledge import KnowledgeError, _require, _terms, _text
-    from project_docs import guard_write_path
+    from project_docs import guard_write_path, physical_lines
 
 INDEX_VERSION = '1'
-ENGINE_VERSION = 'fts5-porter-alias-first-section-v6'
+ENGINE_VERSION = 'fts5-porter-physical-lines-v7'
 
 
 def sections(record):
     """Heading tree with exact source line ranges; fenced code is not a heading."""
-    lines = record['content'].splitlines(keepends=True)
+    lines = physical_lines(record['content'], keepends=True)
     headings, stack, fence = [], [], None
     for number, line in enumerate(lines, 1):
         marker = re.match(r'^ {0,3}(`{3,}|~{3,})', line)
@@ -89,9 +89,13 @@ def _connect(path, readonly=False):
         guard_write_path(path)
         path.parent.mkdir(parents=True, exist_ok=True)
         con = sqlite3.connect(path, timeout=10)
-    con.row_factory=sqlite3.Row
-    con.execute('PRAGMA trusted_schema=OFF')
-    return con
+    try:
+        con.row_factory=sqlite3.Row
+        con.execute('PRAGMA trusted_schema=OFF')
+        return con
+    except BaseException:
+        con.close()
+        raise
 
 
 def _initialize(con):
@@ -112,6 +116,7 @@ def _initialize(con):
 
 def build_index(store, path, *, rebuild=False):
     """Transactional upsert only changed entries; deletion never touches sources."""
+    _require(type(rebuild) is bool, 'rebuild must be boolean')
     con=_connect(path)
     try:
         _initialize(con)
@@ -170,6 +175,7 @@ def indexed_search(store, path, query, *, domain=None, structure=None, limit=5):
     _require(type(limit) is int and 1<=limit<=20, 'limit must be 1..20')
     con=_connect(path,readonly=True)
     try:
+        con.execute('BEGIN')
         meta=dict(con.execute('SELECT key,value FROM meta'))
         _require(meta.get('index_version')==INDEX_VERSION and meta.get('root')==str(store.root), 'index schema/corpus mismatch')
         _require(meta.get('engine_version')==ENGINE_VERSION, 'stale index engine; run index to update')

@@ -10,9 +10,10 @@ from __future__ import annotations
 
 import hashlib
 import os
-from pathlib import Path
+from pathlib import Path, PurePosixPath
+import re
 
-from .project_docs import DocumentError, regular_bytes
+from .project_docs import DocumentError, regular_digest, _relative
 
 INDEX_SCHEMA = 'artifact-index/v1'
 
@@ -52,15 +53,19 @@ def classify(relpath):
     return ('other', None)
 
 
-def _walk(root, directory, max_entries):
-    path = (root / directory).resolve() if directory is not None else root.resolve()
+def _walk(root, directory, max_entries, max_total_bytes=None):
+    lexical = Path(os.path.abspath(root / directory)) if directory is not None else root
+    if lexical != root and root not in lexical.parents:
+        raise DocumentError('index directory must live under the project root')
+    path = _relative(root, directory if directory is not None else '.')
+    path = path.resolve()
     if not path.exists():
         raise DocumentError(f'index directory does not exist: {directory or "."}')
     if not path.is_dir():
         raise DocumentError(f'index directory must be a directory: {directory or "."}')
     if path != root and root not in path.parents:
         raise DocumentError('index directory must live under the project root')
-    files = {}
+    files, total = {}, 0
     for parent, directories, names in os.walk(path, followlinks=False):
         # Reject symlinked directories that would let the walk escape the root.
         for name in directories:
@@ -75,13 +80,23 @@ def _walk(root, directory, max_entries):
                 raise DocumentError(f'index exceeds {max_entries} file entries; narrow the directory')
             rel = item.relative_to(root).as_posix()
             category, mutable = classify(rel)
-            files[rel] = {'sha256': hashlib.sha256(regular_bytes(root, rel)).hexdigest(),
-                          'size': item.stat().st_size,
+            digest, size = regular_digest(root, rel, max_bytes=None if max_total_bytes is None else max_total_bytes-total)
+            total += size
+            files[rel] = {'sha256': digest,
+                          'size': size,
                           'category': category, 'mutable': mutable}
     return dict(sorted(files.items()))
 
 
-def build_artifact_index(root, *, directory=None, required=None, max_entries=10000):
+def _canonical_path(value):
+    if (type(value) is not str or not value or '\\' in value or ':' in value or
+            '\x00' in value or PurePosixPath(value).is_absolute() or PurePosixPath(value).as_posix() != value or
+            any(part in ('', '.', '..') for part in value.split('/'))):
+        raise DocumentError('required path must be canonical and project-relative')
+    return value
+
+
+def build_artifact_index(root, *, directory=None, required=None, max_entries=10000, max_total_bytes=None):
     """Bounded digest of every regular file under `directory` (default: root).
 
     `required` is an explicit list of paths, or a mapping of path -> expected
@@ -93,16 +108,22 @@ def build_artifact_index(root, *, directory=None, required=None, max_entries=100
     root = Path(root).resolve()
     if type(max_entries) is not int or not 1 <= max_entries <= 100000:
         raise DocumentError('invalid index entry bound')
-    files = _walk(root, directory, max_entries)
+    if max_total_bytes is not None and (type(max_total_bytes) is not int or not 0 <= max_total_bytes <= 1024**3):
+        raise DocumentError('invalid total artifact byte budget')
+    files = _walk(root, directory, max_entries, max_total_bytes)
     required_status = {}
     if required is not None:
         if isinstance(required, dict):
-            expected = {str(key): (val if isinstance(val, str) else None) for key, val in required.items()}
+            if any(val is not None and (type(val) is not str or re.fullmatch('[0-9a-f]{64}', val) is None) for val in required.values()):
+                raise DocumentError('required digest must be lowercase SHA256')
+            expected = {_canonical_path(key): val for key, val in required.items()}
         elif isinstance(required, (list, tuple, set)):
-            expected = {str(item): None for item in required}
+            expected = {_canonical_path(item): None for item in required}
         else:
             raise DocumentError('required must be a list of paths or a path->sha256 mapping')
-        prefix = directory.rstrip('/') if directory is not None else ''
+        prefix = (Path(directory).relative_to(root).as_posix() if Path(directory).is_absolute() else Path(directory).as_posix()) if directory is not None else ''
+        if prefix == '.':
+            prefix = ''
         for rel in sorted(expected):
             full_rel = f'{prefix}/{rel.lstrip("/")}' if prefix else rel.lstrip('/')
             if full_rel in files:
@@ -126,6 +147,8 @@ def diff_artifact_index(current, previous):
             and current.get('schema_version') == INDEX_SCHEMA
             and previous.get('schema_version') == INDEX_SCHEMA):
         raise DocumentError('artifact diff requires two artifact-index/v1 snapshots')
+    if any(current.get(key) != previous.get(key) for key in ('root', 'directory')):
+        raise DocumentError('artifact diff requires the same root and directory')
     current_files, previous_files = current.get('files', {}), previous.get('files', {})
     added = sorted(set(current_files) - set(previous_files))
     removed = sorted(set(previous_files) - set(current_files))

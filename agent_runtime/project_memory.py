@@ -55,6 +55,19 @@ def _index_json(value):
         raise MemoryError('memory index requires valid finite UTF-8 JSON') from exc
 
 
+def _index_digest(value):
+    """Same canonical identity without materializing the whole JSON encoding."""
+    try:
+        digest = hashlib.sha256()
+        encoder = json.JSONEncoder(ensure_ascii=False, sort_keys=True, separators=(',', ':'), allow_nan=False)
+        for piece in encoder.iterencode(value):
+            for offset in range(0, len(piece), 65536):
+                digest.update(piece[offset:offset+65536].encode('utf-8'))
+        return digest.hexdigest()
+    except (TypeError, ValueError, UnicodeError, RecursionError) as exc:
+        raise MemoryError('memory index requires valid finite UTF-8 JSON') from exc
+
+
 def _read_entry(db, entry_id, schema_state=None):
     row = db.execute('SELECT * FROM entries WHERE id=?', (entry_id,)).fetchone()
     if row is None:
@@ -442,37 +455,49 @@ class MemoryLedger:
         entries = self.list(status, scope)
         binding = {'project_root': str(self.root), 'filter': {'status': status, 'scope': scope}}
         digest = hashlib.sha256(_index_json(binding).encode('utf-8'))
-        projections = []
+        entry_hashes = []
         for entry in entries:
-            entry_hash = hashlib.sha256(_index_json(entry).encode('utf-8')).hexdigest()
+            entry_hash = _index_digest(entry)
             digest.update(b'\n' + entry_hash.encode('ascii'))
-            content = entry['content']
-            item = {key: value for key, value in entry.items() if key != 'content'}
-            item.update(content_sha256=hashlib.sha256(content.encode('utf-8')).hexdigest(),
-                        content_chars=len(content), entry_sha256=entry_hash)
-            projections.append(item)
+            if not isinstance(entry['content'], str):
+                raise MemoryError('memory index content must be text')
+            entry_hashes.append(entry_hash)
         snapshot = digest.hexdigest()
         if expected_snapshot is not None and expected_snapshot != snapshot:
             raise MemoryError('memory index changed; restart from first page')
         start = 0
         if after_id is not None:
-            positions = {entry['id']: i for i, entry in enumerate(entries)}
-            if after_id not in positions:
+            position = next((i for i, entry in enumerate(entries) if entry['id'] == after_id), None)
+            if position is None:
                 raise MemoryError('index cursor is not in selected snapshot')
-            start = positions[after_id] + 1
+            start = position + 1
+        total = len(entries)
+        page_entries = entries[start:start + limit]
+        page_hashes = entry_hashes[start:start + limit]
+        if entries:
+            del entry
+        del entries, entry_hashes
         packet = {'schema_version': 'memory-index/v1', **binding, 'snapshot': snapshot,
-                  'total_entries': len(entries), 'start': start, 'entries': [],
-                  'next_after_id': None, 'partial': start < len(entries),
+                  'total_entries': total, 'start': start, 'entries': [],
+                  'next_after_id': None, 'partial': start < total,
                   'scope': 'navigation only; content omitted; read required bodies and dependencies '
                            'through current memory checks before use; no validity or completeness proof'}
-        for item in projections[start:start + limit]:
+        entry_chars = 0
+        for entry, entry_hash in zip(page_entries, page_hashes):
+            content = entry['content']
+            item = {key: value for key, value in entry.items() if key != 'content'}
+            item.update(content_sha256=hashlib.sha256(content.encode('utf-8')).hexdigest(),
+                        content_chars=len(content), entry_sha256=entry_hash)
             candidate = dict(packet, entries=packet['entries'] + [item])
-            more = start + len(candidate['entries']) < len(entries)
+            more = start + len(candidate['entries']) < total
             candidate.update(partial=more, next_after_id=item['id'] if more else None)
-            if len(_index_json(candidate)) + len(os.linesep) > max_chars:
+            added_chars = len(_index_json(item)) + (1 if packet['entries'] else 0)
+            candidate_chars = len(_index_json(dict(candidate, entries=[]))) + entry_chars + added_chars
+            if candidate_chars + len(os.linesep) > max_chars:
                 if not packet['entries']:
                     raise MemoryError('complete memory index entry exceeds budget; increase max_chars')
                 break
+            entry_chars += added_chars
             packet = candidate
         if len(_index_json(packet)) + len(os.linesep) > max_chars:
             raise MemoryError('memory index envelope exceeds budget')

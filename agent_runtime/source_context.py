@@ -55,7 +55,7 @@ def source_context(root, request, *, full=False, max_chars=20000):
         raise ValueError('explicit unique top-level symbols required')
     if type(full) is not bool or type(max_chars) is not int or not 1 <= max_chars <= 100000:
         raise ValueError('invalid view flag or character budget')
-    raw = _bound(root, ref)
+    raw = _bound(root, ref, max_bytes=262144)
     if len(raw) > 262144:
         raise ValueError('source exceeds parser byte bound')
     text = raw.decode('utf-8')

@@ -1,9 +1,11 @@
 """Read-only, exact registered historical result relocation; never a write router."""
 import hashlib
+from functools import lru_cache
+from types import MappingProxyType
 from pathlib import Path, PurePosixPath
 import re
 
-from .external_json import load_json
+from .external_json import regular_bytes, strict_json
 
 MARKER = 'agent_doc/legacy-result-paths.json'
 LIMIT = 1024 * 1024
@@ -31,6 +33,26 @@ def _legacy_key(value):
             and path.as_posix() == value)
 
 
+@lru_cache(maxsize=4)
+def _marker_files(data):
+    """Only immutable parsing is cached; current marker bytes are reread each call."""
+    record = strict_json(data)
+    if (not isinstance(record, dict) or set(record) != {'schema_version', 'files'}
+            or record['schema_version'] != 'agent-doc-relocation/v1'
+            or not isinstance(record['files'], dict) or len(record['files']) > 10000):
+        raise ValueError('invalid legacy relocation schema')
+    seen = set()
+    for key, digest in record['files'].items():
+        digests = [digest] if isinstance(digest, str) else digest
+        if (not _legacy_key(key) or key.casefold() in seen or not isinstance(digests, list)
+                or not 1 <= len(digests) <= 2 or any(not isinstance(item, str) or
+                not re.fullmatch('[0-9a-f]{64}', item) for item in digests)
+                or len(set(digests)) != len(digests)):
+            raise ValueError('invalid or case-colliding legacy relocation entry')
+        seen.add(key.casefold())
+    return MappingProxyType({key: tuple(value) if isinstance(value, list) else value for key, value in record['files'].items()})
+
+
 def legacy_read_binding(root, value):
     """Return (relative read path, original digest), or the unmodified input.
 
@@ -46,21 +68,8 @@ def legacy_read_binding(root, value):
     marker = _safe(root, MARKER)
     if not marker.exists():
         return value, None
-    record = load_json(marker, max_bytes=LIMIT)
-    if (not isinstance(record, dict) or set(record) != {'schema_version', 'files'}
-            or record['schema_version'] != 'agent-doc-relocation/v1'
-            or not isinstance(record['files'], dict) or len(record['files']) > 10000):
-        raise ValueError('invalid legacy relocation schema')
-    seen = set()
-    for key, digest in record['files'].items():
-        digests = [digest] if isinstance(digest, str) else digest
-        if (not _legacy_key(key) or key.casefold() in seen or not isinstance(digests, list)
-                or not 1 <= len(digests) <= 2 or any(not isinstance(item, str) or
-                not re.fullmatch('[0-9a-f]{64}', item) for item in digests)
-                or len(set(digests)) != len(digests)):
-            raise ValueError('invalid or case-colliding legacy relocation entry')
-        seen.add(key.casefold())
-    if value not in record['files']:
+    files = _marker_files(regular_bytes(marker, max_bytes=LIMIT))
+    if value not in files:
         return value, None
     previous = _safe(root, value)
     destination = 'agent_doc/' + value[len('doc/'):]
@@ -69,7 +78,7 @@ def legacy_read_binding(root, value):
         raise ValueError('legacy result relocation collision; reconcile original and moved paths')
     if target.exists() and not target.is_file():
         raise ValueError('relocated result must be a regular file')
-    expected = record['files'][value]
+    expected = files[value]
     return destination, tuple(expected) if isinstance(expected, list) else expected
 
 
