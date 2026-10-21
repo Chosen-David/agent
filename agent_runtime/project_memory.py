@@ -562,9 +562,16 @@ def _load_document_refs(path):
 
 
 def main(argv=None):
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8')
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', required=True)
-    parser.add_argument('--compact', action='store_true', help='preserve all JSON fields without formatting whitespace')
+    formatting = parser.add_mutually_exclusive_group()
+    formatting.add_argument('--compact', action='store_true', default=None,
+                            help='preserve all fields without formatting whitespace (default for bounded reads)')
+    formatting.add_argument('--pretty', dest='compact', action='store_false',
+                            help='indent JSON for display; index always uses compact JSON')
     sub = parser.add_subparsers(dest='command', required=True)
     add = sub.add_parser('add')
     add.add_argument('--id', required=True)
@@ -588,6 +595,8 @@ def main(argv=None):
     listing = sub.add_parser('list')
     listing.add_argument('--status', default='active', choices=('active', 'candidate', 'stale', 'superseded', 'all'))
     listing.add_argument('--scope')
+    listing.add_argument('--max-chars', type=int, default=20000,
+                         help='complete output character limit, including newline (256..200000)')
     index = sub.add_parser('index', help='bounded content-free navigation; use check before consuming evidence')
     index.add_argument('--status', default='active', choices=('active', 'candidate', 'stale', 'superseded', 'all'))
     index.add_argument('--scope')
@@ -596,11 +605,18 @@ def main(argv=None):
     index.add_argument('--snapshot')
     index.add_argument('--max-chars', type=int, default=20000)
     sub.add_parser('storage', help='observe SQLite allocation without compaction or deletion')
-    sub.add_parser('check').add_argument('refs', nargs='+')
+    checking = sub.add_parser('check')
+    checking.add_argument('refs', nargs='+')
+    checking.add_argument('--max-chars', type=int, default=20000)
     for command in ('history', 'impact'):
-        sub.add_parser(command).add_argument('id')
+        reading = sub.add_parser(command)
+        reading.add_argument('id')
+        reading.add_argument('--max-chars', type=int, default=20000)
     args = parser.parse_args(argv)
     try:
+        bounded_read = args.command in ('list', 'history', 'impact', 'check')
+        if bounded_read and not 256 <= args.max_chars <= 200000:
+            raise MemoryError('read max_chars must be 256..200000')
         document_refs = (_load_document_refs(args.document_refs)
                          if args.command in ('add', 'correct') else None)
         if args.command in ('add', 'correct') and args.document_refs is not None:
@@ -625,8 +641,16 @@ def main(argv=None):
             result = ledger.storage()
         else:
             result = getattr(ledger, args.command)(args.id)
-        print(_index_json(result) if args.command == 'index' else
-              (render_context(result, compact=True) if args.compact else json.dumps(result, ensure_ascii=False, indent=2)))
+        compact = bounded_read if args.compact is None else args.compact
+        output = (_index_json(result) if args.command == 'index' else
+                  (render_context(result, compact=True) if compact else json.dumps(result, ensure_ascii=False, indent=2)))
+        # Text stdout translates every formatting LF on Windows, not only the
+        # final print newline. JSON string bodies already escape CR/LF.
+        output_chars = len(output) + output.count('\n') * (len(os.linesep) - 1) + len(os.linesep)
+        if bounded_read and output_chars > args.max_chars:
+            raise MemoryError('complete memory response exceeds max_chars; use index, filter scope/status, '
+                              'check fewer IDs, or explicitly increase --max-chars (up to 200000)')
+        print(output)
         return 0
     except (DocumentError, MemoryError, OSError) as exc:
         print(json.dumps({'error': str(exc)}, ensure_ascii=False), file=sys.stderr)

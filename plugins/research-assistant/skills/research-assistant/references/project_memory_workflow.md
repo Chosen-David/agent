@@ -25,6 +25,14 @@
 
 浏览记忆时，完整 checkout 可先用显式分页目录，避免把无关正文反复装入模型上下文：
 
+`list/history/impact/check` 默认输出保留全部字段的紧凑 UTF-8 JSON，完整响应
+（含 JSON 转义和平台换行）最多 20000 个字符。超限时 stdout 为空、exit 2，
+不会截断正文或改变账本；先用 `index` 导航、按 scope/status 筛选或减少 check IDs，
+确需完整大响应时在子命令后显式增加 `--max-chars`（256..200000）。全局
+`--pretty` 可恢复缩进显示，仍计入同一上限；`--compact` 保留兼容。写入命令
+沿用原有显示默认，不在成功写入后因显示预算拒绝。这个上限只控制显示字符，
+不限制数据库读取/分配，也不等于模型 token 或整次任务费用。
+
 ```bash
 python -m agent_runtime.project_memory --root /absolute/project index --scope TASK_ID --limit 20 --max-chars 20000
 python -m agent_runtime.project_memory --root /absolute/project index --scope TASK_ID --after-id LAST_ID --snapshot EXACT_SNAPSHOT_SHA256
