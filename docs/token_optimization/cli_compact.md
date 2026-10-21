@@ -26,6 +26,8 @@ Available entries (rollout tracked in TOK10-20261021):
 
 | Role routing dry-run | `python scripts/run_role.py --compact --project ROOT --role research-write --dry-run` |
 
+| Validation-context recovery | `python scripts/validation_context.py --compact --root ROOT --path PATH --sha256 SHA` |
+
 Use the existing default output for human inspection. Compact output is opt-in
 for tools passing full JSON to a model. It is whitespace compression, not a
 semantic summary and not a measured reduction in total session tokens. Each
