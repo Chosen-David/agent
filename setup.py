@@ -67,14 +67,22 @@ agent_doc/advice/ 必须核验并记录 adopt/adapt/reject/defer 与理由，不
 {END}'''
 
 
-def merge_block(text):
+def managed_block(text):
     if text.count(BEGIN) != text.count(END) or text.count(BEGIN) > 1:
         raise ValueError('malformed managed block in CLAUDE.md; preserve and repair manually')
     if BEGIN in text:
-        start, end = text.index(BEGIN), text.index(END) + len(END)
-        if end < start:
+        start, end_marker = text.index(BEGIN), text.index(END)
+        if end_marker <= start:
             raise ValueError('invalid managed block ordering')
-        return text[:start] + block() + text[end:]
+        end = end_marker + len(END)
+        return text[start:end]
+    return None
+
+
+def merge_block(text):
+    existing = managed_block(text)
+    if existing is not None:
+        return text.replace(existing, block(), 1)
     return text + ('\n\n' if text and not text.endswith('\n\n') else '') + block() + '\n'
 
 
@@ -256,6 +264,17 @@ def install(target, *, model_inventory=None, copy_skills=False):
     claude = checked_target(target, 'CLAUDE.md')
     task_file, document_directories = project_document_layout(target)
     old = claude.read_text(encoding='utf-8') if claude.exists() else ''
+    existing_block = managed_block(old)
+    owned_block_hash = previous.get('managed_block_sha256')
+    if previous and existing_block is None:
+        raise ValueError('preserving locally removed managed block in CLAUDE.md')
+    if existing_block is not None:
+        if owned_block_hash is not None and sha(existing_block) != owned_block_hash:
+            raise ValueError('preserving locally edited managed block in CLAUDE.md')
+        if previous and owned_block_hash is None and existing_block != block():
+            raise ValueError('legacy managed block cannot be safely updated; preserve and reinstall manually')
+        if not previous and existing_block != block():
+            raise ValueError('preserving existing unmanaged block in CLAUDE.md')
     merged = merge_block(old)
     for relative, text in files.items():
         atomic_text(target / relative, text)
@@ -283,6 +302,7 @@ def install(target, *, model_inventory=None, copy_skills=False):
     manifest = {'schema_version': 1, 'repository': str(REPO), 'project_root': str(target), 'commit': commit,
                 'files': {name: sha(text) for name, text in files.items()}, 'links': links,
                 'skill_copies': copies,
+                'managed_block_sha256': sha(block()),
                 'model_inventory': inventory}
     atomic_text(manifest_path, json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
     return check(target)
@@ -323,8 +343,17 @@ def check(target):
         except (OSError, ValueError) as exc:
             errors.append(str(exc))
     claude = target / 'CLAUDE.md'
-    if not claude.is_file() or block() not in claude.read_text(encoding='utf-8'):
-        errors.append('main AI entry not connected')
+    try:
+        claude_text = claude.read_text(encoding='utf-8')
+        existing_block = managed_block(claude_text)
+        owned_block_hash = manifest.get('managed_block_sha256')
+        if existing_block is None or block() != existing_block:
+            errors.append('main AI entry not connected')
+        if owned_block_hash is not None and (
+                existing_block is None or sha(existing_block) != owned_block_hash):
+            errors.append('CLAUDE.md managed block differs from installation manifest')
+    except (OSError, ValueError) as exc:
+        errors.append('main AI entry not connected: ' + str(exc))
     try:
         task_file, document_directories = project_document_layout(target)
         if not task_file.is_file():
@@ -361,7 +390,9 @@ def uninstall(target):
         if relative not in links:
             raise ValueError('unexpected managed link')
         checked_skill_link(target, relative)
-    checked_target(target, 'CLAUDE.md')
+    claude = checked_target(target, 'CLAUDE.md')
+    claude_text = claude.read_text(encoding='utf-8') if claude.exists() else None
+    existing_block = managed_block(claude_text) if claude_text is not None else None
     preserved = []
     for relative, fingerprint in manifest['files'].items():
         if relative not in expected:
@@ -388,12 +419,13 @@ def uninstall(target):
             path.unlink()
         elif os.path.lexists(path):
             preserved.append(relative)
-    claude = checked_target(target, 'CLAUDE.md')
-    if claude.exists():
-        text = claude.read_text(encoding='utf-8')
-        if block() in text:
-            atomic_text(claude, text.replace(block(), '', 1))
-        elif BEGIN in text:
+    if claude_text is not None:
+        owned_block_hash = manifest.get('managed_block_sha256')
+        if (existing_block is not None and
+                ((owned_block_hash is not None and sha(existing_block) == owned_block_hash)
+                 or (owned_block_hash is None and existing_block == block()))):
+            atomic_text(claude, claude_text.replace(existing_block, '', 1))
+        elif existing_block is not None:
             preserved.append('CLAUDE.md modified managed block')
     manifest_path.unlink()
     return {'status': 'uninstalled', 'preserved_local_edits': preserved}

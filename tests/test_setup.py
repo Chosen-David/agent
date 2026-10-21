@@ -4,6 +4,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('bootstrap', ROOT / 'setup.py')
@@ -40,6 +41,7 @@ class SetupTests(unittest.TestCase):
         self.assertEqual(manifest['project_root'], str(self.target.resolve()))
         self.assertEqual(manifest['repository'], str(ROOT))
         self.assertNotEqual(manifest['project_root'], manifest['repository'])
+        self.assertEqual(manifest['managed_block_sha256'], setup.sha(setup.block()))
         self.assertIn('Keep my instructions.', (self.target / 'CLAUDE.md').read_text())
         self.assertIn('TASK.md', (self.target / 'CLAUDE.md').read_text())
         for role, source, _ in setup.catalog():
@@ -59,6 +61,86 @@ class SetupTests(unittest.TestCase):
         setup.install(self.target)
         self.assertEqual(before, (self.target / 'CLAUDE.md').read_bytes())
         self.assertEqual(before.decode().count(setup.BEGIN), 1)
+
+    def test_repeat_install_preserves_edited_managed_block(self):
+        setup.install(self.target)
+        path = self.target / 'CLAUDE.md'
+        edited = path.read_text().replace('简单、目标明确', '用户自定义、目标明确', 1)
+        path.write_text(edited)
+        manifest = self.target / '.claude/agent-workflows/installation.json'
+        before_manifest = manifest.read_bytes()
+
+        with self.assertRaisesRegex(ValueError, 'managed block'):
+            setup.install(self.target)
+
+        self.assertEqual(path.read_text(), edited)
+        self.assertEqual(manifest.read_bytes(), before_manifest)
+        status = setup.check(self.target)
+        self.assertEqual(status['status'], 'needs_setup')
+        self.assertIn('CLAUDE.md managed block differs from installation manifest', status['errors'])
+
+    def test_repeat_install_preserves_removed_managed_block(self):
+        setup.install(self.target)
+        path = self.target / 'CLAUDE.md'
+        path.write_text(path.read_text().replace(setup.block(), '', 1))
+
+        with self.assertRaisesRegex(ValueError, 'removed managed block'):
+            setup.install(self.target)
+
+        self.assertNotIn(setup.BEGIN, path.read_text())
+
+    def test_legacy_manifest_migrates_only_unchanged_managed_block(self):
+        setup.install(self.target)
+        manifest_path = self.target / '.claude/agent-workflows/installation.json'
+        manifest = json.loads(manifest_path.read_text())
+        manifest.pop('managed_block_sha256')
+        manifest_path.write_text(json.dumps(manifest))
+
+        setup.install(self.target)
+
+        migrated = json.loads(manifest_path.read_text())
+        self.assertEqual(migrated['managed_block_sha256'], setup.sha(setup.block()))
+
+        migrated.pop('managed_block_sha256')
+        manifest_path.write_text(json.dumps(migrated))
+        path = self.target / 'CLAUDE.md'
+        edited = path.read_text().replace('简单、目标明确', '旧安装的本地编辑', 1)
+        path.write_text(edited)
+        with self.assertRaisesRegex(ValueError, 'legacy managed block'):
+            setup.install(self.target)
+        self.assertEqual(path.read_text(), edited)
+
+    def test_uninstall_removes_owned_block_after_source_update(self):
+        old_block = setup.BEGIN + '\nold generated rules\n' + setup.END
+        new_block = setup.BEGIN + '\nnew generated rules\n' + setup.END
+        with patch.object(setup, 'block', return_value=old_block):
+            setup.install(self.target)
+
+        with patch.object(setup, 'block', return_value=new_block):
+            setup.uninstall(self.target)
+
+        text = (self.target / 'CLAUDE.md').read_text()
+        self.assertNotIn(setup.BEGIN, text)
+        self.assertNotIn('old generated rules', text)
+
+    def test_uninstall_malformed_block_is_atomic(self):
+        setup.install(self.target)
+        path = self.target / 'CLAUDE.md'
+        path.write_text(path.read_text().replace(setup.END, '', 1))
+        manifest = self.target / '.claude/agent-workflows/installation.json'
+        agent = self.target / '.claude/agents/agent-research-assistant.md'
+        skill = self.target / '.claude/skills/research-assistant'
+
+        with self.assertRaisesRegex(ValueError, 'malformed'):
+            setup.uninstall(self.target)
+
+        self.assertTrue(manifest.is_file())
+        self.assertTrue(agent.is_file())
+        self.assertTrue(skill.exists())
+
+    def test_managed_block_rejects_adjacent_reverse_markers(self):
+        with self.assertRaisesRegex(ValueError, 'ordering'):
+            setup.managed_block(setup.END + setup.BEGIN)
 
     def test_canonical_task_created_without_fabricated_work_and_never_overwritten(self):
         setup.install(self.target)
