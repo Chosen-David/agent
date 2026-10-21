@@ -38,7 +38,9 @@ Owner: main-ai
 
 - 阶段A（进程身份）：task_supervisor.read_process_starttime + live.json starttime + status 校验；
   专项 test_status_verifies_worker_process_identity_against_pid_reuse 及全部 managed_supervisor 11 项通过。
+- 阶段B（统一 artifact 索引）：新增 agent_runtime/artifact_index.py（build_artifact_index + diff_artifact_index），
+  确定性分类 + required 缺失/匹配 + 哈希级对称 diff；tests/test_artifact_index.py 9 项通过。
 
 ### 阻塞与下一步
 
-- 继续阶段B（统一 artifact 索引），再阶段C、阶段D。
+- 继续阶段C（结构化 intake），再阶段D（next 尾注）。

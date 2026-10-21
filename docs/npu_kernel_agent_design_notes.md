@@ -29,10 +29,11 @@ doctor、schema 校验、编译、oracle 对比、计时、best-guard、STATE.js
 - **remember-vs-recompute / receipt**（#10 的增量侧）：`document_delta` 只重读变化文档。
 - **后台任务进程身份**（#7）：`task_supervisor.read_process_starttime` + live.json 的 `starttime` 字段，
   `status` 用 `/proc/PID/stat` 校验心跳写者仍是同一进程，防 PID 复用误判。
+- **统一 artifact 索引**（#8）：`agent_runtime.artifact_index.build_artifact_index` 一趟扫描、
+  按确定性 category/mutable 分类、`required` 缺失/匹配，`diff_artifact_index` 哈希级对称增量。
 
 ## 尚未移植、值得继续（按价值/风险排序）
 
 1. **`next{action,command,reason}` 尾注**（#1）：给确定性结果补单一可执行下一步，让 resume 零重推。
    改动面跨多个结果对象，需单独规划。
 2. **结构化 intake**（#5）：新模块 + 补问 schema + 答案重注入 + 完整性重检。
-3. **统一 artifact 索引**（#8）：一趟扫描 run 树、按 role/category/status 分类，给“缺什么/变了什么”单一视图。
