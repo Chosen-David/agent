@@ -2,8 +2,8 @@
 
 ## 2026-10-21
 
-- [ ] [REFLECT50-20261021] 50-round runtime/memory/Markdown fixes; audit and independent plan review. ([detail](task_details/REFLECT50-20261021.md))
-- [ ] [REFLECT50-VERIFY-20261021] Independent plan/data verification for the 50-round batch. ([detail](task_details/REFLECT50-VERIFY-20261021.md))
+- [x] [REFLECT50-20261021] 50-round runtime/memory/Markdown fixes; audit and independent plan review. ([detail](task_details/REFLECT50-20261021.md))
+- [x] [REFLECT50-VERIFY-20261021] Independent plan/data verification for the 50-round batch. ([detail](task_details/REFLECT50-VERIFY-20261021.md))
 
 - [x] [TOK10-20261021] 10/10轮逐轮推main，最终源码整合复核通过。 ([详情](task_details/TOK10-20261021.md))
 - [x] [TOK10-VERIFY-20261021] 10轮及最终源码整合独立六域验收通过。 ([详情](task_details/TOK10-VERIFY-20261021.md))

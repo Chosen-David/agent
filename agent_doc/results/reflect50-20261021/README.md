@@ -62,3 +62,5 @@ whole-session token, monetary cost, latency, QA or blanket correctness benefits.
 Frozen synthetic observations (o200k_base): large selected literal packet 44,072 → 205 tokens; tiny packet 55 → 158 tokens. Receipt whitespace compaction preserves complete JSON values: 17,884 → 15,774 stored bytes. These are scoped observations, not overall agent-cost savings.
 
 `history-delta.zip` preserves the subsequent R39 compatibility repair and stale final-v1 evidence; final-v2 was also left unaccepted after the auxiliary output guard changed. Final-v3 supersedes both.
+
+Implementation main commit: `b928a253da2586255bceedd0bb1a32fb71eb0f51`; GitHub/native tree readback and committed-source setup/check passed (16 skills, 531 files). `publication.json` records scope and preservation checks. The final bookkeeping commit changes no tested source.
