@@ -4,6 +4,7 @@ import contextlib
 import io
 import os
 from pathlib import Path
+import shutil
 import tempfile
 import subprocess
 import sys
@@ -282,6 +283,49 @@ print(json.dumps({'schema_version':'documents-result/v1','status':'ok','result':
         finally:
             os.close(fd)
         self.assertEqual((original / 'sentinel').read_text(), 'keep')
+
+
+@unittest.skipUnless(os.environ.get('AGENT_DOCUMENTS_TEST_WHEELHOUSE') and pinned_document_platform(),
+                     'explicit cached wheels and pinned document platform required')
+class DocumentsOfflineInstallTests(unittest.TestCase):
+    def test_real_offline_install_can_retry_missing_wheel_and_reuse_without_cache(self):
+        profile, _, version = tools.binding('agpl-3.0')
+        cache = Path(os.environ['AGENT_DOCUMENTS_TEST_WHEELHOUSE'])
+        with tempfile.TemporaryDirectory() as temporary:
+            temporary = Path(temporary)
+            wheels, root = temporary / 'wheels', temporary / 'managed'
+            wheels.mkdir()
+            for item in profile['packages'][:-1]:
+                shutil.copyfile(cache / item['filename'], wheels / item['filename'])
+            with tools.managed_root(root, create=True):
+                tools.atomic_json(root / 'current.json', {'previous': 'preserve on failure'})
+            old = (root / 'current.json').read_bytes()
+            command = [sys.executable, '-m', 'agent_runtime.documents', '--root', str(root),
+                       'install', '--pymupdf-license', 'agpl-3.0', '--offline']
+
+            def invoke(extra):
+                return subprocess.run(command + extra, cwd=tools.REPO,
+                                      capture_output=True, text=True, timeout=360)
+
+            invalid = invoke(['--wheelhouse', str(wheels)])
+            self.assertEqual(invalid.returncode, 3, invalid.stdout + invalid.stderr)
+            self.assertEqual(json.loads(invalid.stdout)['status'], 'invalid')
+            self.assertEqual((root / 'current.json').read_bytes(), old)
+            self.assertFalse((root / version).exists())
+            last = profile['packages'][-1]['filename']
+            shutil.copyfile(cache / last, wheels / last)
+            installed = invoke(['--wheelhouse', str(wheels)])
+            self.assertEqual(installed.returncode, 0, installed.stdout + installed.stderr)
+            self.assertEqual(json.loads(installed.stdout)['result']['status'], 'installed')
+            current = (root / 'current.json').read_bytes()
+            _, receipt = tools.current(root)
+            self.assertEqual(receipt['observation']['packages'],
+                             {p['name']: p['version'] for p in profile['packages']})
+            shutil.rmtree(wheels)
+            reused = invoke([])
+            self.assertEqual(reused.returncode, 0, reused.stdout + reused.stderr)
+            self.assertEqual(json.loads(reused.stdout)['result']['status'], 'reused')
+            self.assertEqual((root / 'current.json').read_bytes(), current)
 
 
 @unittest.skipUnless(os.environ.get('AGENT_DOCUMENTS_TEST_ROOT'), 'explicit installed documents root required')

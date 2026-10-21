@@ -70,3 +70,7 @@ JSON输出统一使用 `documents-result/v1`；成功为 `status=ok`、退出0�
 
 维护者更新锁可显式运行 `python scripts/lock_documents_profile.py WHEELHOUSE`，核对每个 PyPI
 发布条目的 filename/hash 和 wheel metadata，再审查变更；此命令不安装、不自动替换锁。
+
+维护者可显式设置 `AGENT_DOCUMENTS_TEST_WHEELHOUSE=/absolute/wheels`，运行
+`python -m unittest tests.test_documents.DocumentsOfflineInstallTests -v`：隔离目录中验证
+缺包后重试、真实离线安装和删缓存后复用。该开发测试使用 AGPL 参数；默认测试不执行这次安装。
