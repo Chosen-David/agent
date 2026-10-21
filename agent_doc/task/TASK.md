@@ -2,8 +2,19 @@
 
 ## 2026-10-21
 
-- [ ] [TOK10-20261021] 9/10轮已推main并核对；继续逐轮独立验收。 ([详情](task_details/TOK10-20261021.md))
-- [ ] [TOK10-VERIFY-20261021] 独立批次计划与逐轮六域验收。 ([详情](task_details/TOK10-VERIFY-20261021.md))
+- [x] [TOK10-20261021] 10/10轮逐轮推main，最终源码整合复核通过。 ([详情](task_details/TOK10-20261021.md))
+- [x] [TOK10-VERIFY-20261021] 10轮及最终源码整合独立六域验收通过。 ([详情](task_details/TOK10-VERIFY-20261021.md))
+
+- [x] [TOK10-01-20261021] 第01轮 automatic complete basis selection 已独立范围验收并推main。 ([详情](task_details/TOK10-01-20261021.md))
+- [x] [TOK10-02-20261021] 第02轮 communication 已独立范围验收并推main。 ([详情](task_details/TOK10-02-20261021.md))
+- [x] [TOK10-03-20261021] 第03轮 project_memory 已独立范围验收并推main。 ([详情](task_details/TOK10-03-20261021.md))
+- [x] [TOK10-04-20261021] 第04轮 project_docs 已独立范围验收并推main。 ([详情](task_details/TOK10-04-20261021.md))
+- [x] [TOK10-05-20261021] 第05轮 result_store 已独立范围验收并推main。 ([详情](task_details/TOK10-05-20261021.md))
+- [x] [TOK10-06-20261021] 第06轮 validate_experiment_result 已独立范围验收并推main。 ([详情](task_details/TOK10-06-20261021.md))
+- [x] [TOK10-07-20261021] 第07轮 core capabilities 已独立范围验收并推main。 ([详情](task_details/TOK10-07-20261021.md))
+- [x] [TOK10-08-20261021] 第08轮 discover_backends 已独立范围验收并推main。 ([详情](task_details/TOK10-08-20261021.md))
+- [x] [TOK10-09-20261021] 第09轮 role dry-run 已独立范围验收并推main。 ([详情](task_details/TOK10-09-20261021.md))
+- [x] [TOK10-10-20261021] 第10轮 validation_context recovery 已独立范围验收并推main。 ([详情](task_details/TOK10-10-20261021.md))
 
 - [x] [TOK-MEM-20261021] 可逆memory表格已推main并验远端；32短包3135→2523 payload tokens，v2独立验收通过。 ([详情](task_details/TOK-MEM-20261021.md))
 - [x] [TOK-MEM-VERIFY-20261021] v1/v2独立六域验收通过，当前部署数据与复用桥接已核对。 ([详情](task_details/TOK-MEM-VERIFY-20261021.md))

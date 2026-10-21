@@ -11,21 +11,13 @@ Available entries (rollout tracked in TOK10-20261021):
 | Entry | Invocation |
 | --- | --- |
 | Communication | `python -m agent_runtime.communication --compact --db DB --plan PLAN --root ROOT inbox reader` |
-
 | Memory ledger | `python -m agent_runtime.project_memory --compact --root ROOT list` |
-
 | Project documents | `python -m agent_runtime.project_docs --compact --root ROOT inspect` |
-
 | Result store | `python scripts/result_store.py --compact --root ROOT search TERM` |
-
 | Experiment-result validation | `python scripts/validate_experiment_result.py --compact --root ROOT --contract CONTRACT` |
-
 | Core runtime | `python -m agent_runtime --compact --db DB capabilities` |
-
 | Backend discovery | `python scripts/discover_backends.py --compact` |
-
 | Role routing dry-run | `python scripts/run_role.py --compact --project ROOT --role research-write --dry-run` |
-
 | Validation-context recovery | `python scripts/validation_context.py --compact --root ROOT --path PATH --sha256 SHA` |
 
 Use the existing default output for human inspection. Compact output is opt-in
@@ -33,3 +25,5 @@ for tools passing full JSON to a model. It is whitespace compression, not a
 semantic summary and not a measured reduction in total session tokens. Each
 round's result directory records the entire actual stdout (including the native
 newline), stderr, exit status, tokenizer and immutable fixture bytes.
+
+Round09 evidence uses a real WSL Linux installation (native Windows setup lacked symlink privilege), with complete subject UTF-8 stdout including LF and a Windows tokenizer. Persistent source/fixture identity, symlink targets and both environments are recorded in `token10-20261021-09-v3`. Native model dispatch is outside that measurement.
