@@ -83,6 +83,18 @@ class ContextCliOutputTests(unittest.TestCase):
         self.assertEqual(bad.stdout, b'')
         self.assertNotIn(b'Traceback', bad.stderr)
 
+    def test_reference_full_and_prefix_transport_respect_display_budget(self):
+        from agent_runtime.reference_context import restore_reference_view
+        prefix = 'agent_doc/results/long-independent-evidence-run/'
+        data = {'references': [{'path': prefix + f'part-{n}.json', 'sha256': str(n) * 64}
+                               for n in range(8)],
+                'current': {'status': 'cancelled', 'text': '\U00010000\u2028"quoted"'}}
+        sha = self.source('refs.json', json.dumps(data, ensure_ascii=False))
+        for extra in ([], ['--full']):
+            packet = self.boundary('reference_context.py', ['--path', 'refs.json', '--sha256', sha, *extra])
+            self.assertEqual(restore_reference_view(self.root, json.dumps(packet, ensure_ascii=False),
+                                                   'refs.json', sha), data)
+
 
 if __name__ == '__main__':
     unittest.main()
