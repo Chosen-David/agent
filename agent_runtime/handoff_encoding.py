@@ -7,6 +7,7 @@ from .external_json import strict_json
 FORMAT='claims-table/v1'
 COLUMNS=('id','status','depends_on','artifact_ids','knowledge_ids','memory_ids','assumptions')
 BASIS_TABLE_FORMAT='basis-tables/v1'
+AUTO_FORMAT='auto-lossless/v1'
 MEMORY_COLUMNS=('id','kind','content','source','scope','evidence','status','created_at','document_refs','deps')
 
 def encode_claims_table(payload):
@@ -44,6 +45,29 @@ def _decode_table(table, columns, label):
             raise ValueError('truncated/extended '+label+' row')
         entries.append(dict(zip(columns,row)))
     return entries
+
+def choose_basis_payload(payload, token_counter, *, max_chars=200000, max_tokens=None):
+    """Opt-in to all three v1 wire formats; minimize (tokens, chars, order).
+
+    Incompatible table schemas fall back to complete JSON. No field is dropped.
+    All candidates include their headers, must decode, and must fit both caps.
+    """
+    if not callable(token_counter):raise ValueError('auto format requires actual token_counter')
+    candidates=[]
+    for order,encoder in enumerate((deepcopy,encode_claims_table,encode_basis_tables)):
+        try:
+            text=json.dumps(encoder(payload),ensure_ascii=False,sort_keys=True,separators=(',',':'))
+            decode_basis_payload(text)
+        except ValueError:
+            continue
+        tokens=token_counter(text)
+        if type(tokens) is not int or tokens<0:
+            raise ValueError('token_counter must return nonnegative integer')
+        if len(text)<=max_chars and (max_tokens is None or tokens<=max_tokens):
+            candidates.append((tokens,len(text),order,text))
+    if not candidates:raise ValueError('no complete supported basis fits character/token budget')
+    tokens,_,_,text=min(candidates)
+    return text,tokens
 
 def decode_basis_payload(text):
     """Restore exact JSON values. Caller still must revalidate source/freshness/authority."""

@@ -1,3 +1,5 @@
+TOK10-20261021: Mailbox.prepare_context → basis_context → choose_basis_payload 显式选择满足双预算的完整最小包；后续9个CLI消费入口逐轮接入无损compact。默认不变。tests/test_token10.py、scripts/measure_token10.py与各轮results保存局部payload/实际stdout证据，当前状态见task_details/TOK10-20261021.md；root写实现/索引，独立角色验收。
+
 SYSTEM-99/U2: `config/documents-linux-cp312-v1.json` → 显式 `python -m agent_runtime.documents` install/probe → 受管venv中的 `documents_adapter.py` → PDF/Markdown/PPTX/LaTeX源产物。`tests/test_documents.py`、`docs/documents_profile.md`和 `agent_doc/results/system99/` 保存固定依赖、真实smoke与离线复用边界；主AI独占实现/任务，独立角色复核，不自动修改setup行为或安装TeX。
 
 ROLE-MODELS-01: `config/role_model_policy.json` → `agent_runtime/model_routing.py` → `setup.py`安装快照/原生model与`scripts/run_role.py`可信宿主派发。`tests/test_model_routing.py`、`agent_doc/results/role-models-20261021/`验证离线路由和子进程边界；主AI维护实现/任务，独立审查者核验。无在线厂商后端、凭据或质量收益主张。

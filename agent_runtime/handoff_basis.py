@@ -13,7 +13,8 @@ from .project_memory import MemoryLedger, _ids
 
 _BUILTIN_MEMORY_LEDGER = MemoryLedger
 from .handoff_encoding import (FORMAT as CLAIM_TABLE_FORMAT, BASIS_TABLE_FORMAT,
-                               encode_claims_table, encode_basis_tables)
+                               AUTO_FORMAT, encode_claims_table, encode_basis_tables,
+                               choose_basis_payload)
 from scripts.validate_handoff import validate
 
 
@@ -143,7 +144,7 @@ def claim_graph(record):
 def check_handoff_basis(root, record, request):
     """Mandatory when declared; requirements belong to the consumer, not output."""
     _require(isinstance(record, dict) and isinstance(request, dict), 'basis requires objects')
-    _require(request.get('context_format', 'json') in ('json', CLAIM_TABLE_FORMAT, BASIS_TABLE_FORMAT),
+    _require(request.get('context_format', 'json') in ('json', CLAIM_TABLE_FORMAT, BASIS_TABLE_FORMAT, AUTO_FORMAT),
              'unsupported consumer context format')
     for key in ('context_max_chars', 'context_max_tokens'):
         if key in request:
@@ -359,18 +360,21 @@ def basis_context(root, record, request, *, known_knowledge_refs=(), known_memor
             pending = {dep for entry in entries for dep in entry['deps']} - memory_entries.keys()
     payload['memory_entries'] = [memory_entries[k] for k in sorted(memory_entries) if k not in known_memory_ids]
     context_format = request.get('context_format', 'json')
-    if context_format == BASIS_TABLE_FORMAT:
+    tokens = None
+    if context_format == AUTO_FORMAT:
+        serialized,tokens = choose_basis_payload(payload,token_counter,max_chars=max_chars,max_tokens=max_tokens)
+    elif context_format == BASIS_TABLE_FORMAT:
         wire_payload = encode_basis_tables(payload)
     elif context_format == CLAIM_TABLE_FORMAT:
         wire_payload = encode_claims_table(payload)
     else:
         wire_payload = payload
-    serialized = json.dumps(wire_payload, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+    if context_format != AUTO_FORMAT:
+        serialized = json.dumps(wire_payload, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
     _require(len(serialized) <= max_chars, 'complete basis exceeds character budget; narrow task or reuse context')
-    tokens = None
     if token_counter is not None:
         _require(callable(token_counter), 'token_counter must be callable')
-        tokens = token_counter(serialized)
+        if tokens is None:tokens = token_counter(serialized)
         _require(type(tokens) is int and tokens >= 0, 'token_counter must return nonnegative integer')
         _require(max_tokens is None or tokens <= max_tokens, 'complete basis exceeds token budget')
     return {'payload': serialized, 'usage': {'chars': len(serialized), 'bytes': len(serialized.encode()),
