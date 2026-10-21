@@ -18,6 +18,8 @@ Available entries (rollout tracked in TOK10-20261021):
 
 | Result store | `python scripts/result_store.py --compact --root ROOT search TERM` |
 
+| Experiment-result validation | `python scripts/validate_experiment_result.py --compact --root ROOT --contract CONTRACT` |
+
 Use the existing default output for human inspection. Compact output is opt-in
 for tools passing full JSON to a model. It is whitespace compression, not a
 semantic summary and not a measured reduction in total session tokens. Each
