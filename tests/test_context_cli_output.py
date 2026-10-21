@@ -60,6 +60,15 @@ class ContextCliOutputTests(unittest.TestCase):
         self.assertEqual(failed.stdout, b'')
         self.assertEqual((self.root / 'agent_doc/task/TASK.md').read_bytes(), before)
 
+    def test_records_keep_physical_lines_and_global_dependencies(self):
+        text = '{"rule":"global \U00010000"}\r\n{"history":0}\n{"current":"cancelled\\nnow"}'
+        sha = self.source('records.ndjson', text)
+        packet = self.boundary('record_context.py', ['--path', 'records.ndjson', '--sha256', sha,
+                                                    '--line', '3', '--global-line', '1'])
+        self.assertEqual([r['line'] for r in packet['records']], [1, 3])
+        self.assertEqual(packet['records'][0]['text'], text.splitlines(keepends=True)[0])
+        self.assertEqual(packet['omitted_records'], 1)
+
 
 if __name__ == '__main__':
     unittest.main()
