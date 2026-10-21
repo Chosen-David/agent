@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 28
+Version: 29
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -128,7 +128,28 @@ O_CREAT|O_RDWR|O_NOFOLLOW|O_NONBLOCK打开并同FD fstat普通文件，finally�
 checkout烟测输出长度与计数；同步runtime脚本及项目文档镜像。沿用同批17篇正文，不宣称真实token、
 模型质量或整轮完成；首轮独立结果验收的blocked记录原样保留，返修后须重新独立验收。
 
+阶段U（CHAIN-OUTPUT-LADDER）：把复杂解释升级为消费者先冻结请求、producer交付受控文字/图/交互网页/
+讲解视频、结构验证、独立观察后交付的单一链路；普通短问答保持轻量。新增闭合 request/manifest、精确
+claim 集、逐层角色/check 证据、确定性降级状态及稳定 CLI 退出码；manifest 绑定请求与产物实际 SHA，
+producer 自报观察者永不形成接受。POSIX 首版逐路径组件 FD-relative `O_NOFOLLOW` 打开，拒绝父/终点
+symlink、目录、FIFO、路径逃逸和读取期间变化；不声称 OS 沙箱、跨文件事务、Windows 覆盖或语义/
+视觉质量。合同复用既有 visual explanation 流程并同步六个消费者，不替代 artifact index 或另造 TASK。
+文档 profile 为独立 U2：固定平台/完整 wheel 锁和明确 PyMuPDF 许可选择、最终路径 venv、真实公开适配器
+smoke 与 receipt；本阶段未实施 U2，不把候选摘要当安装授权，也不声称仓库已自带 PDF/Markdown/PPTX/
+LaTeX 能力。阶段 U 仍是同一 SYSTEM-99 可恢复检查点，不计整轮完成。
+
 ## Progress
+
+Version29阶段U1新增可信输出阶梯：消费者冻结请求与 claim/check，producer 交付文字/图/网页/视频
+产物，结构验证后仍须独立观察；显式降级只到pending，自报reviewer不能接受。产物按POSIX逐路径
+FD-relative no-follow读取并绑定实际摘要，六个既有视觉/论文角色复用同一workflow镜像。
+首次独审退回祖先symlink、重复check ID、跨层证据及U2安装设计，返修并统一许可/POSIX边界后最终
+接受U1为scope-limited。定向普通/`-O`各55项、TASK/项目文档相关145项、Reader3、同步/编译/diff
+通过。全库两次1548项均仅
+`test_managed_supervisor`当前`/proc` starttime瞬态失败1项（1539通过/8跳过），单项重跑通过/失败
+交替；保留负结果且不顺带改无关supervisor。证据见[阶段U](../../results/system99/stage-u.md)与
+[方案及独审返修](../../results/system99/stage-u-plan.md)。U2文档profile尚未实施，不能宣称自带
+PDF/Markdown/PPTX/LaTeX；未测模型质量、token、费用或媒体质量，SYSTEM-99及整轮继续open。
 
 Version28阶段T在并发main `1cf7258f` 新增摘要导航后固定真实规模回归：317项下默认入口返回2，
 即使每项进度仅1字符全量仍约80369字符。独立方案复核要求区分未勾选与受管active、显式省略计数、

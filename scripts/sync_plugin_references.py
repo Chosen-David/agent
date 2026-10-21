@@ -43,6 +43,11 @@ MAPPINGS = {
         for role in ("explain-research-concepts", "research-figures", "research-diagrams",
                      "research-data-visualization", "paper-reading-companion", "research-assistant")
     ],
+    "workflows/output_ladder_workflow.md": [
+        f"plugins/research-assistant/skills/{role}/references/output_ladder_workflow.md"
+        for role in ("explain-research-concepts", "research-figures", "research-diagrams",
+                     "research-data-visualization", "paper-reading-companion", "research-assistant")
+    ],
     "workflows/agent_communication_workflow.md": [
         "plugins/research-assistant/skills/research-assistant/references/agent_communication_workflow.md",
     ],
