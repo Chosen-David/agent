@@ -16,6 +16,7 @@ import tempfile
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
+from agent_runtime.context_serialization import render_context
 from agent_runtime.external_json import load_json, strict_json
 from agent_runtime.model_routing import EMPTY_INVENTORY, dispatch, resolve, validate_inventory
 
@@ -74,6 +75,7 @@ def adapter_run(command, request, timeout):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--project', required=True)
+    parser.add_argument('--compact', action='store_true', help='preserve all JSON fields without formatting whitespace')
     parser.add_argument('--role', required=True)
     parser.add_argument('--adapter', help='Explicit trusted executable; never loaded from model policy')
     parser.add_argument('--claude', default='claude', help='Native Claude CLI executable')
@@ -107,12 +109,12 @@ def main():
         route = resolve(policy, args.role, inventory,
                         adapter_available=command is not None and not args.dry_run, requires=args.require)
         if args.dry_run:
-            print(json.dumps(route, ensure_ascii=False, indent=2))
+            print((render_context(route, compact=True) if args.compact else json.dumps(route, ensure_ascii=False, indent=2)))
             return 0
         prompt = sys.stdin.read(1024 * 1024 + 1)
         if not prompt.strip() or len(prompt.encode('utf-8')) > 1024 * 1024:
             raise ValueError('provide a nonempty task on stdin, at most 1 MiB')
-        print(json.dumps({'selected_route': route}, ensure_ascii=False), file=sys.stderr)
+        print((render_context({'selected_route': route}, compact=True) if args.compact else json.dumps({'selected_route': route}, ensure_ascii=False)), file=sys.stderr)
         request = {'schema_version': 1, 'project_root': str(project), 'role': args.role,
                    'definition': definition, 'prompt': prompt}
         _, code = dispatch(policy, args.role, inventory, request,

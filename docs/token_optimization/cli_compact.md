@@ -24,6 +24,8 @@ Available entries (rollout tracked in TOK10-20261021):
 
 | Backend discovery | `python scripts/discover_backends.py --compact` |
 
+| Role routing dry-run | `python scripts/run_role.py --compact --project ROOT --role research-write --dry-run` |
+
 Use the existing default output for human inspection. Compact output is opt-in
 for tools passing full JSON to a model. It is whitespace compression, not a
 semantic summary and not a measured reduction in total session tokens. Each
