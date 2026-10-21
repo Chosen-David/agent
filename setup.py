@@ -112,7 +112,7 @@ skills:
 读取 Skill 内 execution/workflow 等所需引用；保留具体数据、单位、日志和产物路径。
 实验/测量数据须按 references/result_validation_workflow.md 经独立 verify_experiment_result；未通过不用于结论。
 向主 AI 返回结论、真实证据、验收状态、未完成项与恢复条件。
-不要自行声明全链完成；由主 AI 对照 agent_doc/task/TASK.md 汇总并维护 tmux 监督器。
+不要自行声明全链完成；由主 AI 按任务范围汇总。仅向已存在且获授权的监督运行交接状态，不自动创建监督器。
 '''
 
 
