@@ -1,0 +1,36 @@
+{
+  "schema_version": "experiment-validation-plan/v1",
+  "scope": "Candidate A only: skip unused package map when no available module; local CPU inventory CLI, unchanged result semantics",
+  "criteria": {
+    "implementation": {
+      "procedure": "Read baseline/candidate actual code and freeze SHA; inspect no global caching and identical version ordering",
+      "acceptance": "Only skip unused map; declared versions and fresh standalone probes retained",
+      "allow_not_applicable": false
+    },
+    "reference_boundary": {
+      "procedure": "Run existing unit tests plus absent/command-only/declared metadata, successful inferred and failing mapping cases",
+      "acceptance": "All pass; no backend initialized; parsed full JSON matches baseline",
+      "allow_not_applicable": false
+    },
+    "data_integrity": {
+      "procedure": "Hash sources, wrapper, registry, raw outputs; five alternating paired samples after separate warmup pair",
+      "acceptance": "No omitted failures; exact output equality each pair; both zero exit; samples complete",
+      "allow_not_applicable": false
+    },
+    "reproducibility": {
+      "procedure": "Independent reviewer runs frozen script/tests and checks exact input/version/raw identities",
+      "acceptance": "Reviewer usable-with-scope or no publication",
+      "allow_not_applicable": false
+    },
+    "numerical_sanity": {
+      "procedure": "Use five paired wall measurements, report each and medians/min/max; profiler separate; verify finite positive seconds, units and recompute all ratios from raw samples",
+      "acceptance": "Median wall reduction >=10%, every pair reduction >=5%; otherwise inconclusive, do not claim benefit",
+      "allow_not_applicable": false
+    },
+    "measurement_validity": {
+      "procedure": "Same interpreter/env/cwd/registry/stdout capture; no package/backend install or concurrent benchmark",
+      "acceptance": "Scope only real local missing-backend inventory workload; no inference/model/other-platform generalization",
+      "allow_not_applicable": false
+    }
+  }
+}

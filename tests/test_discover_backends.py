@@ -69,6 +69,35 @@ class DiscoverBackendsTests(unittest.TestCase):
         self.assertIsNone(result["detected_version"])
         self.assertIsNone(result["version_source"])
 
+
+    def test_declared_version_without_importable_module(self):
+        entry = {"id": "demo", "adoption": "optional_runtime", "category": "test",
+                 "repo": "demo", "detect": {"python_modules": ["missing"],
+                                              "python_distributions": ["demo-dist"]}}
+        with (
+            patch.object(discover.importlib.util, "find_spec", return_value=None),
+            patch.object(discover.importlib.metadata, "packages_distributions") as mapping,
+            patch.object(discover.importlib.metadata, "version", return_value="2.3") as version,
+        ):
+            result = discover.probe_backend(entry)
+        self.assertEqual(result["status"], "not_detected")
+        self.assertEqual(result["python_versions"], {"demo-dist": "2.3"})
+        self.assertEqual(result["detected_version"], "2.3")
+        version.assert_called_once_with("demo-dist")
+        mapping.assert_not_called()
+
+    def test_command_only_does_not_scan_python_distribution_map(self):
+        entry = {"id": "cli", "adoption": "borrow_pattern", "category": "test",
+                 "repo": "cli", "detect": {"commands": ["demo-cli"]}}
+        with (
+            patch.object(discover.shutil, "which", return_value="/bin/demo-cli"),
+            patch.object(discover.importlib.metadata, "packages_distributions") as mapping,
+        ):
+            result = discover.probe_backend(entry)
+        self.assertEqual(result["commands"], {"demo-cli": True})
+        self.assertEqual(result["python_versions"], {})
+        mapping.assert_not_called()
+
     def test_metadata_errors_are_bounded(self):
         entry = {
             "id": "demo",

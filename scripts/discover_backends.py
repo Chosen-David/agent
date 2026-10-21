@@ -48,10 +48,12 @@ def validate_registry(data):
 def _python_versions(detect: dict, modules: dict[str, bool]) -> tuple[dict[str, str], str | None, str | None]:
     declared = list(detect.get("python_distributions", []))
     candidates = set(declared)
-    try:
-        package_map = importlib.metadata.packages_distributions()
-    except Exception:
-        package_map = {}
+    package_map = {}
+    if any(modules.values()):
+        try:
+            package_map = importlib.metadata.packages_distributions()
+        except Exception:
+            pass
     for module_name, available in modules.items():
         if available:
             candidates.update(package_map.get(module_name, []) or [])

@@ -1,0 +1,14 @@
+# SYSTEM-99 bounded continuation: backend discovery
+Baseline 7abb604500859fe000efd9e711f5f427ecacf391, clean standalone checkout, lock owned by main.
+User scope: Agent reliability/efficiency; ordinary push main authorized; preserve guide and unrelated work.
+Existing search: ../system99-memory-2255/backend-prior-search.json; lexical advice/context/corpus/math hits do not benchmark backend discovery. No matching empirical claim reused.
+Observation (static only): _python_versions always calls packages_distributions even for no available Python module, for each of 11 registry entries. Need baseline profile before adopting.
+Candidate A: only skip mapping when no module available. Candidate B: additionally lazy request-local map reuse in CLI. No global cache; independent probe_backend calls remain fresh. Prefer A first for minimal semantic risk; only consider B with evidence.
+Invariants: identical complete parsed JSON/exit/stdout fields; no backend import/execution; declared distribution versions remain queried, sorted candidate preference retained; errors retain diagnostic/fallback behavior. No availability/authorization upgrades.
+Plan: independent plan review -> bounded baseline (one real CLI, profiler and raw hash) -> candidate A -> existing regressions plus command-only/missing modules/declared versions tests -> 5 interleaved real CLI baseline/candidate pairs, first warmup excluded symmetrically, exact output equivalence -> independent result review -> publish only if reliable local CLI improvement without correctness regression.
+Resources: local CPU only, no model/network/backend commands, no package installation. 5 pairs, each process 20s timeout, total 5min cap; if baseline exceeds20s retain blocker. No global settings or unrelated processes touched.
+Acceptance: parsed JSON equal all pairs, target median wall improves >=10%, no degraded failure behavior; results are local inventory CLI only, not whole Agent/quality/model costs. All logs private until independently reviewed. No high-risk changes; no runtime supervisor deployed. Continue same SYSTEM-99 batch, not a new optimization round.
+Single-writer: main edits scripts/discover_backends.py/tests and this private directory; reviewer only independent notes. Data producer main -> verify_experiment_result reviewer -> report/publish consumers. Frozen versions and raw results required before use.
+
+## Version 2 after independent REVISE
+Use one separate warmup pair, then exactly five measured pairs with alternating order. Freeze validation-plan.json and contract.json before data. Profiler outside timed comparison. Every pair must improve >=5%, median >=10%; otherwise no benefit claim. Identical source-compile wrapper with real __file__; freeze wrapper and dependencies. Declared distribution metadata preserved even with no detected modules. No runtime plan-review service deployed.

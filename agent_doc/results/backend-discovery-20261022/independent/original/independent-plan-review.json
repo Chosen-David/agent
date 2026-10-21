@@ -1,0 +1,29 @@
+{
+  "verdict": "REVISE",
+  "scope": "Candidate A only; independent plan review, no runtime adapter authentication or result acceptance",
+  "plan_sha256": "4630130a899edd1125f972496ee42ab0cde3fc1c174f8c6efa62868daa50ec75",
+  "baseline": "7abb604500859fe000efd9e711f5f427ecacf391",
+  "findings": [
+    {
+      "id": "PLAN-1",
+      "required": "Freeze the executable measurement command and path arrangement before running. Both variants must import the same agent_runtime, use the same interpreter/cwd and explicit identical absolute registry path. A script copied under .agent-runs changes ROOT and therefore default registry/import resolution. Record registry/script/dependency hashes and environment."
+    },
+    {
+      "id": "PLAN-2",
+      "required": "Specify warmup and sample count unambiguously: e.g. one separate warmup per variant plus five measured alternating pairs; preserve all raw stdout/stderr/exit/timings and require equivalence per pair. Report spread/paired ratios; >=10% median alone cannot rule out noise. Bound profiler separately and exclude it from wall comparison."
+    },
+    {
+      "id": "PLAN-3",
+      "required": "Before producing empirical data freeze the six-criterion validation_plan and producer->verify_experiment_result->consumer contract required by workflows/result_validation_workflow.md; result hashes remain unknown until produced. Bind a reviewer identity and scoped independent rerun procedure. Do not equate this prose review with a deployed trusted review adapter."
+    }
+  ],
+  "implementation_advice": [
+    "Candidate A is structurally reasonable: with no true modules, the global package map contributes no distribution candidates. Still query every declared distribution and retain preference order/status/diagnostics.",
+    "Test no modules, all false modules (including invalid dotted probes), declared distribution metadata with no module, available-module inferred distribution, and metadata errors; explicit calls without cache remain fresh.",
+    "Candidate B changes snapshot/freshness semantics and should not be included under this approval; require separate evidence/review if A insufficient."
+  ],
+  "limitations": [
+    "No benchmark, production edits, backend/model calls or installs executed.",
+    "Human GUIDE.md is empty and was read only. SYSTEM-99 remains open; no whole-agent speed/quality claim."
+  ]
+}

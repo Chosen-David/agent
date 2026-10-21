@@ -1,0 +1,57 @@
+{
+  "producer": {
+    "task_id": "produce",
+    "task_type": "experiment",
+    "experiment_result": {
+      "result_id": "system99-backend-discovery-0300",
+      "producer_task_id": "produce",
+      "producer_actor": "root",
+      "manifest_path": ".agent-runs/backend-discovery-0300/manifest.json",
+      "validation_plan": {
+        "path": ".agent-runs/backend-discovery-0300/validation-plan.json",
+        "sha256": "a1d6b2e466056067be4c0028c55db217a675d27fd1e62b28d519ccca257c00d8"
+      },
+      "scope": "Candidate A only: skip unused package map when no available module; local CPU inventory CLI, unchanged result semantics"
+    }
+  },
+  "verifier": {
+    "task_id": "verify",
+    "action": "verify_experiment_result",
+    "owner": "independent-reviewer",
+    "depends_on": [
+      "produce"
+    ],
+    "result_validation": {
+      "result_id": "system99-backend-discovery-0300",
+      "producer_task_id": "produce",
+      "producer_actor": "root",
+      "manifest_path": ".agent-runs/backend-discovery-0300/manifest.json",
+      "validation_plan": {
+        "path": ".agent-runs/backend-discovery-0300/validation-plan.json",
+        "sha256": "a1d6b2e466056067be4c0028c55db217a675d27fd1e62b28d519ccca257c00d8"
+      },
+      "scope": "Candidate A only: skip unused package map when no available module; local CPU inventory CLI, unchanged result semantics"
+    }
+  },
+  "consumer": {
+    "task_id": "report-publish",
+    "owner": "root",
+    "depends_on": [
+      "verify"
+    ],
+    "required_result_refs": [
+      {
+        "result_id": "system99-backend-discovery-0300",
+        "producer_task_id": "produce",
+        "producer_actor": "root",
+        "manifest_path": ".agent-runs/backend-discovery-0300/manifest.json",
+        "validation_plan": {
+          "path": ".agent-runs/backend-discovery-0300/validation-plan.json",
+          "sha256": "a1d6b2e466056067be4c0028c55db217a675d27fd1e62b28d519ccca257c00d8"
+        },
+        "scope": "Candidate A only: skip unused package map when no available module; local CPU inventory CLI, unchanged result semantics"
+      }
+    ]
+  },
+  "host_boundary": "Declarative execution order only; no runtime supervisor or trusted review adapter is deployed."
+}
