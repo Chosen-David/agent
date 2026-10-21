@@ -240,6 +240,21 @@ class KnowledgeTests(unittest.TestCase):
         (self.project/'refs.json').write_text(json.dumps({'knowledge_refs':refs}))
         result=subprocess.run(cmd+['check-refs',str(self.project/'refs.json')],cwd=self.project,capture_output=True,text=True)
         self.assertEqual(result.returncode,0,result.stderr)
+        for optimized in (False, True):
+            depth_cmd = ([sys.executable] + (['-O'] if optimized else []) +
+                         ['-X','utf8','-I',str(isolated/'scripts/knowledge.py'),
+                          '--root',str(isolated/'assets/knowledge'),'check-refs',
+                          str(self.project/'refs.json')])
+            for depth, expected in ((256, 0), (257, 2)):
+                raw = ('{"knowledge_refs":' + json.dumps(refs) + ',"extra":' +
+                       '[' * depth + '0' + ']' * depth + '}').encode()
+                (self.project/'refs.json').write_bytes(raw)
+                result = subprocess.run(depth_cmd, cwd=self.project,
+                                        capture_output=True, text=True)
+                self.assertEqual(result.returncode, expected, result.stderr)
+                self.assertNotIn('Traceback', result.stderr)
+                if expected:
+                    self.assertIn('nesting', json.loads(result.stderr)['error'])
         result=subprocess.run(cmd+['show','math.topk-margin','--version','99','--sha256','f'*64],cwd=self.project,capture_output=True,text=True)
         self.assertEqual(result.returncode,2)
         self.assertIn('stale',json.loads(result.stderr)['error'])

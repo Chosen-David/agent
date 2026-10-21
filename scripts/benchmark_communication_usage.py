@@ -24,6 +24,7 @@ import time
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from agent_runtime.communication import Mailbox, canonical
+from agent_runtime.external_json import load_json
 
 
 def load_baseline(path):
@@ -35,6 +36,40 @@ def load_baseline(path):
 
 def digest(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def validate_plan(plan):
+    if not isinstance(plan, dict) or not isinstance(plan.get('scope'), str) or not plan['scope'].strip():
+        raise ValueError('benchmark plan object and scope required')
+    matrix = plan.get('matrix')
+    if not isinstance(matrix, dict):
+        raise ValueError('benchmark matrix required')
+    for key, minimum, maximum in (('repeats', 1, 10000), ('warmups', 0, 10000),
+                                  ('summary_chars', 1, 1_000_000), ('seed', 0, 2**63 - 1)):
+        value = matrix.get(key)
+        if type(value) is not int or not minimum <= value <= maximum:
+            raise ValueError('invalid matrix field: ' + key)
+    for key, minimum, maximum in (('backlog', 0, 1_000_000), ('fanout', 1, 100_000)):
+        values = matrix.get(key)
+        if (not isinstance(values, list) or not values or len(values) > 1000
+                or any(type(value) is not int or not minimum <= value <= maximum for value in values)):
+            raise ValueError('invalid matrix list: ' + key)
+    byte_budget = matrix.get('byte_budget')
+    if (not isinstance(byte_budget, list) or not byte_budget or len(byte_budget) > 2
+            or any(type(value) is not bool for value in byte_budget)):
+        raise ValueError('invalid byte_budget matrix')
+    if matrix.get('arms') != ['baseline', 'indexed_scan', 'candidate']:
+        raise ValueError('exact benchmark arms required')
+    cases = len(matrix['backlog']) * len(matrix['fanout']) * len(matrix['byte_budget'])
+    if cases > 10_000:
+        raise ValueError('communication benchmark matrix exceeds 10000 cases')
+    if max(matrix['backlog']) * max(matrix['fanout']) > 10_000_000:
+        raise ValueError('single communication fixture exceeds 10000000 deliveries')
+    delivery_work = (sum(matrix['backlog']) * sum(matrix['fanout']) *
+                     len(matrix['byte_budget']) * (matrix['warmups'] + matrix['repeats']))
+    if delivery_work > 10_000_000:
+        raise ValueError('aggregate communication work exceeds 10000000 delivery-visits')
+    return plan
 
 
 def timed(function):
@@ -144,19 +179,24 @@ def summarize(cases):
     return rows
 
 
-def main():
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--plan', type=Path, required=True)
     parser.add_argument('--baseline', type=Path, required=True)
     parser.add_argument('--out', type=Path, required=True)
     parser.add_argument('--backlogs', type=int, nargs='+', help='Independent reproduction subset; recorded explicitly')
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     if args.out.exists():
         parser.error('output already exists; preserve raw observations and use a new path')
-    plan = json.loads(args.plan.read_text())
+    try:
+        plan = validate_plan(load_json(args.plan, max_bytes=2 * 1024 * 1024))
+    except ValueError as exc:
+        print(json.dumps({'status': 'invalid', 'reason': str(exc)}))
+        return 2
     config = dict(plan['matrix'])
     if args.backlogs is not None:
         config['backlog'] = args.backlogs
+        validate_plan({'scope': plan['scope'], 'matrix': config})
     baseline = load_baseline(args.baseline)
     rng = random.Random(config['seed'])
     cases = []
@@ -181,7 +221,8 @@ def main():
     summary = args.out.with_name(args.out.stem+'-summary.json')
     summary.write_text(json.dumps(summarize(cases), indent=2)+'\n')
     print(json.dumps({'raw': str(args.out), 'summary': str(summary), 'cases': len(cases)}))
+    return 0
 
 
 if __name__ == '__main__':
-    main()
+    raise SystemExit(main())

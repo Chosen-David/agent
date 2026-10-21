@@ -10,6 +10,7 @@ import time
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from agent_runtime.knowledge import KnowledgeStore
 from agent_runtime.knowledge_index import build_index,indexed_search
+from agent_runtime.external_json import ExternalJSONError,load_json
 
 def main():
     p=argparse.ArgumentParser()
@@ -23,7 +24,7 @@ def main():
     if not 3 <= args.context_limit <= 20:
         p.error('--context-limit must be 3..20')
     started=time.perf_counter();store=KnowledgeStore(args.root);load=time.perf_counter()-started
-    cases=json.loads(Path(args.cases).read_text())['cases']
+    cases=load_json(args.cases,max_bytes=1024*1024)['cases']
     out={'schema_version':1,'snapshot':store.snapshot,'entries':len(store.records),'load_seconds':load,
          'context_candidate_limit':args.context_limit,
          'scope':'Authored synthetic retrieval regression; not blind modeling, semantic retrieval or production speedup. Timings cover raw top-3 search only and exclude corpus loading/context assembly.','backends':{}}
@@ -57,4 +58,8 @@ def main():
     target=Path(args.output);target.parent.mkdir(parents=True,exist_ok=True);target.write_text(json.dumps(out,ensure_ascii=False,indent=2)+'\n')
     print(json.dumps({key:{k:v for k,v in val.items() if k!='queries'} for key,val in out['backends'].items()},indent=2))
     return 0 if all(b['mean_context_recall' if args.accept_context else 'mean_recall_at_3']==1 and all(r['no_hit_correct'] is not False for r in b['queries']) for key,b in out['backends'].items() if key in args.require_backends) else 1
-if __name__=='__main__': raise SystemExit(main())
+if __name__=='__main__':
+    try:raise SystemExit(main())
+    except (ExternalJSONError,OSError,ValueError,KeyError,TypeError) as exc:
+        print(json.dumps({'error':str(exc)},ensure_ascii=False),file=sys.stderr)
+        raise SystemExit(2)

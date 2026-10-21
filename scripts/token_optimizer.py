@@ -6,24 +6,103 @@ Never force-push, auto-stash, remove user data, or count a skipped tick as savin
 from __future__ import annotations
 import argparse
 from contextlib import contextmanager
-import hashlib,json,math,os,queue,subprocess,sys,threading,time
+import hashlib,json,math,os,queue,re,subprocess,sys,threading,time
 from pathlib import Path
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from agent_runtime.project_docs import guard_write_path
+from agent_runtime.external_json import ExternalJSONError,load_json
 
 INTERVAL=3600
 PROMPT='''PROJECT_ROOT=WORKFLOW_ROOT=current repository. Continue agent token optimization only, one concrete iteration. Read current human GUIDE, TASK/TOK-FIVE, progress.json and relevant prior results/advice, not historical full transcripts. Preserve concurrent work. Prefer high-frequency communication and long-context costs. No other project advice interaction, duplicate agents or schedules. Reuse current mechanisms. Limit one optional actual short no-tool A/B pair to 2200 supplied chars per prompt, at most 2 paid calls/50000 paired tokens, no retries; read fresh quota before paid tests. Provider totals and independent quality/source verification are required to count a success; CPU/estimates/negative results do not count. Preserve pending/failed data. Make a useful change, run necessary checks, fetch again and ordinary commit/push main (GitHub MCP non-force expected-SHA publication if native auth fails), independently read back remote and synchronize setup_codex.py then --check. Preserve conflicts and write a concise recovery record if blocked. Keep final report brief; no fabricated token/cash or weight-update claim.'''
 PROMPT+=''' Host already pulled verified main and synchronized skills. Do not repeat host bootstrap or list all repository/results paths. Use UTF-8 explicitly (Get-Content -Encoding UTF8, python -X utf8). Read exact selected task rows with task_context, not full TASK; read only the relevant Plan/Progress section and progress counters, not the full upgrades ledger. Bound rg by known directories and return at most 20 matches. Request <=768 output tokens per command; batch independent small reads. Truncated output is incomplete evidence: recover exact required lines before edits/claims. Prioritize one small actionable change; consolidate commands and preserve an explicit checkpoint before spending the tick budget. An interrupted thread will resume next hour, so do not restart finished reads.'''
 PROFILE_VERSION='bounded-resumable-v1'
 TOOL_OUTPUT_TOKENS=768
+SHA256_RE=re.compile(r'[0-9a-f]{64}')
+GIT_OID_RE=re.compile(r'(?:[0-9a-f]{40}|[0-9a-f]{64})')
+ROLE_ID_RE=re.compile(r'[a-z][a-z0-9-]{0,63}')
+
+def _nonnegative_number(value, field):
+    if type(value) not in (int,float) or not math.isfinite(value) or value<0:
+        raise ValueError(field+' must be a finite nonnegative number')
+
+def _validate_work_snapshot(value):
+    if not isinstance(value,dict) or set(value)!= {'head','status','files','index_sha256'}:
+        raise ValueError('checkpoint work_snapshot has invalid structure')
+    if any(not isinstance(value.get(field),str) for field in ('head','status','index_sha256')):
+        raise ValueError('checkpoint work_snapshot fields must be strings')
+    if (GIT_OID_RE.fullmatch(value['head']) is None
+            or SHA256_RE.fullmatch(value['index_sha256']) is None
+            or not isinstance(value['files'],dict)):
+        raise ValueError('checkpoint work_snapshot hashes are invalid')
+    for path,digest in value['files'].items():
+        if (not isinstance(path,str) or not path
+                or (digest is not None
+                    and (not isinstance(digest,str) or SHA256_RE.fullmatch(digest) is None))):
+            raise ValueError('checkpoint work_snapshot file binding is invalid')
+
+def _validate_checkpoint(value):
+    if not isinstance(value,dict) or set(value)!= {
+            'thread_id','thread_total_tokens','work_snapshot','profile_version','stagnant_ticks'}:
+        raise ValueError('checkpoint has invalid structure')
+    if not isinstance(value['thread_id'],str) or not value['thread_id'].strip():
+        raise ValueError('checkpoint thread_id is invalid')
+    if type(value['thread_total_tokens']) is not int or value['thread_total_tokens']<0:
+        raise ValueError('checkpoint thread_total_tokens is invalid')
+    if type(value['stagnant_ticks']) is not int or value['stagnant_ticks']<0:
+        raise ValueError('checkpoint stagnant_ticks is invalid')
+    if value['profile_version']!=PROFILE_VERSION:
+        raise ValueError('checkpoint profile_version is invalid')
+    _validate_work_snapshot(value['work_snapshot'])
+
+def validate_schedule_state(value,root):
+    """Validate every consumed durable control field before any state mutation."""
+    if not isinstance(value,dict):raise ValueError('schedule state must be a JSON object')
+    if value.get('project_root')!=str(root) or value.get('interval_seconds')!=INTERVAL:
+        raise ValueError('foreign schedule state')
+    _nonnegative_number(value.get('next_due'),'next_due')
+    if 'checkpoint' in value and value['checkpoint'] is not None:
+        _validate_checkpoint(value['checkpoint'])
+    if 'failure_latch' in value:
+        if not isinstance(value['failure_latch'],str) or not value['failure_latch']:
+            raise ValueError('failure_latch must be a nonempty string')
+    for field in ('last_started','last_finished'):
+        if field in value:_nonnegative_number(value[field],field)
+    if 'last_result' in value:
+        result=value['last_result']
+        if (not isinstance(result,dict) or not isinstance(result.get('status'),str)
+                or not result['status'] or ('model_requests' in result
+                and not (result['model_requests'] is None
+                         or type(result['model_requests']) is int and result['model_requests']>=0))):
+            raise ValueError('last_result has invalid structure')
+    return value
+
+def validate_role_registry(value):
+    """Freeze the exact role registry fields consumed by the worker profile."""
+    if not isinstance(value,dict) or set(value)!= {'schema_version','roles'}:
+        raise ValueError('role registry has invalid structure')
+    if value['schema_version']!=1 or not isinstance(value['roles'],list):
+        raise ValueError('role registry schema is invalid')
+    ids=[]
+    for role in value['roles']:
+        if (not isinstance(role,dict)
+                or set(role)!= {'id','kind','skill','workflow','execution'}
+                or any(not isinstance(role[field],str) or not role[field].strip()
+                       for field in ('id','kind','skill','workflow','execution'))
+                or ROLE_ID_RE.fullmatch(role['id']) is None):
+            raise ValueError('role registry entry is invalid')
+        ids.append(role['id'])
+    if len(ids)!=len(set(ids)):
+        raise ValueError('role registry role ids must be unique')
+    return tuple(ids)
 
 def worker_config(root):
-    registry=json.loads((root/'config/role_registry.json').read_bytes())
+    role_ids=validate_role_registry(
+        load_json(root/'config/role_registry.json',max_bytes=1024*1024))
     relevant={'code-reading','code-organization','model-with-knowledge','research-implement-optimize'}
     return {'features.apps':True,'mcp_servers.node_repl.enabled':False,
             'tool_output_token_limit':TOOL_OUTPUT_TOKENS,'model_reasoning_effort':'high',
-            'skills.config':[{'path':str(Path.home()/'.agents/skills'/r['id']/'SKILL.md'),
-                             'enabled':r['id'] in relevant} for r in registry['roles']]}
+            'skills.config':[{'path':str(Path.home()/'.agents/skills'/role_id/'SKILL.md'),
+                             'enabled':role_id in relevant} for role_id in role_ids]}
 
 def work_snapshot(root):
     """Exact host-owned continuation boundary; no overwriting concurrent bytes."""
@@ -184,8 +263,10 @@ def observe_parent_turn(q,backlog,tid,turn,run,send,*,timeout_seconds,max_observ
         send('turn/interrupt',{'threadId':tid,'turnId':turn})
         return receipt('usage-invalid',str(exc))
 
-def run_worker(root,exe,run,*,timeout_seconds=1200,max_observed_tokens=75000,probe_only=False,checkpoint=None,prompt=None):
+def run_worker(root,exe,run,*,timeout_seconds=1200,max_observed_tokens=75000,probe_only=False,
+               checkpoint=None,prompt=None,worker_profile=None):
     if os.name!='nt':raise ValueError('selected native backend requires Windows Python; WSL hosts the tmux timer')
+    config=worker_config(root) if worker_profile is None else worker_profile
     q=queue.Queue();counter=0;backlog=[]
     flags=subprocess.CREATE_NO_WINDOW if os.name=='nt' else 0
     with (run/'stderr.private.log').open('x',encoding='utf-8') as err:
@@ -217,7 +298,7 @@ def run_worker(root,exe,run,*,timeout_seconds=1200,max_observed_tokens=75000,pro
             admission=quota_admission(call('account/rateLimits/read',{}));atomic(run/'admission.json',admission)
             if not admission['admitted'] or probe_only:
                 return {'status':'quota-blocked' if not admission['admitted'] else 'probe-only','model_requests':0,'admission':admission}
-            config=worker_config(root);atomic(run/'profile.json',{'version':PROFILE_VERSION,'config':config})
+            atomic(run/'profile.json',{'version':PROFILE_VERSION,'config':config})
             params={'cwd':str(root),'model':'gpt-6.1-sol','approvalPolicy':'never','sandbox':'danger-full-access','config':config}
             if checkpoint:params['threadId']=checkpoint['thread_id']
             t=call('thread/resume' if checkpoint else 'thread/start',params)
@@ -244,19 +325,27 @@ def tick(root,state_dir,exe,*,now=None,probe_only=False):
         if not locked:return {'status':'another-worker-active','model_requests':0}
         if probe_only:
             # Probe admission without consuming, creating or advancing a due slot.
+            profile=worker_config(root)
             run=state_dir/(str(time.time_ns())+'-probe');run.mkdir()
             try:
                 synchronize(root)
-                result=run_worker(root,exe,run,probe_only=True)
+                result=run_worker(root,exe,run,probe_only=True,worker_profile=profile)
             except Exception as exc:
                 result={'status':'host-blocked','error_type':type(exc).__name__,'model_requests':0}
             atomic(run/'receipt.json',result);return result
         path=state_dir/'state.json'
-        state=json.loads(path.read_bytes()) if path.exists() else {'project_root':str(root),'next_due':now+INTERVAL,'interval_seconds':INTERVAL}
-        if state.get('project_root')!=str(root) or state.get('interval_seconds')!=INTERVAL:raise ValueError('foreign schedule state')
+        try:
+            state=load_json(path,max_bytes=1024*1024)
+        except ExternalJSONError as exc:
+            if not isinstance(exc.__cause__,FileNotFoundError):raise
+            state={'project_root':str(root),'next_due':now+INTERVAL,'interval_seconds':INTERVAL}
+        validate_schedule_state(state,root)
         due=state['next_due'];advance_due(due,now) # validate before comparisons
         if now<due:
             atomic(path,state);return {'status':'not-due','next_due':due,'model_requests':0}
+        # Freeze every external worker-control byte before advancing cadence or
+        # creating per-tick output. A bad registry therefore has no side effects.
+        profile=worker_config(root)
         state['next_due']=advance_due(due,now);state['last_started']=now;atomic(path,state)
         run=state_dir/(str(time.time_ns())+'-tick');run.mkdir();result={};worker_attempted=False
         try:
@@ -277,7 +366,8 @@ def tick(root,state_dir,exe,*,now=None,probe_only=False):
                 else:head=checkpoint['work_snapshot']['head']
             else:head=synchronize(root)
             worker_attempted=True
-            result={'base_revision':head,**run_worker(root,exe,run,probe_only=probe_only,checkpoint=checkpoint)}
+            result={'base_revision':head,**run_worker(root,exe,run,probe_only=probe_only,
+                    checkpoint=checkpoint,worker_profile=profile)}
             # Read-only postcondition; never count worker exit as a published improvement.
             result['dirty_tree']=bool(command(root,'git','status','--porcelain'))
             result['local_head']=command(root,'git','rev-parse','HEAD')
@@ -305,4 +395,8 @@ def main():
     p=argparse.ArgumentParser(description=__doc__);p.add_argument('--root',required=True);p.add_argument('--state-dir',required=True)
     p.add_argument('--codex',required=True);p.add_argument('--probe-only',action='store_true')
     a=p.parse_args();print(json.dumps(tick(a.root,a.state_dir,a.codex,probe_only=a.probe_only),ensure_ascii=False))
-if __name__=='__main__':main()
+if __name__=='__main__':
+    try:main()
+    except (ExternalJSONError,OSError,ValueError) as exc:
+        print(json.dumps({'error':str(exc)},ensure_ascii=False),file=sys.stderr)
+        raise SystemExit(2)

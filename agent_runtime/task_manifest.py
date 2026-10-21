@@ -14,6 +14,7 @@ import re
 import tempfile
 
 from .core import Outcome, validate
+from .external_json import regular_bytes as external_regular_bytes, strict_json
 from .project_memory import check_task_memory
 from .knowledge import check_task_knowledge
 from .result_validation import check_task_results, validate_result_plan
@@ -25,6 +26,14 @@ from .project_docs import (CANONICAL_TASK, assert_ai_writable, check_document_re
 
 
 TASK_SOURCE_LIMIT = 1024 * 1024
+RESULT_RUN_ID_RE = re.compile(r'[A-Za-z0-9][A-Za-z0-9_.-]{0,95}')
+
+
+def _safe_result_path(value):
+    if not isinstance(value, str) or not value.strip() or '\0' in value:
+        return False
+    raw = Path(value)
+    return not raw.is_absolute() and '..' not in raw.parts
 
 
 def digest(path):
@@ -180,11 +189,68 @@ def prepare(task_file, run_id, mode, authorization_reference, *, review_required
 
 def validate_contract(plan, root, *, check_adopted_advice=True, required_task_refs=None):
     validate(plan)
+    source = plan.get('task_source')
+    if (not isinstance(source, dict)
+            or source.get('mode') not in ('auto', 'manual')
+            or not isinstance(source.get('path'), str) or not source['path']
+            or not isinstance(source.get('sha256'), str)
+            or re.fullmatch(r'[0-9a-f]{64}', source['sha256']) is None):
+        raise ValueError('task_source requires mode, path and sha256')
+    documents = plan.get('project_documents')
+    if documents is not None:
+        mappings = ('task_details', 'guides', 'advice', 'adopted_advice')
+        task_index = documents.get('task_index') if isinstance(documents, dict) else None
+        if (not isinstance(documents, dict)
+                or documents.get('schema_version') != 'project-documents/v1'
+                or documents.get('layout') not in ('legacy', 'canonical')
+                or not isinstance(task_index, dict)
+                or not isinstance(task_index.get('path'), str)
+                or not isinstance(task_index.get('sha256'), str)
+                or any(not isinstance(documents.get(field), dict) for field in mappings)):
+            raise ValueError('project_documents has invalid structure')
+    for task in plan['tasks']:
+        refs, outputs = task.get('task_refs'), task.get('outputs')
+        search = task.get('prior_result_search')
+        review = task.get('prior_result_review')
+        if (not isinstance(refs, list) or not refs
+                or any(not isinstance(ref, str) or not ref for ref in refs)
+                or not isinstance(task.get('report_path'), str) or not task['report_path']
+                or not isinstance(outputs, list)
+                or any(not ((isinstance(output, str) and output)
+                            or (isinstance(output, dict)
+                                and isinstance(output.get('path'), str)
+                                and output['path']))
+                       for output in outputs)):
+            raise ValueError('task requires task_refs, outputs and report_path')
+        if 'prior_result_search' in task:
+            results = search.get('results', []) if isinstance(search, dict) else None
+            hit_keys = {'run_id', 'record_sha256', 'record_path', 'summary', 'origin',
+                        'score', 'match', 'stored_validation', 'applicability'}
+            if (not isinstance(search, dict)
+                    or ('results' in search and not isinstance(results, list))
+                    or any(not isinstance(hit, dict)
+                           or set(hit) != hit_keys
+                           or any(not isinstance(hit.get(key), str) or not hit[key]
+                                  for key in hit_keys - {'score'})
+                           or type(hit.get('score')) is not int or hit['score'] <= 0
+                           or hit['match'] != 'lexical'
+                           or hit['applicability'] != 'unchecked'
+                           or not _safe_result_path(hit['record_path'])
+                           or re.fullmatch(r'[0-9a-f]{64}', hit['record_sha256']) is None
+                           for hit in results or [])):
+                raise ValueError('prior_result_search has invalid structure')
+        if 'prior_result_review' in task:
+            record_refs = review.get('record_refs') if isinstance(review, dict) else None
+            if (not isinstance(record_refs, list)
+                    or any(not isinstance(ref, dict)
+                           or not isinstance(ref.get('run_id'), str)
+                           or RESULT_RUN_ID_RE.fullmatch(ref['run_id']) is None
+                           or not isinstance(ref.get('record_sha256'), str)
+                           or re.fullmatch(r'[0-9a-f]{64}', ref['record_sha256']) is None
+                           for ref in record_refs)):
+                raise ValueError('prior_result_review has invalid record_refs')
     validate_result_plan(plan)
     root = Path(root).resolve()
-    source = plan['task_source']
-    if source['mode'] not in ('auto', 'manual'):
-        raise ValueError('task source mode must be auto or manual')
     path = (root / source['path']).resolve()
     if path != resolve_task_file(root):
         raise ValueError('the single task source must be agent_doc/task/TASK.md (legacy project-root TASK.md only before migration)')
@@ -194,7 +260,6 @@ def validate_contract(plan, root, *, check_adopted_advice=True, required_task_re
     if task_snapshot['sha256'] != source['sha256']:
         raise ValueError('TASK.md missing, changed or outside project; reconcile and version the plan')
     items = task_snapshot['items']
-    documents = plan.get('project_documents')
     if documents is None:
         # Legacy serialized runs may only resume without new guide/advice inputs.
         current = snapshot_project_docs(root)
@@ -255,22 +320,22 @@ def result_report(root, task, result_verifier=None):
     check_task_documents(root, task)
     check_task_memory(root, task)
     check_task_knowledge(root, task)
-    path = (Path(root).resolve() / task['report_path']).resolve()
-    if not path.is_relative_to(Path(root).resolve()):
+    root = Path(root).resolve()
+    if not _safe_result_path(task.get('report_path')):
         raise ValueError('result report outside project')
-    # Reuse bounded, regular-file validation before parsing the exact bytes.
+    path = root / task['report_path']
+    for candidate in (path, *path.parents):
+        if candidate == root:
+            break
+        if candidate.is_symlink():
+            raise ValueError('result report path must not contain symlinks')
+    if not path.parent.resolve().is_relative_to(root):
+        raise ValueError('result report outside project')
     # A report digest is a consistency binding, not independent scientific proof.
-    flags = os.O_RDONLY | getattr(os, 'O_NONBLOCK', 0) | getattr(os, 'O_NOFOLLOW', 0)
-    import stat
-    fd = os.open(path, flags)
-    with os.fdopen(fd, 'rb') as stream:
-        if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
-            raise ValueError('result report must be a regular file')
-        data = stream.read(1024 * 1024 + 1)
-    if len(data) > 1024 * 1024:
-        raise ValueError('result report exceeds 1 MiB')
-    value = json.loads(data)
-    if (value.get('task_id') != task['task_id'] or not isinstance(value.get('summary'), str)
+    data = external_regular_bytes(path, max_bytes=1024 * 1024)
+    value = strict_json(data)
+    if (not isinstance(value, dict)
+            or value.get('task_id') != task['task_id'] or not isinstance(value.get('summary'), str)
             or not value['summary'].strip() or not isinstance(value.get('data'), list)
             or not value['data']):
         raise ValueError('report requires task_id, summary and nonempty data')

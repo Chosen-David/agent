@@ -139,6 +139,23 @@ class GridTests(unittest.TestCase):
             out = subprocess.check_output(cmd)
             self.assertEqual(json.loads(out), self.view(full=full))
 
+    def test_cli_enforces_exact_json_depth_boundary(self):
+        script = Path(__file__).resolve().parents[1]/'scripts/grid_context.py'
+        for optimized in (False, True):
+            for depth, expected in ((256, 0), (257, 2)):
+                raw = ('{"coordinates":[],"extra":' + '[' * depth + '0' +
+                       ']' * depth + '}').encode()
+                (self.root/self.path).write_bytes(raw)
+                self.sha = hashlib.sha256(raw).hexdigest()
+                cmd = [sys.executable] + (['-O'] if optimized else []) + [
+                    str(script),'--root',str(self.root),'--path',self.path,
+                    '--sha256',self.sha,'--compact']
+                result = subprocess.run(cmd, capture_output=True, text=True)
+                self.assertEqual(result.returncode, expected, result.stderr)
+                self.assertNotIn('Traceback', result.stderr)
+                if expected:
+                    self.assertIn('nesting', json.loads(result.stderr)['error'])
+
 
 if __name__ == '__main__':
     unittest.main()

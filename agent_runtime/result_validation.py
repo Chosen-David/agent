@@ -17,6 +17,7 @@ import re
 import stat
 
 from .core import Outcome
+from .external_json import strict_json
 from .legacy_result_paths import legacy_read_binding, check_relocated_digest
 
 CHECKS = ('implementation', 'reference_boundary', 'data_integrity',
@@ -89,15 +90,17 @@ def _bytes(root, value):
 
 
 def _json(data):
-    def reject(value):
-        raise ResultValidationError('nonfinite JSON value: ' + value)
-    def pairs(items):
-        result = {}
-        for key, value in items:
-            _need(key not in result, 'duplicate JSON key: ' + key)
-            result[key] = value
-        return result
-    result = json.loads(data, parse_constant=reject, object_pairs_hook=pairs)
+    if isinstance(data, str):
+        try:
+            data = data.encode('utf-8')
+        except UnicodeEncodeError as exc:
+            raise ResultValidationError('JSON input must contain valid Unicode') from exc
+    elif not isinstance(data, bytes):
+        raise ResultValidationError('JSON text or bytes required')
+    try:
+        result = strict_json(data)
+    except ValueError as exc:
+        raise ResultValidationError(str(exc)) from exc
     _need(isinstance(result, dict), 'JSON object required')
     return result
 

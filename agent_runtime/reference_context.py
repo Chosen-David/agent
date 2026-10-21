@@ -5,7 +5,7 @@ import os
 import re
 from .advice_poll import _root
 from .maintenance_observer import read_bound
-from .record_context import _pairs, _constant, _float
+from .record_context import _bounded_depth, _pairs, _constant, _float
 
 SCOPE = 'complete parsed values/order; path-prefix transport only; restore before existing freshness/result gates; no reference existence, validity or permission proof'
 
@@ -22,6 +22,7 @@ def _wire(value):
 def _json(text):
     try:
         value = json.loads(text, object_pairs_hook=_pairs, parse_constant=_constant, parse_float=_float)
+        _bounded_depth(value)
         _wire(value)
         return value
     except RecursionError as exc:

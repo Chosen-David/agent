@@ -11,8 +11,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
+import os
 from pathlib import Path
 import re
+import stat
 import sys
 import sqlite3
 import unicodedata
@@ -23,6 +26,7 @@ if not __package__:
 
 SCHEMA_VERSION = 1
 MAX_BYTES = 1_048_576
+MAX_JSON_DEPTH = 256
 STATUSES = {'candidate', 'published', 'deprecated'}
 KINDS = {'definition', 'theorem', 'method', 'modeling-pattern', 'case', 'counterexample'}
 RELATIONS = {'prerequisite', 'corollary', 'special-case', 'counterexample', 'application', 'related'}
@@ -49,6 +53,22 @@ def _read_utf8_bounded(path, max_bytes, message):
     return raw.decode('utf-8').replace('\r\n', '\n').replace('\r', '\n')
 
 
+def _external_json(path, max_bytes, message):
+    """Read an explicitly supplied JSON path without following or blocking."""
+    flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
+    fd = os.open(path, flags)
+    try:
+        with os.fdopen(fd, 'rb', closefd=False) as stream:
+            info = os.fstat(stream.fileno())
+            _require(stat.S_ISREG(info.st_mode), 'knowledge input must be a regular file')
+            _require(info.st_size <= max_bytes, message)
+            raw = stream.read(max_bytes + 1)
+    finally:
+        os.close(fd)
+    _require(len(raw) <= max_bytes, message)
+    return _json(raw.decode('utf-8'))
+
+
 def _text(value):
     return isinstance(value, str) and bool(value.strip())
 
@@ -69,7 +89,28 @@ def _json(text):
             _require(key not in out, 'duplicate JSON key: ' + key)
             out[key] = value
         return out
-    return json.loads(text, object_pairs_hook=pairs)
+    def constant(value):
+        raise KnowledgeError('non-finite JSON number: ' + value)
+    def finite_float(value):
+        parsed = float(value)
+        _require(math.isfinite(parsed), 'non-finite JSON number: ' + value)
+        return parsed
+    try:
+        value = json.loads(text, object_pairs_hook=pairs, parse_constant=constant,
+                           parse_float=finite_float)
+    except RecursionError as exc:
+        raise KnowledgeError('JSON nesting exceeds bounds') from exc
+    pending = [(value, 0)]
+    while pending:
+        item, depth = pending.pop()
+        _require(depth <= MAX_JSON_DEPTH, 'JSON nesting exceeds bounds')
+        if type(item) is dict:
+            pending.extend((child, depth + 1) for child in item.values()
+                           if type(child) in (dict, list))
+        elif type(item) is list:
+            pending.extend((child, depth + 1) for child in item
+                           if type(child) in (dict, list))
+    return value
 
 
 def _digest(value):
@@ -493,7 +534,8 @@ def main(argv=None):
                 from .knowledge_reuse import decision_support
             else:
                 from knowledge_reuse import decision_support
-            context_data = _json(Path(args.context).read_text(encoding='utf-8'))
+            context_data = _external_json(Path(args.context), MAX_BYTES,
+                                          'context exceeds byte bound')
             out = decision_support(store, args.query, context_data, purpose=args.purpose,
                                    explicit_reproduction=args.explicit_reproduction, limit=args.limit)
         elif args.command == 'context':
@@ -538,7 +580,8 @@ def main(argv=None):
         elif args.command == 'related':
             out = store.related(args.id, limit=args.limit)
         elif args.command == 'check-refs':
-            doc = _json(Path(args.file).read_text(encoding='utf-8'))
+            doc = _external_json(Path(args.file), MAX_BYTES,
+                                 'refs document exceeds byte bound')
             _require(isinstance(doc, dict), 'refs document must be an object')
             out = store.check_refs(doc.get('knowledge_refs'))
         else:

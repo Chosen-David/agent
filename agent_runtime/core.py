@@ -33,6 +33,8 @@ def number(value, low, high):
 
 
 def validate(plan):
+    if not isinstance(plan, dict):
+        raise ValueError('task plan must be a JSON object')
     if plan.get('schema_version') != 'task-dag/v1':
         raise ValueError('expected task-dag/v1')
     for field in ('run_id', 'user_goal', 'authorization_reference'):
@@ -41,6 +43,8 @@ def validate(plan):
     tasks = plan.get('tasks', [])
     if not isinstance(tasks, list) or not 1 <= len(tasks) <= 1000:
         raise ValueError('1..1000 tasks required')
+    if any(not isinstance(task, dict) for task in tasks):
+        raise ValueError('each task must be a JSON object')
     ids = [t.get('task_id') for t in tasks]
     if any(not isinstance(i, str) or not i for i in ids):
         raise ValueError('unique nonempty task IDs required')
@@ -49,12 +53,16 @@ def validate(plan):
         raise ValueError('unique nonempty task IDs required')
     plain_ids = all(type(i) is str for i in ids)
     for task in tasks:
-        for field in ('action', 'owner', 'done_when'):
-            if not task.get(field):
+        for field in ('action', 'owner'):
+            if not isinstance(task.get(field), str) or not task[field]:
                 raise ValueError(f'missing {field}')
+        if not isinstance(task.get('done_when'), dict) or not task['done_when']:
+            raise ValueError('missing done_when')
         deps = task.get('depends_on', [])
-        if not isinstance(deps, list) or any(
-                d not in id_set if plain_ids and type(d) is str else d not in ids for d in deps):
+        if (not isinstance(deps, list) or any(not isinstance(d, str) for d in deps)
+                or any(
+                    d not in id_set if plain_ids and type(d) is str else d not in ids
+                    for d in deps)):
             raise ValueError('unknown dependency')
         if type(task.get('max_attempts')) is not int or not 1 <= task['max_attempts'] <= 20:
             raise ValueError('max_attempts must be 1..20')
@@ -107,7 +115,8 @@ def validate(plan):
         remaining = {i: deps for i, deps in remaining.items() if i not in ready}
         rounds += 1
     policy = plan.get('supervision', {})
-    if not (number(policy.get('min_seconds'), 1, 86400)
+    if not (isinstance(policy, dict)
+            and number(policy.get('min_seconds'), 1, 86400)
             and number(policy.get('max_seconds'), policy['min_seconds'], 86400)
             and isinstance(policy.get('rationale'), str) and policy['rationale']):
         raise ValueError('bounded supervision policy with rationale required')

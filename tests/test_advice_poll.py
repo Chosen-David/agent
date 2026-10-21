@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -108,6 +109,33 @@ class AdvicePollTests(unittest.TestCase):
             self.assertNotEqual(run('--baseline', '.agent-runs/bad.json', '--baseline-sha256',
                                     hashlib.sha256(bad_raw).hexdigest()).returncode, 0)
         self.assertEqual((self.root / path).read_bytes(), raw); self.assertEqual(self.source.read_bytes(), original)
+
+    @unittest.skipUnless(hasattr(os, 'mkfifo'), 'POSIX special-file checks')
+    def test_cli_rejects_untrusted_baseline_before_snapshot_write(self):
+        script = Path(__file__).resolve().parents[1] / 'scripts/advice_poll.py'
+        base = self.root / '.agent-runs' / 'bad-baselines'; base.mkdir(parents=True)
+        sources = []
+        fifo = base / 'fifo.json'; os.mkfifo(fifo); sources.append((fifo, '0' * 64))
+        directory = base / 'directory.json'; directory.mkdir(); sources.append((directory, '0' * 64))
+        target = base / 'target.json'; target.write_text('{}')
+        link = base / 'link.json'; link.symlink_to(target)
+        sources.append((link, hashlib.sha256(target.read_bytes()).hexdigest()))
+        for name, raw in (('duplicate', b'{"x":1,"x":2}'), ('nan', b'{"x":NaN}'),
+                          ('overflow', b'{"x":1e400}'),
+                          ('deep', (b'[' * 1500) + b'0' + (b']' * 1500))):
+            source = base / f'{name}.json'; source.write_bytes(raw)
+            sources.append((source, hashlib.sha256(raw).hexdigest()))
+        for index, (source, digest) in enumerate(sources):
+            output = f'.agent-runs/advice-poll/rejected-{index}.json'
+            result = subprocess.run([sys.executable, '-X', 'utf8', str(script),
+                '--root', str(self.root), '--baseline', source.relative_to(self.root).as_posix(),
+                '--baseline-sha256', digest, '--snapshot-out', output],
+                capture_output=True, text=True, encoding='utf-8', timeout=3)
+            with self.subTest(source=source.name):
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn('error', json.loads(result.stdout))
+                self.assertNotIn('Traceback', result.stderr)
+                self.assertFalse((self.root / output).exists())
 
 
 if __name__ == '__main__': unittest.main()

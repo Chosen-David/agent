@@ -43,6 +43,7 @@ class PublicationTests(unittest.TestCase):
         self.evidence_path = self.directory / 'acceptance.json'
         self.evidence_path.write_text(json.dumps({'expected_stdout': 'candidate\n'}))
         self.allowed = True
+        self.authorize_calls = 0
         self.accept_calls = 0
         self.ledger = self.open()
 
@@ -52,6 +53,7 @@ class PublicationTests(unittest.TestCase):
         return result.stdout.strip()
 
     def authorize(self, scope, action):
+        self.authorize_calls += 1
         return (self.allowed and scope == {
             'repository': str(self.root), 'remote': 'origin', 'remote_url': str(self.remote),
             'branch': 'main', 'authorization_reference': 'fixture explicit user approval'})
@@ -378,6 +380,99 @@ class PublicationTests(unittest.TestCase):
         self.state.symlink_to(self.root / 'TASK.md')
         with self.assertRaisesRegex(PublicationError, 'symlink'):
             self.ledger.status()
+
+    def test_state_reader_rejects_ambiguous_nonfinite_deep_and_oversized_json(self):
+        self.freeze()
+        legal = self.state.read_bytes()
+        corruptions = {
+            'duplicate': legal.rstrip()[:-1] + b',"schema_version":"publication/v1"}',
+            'overflow': legal.rstrip()[:-1] + b',"extra":1e400}',
+            'top-level-list': b'[]',
+            'deep': ('{"extra":' + '[' * 300 + '0' + ']' * 300 + '}').encode(),
+            'oversized': b' ' * (publication.STATE_LIMIT + 1),
+        }
+        for name, raw in corruptions.items():
+            with self.subTest(name=name):
+                self.state.write_bytes(raw)
+                before = self.state.read_bytes()
+                with self.assertRaises(PublicationError):
+                    self.ledger.status()
+                self.assertEqual(self.state.read_bytes(), before)
+        self.state.write_bytes(legal)
+
+    def test_state_reader_rejects_fifo_and_directory_without_blocking(self):
+        self.freeze()
+        legal = self.state.read_bytes()
+        self.state.unlink()
+        if hasattr(os, 'mkfifo'):
+            os.mkfifo(self.state)
+            with self.assertRaises(PublicationError):
+                self.ledger.status()
+            self.state.unlink()
+        self.state.mkdir()
+        with self.assertRaises(PublicationError):
+            self.ledger.status()
+        self.state.rmdir()
+        self.state.write_bytes(legal)
+
+    def test_malformed_nested_candidate_is_rejected_before_trusted_callbacks(self):
+        frozen = self.freeze()
+        evidence = self.evidence(frozen)
+        mutations = {
+            'extra-candidate-key': lambda c: c.update(extra=True),
+            'file-not-object': lambda c: c['files'].__setitem__('app.py', []),
+            'file-extra-key': lambda c: c['files']['app.py'].update(extra=True),
+            'file-mode': lambda c: c['files']['app.py'].__setitem__('mode', '120000'),
+            'file-oid': lambda c: c['files']['app.py'].__setitem__('oid', 'BAD'),
+            'file-sha': lambda c: c['files']['app.py'].__setitem__('sha256', 'BAD'),
+            'candidate-sha': lambda c: c.__setitem__('sha256', '0' * 64),
+            'base-commit': lambda c: c.__setitem__('base_commit', 'BAD'),
+            'ownership-empty': lambda c: c['file_task_refs'].__setitem__('app.py', []),
+            'ownership-duplicate': lambda c: c['file_task_refs'].__setitem__('app.py', ['T1', 'T1']),
+            'ownership-path': lambda c: c['file_task_refs'].__setitem__('../escape', ['T1']),
+            'task-path': lambda c: c.__setitem__('task_path', '../TASK.md'),
+            'task-sha': lambda c: c.__setitem__('task_sha256', '0' * 64),
+            'documents-not-object': lambda c: c.__setitem__('project_documents', []),
+            'document-index': lambda c: c['project_documents'].__setitem__('task_index', []),
+            'document-guide-sha': lambda c: c['project_documents']['guides'].__setitem__('guide.md', 'BAD'),
+            'reviewed-plan': lambda c: c.__setitem__('reviewed_plan', []),
+        }
+        for name, mutate in mutations.items():
+            value = json.loads(json.dumps(frozen))
+            mutate(value['candidate'])
+            self.state.write_text(json.dumps(value))
+            before = self.state.read_bytes()
+            self.authorize_calls = self.accept_calls = 0
+            with self.subTest(name=name):
+                with self.assertRaisesRegex(PublicationError, 'invalid candidate'):
+                    self.ledger.status()
+                with self.assertRaisesRegex(PublicationError, 'invalid candidate'):
+                    self.ledger.mark_tested(evidence)
+                self.assertEqual(self.authorize_calls, 0)
+                self.assertEqual(self.accept_calls, 0)
+                self.assertEqual(self.state.read_bytes(), before)
+
+    def test_unhashable_lifecycle_fields_are_rejected_before_callbacks(self):
+        frozen = self.freeze()
+        evidence = self.evidence(frozen)
+        mutations = (
+            lambda value: value.__setitem__('phase', []),
+            lambda value: value.__setitem__('phase', {}),
+            lambda value: value.__setitem__('events', [{'action': [], 'observed_at': 1}]),
+        )
+        for mutate in mutations:
+            value = json.loads(json.dumps(frozen))
+            mutate(value)
+            self.state.write_text(json.dumps(value))
+            before = self.state.read_bytes()
+            self.authorize_calls = self.accept_calls = 0
+            with self.assertRaises(PublicationError):
+                self.ledger.status()
+            with self.assertRaises(PublicationError):
+                self.ledger.mark_tested(evidence)
+            self.assertEqual(self.authorize_calls, 0)
+            self.assertEqual(self.accept_calls, 0)
+            self.assertEqual(self.state.read_bytes(), before)
 
     def test_state_cannot_pollute_candidate_and_no_network_default(self):
         with self.assertRaisesRegex(PublicationError, 'ignored'):

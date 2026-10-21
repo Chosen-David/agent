@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 """Observe advice changes without loading full advice bodies into a model."""
 import argparse
-import hashlib
 import json
 from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from agent_runtime.advice_poll import _root, _safe, encode, observe_advice, validate_snapshot
+from agent_runtime.external_json import load_json
 from agent_runtime.project_docs import assert_ai_writable
 
 
@@ -25,11 +25,8 @@ def main(argv=None):
         baseline = None
         if a.baseline:
             path = _safe(root, root / a.baseline)
-            if not path.is_file(): raise ValueError('baseline must be a regular file')
-            with path.open('rb') as stream: raw = stream.read(1024 * 1024 + 1)
-            if len(raw) > 1024 * 1024 or hashlib.sha256(raw).hexdigest() != a.baseline_sha256:
-                raise ValueError('baseline byte bound or SHA256 mismatch')
-            baseline = json.loads(raw)
+            baseline = load_json(path, max_bytes=1024 * 1024,
+                                 expected_sha256=a.baseline_sha256)
             validate_snapshot(root, baseline)
         navigation, snapshot = observe_advice(root, baseline)
         if a.snapshot_out:

@@ -1,10 +1,9 @@
 """Read-only, exact registered historical result relocation; never a write router."""
 import hashlib
-import json
-import os
 from pathlib import Path, PurePosixPath
 import re
-import stat
+
+from .external_json import load_json
 
 MARKER = 'agent_doc/legacy-result-paths.json'
 LIMIT = 1024 * 1024
@@ -47,22 +46,7 @@ def legacy_read_binding(root, value):
     marker = _safe(root, MARKER)
     if not marker.exists():
         return value, None
-    fd = os.open(marker, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
-    with os.fdopen(fd, 'rb') as stream:
-        info = os.fstat(stream.fileno())
-        if not stat.S_ISREG(info.st_mode) or info.st_size > LIMIT:
-            raise ValueError('legacy relocation marker must be a bounded regular file')
-        raw = stream.read(LIMIT + 1)
-    if len(raw) > LIMIT:
-        raise ValueError('legacy relocation marker exceeds bound')
-    def unique_pairs(pairs):
-        result = {}
-        for key, item in pairs:
-            if key in result:
-                raise ValueError('duplicate legacy relocation key')
-            result[key] = item
-        return result
-    record = json.loads(raw, object_pairs_hook=unique_pairs)
+    record = load_json(marker, max_bytes=LIMIT)
     if (not isinstance(record, dict) or set(record) != {'schema_version', 'files'}
             or record['schema_version'] != 'agent-doc-relocation/v1'
             or not isinstance(record['files'], dict) or len(record['files']) > 10000):

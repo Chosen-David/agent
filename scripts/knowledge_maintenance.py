@@ -15,8 +15,26 @@ import subprocess
 import sys
 import time
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from agent_runtime.external_json import ExternalJSONError, load_json
+
 SOCKET = 'agent-knowledge'
 SHANGHAI = timezone(timedelta(hours=8))
+JSON_LIMIT = 1024 * 1024
+
+
+def validate_config(config):
+    if (not isinstance(config, dict)
+            or any(not isinstance(config.get(key), str) or not config[key]
+                   for key in ('repo', 'state_dir', 'session'))
+            or not isinstance(config.get('windows_repo'), str)
+            or not isinstance(config.get('runner'), list)
+            or any(not isinstance(item, str) for item in config['runner'])
+            or type(config.get('timeout_seconds')) not in (int, float)
+            or not math.isfinite(config['timeout_seconds']) or config['timeout_seconds'] <= 0):
+        raise ValueError('maintenance config has invalid structure')
+    interval_seconds(config)
+    return config
 
 
 def interval_seconds(config):
@@ -24,6 +42,38 @@ def interval_seconds(config):
     if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
         raise ValueError('interval_seconds must be a positive integer')
     return value
+
+
+def validate_state(state):
+    """Reject malformed durable scheduler state before any migration write."""
+    if (not isinstance(state, dict)
+            or not isinstance(state.get('rounds'), list)
+            or any(not isinstance(item, dict) for item in state['rounds'])
+            or ('schedule_migrations' in state
+                and (not isinstance(state['schedule_migrations'], list)
+                     or any(not isinstance(item, dict)
+                            for item in state['schedule_migrations'])))
+            or ('interval_seconds' in state
+                and (type(state['interval_seconds']) is not int
+                     or state['interval_seconds'] <= 0))
+            or ('next_due' in state
+                and (type(state['next_due']) not in (int, float)
+                     or not math.isfinite(state['next_due']) or state['next_due'] < 0))
+            or ('interval_seconds' in state and 'next_due' not in state)):
+        raise ValueError('maintenance state has invalid structure')
+    return state
+
+
+def validate_live(live):
+    """Reject malformed heartbeat values before process or time operations."""
+    if (not isinstance(live, dict)
+            or type(live.get('pid')) is not int or live['pid'] <= 0
+            or type(live.get('heartbeat_at')) not in (int, float)
+            or not math.isfinite(live['heartbeat_at'])
+            or live['heartbeat_at'] < 0
+            or not isinstance(live.get('session'), str) or not live['session']):
+        raise ValueError('maintenance live snapshot has invalid structure')
+    return live
 
 
 def next_due(now, interval=3600):
@@ -39,9 +89,12 @@ def load_state(config, now):
     path = Path(config['state_dir'])/'state.json'
     interval = interval_seconds(config)
     try:
-        saved = json.loads(path.read_text(encoding='utf-8'))
-    except FileNotFoundError:
-        saved = {'rounds': []}
+        saved = validate_state(load_json(path, max_bytes=JSON_LIMIT))
+    except ExternalJSONError as exc:
+        if isinstance(exc.__cause__, FileNotFoundError):
+            saved = {'rounds': []}
+        else:
+            raise
     if saved.get('interval_seconds') != interval:
         if 'next_due' in saved:
             saved.setdefault('schedule_migrations', []).append({
@@ -49,6 +102,7 @@ def load_state(config, now):
                 'previous_interval_seconds': saved.get('interval_seconds'),
                 'interval_seconds': interval})
         saved.update(interval_seconds=interval, next_due=next_due(now, interval))
+    validate_state(saved)
     # Persist the migration before a heartbeat or a model launch. A guard restart
     # must not reset the new due time or discard historical round receipts.
     atomic(path, saved)
@@ -70,9 +124,10 @@ def tmux(*args):
 def status(config):
     state = Path(config['state_dir'])
     try:
-        live = json.loads((state/'live.json').read_text(encoding='utf-8'))
+        live = validate_live(load_json(state/'live.json', max_bytes=JSON_LIMIT))
         os.kill(live['pid'], 0)
-        fresh = time.time() - live['heartbeat_at'] < 90
+        age = time.time() - live['heartbeat_at']
+        fresh = live['session'] == config['session'] and 0 <= age < 90
     except (OSError, ValueError, KeyError):
         live, fresh = {}, False
     panes = tmux('list-panes', '-t', '=' + config['session'], '-F', '#{pane_dead}')
@@ -169,7 +224,12 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('command',choices=['start','status','stop','serve','guard'])
     p.add_argument('--config',required=True)
-    a=p.parse_args(); path=Path(a.config).resolve(); config=json.loads(path.read_text(encoding='utf-8'))
+    a=p.parse_args(); supplied=Path(a.config).absolute()
+    for candidate in (supplied, *supplied.parents):
+        if candidate.is_symlink():
+            raise ValueError('maintenance config path must not contain symlinks')
+    config=validate_config(load_json(supplied, max_bytes=JSON_LIMIT))
+    path=supplied.resolve()
     if a.command=='serve':
         serve(config); return
     if a.command=='guard':
@@ -199,4 +259,9 @@ def main():
     else: print(json.dumps(status(config),ensure_ascii=False,indent=2))
 
 
-if __name__=='__main__': main()
+if __name__=='__main__':
+    try:
+        main()
+    except (ExternalJSONError, ValueError) as exc:
+        print(json.dumps({'status':'error','error':str(exc)},ensure_ascii=False),file=sys.stderr)
+        raise SystemExit(2)

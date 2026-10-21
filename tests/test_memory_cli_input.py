@@ -3,6 +3,7 @@ from contextlib import closing, redirect_stderr, redirect_stdout
 import io
 import json
 from pathlib import Path
+import os
 import sqlite3
 import tempfile
 import unittest
@@ -67,7 +68,9 @@ class MemoryCliInputTests(unittest.TestCase):
         self.assertEqual(self.ledger.history('old')['entry']['status'], 'superseded')
 
     def test_internal_json_decode_error_not_relabelled_as_input_error(self):
-        self.file.write_text('{}')
+        (self.root / 'TASK.md').write_text('## 2026-10-16\n- [ ] [T1] Audit memory\n')
+        migrate(self.root, '2026-10-16')
+        self.file.write_text(json.dumps(snapshot_project_docs(self.root)))
         error = json.JSONDecodeError('internal corrupted ledger', '', 0)
         with patch.object(MemoryLedger, 'add', side_effect=error):
             with self.assertRaises(json.JSONDecodeError):
@@ -95,8 +98,25 @@ class MemoryCliInputTests(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertEqual(out.getvalue(), '')
         self.assertIn('error', json.loads(err.getvalue()))
-        ledger = MemoryLedger(fresh)
-        self.assertEqual(ledger.list('all'), [])
-        with closing(sqlite3.connect(ledger.path)) as db:
-            self.assertEqual(db.execute('SELECT count(*) FROM events').fetchone()[0], 0)
-            self.assertTrue(db.execute("SELECT 1 FROM sqlite_master WHERE name='memory_events_entry'").fetchone())
+        self.assertFalse((fresh / '.agent-memory').exists())
+
+    @unittest.skipUnless(hasattr(os, 'mkfifo'), 'POSIX special-file checks')
+    def test_first_add_rejects_external_snapshot_before_ledger_creation(self):
+        sources = []
+        fifo = self.root / 'refs.fifo'; os.mkfifo(fifo); sources.append(fifo)
+        directory = self.root / 'refs-dir'; directory.mkdir(); sources.append(directory)
+        target = self.root / 'refs-target.json'; target.write_text('{}')
+        link = self.root / 'refs-link.json'; link.symlink_to(target); sources.append(link)
+        duplicate = self.root / 'refs-duplicate.json'; duplicate.write_text('{"x":1,"x":2}'); sources.append(duplicate)
+        nonfinite = self.root / 'refs-nonfinite.json'; nonfinite.write_text('{"x":NaN}'); sources.append(nonfinite)
+        for name, value in (('null', 'null'), ('list', '[]'), ('object', '{}')):
+            source = self.root / f'refs-{name}.json'; source.write_text(value); sources.append(source)
+        for index, source in enumerate(sources):
+            fresh = self.root / f'fresh-{index}'; fresh.mkdir()
+            args = ['--root', str(fresh), 'add', '--id', 'new', '--kind', 'claim',
+                    '--content', 'new', '--source', 'test', '--document-refs', str(source)]
+            out, err = io.StringIO(), io.StringIO()
+            with self.subTest(source=source.name), redirect_stdout(out), redirect_stderr(err):
+                self.assertEqual(main(args), 2)
+                self.assertNotIn('Traceback', err.getvalue())
+                self.assertFalse((fresh / '.agent-memory').exists())

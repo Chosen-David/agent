@@ -254,6 +254,30 @@ class ClusterPlanningTests(unittest.TestCase):
             self.assertEqual(json.loads(p.stdout)['status'], 'invalid')
             self.assertEqual(p.stderr, '')
 
+    def test_cli_requires_strict_utf8_finite_bounded_input(self):
+        cli = [sys.executable, str(ROOT/'scripts/plan_cluster.py'), 'plan',
+               '--now', '1001', '--input']
+        legal = json.dumps(self.data, separators=(',', ':'))
+        payloads = {
+            'utf16': legal.encode('utf-16'),
+            'overflow': (legal[:-1] + ',"extra":1e400}').encode(),
+            'depth': ('{"inventory":' + '[' * 300 + '0' + ']' * 300 +
+                      ',"tasks":[],"verified_task_ids":[]}').encode(),
+            'oversized': b' ' * (2 * 1024 * 1024 + 1),
+        }
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / 'input.json'
+            for name, raw in payloads.items():
+                with self.subTest(name=name):
+                    path.write_bytes(raw)
+                    before = path.read_bytes()
+                    result = subprocess.run(cli + [str(path)], capture_output=True,
+                                            text=True, timeout=5)
+                    self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+                    self.assertEqual(json.loads(result.stdout)['status'], 'invalid')
+                    self.assertEqual(result.stderr, '')
+                    self.assertEqual(path.read_bytes(), before)
+
 
 if __name__ == '__main__':
     unittest.main()

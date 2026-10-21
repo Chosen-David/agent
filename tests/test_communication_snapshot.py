@@ -5,7 +5,7 @@ from pathlib import Path
 import unittest
 from unittest.mock import patch
 
-from agent_runtime import communication
+from agent_runtime import communication, external_json
 from scripts.validate_handoff import _load_json
 import test_communication as fixtures
 
@@ -48,16 +48,16 @@ class ManifestSnapshotTests(unittest.TestCase):
     def test_replacement_after_single_read_returns_only_bound_snapshot(self):
         seq = self.box.publish(self.event)['seq']
         path = self.root / 'handoff.json'
-        original_read = Path.read_bytes
+        original_read = external_json.regular_bytes
         swapped = False
-        def interpose(target):
+        def interpose(target, **kwargs):
             nonlocal swapped
-            data = original_read(target)
-            if target == path and not swapped:
+            data = original_read(target, **kwargs)
+            if Path(target) == path and not swapped:
                 swapped = True
                 path.write_text(json.dumps(dict(self.record, limitations=['later replacement'])))
             return data
-        with patch.object(Path, 'read_bytes', interpose):
+        with patch.object(external_json, 'regular_bytes', interpose):
             result = self.box.consume_handoff('writer', seq, self.request)
         self.assertTrue(swapped)
         self.assertEqual(result, self.record)

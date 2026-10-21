@@ -11,6 +11,7 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from agent_runtime.external_json import ExternalJSONError, load_json
 from agent_runtime.result_validation import inspect_result
 
 
@@ -21,13 +22,16 @@ def main():
     parser.add_argument('--verifier-adapter', help='explicitly trusted host Python file exporting verify(root, manifest, plan)')
     parser.add_argument('--context-dir', help='opt-in recoverable display; project-relative agent_doc/results/<run_id>/ directory')
     args = parser.parse_args()
+    contract = load_json(args.contract)
+    if not isinstance(contract, dict):
+        raise ValueError('result contract must be a JSON object')
     verifier = None
     if args.verifier_adapter:
         spec = importlib.util.spec_from_file_location('trusted_experiment_verifier', args.verifier_adapter)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         verifier = module.verify
-    result = inspect_result(args.root, json.loads(Path(args.contract).read_text()), verifier)
+    result = inspect_result(args.root, contract, verifier)
     display = result
     if args.context_dir:
         from agent_runtime.validation_context import write_validation_context
@@ -37,4 +41,9 @@ def main():
 
 
 if __name__ == '__main__':
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except (ExternalJSONError, OSError, ValueError) as exc:
+        print(json.dumps({'status': 'error', 'error': str(exc)}, ensure_ascii=False),
+              file=sys.stderr)
+        raise SystemExit(2)

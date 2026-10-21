@@ -10,6 +10,7 @@ import json
 import platform
 from pathlib import Path
 import random
+import re
 import sqlite3
 import statistics
 import subprocess
@@ -18,10 +19,58 @@ import time
 import tracemalloc
 
 from agent_runtime import project_memory as candidate
+from agent_runtime.external_json import regular_bytes, strict_json
 
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def validate_config(config):
+    if not isinstance(config, dict):
+        raise ValueError('benchmark config must be a JSON object')
+    if not isinstance(config.get('baseline'), str) or not re.fullmatch('[0-9a-f]{40}', config['baseline']):
+        raise ValueError('exact baseline commit required')
+    fixtures, measurement = config.get('fixtures'), config.get('measurement')
+    if not isinstance(fixtures, list) or not 1 <= len(fixtures) <= 1000:
+        raise ValueError('1..1000 benchmark fixtures required')
+    if not isinstance(measurement, dict):
+        raise ValueError('measurement config required')
+    for key, minimum, maximum in (('seed', 0, 2**63 - 1), ('wall_pairs', 1, 10000),
+                                  ('traced_pairs', 1, 10000), ('warmup_each', 0, 10000)):
+        value = measurement.get(key)
+        if type(value) is not int or not minimum <= value <= maximum:
+            raise ValueError('invalid measurement field: ' + key)
+    seen = set()
+    total_payload = 0
+    for fixture in fixtures:
+        if not isinstance(fixture, dict):
+            raise ValueError('fixture object required')
+        identifier = fixture.get('id')
+        if not isinstance(identifier, str) or not identifier or identifier in seen:
+            raise ValueError('unique fixture id required')
+        seen.add(identifier)
+        if not isinstance(fixture.get('shape'), str):
+            raise ValueError('fixture shape required')
+        for key, maximum in (('nodes', 1_000_000), ('content_bytes', 256 * 1024 * 1024)):
+            value = fixture.get(key)
+            if type(value) is not int or value < 1 or value > maximum:
+                raise ValueError('invalid fixture field: ' + key)
+        roots = fixture.get('roots')
+        if not ((isinstance(roots, str) and roots) or
+                isinstance(roots, list) and roots and all(type(item) is int and
+                0 <= item < fixture['nodes'] for item in roots)):
+            raise ValueError('fixture roots must be a bounded list or named ordering')
+        payload = fixture['nodes'] * fixture['content_bytes']
+        if payload > 512 * 1024 * 1024:
+            raise ValueError('fixture payload exceeds 512 MiB synthetic allocation bound')
+        total_payload += payload
+    if total_payload > 2 * 1024 * 1024 * 1024:
+        raise ValueError('aggregate fixture payload exceeds 2 GiB bound')
+    calls = len(fixtures) * (measurement['wall_pairs'] + measurement['traced_pairs']) * 2
+    if calls > 100_000:
+        raise ValueError('aggregate measurement call count exceeds 100000')
+    return config
 
 
 def baseline_class(revision):
@@ -101,15 +150,25 @@ def measure(config):
     return result
 
 
-if __name__ == '__main__':
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    args = parser.parse_args()
-    config_bytes = args.config.read_bytes()
-    result = measure(json.loads(config_bytes))
+    args = parser.parse_args(argv)
+    try:
+        config_bytes = regular_bytes(args.config, max_bytes=2 * 1024 * 1024)
+        config = validate_config(strict_json(config_bytes))
+    except ValueError as exc:
+        print(json.dumps({'status': 'invalid', 'reason': str(exc)}))
+        return 2
+    result = measure(config)
     result['config_sha256'] = digest(config_bytes)
     args.output.write_text(json.dumps(result, indent=2) + '\n')
     print(json.dumps({'gate': result['gate'], 'cases': [
         {'id': c['id'], 'wall_reduction': c['wall_summary']['reduction'],
          'peak_reduction': c['traced_summary']['reduction']} for c in result['cases']]}))
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

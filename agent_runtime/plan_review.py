@@ -170,7 +170,8 @@ def _bound(root, ref):
 def current_inputs(root, plan, *, publication_task_refs=None):
     from .task_manifest import validate_contract
     validate_contract(plan, root, check_adopted_advice=True, required_task_refs=publication_task_refs)
-    for ref in policy(plan)['evidence_refs']:
+    review_policy = policy(plan)
+    for ref in review_policy['evidence_refs'] if review_policy else ():
         _bound(root, ref)
     # Prior results are discovery evidence, not scientific acceptance. Bind exact
     # registry bytes nevertheless; new lookup candidates are checked at dispatch.

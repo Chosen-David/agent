@@ -6,6 +6,10 @@ import json
 import re
 import subprocess
 from pathlib import Path, PurePosixPath
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from agent_runtime.external_json import load_json, regular_bytes, strict_json
 
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT_ROOTS = {'plugins', 'prompts', 'workflows', 'templates', 'config', 'agent_runtime'}
@@ -17,6 +21,9 @@ SNAPSHOT_DEPENDENCIES = {'docs/handoff_validation.md', 'docs/backend_handoff.md'
                          'scripts/publish_report.py',
                          'scripts/semantic_acceptance.py',
                          'docs/task_supervisor_validation.md', 'docs/experiment_execution_upgrade.md'}
+JSON_INPUT_LIMIT = 16 * 1024 * 1024
+EXTERNAL_REVIEW_JSON_LIMIT = 16 * 1024 * 1024
+EXTERNAL_EVIDENCE_LIMIT = 256 * 1024 * 1024
 
 
 def digest(data):
@@ -28,7 +35,7 @@ def encoded(value):
 
 
 def read(path):
-    return json.loads(Path(path).read_text(encoding='utf-8'))
+    return load_json(path, max_bytes=JSON_INPUT_LIMIT)
 
 
 def object_record(value):
@@ -231,7 +238,7 @@ def material_bindings(run, manifest):
                       for cid in manifest['expected_cases']}}
 
 
-def external_review_artifact(run, item):
+def external_review_artifact(run, item, *, max_bytes=EXTERNAL_EVIDENCE_LIMIT):
     """Relative controller paths are portable within run.parent, never the run."""
     item = object_record(item)
     if not nonempty(item.get('path')) or not nonempty(item.get('sha256')):
@@ -242,7 +249,7 @@ def external_review_artifact(run, item):
     if (any(parent.is_symlink() for parent in (path, *path.parents)) or
             path.resolve().is_relative_to(Path(run).resolve())):
         raise ValueError('material review evidence must be outside worker run')
-    data = path.read_bytes()
+    data = regular_bytes(path, max_bytes=max_bytes)
     if digest(data) != item['sha256']:
         raise ValueError('material review artifact changed')
     return data
@@ -259,15 +266,8 @@ def check_material_review(run, manifest, actor, trust):
     reviewer = trust.get('reviewer_actor')
     if not nonempty(reviewer) or reviewer == actor:
         raise ValueError('independent material reviewer required')
-    def unique_fields(pairs):
-        result = {}
-        for key, value in pairs:
-            if key in result:
-                raise ValueError('duplicate material review JSON field')
-            result[key] = value
-        return result
-    review = object_record(json.loads(external_review_artifact(run, trust),
-                                      object_pairs_hook=unique_fields))
+    review = object_record(strict_json(external_review_artifact(
+        run, trust, max_bytes=EXTERNAL_REVIEW_JSON_LIMIT)))
     if type(review.get('schema_version')) is not int or review['schema_version'] != 1:
         raise ValueError('material review schema_version')
     if review.get('reviewer_actor') != reviewer:

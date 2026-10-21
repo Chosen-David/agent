@@ -17,7 +17,8 @@ import sqlite3
 import stat
 import sys
 
-from .project_docs import check_document_refs, guard_write_path
+from .project_docs import DocumentError, check_document_refs, guard_write_path
+from .external_json import load_json
 
 
 KINDS = ('intention', 'assumption', 'observation', 'claim', 'procedure', 'artifact')
@@ -529,9 +530,9 @@ def _load_document_refs(path):
     if not path:
         return None
     try:
-        return json.loads(Path(path).read_text())
-    except (json.JSONDecodeError, UnicodeDecodeError) as exc:
-        raise MemoryError('document_refs file must contain valid JSON text') from exc
+        return load_json(path)
+    except ValueError as exc:
+        raise MemoryError(f'document_refs file must contain valid bounded regular JSON text: {exc}') from exc
 
 
 def main(argv=None):
@@ -573,13 +574,17 @@ def main(argv=None):
         sub.add_parser(command).add_argument('id')
     args = parser.parse_args(argv)
     try:
+        document_refs = (_load_document_refs(args.document_refs)
+                         if args.command in ('add', 'correct') else None)
+        if args.command in ('add', 'correct') and args.document_refs is not None:
+            check_document_refs(args.root, document_refs)
         ledger = MemoryLedger(args.root, create=args.command == 'add')
         if args.command == 'add':
             result = ledger.add(args.id, args.kind, args.content, args.source, args.dep, args.scope, args.evidence,
-                                _load_document_refs(args.document_refs))
+                                document_refs)
         elif args.command == 'correct':
             result = ledger.correct(args.id, args.new_id, args.content, args.source, args.reason, args.dep,
-                                    _load_document_refs(args.document_refs))
+                                    document_refs)
         elif args.command == 'accept':
             result = ledger.accept(args.id, args.new_id, args.source, args.reason)
         elif args.command == 'list':
@@ -596,7 +601,7 @@ def main(argv=None):
         print(_index_json(result) if args.command == 'index' else
               json.dumps(result, ensure_ascii=False, indent=2))
         return 0
-    except (MemoryError, OSError) as exc:
+    except (DocumentError, MemoryError, OSError) as exc:
         print(json.dumps({'error': str(exc)}, ensure_ascii=False), file=sys.stderr)
         return 2
 

@@ -107,3 +107,18 @@ class RecordContextTests(unittest.TestCase):
         p=subprocess.run(args+['--global-line','1','--compact'],capture_output=True,text=True,encoding='utf-8')
         self.assertEqual(p.returncode,0,p.stderr)
         self.assertEqual(json.loads(p.stdout),self.view())
+
+    def test_cli_enforces_exact_json_depth_boundary(self):
+        cli=Path(__file__).resolve().parents[1]/'scripts/record_context.py'
+        for optimized in (False, True):
+            for depth, expected in ((256, 0), (257, 2)):
+                raw = ('{"extra":' + '[' * depth + '0' + ']' * depth + '}').encode()
+                self.write(raw)
+                cmd = [sys.executable] + (['-O'] if optimized else []) + [
+                    str(cli),'--root',str(self.root),'--path',self.path,
+                    '--sha256',self.sha,'--line','1','--global-line','1','--compact']
+                result = subprocess.run(cmd, capture_output=True, text=True)
+                self.assertEqual(result.returncode, expected, result.stderr)
+                self.assertNotIn('Traceback', result.stderr)
+                if expected:
+                    self.assertIn('invalid JSON record', json.loads(result.stderr)['error'])

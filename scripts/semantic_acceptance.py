@@ -13,10 +13,16 @@ locations/reasons from independent review. No keyword-based prose classifier.
 """
 import hashlib
 import json
+import os
 from pathlib import Path
+import stat
+
+from agent_runtime.external_json import load_json
 
 
 SEMANTIC_CHECKS = ('artifact_fit', 'originality')
+RECEIPT_LIMIT = 1024 * 1024
+ARTIFACT_LIMIT = 256 * 1024 * 1024
 
 
 def canonical_record_sha256(record):
@@ -47,10 +53,40 @@ def declared_file_hashes(record):
 
 def safe_file(root, path):
     raw = Path(path)
-    resolved = (root / raw).resolve()
-    if raw.is_absolute() or not resolved.is_relative_to(root) or not resolved.is_file():
+    candidate = root / raw
+    if raw.is_absolute() or '..' in raw.parts:
+        raise ValueError('artifact path outside root or missing')
+    for part in (candidate, *candidate.parents):
+        if part == root:
+            break
+        if part.is_symlink():
+            raise ValueError('artifact path must not contain symlinks')
+    resolved = candidate.resolve()
+    if not resolved.is_relative_to(root) or not resolved.is_file():
         raise ValueError('artifact path outside root or missing')
     return resolved
+
+
+def bounded_sha256(path, max_bytes=ARTIFACT_LIMIT):
+    """Hash one regular descriptor without materializing a large artifact."""
+    flags = os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
+    fd = os.open(path, flags)
+    digest, size = hashlib.sha256(), 0
+    try:
+        with os.fdopen(fd, 'rb', closefd=False) as stream:
+            info = os.fstat(stream.fileno())
+            if not stat.S_ISREG(info.st_mode):
+                raise ValueError('artifact must be a regular file')
+            if info.st_size > max_bytes:
+                raise ValueError('artifact exceeds 256 MiB bound')
+            while block := stream.read(1024 * 1024):
+                size += len(block)
+                if size > max_bytes:
+                    raise ValueError('artifact grew beyond 256 MiB bound')
+                digest.update(block)
+    finally:
+        os.close(fd)
+    return digest.hexdigest()
 
 
 def validate_role_events(binding, root, expected_run_id=None):
@@ -61,10 +97,10 @@ def validate_role_events(binding, root, expected_run_id=None):
         try:
             artifact = binding[field]
             path = safe_file(Path(root).resolve(), artifact['path'])
-            content = path.read_bytes()
-            if hashlib.sha256(content).hexdigest() != artifact['sha256']:
-                raise ValueError('receipt hash mismatch')
-            event = json.loads(content)
+            if not isinstance(artifact.get('sha256'), str):
+                raise ValueError('receipt sha256 required')
+            event = load_json(path, max_bytes=RECEIPT_LIMIT,
+                              expected_sha256=artifact['sha256'])
             if not isinstance(event, dict): raise ValueError('receipt must be an object')
             if any(marker in event and event[marker] is not False for marker in ('synthetic', 'fixture_only')) or event.get('adapter') in ('mock', 'fixture', 'synthetic'):
                 raise ValueError('synthetic/mock receipt cannot certify actual execution')
@@ -103,8 +139,8 @@ def validate_acceptance(record, root, acceptance):
         files = declared_file_hashes(record)
         need(acceptance.get('file_hashes') == files and bool(files), 'file hash coverage mismatch')
         for path, digest in files.items():
-            actual = safe_file(Path(root).resolve(), path).read_bytes()
-            need(hashlib.sha256(actual).hexdigest() == digest, f'stale file: {path}')
+            actual = bounded_sha256(safe_file(Path(root).resolve(), path))
+            need(actual == digest, f'stale file: {path}')
     except (TypeError, ValueError, OSError, RuntimeError) as exc:
         errors.append(f'semantic acceptance: invalid record/files: {exc}')
     bindings = record.get('bindings')

@@ -13,6 +13,58 @@ import tempfile
 import time
 
 from agent_runtime.project_memory import MemoryLedger
+from agent_runtime.external_json import load_json
+
+
+def validate_config(config):
+    if not isinstance(config, dict):
+        raise ValueError('benchmark config must be a JSON object')
+    if config.get('operation', 'list') not in ('list', 'check'):
+        raise ValueError('unsupported memory benchmark operation')
+    if (not isinstance(config.get('baseline_revision'), str)
+            or not re.fullmatch('[0-9a-f]{40}', config['baseline_revision'])
+            or not isinstance(config.get('baseline_source_sha256'), str)
+            or not re.fullmatch('[0-9a-f]{64}', config['baseline_source_sha256'])):
+        raise ValueError('exact baseline revision/source hash required')
+    for key, minimum, maximum in (('seed', 0, 2**63 - 1), ('repeats', 1, 10000)):
+        value = config.get(key)
+        if type(value) is not int or not minimum <= value <= maximum:
+            raise ValueError('invalid benchmark field: ' + key)
+    cases = config.get('cases')
+    if not isinstance(cases, list) or not 1 <= len(cases) <= 1000:
+        raise ValueError('1..1000 benchmark cases required')
+    names = set()
+    total_payload = 0
+    total_scan_work = 0
+    for case in cases:
+        if not isinstance(case, dict) or not isinstance(case.get('name'), str) or not case['name'] or case['name'] in names:
+            raise ValueError('unique case name required')
+        names.add(case['name'])
+        for key, minimum, maximum in (('entries', 1, 1_000_000), ('active', 0, 1_000_000),
+                                      ('content_bytes', 1, 256 * 1024 * 1024),
+                                      ('match_every', 1, 1_000_000)):
+            value = case.get(key)
+            if type(value) is not int or not minimum <= value <= maximum:
+                raise ValueError('invalid case field: ' + key)
+        if case['active'] > case['entries'] or not (case.get('scope') is None or isinstance(case.get('scope'), str)):
+            raise ValueError('invalid active count or scope')
+        if case.get('dependency_shape', 'none') not in ('none', 'chain', 'star'):
+            raise ValueError('unsupported dependency fixture')
+        if config.get('operation', 'list') == 'check':
+            offset, count = case.get('refs_offset'), case.get('refs_count')
+            if (type(offset) is not int or type(count) is not int or offset < 0 or count < 1
+                    or offset + count > case['active']):
+                raise ValueError('check fixture requires nonempty active refs')
+        payload = case['entries'] * case['content_bytes']
+        if payload > 512 * 1024 * 1024:
+            raise ValueError('case payload exceeds 512 MiB synthetic allocation bound')
+        total_payload += payload
+        total_scan_work += case['entries'] * (config['repeats'] + 1)
+    if total_payload > 2 * 1024 * 1024 * 1024:
+        raise ValueError('aggregate case payload exceeds 2 GiB bound')
+    if total_scan_work > 50_000_000:
+        raise ValueError('aggregate benchmark scan work exceeds 50000000 entry-visits')
+    return config
 
 
 def benchmark(config):
@@ -101,15 +153,25 @@ def benchmark(config):
             'cases': cases}
 
 
-if __name__ == '__main__':
+def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
-    args = parser.parse_args()
-    result = benchmark(json.loads(args.config.read_text()))
+    args = parser.parse_args(argv)
+    try:
+        config = validate_config(load_json(args.config, max_bytes=2 * 1024 * 1024))
+    except ValueError as exc:
+        print(json.dumps({'status': 'invalid', 'reason': str(exc)}))
+        return 2
+    result = benchmark(config)
     # A measurement is immutable evidence, never silently replace a previous run.
     with args.output.open('x') as stream:
         json.dump(result, stream, indent=2)
         stream.write('\n')
     print(json.dumps([dict(case=c['name'], median=c['median'], reduction=c['reduction'],
                            returned=c['returned']) for c in result['cases']], indent=2))
+    return 0
+
+
+if __name__ == '__main__':
+    raise SystemExit(main())

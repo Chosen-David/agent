@@ -12,10 +12,12 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import stat
 import subprocess
 import time
 
+from .external_json import load_json
 from .project_memory import check_task_memory
 from .task_manifest import atomic_json, task_source_snapshot
 from .project_docs import (assert_ai_writable, check_document_refs, resolve_task_file,
@@ -26,12 +28,131 @@ class PublicationError(ValueError):
     """Publication remains pending until this gate is resolved."""
 
 
+STATE_LIMIT = 16 * 1024 * 1024
+HEX40_OR_64 = re.compile(r'(?:[0-9a-f]{40}|[0-9a-f]{64})\Z')
+HEX64 = re.compile(r'[0-9a-f]{64}\Z')
+
+
 def _hash(value):
     return hashlib.sha256(value).hexdigest()
 
 
 def _canonical(value):
     return json.dumps(value, sort_keys=True, separators=(',', ':'), ensure_ascii=True).encode()
+
+
+def _relative_path(value):
+    return (isinstance(value, str) and bool(value) and '\x00' not in value and
+            not Path(value).is_absolute() and '..' not in Path(value).parts)
+
+
+def _path_hash(value):
+    return (isinstance(value, dict) and set(value) == {'path', 'sha256'} and
+            _relative_path(value.get('path')) and
+            isinstance(value.get('sha256'), str) and HEX64.fullmatch(value['sha256']))
+
+
+def _document_snapshot(value):
+    keys = {'schema_version', 'layout', 'task_index', 'task_details', 'guides',
+            'advice', 'adopted_advice'}
+    if (not isinstance(value, dict) or set(value) != keys or
+            value.get('schema_version') != 'project-documents/v1' or
+            value.get('layout') not in ('canonical', 'legacy') or
+            not _path_hash(value.get('task_index'))):
+        return False
+    details = value.get('task_details')
+    if (not isinstance(details, dict) or any(
+            not isinstance(task_id, str) or not task_id or not _path_hash(ref)
+            for task_id, ref in details.items())):
+        return False
+    for field in ('guides', 'advice', 'adopted_advice'):
+        mapping = value.get(field)
+        if (not isinstance(mapping, dict) or any(
+                not _relative_path(path) or not isinstance(digest, str) or
+                HEX64.fullmatch(digest) is None for path, digest in mapping.items())):
+            return False
+    return True
+
+
+def _candidate_shape(candidate):
+    keys = {'files', 'sha256', 'base_commit', 'file_task_refs', 'task_path',
+            'task_sha256', 'project_documents', 'reviewed_plan'}
+    if not isinstance(candidate, dict) or set(candidate) != keys:
+        return False
+    files = candidate.get('files')
+    if not isinstance(files, dict) or not files:
+        return False
+    for path, entry in files.items():
+        if (not _relative_path(path) or not isinstance(entry, dict) or
+                set(entry) != {'mode', 'oid', 'sha256'} or
+                entry.get('mode') not in ('100644', '100755') or
+                not isinstance(entry.get('oid'), str) or
+                HEX40_OR_64.fullmatch(entry['oid']) is None or
+                not isinstance(entry.get('sha256'), str) or
+                HEX64.fullmatch(entry['sha256']) is None):
+            return False
+    if (not isinstance(candidate.get('sha256'), str) or
+            HEX64.fullmatch(candidate['sha256']) is None or
+            candidate['sha256'] != _hash(_canonical(files)) or
+            not isinstance(candidate.get('base_commit'), str) or
+            HEX40_OR_64.fullmatch(candidate['base_commit']) is None or
+            not _relative_path(candidate.get('task_path')) or
+            candidate['task_path'] not in files or
+            not isinstance(candidate.get('task_sha256'), str) or
+            HEX64.fullmatch(candidate['task_sha256']) is None or
+            candidate['task_sha256'] != files[candidate['task_path']]['sha256'] or
+            not _document_snapshot(candidate.get('project_documents'))):
+        return False
+    ownership = candidate.get('file_task_refs')
+    if not isinstance(ownership, dict) or not ownership:
+        return False
+    for path, refs in ownership.items():
+        if (not _relative_path(path) or not isinstance(refs, list) or not refs or
+                any(not isinstance(ref, str) or not ref for ref in refs) or
+                len(refs) != len(set(refs))):
+            return False
+    reviewed = candidate.get('reviewed_plan')
+    if reviewed is not None:
+        try:
+            from .core import validate
+            validate(reviewed)
+        except (TypeError, ValueError, KeyError):
+            return False
+    return True
+
+
+def _readback_shape(value):
+    return (isinstance(value, dict) and
+            set(value) == {'remote_url', 'branch', 'commit', 'observed_at'} and
+            all(isinstance(value.get(key), str) and value[key]
+                for key in ('remote_url', 'branch')) and
+            isinstance(value.get('commit'), str) and
+            HEX40_OR_64.fullmatch(value['commit']) is not None and
+            type(value.get('observed_at')) in (int, float))
+
+
+def _evidence_shape(value):
+    if not isinstance(value, list):
+        return False
+    for item in value:
+        refs = item.get('task_refs') if isinstance(item, dict) else None
+        if (not isinstance(item, dict) or not isinstance(item.get('path'), str) or
+                not Path(item['path']).is_absolute() or
+                not isinstance(item.get('sha256'), str) or
+                HEX64.fullmatch(item['sha256']) is None or
+                not isinstance(item.get('candidate_sha256'), str) or
+                HEX64.fullmatch(item['candidate_sha256']) is None or
+                not isinstance(refs, list) or not refs or
+                any(not isinstance(ref, str) or not ref for ref in refs) or
+                len(refs) != len(set(refs))):
+            return False
+        memory = item.get('memory_refs')
+        if (memory is not None and
+                (not isinstance(memory, list) or
+                 any(not isinstance(ref, str) or not ref for ref in memory) or
+                 len(memory) != len(set(memory)) or not memory)):
+            return False
+    return True
 
 
 def _regular_bytes(path):
@@ -115,9 +236,65 @@ class PublicationLedger:
 
     def status(self):
         """Historical observations, not a new assertion of current acceptance."""
-        value = json.loads(_regular_bytes(self.path))
-        if value.get('schema_version') != 'publication/v1' or value['scope']['repository'] != str(self.root):
+        for path in (self.path, *self.path.parents):
+            if path.is_symlink():
+                raise PublicationError('state path must not contain symlinks')
+        try:
+            value = load_json(self.path, max_bytes=STATE_LIMIT)
+        except ValueError as exc:
+            raise PublicationError('invalid publication state: ' + str(exc)) from exc
+        if not isinstance(value, dict):
+            raise PublicationError('publication state must be a JSON object')
+        allowed = {'schema_version', 'scope', 'candidate', 'phase', 'tested', 'committed',
+                   'pushed', 'remote_verified', 'evidence', 'commit', 'events', 'last_error',
+                   'push_readback', 'remote_readback'}
+        required = allowed - {'push_readback', 'remote_readback'}
+        if not required <= set(value) or not set(value) <= allowed:
+            raise PublicationError('publication state has invalid fields')
+        scope = value.get('scope')
+        candidate = value.get('candidate')
+        if (value.get('schema_version') != 'publication/v1' or not isinstance(scope, dict)
+                or scope.get('repository') != str(self.root)):
             raise PublicationError('state repository or schema mismatch')
+        if (set(scope) != {'repository', 'remote', 'remote_url', 'branch', 'authorization_reference'}
+                or any(not isinstance(scope.get(key), str) or not scope[key].strip()
+                       for key in scope)):
+            raise PublicationError('publication state has invalid scope')
+        if not _candidate_shape(candidate):
+            raise PublicationError('publication state has invalid candidate')
+        if (not isinstance(value.get('phase'), str) or
+                value['phase'] not in {'pending', 'tested', 'committed', 'pushed', 'remote_verified'}
+                or any(type(value.get(key)) is not bool
+                       for key in ('tested', 'committed', 'pushed', 'remote_verified'))
+                or not _evidence_shape(value.get('evidence'))
+                or not isinstance(value.get('events'), list)
+                or not (value.get('commit') is None or isinstance(value.get('commit'), str) and
+                        HEX40_OR_64.fullmatch(value['commit']) is not None)
+                or not (value.get('last_error') is None or isinstance(value.get('last_error'), str))):
+            raise PublicationError('publication state has invalid lifecycle fields')
+        events = value['events']
+        actions = {'tested', 'committed', 'pushed', 'remote_verified', 'push_failed_pending'}
+        if any(not isinstance(event, dict) or set(event) != {'action', 'observed_at'} or
+               not isinstance(event.get('action'), str) or event['action'] not in actions or
+               type(event.get('observed_at')) not in (int, float) for event in events):
+            raise PublicationError('publication state has invalid events')
+        phase = value['phase']
+        expected = {
+            'pending': (False, False, False, False),
+            'tested': (True, False, False, False),
+            'committed': (True, True, False, False),
+            'pushed': (True, True, True, False),
+            'remote_verified': (True, True, True, True),
+        }[phase]
+        flags = tuple(value[key] for key in ('tested', 'committed', 'pushed', 'remote_verified'))
+        if (flags != expected or (phase == 'pending' and value['evidence']) or
+                (phase != 'pending' and not value['evidence']) or
+                ((phase in ('pending', 'tested')) != (value['commit'] is None)) or
+                ('push_readback' in value) != (phase in ('pushed', 'remote_verified')) or
+                ('remote_readback' in value) != (phase == 'remote_verified') or
+                ('push_readback' in value and not _readback_shape(value['push_readback'])) or
+                ('remote_readback' in value and not _readback_shape(value['remote_readback']))):
+            raise PublicationError('publication state has inconsistent lifecycle')
         return value
 
     def _scope(self, scope, action):

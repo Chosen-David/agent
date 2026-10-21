@@ -89,6 +89,10 @@ def _read(root, value, limit=METADATA_LIMIT):
 
 
 def _json(data):
+    try:
+        text = data.decode('utf-8')
+    except UnicodeDecodeError as exc:
+        raise ResultStoreError('result JSON must contain valid UTF-8') from exc
     def pairs(items):
         value = {}
         for key, item in items:
@@ -97,8 +101,13 @@ def _json(data):
         return value
     def reject(value):
         raise ResultStoreError('nonfinite JSON value: ' + value)
+    def finite_float(value):
+        parsed = float(value)
+        _need(math.isfinite(parsed), 'nonfinite JSON value: ' + value)
+        return parsed
     try:
-        value = json.loads(data, object_pairs_hook=pairs, parse_constant=reject)
+        value = json.loads(text, object_pairs_hook=pairs, parse_constant=reject,
+                           parse_float=finite_float)
     except RecursionError as exc:
         raise _ResultJSONDepthError(str(exc)) from exc
     _need(isinstance(value, dict), 'JSON object required')

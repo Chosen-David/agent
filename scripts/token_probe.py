@@ -14,10 +14,41 @@ sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
 from agent_runtime.prompt_context import compose_entries, ENTRIES, MARKER
 from agent_runtime.project_docs import assert_ai_writable
 from agent_runtime.token_usage import short_probe_usage
+from agent_runtime.external_json import ExternalJSONError,load_json,regular_bytes
+
+class ProbeError(ValueError):
+    pass
 
 def dump(path,value):
     path.write_bytes((json.dumps(value,ensure_ascii=False,indent=2)+'\n').encode('utf-8'))
 def digest(path): return hashlib.sha256(path.read_bytes()).hexdigest()
+
+def quota_windows(quota):
+    if not isinstance(quota,dict) or quota.get('ordinaryUsageAllowed') is not True:
+        raise ProbeError('ordinary model use is not confirmed allowed')
+    limits=quota.get('rateLimitsByLimitId') or {'default':quota.get('rateLimits',{})}
+    if not isinstance(limits,dict):raise ProbeError('quota limits must be an object')
+    windows=[]
+    for limit in limits.values():
+        if not isinstance(limit,dict):raise ProbeError('quota limit must be an object')
+        if limit.get('spendControlReached'): raise ProbeError('spend control reached')
+        for name in ('primary','secondary'):
+            window=limit.get(name)
+            if window:
+                if (not isinstance(window,dict) or type(window.get('usedPercent')) not in (int,float)
+                        or not 0<=window['usedPercent']<90):
+                    raise ProbeError('quota unknown or stop threshold reached')
+                windows.append({'limit':limit.get('limitId'),'window':name,
+                                'usedPercent':window['usedPercent']})
+    if not windows: raise ProbeError('quota window unavailable')
+    return windows
+
+def validate_answer(answer):
+    if (not isinstance(answer,dict) or type(answer.get('proceed')) is not bool
+            or not isinstance(answer.get('reasons'),list)
+            or any(not isinstance(reason,str) for reason in answer['reasons'])):
+        raise ProbeError('quality oracle returned invalid answer structure')
+    return answer
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
@@ -25,23 +56,22 @@ def main():
     p.add_argument('--codex',required=True); p.add_argument('--quota',required=True)
     a=p.parse_args(); root=Path(a.root).resolve(); output=Path(a.output).resolve()
     assert_ai_writable(root,output)
-    output.mkdir(parents=True,exist_ok=True)
+    quota=load_json(a.quota,max_bytes=1024*1024)['result']
+    windows=quota_windows(quota)
+    config_path=Path(os.environ.get('CODEX_HOME',str(Path.home()/'.codex')))/'config.toml'
+    config_raw=regular_bytes(config_path,max_bytes=1024*1024)
+    try:
+        config=tomllib.loads(config_raw.decode('utf-8'))
+    except UnicodeDecodeError as exc:
+        raise ProbeError('Codex config must contain valid UTF-8') from exc
+    config_model = config.get('model')
+    config_effort = config.get('model_reasoning_effort')
+    if any(value is not None and (not isinstance(value, str) or not value.strip())
+           for value in (config_model, config_effort)):
+        raise ProbeError('Codex model and reasoning effort must be nonempty strings when configured')
     if (output/'baseline.jsonl').exists() or (output/'candidate.jsonl').exists():
-        raise RuntimeError('A/B attempt already exists; inspect it, no retry or duplicate billing')
-    quota=json.loads(Path(a.quota).read_text(encoding='utf-8'))['result']
-    if quota.get('ordinaryUsageAllowed') is not True:
-        raise RuntimeError('ordinary model use is not confirmed allowed')
-    limits=quota.get('rateLimitsByLimitId') or {'default':quota.get('rateLimits',{})}
-    windows=[]
-    for limit in limits.values():
-        if limit.get('spendControlReached'): raise RuntimeError('spend control reached')
-        for name in ('primary','secondary'):
-            window=limit.get(name)
-            if window:
-                if not isinstance(window.get('usedPercent'),(int,float)) or window['usedPercent']>=90:
-                    raise RuntimeError('quota unknown or stop threshold reached')
-                windows.append({'limit':limit.get('limitId'),'window':name,'usedPercent':window['usedPercent']})
-    if not windows: raise RuntimeError('quota window unavailable')
+        raise ProbeError('A/B attempt already exists; inspect it, no retry or duplicate billing')
+    output.mkdir(parents=True,exist_ok=True)
     dump(output/'quota-admission.json',{'ordinary_allowed':True,'windows':windows,
                                       'source':'authenticated account/rateLimits/read; no inference', 'observed_at':time.time()})
     fixture=output/'fixture'; fixture.mkdir(exist_ok=True)
@@ -60,21 +90,19 @@ def main():
     full=compose_entries(fixture,deduplicate=False); chosen=compose_entries(fixture)
     prompts={'baseline':full['prompt']+question,'candidate':chosen['prompt']+question}
     if any(len(text)>2200 for text in prompts.values()):
-        raise RuntimeError('supplied short prompt exceeds frozen 2200 character cap')
+        raise ProbeError('supplied short prompt exceeds frozen 2200 character cap')
     schema={'type':'object','properties':{'proceed':{'type':'boolean'},
                 'reasons':{'type':'array','items':{'type':'string'},'maxItems':6}},
             'required':['proceed','reasons'],'additionalProperties':False}
     dump(output/'output-schema.json',schema)
     exe=Path(a.codex).resolve()
-    config_path=Path(os.environ.get('CODEX_HOME',str(Path.home()/'.codex')))/'config.toml'
-    config=tomllib.loads(config_path.read_text(encoding='utf-8'))
     sources=['agent_runtime/prompt_context.py','agent_runtime/token_usage.py','scripts/prompt_context.py',
              'scripts/token_probe.py','tests/test_prompt_context.py']
     dump(output/'source-inventory.json',{'revision':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root).decode().strip(),
         'files':[{'path':s,'sha256':digest(root/s)} for s in sources]})
     dump(output/'config.json',{'binary_sha256':digest(exe),'cli_version':subprocess.check_output([str(exe),'--version']).decode().strip(),
-        'model':config.get('model'),'reasoning_effort':config.get('model_reasoning_effort'),
-        'user_config_sha256':digest(config_path),'max_invocations':2,'retries':0,
+        'model':config_model,'reasoning_effort':config_effort,
+        'user_config_sha256':hashlib.sha256(config_raw).hexdigest(),'max_invocations':2,'retries':0,
         'max_supplied_chars':2200,'timeout_seconds':90,'first_total_cap':25000,'paired_total_cap':50000,
         'scope':'Explicit short no-tool inference only; hidden host instructions not estimated or omitted from server usage.'})
     collected=[]
@@ -98,9 +126,9 @@ def main():
             dump(output/'live.json',{'phase':'failed','attempt':name,'exit_code':proc.returncode})
             return proc.returncode
         usage=short_probe_usage(log_path.read_text(encoding='utf-8',errors='replace').splitlines())
-        answer=json.loads(final_path.read_text(encoding='utf-8'))
+        answer=validate_answer(load_json(final_path,max_bytes=1024*1024))
         if answer.get('proceed') is not False or sorted(answer.get('reasons',[]))!=['R_CANCEL','R_CAP','R_VERIFY']:
-            raise RuntimeError('quality oracle failed; no success or further model calls')
+            raise ProbeError('quality oracle failed; no success or further model calls')
         collected.append({'name':name,**usage,'answer':answer})
         dump(output/'usage.json',{'observations':collected,'scope':usage['scope']})
         if name=='baseline' and usage['total_tokens']>25000:
@@ -115,4 +143,8 @@ def main():
     print(json.dumps({'status':'pending-independent-validation','measured_saving_tokens':savings,'total_spent':total}))
     return 0 if total<=50000 and savings>0 else 2
 
-if __name__=='__main__': raise SystemExit(main())
+if __name__=='__main__':
+    try:raise SystemExit(main())
+    except (ExternalJSONError,OSError,ValueError,KeyError,TypeError) as exc:
+        print(json.dumps({'error':str(exc)},ensure_ascii=False),file=sys.stderr)
+        raise SystemExit(2)

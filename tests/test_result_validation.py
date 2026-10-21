@@ -220,6 +220,35 @@ class ResultValidationTests(unittest.TestCase):
                     self.rewrite_manifest(lambda m: m['metrics'][0].pop('unit'))
                 self.assertEqual(self.result()['status'], 'invalid')
 
+    def test_manifest_overflow_and_excessive_nesting_fail_before_verifier(self):
+        payloads = ('1e400', '[' * 300 + '0' + ']' * 300)
+        for payload in payloads:
+            with self.subTest(payload=payload[:12]):
+                make_fixture(self.root)
+                path = self.root / 'manifest.json'
+                raw = path.read_text().rstrip()
+                path.write_text(raw[:-1] + ',"extra":' + payload + '}')
+                called = []
+                result = self.result(lambda *_: called.append(True))
+                self.assertEqual(result['status'], 'invalid', result)
+                self.assertEqual(called, [])
+
+    def test_validation_plan_overflow_and_excessive_nesting_fail_before_verifier(self):
+        payloads = ('1e400', '[' * 300 + '0' + ']' * 300)
+        for payload in payloads:
+            with self.subTest(payload=payload[:12]):
+                self.contract = make_fixture(self.root)
+                path = self.root / 'validation-plan.json'
+                raw = path.read_text().rstrip()
+                path.write_text(raw[:-1] + ',"extra":' + payload + '}')
+                self.contract['validation_plan'] = ref(self.root, 'validation-plan.json')
+                self.rewrite_manifest(
+                    lambda manifest: manifest.update(validation_plan=self.contract['validation_plan']))
+                called = []
+                result = self.result(lambda *_: called.append(True))
+                self.assertEqual(result['status'], 'invalid', result)
+                self.assertEqual(called, [])
+
     def test_self_review_missing_checks_wrong_scope_and_illicit_na_rejected(self):
         mutations = [lambda r: r['verifier'].update(actor='implementation-agent'),
                      lambda r: r['checks'].pop('reference_boundary'),

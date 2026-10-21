@@ -6,6 +6,24 @@ import re
 from .advice_poll import _root
 from .maintenance_observer import read_bound
 
+MAX_JSON_DEPTH = 256
+
+
+def _bounded_depth(value):
+    """Reject adversarial nesting without recursing over the decoded value."""
+    pending = [(value, 0)]
+    while pending:
+        item, depth = pending.pop()
+        if depth > MAX_JSON_DEPTH:
+            raise ValueError('JSON nesting exceeds bounds')
+        if type(item) is dict:
+            pending.extend((child, depth + 1) for child in item.values()
+                           if type(child) in (dict, list))
+        elif type(item) is list:
+            pending.extend((child, depth + 1) for child in item
+                           if type(child) in (dict, list))
+    return value
+
 
 def _indices(value):
     if (not isinstance(value, (list, tuple)) or not 1 <= len(value) <= 128 or
@@ -58,7 +76,9 @@ def record_view(root, path, expected_sha256, *, lines, global_lines, max_chars=2
         # strings must not invent records; preserve original CRLF and EOF.
         raw = part + ('\n' if i < len(parts) - 1 or text.endswith('\n') else '')
         try:
-            json.loads(raw, object_pairs_hook=_pairs, parse_constant=_constant, parse_float=_float)
+            parsed = json.loads(raw, object_pairs_hook=_pairs, parse_constant=_constant,
+                                parse_float=_float)
+            _bounded_depth(parsed)
         except (ValueError, RecursionError) as exc:
             raise ValueError(f'invalid JSON record at physical line {i + 1}') from exc
         records.append(raw)

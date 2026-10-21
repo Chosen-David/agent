@@ -2,6 +2,7 @@
 import copy
 import hashlib
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -119,6 +120,34 @@ class AgentDocumentNamespaceTests(unittest.TestCase):
             marker.write_bytes(raw)
             with self.subTest(raw=raw[:70]), self.assertRaises(ValueError):
                 legacy_read_binding(self.root, old)
+
+    def test_marker_requires_strict_utf8_bounded_depth_and_regular_file(self):
+        old, _, data = self.moved_file()
+        marker = self.root / 'agent_doc/legacy-result-paths.json'
+        legal = {'schema_version': 'agent-doc-relocation/v1',
+                 'files': {old: hashlib.sha256(data).hexdigest()}}
+        regular = {
+            'utf16': json.dumps(legal).encode('utf-16'),
+            'deep': ('{"schema_version":"agent-doc-relocation/v1","files":{},"x":' +
+                     '[' * 10000 + '0' + ']' * 10000 + '}').encode(),
+        }
+        for name, raw in regular.items():
+            with self.subTest(name=name):
+                marker.write_bytes(raw)
+                before = marker.read_bytes()
+                with self.assertRaises(ValueError):
+                    legacy_read_binding(self.root, old)
+                self.assertEqual(marker.read_bytes(), before)
+        marker.unlink()
+        marker.mkdir()
+        with self.assertRaises(ValueError):
+            legacy_read_binding(self.root, old)
+        marker.rmdir()
+        if hasattr(os, 'mkfifo'):
+            os.mkfifo(marker)
+            with self.assertRaises(ValueError):
+                legacy_read_binding(self.root, old)
+            marker.unlink()
 
     def test_malformed_legacy_path_cannot_escape_or_redirect(self):
         self.moved_file()

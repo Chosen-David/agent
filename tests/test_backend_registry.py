@@ -4,6 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REGISTRY = ROOT / "config" / "backend_registry.json"
+from scripts.discover_backends import validate_registry
 
 
 class BackendRegistryTests(unittest.TestCase):
@@ -19,6 +20,10 @@ class BackendRegistryTests(unittest.TestCase):
         for item in self.backends:
             self.assertTrue(required <= item.keys(), item["id"])
             self.assertTrue(item["repo"].startswith("https://github.com/"), item["id"])
+
+    def test_boolean_schema_version_is_rejected(self):
+        with self.assertRaises(ValueError):
+            validate_registry({"schema_version": True, "backends": []})
 
     def test_core_specialists_are_registered(self):
         expected = {"gpt-researcher", "paperqa2", "storm", "openhands", "ai-scientist", "journeypilot"}

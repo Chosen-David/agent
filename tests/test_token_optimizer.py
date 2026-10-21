@@ -1,7 +1,14 @@
-import json,tempfile,unittest
+import json,os,subprocess,sys,tempfile,unittest
 from pathlib import Path
 from unittest.mock import patch
+from agent_runtime.external_json import ExternalJSONError
 from scripts.token_optimizer import INTERVAL,advance_due,atomic,exclusive,quota_admission,tick
+
+def write_registry(root,roles=()):
+    (root/'config').mkdir(exist_ok=True)
+    (root/'config/role_registry.json').write_text(
+        json.dumps({'schema_version':1,'roles':list(roles)}),encoding='utf-8')
+
 class OptimizerTests(unittest.TestCase):
     def test_cadence_skips_catchup_and_backward_time(self):
         self.assertEqual(advance_due(100,100),3700)
@@ -21,13 +28,18 @@ class OptimizerTests(unittest.TestCase):
         temp=tempfile.TemporaryDirectory();self.addCleanup(temp.cleanup)
         root=Path(temp.name).resolve();state=root/'.agent-runs/hourly';exe=root/'codex.exe';exe.write_bytes(b'not invoked')
         return root,state,exe
+    def registry(self,root,value=...):
+        (root/'config').mkdir(exist_ok=True)
+        role={'id':'code-reading','kind':'code_reading','skill':'skill','workflow':'workflow','execution':'execution'}
+        value={'schema_version':1,'roles':[role]} if value is ... else value
+        (root/'config/role_registry.json').write_text(json.dumps(value),encoding='utf-8')
     def test_fresh_not_due_never_invokes_backend(self):
         root,state,exe=self.fixture()
         with patch('scripts.token_optimizer.synchronize') as sync,patch('scripts.token_optimizer.run_worker') as run:
             self.assertEqual(tick(root,state,exe,now=100)['status'],'not-due');sync.assert_not_called();run.assert_not_called()
             self.assertEqual(json.loads((state/'state.json').read_bytes())['next_due'],3700)
     def test_one_due_tick_persisted_before_model_and_no_second_tick(self):
-        root,state,exe=self.fixture();atomic(state/'state.json',{'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100})
+        root,state,exe=self.fixture();self.registry(root);atomic(state/'state.json',{'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100})
         def worker(*args,**kwargs):
             self.assertEqual(json.loads((state/'state.json').read_bytes())['next_due'],10900)
             return {'status':'quota-blocked','model_requests':0}
@@ -35,7 +47,7 @@ class OptimizerTests(unittest.TestCase):
             self.assertEqual(tick(root,state,exe,now=10000)['status'],'quota-blocked')
             self.assertEqual(tick(root,state,exe,now=10000)['status'],'not-due');self.assertEqual(run.call_count,1)
     def test_preflight_failure_preserves_slot_and_zero_model(self):
-        root,state,exe=self.fixture();atomic(state/'state.json',{'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100})
+        root,state,exe=self.fixture();self.registry(root);atomic(state/'state.json',{'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100})
         with patch('scripts.token_optimizer.synchronize',side_effect=RuntimeError('dirty tree preserved')),patch('scripts.token_optimizer.run_worker') as run:
             self.assertEqual(tick(root,state,exe,now=100)['status'],'host-blocked');run.assert_not_called()
             self.assertEqual(json.loads((state/'state.json').read_bytes())['next_due'],3700)
@@ -46,7 +58,7 @@ class OptimizerTests(unittest.TestCase):
             with exclusive(state/'worker.lock') as second:self.assertFalse(second)
         with exclusive(state/'worker.lock') as again:self.assertTrue(again)
     def test_probe_does_not_consume_due_tick(self):
-        root,state,exe=self.fixture();saved={'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100}
+        root,state,exe=self.fixture();self.registry(root);saved={'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100}
         atomic(state/'state.json',saved)
         with patch('scripts.token_optimizer.synchronize'),patch('scripts.token_optimizer.run_worker',return_value={'status':'probe-only','model_requests':0}) as run:
             self.assertEqual(tick(root,state,exe,now=100,probe_only=True)['status'],'probe-only')
@@ -57,6 +69,56 @@ class OptimizerTests(unittest.TestCase):
         with self.assertRaises(ValueError):tick(root,root/'public-state',exe,now=100)
         atomic(state/'state.json',{'project_root':'foreign','interval_seconds':INTERVAL,'next_due':100})
         with self.assertRaises(ValueError):tick(root,state,exe,now=100)
+
+    def test_bad_registry_is_pure_before_due_tick(self):
+        bad_values=([],None,{'schema_version':1,'roles':[None]},
+                    {'schema_version':1,'roles':[{'kind':'x'}]},
+                    {'schema_version':1,'roles':[{'id':'../escape','kind':'x','skill':'x','workflow':'x','execution':'x'}]},
+                    {'schema_version':1,'roles':[{'id':'same','kind':'x','skill':'x','workflow':'x','execution':'x'}]*2})
+        for value in bad_values:
+            with self.subTest(value=value):
+                root,state,exe=self.fixture();self.registry(root,value)
+                saved={'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100}
+                atomic(state/'state.json',saved);before=(state/'state.json').read_bytes()
+                with patch('scripts.token_optimizer.synchronize') as sync,patch('scripts.token_optimizer.run_worker') as worker:
+                    with self.assertRaises(ValueError):tick(root,state,exe,now=100)
+                self.assertEqual((state/'state.json').read_bytes(),before)
+                self.assertEqual(list(state.glob('*-tick')),[])
+                sync.assert_not_called();worker.assert_not_called()
+
+    @unittest.skipUnless(hasattr(os,'mkfifo'),'requires POSIX special files')
+    def test_special_registry_is_pure_before_due_tick(self):
+        for kind in ('fifo','directory','symlink'):
+            with self.subTest(kind=kind):
+                root,state,exe=self.fixture();(root/'config').mkdir();target=root/'config/role_registry.json'
+                if kind=='fifo':os.mkfifo(target)
+                elif kind=='directory':target.mkdir()
+                else:
+                    elsewhere=root/'elsewhere.json';elsewhere.write_text('{"schema_version":1,"roles":[]}',encoding='utf-8')
+                    target.symlink_to(elsewhere)
+                saved={'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100}
+                atomic(state/'state.json',saved);before=(state/'state.json').read_bytes()
+                with patch('scripts.token_optimizer.run_worker') as worker:
+                    with self.assertRaises(ExternalJSONError):tick(root,state,exe,now=100)
+                self.assertEqual((state/'state.json').read_bytes(),before)
+                self.assertEqual(list(state.glob('*-tick')),[]);worker.assert_not_called()
+
+    def test_registry_parser_boundaries_and_cli_no_traceback(self):
+        from scripts.token_optimizer import worker_config
+        cases=('1e400','{"schema_version":1,"roles":[],"schema_version":1}',
+               '{"schema_version":1,"roles":'+'['*257+'0'+']'*257+'}')
+        for raw in cases:
+            with self.subTest(raw=raw[:30]):
+                root,state,exe=self.fixture();(root/'config').mkdir();(root/'config/role_registry.json').write_text(raw,encoding='utf-8')
+                with self.assertRaises((ExternalJSONError,ValueError)):worker_config(root)
+        root,state,exe=self.fixture();self.registry(root,[])
+        saved={'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100};atomic(state/'state.json',saved)
+        proc=subprocess.run([sys.executable,'scripts/token_optimizer.py','--root',str(root),
+            '--state-dir',str(state),'--codex',str(exe)],cwd=Path(__file__).resolve().parents[1],
+            capture_output=True,text=True,encoding='utf-8')
+        self.assertEqual(proc.returncode,2);self.assertNotIn('Traceback',proc.stderr)
+        self.assertEqual((state/'state.json').read_bytes(),(json.dumps(saved,ensure_ascii=False,indent=2)+'\n').encode())
+        self.assertEqual(list(state.glob('*-tick')),[])
 
 class ParentUsageTests(unittest.TestCase):
     """Synthetic native-shaped transport only; never starts an app-server."""
@@ -177,7 +239,7 @@ class ParentUsageTests(unittest.TestCase):
         from scripts.token_optimizer import run_worker
         for tail in ([json.dumps(self.terminal())],['not JSON']):
             with self.subTest(tail=tail),tempfile.TemporaryDirectory() as tmp:
-                root=Path(tmp);(root/'config').mkdir();(root/'config/role_registry.json').write_text('{"roles":[]}')
+                root=Path(tmp);write_registry(root)
                 replies=[{'id':1,'result':{}},{'id':2,'result':{'ordinaryUsageAllowed':True,
                     'rateLimits':{'primary':{'usedPercent':0}}}},
                     {'id':3,'result':{'thread':{'id':'thread'},'model':'fake','reasoningEffort':'high'}},
@@ -198,6 +260,7 @@ class ParentUsageTests(unittest.TestCase):
         result,_,_=self.replay([self.terminal()])
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp).resolve();state=root/'.agent-runs/synthetic-test';exe=root/'fake';exe.write_bytes(b'not invoked')
+            write_registry(root)
             atomic(state/'state.json',{'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100})
             with patch('scripts.token_optimizer.synchronize',return_value='base'),patch('scripts.token_optimizer.run_worker',return_value=result),patch('scripts.token_optimizer.command',return_value=''):
                 saved=tick(root,state,exe,now=100)
@@ -239,6 +302,7 @@ class HourlyRepairTests(unittest.TestCase):
     def test_failure_latch_advances_clock_without_model_or_sync(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp).resolve();state=root/'.agent-runs/repair';exe=root/'fake';exe.write_bytes(b'not invoked')
+            write_registry(root)
             atomic(state/'state.json',{'project_root':str(root),'interval_seconds':INTERVAL,
                    'next_due':100,'failure_latch':'usage-invalid'})
             with patch('scripts.token_optimizer.run_worker') as worker,patch('scripts.token_optimizer.synchronize') as sync:
@@ -250,7 +314,7 @@ class HourlyRepairTests(unittest.TestCase):
     def test_bounded_profile_preserves_publication_apps(self):
         from scripts.token_optimizer import worker_config,TOOL_OUTPUT_TOKENS
         with tempfile.TemporaryDirectory() as tmp:
-            root=Path(tmp);(root/'config').mkdir();(root/'config/role_registry.json').write_text('{"roles":[]}')
+            root=Path(tmp);write_registry(root)
             config=worker_config(root)
             self.assertEqual(config['tool_output_token_limit'],TOOL_OUTPUT_TOKENS)
             self.assertTrue(config['features.apps'])
@@ -288,6 +352,7 @@ class HourlyRepairTests(unittest.TestCase):
     def test_exception_after_worker_attempt_latches_and_keeps_unknown_usage(self):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp).resolve();state=root/'.agent-runs/repair';exe=root/'fake';exe.write_bytes(b'not invoked')
+            write_registry(root)
             atomic(state/'state.json',{'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100})
             with patch('scripts.token_optimizer.synchronize',return_value='base'),patch('scripts.token_optimizer.run_worker',side_effect=TimeoutError('RPC')) as worker:
                 first=tick(root,state,exe,now=100)
@@ -299,14 +364,16 @@ class HourlyRepairTests(unittest.TestCase):
         from scripts.token_optimizer import PROFILE_VERSION
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp).resolve();state=root/'.agent-runs/repair';exe=root/'fake';exe.write_bytes(b'not invoked')
-            snapshot={'head':'base','status':' M owned.py','files':{'owned.py':'hash'},'index_sha256':'index'}
-            checkpoint={'thread_id':'persisted','thread_total_tokens':100000,'work_snapshot':snapshot,'profile_version':PROFILE_VERSION}
+            write_registry(root)
+            snapshot={'head':'a'*40,'status':' M owned.py','files':{'owned.py':'1'*64},'index_sha256':'2'*64}
+            checkpoint={'thread_id':'persisted','thread_total_tokens':100000,'work_snapshot':snapshot,
+                        'profile_version':PROFILE_VERSION,'stagnant_ticks':0}
             saved={'project_root':str(root),'interval_seconds':INTERVAL,'next_due':100,'checkpoint':checkpoint}
             atomic(state/'state.json',saved)
             result={'status':'budget-interrupted','thread_id':'persisted','thread_total_tokens':180000,
                     'observed_parent_total_tokens':80000,'counts_as_token_success':False}
             def command_result(root,*args):
-                return ' M owned.py' if args[1:]==('status','--porcelain') else 'base' if args[1]=='rev-parse' else ''
+                return ' M owned.py' if args[1:]==('status','--porcelain') else 'a'*40 if args[1]=='rev-parse' else ''
             with patch('scripts.token_optimizer.work_snapshot',return_value=snapshot),patch('scripts.token_optimizer.command',side_effect=command_result),patch('scripts.token_optimizer.run_worker',return_value=result) as worker,patch('scripts.token_optimizer.synchronize') as sync:
                 tick(root,state,exe,now=100)
                 self.assertEqual(worker.call_args.kwargs['checkpoint'],checkpoint);sync.assert_not_called()

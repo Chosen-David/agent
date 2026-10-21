@@ -13,7 +13,7 @@ from unittest.mock import patch
 from agent_runtime.core import ArtifactHandler, Engine, Outcome, Store
 from agent_runtime.scheduler import LocalScheduler, arm
 from agent_runtime.task_manifest import (ReportingHandler, atomic_json, prepare,
-                                          requirements, review, validate_contract)
+                                          requirements, result_report, review, validate_contract)
 from agent_runtime.task_supervisor import ManagedEngine, start
 
 
@@ -169,6 +169,43 @@ class TaskManifestTests(unittest.TestCase):
         path.unlink(); os.mkfifo(path)
         self.proof('T1')
         self.assertEqual(self.engine.tick('test', 'first')['tasks']['T1']['status'], 'blocked')
+
+    def test_final_report_symlink_is_not_resolved_or_accepted(self):
+        task = self.plan['tasks'][0]
+        path = self.root / task['report_path']
+        target = self.root / 'real-report.json'
+        target.write_bytes(path.read_bytes())
+        before = target.read_bytes()
+        path.unlink()
+        path.symlink_to(target)
+        self.proof('T1')
+        outcome = self.handler.run(task, None)
+        self.assertEqual(outcome.status, 'blocked')
+        self.assertIn('result report required', outcome.reason)
+        self.assertEqual(target.read_bytes(), before)
+
+    def test_result_report_strict_json_rejects_ambiguous_or_nonfinite_payloads(self):
+        task = self.plan['tasks'][0]
+        path = self.root / task['report_path']
+        self.proof('T1')
+        cases = (
+            b'{"task_id":"WRONG","task_id":"T1","summary":"x","data":[{"kind":"synthetic","description":"x"}]}',
+            b'{"task_id":"T1","summary":"x","data":[{"kind":"synthetic","description":"x"}],"extra":NaN}',
+            b'{"task_id":"T1","summary":"x","data":[{"kind":"synthetic","description":"x"}],"extra":1e400}',
+            b'[]',
+            (b'[' * 1500) + b'0' + (b']' * 1500),
+        )
+        for raw in cases:
+            path.write_bytes(raw)
+            with self.subTest(raw=raw[:40]):
+                outcome = self.handler.run(task, None)
+                self.assertEqual(outcome.status, 'blocked')
+                self.assertIn('result report required', outcome.reason)
+        valid = (b'{\r\n"task_id":"T1","summary":"x","data":'
+                 b'[{"kind":"synthetic","description":"x"}]\r\n}')
+        path.write_bytes(valid)
+        _value, proof = result_report(self.root, task)
+        self.assertEqual(proof['sha256'], hashlib.sha256(valid).hexdigest())
 
     def test_scoped_scheduler_cannot_execute_another_chain(self):
         other = copy.deepcopy(self.plan); other['run_id'] = 'other'

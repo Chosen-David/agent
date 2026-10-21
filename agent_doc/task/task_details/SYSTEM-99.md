@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 24
+Version: 26
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -97,7 +97,24 @@ producer ID不能覆盖顶层目录身份。排除已被v2记录引用的math-li
 已有目标可补record、并发期间不越界及异常退出释放锁均列为门禁。不主张模型质量、token或完整
 检索性能，仍不是整轮完成。
 
+阶段R（CHAIN-EXTERNAL-JSON）：Version26把外部JSON边界从安全读取贯穿到消费前事务校验。
+显式文件以 `O_NONBLOCK|O_NOFOLLOW` 打开，在同一FD核对普通文件和大小，严格UTF-8/JSON并拒绝
+重复键、非有限数与超过256层容器；consumer还须在建库、推进状态、写输出或启动verifier/backend
+前校验实际消费字段。范围覆盖启动/恢复、交接/通信/记忆、manifest/result/publication、探针/维护、
+knowledge/context与backend/setup；保持原字节SHA、TASK/plan身份、授权和错误分类。固定特殊文件、
+精确大小、非法编码、顶层/叶层错形和合法恢复；父目录攻击、Windows真机及真实宿主不在新增保证内。
+全库/Reader/同步和独立冻结树复核通过后才发布；无性能主张，SYSTEM-99仍open。
+
 ## Progress
+
+Version26阶段R已把共享有界读取接入真实外部控制文件消费者，并在首次状态/输出副作用前校验嵌套
+结构。修后FIFO/目录/末端symlink、重复键、非有限数、非法UTF-8、超限、257层和错形叶字段均
+fail-closed；launch锁可重取，manifest/plan/原字节SHA绑定及合法恢复保持。独审曾因optimizer角色
+表校验过晚退回，返修后代码范围`APPROVE (zero blocker)`；最终冻结树验收计数写入
+[阶段证据](../../results/system99/stage-r.md)与[独立记录](../../results/system99/independent-stage-r.md)。
+普通及`-O`定向各55项、全库1479（1471通过/8跳过）、Reader3、同步/编译/diff检查通过。
+本项无性能/模型质量/usage/费用主张；Windows、父目录恶意替换、真实tmux/SSH/模型/网络和跨机文件
+系统未验证。整批及本轮继续未完成。
 
 Version24阶段Q经两次退回和最终独立方案批准后已实现：5000项内全枚举校验、目录名排序后
 截断，超限空集fail-closed；结果目录外跨进程锁将容量/大小写检查和新目录预留原子化。修前

@@ -11,7 +11,15 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from agent_runtime.result_store import ResultStore, _json, _read, result_context
+from agent_runtime.external_json import load_json
+from agent_runtime.result_store import METADATA_LIMIT, ResultStore, _json, _read, result_context
+
+
+def external_object(path):
+    value = load_json(path, max_bytes=METADATA_LIMIT)
+    if not isinstance(value, dict):
+        raise ValueError('JSON object required')
+    return value
 
 
 def main(argv=None):
@@ -44,21 +52,22 @@ def main(argv=None):
         elif args.command == 'show':
             result = store.show(args.run_id)
         elif args.command in ('register', 'context'):
-            contract = _json(Path(args.contract).read_bytes())
+            contract = external_object(args.contract)
             result = (store.register(contract, historical=args.historical, measured_at=args.measured_at)
                       if args.command == 'register' else
                       result_context(_json(_read(store.root, contract['manifest_path'], 16 * 1024 * 1024))))
         elif args.command == 'register-history':
-            record = _json(Path(args.record).read_bytes())
+            record = external_object(args.record)
             result = store.register_history(**record)
         else:
+            context = external_object(args.context)
             verifier = None
             if args.verifier_adapter:
                 spec = importlib.util.spec_from_file_location('trusted_result_reuse_verifier', args.verifier_adapter)
                 module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
                 verifier = module.verify
-            result = store.decide(args.query, _json(Path(args.context).read_bytes()),
+            result = store.decide(args.query, context,
                          limit=args.limit, max_scan=args.max_scan, verifier=verifier,
                          explicit_reproduction=args.explicit_reproduction, new_claim=args.new_claim,
                          max_age_seconds=args.max_age_seconds)

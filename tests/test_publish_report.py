@@ -171,6 +171,41 @@ class PublishReportTests(unittest.TestCase):
         self.assertIn('duplicate JSON key', result.stderr)
         self.assertFalse((self.root / 'reports').exists())
 
+    @unittest.skipUnless(hasattr(os, 'mkfifo'), 'POSIX special-file checks')
+    def test_cli_rejects_special_nonfinite_deep_and_oversize_manifests_without_writes(self):
+        sources = []
+        fifo = self.root / 'bad-fifo.json'; os.mkfifo(fifo); sources.append(fifo)
+        directory = self.root / 'bad-dir.json'; directory.mkdir(); sources.append(directory)
+        target = self.root / 'bad-target.json'; target.write_text('{}')
+        link = self.root / 'bad-link.json'; link.symlink_to(target); sources.append(link)
+        for name, raw in (('nan', b'{"x":NaN}'), ('overflow', b'{"x":1e400}'),
+                          ('deep', (b'[' * 2000) + b'0' + (b']' * 2000))):
+            source = self.root / f'bad-{name}.json'; source.write_bytes(raw); sources.append(source)
+        oversized = self.root / 'bad-oversized.json'
+        with oversized.open('wb') as stream:
+            stream.seek(16 * 1024 * 1024)
+            stream.write(b'0')
+        sources.append(oversized)
+        for source in sources:
+            result = subprocess.run([sys.executable, str(SCRIPT), 'publish', '--root', str(self.root),
+                '--manifest', source.name], capture_output=True, text=True, timeout=3)
+            with self.subTest(source=source.name):
+                self.assertEqual(result.returncode, 1)
+                self.assertNotIn('Traceback', result.stderr)
+                self.assertFalse((self.root / 'reports').exists())
+
+    def test_large_artifact_is_streamed_within_explicit_bound(self):
+        artifact = self.root / 'data' / 'large.bin'
+        block = b'x' * (1024 * 1024)
+        with artifact.open('wb') as stream:
+            for _ in range(17):
+                stream.write(block)
+        value = copy.deepcopy(self.manifest)
+        value['artifacts'] = [{'path': 'data/large.bin', 'role': 'bounded large fixture',
+                               'sha256': hashlib.sha256(artifact.read_bytes()).hexdigest()}]
+        publish(self.root, value)
+        self.assertEqual(read_report(self.root, 'T1'), value)
+
     def test_competing_distinct_runs_preserve_both_and_coherent_latest(self):
         commands = []
         for run in ('run-1', 'run-2'):

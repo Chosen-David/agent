@@ -14,6 +14,7 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest.mock import patch
 
 from agent_runtime.core import Store
 from agent_runtime.task_manifest import atomic_json, prepare
@@ -98,6 +99,17 @@ class WorkerTests(unittest.TestCase):
         child.wait(timeout=3)
         self.assertNotEqual(child.returncode, 0)
         self.assertIn('must run inside tmux', child.stderr.read())
+
+    def test_status_treats_malformed_live_snapshot_as_not_live(self):
+        live = self.state_dir / 'live.json'
+        for payload in ('[]', '{"pid":"wrong","heartbeat_at":0}',
+                        '{"run_id":"worker-fixture","session":"fixture",'
+                        '"pid":1,"heartbeat_at":"wrong"}'):
+            with self.subTest(payload=payload):
+                live.write_text(payload)
+                with patch('agent_runtime.task_supervisor.tmux') as mocked_tmux:
+                    mocked_tmux.return_value = subprocess.CompletedProcess([], 0, '0\n', '')
+                    self.assertFalse(status(self.config)['live'])
 
     def test_worker_reports_result_and_stops_only_owned_monitor(self):
         child = self.launch()

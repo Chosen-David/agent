@@ -134,3 +134,19 @@ class ReferenceContextTests(unittest.TestCase):
         for full in (False,True):
             p=subprocess.run(args+(['--full'] if full else []),capture_output=True,text=True,encoding='utf-8')
             self.assertEqual(p.returncode,0,p.stderr);self.assertEqual(json.loads(p.stdout),self.view(full=full))
+
+    def test_cli_enforces_exact_json_depth_boundary(self):
+        cli=Path(__file__).resolve().parents[1]/'scripts/reference_context.py'
+        for optimized in (False, True):
+            for depth, expected in ((256, 0), (257, 2)):
+                raw = ('{"references":[],"extra":' + '[' * depth + '0' +
+                       ']' * depth + '}').encode()
+                self.raw(raw)
+                cmd = [sys.executable] + (['-O'] if optimized else []) + [
+                    str(cli),'--root',str(self.root),'--path',self.path,
+                    '--sha256',self.sha,'--compact']
+                result = subprocess.run(cmd, capture_output=True, text=True)
+                self.assertEqual(result.returncode, expected, result.stderr)
+                self.assertNotIn('Traceback', result.stderr)
+                if expected:
+                    self.assertIn('nesting', json.loads(result.stderr)['error'])

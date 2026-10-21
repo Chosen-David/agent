@@ -10,6 +10,7 @@ import fcntl
 import hashlib
 import importlib.util
 import json
+import math
 import os
 from pathlib import Path
 import shlex
@@ -23,12 +24,59 @@ import uuid
 from .core import ArtifactHandler, Engine, Store
 from .scheduler import LocalScheduler, arm
 from .crash_restart import read_crash_state, record_crash
-from .project_docs import assert_ai_writable, guard_write_path, resolve_task_file
+from .external_json import ExternalJSONError, load_json
+from .project_docs import (DocumentError, assert_ai_writable, guard_write_path,
+                           regular_bytes, resolve_task_file)
 from .task_manifest import (ReportingHandler, atomic_json, prepare, review,
-                            validate_contract)
+                            TASK_SOURCE_LIMIT, validate_contract)
 
 CODE_ROOT = Path(__file__).resolve().parents[1]
 TMUX_SOCKET = 'agent-supervisors'
+PLAN_INPUT_LIMIT = 16 * 1024 * 1024
+CONFIG_INPUT_LIMIT = 1024 * 1024
+
+
+class SupervisorInputError(ValueError):
+    pass
+
+
+def load_plan_input(path, root):
+    try:
+        plan = load_json(path, max_bytes=PLAN_INPUT_LIMIT)
+        from .plan_review import current_inputs
+        current_inputs(root, plan)
+        return plan
+    except (DocumentError, ExternalJSONError, OSError, ValueError) as exc:
+        raise SupervisorInputError(str(exc)) from exc
+
+
+def load_config_input(path, *, required=None):
+    try:
+        config = load_json(path, max_bytes=CONFIG_INPUT_LIMIT)
+    except ExternalJSONError as exc:
+        raise SupervisorInputError(str(exc)) from exc
+    fields = {'run_id', 'project_root', 'state_dir', 'adapter', 'allow_legacy', 'session'}
+    required = fields if required is None else set(required)
+    if (not isinstance(config, dict) or not required <= set(config) <= fields
+            or any(not isinstance(config[key], str) or not config[key]
+                   for key in ('run_id', 'project_root', 'state_dir', 'session') if key in config)
+            or ('adapter' in config and config['adapter'] is not None
+                and (not isinstance(config['adapter'], str) or not config['adapter']))
+            or ('allow_legacy' in config and type(config['allow_legacy']) is not bool)):
+        raise SupervisorInputError('supervisor config has invalid structure')
+    return config
+
+
+def validate_live_snapshot(live):
+    """Validate the worker-owned heartbeat before status code uses its fields."""
+    if (not isinstance(live, dict)
+            or not isinstance(live.get('run_id'), str) or not live['run_id']
+            or not isinstance(live.get('session'), str) or not live['session']
+            or type(live.get('pid')) is not int or live['pid'] <= 0
+            or type(live.get('heartbeat_at')) not in (int, float)
+            or not math.isfinite(live['heartbeat_at'])):
+        raise SupervisorInputError('supervisor live snapshot has invalid structure')
+    return live
 
 
 def tmux(*args, check=True):
@@ -65,8 +113,7 @@ def submit_review(plan_path, project_root, state_dir, adapter, out):
     root = Path(project_root).resolve()
     state_dir = assert_ai_writable(root, state_dir)
     out = assert_ai_writable(root, out)
-    plan = json.loads(Path(plan_path).read_text())
-    validate_contract(plan, root)
+    plan = load_plan_input(plan_path, root)
     if not adapter:
         raise ValueError('explicit trusted host adapter required for independent main review')
     spec = importlib.util.spec_from_file_location('agent_review_adapter', str(Path(adapter).resolve()))
@@ -191,7 +238,8 @@ def guard(config_path):
     """Bound crashed-worker retries in the owned pane; keep all durable state."""
     if not os.environ.get('TMUX'):
         raise RuntimeError('guard requires tmux; use start')
-    config = json.loads(Path(config_path).read_text())
+    config = load_config_input(
+        config_path, required={'run_id', 'project_root', 'state_dir'})
     assert_ai_writable(config['project_root'], config['state_dir'])
     crash_path=guard_write_path(Path(config['state_dir'])/'guard-failure.json')
     with guard_write_path(Path(config['state_dir']) / 'supervisor.log').open('a', buffering=1) as log:
@@ -221,7 +269,8 @@ def status(config):
     pane = tmux('list-panes', '-t', '=' + config['session'], '-F', '#{pane_dead}', check=False)
     live = {}
     try:
-        live = json.loads((state_dir / 'live.json').read_text())
+        live = validate_live_snapshot(
+            load_json(state_dir / 'live.json', max_bytes=CONFIG_INPUT_LIMIT))
     except (OSError, ValueError):
         pass
     alive = (pane.returncode == 0 and '0' in pane.stdout.splitlines()
@@ -242,10 +291,9 @@ def status(config):
 def start(plan_path, project_root, state_dir, adapter=None, *, allow_legacy=False):
     if not shutil.which('tmux'):
         raise RuntimeError('tmux unavailable; supervisor was NOT started (no foreground fallback)')
-    plan = json.loads(Path(plan_path).read_text())
     root = Path(project_root).resolve()
     state_dir = assert_ai_writable(root, state_dir)
-    validate_contract(plan, root)
+    plan = load_plan_input(plan_path, root)
     if any(t['action'] == 'configure_host_action' or t['done_when'].get('configure_acceptance') for t in plan['tasks']):
         raise ValueError('draft only: main AI must configure actions, dependencies and acceptance first')
     state_dir.mkdir(parents=True, exist_ok=True)
@@ -257,22 +305,36 @@ def start(plan_path, project_root, state_dir, adapter=None, *, allow_legacy=Fals
                   'allow_legacy': allow_legacy is True,
                   'session': 'agent-' + hashlib.sha256(str(state_dir).encode()).hexdigest()[:16]}
         config_path = state_dir / 'launch.json'
-        if config_path.exists() and json.loads(config_path.read_text()) != config:
+        if config_path.exists() and load_config_input(config_path) != config:
             raise ValueError('state directory bound to different configuration; use a new version')
+        # Recheck every external snapshot that startup will consume before the
+        # database, adapter, durable snapshots, or tmux session can be created.
+        try:
+            read_crash_state(state_dir / 'guard-failure.json', plan['run_id'])
+        except ValueError as exc:
+            if isinstance(exc, ExternalJSONError):
+                raise
+            raise SupervisorInputError(str(exc)) from exc
+        source_bytes = regular_bytes(root, plan['task_source']['path'],
+                                     max_bytes=TASK_SOURCE_LIMIT)
+        if hashlib.sha256(source_bytes).hexdigest() != plan['task_source']['sha256']:
+            raise ValueError('TASK.md changed during startup; reconcile before dispatch')
+        # Keep an explicit revalidation hook at the mutation boundary, then let
+        # current_inputs re-read and bind every file. A replacement immediately
+        # after this check is therefore still observed before Store creation.
+        validate_contract(plan, root)
+        from .plan_review import current_inputs
+        current_inputs(root, plan)
         store = Store(state_dir / 'state.sqlite')
         store.create(plan, project_root=root)
         # Backend code is selected only by this explicit host argument.
         _, _, _, _, plan_verifier = load_backend(config, store)
         from .plan_review import check_plan_review
         check_plan_review(plan, root, plan_verifier, allow_legacy=allow_legacy)
-        source_bytes = (root / plan['task_source']['path']).read_bytes()
-        if hashlib.sha256(source_bytes).hexdigest() != plan['task_source']['sha256']:
-            raise ValueError('TASK.md changed during startup; reconcile before dispatch')
         atomic_json(state_dir / 'source-snapshot.json', {
             'sha256': plan['task_source']['sha256'], 'content': source_bytes.decode('utf-8'),
             'project_documents': plan.get('project_documents'),
             'guide_reviews': plan.get('guide_reviews'), 'advice_assessments': plan.get('advice_assessments')})
-        validate_contract(plan, root)
         atomic_json(config_path, config)
         existing = tmux('has-session', '-t', '=' + config['session'], check=False).returncode == 0
         if not existing:
@@ -283,6 +345,10 @@ def start(plan_path, project_root, state_dir, adapter=None, *, allow_legacy=Fals
             tmux('new-session', '-d', '-s', config['session'], '-c', str(CODE_ROOT), command)
         for _ in range(50):
             receipt = status(config)
+            if receipt.get('guard_blocked'):
+                receipt['status'] = 'blocked'
+                receipt['reason'] = 'worker crash retry limit reached; explicit recovery required'
+                break
             if receipt['final_report'] or receipt['runtime_status'] == 'cancelled':
                 receipt['status'] = 'completed' if receipt['final_report'] else 'cancelled'
                 break
@@ -336,12 +402,15 @@ def main():
     elif args.command == 'review':
         result = submit_review(args.plan, args.project_root, args.state_dir, args.adapter, args.out)
     elif args.command == 'start':
+        # CLI input errors must remain structured even on hosts without tmux.
+        # start() repeats this check at the mutation boundary.
+        load_plan_input(args.plan, Path(args.project_root).resolve())
         result = start(args.plan, args.project_root, args.state_dir, args.adapter, allow_legacy=args.legacy_unprotected)
     elif args.command == '_guard':
         guard(args.config)
         return
     else:
-        config = json.loads(Path(args.config).read_text())
+        config = load_config_input(args.config)
         if args.command == '_worker':
             sys.exit(worker(config))
         if args.command == 'cancel':
@@ -353,4 +422,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except (DocumentError, ExternalJSONError, OSError, SupervisorInputError, ValueError) as exc:
+        print(json.dumps({'status': 'error', 'error': str(exc)}, ensure_ascii=False),
+              file=sys.stderr)
+        raise SystemExit(2)

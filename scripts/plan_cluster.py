@@ -2,33 +2,17 @@
 """Read-only cluster advice. stdout is JSON; never submits jobs or fetches data."""
 import argparse
 import json
-import os
 from pathlib import Path
-import stat
 import sys
 import time
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from agent_runtime.cluster_planning import PlanningError, plan_wave, verify_local_artifact
+from agent_runtime.external_json import load_json
 
 
 def _read(path):
-    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
-    with os.fdopen(fd, 'rb') as stream:
-        info = os.fstat(stream.fileno())
-        if not stat.S_ISREG(info.st_mode) or info.st_size > 2 * 1024 * 1024:
-            raise PlanningError('input must be regular file <=2MiB')
-        raw = stream.read(2 * 1024 * 1024 + 1)
-    if len(raw) > 2 * 1024 * 1024:
-        raise PlanningError('input exceeds 2MiB')
-    def pairs(items):
-        obj = {}
-        for k, v in items:
-            if k in obj:
-                raise PlanningError('duplicate JSON key')
-            obj[k] = v
-        return obj
-    return json.loads(raw, object_pairs_hook=pairs)
+    return load_json(path, max_bytes=2 * 1024 * 1024)
 
 
 def main(argv=None):

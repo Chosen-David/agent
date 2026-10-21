@@ -22,10 +22,15 @@ import tempfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from agent_runtime.project_memory import MemoryLedger
+from agent_runtime.external_json import strict_json
 
 
 class ReportError(ValueError):
     pass
+
+
+METADATA_LIMIT = 16 * 1024 * 1024
+ARTIFACT_LIMIT = 256 * 1024 * 1024
 
 
 def _text(value, name):
@@ -72,13 +77,37 @@ def _path(root, relative, mkdir=False):
     return path
 
 
-def _bytes(root, relative):
+def _bytes(root, relative, *, max_bytes=METADATA_LIMIT):
     path = _path(root, relative)
     fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     with os.fdopen(fd, 'rb') as handle:
-        if not stat.S_ISREG(os.fstat(handle.fileno()).st_mode):
+        info = os.fstat(handle.fileno())
+        if not stat.S_ISREG(info.st_mode):
             raise ReportError(f'expected regular file: {relative}')
-        return handle.read()
+        if info.st_size > max_bytes:
+            raise ReportError(f'file exceeds {max_bytes} byte bound: {relative}')
+        data = handle.read(max_bytes + 1)
+    if len(data) > max_bytes:
+        raise ReportError(f'file grew beyond {max_bytes} byte bound: {relative}')
+    return data
+
+
+def _sha_file(root, relative, *, max_bytes=ARTIFACT_LIMIT):
+    path = _path(root, relative)
+    digest, size = hashlib.sha256(), 0
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    with os.fdopen(fd, 'rb') as handle:
+        info = os.fstat(handle.fileno())
+        if not stat.S_ISREG(info.st_mode):
+            raise ReportError(f'expected regular file: {relative}')
+        if info.st_size > max_bytes:
+            raise ReportError(f'artifact exceeds {max_bytes} byte bound: {relative}')
+        while chunk := handle.read(1024 * 1024):
+            size += len(chunk)
+            if size > max_bytes:
+                raise ReportError(f'artifact grew beyond {max_bytes} byte bound: {relative}')
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def _sha(payload):
@@ -86,16 +115,7 @@ def _sha(payload):
 
 
 def _json(payload):
-    def constant(value):
-        raise ReportError(f'non-finite JSON number: {value}')
-    def pairs(items):
-        result = {}
-        for key, value in items:
-            if key in result:
-                raise ReportError(f'duplicate JSON key: {key}')
-            result[key] = value
-        return result
-    return json.loads(payload, parse_constant=constant, object_pairs_hook=pairs)
+    return strict_json(payload)
 
 
 def _encoded(value):
@@ -142,7 +162,7 @@ def _validate(root, manifest):
         if path in seen:
             raise ReportError(f'duplicate artifact path: {path}')
         seen.add(path)
-        if _sha(_bytes(root, path)) != digest:
+        if _sha_file(root, path) != digest:
             raise ReportError(f'artifact hash changed: {path}')
     refs = manifest.get('memory_refs', [])
     if not isinstance(refs, list):
@@ -194,6 +214,8 @@ def _lock(root, task_id):
 
 def publish(root, manifest):
     root = Path(root).resolve(strict=True)
+    if not isinstance(manifest, dict):
+        raise ReportError('report manifest must be an object')
     # Roundtrip isolates caller mutation and validates all JSON before touching outputs.
     manifest = _json(_encoded(manifest))
     _validate(root, manifest)

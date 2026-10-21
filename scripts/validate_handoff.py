@@ -7,6 +7,12 @@ from collections import deque
 import hashlib
 import json
 from pathlib import Path
+import sys
+
+if not __package__:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
+from agent_runtime.external_json import DEFAULT_JSON_LIMIT, load_json
 
 
 def _sha256_file(path: Path) -> str:
@@ -18,21 +24,9 @@ def _sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def _load_json(path: Path, *, expected_sha256: str | None = None):
-    data = path.read_bytes()
-    if expected_sha256 is not None and hashlib.sha256(data).hexdigest() != expected_sha256:
-        raise ValueError('sha256 mismatch: JSON snapshot')
-    def pairs(items):
-        result = {}
-        for key, value in items:
-            if key in result:
-                raise ValueError(f"duplicate JSON key: {key}")
-            result[key] = value
-        return result
-    def constant(value):
-        raise ValueError(f"non-finite JSON number: {value}")
-    return json.loads(data.decode('utf-8'), object_pairs_hook=pairs,
-                      parse_constant=constant)
+def _load_json(path: Path, *, expected_sha256: str | None = None,
+               max_bytes: int = DEFAULT_JSON_LIMIT):
+    return load_json(path, expected_sha256=expected_sha256, max_bytes=max_bytes)
 
 
 def _consumer_contract(request: object) -> tuple[str | None, dict[str, bool], list[str]]:

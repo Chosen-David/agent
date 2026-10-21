@@ -1,12 +1,23 @@
 import json
+import multiprocessing
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 
 from scripts.setup_codex import synchronize
+
+
+def _sync_in_child(queue, repo, dest, state, home):
+    try:
+        synchronize(repo, dest, state, home)
+    except BaseException as exc:
+        queue.put(('error', type(exc).__name__, str(exc)))
+    else:
+        queue.put(('accepted', None, None))
 
 
 class CodexSetupTests(unittest.TestCase):
@@ -223,6 +234,59 @@ class CodexSetupTests(unittest.TestCase):
         self.assertTrue(any(p.read_text() == 'original' for p in (self.state/'backups').rglob('old.txt')))
         with self.assertRaisesRegex(ValueError, 'Interrupted'):
             self.sync()
+
+    @unittest.skipUnless(hasattr(os, 'mkfifo'), 'Named pipes require POSIX')
+    def test_external_installation_state_fails_closed_before_writes(self):
+        self.sync()
+        manifest = self.state/'installation.json'
+        original = manifest.read_bytes()
+        instructions = (self.home/'AGENTS.md').read_bytes()
+        skill = (self.dest/'one/SKILL.md').read_bytes()
+
+        manifest.unlink()
+        os.mkfifo(manifest)
+        context = multiprocessing.get_context('fork')
+        queue = context.Queue()
+        process = context.Process(target=_sync_in_child,
+            args=(queue, self.repo, self.dest, self.state, self.home))
+        process.start();process.join(2)
+        if process.is_alive():
+            process.terminate();process.join(2)
+            self.fail('installation state FIFO blocked synchronization')
+        self.assertEqual(queue.get(timeout=1)[0], 'error')
+        manifest.unlink();manifest.write_bytes(original)
+
+        for payload in (b'{"x":1,"x":2}', b'{"x":1e400}', b'[]', b'null',
+                        b'[1]', b'{"schema_version":1}'):
+            manifest.write_bytes(payload)
+            with self.assertRaises(ValueError):self.sync()
+        bool_schema = json.loads(original)
+        bool_schema['schema_version'] = True
+        payload = json.dumps(bool_schema).encode()
+        manifest.write_bytes(payload)
+        with self.assertRaises(ValueError):self.sync()
+        self.assertEqual(manifest.read_bytes(), payload)
+        self.assertEqual((self.home/'AGENTS.md').read_bytes(), instructions)
+        self.assertEqual((self.dest/'one/SKILL.md').read_bytes(), skill)
+        manifest.write_bytes(b'[]')
+        repo = Path(__file__).resolve().parents[1]
+        result = subprocess.run(
+            [sys.executable, str(repo/'scripts/setup_codex.py'), '--repo', str(self.repo),
+             '--dest', str(self.dest), '--state', str(self.state),
+             '--codex-home', str(self.home)], capture_output=True, text=True, timeout=3)
+        self.assertEqual(result.returncode, 1)
+        self.assertNotIn('Traceback', result.stderr)
+        self.assertEqual(json.loads(result.stdout)['status'], 'blocked')
+        manifest.unlink();manifest.symlink_to(self.base/'missing-state.json')
+        with self.assertRaises(ValueError):self.sync()
+        manifest.unlink();manifest.mkdir()
+        with self.assertRaises(ValueError):self.sync()
+
+        self.assertEqual((self.home/'AGENTS.md').read_bytes(), instructions)
+        self.assertEqual((self.dest/'one/SKILL.md').read_bytes(), skill)
+        self.assertFalse((self.state/'pending.json').exists())
+        self.assertFalse((self.state/'sync.lock').exists())
+        self.assertFalse((self.state/'backups').exists())
 
 
 if __name__ == '__main__':

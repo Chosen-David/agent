@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -133,6 +134,48 @@ class SourceContextTests(unittest.TestCase):
         self.assertEqual(p.returncode, 0, p.stdout + p.stderr)
         self.assertEqual(json.loads(p.stdout), source_context(self.root, req))
         self.assertEqual(before, {p.name: p.read_bytes() for p in self.root.iterdir()})
+
+    def test_cli_reports_invalid_legacy_marker_without_traceback_or_mutation(self):
+        source = b'def target():\n    return 1\n'
+        old = 'doc/results/legacy/code.py'
+        moved = self.root / 'agent_doc/results/legacy/code.py'
+        moved.parent.mkdir(parents=True)
+        moved.write_bytes(source)
+        request = {'schema_version': 'source-context/v1',
+                   'source': {'path': old, 'sha256': hashlib.sha256(source).hexdigest()},
+                   'symbols': ['target']}
+        request_path = self.root / 'request.json'
+        request_path.write_text(json.dumps(request))
+        marker = self.root / 'agent_doc/legacy-result-paths.json'
+        script = Path(__file__).resolve().parents[1] / 'scripts/source_context.py'
+
+        def run():
+            result = subprocess.run([sys.executable, str(script), '--root', str(self.root),
+                                     '--request', 'request.json'], capture_output=True,
+                                    text=True, timeout=5)
+            self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+            self.assertEqual(result.stderr, '')
+            self.assertIn('error', json.loads(result.stdout))
+
+        regular = [json.dumps({'schema_version': 'agent-doc-relocation/v1',
+                               'files': {old: hashlib.sha256(source).hexdigest()}}).encode('utf-16'),
+                   ('{"schema_version":"agent-doc-relocation/v1","files":{},"x":' +
+                    '[' * 10000 + '0' + ']' * 10000 + '}').encode()]
+        for raw in regular:
+            marker.write_bytes(raw)
+            before = marker.read_bytes()
+            run()
+            self.assertEqual(marker.read_bytes(), before)
+        marker.unlink()
+        marker.mkdir()
+        run()
+        marker.rmdir()
+        if hasattr(os, 'mkfifo'):
+            os.mkfifo(marker)
+            run()
+            marker.unlink()
+        marker.symlink_to(moved)
+        run()
 
 
 if __name__ == '__main__':

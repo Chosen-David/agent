@@ -35,5 +35,6 @@ class ClaimTableTests(unittest.TestCase):
             elif kind=='extra':wire['evidence_claims']['unknown']=[]
             else:wire['context_format']='unknown'
             with self.assertRaises(ValueError):decode_basis_payload(json.dumps(wire))
-        for raw in ('{"x":1,"x":2}','{"x":NaN}','[]'):
+        for raw in ('{"x":1,"x":2}','{"x":NaN}','{"x":1e400}','[]',
+                    '{"x":' + '[' * 300 + '0' + ']' * 300 + '}'):
             with self.assertRaises(ValueError):decode_basis_payload(raw)

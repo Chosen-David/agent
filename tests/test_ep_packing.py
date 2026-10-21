@@ -2,6 +2,9 @@
 from copy import deepcopy
 import json
 from pathlib import Path
+import subprocess
+import sys
+import tempfile
 import unittest
 
 from agent_runtime.ep_packing import PlanningError, plan_packing
@@ -133,6 +136,30 @@ class EpPackingTests(unittest.TestCase):
         b0_plain = max(p['gpu_serial_seconds'] for p in plain['placements'] if p['gpu_uuid'] == 'GPU-b0')
         b0_infl = max(p['gpu_serial_seconds'] for p in infl['placements'] if p['gpu_uuid'] == 'GPU-b0')
         self.assertGreater(b0_infl, b0_plain)
+
+    def test_cli_requires_strict_utf8_finite_bounded_input(self):
+        cli = [sys.executable, str(ROOT/'scripts/plan_ep.py'), 'plan',
+               '--now', '1001', '--input']
+        legal = json.dumps(self.data, separators=(',', ':'))
+        payloads = {
+            'utf16': legal.encode('utf-16'),
+            'overflow': (legal[:-1] + ',"extra":1e400}').encode(),
+            'depth': ('{"inventory":' + '[' * 300 + '0' + ']' * 300 +
+                      ',"jobs":[],"verified_job_ids":[]}').encode(),
+            'oversized': b' ' * (2 * 1024 * 1024 + 1),
+        }
+        with tempfile.TemporaryDirectory() as temp:
+            path = Path(temp) / 'input.json'
+            for name, raw in payloads.items():
+                with self.subTest(name=name):
+                    path.write_bytes(raw)
+                    before = path.read_bytes()
+                    result = subprocess.run(cli + [str(path)], capture_output=True,
+                                            text=True, timeout=5)
+                    self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+                    self.assertEqual(json.loads(result.stdout)['status'], 'invalid')
+                    self.assertEqual(result.stderr, '')
+                    self.assertEqual(path.read_bytes(), before)
 
 
 if __name__ == '__main__':

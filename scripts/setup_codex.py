@@ -14,11 +14,16 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 import subprocess
+import sys
 import time
 import zipfile
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from agent_runtime.external_json import ExternalJSONError, load_json
+
 BEGIN = b'<!-- chosen-agent:begin -->'
 END = b'<!-- chosen-agent:end -->'
+INSTALLATION_STATE_LIMIT = 1024 * 1024
 
 
 
@@ -34,6 +39,25 @@ def writable_installation_root(path):
 
 def digest(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def installation_state(value):
+    fields = {'schema_version', 'repository', 'revision', 'destination', 'codex_home',
+              'roles', 'files', 'instruction_block_sha256'}
+    if (not isinstance(value, dict) or set(value) != fields
+            or type(value.get('schema_version')) is not int or value['schema_version'] != 1):
+        raise ValueError('Invalid installation state schema; preserve for review')
+    if (any(not isinstance(value[key], str) for key in
+            ('repository', 'revision', 'destination', 'codex_home', 'instruction_block_sha256'))
+            or not isinstance(value['roles'], list)
+            or any(not isinstance(role, str) for role in value['roles'])
+            or len(value['roles']) != len(set(value['roles']))
+            or not isinstance(value['files'], dict)
+            or any(not isinstance(path, str) or not isinstance(sha, str)
+                   or re.fullmatch(r'[0-9a-f]{64}', sha) is None
+                   for path, sha in value['files'].items())):
+        raise ValueError('Invalid installation state values; preserve for review')
+    return value
 
 
 def atomic(path, data):
@@ -158,7 +182,14 @@ def synchronize(repo, destination, state, codex_home, *, adopt=False, check=Fals
     revision, roles, files, template = committed(repo)
     wanted = {path: digest(data) for path, data in files.items()}
     manifest_path = state / 'installation.json'
-    prior = json.loads(manifest_path.read_text(encoding='utf-8')) if manifest_path.exists() else None
+    try:
+        prior = installation_state(load_json(
+            manifest_path, max_bytes=INSTALLATION_STATE_LIMIT))
+    except ExternalJSONError as exc:
+        if isinstance(exc.__cause__, FileNotFoundError):
+            prior = None
+        else:
+            raise
     if (state/'pending.json').exists():
         raise ValueError('Interrupted sync; inspect pending.json and backups before recovery')
     actual = installed_files(destination, roles)

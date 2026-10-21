@@ -6,6 +6,9 @@ import json
 from pathlib import Path
 import sys
 
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from agent_runtime.external_json import load_json
+
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from paper_exemplar_checks import validate_learning
 from data_visualization_checks import validate_data_design, validate_pdf_exports
@@ -148,10 +151,10 @@ def main():
     args = p.parse_args()
     record = None
     try:
-        record = json.loads(args.record.read_text())
+        record = load_json(args.record)
         if args.acceptance and args.acceptance.resolve().is_relative_to(args.root.resolve()):
             raise ValueError('trusted acceptance must be outside the worker artifact root')
-        acceptance = json.loads(args.acceptance.read_text()) if args.acceptance else None
+        acceptance = load_json(args.acceptance) if args.acceptance else None
         errors = validate(record, args.root, acceptance=acceptance)
     except (OSError, ValueError) as exc:
         errors = [str(exc)]

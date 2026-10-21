@@ -1,12 +1,16 @@
 """Portable command interface; no arbitrary plan-provided shell execution."""
 import argparse
 import json
-from pathlib import Path
 import signal
+import sys
 import uuid
 
-from .core import ArtifactHandler, Engine, Store
+from .core import ArtifactHandler, Engine, Store, validate
+from .external_json import ExternalJSONError, load_json
 from .scheduler import LocalScheduler, arm
+
+
+PLAN_INPUT_LIMIT = 16 * 1024 * 1024
 
 
 def main():
@@ -27,6 +31,27 @@ def main():
     p.add_argument('--artifact-root', required=True)
     p.add_argument('--max-seconds', type=float, default=None)
     args = parser.parse_args()
+    # Validate the only external JSON input before opening/creating its database.
+    try:
+        initial_plan = (load_json(args.plan, max_bytes=PLAN_INPUT_LIMIT)
+                        if args.command == 'init' else None)
+        initial_root = None
+        if args.command == 'init':
+            validate(initial_plan)
+            if any(key in initial_plan for key in
+                   ('task_source', 'project_documents', 'plan_review')):
+                from .project_docs import project_root_for_task
+                from .plan_review import current_inputs
+                source = initial_plan.get('task_source')
+                if (not isinstance(source, dict)
+                        or not isinstance(source.get('path'), str) or not source['path']):
+                    raise ValueError('managed plan requires a valid task_source path')
+                initial_root = project_root_for_task(source['path']).resolve()
+                current_inputs(initial_root, initial_plan)
+    except (ExternalJSONError, OSError, ValueError) as exc:
+        print(json.dumps({'status': 'error', 'error': str(exc)}, ensure_ascii=False),
+              file=sys.stderr)
+        raise SystemExit(2)
     store = Store(args.db)
     scheduler = LocalScheduler(store)
     if args.command in ('tick', 'serve'):
@@ -36,7 +61,7 @@ def main():
         engine = Engine(store, {'verify_artifacts': handler},
                         authorize=lambda plan, task, adapter: adapter is handler, allow_legacy=args.legacy_unprotected)
     if args.command == 'init':
-        result = {'run_id': store.create(json.loads(Path(args.plan).read_text()))}
+        result = {'run_id': store.create(initial_plan, project_root=initial_root)}
     elif args.command == 'status':
         result = store.snapshot(args.run_id)
         if result['monitor']:
@@ -63,4 +88,9 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except ExternalJSONError as exc:
+        print(json.dumps({'status': 'error', 'error': str(exc)}, ensure_ascii=False),
+              file=sys.stderr)
+        raise SystemExit(2)

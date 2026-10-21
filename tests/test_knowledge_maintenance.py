@@ -1,5 +1,6 @@
 """Ownership and terminal failure checks for recurring model maintenance."""
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -20,6 +21,59 @@ class MaintenanceTests(unittest.TestCase):
 
     def clean(self):
         return patch.object(maintenance.subprocess,'run',return_value=subprocess.CompletedProcess([],0,''))
+
+    def run_status(self, config):
+        script = Path(__file__).resolve().parents[1] / 'scripts/knowledge_maintenance.py'
+        return subprocess.run([sys.executable, str(script), 'status', '--config', str(config)],
+                              capture_output=True, text=True, timeout=5)
+
+    def test_config_cli_rejects_strict_json_and_special_files_before_state_write(self):
+        config = self.repo / 'maintenance.json'
+        valid = json.dumps(self.config)
+        regular = {
+            'utf16': valid.encode('utf-16'),
+            'duplicate': (valid[:-1] + ',"session":"fixture"}').encode(),
+            'overflow': (valid[:-1] + ',"extra":1e400}').encode(),
+            'deep': (valid[:-1] + ',"extra":' + '[' * 300 + '0' + ']' * 300 + '}').encode(),
+            'oversized': b' ' * (maintenance.JSON_LIMIT + 1),
+            'top-list': b'[]',
+        }
+        for name, raw in regular.items():
+            with self.subTest(name=name):
+                config.write_bytes(raw)
+                before = config.read_bytes()
+                result = self.run_status(config)
+                self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+                self.assertEqual(result.stdout, '')
+                self.assertEqual(json.loads(result.stderr)['status'], 'error')
+                self.assertEqual(config.read_bytes(), before)
+                self.assertEqual(list(self.state.iterdir()), [])
+        config.unlink()
+        target = self.repo / 'valid-target.json'
+        target.write_text(valid)
+        cases = ['directory', 'symlink'] + (['fifo'] if hasattr(os, 'mkfifo') else [])
+        for kind in cases:
+            with self.subTest(kind=kind):
+                if config.exists() or config.is_symlink():
+                    if config.is_dir() and not config.is_symlink():
+                        config.rmdir()
+                    else:
+                        config.unlink()
+                if kind == 'directory':
+                    config.mkdir()
+                elif kind == 'symlink':
+                    config.symlink_to(target)
+                else:
+                    os.mkfifo(config)
+                result = self.run_status(config)
+                self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+                self.assertEqual(result.stdout, '')
+                self.assertEqual(json.loads(result.stderr)['status'], 'error')
+                self.assertEqual(list(self.state.iterdir()), [])
+                if config.is_dir() and not config.is_symlink():
+                    config.rmdir()
+                else:
+                    config.unlink()
 
     def test_legacy_calendar_migrates_once_without_losing_history(self):
         old={'next_due':90000,'rounds':[{'status':'runner_failed','exit_code':7}]}
@@ -54,6 +108,43 @@ class MaintenanceTests(unittest.TestCase):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 maintenance.load_state(dict(self.config,interval_seconds=value),100)
         self.assertFalse((self.state/'state.json').exists())
+
+    def test_malformed_state_fails_before_migration_write(self):
+        path = self.state / 'state.json'
+        for payload in ('[]', '{}', '{"rounds":"wrong"}',
+                        '{"rounds":[],"interval_seconds":3600}',
+                        '{"rounds":[],"interval_seconds":3600,"next_due":-1}'):
+            with self.subTest(payload=payload):
+                path.write_text(payload)
+                before = path.read_bytes()
+                with self.assertRaisesRegex(ValueError, 'invalid structure'):
+                    maintenance.load_state(self.config, 100)
+                self.assertEqual(path.read_bytes(), before)
+
+    def test_status_treats_malformed_live_snapshot_as_not_live(self):
+        live = self.state / 'live.json'
+        for payload in ('[]', '{"pid":"wrong","heartbeat_at":0}',
+                        '{"pid":1,"heartbeat_at":"wrong"}',
+                        '{"pid":1,"heartbeat_at":0}',
+                        '{"pid":1,"heartbeat_at":0,"session":""}',
+                        '{"pid":1,"heartbeat_at":-1,"session":"fixture"}'):
+            with self.subTest(payload=payload):
+                live.write_text(payload)
+                with patch.object(maintenance, 'tmux') as mocked_tmux:
+                    mocked_tmux.return_value = subprocess.CompletedProcess([], 0, '0\n', '')
+                    report = maintenance.status(self.config)
+                self.assertFalse(report['live'])
+                self.assertEqual(report['worker'], {})
+
+    def test_status_rejects_mismatched_or_future_live_owner(self):
+        with patch.object(maintenance.os, 'kill'), patch.object(maintenance, 'tmux') as mocked_tmux:
+            mocked_tmux.return_value = subprocess.CompletedProcess([], 0, '0\n', '')
+            for session, heartbeat in (('other', 100), ('fixture', 101)):
+                with self.subTest(session=session, heartbeat=heartbeat), \
+                     patch.object(maintenance.time, 'time', return_value=100):
+                    maintenance.atomic(self.state / 'live.json', {
+                        'pid': 1, 'heartbeat_at': heartbeat, 'session': session})
+                    self.assertFalse(maintenance.status(self.config)['live'])
 
     def test_dirty_repository_never_launches_model(self):
         with patch.object(maintenance.subprocess,'run',return_value=subprocess.CompletedProcess([],0,' M x')), \

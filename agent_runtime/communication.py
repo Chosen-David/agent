@@ -13,7 +13,7 @@ from pathlib import Path
 import sqlite3
 import re
 
-from scripts.validate_handoff import _load_json, validate
+from scripts.validate_handoff import _consumer_contract, _load_json, validate
 from .project_docs import guard_write_path
 
 
@@ -53,6 +53,81 @@ def check_plan(plan):
         value = plan['max_delivery_bytes']
         if type(value) is not int or value < 1:
             raise ValueError('max_delivery_bytes must be a positive integer')
+
+
+def prepare_event(plan, artifact_root, event):
+    """Validate a publish envelope without opening or creating the mailbox."""
+    check_plan(plan)
+    if not isinstance(event, dict):
+        raise ValueError('event must be an object')
+    required = {'event_id', 'run_id', 'input_version', 'sender', 'task_id',
+                'kind', 'summary', 'action', 'refs'}
+    if set(event) != required or any(not nonblank(event.get(k)) for k in required - {'refs'}):
+        raise ValueError('event needs exact envelope fields and a concrete action')
+    if event['run_id'] != plan['run_id'] or event['input_version'] != plan['input_version']:
+        raise ValueError('stale or cross-run event')
+    recipients = sorted({r['recipient'] for r in plan['routes']
+                         if all(r[k] == event[k] for k in ('sender', 'task_id', 'kind'))})
+    if not recipients:
+        raise ValueError('no approved consumer route')
+    body = canonical(event)
+    if len(body.encode('utf-8')) > plan.get('max_message_bytes', 8192):
+        raise ValueError('message budget exceeded: put detail in referenced artifacts')
+    refs = event['refs']
+    if not isinstance(refs, list) or not refs:
+        raise ValueError('reference the artifact, question, review or blocker record')
+    errors = validate({'schema_version': 1, 'run_id': plan['run_id'],
+                       'role': event['sender'], 'input_version': event['input_version'],
+                       'status': 'partial', 'limitations': ['communication, not completion'],
+                       'artifacts': refs, 'checks': [], 'tasks': []}, Path(artifact_root))
+    if errors:
+        raise ValueError('; '.join(errors))
+    return body, recipients
+
+
+def validate_receipt(plan, receipt):
+    """Return a canonical receipt only after its complete wire contract passes."""
+    check_plan(plan)
+    if not isinstance(receipt, dict) or set(receipt) != {'status', 'reason'}:
+        raise ValueError('receipt needs status and reason')
+    if receipt['status'] not in ('consumed', 'rejected', 'needs_revision') or not nonblank(receipt['reason']):
+        raise ValueError('invalid receipt')
+    body = canonical(receipt)
+    if len(body.encode('utf-8')) > plan.get('max_message_bytes', 8192):
+        raise ValueError('receipt budget exceeded')
+    return body
+
+
+def validate_consumer_request(request):
+    """Validate the independent consumer scope before mailbox persistence."""
+    _version, _tasks, errors = _consumer_contract(request)
+    if errors:
+        raise ValueError('; '.join(errors))
+
+
+def validate_known_context(known):
+    """Validate cache hints structurally; they never authorize skipped checks."""
+    if not isinstance(known, dict) or not set(known) <= {'knowledge_refs', 'memory_refs'}:
+        raise ValueError('known context must contain only knowledge_refs and memory_refs')
+    knowledge = known.get('knowledge_refs', [])
+    memory = known.get('memory_refs', [])
+    if not isinstance(knowledge, list):
+        raise ValueError('known knowledge_refs must be a list')
+    seen = set()
+    for ref in knowledge:
+        if (not isinstance(ref, dict) or set(ref) != {'id', 'version', 'sha256'}
+                or not nonblank(ref.get('id')) or ref['id'] in seen
+                or type(ref.get('version')) is not int or ref['version'] < 1
+                or not isinstance(ref.get('sha256'), str)
+                or re.fullmatch('[0-9a-f]{64}', ref['sha256']) is None):
+            raise ValueError('known knowledge_refs contain an invalid pinned reference')
+        seen.add(ref['id'])
+    if (not isinstance(memory, list)
+            or any(not isinstance(value, str)
+                   or re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9_.:-]*', value) is None
+                   for value in memory)
+            or len(set(memory)) != len(memory)):
+        raise ValueError('known memory_refs must contain unique stable IDs')
 
 
 class Mailbox:
@@ -146,32 +221,7 @@ class Mailbox:
             db.close()
 
     def _prepare_publish(self, event):
-        if not isinstance(event, dict):
-            raise ValueError('event must be an object')
-        required = {'event_id', 'run_id', 'input_version', 'sender', 'task_id',
-                    'kind', 'summary', 'action', 'refs'}
-        if set(event) != required or any(not nonblank(event.get(k)) for k in required - {'refs'}):
-            raise ValueError('event needs exact envelope fields and a concrete action')
-        if event['run_id'] != self.run_id or event['input_version'] != self.plan['input_version']:
-            raise ValueError('stale or cross-run event')
-        recipients = sorted({r['recipient'] for r in self.plan['routes']
-                             if all(r[k] == event[k] for k in ('sender', 'task_id', 'kind'))})
-        if not recipients:
-            raise ValueError('no approved consumer route')
-        body = canonical(event)
-        if len(body.encode('utf-8')) > self.plan.get('max_message_bytes', 8192):
-            raise ValueError('message budget exceeded: put detail in referenced artifacts')
-        refs = event['refs']
-        if not isinstance(refs, list) or not refs:
-            raise ValueError('reference the artifact, question, review or blocker record')
-        # Reuse existing path/digest/ID checks instead of a divergent validator.
-        errors = validate({'schema_version': 1, 'run_id': self.run_id,
-                           'role': event['sender'], 'input_version': event['input_version'],
-                           'status': 'partial', 'limitations': ['communication, not completion'],
-                           'artifacts': refs, 'checks': [], 'tasks': []}, self.root)
-        if errors:
-            raise ValueError('; '.join(errors))
-        return body, recipients
+        return prepare_event(self.plan, self.root, event)
 
     def _store_publish(self, db, event, body, recipients):
         old = db.execute('SELECT seq,body FROM communication_events WHERE run_id=? AND event_id=?',
@@ -304,13 +354,9 @@ class Mailbox:
 
     def acknowledge(self, recipient, seq, receipt):
         # Receipt records handling, never task completion or scientific validity.
-        if type(seq) is not int or not isinstance(receipt, dict) or set(receipt) != {'status', 'reason'}:
-            raise ValueError('receipt needs status and reason')
-        if receipt['status'] not in ('consumed', 'rejected', 'needs_revision') or not nonblank(receipt['reason']):
-            raise ValueError('invalid receipt')
-        body = canonical(receipt)
-        if len(body.encode('utf-8')) > self.plan.get('max_message_bytes', 8192):
-            raise ValueError('receipt budget exceeded')
+        if type(seq) is not int or seq <= 0:
+            raise ValueError('receipt needs a positive sequence')
+        body = validate_receipt(self.plan, receipt)
         with self.connect() as db:
             db.execute('BEGIN IMMEDIATE')
             row = db.execute('''SELECT d.receipt FROM communication_deliveries d
@@ -337,6 +383,7 @@ class Mailbox:
         Returns data without ACK: the host must separately read/verify semantics,
         perform an idempotent action, then acknowledge. A failed check stays pending.
         """
+        validate_consumer_request(request)
         with self.connect() as db:
             row = db.execute('''SELECT e.body FROM communication_events e
                 JOIN communication_deliveries d ON e.seq=d.seq
@@ -449,25 +496,51 @@ def main():
     p.add_argument('--max-tokens', type=int)
     args = parser.parse_args()
     try:
-        box = Mailbox(args.db, _load_json(args.plan), args.root)
+        plan = _load_json(args.plan)
+        check_plan(plan)
+        payload = None
+        known = None
+        if args.command == 'publish':
+            payload = _load_json(args.event)
+            prepare_event(plan, args.root, payload)
+        elif args.command == 'publish-many':
+            payload = _load_json(args.events)
+            if (not isinstance(payload, list) or not 1 <= len(payload) <= 100
+                    or any(not isinstance(event, dict) for event in payload)):
+                raise ValueError('batch must be a list of 1..100 event objects')
+            for event in payload:
+                prepare_event(plan, args.root, event)
+        elif args.command == 'ack':
+            payload = _load_json(args.receipt)
+            if args.recipient not in {r['recipient'] for r in plan['routes']} or args.seq <= 0:
+                raise ValueError('ack requires a routed recipient and positive sequence')
+            validate_receipt(plan, payload)
+        elif args.command in ('consume', 'context'):
+            payload = _load_json(args.request)
+            if args.recipient not in {r['recipient'] for r in plan['routes']} or args.seq <= 0:
+                raise ValueError('consume requires a routed recipient and positive sequence')
+            validate_consumer_request(payload)
+            if args.command == 'context':
+                known = _load_json(args.known) if args.known else {}
+                validate_known_context(known)
+        box = Mailbox(args.db, plan, args.root)
         if args.command == 'inbox-index':
             result = box.inbox_index(args.recipient, limit=args.limit, task_id=args.task_id, max_chars=args.max_chars, after_seq=args.after_seq)
         elif args.command == 'read-pending':
             result = box.read_pending(args.recipient, args.seq, args.body_sha256)
         elif args.command == 'publish':
-            result = box.publish(_load_json(args.event))
+            result = box.publish(payload)
         elif args.command == 'publish-many':
-            result = box.publish_many(_load_json(args.events))
+            result = box.publish_many(payload)
         elif args.command == 'inbox':
             result = box.inbox(args.recipient, limit=args.limit, task_id=args.task_id, after_seq=args.after_seq)
         elif args.command == 'ack':
-            box.acknowledge(args.recipient, args.seq, _load_json(args.receipt)); result = {'acknowledged': True}
+            box.acknowledge(args.recipient, args.seq, payload); result = {'acknowledged': True}
         elif args.command == 'consume':
-            result = box.consume_handoff(args.recipient, args.seq, _load_json(args.request))
+            result = box.consume_handoff(args.recipient, args.seq, payload)
         elif args.command == 'context':
             from .handoff_basis import make_token_counter
-            known = _load_json(args.known) if args.known else {}
-            result = box.prepare_context(args.recipient, args.seq, _load_json(args.request),
+            result = box.prepare_context(args.recipient, args.seq, payload,
                                          max_chars=args.max_chars,
                                          max_tokens=args.max_tokens,
                                          token_counter=make_token_counter(args.encoding) if args.encoding else None,

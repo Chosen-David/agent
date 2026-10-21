@@ -83,6 +83,47 @@ class ResultStoreTests(unittest.TestCase):
         self.assertFalse(decision['automatic_skip_authorized'])
         self.assertEqual(decision['validation_status'], 'usable-with-scope')
 
+    def test_persisted_exponent_overflow_is_not_a_finite_result_value(self):
+        artifact = self.root / 'historical.txt'
+        artifact.write_text('bounded historical evidence')
+        self.store.register_history('history-overflow', 'finite metadata fixture', [{
+            'path': 'historical.txt',
+            'sha256': hashlib.sha256(artifact.read_bytes()).hexdigest(),
+        }])
+        record = self.root / 'agent_doc/results/history-overflow/record.json'
+        raw = record.read_text().rstrip()
+        record.write_text(raw[:-1] + ',"extra":1e400}')
+        before = record.read_bytes()
+        with self.assertRaisesRegex(ResultStoreError, 'nonfinite'):
+            self.store.show('history-overflow')
+        self.assertEqual(record.read_bytes(), before)
+        result = self.store.search('finite metadata')
+        self.assertEqual(result['status'], 'incomplete')
+        self.assertIn('history-overflow', [item['run_id'] for item in result['errors']])
+
+    def test_persisted_record_and_search_cli_require_utf8(self):
+        artifact = self.root / 'utf16-history.txt'
+        artifact.write_text('UTF-8 source artifact')
+        self.store.register_history('history-utf16', 'UTF-16 record fixture', [{
+            'path': artifact.name,
+            'sha256': hashlib.sha256(artifact.read_bytes()).hexdigest(),
+        }])
+        record = self.root / 'agent_doc/results/history-utf16/record.json'
+        value = json.loads(record.read_text())
+        record.write_bytes(json.dumps(value).encode('utf-16'))
+        before = record.read_bytes()
+        with self.assertRaisesRegex(ResultStoreError, 'UTF-8'):
+            self.store.show('history-utf16')
+        script = Path(__file__).resolve().parents[1] / 'scripts/result_store.py'
+        result = subprocess.run([sys.executable, str(script), '--root', str(self.root),
+                                 'search', 'UTF-16 record fixture'], capture_output=True,
+                                text=True, timeout=10)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        payload = json.loads(result.stdout)
+        self.assertEqual(payload['status'], 'incomplete')
+        self.assertIn('history-utf16', [item['run_id'] for item in payload['errors']])
+        self.assertEqual(record.read_bytes(), before)
+
     def test_explicit_handler_and_consumers_recheck_not_skip_by_search(self):
         self.register()
         task = {'action': 'reuse_validated_result', 'result_reuse': self.selection()}

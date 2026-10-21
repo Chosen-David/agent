@@ -4,6 +4,9 @@ import hashlib
 import importlib.util
 import json
 from pathlib import Path
+import os
+import subprocess
+import sys
 import tempfile
 import unittest
 
@@ -74,8 +77,77 @@ class PaperDeliveryTests(unittest.TestCase):
     def check_with_synthetic_trust(self):
         return m.validate(self.good, self.root, acceptance=synthetic_acceptance(self.good))
 
+    def run_cli(self, record):
+        record_path = self.root / 'delivery-record.json'
+        acceptance_path = self.root.parent / (self.root.name + '-acceptance.json')
+        self.addCleanup(acceptance_path.unlink, missing_ok=True)
+        record_path.write_text(json.dumps(record, allow_nan=False))
+        acceptance_path.write_text(json.dumps(synthetic_acceptance(record), allow_nan=False))
+        record_before, acceptance_before = record_path.read_bytes(), acceptance_path.read_bytes()
+        result = subprocess.run([
+            sys.executable, str(ROOT / 'scripts/validate_paper_delivery.py'), str(record_path),
+            '--root', str(self.root), '--acceptance', str(acceptance_path),
+        ], capture_output=True, text=True, timeout=10)
+        self.assertEqual(record_path.read_bytes(), record_before)
+        self.assertEqual(acceptance_path.read_bytes(), acceptance_before)
+        return result
+
     def test_valid_declarations_only(self):
         self.assertEqual(self.check_with_synthetic_trust(), [])
+
+    def test_cli_rejects_ambiguous_nonfinite_deep_and_oversized_receipts(self):
+        binding = self.good['bindings'][0]
+        receipt = self.root / binding['start_receipt']['path']
+        legal = receipt.read_text()
+        corruptions = {
+            'duplicate': legal.replace('"kind": "start"',
+                                       '"kind":"wrong","kind":"start"', 1),
+            'nan': legal[:-1] + ',"extra":NaN}',
+            'overflow': legal[:-1] + ',"extra":1e400}',
+            'deep': legal[:-1] + ',"extra":' + '[' * 300 + '0' + ']' * 300 + '}',
+            'oversized': legal[:-1] + ',"padding":"' + 'x' * (1024 * 1024) + '"}',
+        }
+        original = receipt.read_bytes()
+        for name, raw in corruptions.items():
+            with self.subTest(name=name):
+                receipt.write_text(raw)
+                binding['start_receipt']['sha256'] = hashlib.sha256(receipt.read_bytes()).hexdigest()
+                before = receipt.read_bytes()
+                result = self.run_cli(self.good)
+                self.assertEqual(result.returncode, 1, result.stderr + result.stdout)
+                self.assertFalse(json.loads(result.stdout)['declarations_valid'])
+                self.assertEqual(receipt.read_bytes(), before)
+        receipt.write_bytes(original)
+        binding['start_receipt']['sha256'] = hashlib.sha256(original).hexdigest()
+
+    def test_cli_rejects_fifo_directory_and_final_symlink_receipts_without_hanging(self):
+        binding = self.good['bindings'][0]
+        original = copy.deepcopy(binding['start_receipt'])
+        target = self.root / original['path']
+        special = self.root / 'special-receipt'
+        cases = ['directory', 'symlink'] + (['fifo'] if hasattr(os, 'mkfifo') else [])
+        for kind in cases:
+            with self.subTest(kind=kind):
+                if special.exists() or special.is_symlink():
+                    if special.is_dir() and not special.is_symlink():
+                        special.rmdir()
+                    else:
+                        special.unlink()
+                if kind == 'directory':
+                    special.mkdir()
+                elif kind == 'symlink':
+                    special.symlink_to(target)
+                else:
+                    os.mkfifo(special)
+                binding['start_receipt'] = {'path': special.name, 'sha256': '0' * 64}
+                result = self.run_cli(self.good)
+                self.assertEqual(result.returncode, 1, result.stderr + result.stdout)
+                self.assertFalse(json.loads(result.stdout)['declarations_valid'])
+                if special.is_dir() and not special.is_symlink():
+                    special.rmdir()
+                else:
+                    special.unlink()
+        binding['start_receipt'] = original
 
     def test_ten_exemplars_must_be_distinct_and_fully_read(self):
         for change, fragment in [

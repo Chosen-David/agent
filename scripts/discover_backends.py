@@ -15,9 +15,33 @@ import importlib.util
 import json
 import shutil
 from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from agent_runtime.external_json import ExternalJSONError, load_json
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_REGISTRY = ROOT / "config" / "backend_registry.json"
+
+
+def validate_registry(data):
+    if (not isinstance(data, dict) or type(data.get("schema_version")) is not int
+            or data["schema_version"] != 1
+            or not isinstance(data.get("backends"), list)):
+        raise ValueError("backend registry must be a schema_version 1 object")
+    seen = set()
+    for entry in data["backends"]:
+        if (not isinstance(entry, dict)
+                or any(not isinstance(entry.get(key), str) or not entry[key]
+                       for key in ("id", "adoption", "category", "repo"))
+                or entry["id"] in seen or not isinstance(entry.get("detect"), dict)):
+            raise ValueError("backend registry entry has invalid structure")
+        seen.add(entry["id"])
+        for key in ("python_modules", "commands", "python_distributions"):
+            values = entry["detect"].get(key, [])
+            if not isinstance(values, list) or any(not isinstance(value, str) for value in values):
+                raise ValueError("backend detection fields must be string lists")
+    return data
 
 
 def _python_versions(detect: dict, modules: dict[str, bool]) -> tuple[dict[str, str], str | None, str | None]:
@@ -91,7 +115,7 @@ def main() -> int:
     parser.add_argument("--only", action="append", default=[], help="backend id; repeatable")
     parser.add_argument("--pretty", action="store_true")
     args = parser.parse_args()
-    data = json.loads(args.registry.read_text(encoding="utf-8"))
+    data = validate_registry(load_json(args.registry, max_bytes=1024 * 1024))
     selected = data["backends"]
     if args.only:
         wanted = set(args.only)
@@ -109,4 +133,9 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    try:
+        raise SystemExit(main())
+    except (ExternalJSONError, ValueError) as exc:
+        print(json.dumps({"status": "error", "error": str(exc)}, ensure_ascii=False),
+              file=sys.stderr)
+        raise SystemExit(2)

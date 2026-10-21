@@ -124,6 +124,25 @@ class RuntimeContracts(unittest.TestCase):
             with self.subTest(plan=p), self.assertRaises(ValueError):
                 validate(p)
 
+    def test_dag_rejects_nested_json_shapes_as_contract_errors(self):
+        invalid = []
+        for tasks in ([1], [{'task_id': 'a'}]):
+            candidate = plan()
+            candidate['tasks'] = tasks
+            invalid.append(candidate)
+        for supervision in ([], 'wrong'):
+            candidate = plan()
+            candidate['supervision'] = supervision
+            invalid.append(candidate)
+        for field, value in (('action', []), ('owner', {}), ('done_when', []),
+                             ('depends_on', [{}])):
+            candidate = plan()
+            candidate['tasks'][0][field] = value
+            invalid.append(candidate)
+        for candidate in invalid:
+            with self.subTest(candidate=candidate), self.assertRaises(ValueError):
+                validate(candidate)
+
     def test_dependency_membership_retains_string_subclass_equality(self):
         class OddHash(str):
             def __hash__(self):

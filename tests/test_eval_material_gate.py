@@ -6,6 +6,8 @@ an explicit test-controller judgment, not a claimed natural-language verifier.
 import copy
 import importlib.util
 import json
+import multiprocessing
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -16,6 +18,15 @@ ROOT = Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location('material_pipeline', ROOT / 'scripts/agent_eval_pipeline.py')
 p = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(p)
+
+
+def _authorize_in_child(queue, run, trust):
+    try:
+        p.authorize_dispatch(run, 'a', 'worker', material_review=trust)
+    except BaseException as exc:
+        queue.put(('error', type(exc).__name__, str(exc)))
+    else:
+        queue.put(('accepted', None, None))
 
 
 class MaterialGateTests(unittest.TestCase):
@@ -157,6 +168,27 @@ class MaterialGateTests(unittest.TestCase):
         link = self.base / 'review-link.json'
         link.symlink_to(self.review_path)
         self.assert_rejected(dict(self.trust, path=str(link)))
+
+    @unittest.skipUnless(hasattr(os, 'mkfifo'), 'POSIX special-file checks')
+    def test_fifo_material_review_fails_without_blocking_or_starting(self):
+        self.review_path.unlink()
+        os.mkfifo(self.review_path)
+        context = multiprocessing.get_context('fork')
+        queue = context.Queue()
+        process = context.Process(
+            target=_authorize_in_child, args=(queue, self.run, self.trust))
+        process.start()
+        process.join(2)
+        if process.is_alive():
+            process.terminate()
+            process.join(2)
+            self.fail('material review FIFO blocked the pre-spawn gate')
+        self.assertEqual(process.exitcode, 0)
+        status, error_type, message = queue.get(timeout=1)
+        self.assertEqual(status, 'error')
+        self.assertEqual(error_type, 'ExternalJSONError')
+        self.assertIn('regular file', message)
+        self.assertEqual(list((self.run / 'cases/a/attempts').iterdir()), [])
 
     def test_symlink_parent_and_relative_traversal_rejected(self):
         link = self.base / 'controller-link'
