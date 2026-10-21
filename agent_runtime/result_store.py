@@ -7,8 +7,10 @@ executes experiment commands or chooses/imports an adapter from stored data.
 """
 from __future__ import annotations
 
+from contextlib import contextmanager
 from copy import deepcopy
 import datetime as dt
+import errno
 import hashlib
 import json
 import math
@@ -17,6 +19,7 @@ from pathlib import Path
 import re
 import stat
 import tempfile
+import time
 
 from .project_docs import assert_ai_writable
 from .result_validation import inspect_result
@@ -27,6 +30,8 @@ SCHEMA = 'project-result-record/v1'
 CONTEXT_FIELDS = ('scope', 'code_revision', 'artifacts', 'execution', 'metrics')
 METADATA_LIMIT = 1024 * 1024
 ARTIFACT_LIMIT = 256 * 1024 * 1024
+DIRECTORY_ENTRY_LIMIT = 5000
+REGISTRY_LOCK = '.agent-runs/result-store.lock'
 
 
 class ResultStoreError(ValueError):
@@ -218,6 +223,64 @@ def _tokens(query):
     return list(dict.fromkeys(tokens))[:96]
 
 
+@contextmanager
+def _registry_lock(root):
+    """Serialize participating local registry writers without entering results."""
+    path = assert_ai_writable(root, REGISTRY_LOCK)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path = assert_ai_writable(root, REGISTRY_LOCK)
+    flags = os.O_CREAT | os.O_RDWR | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
+    fd = os.open(path, flags, 0o600)
+    acquired = False
+    try:
+        info = os.fstat(fd)
+        _need(stat.S_ISREG(info.st_mode), 'result registry lock must be a regular file')
+        if info.st_size < 1:
+            os.lseek(fd, 0, os.SEEK_SET)
+            os.write(fd, b'\0')
+            os.fsync(fd)
+        _lock_registry_fd(fd)
+        acquired = True
+        yield
+    finally:
+        try:
+            if acquired:
+                _unlock_registry_fd(fd)
+        finally:
+            # Closing the descriptor is the final release guarantee even if
+            # the explicit unlock operation reports an error.
+            os.close(fd)
+
+
+def _lock_registry_fd(fd, platform=None):
+    platform = os.name if platform is None else platform
+    if platform == 'nt':
+        import msvcrt
+        while True:
+            try:
+                os.lseek(fd, 0, os.SEEK_SET)
+                msvcrt.locking(fd, msvcrt.LK_NBLCK, 1)
+                return
+            except OSError as exc:
+                if exc.errno not in (errno.EACCES, errno.EAGAIN, errno.EDEADLK):
+                    raise
+                time.sleep(0.01)
+    else:
+        import fcntl
+        fcntl.flock(fd, fcntl.LOCK_EX)
+
+
+def _unlock_registry_fd(fd, platform=None):
+    platform = os.name if platform is None else platform
+    if platform == 'nt':
+        import msvcrt
+        os.lseek(fd, 0, os.SEEK_SET)
+        msvcrt.locking(fd, msvcrt.LK_UNLCK, 1)
+    else:
+        import fcntl
+        fcntl.flock(fd, fcntl.LOCK_UN)
+
+
 class ResultStore:
     """No directory is created by construction, show, search or decision support."""
     def __init__(self, root):
@@ -228,24 +291,26 @@ class ResultStore:
         return f'{HOME}/{_identifier(run_id)}/record.json'
 
     def _directories(self, max_scan):
-        _need(type(max_scan) is int and 1 <= max_scan <= 5000, 'max_scan must be 1..5000')
+        _need(type(max_scan) is int and 1 <= max_scan <= DIRECTORY_ENTRY_LIMIT,
+              f'max_scan must be 1..{DIRECTORY_ENTRY_LIMIT}')
         home = _path(self.root, HOME)
         if not home.exists():
-            return [], False
+            return [], False, 0
         _need(home.is_dir(), 'result home must be a directory')
-        names, partial = [], False
-        # Bound directory enumeration too, including non-record entries.
+        names, entry_count = [], 0
         with os.scandir(home) as entries:
-            for count, entry in enumerate(entries):
-                if count >= max_scan:
-                    partial = True
-                    break
+            for entry in entries:
+                entry_count += 1
+                if entry_count > DIRECTORY_ENTRY_LIMIT:
+                    # Never expose an order-dependent prefix from an oversized registry.
+                    return [], True, entry_count
                 if entry.is_symlink():
                     raise ResultStoreError('result directory contains symlink: ' + entry.name)
                 if entry.is_dir(follow_symlinks=False):
                     _identifier(entry.name)
                     names.append(entry.name)
-        return sorted(names), partial
+        names.sort()
+        return names[:max_scan], len(names) > max_scan, entry_count
 
     def show(self, run_id):
         rel = self._record_path(run_id)
@@ -266,14 +331,21 @@ class ResultStore:
         run_id = _identifier(record['run_id'])
         # Check lexical root before resolving it; never alias writes into guide.
         target = assert_ai_writable(self.supplied_root, self._record_path(run_id))
-        names, partial = self._directories(5000)
-        _need(not partial, 'registry collision check exceeds 5000 entries; partition before registration')
-        _need(not any(name.casefold() == run_id.casefold() and name != run_id for name in names),
-              'case-folding run_id collision')
-        _need(not target.exists(), 'run_id is immutable and already registered')
         raw = (json.dumps(record, indent=2, ensure_ascii=False, allow_nan=False) + '\n').encode()
         _need(len(raw) <= METADATA_LIMIT, 'record exceeds metadata bound')
-        target.parent.mkdir(parents=True, exist_ok=True)
+        with _registry_lock(self.supplied_root):
+            names, partial, entry_count = self._directories(DIRECTORY_ENTRY_LIMIT)
+            _need(not partial, f'registry collision check exceeds {DIRECTORY_ENTRY_LIMIT} entries; '
+                  'partition before registration')
+            _need(not any(name.casefold() == run_id.casefold() and name != run_id for name in names),
+                  'case-folding run_id collision')
+            _need(not target.exists(), 'run_id is immutable and already registered')
+            if not target.parent.exists():
+                _need(entry_count < DIRECTORY_ENTRY_LIMIT,
+                      f'result registry has {DIRECTORY_ENTRY_LIMIT} entries; partition before registration')
+                target.parent.mkdir(parents=True)
+            else:
+                _need(target.parent.is_dir(), 'result run path must be a directory')
         fd, temporary = tempfile.mkstemp(prefix='.record-', dir=target.parent)
         try:
             try:
@@ -352,7 +424,7 @@ class ResultStore:
         _need(type(limit) is int and 1 <= limit <= 20, 'limit must be 1..20')
         if context is not None:
             _context(context)
-        names, partial = self._directories(max_scan)
+        names, partial, _ = self._directories(max_scan)
         tokens = _tokens(query)
         exact_eligible = None
         context_checked = False

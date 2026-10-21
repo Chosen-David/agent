@@ -237,7 +237,9 @@ class PriorResultReuseAcceptanceTests(unittest.TestCase):
         with patch.object(reuse.os,'link',side_effect=OSError('synthetic interrupted publish')):
             with self.assertRaises(OSError):self.register()
         self.assertFalse((self.root/'agent_doc/results'/self.run_id/'record.json').exists())
-        self.assertEqual(self.bytes(),original)
+        after=self.bytes()
+        self.assertEqual(after.pop('.agent-runs/result-store.lock'),b'\0')
+        self.assertEqual(after,original)
         self.register();self.assertEqual(self.decision()['decision'],'reuse')
 
     def task_and_observer(self):

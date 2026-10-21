@@ -2,13 +2,17 @@
 import copy
 import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import time
+from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
 
+import agent_runtime.result_store as result_store
 from agent_runtime.result_store import (ResultStore, ResultStoreError, ReuseResultHandler,
     check_task_reuse, register_task_result, result_context)
 from agent_runtime.core import ArtifactHandler
@@ -283,6 +287,266 @@ class ResultStoreTests(unittest.TestCase):
         self.assertEqual(found['results'][0]['applicability'], 'unchecked')
         (self.base / 'record.json').write_text('{"run_id":1,"run_id":2}')
         self.assertTrue(self.store.search('integer')['errors'])
+
+    def test_bounded_search_selects_same_directories_for_reversed_enumeration(self):
+        root = self.root / 'stable-scan'
+        root.mkdir()
+        artifact = root / 'historical.json'
+        artifact.write_text('{"measurement":1}\n')
+        ref = {'path': artifact.name, 'sha256': hashlib.sha256(artifact.read_bytes()).hexdigest()}
+        store = ResultStore(root)
+        for run_id in ('zeta', 'alpha', 'middle'):
+            store.register_history(run_id, 'stable ordering evidence', [ref])
+        original_scandir = os.scandir
+
+        class ReversedScandir:
+            def __init__(self, path):
+                with original_scandir(path) as entries:
+                    self.entries = list(entries)[::-1]
+            def __enter__(self):
+                return iter(self.entries)
+            def __exit__(self, *_):
+                return False
+
+        expected = ['alpha', 'middle']
+        normal = store.search('stable ordering evidence', max_scan=2, limit=20)
+        with patch('agent_runtime.result_store.os.scandir', ReversedScandir):
+            reversed_result = store.search('stable ordering evidence', max_scan=2, limit=20)
+        self.assertEqual([item['run_id'] for item in normal['results']], expected)
+        self.assertEqual([item['run_id'] for item in reversed_result['results']], expected)
+
+    def test_regular_file_does_not_consume_directory_scan_budget(self):
+        root = self.root / 'scan-budget'
+        home = root / 'agent_doc/results'
+        home.mkdir(parents=True)
+        artifact = root / 'artifact.json'
+        artifact.write_text('{}\n')
+        ref = {'path': artifact.name, 'sha256': hashlib.sha256(artifact.read_bytes()).hexdigest()}
+        store = ResultStore(root)
+        store.register_history('alpha', 'budget evidence', [ref])
+        store.register_history('beta', 'budget evidence', [ref])
+        (home / 'README.md').write_text('catalog notes\n')
+        result = store.search('budget evidence', max_scan=2, limit=20)
+        self.assertEqual(result['scanned'], 2)
+        self.assertFalse(result['partial'])
+        self.assertEqual([item['run_id'] for item in result['results']], ['alpha', 'beta'])
+
+    def test_symlink_after_selected_directory_is_still_rejected(self):
+        root = self.root / 'late-symlink'
+        home = root / 'agent_doc/results'
+        home.mkdir(parents=True)
+        (home / 'alpha').mkdir()
+        (home / 'z-link').symlink_to(root, target_is_directory=True)
+        with self.assertRaisesRegex(ResultStoreError, 'symlink'):
+            ResultStore(root).search('anything', max_scan=1)
+
+    def test_over_capacity_search_returns_no_native_order_prefix(self):
+        root = self.root / 'over-capacity'
+        home = root / 'agent_doc/results'
+        home.mkdir(parents=True)
+        for name in ('first', 'second', 'third', 'fourth'):
+            (home / name).mkdir()
+        store = ResultStore(root)
+        with patch.object(result_store, 'DIRECTORY_ENTRY_LIMIT', 3, create=True):
+            result = store.search('anything', max_scan=3)
+        self.assertEqual(result['results'], [])
+        self.assertEqual(result['scanned'], 0)
+        self.assertTrue(result['partial'])
+        self.assertEqual(result['status'], 'incomplete')
+        artifact = root / 'artifact.json'
+        artifact.write_text('{}\n')
+        ref = {'path': artifact.name, 'sha256': hashlib.sha256(artifact.read_bytes()).hexdigest()}
+        with patch.object(result_store, 'DIRECTORY_ENTRY_LIMIT', 3):
+            with self.assertRaisesRegex(ResultStoreError, 'exceeds 3 entries'):
+                store.register_history('fifth', 'must fail closed', [ref])
+        self.assertFalse((home / 'fifth').exists())
+
+    def test_registration_capacity_matrix_and_existing_run_recovery(self):
+        root = self.root / 'capacity'
+        home = root / 'agent_doc/results'
+        home.mkdir(parents=True)
+        artifact = root / 'artifact.json'
+        artifact.write_text('{}\n')
+        ref = {'path': artifact.name, 'sha256': hashlib.sha256(artifact.read_bytes()).hexdigest()}
+        for name in ('one', 'two'):
+            (home / name).mkdir()
+        store = ResultStore(root)
+        with patch.object(result_store, 'DIRECTORY_ENTRY_LIMIT', 3):
+            store.register_history('third', 'capacity evidence', [ref])
+            self.assertEqual(len(list(home.iterdir())), 3)
+            with self.assertRaisesRegex(ResultStoreError, '3 entries'):
+                store.register_history('fourth', 'must not create a fourth entry', [ref])
+            self.assertFalse((home / 'fourth').exists())
+            (home / 'third/record.json').unlink()
+            store.register_history('third', 'recover existing reserved directory', [ref])
+            self.assertTrue((home / 'third/record.json').is_file())
+
+    @unittest.skipIf(os.name == 'nt', 'POSIX process/lock termination test')
+    def test_process_death_releases_capacity_lock_without_overflow(self):
+        root = self.root / 'process-capacity'
+        home = root / 'agent_doc/results'
+        home.mkdir(parents=True)
+        artifact = root / 'artifact.json'
+        artifact.write_text('{}\n')
+        digest = hashlib.sha256(artifact.read_bytes()).hexdigest()
+        for name in ('one', 'two'):
+            (home / name).mkdir()
+        ready = root / 'ready'
+        repo = Path(__file__).resolve().parents[1]
+        env = os.environ.copy()
+        env['PYTHONPATH'] = str(repo)
+        holder_code = (
+            'import os, pathlib, sys, time; import agent_runtime.result_store as rs; '
+            'root=pathlib.Path(sys.argv[1]); ready=pathlib.Path(sys.argv[2]); '
+            'lock=rs._registry_lock(root); lock.__enter__(); '
+            '(root/"agent_doc/results/third").mkdir(); ready.write_text("held"); time.sleep(30)')
+        contender_code = (
+            'import hashlib, pathlib, sys; import agent_runtime.result_store as rs; '
+            'rs.DIRECTORY_ENTRY_LIMIT=3; root=pathlib.Path(sys.argv[1]); '
+            'ref={"path":"artifact.json","sha256":sys.argv[2]}; '
+            'rs.ResultStore(root).register_history("fourth","capacity evidence",[ref])')
+        holder = subprocess.Popen([sys.executable, '-c', holder_code, str(root), str(ready)],
+                                  cwd=repo, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                                  text=True)
+        self.addCleanup(lambda: holder.poll() is None and holder.kill())
+        deadline = time.monotonic() + 5
+        while not ready.exists() and time.monotonic() < deadline:
+            time.sleep(0.01)
+        self.assertTrue(ready.exists(), 'holder did not acquire the registry lock')
+        contender = subprocess.Popen([sys.executable, '-c', contender_code, str(root), digest],
+                                     cwd=repo, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        self.addCleanup(lambda: contender.poll() is None and contender.kill())
+        time.sleep(0.15)
+        self.assertIsNone(contender.poll(), 'contender must block before its directory creation')
+        self.assertEqual(sorted(path.name for path in home.iterdir()), ['one', 'third', 'two'])
+        holder.kill()
+        holder.communicate(timeout=5)
+        _, contender_error = contender.communicate(timeout=5)
+        self.assertNotEqual(contender.returncode, 0, contender_error)
+        self.assertFalse((home / 'fourth').exists())
+        ref = {'path': artifact.name, 'sha256': digest}
+        with patch.object(result_store, 'DIRECTORY_ENTRY_LIMIT', 3):
+            ResultStore(root).register_history('third', 'recover after terminated owner', [ref])
+        self.assertEqual(len(list(home.iterdir())), 3)
+
+    def test_multiprocess_capacity_and_same_run_publication_are_atomic(self):
+        repo = Path(__file__).resolve().parents[1]
+        env = os.environ.copy()
+        env['PYTHONPATH'] = str(repo)
+        worker = (
+            'import pathlib, sys, time; import agent_runtime.result_store as rs; '
+            'root=pathlib.Path(sys.argv[1]); gate=pathlib.Path(sys.argv[2]); '
+            'rs.DIRECTORY_ENTRY_LIMIT=int(sys.argv[4]); '
+            'ref={"path":"artifact.json","sha256":sys.argv[5]}; '
+            'exec("while not gate.exists():\\n time.sleep(0.005)"); '
+            'rs.ResultStore(root).register_history(sys.argv[3],"concurrent evidence",[ref])')
+
+        def race(root, run_ids, initial=()):
+            home = root / 'agent_doc/results'
+            home.mkdir(parents=True)
+            for name in initial:
+                (home / name).mkdir()
+            artifact = root / 'artifact.json'
+            artifact.write_text('{}\n')
+            digest = hashlib.sha256(artifact.read_bytes()).hexdigest()
+            gate = root / 'gate'
+            processes = [subprocess.Popen(
+                [sys.executable, '-c', worker, str(root), str(gate), run_id, '3', digest],
+                cwd=repo, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                for run_id in run_ids]
+            gate.write_text('go\n')
+            outputs = [process.communicate(timeout=10) for process in processes]
+            return home, processes, outputs
+
+        distinct_root = self.root / 'distinct-race'
+        home, processes, outputs = race(distinct_root, ('third-a', 'third-b'), ('one', 'two'))
+        self.assertEqual(sorted(process.returncode for process in processes), [0, 1], outputs)
+        self.assertEqual(len(list(home.iterdir())), 3)
+        self.assertEqual(sum((home / name / 'record.json').is_file()
+                             for name in ('third-a', 'third-b')), 1)
+
+        same_root = self.root / 'same-race'
+        home, processes, outputs = race(same_root, ('shared', 'shared'))
+        self.assertEqual(sorted(process.returncode for process in processes), [0, 1], outputs)
+        self.assertEqual([path.name for path in home.iterdir()], ['shared'])
+        self.assertTrue((home / 'shared/record.json').is_file())
+
+        casefold_root = self.root / 'casefold-race'
+        home, processes, outputs = race(casefold_root, ('Shared', 'shared'))
+        self.assertEqual(sorted(process.returncode for process in processes), [0, 1], outputs)
+        self.assertEqual(len(list(home.iterdir())), 1)
+        self.assertEqual([path.name.casefold() for path in home.iterdir()], ['shared'])
+
+    def test_registry_lock_rejects_symlink_fifo_and_symlinked_parent(self):
+        cases = ['symlink', 'parent-symlink']
+        if hasattr(os, 'mkfifo'):
+            cases.insert(1, 'fifo')
+        for case in cases:
+            with self.subTest(case=case):
+                root = self.root / ('unsafe-lock-' + case)
+                root.mkdir()
+                outside = self.root / ('outside-' + case)
+                outside.mkdir()
+                if case == 'parent-symlink':
+                    (root / '.agent-runs').symlink_to(outside, target_is_directory=True)
+                else:
+                    state = root / '.agent-runs'
+                    state.mkdir()
+                    lock = state / 'result-store.lock'
+                    if case == 'symlink':
+                        lock.symlink_to(outside / 'lock')
+                    else:
+                        os.mkfifo(lock)
+                with self.assertRaises((OSError, ValueError)):
+                    with result_store._registry_lock(root):
+                        self.fail('unsafe lock must not be acquired')
+
+    def test_registry_lock_is_stable_regular_file(self):
+        root = self.root / 'stable-lock'
+        root.mkdir()
+        for _ in range(2):
+            with result_store._registry_lock(root):
+                lock = root / result_store.REGISTRY_LOCK
+                self.assertTrue(lock.is_file())
+                self.assertEqual(lock.read_bytes(), b'\0')
+        self.assertTrue((root / result_store.REGISTRY_LOCK).is_file())
+
+    def test_registry_lock_closes_descriptor_when_explicit_unlock_fails(self):
+        root = self.root / 'unlock-failure'
+        root.mkdir()
+        observed = []
+
+        def fail_unlock(fd):
+            observed.append(fd)
+            raise OSError('synthetic unlock failure')
+
+        with patch('agent_runtime.result_store._unlock_registry_fd', fail_unlock):
+            with self.assertRaisesRegex(OSError, 'synthetic unlock failure'):
+                with result_store._registry_lock(root):
+                    pass
+        self.assertEqual(len(observed), 1)
+        with self.assertRaises(OSError) as closed:
+            os.fstat(observed[0])
+        self.assertEqual(closed.exception.errno, result_store.errno.EBADF)
+
+    def test_windows_registry_lock_retries_and_locks_first_byte(self):
+        calls = []
+        attempts = [0]
+        fake = SimpleNamespace(LK_NBLCK=1, LK_UNLCK=2)
+        def locking(fd, mode, size):
+            calls.append((os.lseek(fd, 0, os.SEEK_CUR), mode, size))
+            if mode == fake.LK_NBLCK and attempts[0] == 0:
+                attempts[0] += 1
+                raise OSError(result_store.errno.EACCES, 'synthetic contention')
+        fake.locking = locking
+        with tempfile.TemporaryFile() as stream, patch.dict(sys.modules, {'msvcrt': fake}), \
+                patch('agent_runtime.result_store.time.sleep') as sleep:
+            stream.write(b'\0')
+            stream.seek(0)
+            result_store._lock_registry_fd(stream.fileno(), platform='nt')
+            result_store._unlock_registry_fd(stream.fileno(), platform='nt')
+        self.assertEqual(calls, [(0, 1, 1), (0, 1, 1), (0, 2, 1)])
+        sleep.assert_called_once_with(0.01)
 
     def test_read_only_missing_store_does_not_create_files(self):
         empty = self.root / 'empty'
