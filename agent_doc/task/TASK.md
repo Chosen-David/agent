@@ -1,5 +1,9 @@
 # Project tasks
 
+## 2026-10-21
+
+- [ ] [NPU-ABSORB-100] 吸收 npu_kernel_agent 剩余可移植设计：后台任务进程身份判定、统一 artifact 索引、结构化 intake、next 尾注。 ([详情](task_details/NPU-ABSORB-100.md))
+
 ## 2026-10-20
 
 - [ ] [SYSTEM-99] 系统级改进批次：入口、任务/恢复、协作、记忆、上下文与真实任务质量全面验收；小修复与小时唤醒仅为检查点。 ([详情](task_details/SYSTEM-99.md))

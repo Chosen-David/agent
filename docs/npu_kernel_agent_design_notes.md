@@ -27,6 +27,8 @@ doctor、schema 校验、编译、oracle 对比、计时、best-guard、STATE.js
 - **分层加载**（#4 的只读侧）：`agent_runtime.project_docs.task_navigation` 摘要优先导航 +
   `workflows/project_document_workflow.md` 的续跑指引。见 [task_navigation](token_optimization/task_navigation.md)。
 - **remember-vs-recompute / receipt**（#10 的增量侧）：`document_delta` 只重读变化文档。
+- **后台任务进程身份**（#7）：`task_supervisor.read_process_starttime` + live.json 的 `starttime` 字段，
+  `status` 用 `/proc/PID/stat` 校验心跳写者仍是同一进程，防 PID 复用误判。
 
 ## 尚未移植、值得继续（按价值/风险排序）
 
@@ -34,4 +36,3 @@ doctor、schema 校验、编译、oracle 对比、计时、best-guard、STATE.js
    改动面跨多个结果对象，需单独规划。
 2. **结构化 intake**（#5）：新模块 + 补问 schema + 答案重注入 + 完整性重检。
 3. **统一 artifact 索引**（#8）：一趟扫描 run 树、按 role/category/status 分类，给“缺什么/变了什么”单一视图。
-4. **后台任务进程身份**（#7）：为 tmux supervisor 补 `/proc/PID/stat` 的 start_ticks，防 PID 复用误判。

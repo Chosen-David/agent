@@ -85,6 +85,27 @@ def load_config_input(path, *, required=None):
     return config
 
 
+def read_process_starttime(pid):
+    """Return a process's start ticks from /proc/<pid>/stat, or None.
+
+    Field 22 (starttime) is stable for the lifetime of a process, so a matching
+    value disambiguates the live worker from a recycled PID that merely shares
+    the number after a crash. Ticks are never converted: writer and reader store
+    and compare the same raw field, so clock resolution cannot skew the check.
+    """
+    try:
+        with open(f'/proc/{pid}/stat', 'r', encoding='ascii') as handle:
+            raw = handle.read()
+    except (OSError, ValueError):
+        return None
+    # comm (field 2) is parenthesised and may itself contain ')' or spaces; the
+    # text after the final ')' is fields 3.., so starttime (22) sits at index 19.
+    fields = raw.rsplit(')', 1)[-1].split()
+    if len(fields) < 20:
+        return None
+    return fields[19]
+
+
 def validate_live_snapshot(live):
     """Validate the worker-owned heartbeat before status code uses its fields."""
     if (not isinstance(live, dict)
@@ -92,7 +113,8 @@ def validate_live_snapshot(live):
             or not isinstance(live.get('session'), str) or not live['session']
             or type(live.get('pid')) is not int or live['pid'] <= 0
             or type(live.get('heartbeat_at')) not in (int, float)
-            or not math.isfinite(live['heartbeat_at'])):
+            or not math.isfinite(live['heartbeat_at'])
+            or not isinstance(live.get('starttime'), str) or not live['starttime']):
         raise SupervisorInputError('supervisor live snapshot has invalid structure')
     return live
 
@@ -202,7 +224,8 @@ def worker(config):
                 scheduler.heartbeat(service_id)
                 atomic_json(state_dir / 'live.json', {
                     'run_id': config['run_id'], 'session': config['session'],
-                    'pid': os.getpid(), 'heartbeat_at': time.time(), 'service_id': service_id})
+                    'pid': os.getpid(), 'heartbeat_at': time.time(), 'service_id': service_id,
+                    'starttime': read_process_starttime(os.getpid())})
                 report = publish(config, store, result_verifier=result_verifier, plan_review_verifier=plan_review_verifier)
                 if report['runtime_status'] == 'cancelled':
                     return 0
@@ -294,7 +317,8 @@ def status(config):
     alive = (pane.returncode == 0 and '0' in pane.stdout.splitlines()
              and live.get('run_id') == config['run_id']
              and live.get('session') == config['session']
-             and 0 <= time.time() - live.get('heartbeat_at', 0) < 10)
+             and 0 <= time.time() - live.get('heartbeat_at', 0) < 10
+             and live.get('starttime') == read_process_starttime(live.get('pid')))
     monitor = snap['monitor']
     if monitor:
         monitor = LocalScheduler(store).read(monitor['id'])

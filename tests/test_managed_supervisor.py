@@ -111,6 +111,26 @@ class WorkerTests(unittest.TestCase):
                     mocked_tmux.return_value = subprocess.CompletedProcess([], 0, '0\n', '')
                     self.assertFalse(status(self.config)['live'])
 
+    def test_status_verifies_worker_process_identity_against_pid_reuse(self):
+        from agent_runtime.task_supervisor import read_process_starttime
+        starttime = read_process_starttime(os.getpid())
+        self.assertIsNotNone(starttime)
+        self.assertIsNone(read_process_starttime(999999999))
+        live = self.state_dir / 'live.json'
+        base = {'run_id': self.plan['run_id'], 'session': 'fixture',
+                'pid': os.getpid(), 'heartbeat_at': time.time(), 'service_id': 's'}
+        # A fresh heartbeat whose recorded starttime belongs to another process is
+        # rejected: it is a recycled PID, not the worker that wrote live.json.
+        live.write_text(json.dumps({**base, 'starttime': 'not-this-process'}))
+        with patch('agent_runtime.task_supervisor.tmux') as mocked_tmux:
+            mocked_tmux.return_value = subprocess.CompletedProcess([], 0, '0\n', '')
+            self.assertFalse(status(self.config)['live'])
+        # The same heartbeat with the current process's own starttime is accepted.
+        live.write_text(json.dumps({**base, 'starttime': starttime}))
+        with patch('agent_runtime.task_supervisor.tmux') as mocked_tmux:
+            mocked_tmux.return_value = subprocess.CompletedProcess([], 0, '0\n', '')
+            self.assertTrue(status(self.config)['live'])
+
     def test_worker_reports_result_and_stops_only_owned_monitor(self):
         child = self.launch()
         wait_for(lambda: self.store.snapshot(self.plan['run_id'])['monitor'])
