@@ -30,6 +30,10 @@
 
 这些只是便于一眼看清的派生摘要，不替代受管 SQLite 的节点状态与独立验收；勾选框/状态字样本身不构成完成。
 
+## 摘要优先导航（减少重复读取）
+
+续跑/派发前不必每次重读所有 detail 全文。先取一份廉价导航摘要：索引行 + 每个 detail 的 `Status`/`Owner`/`### 摘要`/有界的 `## Progress` 末尾，用于判断“该看哪个、下一步由谁继续”；只有真正推进某个任务时才打开那份 detail 全文。可调用 `agent_runtime.project_docs.task_navigation(root)`，或命令行 `python -m agent_runtime.project_docs --root . nav`。这是“只读最小视图 vs 完整冻结”的分层加载：摘要里的 `Status`/`Owner` 仅作派生态，不替代受管账本与独立验收。
+
 结果引用准确的 run ID、路径和适用范围；未通过独立验证的数据不能写成已可消费的结论。详情目录只放已登记的任务文件，职责说明集中在本 README，避免被严格任务索引校验识别为孤立任务。
 
 [返回文档分工](../README.md) · [人工指南](../guide/README.md) · [建议取舍](../advice/README.md)
