@@ -14,6 +14,8 @@ Available entries (rollout tracked in TOK10-20261021):
 
 | Memory ledger | `python -m agent_runtime.project_memory --compact --root ROOT list` |
 
+| Project documents | `python -m agent_runtime.project_docs --compact --root ROOT inspect` |
+
 Use the existing default output for human inspection. Compact output is opt-in
 for tools passing full JSON to a model. It is whitespace compression, not a
 semantic summary and not a measured reduction in total session tokens. Each

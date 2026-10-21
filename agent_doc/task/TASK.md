@@ -2,7 +2,7 @@
 
 ## 2026-10-21
 
-- [ ] [TOK10-20261021] 2/10轮已推main并核对；继续逐轮独立验收。 ([详情](task_details/TOK10-20261021.md))
+- [ ] [TOK10-20261021] 3/10轮已推main并核对；继续逐轮独立验收。 ([详情](task_details/TOK10-20261021.md))
 - [ ] [TOK10-VERIFY-20261021] 独立批次计划与逐轮六域验收。 ([详情](task_details/TOK10-VERIFY-20261021.md))
 
 - [x] [TOK-MEM-20261021] 可逆memory表格已推main并验远端；32短包3135→2523 payload tokens，v2独立验收通过。 ([详情](task_details/TOK-MEM-20261021.md))

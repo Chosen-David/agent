@@ -17,6 +17,7 @@ import stat
 import tempfile
 from urllib.parse import urlsplit
 
+from .context_serialization import render_context
 CANONICAL_TASK = 'agent_doc/task/TASK.md'
 DOCUMENT_DIRECTORIES = ('agent_doc/task/task_details', 'agent_doc/advice', 'agent_doc/guide', 'agent_doc/results')
 TASK_PATTERN = re.compile(r'^\s*[-*+] \[([ xX])\] \[([A-Za-z0-9][A-Za-z0-9_.-]*)\] (.+)$')
@@ -707,6 +708,7 @@ def migrate(root, date):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', required=True)
+    parser.add_argument('--compact', action='store_true', help='preserve all JSON fields without formatting whitespace')
     sub = parser.add_subparsers(dest='command', required=True)
     sub.add_parser('init', help='initialize only the explicitly selected existing project')
     sub.add_parser('inspect')
@@ -738,7 +740,7 @@ def main(argv=None):
         if args.command == 'nav':
             rendered = json.dumps(result, ensure_ascii=False, separators=(',', ':'))
         else:
-            rendered = json.dumps(result, ensure_ascii=False, indent=2)
+            rendered = (render_context(result, compact=True) if args.compact else json.dumps(result, ensure_ascii=False, indent=2))
         print(rendered)
         return 0
     except (OSError, ValueError) as exc:
