@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 26
+Version: 27
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -105,7 +105,24 @@ knowledge/context与backend/setup；保持原字节SHA、TASK/plan身份、授�
 精确大小、非法编码、顶层/叶层错形和合法恢复；父目录攻击、Windows真机及真实宿主不在新增保证内。
 全库/Reader/同步和独立冻结树复核通过后才发布；无性能主张，SYSTEM-99仍open。
 
+阶段S（CHAIN-SUPERVISOR-LOCK）：只修复supervisor的launch.lock/worker.lock在真实FIFO上
+以写模式打开永久阻塞的边界。共享私有opener先保留原写入guard，再以
+O_CREAT|O_RDWR|O_NOFOLLOW|O_NONBLOCK打开并同FD fstat普通文件，finally关闭；原launch
+阻塞flock和worker非阻塞重复退出策略保持，不unlink/replace/truncate锁inode。
+先保存两真实入口修前超时，再独立方案审核，覆盖FIFO/目录/symlink、guard后替换、
+数据库/backend/tmux零调用、正常互斥、进程退出和异常释放、inode/原字节不变及fstat失败关闭FD。
+不扩展到未证实同类缺陷的contamination锁，不改并发作者的论文交付修复；定向/全库/Reader/
+同步与独立结果验收通过后发布。POSIX本机夹具不代表真实tmux/SSH、Windows、父目录攻击或
+跨主机锁认证；沿用同批17篇正文记录，真实宿主/多轮质量/usage/费用仍open。
+
 ## Progress
+
+Version27阶段S续接基线5b9bae0b；读取既有R结果后不重复修复JSON边界。新的真实start/worker
+FIFO反例各在2秒子进程预算内超时，父进程已回收；独立方案审核已接受仅两supervisor锁范围。
+候选定向5项（8个坏锁入口子例）普通/-O通过；全库1484项（1476通过/8跳过）、Reader3、
+同步/编译/diff通过。独审普通/-O各39项及3负控接受有界恢复正确性；
+[阶段证据](../../results/system99/stage-s.md)与[独立验收](../../results/system99/independent-stage-s.md)
+记录范围，未重跑模型/真实宿主或宣称性能收益；整批仍open，普通发布/回读收尾。
 
 Version26阶段R已把共享有界读取接入真实外部控制文件消费者，并在首次状态/输出副作用前校验嵌套
 结构。修后FIFO/目录/末端symlink、重复键、非有限数、非法UTF-8、超限、257层和错形叶字段均

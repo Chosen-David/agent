@@ -6,6 +6,7 @@ The generic backend verifies artifacts; it cannot invent a main AI/model backend
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 import fcntl
 import hashlib
 import importlib.util
@@ -16,6 +17,7 @@ from pathlib import Path
 import shlex
 import shutil
 import signal
+import stat
 import subprocess
 import sys
 import time
@@ -38,6 +40,22 @@ CONFIG_INPUT_LIMIT = 1024 * 1024
 
 class SupervisorInputError(ValueError):
     pass
+
+
+@contextmanager
+def _lock_file(path):
+    """Keep a stable regular lock inode; reject special files before flock."""
+    path = guard_write_path(path)
+    flags = os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW | os.O_NONBLOCK
+    fd = os.open(path, flags, 0o666)
+    try:
+        if not stat.S_ISREG(os.fstat(fd).st_mode):
+            raise SupervisorInputError('supervisor lock must be a regular file')
+        yield fd
+    finally:
+        # Closing also releases flock on body/locking errors and normal exit.
+        # Never unlink/replace: other participating processes use this inode.
+        os.close(fd)
 
 
 def load_plan_input(path, root):
@@ -163,7 +181,7 @@ def worker(config):
         raise RuntimeError('managed supervisor must run inside tmux; use start')
     state_dir = assert_ai_writable(config['project_root'], config['state_dir'])
     # A DB has exactly one managed worker; duplicate starts cannot duplicate agents.
-    with guard_write_path(state_dir / 'worker.lock').open('a') as lock:
+    with _lock_file(state_dir / 'worker.lock') as lock:
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
@@ -298,7 +316,7 @@ def start(plan_path, project_root, state_dir, adapter=None, *, allow_legacy=Fals
         raise ValueError('draft only: main AI must configure actions, dependencies and acceptance first')
     state_dir.mkdir(parents=True, exist_ok=True)
     # Serialize start/configuration changes, separate from the lifetime worker lock.
-    with guard_write_path(state_dir / 'launch.lock').open('a') as lock:
+    with _lock_file(state_dir / 'launch.lock') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX)
         config = {'run_id': plan['run_id'], 'project_root': str(root), 'state_dir': str(state_dir),
                   'adapter': str(Path(adapter).resolve()) if adapter else None,
