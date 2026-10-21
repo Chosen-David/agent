@@ -34,6 +34,16 @@ class DispatchContextTests(unittest.TestCase):
         with self.assertRaises(ValueError):prepare_dispatch(self.root,self.request,max_chars=10)
         (self.root/'brief.json').write_text('corrected',encoding='utf-8')
         with self.assertRaises(ValueError):prepare_dispatch(self.root,self.request)
+    def test_write_scope_bounds_defaults_and_exclusions(self):
+        self.assertEqual(prepare_dispatch(self.root,self.request)['write_scope'],[])
+        r=copy.deepcopy(self.request);r['write_scope']=['agent_doc/task/task_details/FIG8.md','agent_doc/results/fig8-run/']
+        plan=prepare_dispatch(self.root,r)
+        self.assertEqual(plan['write_scope'],r['write_scope'])
+        self.assertEqual(json.loads(plan['input_text'])['write_scope'],r['write_scope'])
+        for bad in (['/abs'],['../outside'],['agent_doc/guide/GUIDE.md'],['doc/guide/GUIDE.md'],
+                    ['agent_doc/task/TASK.md'],['TASK.md'],['a\x00b'],[''],['x']*33):
+            b=copy.deepcopy(self.request);b['write_scope']=bad
+            with self.assertRaises(ValueError):prepare_dispatch(self.root,b)
     def test_actual_cli_no_writes_or_inference(self):
         p=self.root/'request.json';p.write_text(json.dumps(self.request),encoding='utf-8')
         before={str(x.relative_to(self.root)):x.read_bytes() for x in self.root.rglob('*') if x.is_file()}

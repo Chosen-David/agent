@@ -8,8 +8,8 @@ def prepare_dispatch(root,request,*,force_inherit=False,max_chars=12000):
     root=Path(root)
     if not root.is_absolute():raise ValueError('absolute PROJECT_ROOT required')
     root=root.resolve(strict=True)
-    fields={'schema_version','project_root','task_id','parent','settings_complete','needs_complete','history_required','guide_verified_human','required_refs','context_refs','instruction'}
-    if not isinstance(request,dict) or set(request)!=fields or request['schema_version']!=SCHEMA:
+    fields={'schema_version','project_root','task_id','parent','settings_complete','needs_complete','history_required','guide_verified_human','required_refs','context_refs','instruction','write_scope'}
+    if not isinstance(request,dict) or not (fields-{'write_scope'})<=set(request)<=fields or request['schema_version']!=SCHEMA:
         raise ValueError('explicit host dispatch contract required')
     if not isinstance(request['project_root'],str) or Path(request['project_root']).resolve(strict=True)!=root:
         raise ValueError('wrong project binding')
@@ -19,6 +19,20 @@ def prepare_dispatch(root,request,*,force_inherit=False,max_chars=12000):
         raise ValueError('invalid host flags/budget')
     for k in ('task_id','instruction'):
         if not isinstance(request[k],str) or not request[k].strip() or len(request[k])>4000:raise ValueError('bounded task/instruction required')
+    write_scope=request.get('write_scope',[])
+    if not isinstance(write_scope,list) or len(write_scope)>32:
+        raise ValueError('bounded write scope list required')
+    for scope in write_scope:
+        if not isinstance(scope,str) or not scope.strip() or '\0' in scope or len(scope)>512:
+            raise ValueError('bounded write scope paths required')
+        rel=Path(scope)
+        if rel.is_absolute() or '..' in rel.parts or not (root/rel).resolve().is_relative_to(root):
+            raise ValueError('write scope must stay inside project')
+        parts=tuple(p.casefold() for p in rel.parts)
+        if any(parts[i] in ('doc','agent_doc') and parts[i+1]=='guide' for i in range(len(parts)-1)):
+            raise ValueError('human-only guide is outside sub-agent write scope')
+        if rel.as_posix().casefold() in ('task.md','agent_doc/task/task.md'):
+            raise ValueError('task index is single-writer main-AI output, outside sub-agent write scope')
     parent=request['parent'];keys={'thread_id','last_turn_id','cwd','model','reasoning_effort','approval_policy','sandbox','config'}
     if not isinstance(parent,dict) or set(parent)!=keys:raise ValueError('native parent settings required')
     for k in keys-{'config'}:
@@ -50,7 +64,8 @@ def prepare_dispatch(root,request,*,force_inherit=False,max_chars=12000):
         if guides[0]['text'].strip() and not request['guide_verified_human']:
             raise ValueError('nonempty guide human provenance not verified')
     packet={'schema_version':'subtask-context/v1','project_root':str(root),'task_id':request['task_id'],
-        'instruction':request['instruction'],'guide_verified_human':request['guide_verified_human'],'documents':docs}
+        'instruction':request['instruction'],'guide_verified_human':request['guide_verified_human'],
+        'write_scope':write_scope,'documents':docs}
     text=json.dumps(packet,ensure_ascii=False,separators=(',',':'))
     if len(text)>max_chars:raise ValueError('complete subtask context exceeds budget; no truncation')
     params={'cwd':str(root),'model':parent['model'],'approvalPolicy':parent['approval_policy'],
@@ -60,6 +75,7 @@ def prepare_dispatch(root,request,*,force_inherit=False,max_chars=12000):
         if not request['settings_complete']:params={}
         params.update(threadId=parent['thread_id'],lastTurnId=parent['last_turn_id'],excludeTurns=True)
     return {'schema_version':'dispatch-plan/v1','method':'thread/start' if fresh else 'thread/fork','params':params,
-        'input_text':text,'scope':'host-declared dependency-complete closed task' if fresh else 'inherit history; unknown or required history retained',
+        'input_text':text,'write_scope':write_scope,
+        'scope':'host-declared dependency-complete closed task' if fresh else 'inherit history; unknown or required history retained',
         'authorization':'unchanged native parent settings; contract is not authorization',
         'source_dependencies':copy.deepcopy(refs)}

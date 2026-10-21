@@ -2,10 +2,16 @@
 
 Task-ID: T1
 Date: 2026-10-07
+Status: planned
+Owner: main-ai
 
-此文件是格式模板，复制到当前项目 `agent_doc/task/task_details/<ID>.md` 时填写真实 ID、日期和目标；不能把示例当成已经发生的工作。Date 表示任务来源/组织日期并与索引分组一致；历史完成日期只能按真实证据另行记录。
+此文件是格式模板，复制到当前项目 `agent_doc/task/task_details/<ID>.md` 时填写真实 ID、日期和目标；不能把示例当成已经发生的工作。Date 表示任务来源/组织日期并与索引分组一致；历史完成日期只能按真实证据另行记录。Status 与 Owner 是便于一眼看清的派生摘要（取值与含义见 `agent_doc/task/README.md`）；真正节点状态与验收以受管 SQLite 与独立校验为准，勾选框/状态字样不构成完成。
 
 ## Plan
+
+### 摘要
+
+- 一句话说明本任务要做什么、当前到哪一步、下一步由谁继续（这是索引里那份简洁登记的展开；日志与证据不堆在这里）。
 
 ### 目标与验收
 
@@ -15,9 +21,13 @@ Date: 2026-10-07
 - 可独立核验的完成条件：
 - 测试/实验数据的 verify_experiment_result 节点、预先冻结的 validation_plan 和 scope：
 
+### 沙箱 / 写入范围
+
+- 唯一作者与允许写入路径（始终排除 `agent_doc/guide/`，且不写总索引 `TASK.md`；子 agent 只写自己这份 detail 与自己对应的 result 目录）：
+- 只读依赖（guide、advice、他人 detail、已有 results）与需要主机授权的动作：
+
 ### 实现方法
 
-- 唯一作者与允许写入路径（始终排除 `agent_doc/guide/`）：
 - 已有结果检索记录、匹配维度、当前独立验证、复用/拒用理由与最小新增检查：
 - 方案、实际接口、输入/输出（新数据位于 agent_doc/results/<run_id>/）及恢复方式：
 - 建议路径/版本、采用或不采用的理由：
