@@ -14,6 +14,14 @@ from agent_runtime import documents as tools
 from agent_runtime.documents_adapter import latex_escape
 
 
+def pinned_document_platform():
+    try:
+        tools.platform_identity()
+        return True
+    except tools.DocumentsUnavailable:
+        return False
+
+
 class DocumentsBoundaryTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -76,6 +84,7 @@ class DocumentsBoundaryTests(unittest.TestCase):
             with self.assertRaisesRegex(tools.DocumentsUnavailable, 'unsupported'):
                 tools.platform_identity()
 
+    @unittest.skipUnless(pinned_document_platform(), 'optional wheel profile requires CPython3.12 Linux x86_64 glibc')
     def test_dependency_closure_and_wheel_tags(self):
         profile, sha = tools.load_profile()
         self.assertEqual(len(profile['packages']), 10)
@@ -101,6 +110,7 @@ class DocumentsBoundaryTests(unittest.TestCase):
         self.assertEqual(latex_escape('\\{}$&#%_~^'),
                          r'\textbackslash{}\{\}\$\&\#\%\_\textasciitilde{}\textasciicircum{}')
 
+    @unittest.skipUnless(pinned_document_platform(), 'optional wheel profile requires CPython3.12 Linux x86_64 glibc')
     def test_offline_failure_preserves_current_bytes(self):
         with tools.managed_root(self.root, create=True):
             tools.atomic_json(self.root / 'current.json', {'old': True})

@@ -19,7 +19,7 @@ Owner: main-ai
 - 人类指南约束、版本及来源核实：
 - 依赖、允许动作与暂停范围：
 - 可独立核验的完成条件：
-- 测试/实验数据的 verify_experiment_result 节点、预先冻结的 validation_plan 和 scope：
+- 实验/测量数据的 verify_experiment_result 节点、预先冻结的 validation_plan 和 scope：
 
 ### 沙箱 / 写入范围
 

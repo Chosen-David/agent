@@ -33,4 +33,4 @@ description: "多机异构 GPU 池实验派单全生命周期：SSH 接入、环
 
 生产或消费实验数据时遵循 [结果独立验证](references/result_validation_workflow.md)：生产后保持 pending，经不同 owner 的 `verify_experiment_result` 核验实际代码/输入/配置与数据有效性后，才可判决、作图或交给下一消费者；失败/缺证据/过期先修复重测，保留原始记录。仅可报告 usable-with-scope，不保证绝对无 bug。
 
-项目新指令先按 [既有结果检索与复用](references/result_reuse_workflow.md) 查询当前项目 `agent_doc/results/`，比较任务、代码/输入/配置/环境、指标单位和当前独立验收后，再规划新增派单；保留检索与取舍记录。复用不跳过独立代码/数据门禁、用户明确复现或新主张验收。
+规划实验/测量或复用实证结论前按 [既有结果检索与复用](references/result_reuse_workflow.md) 查询当前项目 `agent_doc/results/`，比较任务、代码/输入/配置/环境、指标单位和当前独立验收后，再规划新增派单；保留检索与取舍记录。复用不跳过独立代码/数据门禁、用户明确复现或新主张验收。

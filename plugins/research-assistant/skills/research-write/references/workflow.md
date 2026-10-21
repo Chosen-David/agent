@@ -2,7 +2,7 @@
 
 # 论文写作 Agent Workflow
 
-测试/实验数据的必经独立验收见 [结果验证闭环](result_validation_workflow.md)，未通过或过期证据不进入依赖结论。
+实验/测量数据的必经独立验收见 [结果验证闭环](result_validation_workflow.md)，未通过或过期证据不进入依赖结论。
 完整论文/投稿任务必须先执行 [论文交付契约](paper_delivery_contract.md)：写作前绑定角色与目标，分别验收科研论证、证据和全页阅读；审计记录为私密伴随材料，不替代论文。
 
 
@@ -185,9 +185,9 @@ claims:
 ## 6. 论文写作 Agent 完整 Prompt
 
 ```text
-项目新指令先检索agent_doc/results/的已有数据与验证，再规划新实验；比较目标、代码/输入/配置/环境、指标单位、scope和当前独立验证，保存实际查询及取舍。
+规划实验/测量或复用实证结论前检索agent_doc/results/的已有数据与验证，再规划新实验；比较目标、代码/输入/配置/环境、指标单位、scope和当前独立验证，保存实际查询及取舍。
 复用不绕过独立代码/数据门禁；条件变更做最小必要复验，明确复现/必做实验/新主张验收不能跳过。新数据统一入agent_doc/results/<run_id>/，历史文件仅索引时不谎称已搬移。
-测试/实验数据必须经过独立结果验证：生产后保持 pending，先由不同 owner 的 verify_experiment_result 核验实际代码/输入/配置和数据有效性，再供任何图表或结论使用。
+实验/测量数据必须经过独立结果验证：生产后保持 pending，先由不同 owner 的 verify_experiment_result 核验实际代码/输入/配置和数据有效性，再供任何图表或结论使用。
 生产者experiment_result、验证节点result_validation、消费者required_result_refs绑定相同冻结契约；失败或过期保留原始记录，先版本化修复重测，再独立复验。
 只可声称usable-with-scope，不能保证绝对无bug；无实际独立后端就明确阻塞，不伪造pass。具体契约见result_validation_workflow.md。
 

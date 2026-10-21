@@ -5,9 +5,12 @@
 ## 两步开始
 
 ```bash
-git clone --depth 1 https://github.com/Chosen-David/agent.git
+git clone --filter=blob:none --depth 1 --sparse https://github.com/Chosen-David/agent.git
+git -C agent sparse-checkout set agent_runtime scripts config templates plugins prompts workflows knowledge examples apps docs/codex_adoption docs/token_optimization docs/assets/readme
 python3 agent/setup.py --target /absolute/path/to/your-project
 ```
+
+默认使用轻量检出，包含两种安装器的全部依赖与应用，不带本库历史任务/实验结果和大型开发资料。维护本库自身或运行完整测试前，请在 agent 目录运行 `git sparse-checkout disable` 恢复完整工作树。
 
 仓库的 Skills 随 clone 一起下载。脚本读取角色注册表，当前配置 16 个 Skills 和 16 个 `agent-*` 子 Agent，不需要逐个找文件。Python 3.10+，无 pip 依赖。Windows 原生环境默认复制技能，无需管理员或符号链接权限，命令中的 `python3` 可换成 `python`。Linux/WSL 默认链接技能，也可传 `--copy-skills`。已有链接保持链接；已有复制安装继续按复制方式更新。tmux 监督需要 Linux/WSL/server，仅后台任务才用。
 

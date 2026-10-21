@@ -33,7 +33,8 @@
 需要 Python 3.10+、Git 和可用的 Claude Code。安装脚本无 pip 依赖；Windows 默认复制技能，无需管理员或符号链接权限。Windows 命令中的 `python3` 可换成 `python`。
 
 ```bash
-git clone --depth 1 https://github.com/Chosen-David/agent.git
+git clone --filter=blob:none --depth 1 --sparse https://github.com/Chosen-David/agent.git
+git -C agent sparse-checkout set agent_runtime scripts config templates plugins prompts workflows knowledge examples apps docs/codex_adoption docs/token_optimization docs/assets/readme
 python3 agent/setup.py --target /absolute/path/to/ProjectA
 ```
 
@@ -50,6 +51,8 @@ python3 /absolute/path/to/agent/setup.py --target /absolute/path/to/ProjectA --c
 > 找出这个项目的启动入口，解释最短运行步骤；遇到一个确实阻碍运行的问题就修复并验证。只加载相关技能。
 
 主 AI 直接处理这类任务。需要实现与独立复核、实验与作图等多种工作配合时，再启用对应角色；有明确后台运行需求时才配置监督器。安装不要求先写一套 DAG 或接入 tmux。尚未通过真实模型对照证明本库比单 AI 更好；请以自己任务上的交付质量和配置成本判断。
+
+上述轻量检出包含安装器、全部技能、运行时和应用；默认不检出本库历史任务/结果和大型开发资料。维护本库或运行完整开发测试前，在 agent 目录执行 `git sparse-checkout disable`。部分克隆仅在 Git 服务端支持过滤时减少传输；这里不承诺具体下载或耗时降幅。
 
 开发者运行中的缓存、原始日志和一次性审计产物放在忽略的 `.agent-runs/`，不随日常修复提交。`agent_doc/results/` 只显式发布需要共享的结果；浅克隆避免下载历史执行产物的旧版本。
 

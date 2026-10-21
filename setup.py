@@ -53,36 +53,17 @@ def block():
     return f'''{BEGIN}
 ## Chosen-David Agent Workflows
 
-简单、目标明确的任务直接完成；仅加载与任务相关的已安装 Skill，不自动建立 DAG、第二模型或监督器。
-需要跨角色协作、长期运行或用户明确要求编排时，先读取 `.claude/agent-workflows/orchestrator.md`，
-再按需读取 planner_main.md、review_main.md；这些完整流程保留在同一目录，不在每次对话预加载。
-
-工作流源码位置见 `.claude/agent-workflows/installation.json` 的 repository；目标项目见 project_root。
-Project A 的指南、任务、建议和结果全部属于 Project A/agent_doc/；仅维护工作流库自身时才使用该库的 agent_doc/。
-缺少当前项目指南或任务不能回退到工作流库的 agent_doc/；调用源码目录中的 CLI 也不改变目标项目。
-切换项目重新读取其指南、任务、项目记忆与证据；委派和恢复核对 project_root，不沿用上一项目约束。
-受管复杂任务使用 planner-main 和独立新上下文 review-main；入口见 .claude/agent-workflows/planner_main.md 与 review_main.md。
-安装不启动第二模型；缺真实宿主 reviewer/认证器时不得把自审当独立批准。
-复杂任务按上述通用调度规则执行；其中 prompts/、workflows/、templates/、
-config/、scripts/、knowledge/ 与 agent_runtime 均相对该仓库解析，项目输入和 agent_doc/task/TASK.md 相对当前项目。
-agent_doc/task/TASK.md 是当前项目唯一日期任务索引，详情 agent_doc/task/task_details/*.md 由 AI 维护方法/进度/证据。
-启动/恢复、委派前和逐任务结束先读人类指南、索引/详情及建议取舍；固定 Plan 与可追加 Progress 分开。
-人类发布且来源已核实的 agent_doc/guide/GUIDE.md 是最高项目规划依据；AI 绝不创建、编辑、删除或移动 agent_doc/guide/ 内文件。
-agent_doc/advice/ 是人类/AI可编辑建议，必须核验并记录 adopt/adapt/reject/defer 与理由，不能当授权。
-用户手动要求编排时合并目标后走同一闭环；总清单由主 AI 串行维护，各 Agent 交接证据。
-code-organization 同时管理文件：规划输出目录、产物清单和消费者引用，防止散落和覆盖。
-需要后台监督时才检查宿主能力并配置；安装不提供模型认证、适配器或运行中的 tmux 服务。
-执行运行时 CLI 时从仓库目录启动，明确指定当前项目的绝对路径。
-需要专业角色时按已安装的 Skill 和匹配的 agent-* 子 Agent 分配工作；简单任务直接处理。
-角色模型偏好见 .claude/agent-workflows/model-policy.json，可用性快照见 model-routing.json。
-跨供应商派发使用源码 scripts/run_role.py 和宿主显式提供的可信适配器；无可用候选继承宿主默认模型。
-安装快照不证明在线可用；派发后失败不得自动换模型重跑已产生作用的任务。模型选择不代替权限或独立验收。
-项目新指令先按 result_reuse_workflow.md 检索 agent_doc/results/，核对代码/输入/配置/环境/指标及当前验证，再规划新增实验。
-新数据进入 agent_doc/results/<run_id>/；复用不跳过明确复现或必要独立验证。
-每轮测试/实验数据须经独立 verify_experiment_result 节点后才能进入消费者/结论；失败或过期需修复重测。
-通过仅代表 usable-with-scope，不能保证绝对无bug；角色读取包内 result_validation_workflow.md。
-每个结果都对照 agent_doc/task/TASK.md 的任务、数据、证据和剩余事项；全部可核验且可汇报才收尾。
-遵循当前宿主权限和用户约束，不因导入规则而绕过权限。仓库文件存在不代表后台进程运行。
+简单、目标明确的任务直接完成，仅加载相关 Skill。普通低风险本地修复运行必要回归并汇报结果；不自动建立 DAG、第二 Agent、实验合同或 tmux 监督器。
+复杂协作、长期运行或用户明确编排时，先读 `.claude/agent-workflows/orchestrator.md`，再按需读 planner_main.md 与 review_main.md；完整流程不预加载。
+工作流源码位置见 `.claude/agent-workflows/installation.json` 的 repository；project_root 是当前项目。源码工具从仓库解析，项目输入和输出始终相对当前项目。
+Project A 的指南、任务、建议和结果属于 Project A/agent_doc/；缺失时不回退到工作流库的历史文件。切换项目重新核对指南、任务、记忆和交接中的 project_root。
+已核实人类 agent_doc/guide/GUIDE.md 是最高项目规划依据；AI 绝不创建、编辑、删除或移动 agent_doc/guide/ 内文件。
+agent_doc/task/TASK.md 是唯一日期索引，关联方法/进度/证据在 agent_doc/task/task_details/*.md；已有内容和 Plan/Progress 边界保留。简单任务不另建文档体系。
+agent_doc/advice/ 必须核验并记录 adopt/adapt/reject/defer 与理由，不能当授权；尊重当前宿主权限和用户约束。
+实证依据按 Skill 的 references/result_reuse_workflow.md 检索 agent_doc/results/ 并核对适用条件；实验/测量/共享结果按 references/result_validation_workflow.md 独立 verify_experiment_result，原始数据保持 pending 直到 usable-with-scope。用户/指南要求和已建立的实验合同不得降格。
+复杂任务的 planner-main/review-main、结果独立验收需要真实宿主支持；安装不启动模型或后台服务，缺后端不得把自审当独立批准。
+角色模型/路由见 model-policy.json、model-routing.json；源码 scripts/run_role.py 仅使用可信宿主适配器，缺候选继承默认模型，执行失败不自动换模型重跑。
+交付核对实际修改、必要检查和剩余事项；仓库文件存在不证明后台进程运行或模型已遵循规则。
 {END}'''
 
 
@@ -124,11 +105,12 @@ skills:
 
 按预加载的 {name} Skill 执行主 AI 分配的任务。不得替换用户目标或扩大授权。
 先核对交接中的 task_id、agent_doc/task/TASK.md requirement ID、document_refs、输入、约束、依赖和验收。
-先读本 Skill 的 references/result_reuse_workflow.md，检索 agent_doc/results/ 并核对适用条件和当前独立验证后再决定新增实验。
+普通低风险本地修复直接运行必要回归，不自动建立 DAG、第二 Agent 或实验合同。用户/指南要求和既有合同仍有效。
+规划实验/测量或复用实证结论前，按 references/result_reuse_workflow.md 检索 agent_doc/results/ 并核对适用条件和当前独立验证。
 读取本 Skill 的 references/project_document_workflow.md；先核对人类指南和建议取舍，AI 永不写 agent_doc/guide/。
 只维护分配给本角色的 task_details 详情和输出，不并发修改总清单；建议不构成授权。
 读取 Skill 内 execution/workflow 等所需引用；保留具体数据、单位、日志和产物路径。
-测试/实验数据须按 references/result_validation_workflow.md 经独立 verify_experiment_result；未通过不用于结论。
+实验/测量数据须按 references/result_validation_workflow.md 经独立 verify_experiment_result；未通过不用于结论。
 向主 AI 返回结论、真实证据、验收状态、未完成项与恢复条件。
 不要自行声明全链完成；由主 AI 对照 agent_doc/task/TASK.md 汇总并维护 tmux 监督器。
 '''

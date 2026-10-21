@@ -12,6 +12,6 @@
 
 教学图使用 [网页图解教学](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-figures/references/visual_explanation_workflow.md) 的最小双向交接：同一小例子从直觉到精确，保持 step/panel 对应；返回实际预览、主源、caption/alt text 以及语义和视觉检查，不把渲染、发送与用户已看见混为同一状态。
 
-测试/实验数据依赖按 [结果验证闭环](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-figures/references/result_validation_workflow.md)：生产后 pending，独立 verify_experiment_result 完成代码和数据核验后才可 usable-with-scope；消费者传 required_result_refs 并依赖验证节点。失败/缺证据/版本变化先阻塞、修复、重测和复验，保留旧原始数据，不保证绝对无 bug。
+普通低风险局部修复直接运行并汇报回归，适用边界见 [结果验证分类](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-figures/references/result_validation_workflow.md)。实验/测量数据依赖按 [结果验证闭环](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-figures/references/result_validation_workflow.md)：生产后 pending，独立 verify_experiment_result 完成代码和数据核验后才可 usable-with-scope；消费者传 required_result_refs 并依赖验证节点。失败/缺证据/版本变化先阻塞、修复、重测和复验，保留旧原始数据，不保证绝对无 bug。
 
-项目新指令先按 [既有结果检索与复用](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-figures/references/result_reuse_workflow.md) 查 `agent_doc/results/` 的数据与当前验证，比较任务/代码/输入/配置/环境/指标单位后再安排新实验；复用保留独立代码/数据门禁，明确复现与新主张必做验收不能跳过。
+规划实验/测量或复用实证结论前按 [既有结果检索与复用](https://github.com/Chosen-David/agent/blob/main/plugins/research-assistant/skills/research-figures/references/result_reuse_workflow.md) 查 `agent_doc/results/` 的数据与当前验证，比较任务/代码/输入/配置/环境/指标单位后再安排新实验；复用保留独立代码/数据门禁，明确复现与新主张必做验收不能跳过。
