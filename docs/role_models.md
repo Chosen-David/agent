@@ -2,6 +2,24 @@
 
 `setup.py` 为 Claude Code 安装模型偏好及路由快照；`scripts/run_role.py` 在独立调用前选择模型。无可用候选时使用宿主默认模型。无需配置新厂商即可继续原来的使用方式。
 
+角色文件、任务 stdin 和子进程请求统一使用 UTF-8；任务原始换行保留。
+默认拒绝超过 128 KiB 的完整本地请求（包含角色指令、任务和路由），不裁剪正文。
+大输入优先使用项目内文件引用；确需全文时可显式设置 `--max-request-bytes`，最高 16 MiB，
+单次任务 stdin 仍最多 1 MiB。空、非法 UTF-8 或本地超限输入不会启动模型；在能够本地
+判定时也不会查询 adapter inventory。最终加入路由后再次检查，失败不重试。
+可用 `--max-input-tokens N --tokenizer ENCODING` 对同一 canonical JSON 做精确可选计数，
+复用已有 tiktoken 支持；两个参数必须一起使用。该边界不包含宿主自动加载的规则、
+工具输出或后续轮次，不能当成 provider 的整任务 token/费用上限。
+
+跨平台 Python 包装器可以显式传参数，无需依赖 Windows 不支持的 shebang：
+
+```bash
+python scripts/run_role.py --project /absolute/project --role research-write --claude /absolute/python --claude-arg /absolute/native-wrapper.py
+python scripts/run_role.py --project /absolute/project --role research-write --adapter /absolute/python --adapter-arg /absolute/adapter.py
+```
+
+这些参数属于用户选定的可信命令，不从任务文本或模型策略加载，也不经过 shell。
+
 ## 初始分工
 
 2026-10-21 核对官方型号后制定的工程初值，未做本项目跨模型质量/成本对比。配置唯一来源是 [role_model_policy.json](../config/role_model_policy.json)，可调整候选顺序；不自动追逐新型号。
