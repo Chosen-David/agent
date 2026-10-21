@@ -1,15 +1,15 @@
 # Claude Code 快速接入
 
-仓库是主 AI 的工作流与技能层。下面的安装会接入主 AI 调度、全部角色 Skills、Claude 子 Agent，以及 agent_doc/task/TASK.md/tmux 监督规范。适用于服务器上的 **Claude Code**，不是在 Claude 网页中粘贴链接即部署后台。
+仓库是主 AI 的工作流与技能层。安装接入按需调度入口、全部角色 Skills 和 Claude 子 Agent。简单任务直接处理，复杂任务才加载完整编排。适用于 **Claude Code**；后台监督是可选配置。
 
 ## 两步开始
 
 ```bash
-git clone https://github.com/Chosen-David/agent.git
+git clone --depth 1 https://github.com/Chosen-David/agent.git
 python3 agent/setup.py --target /absolute/path/to/your-project
 ```
 
-仓库的 Skills 随 clone 一起下载。脚本读取角色注册表，当前配置 16 个 Skills 和 16 个 `agent-*` 子 Agent，不需要逐个找文件。Python 3.10+，无 pip 依赖。Linux/WSL 推荐；Windows 原生环境需要目录符号链接权限，tmux 监督运行在 Linux/WSL/server。
+仓库的 Skills 随 clone 一起下载。脚本读取角色注册表，当前配置 16 个 Skills 和 16 个 `agent-*` 子 Agent，不需要逐个找文件。Python 3.10+，无 pip 依赖。Windows 原生环境默认复制技能，无需管理员或符号链接权限，命令中的 `python3` 可换成 `python`。Linux/WSL 默认链接技能，也可传 `--copy-skills`。已有链接保持链接；已有复制安装继续按复制方式更新。tmux 监督需要 Linux/WSL/server，仅后台任务才用。
 
 如果直接在本仓库工作：
 
@@ -27,10 +27,10 @@ claude
 | --- | --- |
 | 项目 `agent_doc/task/TASK.md` | 新项目创建空白日期索引，不编造任务；已有内容不覆盖，卸载也保留 |
 | `agent_doc/task/task_details/`、`agent_doc/advice/`、`agent_doc/results/` | 创建目录，分别存任务详情、需评估建议、新数据/元数据/验证共享结果 |
-| `agent_doc/guide/` | 仅 mkdir 空目录；人类自行发布 guide.md，安装器不创建任何文件 |
-| 项目 `CLAUDE.md` 中的受管块 | 自动导入主 AI 通用调度；保留已有内容 |
-| `.claude/agent-workflows/orchestrator.md` | 仓库主调度的当前完整副本，按仓库逻辑选择模式、Skill 和 Agent |
-| `.claude/skills/<角色>/` | 指向已下载仓库 Skill 的目录链接，包含完整 references/scripts/assets |
+| `agent_doc/guide/` | 仅 mkdir 空目录；人类自行发布 GUIDE.md，安装器不创建任何文件 |
+| 项目 `CLAUDE.md` 中的受管块 | 简短按需入口，保留已有内容；不自动导入整篇编排说明 |
+| `.claude/agent-workflows/orchestrator.md` | 完整编排副本，复杂任务按需读取 |
+| `.claude/skills/<角色>/` | Windows 为内容校验的副本；Linux/WSL 默认链接，包含完整 references/scripts/assets |
 | `.claude/agents/agent-<角色>.md` | Claude 可调度子 Agent，预加载对应 Skill，返回任务 ID、数据和证据 |
 | `.claude/agent-workflows/installation.json` | 记录仓库位置、版本、受管文件哈希和安装清单 |
 
@@ -58,19 +58,17 @@ python3 agent/setup.py --target /absolute/path/to/your-project
 
 人类自行在 `agent_doc/guide/guide.md` 发布项目目标、硬约束、架构约定和优先级。它在当前用户决定和宿主安全/权限边界内具有最高项目规划优先级；AI 永不修改该目录任何文件。指南缺失可按现有明确授权继续，不能由 AI 代写。其他 AI 反馈或改进方案放 `agent_doc/advice/`，必须核验证据并记录 adopt/adapt/reject/defer 和理由。
 
-## 接入后主 AI 怎么做
+## 第一个任务
 
-可直接对 Claude 说：
+在目标项目启动 Claude，检查 `/memory` 和 `/agents` 后，直接描述想完成的工作。例如：
 
-> 按当前仓库配置接管这个项目。自动读取 agent_doc/task/TASK.md 编排任务链，配置真实工作 Agent 和主 AI 恢复适配器，在专用 tmux 会话里启动监督器。每完成一项核对对应任务、数据和剩余工作，直到全部验收完成后汇报。
+> 找出项目的启动入口，给出最短运行步骤；若发现一个阻碍运行的问题，修复并做必要验证。只加载相关技能。
 
-也可以手动触发：
+简单任务由主 AI 直接完成，已有项目规则继续适用。无需先配置 DAG、模型适配器或 tmux。
+涉及多个专业产物、独立审核或长期运行时，主 AI 再按需读取完整编排说明。
+复杂任务的指南保护、唯一任务索引、结果复用和独立验收要求仍按对应工作流执行。
 
-> 把我刚才列出的目标合并进 agent_doc/task/TASK.md，编排并执行任务链。
-
-主 AI 维护当前项目唯一的 `agent_doc/task/TASK.md` 日期索引和 `agent_doc/task/task_details/*.md` 详情，并在启动/恢复、委派前和逐任务结束时读取；code-organization 同时担任文件管理 Agent，协调各 Agent 的输出目录、产物清单和消费者引用。主 AI 先检索 agent_doc/results/ 的既有数据并核对当前独立验证，再规范化 agent_doc/task/TASK.md、补任务依赖/验收、配置 Agent、适配器和计时策略，验证后台启动的真实 ID/心跳，处理恢复，并向你汇报。任务文件可参考 [agent_doc/task/TASK.md 模板](templates/TASK.md)，不可覆盖已有任务。详细命令见 [监督工作流](workflows/task_supervision_workflow.md#tmux-与任务文档闭环)。
-
-**可执行性边界**：本地 Skills/子 Agent 安装成功，不等于已连接可离线调用的模型或已启动监督器。tmux 必须在服务器可用，主 AI 必须配置真实授权的 host adapter；默认运行时只验证文件，不会自动调用 Claude。主 AI 的交互进程和监督器都在 tmux 中，仍需为恢复调用保存会话/job ID 与 submit/poll 接口。首次使用宿主信任提示按 Claude 本身流程处理，不跳过。
+**可选后台任务**：只有确需无人值守时才配置监督器。安装器不提供模型登录、可信 host adapter 或运行中的 tmux 服务；这些能力必须在实际宿主核验。文件检查成功不等于模型已加载技能或后台任务已启动。
 
 ## 可选文档依赖：一次安装、反复复用
 
@@ -102,7 +100,7 @@ python3 setup.py --target /absolute/path/to/your-project
 python3 setup.py --target /absolute/path/to/your-project --uninstall
 ```
 
-安装/卸载在写入前拒绝指向人类 `agent_doc/guide/` 的目标或别名；角色链接的父目录也不允许重定向到指南。重复安装不会重复添加规则。同名用户文件/手改受管 Agent 会精确报冲突并保留；先比较内容再由主 AI 在授权范围内处理，不强制覆盖。不要删除/移动仓库目录，否则 Skill 链接会失效；检查会发现此问题。更新前先让运行中的任务到达可恢复检查点，避免热替换其 Skill/验收规则。
+安装/卸载在写入前拒绝指向人类 `agent_doc/guide/` 的目标或别名；角色链接的父目录也不允许重定向到指南。重复安装不会重复添加规则。同名用户文件/手改受管 Agent 会精确报冲突并保留；先比较内容再由主 AI 在授权范围内处理，不强制覆盖。复制安装按清单逐文件校验，技能中的用户修改或新增文件/目录会阻止覆盖，卸载保留这些改动。不要删除/移动仓库目录：链接安装会失效，复制安装的完整编排工具也仍从该仓库调用。更新前先让运行中的任务到达可恢复检查点，避免热替换其 Skill/验收规则。
 
 `--check` 的 `status=configured` 只表示文件接线正常。`capabilities` 分别报告 Python、Claude CLI、tmux 路径以及未检查的模型认证；`supervisor=not_started` 表示 setup 本身没有启动后台，不推断机器上没有其他监督器。tmux 无法跨服务器断电/重启保活，重启后由主 AI 使用同一 state-dir 恢复。
 

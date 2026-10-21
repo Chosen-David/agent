@@ -44,7 +44,10 @@ class SetupTests(unittest.TestCase):
         self.assertIn('TASK.md', (self.target / 'CLAUDE.md').read_text())
         for role, source, _ in setup.catalog():
             skill = self.target / '.claude/skills' / role['id']
-            self.assertEqual(skill.resolve(), source)
+            if result['skill_storage'] == 'copy':
+                self.assertFalse(skill.is_symlink())
+            else:
+                self.assertEqual(skill.resolve(), source)
             self.assertEqual((skill / 'SKILL.md').read_bytes(), (source / 'SKILL.md').read_bytes())
             agent = self.target / '.claude/agents' / ('agent-' + role['id'] + '.md')
             self.assertIn('  - ' + role['id'], agent.read_text())
@@ -102,11 +105,16 @@ class SetupTests(unittest.TestCase):
         marketplace = json.loads((ROOT / '.claude-plugin/marketplace.json').read_text())
         advertised = {path for plugin in marketplace['plugins'] for path in plugin['skills']}
         for role, _, _ in setup.catalog():
-            self.assertIn('./' + str(Path(role['skill']).parent), advertised)
+            self.assertIn('./' + Path(role['skill']).parent.as_posix(), advertised)
 
     def test_symlinked_config_directory_cannot_redirect_writes(self):
         with tempfile.TemporaryDirectory() as outside:
-            (self.target / '.claude').symlink_to(outside, target_is_directory=True)
+            try:
+                (self.target / '.claude').symlink_to(outside, target_is_directory=True)
+            except OSError as exc:
+                if getattr(exc, 'winerror', None) == 1314:
+                    self.skipTest('host lacks symlink privileges')
+                raise
             with self.assertRaisesRegex(ValueError, 'outside target'): setup.install(self.target)
             self.assertEqual(list(Path(outside).iterdir()), [])
 

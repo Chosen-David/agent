@@ -32,14 +32,20 @@ class IngestScopeTests(unittest.TestCase):
         attachment = self.root / 'entries' / 'attachment.bin'
         attachment.write_bytes(b'keep entries subtree complete')
         copied = []
-        original = shutil.copyfile
-        def trace(src, dst, **kwargs):
+        attachments = []
+        original = shutil.copytree
+        def trace(src, dst, *args, **kwargs):
             copied.append(Path(src))
-            return original(src, dst, **kwargs)
-        with patch.object(shutil, 'copyfile', trace):
+            result = original(src, dst, *args, **kwargs)
+            candidate = Path(dst) / 'attachment.bin'
+            if candidate.is_file():
+                attachments.append(candidate.read_bytes())
+            return result
+        with patch.object(shutil, 'copytree', trace):
             receipt = ingest(self.root, self.meta, self.body)
-        self.assertNotIn(extra, copied)
-        self.assertIn(attachment, copied)
+        self.assertNotIn(self.root, copied)
+        self.assertIn(self.root / 'entries', copied)
+        self.assertIn(attachment.read_bytes(), attachments)
         self.assertEqual(extra.read_bytes(), b'cache' * 1000)
         self.assertEqual(receipt['status'], 'candidate')
         self.assertEqual(KnowledgeStore(self.root).ref('math.scope-import'), receipt['knowledge_ref'])

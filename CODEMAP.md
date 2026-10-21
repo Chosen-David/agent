@@ -1,4 +1,4 @@
-REFLECT50-20261021: project_docs / project_memory / result_store / result_validation -> bounded navigation, streaming IO, fresh evidence checks; markdown_context + storage_inventory add opt-in literal retrieval and metadata-only observation. 50 source iterations, 54 regression tests; scripts/measure_reflect50.py and agent_doc/results/reflect50-20261021 retain scoped raw evidence and repairs.
+User entry: setup.py -> UTF-8 portable Claude install / check / owned-copy update / uninstall; scripts/setup_codex.py -> isolated Codex skills. Simple tasks load relevant skills; complex tasks read prompts/orchestrator.md on demand. tests/test_setup_portable.py covers a fresh Chinese-path lifecycle without models or real profiles.
 
 TOK10-20261021: Mailbox.prepare_context → basis_context → choose_basis_payload 显式选择满足双预算的完整最小包；9个CLI消费入口已逐轮接入无损compact（10/10）；docs/token_optimization/cli_compact.md列出显式用法。默认不变。tests/test_token10.py、scripts/measure_token10.py与各轮results保存局部payload/实际stdout证据，当前状态见task_details/TOK10-20261021.md；root写实现/索引，独立角色验收。
 

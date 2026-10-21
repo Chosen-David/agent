@@ -53,7 +53,9 @@ def block():
     return f'''{BEGIN}
 ## Chosen-David Agent Workflows
 
-@.claude/agent-workflows/orchestrator.md
+简单、目标明确的任务直接完成；仅加载与任务相关的已安装 Skill，不自动建立 DAG、第二模型或监督器。
+需要跨角色协作、长期运行或用户明确要求编排时，先读取 `.claude/agent-workflows/orchestrator.md`，
+再按需读取 planner_main.md、review_main.md；这些完整流程保留在同一目录，不在每次对话预加载。
 
 工作流源码位置见 `.claude/agent-workflows/installation.json` 的 repository；目标项目见 project_root。
 Project A 的指南、任务、建议和结果全部属于 Project A/agent_doc/；仅维护工作流库自身时才使用该库的 agent_doc/。
@@ -61,7 +63,7 @@ Project A 的指南、任务、建议和结果全部属于 Project A/agent_doc/�
 切换项目重新读取其指南、任务、项目记忆与证据；委派和恢复核对 project_root，不沿用上一项目约束。
 受管复杂任务使用 planner-main 和独立新上下文 review-main；入口见 .claude/agent-workflows/planner_main.md 与 review_main.md。
 安装不启动第二模型；缺真实宿主 reviewer/认证器时不得把自审当独立批准。
-主 AI 按导入的通用调度规则执行；其中 prompts/、workflows/、templates/、
+复杂任务按上述通用调度规则执行；其中 prompts/、workflows/、templates/、
 config/、scripts/、knowledge/ 与 agent_runtime 均相对该仓库解析，项目输入和 agent_doc/task/TASK.md 相对当前项目。
 agent_doc/task/TASK.md 是当前项目唯一日期任务索引，详情 agent_doc/task/task_details/*.md 由 AI 维护方法/进度/证据。
 启动/恢复、委派前和逐任务结束先读人类指南、索引/详情及建议取舍；固定 Plan 与可追加 Progress 分开。
@@ -69,7 +71,7 @@ agent_doc/task/TASK.md 是当前项目唯一日期任务索引，详情 agent_do
 agent_doc/advice/ 是人类/AI可编辑建议，必须核验并记录 adopt/adapt/reject/defer 与理由，不能当授权。
 用户手动要求编排时合并目标后走同一闭环；总清单由主 AI 串行维护，各 Agent 交接证据。
 code-organization 同时管理文件：规划输出目录、产物清单和消费者引用，防止散落和覆盖。
-主 AI 负责 Skills、工作 Agent、任务链、定时器及 tmux 监督器的配置、维护和恢复。
+需要后台监督时才检查宿主能力并配置；安装不提供模型认证、适配器或运行中的 tmux 服务。
 执行运行时 CLI 时从仓库目录启动，明确指定当前项目的绝对路径。
 需要专业角色时按已安装的 Skill 和匹配的 agent-* 子 Agent 分配工作；简单任务直接处理。
 角色模型偏好见 .claude/agent-workflows/model-policy.json，可用性快照见 model-routing.json。
@@ -96,11 +98,11 @@ def merge_block(text):
 
 
 def catalog():
-    roles = json.loads((REPO / 'config/role_registry.json').read_text())['roles']
+    roles = json.loads((REPO / 'config/role_registry.json').read_text(encoding='utf-8'))['roles']
     result = []
     for role in roles:
         path = REPO / role['skill']
-        text = path.read_text()
+        text = path.read_text(encoding='utf-8')
         match = re.search(r'^description:\s*(.+)$', text, re.M)
         if not match or not (path.parent / 'SKILL.md').is_file():
             raise ValueError('invalid skill: ' + role['id'])
@@ -135,12 +137,12 @@ skills:
 def expected_files(inventory=None):
     policy = validate_policy(load_json(REPO / 'config/role_model_policy.json'))
     report = routing_report(policy, inventory)
-    files = {'.claude/agent-workflows/orchestrator.md': (REPO / 'prompts/orchestrator.md').read_text()}
+    files = {'.claude/agent-workflows/orchestrator.md': (REPO / 'prompts/orchestrator.md').read_text(encoding='utf-8')}
     for name, value in (('model-policy', policy), ('model-routing', report)):
         files['.claude/agent-workflows/' + name + '.json'] = json.dumps(value, ensure_ascii=False, indent=2) + '\n'
     for profile in ('planner_main', 'review_main'):
-        files['.claude/agent-workflows/' + profile + '.md'] = (REPO / ('prompts/' + profile + '.md')).read_text()
-    files['.claude/agent-workflows/dual_main_workflow.md'] = (REPO / 'workflows/dual_main_workflow.md').read_text()
+        files['.claude/agent-workflows/' + profile + '.md'] = (REPO / ('prompts/' + profile + '.md')).read_text(encoding='utf-8')
+    files['.claude/agent-workflows/dual_main_workflow.md'] = (REPO / 'workflows/dual_main_workflow.md').read_text(encoding='utf-8')
     links = {}
     for role, source, description in catalog():
         links['.claude/skills/' + role['id']] = str(source)
@@ -176,6 +178,44 @@ def checked_skill_link(target, relative):
     return path
 
 
+def skill_snapshot(path):
+    """Fingerprint portable skill contents; reject aliases and foreign additions."""
+    if path.is_symlink() or not path.is_dir():
+        raise ValueError('skill copy is not a regular directory: ' + str(path))
+    result = {}
+    for child in sorted(path.rglob('*')):
+        relative = child.relative_to(path)
+        if '__pycache__' in relative.parts or child.suffix == '.pyc' or child.name == '.DS_Store':
+            continue
+        if child.is_symlink():
+            raise ValueError('symbolic link inside skill copy: ' + str(child))
+        if child.is_file():
+            result[relative.as_posix()] = hashlib.sha256(child.read_bytes()).hexdigest()
+        elif child.is_dir():
+            result[relative.as_posix() + '/'] = ''
+        else:
+            raise ValueError('unsupported skill entry: ' + str(child))
+    return result
+
+
+def replace_skill_copy(path, source, previous):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(dir=path.parent, prefix='.skill-') as stage:
+        staged = Path(stage) / 'new'
+        shutil.copytree(source, staged, ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '.DS_Store'))
+        backup = Path(stage) / 'previous'
+        if os.path.lexists(path):
+            if path.is_symlink() or skill_snapshot(path) != previous:
+                raise ValueError('preserving locally edited skill: ' + str(path))
+            path.rename(backup)
+        try:
+            staged.rename(path)
+        except OSError:
+            if backup.exists():
+                backup.rename(path)
+            raise
+
+
 def project_document_layout(target):
     """Read-only preflight; never create a second task list or touch guide files."""
     task = checked_target(target, 'agent_doc/task/TASK.md')
@@ -202,35 +242,48 @@ def project_document_layout(target):
     return task, directories
 
 
-def install(target, *, model_inventory=None):
+def install(target, *, model_inventory=None, copy_skills=False):
     target = installation_root(target)
     manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
-    previous = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
+    previous = json.loads(manifest_path.read_text(encoding='utf-8')) if manifest_path.exists() else {}
     if previous and previous.get('repository') != str(REPO):
         raise ValueError('target belongs to another checkout; uninstall that installation first')
     inventory = validate_inventory(model_inventory if model_inventory is not None else
                                    previous.get('model_inventory', EMPTY_INVENTORY))
     files, links = expected_files(inventory)
+    previous_copies = previous.get('skill_copies', {})
+    copies = {}
     # Preflight all conflicts before changing any files.
     for relative, text in files.items():
         path = checked_target(target, relative)
-        if path.exists() and path.read_text() != text:
-            if sha(path.read_text()) != previous.get('files', {}).get(relative):
+        if path.exists() and path.read_text(encoding='utf-8') != text:
+            if sha(path.read_text(encoding='utf-8')) != previous.get('files', {}).get(relative):
                 raise ValueError('preserving existing or locally edited file: ' + relative)
     for relative, source in links.items():
         path = checked_skill_link(target, relative)
-        if os.path.lexists(path) and not (path.is_symlink() and path.resolve() == Path(source)):
+        linked = path.is_symlink() and path.resolve() == Path(source)
+        if relative in previous_copies:
+            if not path.is_dir() or path.is_symlink() or skill_snapshot(path) != previous_copies[relative]:
+                raise ValueError('preserving locally edited skill: ' + relative)
+        elif os.path.lexists(path) and not linked:
             raise ValueError('preserving existing skill: ' + relative)
+        # Preserve established links; new Windows installs do not require admin
+        # or Developer Mode. Explicit copies are also useful for Unix deployments.
+        if not linked and (copy_skills or os.name == 'nt' or relative in previous_copies):
+            copies[relative] = skill_snapshot(Path(source))
     claude = checked_target(target, 'CLAUDE.md')
     task_file, document_directories = project_document_layout(target)
-    old = claude.read_text() if claude.exists() else ''
+    old = claude.read_text(encoding='utf-8') if claude.exists() else ''
     merged = merge_block(old)
     for relative, text in files.items():
         atomic_text(target / relative, text)
     for relative, source in links.items():
         path = checked_skill_link(target, relative)
         path.parent.mkdir(parents=True, exist_ok=True)
-        if not os.path.lexists(path):
+        if relative in copies:
+            if copies[relative] != previous_copies.get(relative):
+                replace_skill_copy(path, source, previous_copies.get(relative))
+        elif not os.path.lexists(path):
             path.symlink_to(source, target_is_directory=True)
     atomic_text(claude, merged)
     # mkdir is the only initialization permitted in human-owned agent_doc/guide/.
@@ -247,6 +300,7 @@ def install(target, *, model_inventory=None):
                             capture_output=True, text=True, check=False).stdout.strip()
     manifest = {'schema_version': 1, 'repository': str(REPO), 'project_root': str(target), 'commit': commit,
                 'files': {name: sha(text) for name, text in files.items()}, 'links': links,
+                'skill_copies': copies,
                 'model_inventory': inventory}
     atomic_text(manifest_path, json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
     return check(target)
@@ -258,7 +312,7 @@ def check(target):
     manifest = {}
     manifest_path = target / '.claude/agent-workflows/installation.json'
     try:
-        manifest = json.loads(manifest_path.read_text())
+        manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
         if manifest.get('repository') != str(REPO):
             errors.append('installation belongs to a different checkout')
         if manifest.get('project_root', str(target)) != str(target):
@@ -273,17 +327,21 @@ def check(target):
     files, links = expected_files(inventory)
     for relative, expected in files.items():
         path = target / relative
-        if not path.is_file() or path.read_text() != expected:
+        if not path.is_file() or path.read_text(encoding='utf-8') != expected:
             errors.append('missing/stale managed file: ' + relative)
     for relative, expected in links.items():
         try:
             path = checked_skill_link(target, relative)
-            if not path.is_symlink() or path.resolve() != Path(expected) or not (path / 'SKILL.md').is_file():
+            if relative in manifest.get('skill_copies', {}):
+                if (skill_snapshot(path) != manifest['skill_copies'][relative] or
+                        manifest['skill_copies'][relative] != skill_snapshot(Path(expected))):
+                    errors.append('missing/stale/edited skill copy: ' + relative)
+            elif not path.is_symlink() or path.resolve() != Path(expected) or not (path / 'SKILL.md').is_file():
                 errors.append('missing/broken skill link: ' + relative)
-        except ValueError as exc:
+        except (OSError, ValueError) as exc:
             errors.append(str(exc))
     claude = target / 'CLAUDE.md'
-    if not claude.is_file() or block() not in claude.read_text():
+    if not claude.is_file() or block() not in claude.read_text(encoding='utf-8'):
         errors.append('main AI entry not connected')
     try:
         task_file, document_directories = project_document_layout(target)
@@ -296,6 +354,7 @@ def check(target):
         errors.append(str(exc))
     return {'status': 'configured' if not errors else 'needs_setup', 'target': str(target),
             'skills': len(links), 'subagents': len(links), 'errors': errors,
+            'skill_storage': 'copy' if manifest.get('skill_copies') else 'symlink',
             'model_routing': routing_report(load_json(REPO / 'config/role_model_policy.json'), inventory),
             'capabilities': {'python': sys.version.split()[0], 'claude_cli': shutil.which('claude'),
                              'tmux': shutil.which('tmux'), 'model_auth': 'not_checked',
@@ -306,7 +365,7 @@ def check(target):
 def uninstall(target):
     target = installation_root(target)
     manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
-    manifest = json.loads(manifest_path.read_text())
+    manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
     expected, links = expected_files()
     if manifest.get('repository') != str(REPO):
         raise ValueError('installation belongs to a different checkout')
@@ -326,7 +385,7 @@ def uninstall(target):
         if relative not in expected:
             raise ValueError('unexpected managed path')
         path = checked_target(target, relative)
-        if path.is_file() and sha(path.read_text()) == fingerprint:
+        if path.is_file() and sha(path.read_text(encoding='utf-8')) == fingerprint:
             path.unlink()
         elif path.exists():
             preserved.append(relative)
@@ -334,13 +393,22 @@ def uninstall(target):
         if relative not in links:
             raise ValueError('unexpected managed link')
         path = checked_skill_link(target, relative)
-        if path.is_symlink() and path.resolve() == Path(source):
+        if relative in manifest.get('skill_copies', {}):
+            try:
+                unchanged = skill_snapshot(path) == manifest['skill_copies'][relative]
+            except (OSError, ValueError):
+                unchanged = False
+            if unchanged:
+                shutil.rmtree(path)
+            elif os.path.lexists(path):
+                preserved.append(relative)
+        elif path.is_symlink() and path.resolve() == Path(source):
             path.unlink()
         elif os.path.lexists(path):
             preserved.append(relative)
     claude = checked_target(target, 'CLAUDE.md')
     if claude.exists():
-        text = claude.read_text()
+        text = claude.read_text(encoding='utf-8')
         if block() in text:
             atomic_text(claude, text.replace(block(), '', 1))
         elif BEGIN in text:
@@ -350,20 +418,24 @@ def uninstall(target):
 
 
 def main():
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8')
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--target', default='.', help='Claude project directory, default current directory')
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--check', action='store_true', help='read-only installation/host check')
     group.add_argument('--uninstall', action='store_true', help='remove only owned, unmodified generated files')
     parser.add_argument('--model-inventory', help='Explicit host-supported model metadata JSON; no credentials')
+    parser.add_argument('--copy-skills', action='store_true', help='copy skills (Windows default); preserve existing links')
     args = parser.parse_args()
     if sys.version_info < (3, 10):
         parser.error('Python 3.10+ required')
-    if args.model_inventory and (args.check or args.uninstall):
-        parser.error('--model-inventory applies only to installation/update')
+    if (args.model_inventory or args.copy_skills) and (args.check or args.uninstall):
+        parser.error('--model-inventory/--copy-skills apply only to installation/update')
     try:
         inventory = load_json(args.model_inventory) if args.model_inventory else None
-        result = check(args.target) if args.check else uninstall(args.target) if args.uninstall else install(args.target, model_inventory=inventory)
+        result = check(args.target) if args.check else uninstall(args.target) if args.uninstall else install(args.target, model_inventory=inventory, copy_skills=args.copy_skills)
     except (OSError, ValueError) as exc:
         parser.exit(2, f'setup blocked: {exc}\n')
     print(json.dumps(result, ensure_ascii=False, indent=2))

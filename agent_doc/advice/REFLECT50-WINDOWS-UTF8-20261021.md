@@ -1,4 +1,10 @@
-# Windows UTF-8 follow-up (deferred)
+# Windows UTF-8 follow-up
+
+USABILITY-20261021 disposition: **adopt**. Fix explicit UTF-8 candidate/provenance
+storage and CLI streams, regenerate bundled scripts, then independently validate
+isolated non-ASCII ingest and CP936 output. The earlier defer and failure evidence
+below describe the historical snapshot, retained in Git at 0115477; they do not
+bound the new user-requested repair. Current acceptance is recorded in the task detail.
 
 Task: REFLECT50-20261021. Disposition: **defer** beyond the requested fifty
 counted iterations; this is a diagnosed pre-existing product defect, not a passed

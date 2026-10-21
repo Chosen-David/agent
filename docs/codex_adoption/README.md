@@ -1,6 +1,6 @@
 # Codex 本机接入与迭代
 
-本仓库的 Codex 接入使用用户级技能和简短的全局调度指引，按需加载专业流程。当前提供 15 个角色技能；保持通用助手身份。本机安装先使用系统 skill-installer 从固定提交下载，再由下面的工具验证归属并接管更新。
+本仓库的 Codex 接入使用用户级技能和简短的全局调度指引，按需加载专业流程。当前提供 16 个角色技能；保持通用助手身份。新用户从干净克隆直接运行下面的安装命令，无需先使用 skill-installer。
 
 ## 安装和检查
 
@@ -13,7 +13,7 @@ python scripts/setup_codex.py --check
 
 默认写入 `~/.agents/skills/<角色>/`，在 `CODEX_HOME/AGENTS.md`（默认 `~/.codex/AGENTS.md`）加入受管块，保留块外现有内容。状态位于 `CODEX_HOME/chosen-agent/installation.json`。可用 `--dest`、`--codex-home`、`--state` 指定独立测试环境。现有同名技能会阻塞。已由官方 installer 安装且全部内容与本仓库当前提交精确相同时，可用 `--adopt` 一次接管；该参数不跳过冲突检查。
 
-目录符合 [OpenAI Docs 的本地技能机制](https://learn.chatgpt.com/docs/build-skills)，全局规则采用 [AGENTS.md 机制](https://learn.chatgpt.com/docs/agent-configuration/agents-md)。下一轮或新会话发现技能；若宿主尚未刷新则重启 Codex。安装检查表示文件和版本接线成功；模型认证、实际技能发现和调用另做真实任务核验，见本轮 `validation.json`。脚本不修改模型、登录、审批、MCP、插件或 API 配置，不启动新 Agent/定时器。
+目录符合 [OpenAI Docs 的本地技能机制](https://learn.chatgpt.com/docs/build-skills)，全局规则采用 [AGENTS.md 机制](https://learn.chatgpt.com/docs/agent-configuration/agents-md)。下一轮或新会话发现技能；若宿主尚未刷新则重启 Codex。安装检查表示文件和版本接线成功；随后在目标项目中执行一个小任务，核验实际技能发现和调用。脚本不修改模型、登录、审批、MCP、插件或 API 配置，不启动新 Agent/定时器。
 
 工作流相对仓库解析；当前项目以 `agent_doc/task/TASK.md` 为唯一日期索引，AI 在 `agent_doc/task/task_details/*.md` 维护方法/进度/证据。其他项目绝不导入本仓库历史任务。每个安装角色携带 `references/project_document_workflow.md`：先核对人类指南及建议取舍，AI 不得在 `agent_doc/guide/` 写任何文件，`agent_doc/advice/` 须经过 adopt/adapt/reject/defer 与理由评估。知识结论检查前提和版本，不冒充本机实验。
 
@@ -22,7 +22,7 @@ python scripts/setup_codex.py --check
 用户级技能可以供多个项目使用；`setup_codex.py` 的安装目录与 agent 源码位置不决定当前项目文档的位置。明确目标后单独初始化一个已存在的项目：
 
 ```powershell
-python C:/Users/WI/Desktop/home_work/AI_LLM/agent/scripts/project_docs.py --root C:/work/ProjectA init
+python /absolute/path/to/agent/scripts/project_docs.py --root /absolute/path/to/ProjectA init
 ```
 
 你在 `C:/work/ProjectA/agent_doc/guide/GUIDE.md` 编写 Project A 的目标、约束与验收；AI 在该项目的 `agent_doc/task/`、`agent_doc/advice/`、`agent_doc/results/` 维护工作记录。初始化只建空目录和空任务索引，不编写指南、不复制 agent 的历史任务，也不启动后台服务。已有文档保留；旧根 TASK.md 需显式检查/迁移。
@@ -44,9 +44,9 @@ python C:/Users/WI/Desktop/home_work/AI_LLM/agent/scripts/project_docs.py --root
 
 更新前在私有 state/backups 保存被替换文件和原全局指引，原子写入单个文件，最后核对完整快照并提交安装清单。若 I/O 中断，保留 pending.json、旧清单和备份，下一次会阻塞。先核对 before/after、实际文件、备份及运行状态，再恢复完整旧快照或完成已验证新快照；确认一致后才清理自有 pending、临时文件与锁。不能按锁龄自动删除，也不能强行覆盖本机修改。
 
-这是工作流、技能与工具的工程迭代，不是修改模型权重。本轮不重复创建已有云端每小时优化任务，现有 WSL 知识维护继续运行。Windows 宿主桥可显式配置 `--host-git-sync --host-skill-sync`：启动模型前先 fetch/fast-forward、核对干净 HEAD 等于 fetched main，再同步受保护的技能；模型完成后，仅在全部工作文件与发布树一致时再次同步。必须同时开启 Git 验证。本机维护入口已启用这些选项，每小时频率不变。
+这是工作流、技能与工具的工程迭代，不修改模型权重。新安装不会创建云端定时任务或 WSL 知识维护进程。如果自行配置 Windows 宿主桥，可显式开启 `--host-git-sync --host-skill-sync`：启动模型前先 fetch/fast-forward、核对干净 HEAD 等于 fetched main，再同步受保护的技能；模型完成后，仅在全部工作文件与发布树一致时再次同步。必须同时开启 Git 验证；这些选项不是安装后的默认后台行为。
 
-启动前同步结果写入 `host-skills-before.json`；冲突会阻止本轮模型启动并保留本机技能。发布后同步结果仍写入 `host-skills.json`，失败保留已发布成果。两阶段回执分开，避免覆盖拉取后的同步证据。宿主只在两轮之间更新，不扩大模型 sandbox 写权限。这不是任意终端 `git pull` 的全局 Git hook；交互会话遵循受管 AGENTS 指令执行同步，现有维护 runner 自动执行上述顺序。已运行会话不会热替换其已加载上下文，下一轮或新会话发现更新。
+启动前同步结果写入 `host-skills-before.json`；冲突会阻止本轮模型启动并保留本机技能。发布后同步结果仍写入 `host-skills.json`，失败保留已发布成果。两阶段回执分开，避免覆盖拉取后的同步证据。宿主只在两轮之间更新，不扩大模型 sandbox 写权限。这不是任意终端 `git pull` 的全局 Git hook；交互会话遵循受管 AGENTS 指令执行同步，启用上述选项的维护 runner 才自动执行。已运行会话不会热替换其已加载上下文，下一轮或新会话发现更新。
 
 仓库文档迁移、插件引用同步与本机技能安装是三种不同操作。`setup_codex.py` 的既有文件快照机制会携带新增包内契约和受管入口，不创建/迁移用户项目文档，不触碰其人类指南。只有已提交且独立核验后按原同步步骤执行并读回，才可报告本机已更新；新会话是否实际发现和遵守规则仍须另验。
 

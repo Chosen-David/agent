@@ -2,6 +2,8 @@
 
 ## 2026-10-21
 
+- [x] [USABILITY-20261021] Portable onboarding and artifact hygiene fixed; independent fresh-clone lifecycle and scoped regressions passed. ([detail](task_details/USABILITY-20261021.md))
+
 - [x] [REFLECT50-20261021] 50-round runtime/memory/Markdown fixes; audit and independent plan review. ([detail](task_details/REFLECT50-20261021.md))
 - [x] [REFLECT50-VERIFY-20261021] Independent plan/data verification for the 50-round batch. ([detail](task_details/REFLECT50-VERIFY-20261021.md))
 

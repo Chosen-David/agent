@@ -1,4 +1,5 @@
 import json
+from contextlib import closing
 from pathlib import Path
 import shutil
 import sqlite3
@@ -51,7 +52,7 @@ class IndexTests(unittest.TestCase):
         # TABLE is legitimate paper locator text in the expanded corpus.
         # SQL-looking input must remain search data and preserve the index.
         indexed_search(self.store,self.db,'" DROP TABLE docs; -- zzqxnonexistent')
-        with sqlite3.connect(self.db) as con:
+        with closing(sqlite3.connect(self.db)) as con, con:
             self.assertEqual(con.execute('SELECT count(*) FROM docs').fetchone()[0],self.published_count)
             indexed_ids={row[0] for row in con.execute('SELECT id FROM docs')}
             self.assertEqual(indexed_ids,self.published_ids)
@@ -65,10 +66,10 @@ class IndexTests(unittest.TestCase):
         with self.assertRaisesRegex(KnowledgeError,'missing'):
             indexed_search(self.store,self.db,'q')
         self.db.parent.mkdir()
-        with sqlite3.connect(self.db) as c: c.execute('CREATE TABLE valuable(data)')
+        with closing(sqlite3.connect(self.db)) as c, c: c.execute('CREATE TABLE valuable(data)')
         with self.assertRaisesRegex(KnowledgeError,'unrelated'):
             build_index(self.store,self.db)
-        with sqlite3.connect(self.db) as c:
+        with closing(sqlite3.connect(self.db)) as c, c:
             self.assertEqual(c.execute('SELECT count(*) FROM valuable').fetchone()[0],0)
         self.db.unlink();build_index(self.store,self.db)
         other=Path(self.tmp.name)/'other';shutil.copytree(self.root,other)
@@ -92,7 +93,7 @@ class IndexTests(unittest.TestCase):
         singular = indexed_search(self.store,self.db,'residual',limit=min(self.published_count,20))['results']
         self.assertIn('math.linear-system-stability', [r['id'] for r in plural])
         self.assertEqual({r['id'] for r in plural}, {r['id'] for r in singular})
-        with sqlite3.connect(self.db) as con:
+        with closing(sqlite3.connect(self.db)) as con, con:
             con.execute("UPDATE meta SET value='old-engine' WHERE key='engine_version'")
         with self.assertRaisesRegex(KnowledgeError, 'stale index engine'):
             indexed_search(self.store,self.db,'residuals')
@@ -112,12 +113,12 @@ class IndexTests(unittest.TestCase):
         self.assertEqual(row['id'],metadata['id'])
         self.assertIn('section-bm25',[match['retriever'] for match in row['matches']])
         self.assertEqual(row['sections'],[])
-        with sqlite3.connect(self.db) as con:
+        with closing(sqlite3.connect(self.db)) as con, con:
             contexts=con.execute('SELECT context FROM chunks WHERE id=?',(metadata['id'],)).fetchall()
         self.assertGreater(len(contexts),1)
         self.assertEqual(sum('zqxmetadataonly' in value for value, in contexts),1)
         # A persisted v2 cache must not silently retain alias-blind chunks.
-        with sqlite3.connect(self.db) as con:
+        with closing(sqlite3.connect(self.db)) as con, con:
             con.execute("UPDATE meta SET value='fts5-porter-context-v2' WHERE key='engine_version'")
             con.execute("UPDATE chunks SET context='' WHERE id=?",(metadata['id'],))
         with self.assertRaisesRegex(KnowledgeError,'stale index engine'):
@@ -200,7 +201,7 @@ class IndexTests(unittest.TestCase):
         self.assertEqual(len(store.records),self.total_count+1)
         with self.assertRaises(KnowledgeError): store.get('math.import-example')
         self.assertEqual(build_index(store,self.db)['indexed'],self.published_count)
-        with sqlite3.connect(self.db) as con:
+        with closing(sqlite3.connect(self.db)) as con, con:
             indexed_ids={row[0] for row in con.execute('SELECT id FROM docs')}
         published_ids={kid for kid,record in store.records.items() if record['status']=='published'}
         unpublished_ids=set(store.records)-published_ids

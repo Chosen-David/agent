@@ -323,3 +323,5 @@ reviewer returns seven-domain independent plan verdict, then six-domain data gat
 - Root may consume scoped v3 conclusions and proceed with authorized publication
   and verified-snapshot synchronization. Remote publication and installed skills
   are separate root-owned checks, not implied by this local gate.
+
+USABILITY-20261021 follow-up: per-run raw evidence has been detached from the current product tree and retained locally plus in Git history at 011547708922bf65d603d9d7f5fdcbad60e2a13b. Earlier result paths describe that historical snapshot; they are not fresh-clone dependencies. Product regressions are named by behavior.

@@ -475,6 +475,9 @@ def check_handoff_knowledge(root, record, request):
 
 
 def main(argv=None):
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8')
     if __package__:
         from .context_serialization import render_context
     else:

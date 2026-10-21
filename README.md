@@ -30,10 +30,10 @@
 
 ### Claude Code · 完整项目接入
 
-需要 Python 3.10+、Git 和可用的 Claude Code。安装脚本无 pip 依赖；Linux/WSL 推荐，原生 Windows 需要目录符号链接权限。
+需要 Python 3.10+、Git 和可用的 Claude Code。安装脚本无 pip 依赖；Windows 默认复制技能，无需管理员或符号链接权限。Windows 命令中的 `python3` 可换成 `python`。
 
 ```bash
-git clone https://github.com/Chosen-David/agent.git
+git clone --depth 1 https://github.com/Chosen-David/agent.git
 python3 agent/setup.py --target /absolute/path/to/ProjectA
 ```
 
@@ -44,6 +44,14 @@ python3 /absolute/path/to/agent/setup.py --target /absolute/path/to/ProjectA --c
 ```
 
 [安装内容、旧项目迁移、更新与卸载 →](SETUP.md) · [角色模型分工与默认回退 →](docs/role_models.md)
+
+第一次可以直接给一个小任务，例如：
+
+> 找出这个项目的启动入口，解释最短运行步骤；遇到一个确实阻碍运行的问题就修复并验证。只加载相关技能。
+
+主 AI 直接处理这类任务。需要实现与独立复核、实验与作图等多种工作配合时，再启用对应角色；有明确后台运行需求时才配置监督器。安装不要求先写一套 DAG 或接入 tmux。尚未通过真实模型对照证明本库比单 AI 更好；请以自己任务上的交付质量和配置成本判断。
+
+开发者运行中的缓存、原始日志和一次性审计产物放在忽略的 `.agent-runs/`，不随日常修复提交。`agent_doc/results/` 只显式发布需要共享的结果；浅克隆避免下载历史执行产物的旧版本。
 
 <details>
 <summary><strong>Codex · 用户级技能接入</strong></summary>
