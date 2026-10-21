@@ -1,0 +1,61 @@
+{
+  "tasks": [
+    {
+      "task_id": "produce-memory-pack",
+      "owner": "/root",
+      "task_type": "experiment",
+      "produces_data": true,
+      "experiment_result": {
+        "result_id": "memory-pack-20261021-v1",
+        "producer_task_id": "produce-memory-pack",
+        "producer_actor": "/root",
+        "manifest_path": "agent_doc/results/memory-pack-20261021/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/memory-pack-20261021/validation_plan.json",
+          "sha256": "7bf7799c8db666a116a26a8ad114e3c10ada14b364533ff21456cf2ac9c37bb3"
+        },
+        "scope": "TOK-MEM-20261021 lossless opt-in basis-tables/v1: six deterministic JSON payload pairs plus one actual Mailbox fixture, local tiktoken 0.12.0 o200k_base payload tokens and UTF-8 bytes; no total model-token, cash, quality, latency or disk-space claim"
+      },
+      "depends_on": []
+    },
+    {
+      "task_id": "verify-memory-pack",
+      "owner": "/root/memory_index_verifier",
+      "action": "verify_experiment_result",
+      "result_validation": {
+        "result_id": "memory-pack-20261021-v1",
+        "producer_task_id": "produce-memory-pack",
+        "producer_actor": "/root",
+        "manifest_path": "agent_doc/results/memory-pack-20261021/manifest.json",
+        "validation_plan": {
+          "path": "agent_doc/results/memory-pack-20261021/validation_plan.json",
+          "sha256": "7bf7799c8db666a116a26a8ad114e3c10ada14b364533ff21456cf2ac9c37bb3"
+        },
+        "scope": "TOK-MEM-20261021 lossless opt-in basis-tables/v1: six deterministic JSON payload pairs plus one actual Mailbox fixture, local tiktoken 0.12.0 o200k_base payload tokens and UTF-8 bytes; no total model-token, cash, quality, latency or disk-space claim"
+      },
+      "depends_on": [
+        "produce-memory-pack"
+      ]
+    },
+    {
+      "task_id": "publish-memory-pack",
+      "owner": "/root",
+      "required_result_refs": [
+        {
+          "result_id": "memory-pack-20261021-v1",
+          "producer_task_id": "produce-memory-pack",
+          "producer_actor": "/root",
+          "manifest_path": "agent_doc/results/memory-pack-20261021/manifest.json",
+          "validation_plan": {
+            "path": "agent_doc/results/memory-pack-20261021/validation_plan.json",
+            "sha256": "7bf7799c8db666a116a26a8ad114e3c10ada14b364533ff21456cf2ac9c37bb3"
+          },
+          "scope": "TOK-MEM-20261021 lossless opt-in basis-tables/v1: six deterministic JSON payload pairs plus one actual Mailbox fixture, local tiktoken 0.12.0 o200k_base payload tokens and UTF-8 bytes; no total model-token, cash, quality, latency or disk-space claim"
+        }
+      ],
+      "depends_on": [
+        "verify-memory-pack"
+      ]
+    }
+  ]
+}

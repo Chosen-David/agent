@@ -1,10 +1,13 @@
-"""Opt-in, lossless claim-table context. Not evidence acceptance or compression of prose."""
+"""Opt-in lossless basis tables; no evidence acceptance or prose summarization."""
 from copy import deepcopy
+import json
 
 from .external_json import strict_json
 
 FORMAT='claims-table/v1'
 COLUMNS=('id','status','depends_on','artifact_ids','knowledge_ids','memory_ids','assumptions')
+BASIS_TABLE_FORMAT='basis-tables/v1'
+MEMORY_COLUMNS=('id','kind','content','source','scope','evidence','status','created_at','document_refs','deps')
 
 def encode_claims_table(payload):
     if not isinstance(payload,dict) or 'context_format' in payload:
@@ -17,6 +20,31 @@ def encode_claims_table(payload):
     result['evidence_claims']={'columns':list(COLUMNS),'rows':[[deepcopy(c[k]) for k in COLUMNS] for c in claims]}
     return result
 
+def encode_basis_tables(payload):
+    """Share claim/memory column names, retaining every original JSON value."""
+    result=encode_claims_table(payload)
+    entries=payload.get('memory_entries')
+    if not isinstance(entries,list) or any(not isinstance(e,dict) or set(e)!=set(MEMORY_COLUMNS) for e in entries):
+        raise ValueError('complete memory objects required; never drop unknown fields')
+    result['context_format']=BASIS_TABLE_FORMAT
+    result['memory_entries']={'columns':list(MEMORY_COLUMNS),
+                              'rows':[[deepcopy(e[k]) for k in MEMORY_COLUMNS] for e in entries]}
+    # Table wrappers add nesting. Reject packets our bounded strict decoder
+    # cannot restore, rather than returning a successful unusable handoff.
+    decode_basis_payload(json.dumps(result,ensure_ascii=False,sort_keys=True,separators=(',',':')))
+    return result
+
+def _decode_table(table, columns, label):
+    if (not isinstance(table,dict) or set(table)!={'columns','rows'} or
+            table['columns']!=list(columns) or not isinstance(table['rows'],list)):
+        raise ValueError('exact '+label+' table schema required')
+    entries=[]
+    for row in table['rows']:
+        if not isinstance(row,list) or len(row)!=len(columns):
+            raise ValueError('truncated/extended '+label+' row')
+        entries.append(dict(zip(columns,row)))
+    return entries
+
 def decode_basis_payload(text):
     """Restore exact JSON values. Caller still must revalidate source/freshness/authority."""
     if not isinstance(text,str) or len(text)>200000:
@@ -24,14 +52,9 @@ def decode_basis_payload(text):
     data=strict_json(text.encode('utf-8'))
     if not isinstance(data,dict):raise ValueError('basis object required')
     if 'context_format' not in data:return data
-    if data.pop('context_format')!=FORMAT:raise ValueError('unsupported context format')
-    table=data.get('evidence_claims')
-    if (not isinstance(table,dict) or set(table)!={'columns','rows'} or
-            table['columns']!=list(COLUMNS) or not isinstance(table['rows'],list)):
-        raise ValueError('exact claim table schema required')
-    claims=[]
-    for row in table['rows']:
-        if not isinstance(row,list) or len(row)!=len(COLUMNS):raise ValueError('truncated/extended claim row')
-        claims.append(dict(zip(COLUMNS,row)))
-    data['evidence_claims']=claims
+    context_format=data.pop('context_format')
+    if context_format not in (FORMAT,BASIS_TABLE_FORMAT):raise ValueError('unsupported context format')
+    data['evidence_claims']=_decode_table(data.get('evidence_claims'),COLUMNS,'claim')
+    if context_format==BASIS_TABLE_FORMAT:
+        data['memory_entries']=_decode_table(data.get('memory_entries'),MEMORY_COLUMNS,'memory')
     return data

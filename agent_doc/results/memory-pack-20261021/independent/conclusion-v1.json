@@ -1,0 +1,149 @@
+{
+  "decision": "usable-with-scope",
+  "actor": "/root/memory_index_verifier",
+  "run_id": "tok-mem-20261021-independent-v1",
+  "result_id": "memory-pack-20261021-v1",
+  "scope": "TOK-MEM-20261021 lossless opt-in basis-tables/v1: six deterministic JSON payload pairs plus one actual Mailbox fixture, local tiktoken 0.12.0 o200k_base payload tokens and UTF-8 bytes; no total model-token, cash, quality, latency or disk-space claim",
+  "manifest_sha256": "2f6646f5ac9ef30a45c0db724dbd3d3e74bc0b6aced0b4b31a1cd044c4b50a81",
+  "cases": [
+    {
+      "case": "empty",
+      "counts": {
+        "json": {
+          "bytes": 138,
+          "tokens": 33
+        },
+        "claims-table/v1": {
+          "bytes": 279,
+          "tokens": 67
+        },
+        "basis-tables/v1": {
+          "bytes": 395,
+          "tokens": 97
+        }
+      }
+    },
+    {
+      "case": "singleton",
+      "counts": {
+        "json": {
+          "bytes": 516,
+          "tokens": 142
+        },
+        "claims-table/v1": {
+          "bytes": 572,
+          "tokens": 156
+        },
+        "basis-tables/v1": {
+          "bytes": 593,
+          "tokens": 164
+        }
+      }
+    },
+    {
+      "case": "short-32",
+      "counts": {
+        "json": {
+          "bytes": 12765,
+          "tokens": 3679
+        },
+        "claims-table/v1": {
+          "bytes": 10186,
+          "tokens": 3135
+        },
+        "basis-tables/v1": {
+          "bytes": 7262,
+          "tokens": 2523
+        }
+      }
+    },
+    {
+      "case": "unique-32",
+      "counts": {
+        "json": {
+          "bytes": 12649,
+          "tokens": 3711
+        },
+        "claims-table/v1": {
+          "bytes": 10070,
+          "tokens": 3167
+        },
+        "basis-tables/v1": {
+          "bytes": 7146,
+          "tokens": 2555
+        }
+      }
+    },
+    {
+      "case": "long-8",
+      "counts": {
+        "json": {
+          "bytes": 40329,
+          "tokens": 7141
+        },
+        "claims-table/v1": {
+          "bytes": 39790,
+          "tokens": 7029
+        },
+        "basis-tables/v1": {
+          "bytes": 39146,
+          "tokens": 6897
+        }
+      }
+    },
+    {
+      "case": "unicode-8",
+      "counts": {
+        "json": {
+          "bytes": 3481,
+          "tokens": 1101
+        },
+        "claims-table/v1": {
+          "bytes": 2942,
+          "tokens": 989
+        },
+        "basis-tables/v1": {
+          "bytes": 2298,
+          "tokens": 857
+        }
+      }
+    }
+  ],
+  "actual_mailbox_counts": {
+    "ordinary": {
+      "chars": 4539,
+      "bytes": 6184,
+      "tokens": 2013,
+      "max_chars": 200000,
+      "max_tokens": null,
+      "tokenizer": "o200k_base",
+      "tokenizer_version": "0.12.0",
+      "scope": "exact serialized payload only; tool envelope and model output excluded"
+    },
+    "table": {
+      "chars": 4351,
+      "bytes": 5996,
+      "tokens": 1979,
+      "max_chars": 200000,
+      "max_tokens": null,
+      "tokenizer": "o200k_base",
+      "tokenizer_version": "0.12.0",
+      "scope": "exact serialized payload only; tool envelope and model output excluded"
+    }
+  },
+  "independent_payload_recounts": 43,
+  "random_properties": 250,
+  "legacy_differentials": 250,
+  "invalid_cases": 33,
+  "independent_regression_passes": 12,
+  "optimized_regression_passes": 7,
+  "limitations": [
+    "Only lossless opt-in transport and six deterministic synthetic compact JSON payload comparisons plus a two-format synthetic actual Mailbox fixture are accepted; no private/user-memory or production workload was tested.",
+    "Exact local o200k_base payload tokens and UTF-8 bytes exclude request/tool/model framing, history, reasoning, answers and total session usage; no cash, QA/quality, latency, disk-space or universal bug-free claim.",
+    "Empty and singleton packets grow; no aggregate benefit or global-default change is justified. The actual producer Mailbox fixture compares JSON/new only; all three formats were tested in the six fixed cases and the independently built fixture.",
+    "The decoder retains its 200000-character and 256-container-depth limits. New wrappers can make an otherwise shallower ordinary object exceed the bound; the new encoder explicitly refuses such packets rather than promising all arbitrary Python objects are encodable.",
+    "Relevant native and Linux strict checks were run; full repository suite was not required or executed for this local change. Earlier producer GBK/fcntl and /mnt/c timeout failures remain recorded, with no relaxed threshold.",
+    "Actual Mailbox timestamps may differ across independent runs; each current pair must restore exactly and be recounted independently. Six fixed cases did reproduce byte-for-byte.",
+    "This review came from actual native collaboration actor /root/memory_index_verifier, not an unavailable preferred external model. Future archive references become valid only after original-byte copying and host identity/hash verification; JSON independent flags do not self-authenticate a provider or deploy ReviewSession."
+  ]
+}

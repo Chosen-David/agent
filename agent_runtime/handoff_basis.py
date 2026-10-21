@@ -12,7 +12,8 @@ from .knowledge import KnowledgeStore, check_handoff_knowledge
 from .project_memory import MemoryLedger, _ids
 
 _BUILTIN_MEMORY_LEDGER = MemoryLedger
-from .handoff_encoding import FORMAT as CLAIM_TABLE_FORMAT, encode_claims_table
+from .handoff_encoding import (FORMAT as CLAIM_TABLE_FORMAT, BASIS_TABLE_FORMAT,
+                               encode_claims_table, encode_basis_tables)
 from scripts.validate_handoff import validate
 
 
@@ -142,7 +143,7 @@ def claim_graph(record):
 def check_handoff_basis(root, record, request):
     """Mandatory when declared; requirements belong to the consumer, not output."""
     _require(isinstance(record, dict) and isinstance(request, dict), 'basis requires objects')
-    _require(request.get('context_format', 'json') in ('json', CLAIM_TABLE_FORMAT),
+    _require(request.get('context_format', 'json') in ('json', CLAIM_TABLE_FORMAT, BASIS_TABLE_FORMAT),
              'unsupported consumer context format')
     for key in ('context_max_chars', 'context_max_tokens'):
         if key in request:
@@ -357,7 +358,13 @@ def basis_context(root, record, request, *, known_knowledge_refs=(), known_memor
             memory_entries.update((entry['id'], entry) for entry in entries)
             pending = {dep for entry in entries for dep in entry['deps']} - memory_entries.keys()
     payload['memory_entries'] = [memory_entries[k] for k in sorted(memory_entries) if k not in known_memory_ids]
-    wire_payload = encode_claims_table(payload) if request.get('context_format') == CLAIM_TABLE_FORMAT else payload
+    context_format = request.get('context_format', 'json')
+    if context_format == BASIS_TABLE_FORMAT:
+        wire_payload = encode_basis_tables(payload)
+    elif context_format == CLAIM_TABLE_FORMAT:
+        wire_payload = encode_claims_table(payload)
+    else:
+        wire_payload = payload
     serialized = json.dumps(wire_payload, ensure_ascii=False, sort_keys=True, separators=(',', ':'))
     _require(len(serialized) <= max_chars, 'complete basis exceeds character budget; narrow task or reuse context')
     tokens = None

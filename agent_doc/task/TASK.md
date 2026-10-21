@@ -2,6 +2,9 @@
 
 ## 2026-10-21
 
+- [ ] [TOK-MEM-20261021] 显式可逆 memory/claim 表格交接，配对 token 计数与独立门禁后发布。 ([详情](task_details/TOK-MEM-20261021.md))
+- [x] [TOK-MEM-VERIFY-20261021] v1/v2独立六域验收通过，当前部署数据与复用桥接已核对。 ([详情](task_details/TOK-MEM-VERIFY-20261021.md))
+
 - [x] [ROLE-MODELS-01] 18角色模型策略、安装/派发及默认回退通过独立验收；全库1522项（8skip）/Reader3项、同步后39项通过；发布回读另核。 ([详情](task_details/ROLE-MODELS-01.md))
 
 - [ ] [NPU-ABSORB-100] 吸收 npu_kernel_agent 剩余可移植设计：后台任务进程身份判定、统一 artifact 索引、结构化 intake、next 尾注。 ([详情](task_details/NPU-ABSORB-100.md))

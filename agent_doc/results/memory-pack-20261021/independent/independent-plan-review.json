@@ -1,0 +1,25 @@
+{
+  "reviewer": "/root/memory_index_verifier",
+  "project_root": "C:\\Users\\WI\\Desktop\\home_work\\AI_LLM\\agent",
+  "reviewed_plan_version": "v1",
+  "initial_review_head": "b028d579048c0eb80ef0dbeae68d6e2060a1dfce",
+  "current_head": "425390428f7ea9dbf5b5a4756c5d6cadcab89be3",
+  "plan_whole_sha256": "1b117c1992938ae57855b5371f4de0b206442244722d48986d070aee32d71684",
+  "stable_plan": "# TOK-MEM-20261021\n\n## Plan\n\nv1 / EXECUTE. PROJECT_ROOT=WORKFLOW_ROOT=C:/Users/WI/Desktop/home_work/AI_LLM/agent. 用户授权持续节约 token、结合最新远端且每轮直接发布 main。本轮从 b028d579 快进开始，setup_codex 与 --check 成功；保留 .gitattributes、progress.json、三个 json_context 文件原改动，不写 guide，不改 SGLang。\n\n有界改进：在 Mailbox.prepare_context 实际链新增显式选择的 basis-tables/v1，同时表格化完整 claims 和 memory。只共享列名，值不缩写、不摘要、不外置；未知 memory 字段拒绝，不能静默丢失。默认 JSON 与 claims-table/v1 兼容；解码沿用最新 strict_json；更正/依赖/来源/预算门禁不变。小包可能变长，明确 opt-in，不改变全局默认。不改 ledger/cache 存储，不删历史文件。\n\n任务链：独立计划复核 → root 实现/固定合成输入/测量 → 独立 verify_experiment_result → 结论/普通发布/远端读回 → setup_codex/check。可用原生独立 agent；角色偏好后端不可用时继承宿主，不声称外部模型运行。最多两轮有界修复，无 GPU/付费模型调用。仅此索引由 root 写；独立审查者仅写 TOK-MEM-VERIFY-20261021.md 与 .agent-runs/memory-pack-20261021/。\n\n预定验收：完整 JSON 值精确往返、输入不变；空/单条/多条/长正文/Unicode/未知字段/短行/错误版本/重复键/非有限数拒绝；实际 Mailbox 新格式完整依赖、纠错失效、token/字符预算及不可更改消费请求保持。固定 tiktoken 0.12.0/o200k_base，对同一完整 payload 做 compact sorted JSON 配对计数，负对照全部保留；只报最终 payload token/UTF-8 字节，不报整个会话、推理输出、现金、QA 或延迟收益。不增加 progress 成功计数。\n\n先前检索：ResultStore.search('memory compression context table',limit=5,max_scan=500) 扫描254，partial=true；combined-corpus-delta/v3/v4 为 pending，comm-ack-confirm 与 math-fano-message 为 scoped 历史数据，负载/代码/指标均不同，不复用数值。知识工具检索的 QLoRA/DSU/HNSW 与本轮 JSON 传输不匹配，拒用其算法/性能保证。复用现有 claims-table 接口与 strict_json，而非另造语义压缩器。\n\n本轮正文精读（2026-10-21，重复阅读不算新论文）：LongMemEval v2 https://arxiv.org/html/2410.10813v2 §4.2、§5.1–5.3，保留原始值与摘要/事实提取的质量取舍依赖 reader；RAG Best Practices v1 https://arxiv.org/html/2407.01219v1 §3.6–3.7/Table10，压缩输入可减少长度但可能损失任务表现。因此只做可逆结构编码，不推导任务质量或迁移论文收益。本记录不关闭 CONCISE-98 的十篇批次。\n\n证据目录 agent_doc/results/memory-pack-20261021/；主 AI 独占代码、测试、协议、manifest、报告；独立审查证据在其 detail 与 .agent-runs 内，主 AI 按原字节归档。\n\n",
+  "stable_plan_sha256": "ffe323f6190b08440d46b6a2120b2d288574496b48f150ef581dcf7d91d2abd3",
+  "refs": {
+    "agent_runtime/handoff_encoding.py": "a69189997436d725230c208ff33ff6c0fb13fa44bbd6ea7659ccc6a1bd194d60",
+    "agent_runtime/handoff_basis.py": "73b56ed673fe34e163316765372b38489c931d1a030641af75395fd3fb46123c",
+    "agent_runtime/communication.py": "d2da2b580c7d059a2f2e68b6fb3d35c21977825b95d37ce11e79ebabdba40f59",
+    "agent_runtime/external_json.py": "1b727a5f8ad1bf7d94113c3360f898789a89ecc9c0742613d6572b5911e794ff",
+    "agent_doc/results/memory-pack-20261021/config.json": "6ce6e4d71dd120605c01bab09027a6d9a84ba4c1d6652394550ae0b804f55f4f",
+    "agent_doc/results/memory-pack-20261021/validation_plan.json": "7bf7799c8db666a116a26a8ad114e3c10ada14b364533ff21456cf2ac9c37bb3"
+  },
+  "decision": "approve",
+  "tests_executed": false,
+  "limitations": [
+    "Plan approval only; no result or implementation acceptance",
+    "No prior-round measurement or conclusion inherited",
+    "Research-paper interpretation and external reviewer model not certified by this role"
+  ]
+}

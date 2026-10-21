@@ -1,0 +1,154 @@
+{
+  "actor": "/root/memory_index_verifier",
+  "run_id": "tok-mem-20261021-independent-v1",
+  "checks": [
+    {
+      "name": "random_type_reference_and_legacy",
+      "verdict": "pass",
+      "observations": {
+        "seed": 211021,
+        "random_payloads": 250,
+        "legacy_differential_payloads": 250,
+        "type_sensitive": true
+      }
+    },
+    {
+      "name": "strict_schema_and_boundaries",
+      "verdict": "pass",
+      "observations": {
+        "invalid_cases": 33,
+        "depth_boundaries": [
+          {
+            "nested_arrays": 0,
+            "encoded_container_depth": 4,
+            "accepted": true
+          },
+          {
+            "nested_arrays": 1,
+            "encoded_container_depth": 4,
+            "accepted": true
+          },
+          {
+            "nested_arrays": 250,
+            "encoded_container_depth": 253,
+            "accepted": true
+          },
+          {
+            "nested_arrays": 251,
+            "encoded_container_depth": 254,
+            "accepted": true
+          },
+          {
+            "nested_arrays": 252,
+            "encoded_container_depth": 255,
+            "accepted": true
+          },
+          {
+            "nested_arrays": 253,
+            "encoded_container_depth": 256,
+            "accepted": true
+          },
+          {
+            "nested_arrays": 254,
+            "encoded_container_depth": 257,
+            "accepted": false
+          },
+          {
+            "nested_arrays": 255,
+            "encoded_container_depth": 258,
+            "accepted": false
+          },
+          {
+            "nested_arrays": 256,
+            "encoded_container_depth": 259,
+            "accepted": false
+          },
+          {
+            "nested_arrays": 257,
+            "encoded_container_depth": 260,
+            "accepted": false
+          },
+          {
+            "nested_arrays": 260,
+            "encoded_container_depth": 263,
+            "accepted": false
+          },
+          {
+            "nested_arrays": 400,
+            "encoded_container_depth": 403,
+            "accepted": false
+          }
+        ],
+        "exact_200000_characters": "pass"
+      }
+    },
+    {
+      "name": "actual_independent_mailbox",
+      "verdict": "pass",
+      "observations": {
+        "ordinary": {
+          "payload": "{\"artifacts\":[{\"id\":\"proof\",\"path\":\"proof.json\",\"sha256\":\"48208f9428d64634bd8e28ff345bf0eab60d53c18fa2fbdb0b9bc1e84df2b5f6\"}],\"evidence_claims\":[{\"artifact_ids\":[\"proof\"],\"assumptions\":[],\"depends_on\":[],\"id\":\"claim\",\"knowledge_ids\":[],\"memory_ids\":[\"leaf\"],\"status\":\"supported\"}],\"input_version\":\"v1\",\"knowledge_entries\":[],\"knowledge_refs\":[],\"memory_entries\":[{\"content\":\"合成原文 1.0 🧠\",\"created_at\":\"2026-10-21T07:38:27.325Z\",\"deps\":[],\"document_refs\":null,\"evidence\":\"verified\",\"id\":\"base\",\"kind\":\"observation\",\"scope\":[],\"source\":\"independent:synthetic\",\"status\":\"active\"},{\"content\":\"dependent value\",\"created_at\":\"2026-10-21T07:38:27.332Z\",\"deps\":[\"base\"],\"document_refs\":null,\"evidence\":\"verified\",\"id\":\"leaf\",\"kind\":\"claim\",\"scope\":[],\"source\":\"independent:synthetic\",\"status\":\"active\"}],\"memory_refs\":[\"leaf\"]}",
+          "usage": {
+            "chars": 818,
+            "bytes": 829,
+            "tokens": 256,
+            "max_chars": 20000,
+            "max_tokens": null,
+            "tokenizer": "o200k_base",
+            "tokenizer_version": "0.12.0",
+            "scope": "exact serialized payload only; tool envelope and model output excluded"
+          },
+          "selection": null,
+          "reused_knowledge_ids": [],
+          "reused_memory_ids": []
+        },
+        "legacy": {
+          "payload": "{\"artifacts\":[{\"id\":\"proof\",\"path\":\"proof.json\",\"sha256\":\"48208f9428d64634bd8e28ff345bf0eab60d53c18fa2fbdb0b9bc1e84df2b5f6\"}],\"context_format\":\"claims-table/v1\",\"evidence_claims\":{\"columns\":[\"id\",\"status\",\"depends_on\",\"artifact_ids\",\"knowledge_ids\",\"memory_ids\",\"assumptions\"],\"rows\":[[\"claim\",\"supported\",[],[\"proof\"],[],[\"leaf\"],[]]]},\"input_version\":\"v1\",\"knowledge_entries\":[],\"knowledge_refs\":[],\"memory_entries\":[{\"content\":\"合成原文 1.0 🧠\",\"created_at\":\"2026-10-21T07:38:27.325Z\",\"deps\":[],\"document_refs\":null,\"evidence\":\"verified\",\"id\":\"base\",\"kind\":\"observation\",\"scope\":[],\"source\":\"independent:synthetic\",\"status\":\"active\"},{\"content\":\"dependent value\",\"created_at\":\"2026-10-21T07:38:27.332Z\",\"deps\":[\"base\"],\"document_refs\":null,\"evidence\":\"verified\",\"id\":\"leaf\",\"kind\":\"claim\",\"scope\":[],\"source\":\"independent:synthetic\",\"status\":\"active\"}],\"memory_refs\":[\"leaf\"]}",
+          "usage": {
+            "chars": 874,
+            "bytes": 885,
+            "tokens": 270,
+            "max_chars": 20000,
+            "max_tokens": null,
+            "tokenizer": "o200k_base",
+            "tokenizer_version": "0.12.0",
+            "scope": "exact serialized payload only; tool envelope and model output excluded"
+          },
+          "selection": null,
+          "reused_knowledge_ids": [],
+          "reused_memory_ids": []
+        },
+        "tables": {
+          "payload": "{\"artifacts\":[{\"id\":\"proof\",\"path\":\"proof.json\",\"sha256\":\"48208f9428d64634bd8e28ff345bf0eab60d53c18fa2fbdb0b9bc1e84df2b5f6\"}],\"context_format\":\"basis-tables/v1\",\"evidence_claims\":{\"columns\":[\"id\",\"status\",\"depends_on\",\"artifact_ids\",\"knowledge_ids\",\"memory_ids\",\"assumptions\"],\"rows\":[[\"claim\",\"supported\",[],[\"proof\"],[],[\"leaf\"],[]]]},\"input_version\":\"v1\",\"knowledge_entries\":[],\"knowledge_refs\":[],\"memory_entries\":{\"columns\":[\"id\",\"kind\",\"content\",\"source\",\"scope\",\"evidence\",\"status\",\"created_at\",\"document_refs\",\"deps\"],\"rows\":[[\"base\",\"observation\",\"合成原文 1.0 🧠\",\"independent:synthetic\",[],\"verified\",\"active\",\"2026-10-21T07:38:27.325Z\",null,[]],[\"leaf\",\"claim\",\"dependent value\",\"independent:synthetic\",[],\"verified\",\"active\",\"2026-10-21T07:38:27.332Z\",null,[\"base\"]]]},\"memory_refs\":[\"leaf\"]}",
+          "usage": {
+            "chars": 800,
+            "bytes": 811,
+            "tokens": 258,
+            "max_chars": 20000,
+            "max_tokens": null,
+            "tokenizer": "o200k_base",
+            "tokenizer_version": "0.12.0",
+            "scope": "exact serialized payload only; tool envelope and model output excluded"
+          },
+          "selection": null,
+          "reused_knowledge_ids": [],
+          "reused_memory_ids": []
+        },
+        "closure": [
+          "base",
+          "leaf"
+        ],
+        "exact_caps": "pass",
+        "one_short_and_consumer_caps": "refused",
+        "immutable_request": "refused",
+        "artifact_mutation": "refused",
+        "correction_and_known_reuse": "refused"
+      }
+    }
+  ],
+  "source_hashes": {
+    "agent_runtime/handoff_encoding.py": "1d144d74dc1b1495a4f8dbc36ffca99116ab91311bb5c9c8ccbd783696835704",
+    "agent_runtime/handoff_basis.py": "eefd03f292faa37c5cf9530d3721f3197790bdf97700f1650f86f88d13348dbb",
+    "agent_runtime/external_json.py": "f154b63e6852b3fec6285e2dae9c749d2a8a34943746fac22c61cd9658fce849"
+  }
+}

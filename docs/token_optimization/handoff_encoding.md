@@ -1,4 +1,10 @@
-# Opt-in lossless claim tables
+# Opt-in lossless basis tables
+
+Consumers that also support memory tables can explicitly request `"context_format":"basis-tables/v1"` through the same entry points. This retains the claim table below and represents `memory_entries` as `{ "columns": [...], "rows": [...] }`. The exact memory column order is `id`, `kind`, `content`, `source`, `scope`, `evidence`, `status`, `created_at`, `document_refs`, `deps`. Each row contains all ten original values, including full prose, provenance, correction state and dependencies. No dictionary, external cache or persistent already-read state is required. The default and `claims-table/v1` remain compatible.
+
+`decode_basis_payload` restores either version to ordinary JSON objects. New memory fields require a new supported schema: the encoder refuses missing/extra fields instead of dropping them. The new encoder also refuses packets exceeding the strict decoder's 200,000-character or nesting boundaries. Source/dependency checks run before encoding; character and actual-token budgets apply to the complete encoded payload, including version and columns. Changing format on an already consumed delivery remains forbidden. A table is a transport representation, never a validity or acceptance certificate.
+
+Only use this format with a compatible consumer. If a host expands tables before sending text to the model, the expanded model input is the relevant cost. Small packets may grow; local payload-token measurements do not establish total model usage or reader quality. The current scoped accounting and negative controls are in [memory-pack-20261021](../../agent_doc/results/memory-pack-20261021/).
 
 The existing consumer request can contain `"context_format":"claims-table/v1"` when calling `Mailbox.prepare_context` or the `communication prepare-context` CLI. The default remains ordinary JSON. All existing delivery, source, freshness, dependency and budget checks run first. A table saves repeated field names; it neither deletes negative evidence nor summarizes prose. Small handoffs can grow, so this is explicitly selected by a compatible consumer, not a global default.
 

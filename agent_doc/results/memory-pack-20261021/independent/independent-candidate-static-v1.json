@@ -1,0 +1,22 @@
+{
+  "scope": "candidate static code review only; no experiment acceptance",
+  "actor": "/root/memory_index_verifier",
+  "tests_executed": false,
+  "blocking_findings": [],
+  "sources": {
+    "agent_runtime/handoff_encoding.py": "1d144d74dc1b1495a4f8dbc36ffca99116ab91311bb5c9c8ccbd783696835704",
+    "agent_runtime/handoff_basis.py": "eefd03f292faa37c5cf9530d3721f3197790bdf97700f1650f86f88d13348dbb",
+    "agent_runtime/external_json.py": "f154b63e6852b3fec6285e2dae9c749d2a8a34943746fac22c61cd9658fce849",
+    "agent_runtime/communication.py": "a9bc16b401cee539e7ad0ae4b20c8d2de036dfe08514bc208c633a41229b35e3",
+    "tests/test_memory_tables.py": "8e46ffd88a13f05fbb398224e73e376aab102ca84ae036de97f491ecdcea90cc",
+    "agent_doc/results/memory-pack-20261021/measure.py": "91cda48d2670393abd3caf3e3ad7cbee4bc5a1956113d5d3d753611dfdeabdab"
+  },
+  "observations": [
+    "Encoder preserves original FORMAT and source fields; new format self-validates complete serialization through strict decoder",
+    "Exact column schemas and row widths reject unknown/lost fields; raw JSON and legacy decoding remain supported",
+    "Mailbox source/current dependency validation precedes encoding; final char/token budgets follow it; consumed request remains immutable",
+    "Six deterministic cases have three formats; actual Mailbox fixture currently compares only ordinary/new format",
+    "No claim of timing, total model tokens, cash, QA or old-round reuse"
+  ],
+  "next": "Await frozen manifest and raw payloads; independently execute boundary/reference/measurement checks before acceptance"
+}
