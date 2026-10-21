@@ -4,6 +4,13 @@ from pathlib import Path
 from .result_validation import _bound
 
 SCHEMA='dispatch-context/v1'
+def task_write_scope(task_id,run_id=None):
+    """Default single-writer scope for a task author: its own detail file plus its
+    own per-task run directory. The main AI may override with an explicit
+    write_scope, including an empty list for read-only dispatch."""
+    if not isinstance(task_id,str) or not task_id.strip():raise ValueError('task_id required')
+    if run_id is not None and (not isinstance(run_id,str) or not run_id.strip()):raise ValueError('run_id must be a nonempty string')
+    return [f'agent_doc/task/task_details/{task_id}.md',f'.agent-runs/{run_id or task_id}/']
 def prepare_dispatch(root,request,*,force_inherit=False,max_chars=12000):
     root=Path(root)
     if not root.is_absolute():raise ValueError('absolute PROJECT_ROOT required')
@@ -19,7 +26,7 @@ def prepare_dispatch(root,request,*,force_inherit=False,max_chars=12000):
         raise ValueError('invalid host flags/budget')
     for k in ('task_id','instruction'):
         if not isinstance(request[k],str) or not request[k].strip() or len(request[k])>4000:raise ValueError('bounded task/instruction required')
-    write_scope=request.get('write_scope',[])
+    write_scope=request.get('write_scope') if 'write_scope' in request else task_write_scope(request['task_id'])
     if not isinstance(write_scope,list) or len(write_scope)>32:
         raise ValueError('bounded write scope list required')
     for scope in write_scope:

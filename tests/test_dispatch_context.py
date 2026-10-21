@@ -35,7 +35,12 @@ class DispatchContextTests(unittest.TestCase):
         (self.root/'brief.json').write_text('corrected',encoding='utf-8')
         with self.assertRaises(ValueError):prepare_dispatch(self.root,self.request)
     def test_write_scope_bounds_defaults_and_exclusions(self):
-        self.assertEqual(prepare_dispatch(self.root,self.request)['write_scope'],[])
+        from agent_runtime.dispatch_context import task_write_scope
+        self.assertEqual(task_write_scope('FIG8'),['agent_doc/task/task_details/FIG8.md','.agent-runs/FIG8/'])
+        self.assertEqual(task_write_scope('FIG8','run-1'),['agent_doc/task/task_details/FIG8.md','.agent-runs/run-1/'])
+        self.assertEqual(prepare_dispatch(self.root,self.request)['write_scope'],['agent_doc/task/task_details/FIG8.md','.agent-runs/FIG8/'])
+        r=copy.deepcopy(self.request);r['write_scope']=[]
+        self.assertEqual(prepare_dispatch(self.root,r)['write_scope'],[])
         r=copy.deepcopy(self.request);r['write_scope']=['agent_doc/task/task_details/FIG8.md','agent_doc/results/fig8-run/']
         plan=prepare_dispatch(self.root,r)
         self.assertEqual(plan['write_scope'],r['write_scope'])
