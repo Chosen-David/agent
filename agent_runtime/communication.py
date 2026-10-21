@@ -14,6 +14,7 @@ import sqlite3
 import re
 
 from scripts.validate_handoff import _consumer_contract, _load_json, validate
+from .context_serialization import render_context
 from .project_docs import guard_write_path
 
 
@@ -471,6 +472,7 @@ class Mailbox:
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--db', required=True)
+    parser.add_argument('--compact', action='store_true', help='preserve all JSON fields without formatting whitespace')
     parser.add_argument('--plan', type=Path, required=True)
     parser.add_argument('--root', type=Path, required=True)
     sub = parser.add_subparsers(dest='command', required=True)
@@ -554,7 +556,7 @@ def main():
             result = box.status()
     except (ValueError, OSError, sqlite3.Error) as exc:
         print(json.dumps({'error': str(exc)}, ensure_ascii=False)); return 1
-    print(json.dumps(result, ensure_ascii=False, indent=2)); return 0
+    print((render_context(result, compact=True) if args.compact else json.dumps(result, ensure_ascii=False, indent=2))); return 0
 
 
 if __name__ == '__main__':
