@@ -16,7 +16,7 @@
 
 把专业能力接入你正在工作的项目：主 AI 保持通用身份，按目标选择技能，围绕代码、数据、图表与文稿组织协作。简单问题直接处理；复杂任务才使用计划审核、任务 DAG、版本化交接与独立验收。
 
-仓库提供 **15 个角色技能、2 个插件包、可复制工作流，以及可选的本地运行时**。模型、工具、认证和运行资源由实际宿主提供；安装工作流本身不会启动模型或后台服务。
+仓库提供 **16 个角色技能、2 个插件包、可复制工作流，以及可选的本地运行时**。模型、工具、认证和运行资源由实际宿主提供；安装工作流本身不会启动模型或后台服务。
 
 ### 为什么这样组织
 
@@ -43,7 +43,7 @@ python3 agent/setup.py --target /absolute/path/to/ProjectA
 python3 /absolute/path/to/agent/setup.py --target /absolute/path/to/ProjectA --check
 ```
 
-[安装内容、旧项目迁移、更新与卸载 →](SETUP.md)
+[安装内容、旧项目迁移、更新与卸载 →](SETUP.md) · [角色模型分工与默认回退 →](docs/role_models.md)
 
 <details>
 <summary><strong>Codex · 用户级技能接入</strong></summary>

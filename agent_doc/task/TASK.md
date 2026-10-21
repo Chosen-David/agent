@@ -2,6 +2,8 @@
 
 ## 2026-10-21
 
+- [x] [ROLE-MODELS-01] 18角色模型策略、安装/派发及默认回退通过独立验收；全库1522项（8skip）/Reader3项、同步后39项通过；发布回读另核。 ([详情](task_details/ROLE-MODELS-01.md))
+
 - [ ] [NPU-ABSORB-100] 吸收 npu_kernel_agent 剩余可移植设计：后台任务进程身份判定、统一 artifact 索引、结构化 intake、next 尾注。 ([详情](task_details/NPU-ABSORB-100.md))
 
 ## 2026-10-20

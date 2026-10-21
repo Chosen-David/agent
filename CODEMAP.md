@@ -1,3 +1,5 @@
+ROLE-MODELS-01: `config/role_model_policy.json` → `agent_runtime/model_routing.py` → `setup.py`安装快照/原生model与`scripts/run_role.py`可信宿主派发。`tests/test_model_routing.py`、`agent_doc/results/role-models-20261021/`验证离线路由和子进程边界；主AI维护实现/任务，独立审查者核验。无在线厂商后端、凭据或质量收益主张。
+
 ARTIFACT-FD-77: `result_validation._bytes` 保留原始fd所有权，`fdopen(closefd=False)`借用，finally关闭；`tests/test_result_read_fd.py` 和 `agent_doc/results/artifact-fd77/` 记录拒绝路径资源释放及独立复核。仅资源正确性，不含吞吐结论。
 
 ARTIFACT-READ-76: `prepare_dispatch` → `result_validation._bound/_bytes`；小于64KiB的可seek文件按size+1探测，增长时释放探测结果再有界重读。`tests/test_result_read_allocation.py`、`scripts/benchmark_artifact_read.py`、`agent_doc/results/artifact-read76/` 覆盖完整派发Python分配、增长非退化与独立语义复核。主AI维护实现/任务，独立审查者只写证据；不宣称wall/RSS/模型质量收益，目录fd泄漏由ARTIFACT-FD-77跟进。

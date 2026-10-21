@@ -13,6 +13,9 @@ import subprocess
 import sys
 import tempfile
 
+from agent_runtime.external_json import load_json
+from agent_runtime.model_routing import EMPTY_INVENTORY, routing_report, validate_inventory, validate_policy
+
 REPO = Path(__file__).resolve().parent
 BEGIN = '<!-- chosen-david-agent:begin -->'
 END = '<!-- chosen-david-agent:end -->'
@@ -69,6 +72,9 @@ code-organization 同时管理文件：规划输出目录、产物清单和消�
 主 AI 负责 Skills、工作 Agent、任务链、定时器及 tmux 监督器的配置、维护和恢复。
 执行运行时 CLI 时从仓库目录启动，明确指定当前项目的绝对路径。
 需要专业角色时按已安装的 Skill 和匹配的 agent-* 子 Agent 分配工作；简单任务直接处理。
+角色模型偏好见 .claude/agent-workflows/model-policy.json，可用性快照见 model-routing.json。
+跨供应商派发使用源码 scripts/run_role.py 和宿主显式提供的可信适配器；无可用候选继承宿主默认模型。
+安装快照不证明在线可用；派发后失败不得自动换模型重跑已产生作用的任务。模型选择不代替权限或独立验收。
 项目新指令先按 result_reuse_workflow.md 检索 agent_doc/results/，核对代码/输入/配置/环境/指标及当前验证，再规划新增实验。
 新数据进入 agent_doc/results/<run_id>/；复用不跳过明确复现或必要独立验证。
 每轮测试/实验数据须经独立 verify_experiment_result 节点后才能进入消费者/结论；失败或过期需修复重测。
@@ -103,12 +109,13 @@ def catalog():
     return result
 
 
-def agent_text(role, description):
+def agent_text(role, description, model='inherit'):
     name = role['id']
     # JSON strings are also valid quoted YAML scalars; no extra YAML dependency.
     return f'''---
 name: agent-{name}
 description: {json.dumps(description, ensure_ascii=False)}
+model: {json.dumps(model)}
 skills:
   - {name}
 ---
@@ -125,15 +132,20 @@ skills:
 '''
 
 
-def expected_files():
+def expected_files(inventory=None):
+    policy = validate_policy(load_json(REPO / 'config/role_model_policy.json'))
+    report = routing_report(policy, inventory)
     files = {'.claude/agent-workflows/orchestrator.md': (REPO / 'prompts/orchestrator.md').read_text()}
+    for name, value in (('model-policy', policy), ('model-routing', report)):
+        files['.claude/agent-workflows/' + name + '.json'] = json.dumps(value, ensure_ascii=False, indent=2) + '\n'
     for profile in ('planner_main', 'review_main'):
         files['.claude/agent-workflows/' + profile + '.md'] = (REPO / ('prompts/' + profile + '.md')).read_text()
     files['.claude/agent-workflows/dual_main_workflow.md'] = (REPO / 'workflows/dual_main_workflow.md').read_text()
     links = {}
     for role, source, description in catalog():
         links['.claude/skills/' + role['id']] = str(source)
-        files['.claude/agents/agent-' + role['id'] + '.md'] = agent_text(role, description)
+        route = report['routes'][role['id']]
+        files['.claude/agents/agent-' + role['id'] + '.md'] = agent_text(role, description, route['model'] or 'inherit')
     return files, links
 
 
@@ -190,13 +202,15 @@ def project_document_layout(target):
     return task, directories
 
 
-def install(target):
+def install(target, *, model_inventory=None):
     target = installation_root(target)
-    files, links = expected_files()
     manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
     previous = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
     if previous and previous.get('repository') != str(REPO):
         raise ValueError('target belongs to another checkout; uninstall that installation first')
+    inventory = validate_inventory(model_inventory if model_inventory is not None else
+                                   previous.get('model_inventory', EMPTY_INVENTORY))
+    files, links = expected_files(inventory)
     # Preflight all conflicts before changing any files.
     for relative, text in files.items():
         path = checked_target(target, relative)
@@ -232,15 +246,16 @@ def install(target):
     commit = subprocess.run(['git', '-C', str(REPO), 'rev-parse', 'HEAD'],
                             capture_output=True, text=True, check=False).stdout.strip()
     manifest = {'schema_version': 1, 'repository': str(REPO), 'project_root': str(target), 'commit': commit,
-                'files': {name: sha(text) for name, text in files.items()}, 'links': links}
+                'files': {name: sha(text) for name, text in files.items()}, 'links': links,
+                'model_inventory': inventory}
     atomic_text(manifest_path, json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
     return check(target)
 
 
 def check(target):
     target = installation_root(target)
-    files, links = expected_files()
     errors = []
+    manifest = {}
     manifest_path = target / '.claude/agent-workflows/installation.json'
     try:
         manifest = json.loads(manifest_path.read_text())
@@ -250,6 +265,12 @@ def check(target):
             errors.append('installation belongs to a different project')
     except (OSError, ValueError):
         errors.append('installation manifest missing/invalid')
+    try:
+        inventory = validate_inventory(manifest.get('model_inventory', EMPTY_INVENTORY))
+    except ValueError:
+        inventory = EMPTY_INVENTORY
+        errors.append('invalid model inventory in installation manifest')
+    files, links = expected_files(inventory)
     for relative, expected in files.items():
         path = target / relative
         if not path.is_file() or path.read_text() != expected:
@@ -275,6 +296,7 @@ def check(target):
         errors.append(str(exc))
     return {'status': 'configured' if not errors else 'needs_setup', 'target': str(target),
             'skills': len(links), 'subagents': len(links), 'errors': errors,
+            'model_routing': routing_report(load_json(REPO / 'config/role_model_policy.json'), inventory),
             'capabilities': {'python': sys.version.split()[0], 'claude_cli': shutil.which('claude'),
                              'tmux': shutil.which('tmux'), 'model_auth': 'not_checked',
                              'supervisor': 'not_started', 'host_adapter': 'project_specific'},
@@ -333,11 +355,15 @@ def main():
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--check', action='store_true', help='read-only installation/host check')
     group.add_argument('--uninstall', action='store_true', help='remove only owned, unmodified generated files')
+    parser.add_argument('--model-inventory', help='Explicit host-supported model metadata JSON; no credentials')
     args = parser.parse_args()
     if sys.version_info < (3, 10):
         parser.error('Python 3.10+ required')
+    if args.model_inventory and (args.check or args.uninstall):
+        parser.error('--model-inventory applies only to installation/update')
     try:
-        result = check(args.target) if args.check else uninstall(args.target) if args.uninstall else install(args.target)
+        inventory = load_json(args.model_inventory) if args.model_inventory else None
+        result = check(args.target) if args.check else uninstall(args.target) if args.uninstall else install(args.target, model_inventory=inventory)
     except (OSError, ValueError) as exc:
         parser.exit(2, f'setup blocked: {exc}\n')
     print(json.dumps(result, ensure_ascii=False, indent=2))
