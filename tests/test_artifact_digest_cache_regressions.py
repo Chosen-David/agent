@@ -1,5 +1,6 @@
 import hashlib
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -13,9 +14,15 @@ class Inventory(unittest.TestCase):
         (self.root/'a.md').write_bytes(b'abc')
 
     def test_lexical_symlink_refusal(self):
-        original=Path.is_symlink
-        with patch.object(Path,'is_symlink',lambda p: p==self.root/'alias' or original(p)):
-            with self.assertRaisesRegex(DocumentError,'symlink'):a.build_artifact_index(self.root,directory='alias')
+        alias = self.root / 'alias'
+        try:
+            alias.symlink_to(self.root / 'missing-target', target_is_directory=True)
+        except OSError as exc:
+            if os.name == 'nt' and getattr(exc, 'winerror', None) == 1314:
+                self.skipTest('host does not permit creating fixture symlinks')
+            raise
+        with self.assertRaisesRegex(DocumentError, 'symlink'):
+            a.build_artifact_index(self.root, directory='alias')
 
     def test_required_path_identity(self):
         with self.assertRaises(DocumentError):a.build_artifact_index(self.root,required=['bad\x00name'])

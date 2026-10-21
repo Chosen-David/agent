@@ -19,9 +19,9 @@ import tempfile
 from urllib.parse import urlsplit
 
 if __package__:
-    from .context_serialization import render_context
+    from .context_serialization import ContextBudgetError, render_cli_context, render_context
 else:
-    from context_serialization import render_context
+    from context_serialization import ContextBudgetError, render_cli_context, render_context
 CANONICAL_TASK = 'agent_doc/task/TASK.md'
 DOCUMENT_DIRECTORIES = ('agent_doc/task/task_details', 'agent_doc/advice', 'agent_doc/guide', 'agent_doc/results')
 TASK_PATTERN = re.compile(r'^\s*[-*+] \[([ xX])\] \[([A-Za-z0-9][A-Za-z0-9_.-]*)\] (.+)$')
@@ -825,11 +825,16 @@ def main(argv=None):
             stream.reconfigure(encoding='utf-8')
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', required=True)
-    parser.add_argument('--compact', action='store_true', help='preserve all JSON fields without formatting whitespace')
+    formatting = parser.add_mutually_exclusive_group()
+    formatting.add_argument('--compact', action='store_true', default=None,
+                            help='preserve every field; default for inspect/validate')
+    formatting.add_argument('--pretty', dest='compact', action='store_false', help='indent JSON; nav stays compact')
     sub = parser.add_subparsers(dest='command', required=True)
     sub.add_parser('init', help='initialize only the explicitly selected existing project')
-    sub.add_parser('inspect')
-    sub.add_parser('validate')
+    for command in ('inspect', 'validate'):
+        viewing = sub.add_parser(command)
+        viewing.add_argument('--max-chars', type=int, default=20000,
+                             help='complete display character cap including newline (1..1000000)')
     nav = sub.add_parser('nav')
     nav.add_argument('--max-chars', type=int, default=12000)
     nav.add_argument('--progress-chars', '--progress-tail-chars', dest='progress_chars',
@@ -845,6 +850,9 @@ def main(argv=None):
     sub.add_parser('guard-write').add_argument('paths', nargs='+')
     args = parser.parse_args(argv)
     try:
+        bounded_snapshot = args.command in ('inspect', 'validate')
+        if bounded_snapshot and not 1 <= args.max_chars <= 1000000:
+            raise ContextBudgetError('display max_chars must be 1..1000000')
         if args.command == 'init':
             result = initialize_project_docs(args.root)
         elif args.command == 'migrate':
@@ -861,10 +869,16 @@ def main(argv=None):
         # pretty-printing it would silently exceed the checked character budget.
         if args.command == 'nav':
             rendered = json.dumps(result, ensure_ascii=False, separators=(',', ':'))
+        elif bounded_snapshot:
+            compact = True if args.compact is None else args.compact
+            rendered = render_cli_context(result, compact=compact, indent=2, max_chars=args.max_chars)
         else:
             rendered = (render_context(result, compact=True) if args.compact else json.dumps(result, ensure_ascii=False, indent=2))
         print(rendered)
         return 0
+    except ContextBudgetError as exc:
+        print(json.dumps({'error': str(exc)}, ensure_ascii=False), file=sys.stderr)
+        return 2
     except (OSError, ValueError) as exc:
         print(json.dumps({'error': str(exc)}, ensure_ascii=False))
         return 2

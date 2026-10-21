@@ -23,9 +23,9 @@ class ContextCliOutputTests(unittest.TestCase):
         file.write_bytes(text.encode('utf-8'))
         return hashlib.sha256(file.read_bytes()).hexdigest()
 
-    def cli(self, script, args, cap=1000000, compact=False):
+    def cli(self, script, args, cap=1000000, compact=False, *, formatting=()):
         return subprocess.run([sys.executable, str(ROOT / 'scripts' / script),
-                               '--root', str(self.root), *args, '--max-chars', str(cap),
+                               '--root', str(self.root), *formatting, *args, '--max-chars', str(cap),
                                *(['--compact'] if compact else [])], capture_output=True,
                               env=dict(os.environ, PYTHONUTF8='0', PYTHONIOENCODING='cp936'), timeout=20)
 
@@ -105,6 +105,46 @@ class ContextCliOutputTests(unittest.TestCase):
         text = result.stdout.decode('utf-8')
         self.assertIn('\U00010000', text)
         self.assertEqual(json.loads(text)['project_root'], str(self.root))
+
+    def document_fixture(self, count):
+        rows = ['# Tasks', '## 2026-10-21']
+        for n in range(count):
+            rows.append(f'- [ ] [T{n}] Review \U00010000 {"scope " * 12}([detail](task_details/T{n}.md))')
+            self.source(f'agent_doc/task/task_details/T{n}.md',
+                        f'# T{n}\nTask-ID: T{n}\nDate: 2026-10-21\n## Plan\nScope\n## Progress\nReady\n')
+        self.source('agent_doc/task/TASK.md', '\n'.join(rows) + '\n')
+
+    def test_document_snapshots_bound_actual_compact_and_pretty_packets(self):
+        self.document_fixture(1)
+        for command in ('inspect', 'validate'):
+            values = []
+            for formatting in ((), ('--pretty',), ('--compact',)):
+                full = self.cli('project_docs.py', [command], formatting=formatting)
+                self.assertEqual(full.returncode, 0, full.stderr)
+                text = full.stdout.decode('utf-8')
+                exact = self.cli('project_docs.py', [command], len(text), formatting=formatting)
+                self.assertEqual(exact.returncode, 0, exact.stderr)
+                self.assertEqual(exact.stdout, full.stdout)
+                failed = self.cli('project_docs.py', [command], len(text) - 1, formatting=formatting)
+                self.assertEqual(failed.returncode, 2)
+                self.assertEqual(failed.stdout, b'')
+                self.assertIn('budget', json.loads(failed.stderr)['error'])
+                values.append(json.loads(text))
+            self.assertTrue(all(value == values[0] for value in values))
+
+    def test_large_document_inventory_requires_explicit_budget_not_truncation(self):
+        from agent_runtime.project_docs import snapshot_project_docs
+        self.document_fixture(200)
+        self.assertGreater(len(json.dumps(snapshot_project_docs(self.root), ensure_ascii=False)), 20000)
+        before = {str(p): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        for command in ('inspect', 'validate'):
+            denied = self.cli('project_docs.py', [command], 20000)
+            self.assertEqual(denied.returncode, 2)
+            self.assertEqual(denied.stdout, b'')
+            full = self.cli('project_docs.py', [command], 200000)
+            self.assertEqual(full.returncode, 0, full.stderr)
+            self.assertEqual(json.loads(full.stdout), snapshot_project_docs(self.root))
+        self.assertEqual({str(p): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}, before)
 
 
 if __name__ == '__main__':

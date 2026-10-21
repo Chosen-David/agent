@@ -2,7 +2,7 @@
 
 ## 2026-10-21
 
-- [ ] [ITER10-20261021B] Ten practical token/memory/cache/portability fixes, each verified and pushed to main. ([detail](task_details/ITER10-20261021B.md))
+- [x] [ITER10-20261021B] Ten context/memory/cache/portability fixes verified and published; final scoped suite passed. ([detail](task_details/ITER10-20261021B.md))
 
 - [x] [PRODUCT-20261021] UTF8 role execution, bounded memory output, lean installs and light task entry paths fixed; scoped independent checks passed. ([detail](task_details/PRODUCT-20261021.md))
 

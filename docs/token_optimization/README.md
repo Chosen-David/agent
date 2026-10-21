@@ -1,5 +1,19 @@
 # 组合入口的 token 优化
 
+上下文 CLI 以完整 UTF8 JSON 和平台换行为单位检查显示预算，超限不截断：
+
+| 入口 | 默认上限 | 显式提高上限 |
+| --- | --- | --- |
+| `task_context.py` / `log_context.py` / `record_context.py` / `reference_context.py` | 20000字符 | `--max-chars`，最多1000000 |
+| `result_store.py search/show/decide/context` | 20000字符，默认紧凑 | 子命令后的 `--max-chars`，最多1000000 |
+| `project_docs.py inspect/validate` | 20000字符，默认紧凑 | 子命令后的 `--max-chars`，最多1000000 |
+| `project_memory` 的 list/history/impact/check/storage | 20000字符，默认紧凑 | 子命令后的 `--max-chars`，最多200000 |
+
+结果库、文档快照和记忆的全局 `--pretty` 须放在子命令前，缩进也计入预算。
+优先按任务、记录或scope收窄读取；需完整大响应时显式提高上限。写入命令不因
+读取预算在成功后报错。显示字符不是token、数据库读取量或整次会话费用；现有
+SHA/依赖/独立验收门禁继续有效。下面保留历史实验及其原适用范围。
+
 2026-10-11按用户要求完成[五轮短对照升级](five_rounds.md)，各轮已独立验收并核对main，累计14项真实成功；随后启动[每小时优化器](hourly_optimizer.md)。五项短对照总tokens分别少18152、313、231、203、181；不推广为全会话净成本或长文收益。监督维护接入[事件门禁](maintenance_gate.md)与完整的显式项目文件/advice/外部事件观察器；先前99%额度停止记录仍保留，后续新命名空间已通过真实测试。
 
 advice会议先由宿主检查[版本变更清单](advice_meetings.md)，按新增/修改内容与未决任务决定需要读取什么；归档也检测变更，不自动授信或关闭任务。此次有SGLang提交阅读和CPU边界检查，真实模型token收益尚待短对照，不增加成功计数。
