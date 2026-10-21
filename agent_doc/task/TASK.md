@@ -34,7 +34,7 @@
 
 - [ ] [CONCISE-98] 精简Skill与CLAUDE入口修复通过范围验收；正文阅读2/10，批次未完成，发布回读另核。 ([详情](task_details/CONCISE-98.md))
 
-- [ ] [RESULT-TIME-97] 结果时间UTC越界隔离；修前API/CLI复现、窄来源修复与独立验证后发布。 ([详情](task_details/RESULT-TIME-97.md))
+- [x] [RESULT-TIME-97] 结果时间UTC越界隔离已由并发main实现；补齐API/CLI、写前拒绝、字节不变及非泛吞回归并独立验收。 ([详情](task_details/RESULT-TIME-97.md))
 
 - [x] [RESULT-FD-95] 结果读取/哈希/登记fd释放：独立普通/-O各38场景泄漏12→0、专项各103通过，全库1339通过/8skip、Reader3通过；发布回读另核，不主张吞吐提速。 ([详情](task_details/RESULT-FD-95.md))
 

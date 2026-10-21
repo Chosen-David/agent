@@ -161,6 +161,16 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 
 ## Progress
 
+阶段U5（RESULT-TIME-97）完成一个有界可靠性检查点：旧`27195c7d`真实复现合法ISO-8601
+边界在UTC换算时抛裸`OverflowError`，导致单条坏结果中断API/CLI搜索。发布前发现并发main
+`b928a253`已在同一窄来源实现修复，故未重复修改生产代码；只新增五项持久回归，覆盖上下合法
+邻界、两个时间字段的坏记录隔离、CLI继续返回好记录、原字节不变、注册写前拒绝和无关
+`OverflowError`传播。最新`01154770`上主执行者全库1638项全部执行成功（12项能力型skip），
+独立复核接受`usable-with-scope`并保留其宿主中一个无关`/proc`能力失败。证据见
+[RESULT-TIME-97](../../results/result-time97/report.md)及
+[独立验收](../../results/result-time97/independent-result.md)。无性能/模型收益主张；SYSTEM-99及
+本系统级轮次仍open，不把本检查点计为整轮完成。
+
 阶段U3基于远端main `a87347c7`固定真实修前失败：两页PDF请求`pages=1,3`正确返回exit3/invalid，
 但目标目录仍存在并含`page-1.png`。独立方案首轮发现普通`os.rename`会覆盖并发空目录而REVISE；
 Version30改用同父FD的`renameat2(RENAME_NOREPLACE)`、staging身份复核和无不安全回退后APPROVE。

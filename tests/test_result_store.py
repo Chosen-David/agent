@@ -1,5 +1,6 @@
 """Local CPU registration/retrieval/reuse; no hosted model or performance claim."""
 import copy
+import datetime as dt
 import hashlib
 import json
 import os
@@ -123,6 +124,100 @@ class ResultStoreTests(unittest.TestCase):
         self.assertEqual(payload['status'], 'incomplete')
         self.assertIn('history-utf16', [item['run_id'] for item in payload['errors']])
         self.assertEqual(record.read_bytes(), before)
+
+    def test_timestamp_rejects_utc_conversion_overflow_as_domain_error(self):
+        invalid = (
+            '0001-01-01T00:00:00+01:00',
+            '9999-12-31T23:59:59-01:00',
+        )
+        for value in invalid:
+            with self.subTest(value=value):
+                with self.assertRaisesRegex(ResultStoreError, 'UTC range') as caught:
+                    result_store._timestamp(value)
+                self.assertIsInstance(caught.exception.__cause__, OverflowError)
+
+        expected = (
+            ('0001-01-01T01:00:00+01:00', dt.datetime.min.replace(tzinfo=dt.timezone.utc)),
+            ('9999-12-31T22:59:59-01:00',
+             dt.datetime.max.replace(tzinfo=dt.timezone.utc, microsecond=0)),
+        )
+        for value, reference in expected:
+            with self.subTest(value=value):
+                self.assertEqual(result_store._timestamp(value), reference)
+
+    def test_search_isolates_timestamp_utc_overflow_without_changing_records(self):
+        artifact = self.root / 'timestamp-history.txt'
+        artifact.write_text('timestamp boundary evidence')
+        ref = {'path': artifact.name, 'sha256': hashlib.sha256(artifact.read_bytes()).hexdigest()}
+        for run_id in ('bad-measured', 'bad-registered', 'valid-neighbor'):
+            self.store.register_history(run_id, 'timestamp boundary evidence', [ref])
+        records = {
+            run_id: self.root / f'agent_doc/results/{run_id}/record.json'
+            for run_id in ('bad-measured', 'bad-registered', 'valid-neighbor')
+        }
+        measured = json.loads(records['bad-measured'].read_text())
+        measured['measured_at'] = '9999-12-31T23:59:59-01:00'
+        records['bad-measured'].write_text(json.dumps(measured) + '\n')
+        registered = json.loads(records['bad-registered'].read_text())
+        registered['registered_at'] = '0001-01-01T00:00:00+01:00'
+        records['bad-registered'].write_text(json.dumps(registered) + '\n')
+        before = {run_id: path.read_bytes() for run_id, path in records.items()}
+
+        found = self.store.search('timestamp boundary evidence')
+
+        self.assertEqual([item['run_id'] for item in found['results']], ['valid-neighbor'])
+        errors = {item['run_id'] for item in found['errors']}
+        self.assertTrue({'bad-measured', 'bad-registered'} <= errors)
+        self.assertEqual(found['status'], 'candidates')
+        self.assertEqual({run_id: path.read_bytes() for run_id, path in records.items()}, before)
+
+    def test_search_cli_isolates_timestamp_utc_overflow(self):
+        artifact = self.root / 'timestamp-cli.txt'
+        artifact.write_text('timestamp CLI evidence')
+        ref = {'path': artifact.name, 'sha256': hashlib.sha256(artifact.read_bytes()).hexdigest()}
+        for run_id in ('cli-bad', 'cli-good'):
+            self.store.register_history(run_id, 'timestamp CLI evidence', [ref])
+        record_path = self.root / 'agent_doc/results/cli-bad/record.json'
+        record = json.loads(record_path.read_text())
+        record['registered_at'] = '0001-01-01T00:00:00+01:00'
+        record_path.write_text(json.dumps(record) + '\n')
+        before = record_path.read_bytes()
+        script = Path(__file__).resolve().parents[1] / 'scripts/result_store.py'
+
+        completed = subprocess.run(
+            [sys.executable, str(script), '--root', str(self.root),
+             'search', 'timestamp CLI evidence'],
+            capture_output=True, text=True, timeout=10,
+        )
+
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        payload = json.loads(completed.stdout)
+        self.assertEqual([item['run_id'] for item in payload['results']], ['cli-good'])
+        self.assertIn('cli-bad', [item['run_id'] for item in payload['errors']])
+        self.assertEqual(record_path.read_bytes(), before)
+
+    def test_timestamp_overflow_is_rejected_before_history_registration(self):
+        artifact = self.root / 'timestamp-register.txt'
+        artifact.write_text('timestamp registration evidence')
+        ref = {'path': artifact.name, 'sha256': hashlib.sha256(artifact.read_bytes()).hexdigest()}
+        for index, value in enumerate((
+                '0001-01-01T00:00:00+01:00',
+                '9999-12-31T23:59:59-01:00')):
+            run_id = f'bad-registration-{index}'
+            with self.subTest(value=value):
+                with self.assertRaisesRegex(ResultStoreError, 'UTC range'):
+                    self.store.register_history(
+                        run_id, 'timestamp registration evidence', [ref], measured_at=value)
+                self.assertFalse((self.root / f'agent_doc/results/{run_id}').exists())
+
+    def test_search_does_not_hide_unrelated_overflow_from_custom_show(self):
+        artifact = self.root / 'custom-overflow.txt'
+        artifact.write_text('custom overflow evidence')
+        ref = {'path': artifact.name, 'sha256': hashlib.sha256(artifact.read_bytes()).hexdigest()}
+        self.store.register_history('custom-overflow', 'custom overflow evidence', [ref])
+        with patch.object(self.store, 'show', side_effect=OverflowError('unrelated')):
+            with self.assertRaisesRegex(OverflowError, 'unrelated'):
+                self.store.search('custom overflow evidence')
 
     def test_explicit_handler_and_consumers_recheck_not_skip_by_search(self):
         self.register()
