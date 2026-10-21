@@ -11,6 +11,7 @@ import unittest
 from unittest.mock import patch
 
 from agent_runtime import documents as tools
+from agent_runtime import documents_adapter as adapter
 from agent_runtime.documents_adapter import latex_escape
 
 
@@ -22,6 +23,28 @@ def pinned_document_platform():
         return False
 
 
+class DocumentsAdapterTests(unittest.TestCase):
+    def test_latex_all_special_characters_are_literal(self):
+        self.assertEqual(latex_escape('\\{}$&#%_~^'),
+                         r'\textbackslash{}\{\}\$\&\#\%\_\textasciitilde{}\textasciicircum{}')
+
+    def test_missing_resource_refuses_before_input_or_parser_execution(self):
+        output = io.StringIO()
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / 'output'
+            argv = ['documents_adapter', 'latex-source', str(Path(directory) / 'missing.json'), str(target)]
+            with patch.dict(sys.modules, {'resource': None}), patch.object(sys, 'argv', argv), \
+                    patch.object(adapter.Path, 'read_bytes') as read, \
+                    patch.object(adapter, 'execute') as execute, contextlib.redirect_stdout(output):
+                self.assertEqual(adapter.main(), 2)
+            self.assertFalse(target.exists())
+            read.assert_not_called()
+            execute.assert_not_called()
+        self.assertEqual(json.loads(output.getvalue())['status'], 'unavailable')
+
+
+@unittest.skipUnless(tools.fcntl is not None and hasattr(os, 'O_NOFOLLOW'),
+                     'managed documents require POSIX file and locking primitives')
 class DocumentsBoundaryTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
@@ -105,10 +128,6 @@ class DocumentsBoundaryTests(unittest.TestCase):
             (directory / '.incomplete').write_text('{}')
             with self.assertRaisesRegex(ValueError, 'incomplete'):
                 tools.verify(self.root, version, {})
-
-    def test_latex_all_special_characters_are_literal(self):
-        self.assertEqual(latex_escape('\\{}$&#%_~^'),
-                         r'\textbackslash{}\{\}\$\&\#\%\_\textasciitilde{}\textasciicircum{}')
 
     @unittest.skipUnless(pinned_document_platform(), 'optional wheel profile requires CPython3.12 Linux x86_64 glibc')
     def test_offline_failure_preserves_current_bytes(self):

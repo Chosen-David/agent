@@ -32,7 +32,12 @@ class RepositoryTaskIntegrationTests(unittest.TestCase):
         self.assertTrue(all(task['action'] == 'configure_host_action' for task in draft['tasks']))
         self.assertEqual(draft['advice_assessments'], [])
         self.assertEqual(draft['guide_reviews'], [])
-        with self.assertRaisesRegex(ValueError, 'human guide review required'):
+        # A human-only guide may be absent in a clean source/test snapshot. The
+        # first actual planning input still blocks dispatch until assessed.
+        required = ('human guide review required' if draft['project_documents']['guides']
+                    else 'unassessed advice')
+        self.assertTrue(draft['project_documents']['guides'] or draft['project_documents']['advice'])
+        with self.assertRaisesRegex(ValueError, required):
             validate_contract(draft, ROOT)
 
     def test_current_snapshot_rejects_old_bindings_but_not_progress(self):

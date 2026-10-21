@@ -2,7 +2,7 @@
 
 ## 2026-10-21
 
-- [ ] [PRODUCT-20261021] Improve actual role execution, light task defaults and lean installation; independent verification per published batch. ([detail](task_details/PRODUCT-20261021.md))
+- [x] [PRODUCT-20261021] UTF8 role execution, bounded memory output, lean installs and light task entry paths fixed; scoped independent checks passed. ([detail](task_details/PRODUCT-20261021.md))
 
 - [x] [USABILITY-20261021] Portable onboarding and artifact hygiene fixed; independent fresh-clone lifecycle and scoped regressions passed. ([detail](task_details/USABILITY-20261021.md))
 

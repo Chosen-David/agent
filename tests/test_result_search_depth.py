@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from agent_runtime.result_store import METADATA_LIMIT, ResultStore, SCHEMA
+from agent_runtime.result_store import METADATA_LIMIT, ResultStore, ResultStoreError, SCHEMA
 
 
 class ResultSearchDepthTests(unittest.TestCase):
@@ -43,7 +43,12 @@ class ResultSearchDepthTests(unittest.TestCase):
     def assert_isolated(self, result, bad, expected):
         self.assertEqual([hit['run_id'] for hit in result['results']], expected)
         self.assertEqual([error['run_id'] for error in result['errors']], bad)
-        self.assertTrue(all('recursion' in error['error'].lower() for error in result['errors']))
+        for error in result['errors']:
+            # Iterative JSON implementations may accept this nesting depth;
+            # that record must still fail its schema, independently of neighbors.
+            with self.assertRaises((ResultStoreError, RecursionError)) as original:
+                self.store.show(error['run_id'])
+            self.assertEqual(error['error'], str(original.exception))
         self.assertEqual(result['status'], 'candidates' if expected else 'incomplete')
         self.assertTrue(all(hit['applicability'] == 'unchecked' for hit in result['results']))
 
@@ -69,22 +74,41 @@ class ResultSearchDepthTests(unittest.TestCase):
                 self.assertEqual(result.returncode, 0, result.stderr)
                 self.assert_isolated(json.loads(result.stdout), ['bad'], ['good'])
 
-    def test_direct_show_still_raises_recursion_error(self):
+    def test_direct_show_preserves_native_depth_error_or_validates_schema(self):
         path = self.deep()
-        with self.assertRaises(RecursionError) as original:
+        try:
             json.loads(path.read_bytes())
+        except RecursionError as error:
+            original = error
+        else:
+            with self.assertRaisesRegex(ResultStoreError, 'schema/identity'):
+                self.store.show('bad')
+            return
         with self.assertRaises(RecursionError) as caught:
             self.store.show('bad')
-        self.assertEqual(str(caught.exception), str(original.exception))
+        self.assertEqual(str(caught.exception), str(original))
         self.assertIsInstance(caught.exception.__cause__, RecursionError)
-        self.assertEqual(str(caught.exception.__cause__), str(original.exception))
+        self.assertEqual(str(caught.exception.__cause__), str(original))
 
-    def test_invalid_caller_context_is_not_a_record_error(self):
-        nested = 0
-        for _ in range(10000):
-            nested = [nested]
-        with self.assertRaises(RecursionError):
-            self.store.search('needle', context={'artifacts': {'deep': nested}})
+    def test_caller_serialization_failure_is_not_a_record_error(self):
+        error = RecursionError('caller context depth')
+        with patch('agent_runtime.result_store.json.dumps', side_effect=error):
+            with self.assertRaises(RecursionError) as caught:
+                self.store.search('needle', context={'artifacts': {'deep': []}})
+        self.assertIs(caught.exception, error)
+
+    def test_decoder_depth_failure_is_isolated_on_all_interpreters(self):
+        self.good()
+        self.deep()
+        loads = json.loads
+        def decode(text, *args, **kwargs):
+            if text.startswith('{"payload":'):
+                raise RecursionError('fixture decoder recursion limit')
+            return loads(text, *args, **kwargs)
+        with patch('agent_runtime.result_store.json.loads', side_effect=decode):
+            result = self.store.search('needle')
+            self.assert_isolated(result, ['bad'], ['good'])
+            self.assertIn('fixture decoder recursion limit', result['errors'][0]['error'])
 
     def test_custom_show_recursion_error_is_not_swallowed(self):
         self.good()

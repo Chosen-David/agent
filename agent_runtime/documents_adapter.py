@@ -9,7 +9,6 @@ import importlib.metadata
 import json
 import math
 from pathlib import Path
-import resource
 import tempfile
 
 
@@ -139,10 +138,11 @@ def main():
     args = parser.parse_args()
     # Applies before importing document parsers. The parent also enforces wall
     # time and a file-backed output cap; no shell or arbitrary generator runs.
-    resource.setrlimit(resource.RLIMIT_AS, (1024**3, 1024**3))
-    resource.setrlimit(resource.RLIMIT_FSIZE, (64 * 1024**2, 64 * 1024**2))
-    resource.setrlimit(resource.RLIMIT_CPU, (50, 50))
     try:
+        import resource
+        resource.setrlimit(resource.RLIMIT_AS, (1024**3, 1024**3))
+        resource.setrlimit(resource.RLIMIT_FSIZE, (64 * 1024**2, 64 * 1024**2))
+        resource.setrlimit(resource.RLIMIT_CPU, (50, 50))
         raw = Path(args.input).read_bytes()
         if len(raw) > 2 * INPUT_LIMIT + 4096:
             raise ValueError('input envelope exceeds limit')

@@ -8,8 +8,14 @@ from agent_runtime.maintenance_observer import maintenance_observer, read_bound
 
 
 class ObserverTests(unittest.TestCase):
-    def test_real_project_binding_and_quiet_trace(self):
+    def maintained_root(self):
         root = Path(__file__).resolve().parents[1]
+        if not (root / 'agent_doc/guide/GUIDE.md').is_file():
+            self.skipTest('maintained-checkout integration needs an existing human guide; never create one')
+        return root
+
+    def test_real_project_binding_and_quiet_trace(self):
+        root = self.maintained_root()
         event = {'due': False, 'evidence': 'pending'}
         observe = maintenance_observer(root, 'bounded-test', [], lambda: event)
         calls = []
@@ -40,7 +46,7 @@ class ObserverTests(unittest.TestCase):
                 read_bound(root, 'data', max_bytes=5)
 
     def test_ambiguous_and_unstable_events(self):
-        root = Path(__file__).resolve().parents[1]
+        root = self.maintained_root()
         with self.assertRaises(ValueError):
             maintenance_observer(root, 'test', ['agent_doc/task/TASK.md'], lambda: {})
         counter = iter([{'epoch': 1}, {'epoch': 2}])
@@ -54,7 +60,7 @@ class ObserverTests(unittest.TestCase):
                 maintenance_observer(root, 'test', [], lambda: events)()
 
     def test_all_advice_version_is_bound(self):
-        root = Path(__file__).resolve().parents[1]
+        root = self.maintained_root()
         with patch('agent_runtime.maintenance_observer.observe_advice', return_value=({}, {'v': 1})):
             first = maintenance_observer(root, 'test', [], lambda: {})()
         with patch('agent_runtime.maintenance_observer.observe_advice', return_value=({}, {'v': 2})):
