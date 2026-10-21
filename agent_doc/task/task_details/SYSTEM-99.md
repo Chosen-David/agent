@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 31
+Version: 32
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -153,8 +153,11 @@ tmux边界，再提出独立可验收方案：一次安装/离线复用tmux及�
 回看、合理scrollback和终端能力回退；不得覆盖用户`~/.tmux.conf`、启动后台服务或宣称SSH/重启
 恢复。上下文限制继续复用现有预算/压缩权威入口，区分终端回滚行数、模型context window和项目
 任务包预算，不能把三者混为一个“上下文限制”。实施前须固定支持平台、包来源/版本/许可、配置
-合并与卸载恢复合同、真实无tmux→安装→离线复用→会话/鼠标配置验收及独立方案审核。本版只登记
-后续范围，尚未安装、实现或声称体验/性能收益，不另造竞争TASK。
+合并与卸载恢复合同、真实无tmux→安装→离线复用→会话/鼠标配置验收及独立方案审核。Version34
+[受阻方案](../../results/system99/stage-u4-plan.md)已固定Ubuntu Noble amd64 archive/许可、rootless
+SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状态机，并经
+[独立方案复核](../../results/system99/independent-stage-u4-plan.md)批准。当前只登记可发布的
+`PROPOSED / blocked-on-real-host`检查点，尚未安装、实现或声称体验/性能收益，不另造竞争TASK。
 
 ## Progress
 
@@ -170,8 +173,20 @@ compileall和diff检查通过；3个新集成用例因全库未传显式root而s
 去除新增元数据可逐字节还原并发原blob。任务入口恢复4/4，最终全库1579项全部执行成功、11skip，
 日志SHA256 `86342a19997168736a155a511167c803cc8373954c4b9f3b409d7a03a7e6e14a`。
 最终并发整合独审另重跑任务入口4、专项普通/-O各20并接受`usable-with-scope`，未重跑最终全库。
-普通发布尚未完成；
+已以普通提交`0e835025ea5ff47e7c104e7ab13a9ef18ba9e2c1`发布到main并回读远端同SHA及树
+`487fd09127706a7e5bf6233124e636bb987a4038`；
 无性能、真实模型、TeX编译或整轮完成主张。证据见[U3](../../results/system99/stage-u3.md)。
+
+阶段U4先查询270个结果目录（`partial=true`），未发现可复用的tmux安装结果。当前Ubuntu
+24.04.3 amd64宿主PATH无tmux；固定的tmux 3.4-1build1、libevent-core 2.1.12-stable-9ubuntu2、
+libutempter0 1.2.1-3build1 archive哈希及ELF/copyright已核对，临时隔离库可运行`tmux -V`。
+但Python `AF_UNIX`与真实tmux server均以`EPERM`失败，不能完成session、mouse、配置读回或活动
+server卸载门禁。Version32、33独立审查分别退回许可/提取/resolver与SONAME/utmp/卸载问题；
+Version34文件SHA256 `e20a92de56e386d26c392e25c9dea2c4169ce57b37b19610ceb8c7d701f56454`
+关闭全部阻塞项并获`APPROVE`。因此本次只发布方案检查点：未写生产代码、未接入默认supervisor、
+未把`tmux -V`或静态检查冒充真实会话，也不宣称一次安装、鼠标、回滚、性能或跨重启可用。
+下一步必须在授权且允许AF_UNIX socket的Ubuntu Noble amd64宿主完成真实无tmux→安装→断网复用→
+两种TERM会话/鼠标/完整配置/卸载恢复验收，再决定是否实现并接入；SYSTEM-99及本轮保持open。
 
 第二次发布前main推进至`e5cdac5a`（TOK10第4至8轮）。候选保留并发代码/结果，只补第4至8轮索引和
 规范身份并将父摘要更正为8/10；逆投影与最新main原blob一致。重放先暴露生成引用未同步，机械同步又

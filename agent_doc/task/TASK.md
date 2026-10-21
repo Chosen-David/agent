@@ -25,7 +25,7 @@
 
 ## 2026-10-20
 
-- [ ] [SYSTEM-99] 系统级改进批次：U3实现文档no-clobber原子发布并修复独立Skill导入；最新main上专项各20、全库1579（11skip）及Reader3通过，发布待收尾；U4将实现tmux一次安装、鼠标/回滚体验与上下文预算边界。 ([详情](task_details/SYSTEM-99.md))
+- [ ] [SYSTEM-99] 系统级改进批次：U3文档no-clobber原子发布已在main `0e835025`回读；U4 Version34方案独立批准，但当前宿主禁止AF_UNIX socket，故仅发布受阻计划检查点，尚未实现或宣称tmux体验收益。 ([详情](task_details/SYSTEM-99.md))
 
 - [x] [MEM-INDEX-96] 分页目录/快照失效/存储观察已独立验收并发布；长文单条读取载荷54147→6116 tokens，全库未全绿，非总token收益。 ([详情](task_details/MEM-INDEX-96.md))
 
