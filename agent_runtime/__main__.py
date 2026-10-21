@@ -5,6 +5,7 @@ import signal
 import sys
 import uuid
 
+from .context_serialization import render_context
 from .core import ArtifactHandler, Engine, Store, validate
 from .external_json import ExternalJSONError, load_json
 from .scheduler import LocalScheduler, arm
@@ -16,6 +17,7 @@ PLAN_INPUT_LIMIT = 16 * 1024 * 1024
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--db', required=True)
+    parser.add_argument('--compact', action='store_true', help='preserve all JSON fields without formatting whitespace')
     parser.add_argument('--legacy-unprotected', action='store_true', help='explicit trusted compatibility; no independent main review')
     sub = parser.add_subparsers(dest='command', required=True)
     p = sub.add_parser('init'); p.add_argument('plan')
@@ -84,7 +86,7 @@ def main():
         signal.signal(signal.SIGINT, lambda *_: stopped.append(True))
         scheduler.serve(engine, lambda: bool(stopped), args.max_seconds)
         result = {'status': 'serve_stopped', 'capabilities': scheduler.capabilities()}
-    print(json.dumps(result, ensure_ascii=False, indent=2))
+    print((render_context(result, compact=True) if args.compact else json.dumps(result, ensure_ascii=False, indent=2)))
 
 
 if __name__ == '__main__':

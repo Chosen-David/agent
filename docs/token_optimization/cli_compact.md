@@ -20,6 +20,8 @@ Available entries (rollout tracked in TOK10-20261021):
 
 | Experiment-result validation | `python scripts/validate_experiment_result.py --compact --root ROOT --contract CONTRACT` |
 
+| Core runtime | `python -m agent_runtime --compact --db DB capabilities` |
+
 Use the existing default output for human inspection. Compact output is opt-in
 for tools passing full JSON to a model. It is whitespace compression, not a
 semantic summary and not a measured reduction in total session tokens. Each
