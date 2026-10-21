@@ -138,6 +138,64 @@ class DocumentsBoundaryTests(unittest.TestCase):
             tools.install(self.root, 'agpl-3.0', offline=True)
         self.assertEqual((self.root / 'current.json').read_bytes(), before)
 
+    def test_wheelhouse_preflight_failure_can_be_corrected_and_retried(self):
+        wheels = Path(self.temp.name) / 'wheels'
+        wheels.mkdir()
+        packages = [dict(name=name, version='1', filename=name + '.whl',
+                         url='https://example.invalid/' + name,
+                         sha256=tools.digest(name.encode())) for name in ('first', 'last')]
+        profile, expected, version = dict(packages=packages), {'test': 'binding'}, 'b' * 64
+        observation = dict(packages={p['name']: p['version'] for p in packages})
+        for failure in ('missing', 'corrupt', 'symlink'):
+            with self.subTest(failure=failure):
+                root = Path(self.temp.name) / failure
+                with tools.managed_root(root, create=True):
+                    tools.atomic_json(root / 'current.json', {'old': failure})
+                old = (root / 'current.json').read_bytes()
+                (wheels / 'first.whl').write_bytes(b'first')
+                last = wheels / 'last.whl'
+                if last.exists() or last.is_symlink():
+                    last.unlink()
+                if failure == 'corrupt':
+                    last.write_bytes(b'wrong')
+                elif failure == 'symlink':
+                    last.symlink_to(wheels / 'first.whl')
+                with (patch.object(tools, 'binding', return_value=(profile, expected, version)),
+                      patch.object(tools.venv, 'EnvBuilder') as builder,
+                      patch.object(tools.subprocess, 'run') as pip,
+                      patch.object(tools, 'smoke', return_value=observation)):
+                    with self.assertRaises((ValueError, OSError)):
+                        tools.install(root, 'agpl-3.0', wheelhouse=wheels, offline=True)
+                    self.assertEqual((root / 'current.json').read_bytes(), old)
+                    self.assertFalse((root / version).exists())
+                    builder.assert_not_called()
+                    pip.assert_not_called()
+                    if last.exists() or last.is_symlink():
+                        last.unlink()
+                    last.write_bytes(b'last')
+                    result = tools.install(root, 'agpl-3.0', wheelhouse=wheels, offline=True)
+                    self.assertEqual(result['status'], 'installed')
+                    builder.return_value.create.assert_called_once_with(root / version)
+                    pip.assert_called_once()
+                    self.assertFalse((root / version / '.incomplete').exists())
+
+    def test_failure_after_preflight_keeps_diagnostics_and_old_current(self):
+        profile, expected, version = dict(packages=[]), {'test': 'binding'}, 'c' * 64
+        with tools.managed_root(self.root, create=True):
+            tools.atomic_json(self.root / 'current.json', {'old': True})
+        old = (self.root / 'current.json').read_bytes()
+        with (patch.object(tools, 'binding', return_value=(profile, expected, version)),
+              patch.object(tools.venv, 'EnvBuilder'),
+              patch.object(tools.subprocess, 'run',
+                           side_effect=subprocess.CalledProcessError(1, ['pip'])) as pip):
+            with self.assertRaises(subprocess.CalledProcessError):
+                tools.install(self.root, 'agpl-3.0')
+            self.assertTrue((self.root / version / '.incomplete').is_file())
+            self.assertEqual((self.root / 'current.json').read_bytes(), old)
+            with self.assertRaisesRegex(ValueError, 'incomplete'):
+                tools.install(self.root, 'agpl-3.0')
+            pip.assert_called_once()
+
     def _adapter(self):
         path = Path(self.temp.name) / 'adapter.py'
         path.write_text("""import json, pathlib, sys, time

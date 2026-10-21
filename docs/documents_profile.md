@@ -25,6 +25,8 @@ python -m agent_runtime.documents --root /absolute/dedicated/documents-env probe
 精确文件名和 SHA-256。首次联网安装仅访问锁内包 URL，不查询浮动版本。
 同一锁/适配器/解释器/许可组合的重复 install 先重验 receipt 与真实 smoke，成功即 `reused`，
 不创建 venv、不调用 pip。`--offline` 的首次安装必须显式提供 wheelhouse。
+本地 wheelhouse 的全部路径和哈希先预检；缺文件、链接或损坏缓存不会创建版本目录，
+修正缓存后可直接重试。预检后 pip 仍以锁内哈希核验实际读取的文件。
 
 venv 位于最终路径，不能移动，否则 shebang 和 receipt 路径失效。`current.json` 是受限 JSON
 指针；新环境带 `.incomplete`，真实 smoke 全过后才发布 receipt/current。失败保留诊断目录和

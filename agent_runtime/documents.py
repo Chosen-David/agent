@@ -298,12 +298,8 @@ def install(root, license_choice, *, wheelhouse=None, offline=False):
             return dict(status='reused', receipt=receipt)
         if offline and wheelhouse is None:
             raise ValueError('offline first install requires --wheelhouse')
-        directory.mkdir()
-        atomic_json(directory / '.incomplete', dict(schema_version='documents-install/v1', binding=expected))
-        # Keep a failed incomplete directory for diagnosis; never delete unknown
-        # environments or rewrite the previous current/receipt on failure.
-        venv.EnvBuilder(with_pip=True).create(directory)
-        requirements = directory / 'requirements.lock'
+        # Reject a bad local cache before creating an environment that would
+        # require manual recovery. pip still verifies hashes at consumption.
         lines = []
         for item in profile['packages']:
             location = item['url']
@@ -313,6 +309,12 @@ def install(root, license_choice, *, wheelhouse=None, offline=False):
                     raise ValueError('wheelhouse hash mismatch: ' + item['filename'])
                 location = wheel.as_uri()
             lines.append(f"{item['name']} @ {location} --hash=sha256:{item['sha256']}")
+        directory.mkdir()
+        atomic_json(directory / '.incomplete', dict(schema_version='documents-install/v1', binding=expected))
+        # Keep a failed incomplete directory for diagnosis; never delete unknown
+        # environments or rewrite the previous current/receipt on failure.
+        venv.EnvBuilder(with_pip=True).create(directory)
+        requirements = directory / 'requirements.lock'
         requirements.write_text('\n'.join(lines) + '\n', encoding='utf-8')
         command = [str(directory / 'bin/python'), '-I', '-m', 'pip', '--isolated',
                    '--disable-pip-version-check', 'install', '--require-hashes',
