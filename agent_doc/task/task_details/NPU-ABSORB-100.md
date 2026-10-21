@@ -2,7 +2,7 @@
 
 Task-ID: NPU-ABSORB-100
 Date: 2026-10-21
-Status: doing
+Status: blocked
 Owner: main-ai
 
 ## Plan
@@ -42,7 +42,10 @@ Owner: main-ai
   确定性分类 + required 缺失/匹配 + 哈希级对称 diff；tests/test_artifact_index.py 9 项通过。
 - 阶段C（结构化 intake）：新增 agent_runtime/intake.py（build_intake + apply_intake），
   ≤5 选项补问 schema + 答案重注入 + 完整性重检；tests/test_intake.py 7 项通过。
+- 阶段D（next 尾注）：新增 agent_runtime/next_step.py（attach_next + validate_next），
+  校验 action/command/reason 三元 footer，不覆盖已有 next；tests/test_next_step.py 5 项通过。
 
 ### 阻塞与下一步
 
-- 继续阶段D（next 尾注）。
+- 四阶段代码均已实现 + 单元测试 + 推送 + 远端 SHA 读回核对；独立结果验收待可信宿主后端，
+  无后端则如实 blocked，不伪称"已让 AI 常驻"或已完成独立验证。

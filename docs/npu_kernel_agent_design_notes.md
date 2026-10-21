@@ -33,8 +33,11 @@ doctor、schema 校验、编译、oracle 对比、计时、best-guard、STATE.js
   按确定性 category/mutable 分类、`required` 缺失/匹配，`diff_artifact_index` 哈希级对称增量。
 - **结构化 intake**（#5）：`agent_runtime.intake.build_intake`/`apply_intake`，`NEEDS_CONFIRMATION`
   ≤5 选项补问 + 答案重注入 + 完整性重检，不猜不补。
+- **`next{action,command,reason}` 尾注**（#1）：`agent_runtime.next_step.attach_next`/`validate_next`
+  的校验三元 schema 原语，结果对象按需挂载，不覆盖既有 `next`。
 
-## 尚未移植、值得继续（按价值/风险排序）
+## 剩余可移植项
 
-1. **`next{action,command,reason}` 尾注**（#1）：给确定性结果补单一可执行下一步，让 resume 零重推。
-   改动面跨多个结果对象，需单独规划。
+10 条均已映射或吸收；#1/#5/#7/#8 本轮落为独立模块或监督器增强，#2/#3/#4/#6/#9/#10 与既有
+SQLite ledger、`result_validation`、`plan_review`、`check_handoff_basis`、`atomic_write` 等机制等价，
+不重复实现。独立结果验收仍待可信宿主后端。
