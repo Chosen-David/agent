@@ -95,6 +95,17 @@ class ContextCliOutputTests(unittest.TestCase):
             self.assertEqual(restore_reference_view(self.root, json.dumps(packet, ensure_ascii=False),
                                                    'refs.json', sha), data)
 
+    def test_document_navigation_outputs_utf8_under_cp936(self):
+        self.source('agent_doc/task/TASK.md', '# Tasks\n## 2026-10-21\n'
+                    '- [ ] [T1] Review \U00010000 ([detail](task_details/T1.md))\n')
+        self.source('agent_doc/task/task_details/T1.md',
+                    '# T1\nTask-ID: T1\nDate: 2026-10-21\n## Plan\nReview \U00010000\n## Progress\nReady\n')
+        result = self.cli('project_docs.py', ['nav'], cap=20000)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        text = result.stdout.decode('utf-8')
+        self.assertIn('\U00010000', text)
+        self.assertEqual(json.loads(text)['project_root'], str(self.root))
+
 
 if __name__ == '__main__':
     unittest.main()

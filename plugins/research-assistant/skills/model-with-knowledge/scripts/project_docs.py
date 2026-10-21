@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 import re
 import stat
+import sys
 import tempfile
 from urllib.parse import urlsplit
 
@@ -100,8 +101,13 @@ def _relative(root, path):
     for part in (path, *path.parents):
         if part == root:
             break
-        if part.is_symlink():
-            raise DocumentError('document path must not contain symlinks')
+        try:
+            info = part.lstat()
+        except FileNotFoundError:
+            continue
+        if (stat.S_ISLNK(info.st_mode) or
+                getattr(info, 'st_file_attributes', 0) & getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 1024)):
+            raise DocumentError('document path must not contain symlinks or reparse points')
     return path
 
 
@@ -814,6 +820,9 @@ def migrate(root, date):
 
 
 def main(argv=None):
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, 'reconfigure'):
+            stream.reconfigure(encoding='utf-8')
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', required=True)
     parser.add_argument('--compact', action='store_true', help='preserve all JSON fields without formatting whitespace')
