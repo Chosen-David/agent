@@ -1,5 +1,8 @@
 # TOK-MEM-VERIFY-20261021
 
+Task-ID: TOK-MEM-VERIFY-20261021
+Date: 2026-10-21
+
 ## Plan
 
 Owner: independent native agent. PROJECT_ROOT=C:/Users/WI/Desktop/home_work/AI_LLM/agent. 复核 TOK-MEM-20261021 v1 与实际编码/消费者契约；结果生产后独立 verify_experiment_result。仅此文件与 .agent-runs/memory-pack-20261021/ 可写；不改实现/协议/主索引/guide。审查证据由 root 原字节归档。

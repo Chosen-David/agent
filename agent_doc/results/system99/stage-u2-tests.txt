@@ -1,0 +1,49 @@
+test_shared_contract_is_bundled_for_all_actual_consumers (test_visual_explanation.VisualTeachingPackageTests.test_shared_contract_is_bundled_for_all_actual_consumers) ... ok
+
+======================================================================
+ERROR: test_current_snapshot_rejects_old_bindings_but_not_progress (test_repository_task_integration.RepositoryTaskIntegrationTests.test_current_snapshot_rejects_old_bindings_but_not_progress)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-current/tests/test_repository_task_integration.py", line 39, in test_current_snapshot_rejects_old_bindings_but_not_progress
+    snapshot = snapshot_project_docs(ROOT)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6416f20dc59b/agent-current/agent_runtime/project_docs.py", line 214, in snapshot_project_docs
+    raise DocumentError('task detail identity/date must match TASK.md: ' + item['id'])
+agent_runtime.project_docs.DocumentError: task detail identity/date must match TASK.md: TOK-MEM-20261021
+
+======================================================================
+ERROR: test_repository_draft_keeps_complete_scope_and_review_gate (test_repository_task_integration.RepositoryTaskIntegrationTests.test_repository_draft_keeps_complete_scope_and_review_gate)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-current/tests/test_repository_task_integration.py", line 26, in test_repository_draft_keeps_complete_scope_and_review_gate
+    draft = prepare(ROOT, 'repository-document-check', 'manual', 'read-only regression')
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6416f20dc59b/agent-current/agent_runtime/task_manifest.py", line 158, in prepare
+    documents = snapshot_project_docs(root)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6416f20dc59b/agent-current/agent_runtime/project_docs.py", line 214, in snapshot_project_docs
+    raise DocumentError('task detail identity/date must match TASK.md: ' + item['id'])
+agent_runtime.project_docs.DocumentError: task detail identity/date must match TASK.md: TOK-MEM-20261021
+
+======================================================================
+ERROR: test_repository_snapshot_has_every_indexed_detail (test_repository_task_integration.RepositoryTaskIntegrationTests.test_repository_snapshot_has_every_indexed_detail)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-current/tests/test_repository_task_integration.py", line 19, in test_repository_snapshot_has_every_indexed_detail
+    snapshot = snapshot_project_docs(ROOT)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6416f20dc59b/agent-current/agent_runtime/project_docs.py", line 214, in snapshot_project_docs
+    raise DocumentError('task detail identity/date must match TASK.md: ' + item['id'])
+agent_runtime.project_docs.DocumentError: task detail identity/date must match TASK.md: TOK-MEM-20261021
+
+----------------------------------------------------------------------
+Ran 1570 tests in 106.853s
+
+FAILED (errors=3, skipped=10)
+
+----------------------------------------------------------------------
+Ran 1570 tests in 99.840s
+
+OK (skipped=10)
+42c8cb024f63e78f37cf2d0ee00ac621229c71e15a77e2068665bd9bb88aed0a  /tmp/agent-u2-full.log
+5f9c5cc9e4614da4f29d02bc8a800175a5b8332171ebd337721c470a3ecb2da7  /tmp/agent-u2-full-final.log

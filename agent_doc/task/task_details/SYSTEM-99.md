@@ -140,6 +140,18 @@ LaTeX 能力。阶段 U 仍是同一 SYSTEM-99 可恢复检查点，不计整轮
 
 ## Progress
 
+阶段U2续接最新main `1d1c579a`，独立方案复核先返修current/锁/限额/receipt后通过。
+已实现CPython3.12/Linux x86_64/glibc≥2.28显式documents profile：10包精确wheel锁和依赖闭包，
+受管最终路径venv、许可显式选择、真实公开PDF/Markdown/PPTX/LaTeX源操作、smoke和receipt，
+重复install离线复用不调用pip。10个wheel重新查PyPI并重新下载，hash一致；二次独审修正CLI
+schema/失败分类、fcntl平台导入及PPTX合计限额，最终usable-with-scope。普通/-O各14项真实能力及
+边界测试通过。首轮全库1570有3错误/10skip，定位并发新增TOK-MEM两详情缺Task-ID/Date；经独审
+仅补元数据，4项真实仓库入口恢复，全库最终1570（1560通过/10skip），Reader3及同步/编译/diff通过。
+两跳过项为显式文档root集成测试，已在定向真实环境执行；另8项为既有可选测试。旧文档whole-file
+bindings按原stale规则处理，不改原Plan/测量/独审。证据见[U2](../../results/system99/stage-u2.md)。
+TeX编译、其它平台、真实模型质量/token/费用、视觉质量和用户部署未验；同一批次阅读不重计，
+SYSTEM-99仍open，待普通发布与远端回读。未启动tmux或新定时器。
+
 Version29阶段U1新增可信输出阶梯：消费者冻结请求与 claim/check，producer 交付文字/图/网页/视频
 产物，结构验证后仍须独立观察；显式降级只到pending，自报reviewer不能接受。产物按POSIX逐路径
 FD-relative no-follow读取并绑定实际摘要，六个既有视觉/论文角色复用同一workflow镜像。

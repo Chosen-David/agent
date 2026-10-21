@@ -72,6 +72,21 @@ python3 agent/setup.py --target /absolute/path/to/your-project
 
 **可执行性边界**：本地 Skills/子 Agent 安装成功，不等于已连接可离线调用的模型或已启动监督器。tmux 必须在服务器可用，主 AI 必须配置真实授权的 host adapter；默认运行时只验证文件，不会自动调用 Claude。主 AI 的交互进程和监督器都在 tmux 中，仍需为恢复调用保存会话/job ID 与 submit/poll 接口。首次使用宿主信任提示按 Claude 本身流程处理，不跳过。
 
+## 可选文档依赖：一次安装、反复复用
+
+PDF阅读/渲染、Markdown转HTML、PPTX生成及LaTeX源码使用独立固定版本profile，
+不会随普通setup自动联网安装。完整checkout下显式执行：
+
+```bash
+python -m agent_runtime.documents --root /absolute/dedicated/documents-env \
+  install --pymupdf-license agpl-3.0
+python -m agent_runtime.documents --root /absolute/dedicated/documents-env probe
+```
+
+PyMuPDF许可必须按用途明确选择AGPL或商业许可；首版支持CPython3.12/Linux x86_64/glibc≥2.28。
+离线wheelhouse、四种公开操作、资源上限和失败恢复见[文档工具说明](docs/documents_profile.md)。
+LaTeX源码可生成，TeX编译器未随库安装。
+
 ## 检查、更新和卸载
 
 ```bash

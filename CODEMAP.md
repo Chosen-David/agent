@@ -1,3 +1,5 @@
+SYSTEM-99/U2: `config/documents-linux-cp312-v1.json` → 显式 `python -m agent_runtime.documents` install/probe → 受管venv中的 `documents_adapter.py` → PDF/Markdown/PPTX/LaTeX源产物。`tests/test_documents.py`、`docs/documents_profile.md`和 `agent_doc/results/system99/` 保存固定依赖、真实smoke与离线复用边界；主AI独占实现/任务，独立角色复核，不自动修改setup行为或安装TeX。
+
 ROLE-MODELS-01: `config/role_model_policy.json` → `agent_runtime/model_routing.py` → `setup.py`安装快照/原生model与`scripts/run_role.py`可信宿主派发。`tests/test_model_routing.py`、`agent_doc/results/role-models-20261021/`验证离线路由和子进程边界；主AI维护实现/任务，独立审查者核验。无在线厂商后端、凭据或质量收益主张。
 
 ARTIFACT-FD-77: `result_validation._bytes` 保留原始fd所有权，`fdopen(closefd=False)`借用，finally关闭；`tests/test_result_read_fd.py` 和 `agent_doc/results/artifact-fd77/` 记录拒绝路径资源释放及独立复核。仅资源正确性，不含吞吐结论。
