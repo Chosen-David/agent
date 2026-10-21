@@ -11,7 +11,8 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from agent_runtime.context_serialization import render_context
+from agent_runtime.context_serialization import (ContextBudgetError, configure_utf8_output,
+                                                 render_cli_context, render_context)
 from agent_runtime.external_json import load_json
 from agent_runtime.result_store import METADATA_LIMIT, ResultStore, _json, _read, result_context
 
@@ -24,9 +25,13 @@ def external_object(path):
 
 
 def main(argv=None):
+    configure_utf8_output()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', required=True)
-    parser.add_argument('--compact', action='store_true', help='preserve all JSON fields without formatting whitespace')
+    formatting = parser.add_mutually_exclusive_group()
+    formatting.add_argument('--compact', action='store_true', default=None,
+                            help='preserve every field; default for retrieval/decision replies')
+    formatting.add_argument('--pretty', dest='compact', action='store_false', help='indent complete JSON replies')
     parser.add_argument('--compact-storage', action='store_true', help='compact new immutable registry records; independent of stdout formatting')
     subs = parser.add_subparsers(dest='command', required=True)
     for name in ('search', 'decide'):
@@ -34,22 +39,31 @@ def main(argv=None):
         command.add_argument('query')
         command.add_argument('--limit', type=int, default=5)
         command.add_argument('--max-scan', type=int, default=200)
+        command.add_argument('--max-chars', type=int, default=20000,
+                             help='complete display character cap including newline (1..1000000)')
         if name == 'decide':
             command.add_argument('--context', required=True)
             command.add_argument('--verifier-adapter')
             command.add_argument('--explicit-reproduction', action='store_true')
             command.add_argument('--new-claim', action='store_true')
             command.add_argument('--max-age-seconds', type=float)
-    subs.add_parser('show').add_argument('run_id')
+    showing = subs.add_parser('show')
+    showing.add_argument('run_id')
+    showing.add_argument('--max-chars', type=int, default=20000)
     register = subs.add_parser('register')
     register.add_argument('--contract', required=True)
     register.add_argument('--historical', action='store_true')
     register.add_argument('--measured-at')
     subs.add_parser('register-history').add_argument('--record', required=True)
-    subs.add_parser('context').add_argument('--contract', required=True)
+    context_command = subs.add_parser('context')
+    context_command.add_argument('--contract', required=True)
+    context_command.add_argument('--max-chars', type=int, default=20000)
     args = parser.parse_args(argv)
-    store = ResultStore(args.root, compact_storage=args.compact_storage)
     try:
+        bounded = args.command in ('search', 'decide', 'show', 'context')
+        if bounded and not 1 <= args.max_chars <= 1000000:
+            raise ContextBudgetError('display max_chars must be 1..1000000')
+        store = ResultStore(args.root, compact_storage=args.compact_storage)
         if args.command == 'search':
             result = store.search(args.query, limit=args.limit, max_scan=args.max_scan)
         elif args.command == 'show':
@@ -74,8 +88,14 @@ def main(argv=None):
                          limit=args.limit, max_scan=args.max_scan, verifier=verifier,
                          explicit_reproduction=args.explicit_reproduction, new_claim=args.new_claim,
                          max_age_seconds=args.max_age_seconds)
-        print((render_context(result, compact=True) if args.compact else json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False)))
+        compact = bounded if args.compact is None else args.compact
+        output = (render_cli_context(result, compact=compact, indent=2, max_chars=args.max_chars)
+                  if bounded else render_context(result, compact=compact, indent=2))
+        print(output)
         return 0
+    except ContextBudgetError as exc:
+        print(json.dumps({'status': 'blocked', 'error': str(exc)}, ensure_ascii=False), file=sys.stderr)
+        return 2
     except (OSError, ValueError, KeyError, TypeError) as exc:
         print(json.dumps({'status': 'blocked', 'error': str(exc)}, ensure_ascii=False))
         return 2

@@ -30,6 +30,12 @@
 
 完整 checkout 提供 `agent_runtime/result_store.py` 和 `scripts/result_store.py`。独立安装的纯 Skill 只带工作流；必须从安装元数据确认完整仓库位置，再调用其中 CLI，不声称安装提示就部署了运行时或验证器。
 
+`search/show/decide/context` 默认输出完整紧凑 UTF8 JSON，含平台换行最多20000字符；
+超限stdout为空、stderr返回blocked JSON、exit2，不截断或授信。缩小查询范围/limit，
+或在子命令后显式提高 `--max-chars`（1..1000000）；全局 `--pretty` 恢复缩进并计入
+同一预算。`--compact` 保留兼容；注册命令沿用原显示默认，不作写入后的预算拒绝。
+显示上限不限制存储/读取量，也不等于整次模型调用的token预算。
+
 ```bash
 python scripts/result_store.py --root /absolute/project search '平方和 CPU 验证' --limit 5 --max-scan 200
 python scripts/result_store.py --root /absolute/project show cpu-run-1
