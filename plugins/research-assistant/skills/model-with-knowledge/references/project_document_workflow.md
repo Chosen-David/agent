@@ -41,6 +41,8 @@
 
 启动/恢复、委派前、收到用户或指南更新、每项结果后及最终汇报前，依次核对：当前授权 → 人类指南及版本 → 唯一任务清单 → 本次 task_refs 对应详情 → 相关建议及处理结果 → agent_doc/results/ 已有数据检索与适用性核对 → 运行状态/证据。先查当前项目根，不将安装目录当目标项目。
 
+续跑/导航时不必每次重读所有详情全文：先取廉价导航摘要（索引行 + 各详情 `Status`/`Owner`/`### 摘要`/有界 `## Progress` 末尾），判断该看哪个、下一步由谁继续；只有真正推进某个任务时才打开那份详情全文。可调用 `agent_runtime.project_docs.task_navigation(root)` 或 `python -m agent_runtime.project_docs --root ABSOLUTE_PROJECT_ROOT nav`。摘要里的 `Status`/`Owner` 仅作派生态，不替代受管账本与独立验收。
+
 总清单格式：
 
 ```markdown

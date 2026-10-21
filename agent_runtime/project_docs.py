@@ -292,6 +292,45 @@ def task_navigation(root, *, max_chars=12000, progress_tail_chars=400):
     return digest
 
 
+def _symmetric_diff(current, previous):
+    current, previous = current or {}, previous or {}
+    added = sorted(set(current) - set(previous))
+    removed = sorted(set(previous) - set(current))
+    changed = sorted(key for key in set(current) & set(previous) if current[key] != previous[key])
+    return {'added': added, 'removed': removed, 'changed': changed}
+
+
+def document_delta(current, refs):
+    """Fine-grained change set between two project-documents/v1 snapshots.
+
+    Resume/navigation uses this to re-read only changed guides/advice/details
+    instead of the whole set — the receipt/remember-vs-recompute pattern. This
+    is a symmetric diff over the frozen shape; it never validates a plan binding.
+    """
+    if not isinstance(current, dict) or not isinstance(refs, dict):
+        raise DocumentError('document delta requires two project-documents/v1 snapshots')
+    if (current.get('schema_version') != 'project-documents/v1' or
+            refs.get('schema_version') != 'project-documents/v1'):
+        raise DocumentError('document delta requires project-documents/v1 snapshots')
+    layout_changed = current.get('layout') != refs.get('layout')
+    task_index_changed = current.get('task_index') != refs.get('task_index')
+    groups = {
+        'task_details': _symmetric_diff(current.get('task_details'), refs.get('task_details')),
+        'guides': _symmetric_diff(current.get('guides'), refs.get('guides')),
+        'advice': _symmetric_diff(current.get('advice'), refs.get('advice')),
+        'adopted_advice': _symmetric_diff(current.get('adopted_advice'), refs.get('adopted_advice')),
+    }
+    any_changed = (layout_changed or task_index_changed or
+                   any(values['added'] or values['removed'] or values['changed']
+                       for values in groups.values()))
+    return {'schema_version': 'document-delta/v1', 'layout': {'before': refs.get('layout'),
+            'after': current.get('layout'), 'changed': layout_changed},
+            'task_index_changed': task_index_changed, 'task_details': groups['task_details'],
+            'guides': groups['guides'], 'advice': groups['advice'],
+            'adopted_advice': groups['adopted_advice'], 'any_changed': any_changed,
+            'scope': 'symmetric SHA-level diff of document snapshots; unchanged entries need no re-read'}
+
+
 def check_document_refs(root, refs):
     if not isinstance(refs, dict) or refs.get('schema_version') != 'project-documents/v1':
         raise DocumentError('project document dependency snapshot required')

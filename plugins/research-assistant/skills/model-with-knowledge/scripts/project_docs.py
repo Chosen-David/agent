@@ -219,6 +219,79 @@ def snapshot_project_docs(root):
             'advice': _inventory(root, 'agent_doc/advice'), 'adopted_advice': {}}
 
 
+def _field_once(text, name):
+    """One optional non-authoritative derived field; multiple copies are ambiguous."""
+    matches = re.findall(r'^' + re.escape(name) + r': (.*)$', text, re.M)
+    if len(matches) > 1:
+        raise DocumentError('detail has multiple ' + name + ' fields')
+    if not matches:
+        return None
+    return matches[0].strip() or None
+
+
+def _plan_section(text, name):
+    """Body of one `### name` plan section, stopping at the next heading."""
+    header = re.compile(r'^### ' + re.escape(name) + r'[ \t]*$', re.M)
+    match = header.search(text)
+    if match is None:
+        return None
+    rest = text[match.end():]
+    stop = re.search(r'^#{2,3} ', rest, re.M)
+    body = rest if stop is None else rest[:stop.start()]
+    return body.strip() or None
+
+
+def _progress_tail(text, limit):
+    text = text.strip()
+    if len(text) <= limit:
+        return text
+    return '…(earlier progress omitted)…\n' + text[-limit:]
+
+
+def task_navigation(root, *, max_chars=12000, progress_tail_chars=400):
+    """Cheap resume/navigation digest: index rows plus each detail's derived
+    Status/Owner, `### 摘要` and a bounded `## Progress` tail.
+
+    Mirrors the tiered "capabilities (read-only minimal) vs full freeze" loading
+    pattern: the main AI resumes/navigates from this digest and opens only the
+    detail file it is actually advancing, instead of re-reading every full plan
+    body on startup/resume/delegation. Derived fields are non-authoritative —
+    Status/Owner never supersede the managed ledger or independent validation.
+    """
+    root = Path(root).resolve()
+    index = resolve_task_file(root)
+    if index != root / CANONICAL_TASK:
+        raise DocumentError('task navigation requires the canonical task index')
+    if type(max_chars) is not int or not 1 <= max_chars <= 200000:
+        raise DocumentError('invalid navigation character budget')
+    if type(progress_tail_chars) is not int or not 1 <= progress_tail_chars <= 100000:
+        raise DocumentError('invalid progress tail bound')
+    items = parse_requirements(regular_bytes(root, index).decode('utf-8'), canonical=True)
+    tasks = []
+    for item in items:
+        rel = f'agent_doc/task/{item["detail"]}'
+        text = regular_bytes(root, rel).decode('utf-8').replace('\r\n', '\n')
+        planning, progress = split_detail(text)
+        if (re.findall(r'^Task-ID: (.+)$', planning, re.M) != [item['id']] or
+                re.findall(r'^Date: (.+)$', planning, re.M) != [item['date']]):
+            raise DocumentError('task detail identity/date must match TASK.md: ' + item['id'])
+        tasks.append({'id': item['id'], 'title': item['title'], 'date': item['date'],
+                      'checked': item['checked'],
+                      'status': _field_once(planning, 'Status'),
+                      'owner': _field_once(planning, 'Owner'),
+                      'summary': _plan_section(planning, '摘要'),
+                      'progress_tail': _progress_tail(progress, progress_tail_chars),
+                      'detail': item['detail']})
+    digest = {'schema_version': 'task-navigation/v1', 'project_root': str(root),
+              'task_index': index.relative_to(root).as_posix(), 'tasks': tasks,
+              'scope': 'derived navigation digest; Status/Owner/summary are non-authoritative '
+                       'and do not replace ledger state or independent verification'}
+    serialized = json.dumps(digest, ensure_ascii=False, separators=(',', ':'))
+    if len(serialized) > max_chars:
+        raise DocumentError('task navigation exceeds character budget; narrow the digest')
+    return digest
+
+
 def check_document_refs(root, refs):
     if not isinstance(refs, dict) or refs.get('schema_version') != 'project-documents/v1':
         raise DocumentError('project document dependency snapshot required')
@@ -575,6 +648,9 @@ def main(argv=None):
     sub.add_parser('init', help='initialize only the explicitly selected existing project')
     sub.add_parser('inspect')
     sub.add_parser('validate')
+    nav = sub.add_parser('nav')
+    nav.add_argument('--max-chars', type=int, default=12000)
+    nav.add_argument('--progress-tail-chars', type=int, default=400)
     action = sub.add_parser('migrate')
     action.add_argument('--date', required=True)
     sub.add_parser('guard-write').add_argument('paths', nargs='+')
@@ -586,6 +662,9 @@ def main(argv=None):
             result = migrate(args.root, args.date)
         elif args.command == 'guard-write':
             result = {'allowed': [str(assert_ai_writable(args.root, path)) for path in args.paths]}
+        elif args.command == 'nav':
+            result = task_navigation(args.root, max_chars=args.max_chars,
+                                     progress_tail_chars=args.progress_tail_chars)
         else:
             result = snapshot_project_docs(args.root)
         print(json.dumps(result, ensure_ascii=False, indent=2))

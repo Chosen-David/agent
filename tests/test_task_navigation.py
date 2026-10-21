@@ -4,7 +4,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from agent_runtime.project_docs import DocumentError, task_navigation
+from agent_runtime.project_docs import DocumentError, document_delta, snapshot_project_docs, task_navigation
 
 DETAIL = '''# [T1] Build a widget
 
@@ -109,6 +109,70 @@ class TaskNavigationTests(unittest.TestCase):
         tail = task_navigation(self.root, progress_tail_chars=80)['tasks'][0]['progress_tail']
         self.assertLessEqual(len(tail), 80 + len('…(earlier progress omitted)…\n'))
         self.assertIn('…(earlier progress omitted)…', tail)
+
+
+class DocumentDeltaTests(unittest.TestCase):
+    def setUp(self):
+        temporary = tempfile.TemporaryDirectory(prefix='document-delta-')
+        self.addCleanup(temporary.cleanup)
+        self.root = Path(temporary.name)
+        details = self.root / 'agent_doc/task/task_details'
+        details.mkdir(parents=True)
+        (self.root / 'agent_doc/task/TASK.md').write_text(
+            '# Project tasks\n\n## 2026-10-07\n\n'
+            '- [ ] [T1] Build a widget ([详情](task_details/T1.md))\n')
+        (details / 'T1.md').write_text(DETAIL)
+
+    def base(self):
+        return {'schema_version': 'project-documents/v1', 'layout': 'canonical',
+                'task_index': {'path': 'agent_doc/task/TASK.md', 'sha256': 'i'},
+                'task_details': {'T1': {'path': 'task_details/T1.md', 'sha256': 'd'}},
+                'guides': {'agent_doc/guide/GUIDE.md': 'g'},
+                'advice': {'agent_doc/advice/a.md': 'a'},
+                'adopted_advice': {}}
+
+    def test_unchanged_snapshot_reports_no_change(self):
+        base = self.base()
+        delta = document_delta(base, base)
+        self.assertFalse(delta['any_changed'])
+        self.assertFalse(delta['layout']['changed'])
+        self.assertFalse(delta['task_index_changed'])
+
+    def test_added_removed_changed_are_symmetric(self):
+        base = self.base()
+        next_snapshot = json.loads(json.dumps(base))
+        next_snapshot['task_details']['T2'] = {'path': 'task_details/T2.md', 'sha256': 'd2'}
+        next_snapshot['task_details']['T1']['sha256'] = 'd-now'
+        next_snapshot['guides']['agent_doc/guide/GUIDE.md'] = 'g-now'
+        del next_snapshot['advice']['agent_doc/advice/a.md']
+        next_snapshot['adopted_advice'] = {'agent_doc/advice/a.md': 'a'}
+        delta = document_delta(next_snapshot, base)
+        self.assertTrue(delta['any_changed'])
+        self.assertEqual(delta['task_details']['added'], ['T2'])
+        self.assertEqual(delta['task_details']['changed'], ['T1'])
+        self.assertEqual(delta['guides']['changed'], ['agent_doc/guide/GUIDE.md'])
+        self.assertEqual(delta['advice']['removed'], ['agent_doc/advice/a.md'])
+        self.assertEqual(delta['adopted_advice']['added'], ['agent_doc/advice/a.md'])
+        # Symmetry: the same entries appear when diffing in the reverse direction.
+        reverse = document_delta(base, next_snapshot)
+        self.assertEqual(reverse['task_details']['removed'], ['T2'])
+        self.assertEqual(reverse['guides']['changed'], ['agent_doc/guide/GUIDE.md'])
+
+    def test_non_snapshot_input_is_rejected(self):
+        base = self.base()
+        with self.assertRaisesRegex(DocumentError, 'project-documents/v1'):
+            document_delta({'schema_version': 'other'}, base)
+        with self.assertRaisesRegex(DocumentError, 'two project-documents/v1'):
+            document_delta(base, 'not-a-dict')
+
+    def test_integration_with_real_snapshot_reports_guide_change(self):
+        base = snapshot_project_docs(self.root)
+        guide = self.root / 'agent_doc/guide'
+        guide.mkdir()
+        (guide / 'GUIDE.md').write_text('# Human guide\n', encoding='utf-8')
+        delta = document_delta(snapshot_project_docs(self.root), base)
+        self.assertTrue(delta['any_changed'])
+        self.assertEqual(delta['guides']['added'], ['agent_doc/guide/GUIDE.md'])
 
 
 if __name__ == '__main__':
