@@ -11,6 +11,7 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from agent_runtime.context_serialization import render_context
 from agent_runtime.external_json import load_json
 from agent_runtime.result_store import METADATA_LIMIT, ResultStore, _json, _read, result_context
 
@@ -25,6 +26,7 @@ def external_object(path):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--root', required=True)
+    parser.add_argument('--compact', action='store_true', help='preserve all JSON fields without formatting whitespace')
     subs = parser.add_subparsers(dest='command', required=True)
     for name in ('search', 'decide'):
         command = subs.add_parser(name)
@@ -71,7 +73,7 @@ def main(argv=None):
                          limit=args.limit, max_scan=args.max_scan, verifier=verifier,
                          explicit_reproduction=args.explicit_reproduction, new_claim=args.new_claim,
                          max_age_seconds=args.max_age_seconds)
-        print(json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False))
+        print((render_context(result, compact=True) if args.compact else json.dumps(result, ensure_ascii=False, indent=2, allow_nan=False)))
         return 0
     except (OSError, ValueError, KeyError, TypeError) as exc:
         print(json.dumps({'status': 'blocked', 'error': str(exc)}, ensure_ascii=False))
