@@ -1,0 +1,39 @@
+test_invalid_http_request_errors_do_not_echo_auth_or_url (test_gateway_contract.GatewayContractTests.test_invalid_http_request_errors_do_not_echo_auth_or_url) ... 
+  test_invalid_http_request_errors_do_not_echo_auth_or_url (test_gateway_contract.GatewayContractTests.test_invalid_http_request_errors_do_not_echo_auth_or_url) (kind='ValueError') ... FAIL
+  test_invalid_http_request_errors_do_not_echo_auth_or_url (test_gateway_contract.GatewayContractTests.test_invalid_http_request_errors_do_not_echo_auth_or_url) (kind='InvalidURL') ... ERROR
+
+======================================================================
+ERROR: test_invalid_http_request_errors_do_not_echo_auth_or_url (test_gateway_contract.GatewayContractTests.test_invalid_http_request_errors_do_not_echo_auth_or_url) (kind='InvalidURL')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-gateway-contract-1859/tests/test_gateway_contract.py", line 141, in test_invalid_http_request_errors_do_not_echo_auth_or_url
+    self.assertNotEqual(discovery.main(), 0)
+                        ^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6416f20dc59b/agent-gateway-contract-1859/scripts/discover_models.py", line 150, in main
+    inventory = build_inventory(fetch_models(base_url, auth_token, timeout=args.timeout))
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6416f20dc59b/agent-gateway-contract-1859/scripts/discover_models.py", line 72, in fetch_models
+    with urllib.request.urlopen(req, timeout=timeout) as resp:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1198, in _execute_mock_call
+    raise effect
+http.client.InvalidURL: fixture-url-password-sentinel
+
+======================================================================
+FAIL: test_invalid_http_request_errors_do_not_echo_auth_or_url (test_gateway_contract.GatewayContractTests.test_invalid_http_request_errors_do_not_echo_auth_or_url) (kind='ValueError')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-gateway-contract-1859/tests/test_gateway_contract.py", line 142, in test_invalid_http_request_errors_do_not_echo_auth_or_url
+    self.assertNotIn('fixture-auth-sentinel', err.getvalue())
+AssertionError: 'fixture-auth-sentinel' unexpectedly found in 'discovery failed: Invalid header value fixture-auth-sentinel\n'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+FAILED (failures=1, errors=1)

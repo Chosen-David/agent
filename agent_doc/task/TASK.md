@@ -2,6 +2,8 @@
 
 ## 2026-10-22
 
+- [x] [GATEWAY-CONTRACT-01] 发现能力契约、请求错误脱敏及tmux诊断异常已修复；15/15+73独审通过，旧快照需宿主复核，发布回读另核。 ([详情](task_details/GATEWAY-CONTRACT-01.md))
+
 - [x] [INSTALL-RECOVERY-01] 发现输出所有权、doctor模型清单/报告同步与非对象清单诊断已修复；16/16+57独审通过，发布回读另核。 ([详情](task_details/INSTALL-RECOVERY-01.md))
 
 - [x] [SETUP-DOCTOR-01] doctor 条件导入崩溃已修复；修前失败、6/6+51回归和独审通过，发布回读另核。 ([详情](task_details/SETUP-DOCTOR-01.md))

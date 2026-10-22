@@ -458,3 +458,10 @@ SYSTEM99未完成，无新增论文阅读或性能主张，发布/readback另核
 与独审/旧源码失败复现/实际run_role dry-run通过，[证据](../../advice/INSTALL-RECOVERY-01.md)。
 保留v1和旧夹具缺manifest的失败，不外推真实网关/模型/tmux或多文件事务/性能。SYSTEM99
 质量/usage/成本等原缺口仍open，无新增阅读计数，不计新一轮，发布readback另核。
+
+同批GATEWAY-CONTRACT-01：仅id发现曾断言available/tools并猜vision、覆盖显式能力，
+改为inactive未知目录并保留host声明，严格有界解析；tmux异常转warnings且失败不计fixes。
+独审首次REVISE发现URL构造错误可回显合成凭据，同Plan返修并保留原失败。最终独立普通/-O
+各15、相关73与实际CLI/消费者探针通过，[证据](../../advice/GATEWAY-CONTRACT-01.md)。
+旧快照provenance未知需宿主复核，未声称自动修复；真实网关/模型/tmux、任务质量/成本、
+needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读另核。

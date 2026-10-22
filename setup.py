@@ -520,6 +520,7 @@ def doctor(target):
     target = installation_root(target)
     report = check(target)
     fixes = []
+    warnings = []
 
     # 1. Auto-discover models if inventory is empty (only update model files)
     inventory = report.get('model_routing', {})
@@ -538,12 +539,16 @@ def doctor(target):
     if os.environ.get('TMUX'):
         tmux_conf = REPO / 'agent_runtime' / 'tmux.conf'
         if tmux_conf.is_file():
-            r = subprocess.run(['tmux', 'source-file', str(tmux_conf)],
-                               capture_output=True, text=True, timeout=5, check=False)
-            if r.returncode == 0:
-                fixes.append('Applied tmux.conf (mouse/clipboard/256color)')
+            try:
+                r = subprocess.run(['tmux', 'source-file', str(tmux_conf)],
+                                   capture_output=True, text=True, timeout=5, check=False)
+            except (OSError, subprocess.TimeoutExpired) as exc:
+                warnings.append(f'tmux source-file unavailable: {type(exc).__name__}')
             else:
-                fixes.append(f'tmux source-file failed: {r.stderr.strip()[:100]}')
+                if r.returncode == 0:
+                    fixes.append('Applied tmux.conf (mouse/clipboard/256color)')
+                else:
+                    warnings.append(f'tmux source-file failed: {r.stderr.strip()[:100]}')
 
     # 3. Check Python version
     py_ver = sys.version_info
@@ -551,6 +556,7 @@ def doctor(target):
 
     report['doctor'] = {
         'fixes_applied': fixes,
+        'warnings': warnings,
         'python_ok': py_ok,
         'python_version': sys.version.split()[0],
         'in_tmux': bool(os.environ.get('TMUX')),

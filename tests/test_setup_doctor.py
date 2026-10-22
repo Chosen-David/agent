@@ -57,8 +57,9 @@ class SetupDoctorTests(unittest.TestCase):
                 ['tmux', 'source-file', str(setup.REPO / 'agent_runtime/tmux.conf')],
                 capture_output=True, text=True, timeout=5, check=False)
             self.assertTrue(report['doctor']['in_tmux'])
-            message = report['doctor']['fixes_applied'][0]
-            self.assertIn('Applied tmux.conf' if code == 0 else 'tmux source-file failed: fixture failure', message)
+            messages = report['doctor']['fixes_applied' if code == 0 else 'warnings']
+            self.assertIn('Applied tmux.conf' if code == 0 else 'tmux source-file failed: fixture failure', messages[0])
+            self.assertEqual(report['doctor']['warnings' if code == 0 else 'fixes_applied'], [])
 
     def test_installed_no_gateway_lifecycle_preserves_user_prose(self):
         claude = self.root / 'CLAUDE.md'

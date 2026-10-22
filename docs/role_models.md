@@ -44,6 +44,13 @@ PDF/伴读/三类作图角色要求 tools + vision，其他默认要求 tools。
 python3 agent/setup.py --target /absolute/project
 ```
 
+自动 `/v1/models` 发现只得到型号ID，不证明同身份可调用或支持tools/vision；新发现条目
+保存为 `available:false`、`capabilities:[]`，角色继续继承默认模型。名称分类仅预览提示，
+不能用于路由。宿主验证精确型号、接口和能力后，再显式提供下列目录。
+`discover_models.py --from-inventory` 仅校验并保留声明，不按名称补能力。
+此前版本已安装的快照不会自动撤销：无法判断它来自名称推测还是宿主验证；请复核并显式重传，
+不要把旧 `available:true` 作为验证证据。
+
 可复制 [型号目录模板](../examples/role_model_inventory.json)，初始全部 `available:false`，只有宿主验证后才设为true并确认能力。确认当前 Claude 接口确实支持某个模型后，提供不含密钥的目录：
 
 ```json
