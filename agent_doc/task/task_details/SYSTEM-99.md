@@ -436,3 +436,10 @@ record逐项绑定且不改旧失败/无效题名；正式查询缺record错误3
 [简报与原始证据](../../advice/DISPATCH-SCOPE-01.md)保留修前失败；无OS隔离/竞态/Windows/
 模型或性能主张。论文续读第11篇正文记录在本批私有阅读检查点，不以阅读或提交计完成轮次；
 原tmux、真实任务质量/usage/成本缺口仍open，发布及远端回读另核。
+
+同批MODEL-DISCOVERY-02：d8abd23e新增安装发现链仍清理项目固定同名文件；无网关亦删除，
+首次安装父目录未创建使发现失败，TimeoutExpired未回退。改用调用独占TemporaryDirectory，
+保留原30秒和None语义；基线7项3failure/5error，候选与独审普通/-O各7、相关40回归通过，
+独审另验安装真实消费模拟inventory及清理边界。[简报](../../advice/MODEL-DISCOVERY-02.md)
+限auto helper/离线安装消费者；显式discover与doctor其他逻辑仍待审，无真实网关/模型或性能
+主张；SYSTEM99未完成，发布和远端readback另核。

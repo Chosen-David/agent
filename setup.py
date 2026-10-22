@@ -237,23 +237,21 @@ def project_document_layout(target):
 def _auto_discover_inventory(target):
     """Try auto-discovery only when there's a usable gateway in the environment.
     Returns None if discovery is not possible (caller falls back to previous/empty)."""
-    from subprocess import run, PIPE
+    from subprocess import run, TimeoutExpired
     discover_script = REPO / 'scripts' / 'discover_models.py'
-    tmp = target / '.claude' / 'agent-workflows' / '_discovery_tmp.json'
-    try:
-        env_base = os.environ.get('ANTHROPIC_BASE_URL')
-        if not env_base:
-            return None
-        result = run([sys.executable, str(discover_script), '--output', str(tmp)],
-                     capture_output=True, text=True, cwd=str(target), timeout=30, check=False)
-        if result.returncode != 0:
-            return None
-        return load_json(tmp)
-    except (OSError, ValueError):
+    if not os.environ.get('ANTHROPIC_BASE_URL'):
         return None
-    finally:
-        if tmp.exists():
-            tmp.unlink()
+    try:
+        # Discovery precedes installer preflight; own no paths in the project.
+        with tempfile.TemporaryDirectory(prefix='agent-model-discovery-') as directory:
+            tmp = Path(directory) / 'inventory.json'
+            result = run([sys.executable, str(discover_script), '--output', str(tmp)],
+                         capture_output=True, text=True, cwd=str(target), timeout=30, check=False)
+            if result.returncode != 0:
+                return None
+            return load_json(tmp)
+    except (OSError, ValueError, TimeoutExpired):
+        return None
 
 
 def install(target, *, model_inventory=None, copy_skills=False):
