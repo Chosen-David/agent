@@ -465,3 +465,11 @@ SYSTEM99未完成，无新增论文阅读或性能主张，发布/readback另核
 各15、相关73与实际CLI/消费者探针通过，[证据](../../advice/GATEWAY-CONTRACT-01.md)。
 旧快照provenance未知需宿主复核，未声称自动修复；真实网关/模型/tmux、任务质量/成本、
 needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读另核。
+
+同批DOCTOR-RESTART-01修复诊断无变化却总是宣称配置更新/要求重启：既有预检中比较实际
+受管模型文件内容，缺文件恢复计变化；needs_restart明确仅本次doctor作用，现有会话加载
+仍unknown。修前8项5失败，修后普通/-O各8/16、setup29/gateway15通过，独立另验真实
+安装目标CLI/实际路由更新/重复调用/冲突字节不变，接受有限本地范围。
+[证据](../../advice/DOCTOR-RESTART-01.md)；原tmux/live模型/质量/usage/成本未决，
+不计新轮或性能收益。新增2610.10590v1正文§§1–9阅读，本次仅1篇，不重计清理前记录；
+归档可恢复不证明语义完整，真实host上下文投影及总账验证继续open。发布/readback另核。

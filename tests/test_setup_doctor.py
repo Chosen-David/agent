@@ -27,6 +27,7 @@ class SetupDoctorTests(unittest.TestCase):
         self.assertEqual(report['status'], 'needs_setup')
         self.assertTrue(report['errors'])
         self.assertFalse(report['doctor']['in_tmux'])
+        self.assertFalse(report['doctor']['needs_restart'])
         self.assertFalse((self.root / '.claude').exists())
 
     def test_all_fallback_discovery_unavailable(self):
@@ -39,6 +40,7 @@ class SetupDoctorTests(unittest.TestCase):
         discover.assert_called_once_with(self.root)
         self.assertEqual(report['errors'], ['fixture needs setup'])
         self.assertEqual(report['doctor']['fixes_applied'], [])
+        self.assertFalse(report['doctor']['needs_restart'])
 
     def test_nonfallback_inventory_skips_discovery(self):
         initial = {'model_routing': {'routes': {'writer': {'fallback': False}}}}
@@ -60,6 +62,7 @@ class SetupDoctorTests(unittest.TestCase):
             messages = report['doctor']['fixes_applied' if code == 0 else 'warnings']
             self.assertIn('Applied tmux.conf' if code == 0 else 'tmux source-file failed: fixture failure', messages[0])
             self.assertEqual(report['doctor']['warnings' if code == 0 else 'fixes_applied'], [])
+            self.assertFalse(report['doctor']['needs_restart'])
 
     def test_installed_no_gateway_lifecycle_preserves_user_prose(self):
         claude = self.root / 'CLAUDE.md'
@@ -71,6 +74,8 @@ class SetupDoctorTests(unittest.TestCase):
         report = setup.doctor(self.root)
         self.assertEqual(report['errors'], [])
         self.assertEqual(report['status'], 'configured')
+        self.assertFalse(report['doctor']['needs_restart'])
+        self.assertIn('not checked', report['doctor']['restart_hint'])
         self.assertEqual(manifest.read_bytes(), original_manifest)
         self.assertEqual(claude.read_bytes(), installed_claude)
         self.assertEqual(setup.check(self.root)['errors'], [])
@@ -88,6 +93,24 @@ class SetupDoctorTests(unittest.TestCase):
         self.assertEqual(report['status'], 'needs_setup')
         self.assertFalse(report['doctor']['in_tmux'])
         self.assertFalse((self.root / '.claude').exists())
+
+    def test_identical_discovery_does_not_request_restart(self):
+        setup.install(self.root, model_inventory=setup.EMPTY_INVENTORY)
+        # Nonempty discovery can still leave all generated runtime files unchanged.
+        with patch.object(setup, '_auto_discover_inventory',
+                          return_value=setup.EMPTY_INVENTORY):
+            report = setup.doctor(self.root)
+        self.assertEqual(report['errors'], [])
+        self.assertFalse(report['doctor']['needs_restart'])
+
+    def test_missing_owned_model_file_restored_requires_restart(self):
+        setup.install(self.root, model_inventory=setup.EMPTY_INVENTORY)
+        (self.root / '.claude/agent-workflows/model-routing.json').unlink()
+        with patch.object(setup, '_auto_discover_inventory',
+                          return_value=setup.EMPTY_INVENTORY):
+            report = setup.doctor(self.root)
+        self.assertEqual(report['errors'], [])
+        self.assertTrue(report['doctor']['needs_restart'])
 
 
 if __name__ == '__main__':

@@ -109,6 +109,7 @@ class InstallRecoveryTests(unittest.TestCase):
         discover.assert_called_once_with(self.root)
         self.assertEqual(report['errors'], [])
         self.assertEqual(report['model_routing']['routes']['research-write']['model'], 'claude-opus-5-5')
+        self.assertTrue(report['doctor']['needs_restart'])
         manifest = setup.load_json(self.root / '.claude/agent-workflows/installation.json')
         self.assertEqual(manifest['model_inventory'], inventory())
         for name, fingerprint in manifest['files'].items():
@@ -116,7 +117,9 @@ class InstallRecoveryTests(unittest.TestCase):
         self.assertEqual(sentinel.read_bytes(), before)
         self.assertEqual(setup.check(self.root)['errors'], [])
         with patch.object(setup, '_auto_discover_inventory') as discover:
-            self.assertEqual(setup.doctor(self.root)['errors'], [])
+            second = setup.doctor(self.root)
+            self.assertEqual(second['errors'], [])
+            self.assertFalse(second['doctor']['needs_restart'])
         discover.assert_not_called()
         self.assertEqual(setup.install(self.root)['errors'], [])
         result = setup.uninstall(self.root)

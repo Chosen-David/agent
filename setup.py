@@ -480,7 +480,7 @@ def discover(target):
 
 
 def update_model_inventory(target, inventory):
-    """Update only owned model files; the installation manifest is authoritative."""
+    """Update owned model files and return whether their contents changed."""
     manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
     manifest = load_json(manifest_path)
     if not isinstance(manifest, dict) or manifest.get('schema_version') != 1:
@@ -501,18 +501,22 @@ def update_model_inventory(target, inventory):
                           '.claude/agent-workflows/model-routing.json')
               or name.startswith('.claude/agents/')}
     # Complete preflight before the first write, including later agent conflicts.
-    for name in models:
+    changed = False
+    for name, text in models.items():
         path = checked_target(target, name)
         if name not in owned:
             raise ValueError('preserving model file without installation ownership: ' + name)
-        if path.exists() and sha(path.read_text(encoding='utf-8')) != owned[name]:
+        previous = path.read_text(encoding='utf-8') if path.exists() else None
+        if previous is not None and sha(previous) != owned[name]:
             raise ValueError('preserving locally edited model file: ' + name)
+        changed = changed or previous != text
     for name, text in models.items():
         atomic_text(target / name, text)
     manifest['files'] = {**owned, **{name: sha(text) for name, text in models.items()}}
     manifest['model_inventory'] = inventory
     # Each write is atomic; this is not a multi-file transaction on I/O failure.
     atomic_text(manifest_path, json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
+    return changed
 
 
 def doctor(target):
@@ -521,6 +525,7 @@ def doctor(target):
     report = check(target)
     fixes = []
     warnings = []
+    configs_changed = False
 
     # 1. Auto-discover models if inventory is empty (only update model files)
     inventory = report.get('model_routing', {})
@@ -530,7 +535,7 @@ def doctor(target):
     if fallback_count == len(routes) and routes and manifest_path.is_file():
         discovered = _auto_discover_inventory(target)
         if discovered:
-            update_model_inventory(target, discovered)
+            configs_changed = update_model_inventory(target, discovered)
             report = check(target)
             fixes.append(f'Auto-discovered {len(discovered["models"])} gateway models (was: all fallback)')
             fixes.append('Updated owned model files and installation inventory')
@@ -560,8 +565,12 @@ def doctor(target):
         'python_ok': py_ok,
         'python_version': sys.version.split()[0],
         'in_tmux': bool(os.environ.get('TMUX')),
-        'needs_restart': True,
-        'restart_hint': 'Agent configs updated. Restart Claude Code to load new agent model/language settings.',
+        'needs_restart': configs_changed,
+        'restart_scope': 'configuration changes made by this doctor call',
+        'restart_hint': (
+            'Agent configs updated. Restart Claude Code to load new agent model/language settings.'
+            if configs_changed else
+            'No agent configuration changed during this doctor call. Current session load state was not checked.'),
     }
     return report
 
