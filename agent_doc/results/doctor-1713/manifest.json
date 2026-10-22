@@ -1,0 +1,48 @@
+{
+  "task": "SETUP-DOCTOR-01",
+  "baseline": "c4a0311bf9d059ac97a865b91f0f5c195cf864a7",
+  "scope": "Ordinary doctor control flow, no performance or live-service claim",
+  "environment": {
+    "python": "3.12.14",
+    "system": "Linux",
+    "machine": "x86_64"
+  },
+  "commands": [
+    "python -m unittest discover -s tests -p test_setup_doctor.py -v",
+    "python -O -m unittest discover -s tests -p test_setup_doctor.py -v",
+    "unittest discover: test_setup.py,test_setup_portable.py,test_model_discovery_setup.py,test_model_routing.py,test_install_profiles.py,test_role_process.py"
+  ],
+  "checks": {
+    "candidate": 6,
+    "optimized": 6,
+    "integration": 51
+  },
+  "sha256": {
+    "setup.py": "70c807b5237aa4db50754595965393ebb2bcff4d083acaa037962e6ba4c476d4",
+    "tests/test_setup_doctor.py": "6ec22b9919bd82fc0f60092de53f706a045a67c84ce23642c6fc86edf038e8f1",
+    "AGENTS.md": "ef5bc14e7814dfa5de4b17b7650ea5b94836379c9aa43aae92a34353501ae45c",
+    "agent_doc/guide/GUIDE.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_doc/guide/README.md": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+  },
+  "limitations": [
+    "mocked tmux/discovery; no live gateway/model/server",
+    "explicit discover and doctor successful discovery/manifest/report consistency excluded",
+    "whole SYSTEM-99 remains open; no new paper count"
+  ],
+  "independent_review": "ACCEPT usable-with-scope; native separate context, not authenticated runtime receipt",
+  "evidence_sha256": {
+    "baseline.log": "dff2b28fc452e0788e16266bc460228fab0348eee9a924528e494158327b9e37",
+    "candidate-initial.log": "58fcb3e6641b7a5c2654b7e838b5010988cca1a3ef2819b7ba42fb598dd71b63",
+    "candidate.log": "bf798ec9ac43e8ed530a9f037cd2c54b44ce9953d70862977f8e1b00f606c894",
+    "integration.log": "8da3b10641be000ace1552aff653025aad07fb47a6393fc6167e2a902b3a572b",
+    "optimized-initial.log": "e96cbd746a49bce7970442e4fb3ed15f9987d89196dd11255ab163965767798a",
+    "optimized.log": "92e40b51777dc93fba98aa58243ddb1305422108c3626db3ea96ab3cd7e341e5",
+    "plan-review.md": "808c2f704cd3555bb6d76cfad6ce51c7f71a7f15c2fbad06a66fc53fc81ddf28",
+    "result-review.md": "a5bc6bc2a6f010578ddb02639822fbe9fe1039fd96b5d3ed8680cd5176227af1",
+    "reviewer-baseline.log": "d7aa319823eb495dc0fbf353a65e8a92c31cc3529bbc8c1a24db4352759b38c0",
+    "reviewer-integration.log": "c337548147e8e48f5cbf64e558a402aa8977604f97a138fbca3ccf5a89936621",
+    "reviewer-normal.log": "1cd090bc966dfb83e3189a56c92c0132b2a0e8c6bb1fb0b058843da4a18cd075",
+    "reviewer-optimized.log": "179dd8007bd9d7df3d150ea915d6de567979f4a6e05d7c83236821bd9d956fd6",
+    "reviewer-probes.log": "396b5b5c00ffa3a3dc126c180b52b6e8bcf2fefe7c1f268d94dbe31a4e6243b8"
+  }
+}

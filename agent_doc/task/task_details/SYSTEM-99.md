@@ -443,3 +443,10 @@ record逐项绑定且不改旧失败/无效题名；正式查询缺record错误3
 独审另验安装真实消费模拟inventory及清理边界。[简报](../../advice/MODEL-DISCOVERY-02.md)
 限auto helper/离线安装消费者；显式discover与doctor其他逻辑仍待审，无真实网关/模型或性能
 主张；SYSTEM99未完成，发布和远端readback另核。
+
+同批SETUP-DOCTOR-01恢复诊断入口普通控制流：c4a0311b条件块局部os导入导致无网关、
+非fallback等路径UnboundLocalError，删除冗余局部导入。基线6项2failure/5error；最终
+普通/-O各6和相关51通过，独审重跑及旧源码复现、成功发现fixture接受有限范围。
+首版测试的卸载空行错误假设与日志保留；doctor前后用户正文/manifest精确字节核对通过。
+[证据](../../advice/SETUP-DOCTOR-01.md)不涵盖真实tmux/网关、模型更新清单一致性/过期报告；
+SYSTEM99未完成，无新增论文阅读或性能主张，发布/readback另核。

@@ -2,6 +2,8 @@
 
 ## 2026-10-22
 
+- [x] [SETUP-DOCTOR-01] doctor 条件导入崩溃已修复；修前失败、6/6+51回归和独审通过，发布回读另核。 ([详情](task_details/SETUP-DOCTOR-01.md))
+
 - [x] [MODEL-DISCOVERY-02] 自动模型发现使用独占临时目录，保留用户文件并修复首次发现/超时回退；独审与7/7+40回归通过，发布回读另核。 ([详情](task_details/MODEL-DISCOVERY-02.md))
 
 - [x] [PAPER-SKILLS-01] 论文Agent内置固定版本ARIS与nature-writing，离线安装/调用和独立试用通过；Skills已保存，main发布回读另核。 ([详情](task_details/PAPER-SKILLS-01.md))

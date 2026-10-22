@@ -497,7 +497,6 @@ def doctor(target):
             mi_path = target / '.claude/agent-workflows' / 'model_inventory.json'
             atomic_text(mi_path, json.dumps(inv, ensure_ascii=False, indent=2) + '\n')
             # Update agent model fields
-            import re, os
             agents_dir = target / '.claude' / 'agents'
             for role, route in report_obj['routes'].items():
                 agent_path = agents_dir / f'agent-{role}.md'
