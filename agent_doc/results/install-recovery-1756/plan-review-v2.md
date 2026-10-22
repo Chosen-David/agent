@@ -1,0 +1,15 @@
+# INSTALL-RECOVERY-01 independent plan review — Version 2
+
+Verdict: APPROVE for the narrowly stated Version 2 delta. Native separate review, not a machine-authenticated runtime receipt or release authorization. Original Version 1 plan-review.md remains intact.
+
+Stable Plan prefix SHA256 `3319ee8b8908530eddd08dd9220e2dad031e31062a7f072d1720e3e46192c632`. Reviewed Version 2 task detail, actual check → doctor → update_model_inventory caller path and current Version 1 implementation. Baseline remains 61a7ee343d36f9e211fd697282c78743a2160ab2; Version 1 passing tests are historical and do not accept Version 2 changes.
+
+- Intent: pass. Make malformed top-level installation metadata produce the existing needs_setup health report rather than AttributeError before the protected updater is reached.
+- Guide: pass. No guide/index authority or write-scope expansion; only setup.py read-side validation and scoped regressions.
+- Assumptions: pass. Independently called current doctor with array, null, integer and string manifest bodies in four real temporary targets with gateway/TMUX absent. Each raises AttributeError at the initial check path, with original manifest bytes unchanged. Therefore updater-only object validation is insufficient for the real entry chain.
+- Prior results: pass. Preserve all Version 1 logs/approval and independently found counterexample. Retest impacted full caller paths rather than claim the prior 14/57 counts cover new validation.
+- Acceptance: pass. Add explicit dict validation immediately after JSON load and before any .get use; reject via the existing ValueError handling and reset manifest to an empty dict in that handler. Require array/null/scalar check and no-gateway doctor to return needs_setup, preserve bytes and write no files. With a valid discovered inventory and malformed existing manifest, require a controlled failure before any model write; the updater must still load and reject actual malformed metadata rather than authorize from the diagnostic fallback dict.
+- Risk: pass within narrow scope. Diagnostic fallback is not installation ownership. Do not persist the empty fallback, create a manifest, mask errors as configured or permit model writes based on it. Existing valid-object routing/skills/managed-block behavior must remain tested. This does not comprehensively validate every nested manifest field or repair install/uninstall malformed-metadata handling.
+- Resources: pass. CPU/temp fixtures and process replacements only; no live gateway/model/tmux service required.
+
+No blocking findings in the delta plan. Independent result revalidation remains necessary after implementation, including ordinary/-O scoped tests and related setup integration, original malformed-object failure retention and zero-mutation assertions. Preserve all prior ownership, symlink, project identity, authoritative manifest, unrelated-file and nontransactionality requirements. No system quality, speed, live-service, Windows or round-completion claim is authorized by this approval.

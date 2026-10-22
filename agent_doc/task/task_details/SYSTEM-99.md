@@ -450,3 +450,11 @@ record逐项绑定且不改旧失败/无效题名；正式查询缺record错误3
 首版测试的卸载空行错误假设与日志保留；doctor前后用户正文/manifest精确字节核对通过。
 [证据](../../advice/SETUP-DOCTOR-01.md)不涵盖真实tmux/网关、模型更新清单一致性/过期报告；
 SYSTEM99未完成，无新增论文阅读或性能主张，发布/readback另核。
+
+同批INSTALL-RECOVERY-01恢复模型发现→安装/doctor→清单→派发预览链：显式discover先写
+项目inventory导致覆盖/首次失败；doctor更新模型但库存/hash与返回报告过期，检查报错且
+重复安装被阻塞。独占临时输出、完整所有权预检、同步manifest再check修复；独审v1另发现
+非对象清单在check先崩溃，经Plan v2复审后补读取端类型诊断。最终普通/-O各16、相关57
+与独审/旧源码失败复现/实际run_role dry-run通过，[证据](../../advice/INSTALL-RECOVERY-01.md)。
+保留v1和旧夹具缺manifest的失败，不外推真实网关/模型/tmux或多文件事务/性能。SYSTEM99
+质量/usage/成本等原缺口仍open，无新增阅读计数，不计新一轮，发布readback另核。

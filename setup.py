@@ -342,11 +342,14 @@ def check(target):
     manifest_path = target / '.claude/agent-workflows/installation.json'
     try:
         manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+        if not isinstance(manifest, dict):
+            raise ValueError('invalid installation manifest')
         if manifest.get('repository') != str(REPO):
             errors.append('installation belongs to a different checkout')
         if manifest.get('project_root', str(target)) != str(target):
             errors.append('installation belongs to a different project')
     except (OSError, ValueError):
+        manifest = {}
         errors.append('installation manifest missing/invalid')
     try:
         inventory = validate_inventory(manifest.get('model_inventory', EMPTY_INVENTORY))
@@ -459,16 +462,57 @@ def uninstall(target):
 
 
 def discover(target):
-    """Auto-discover gateway models, write inventory, and install with it."""
-    from subprocess import run, PIPE
+    """Discover into owned temporary storage, then run installer preflight."""
     target = installation_root(target)
     discover_script = REPO / 'scripts' / 'discover_models.py'
-    inventory_path = target / '.claude' / 'agent-workflows' / 'model_inventory.json'
-    result = run([sys.executable, str(discover_script), '--output', str(inventory_path)],
-                 capture_output=True, text=True, cwd=str(target), check=False)
-    if result.returncode != 0:
-        raise RuntimeError('model discovery failed: ' + result.stderr.strip())
-    return install(target, model_inventory=load_json(inventory_path))
+    with tempfile.TemporaryDirectory(prefix='agent-model-discovery-') as directory:
+        inventory_path = Path(directory) / 'inventory.json'
+        try:
+            result = subprocess.run(
+                [sys.executable, str(discover_script), '--output', str(inventory_path)],
+                capture_output=True, text=True, cwd=str(target), timeout=30, check=False)
+        except subprocess.TimeoutExpired as exc:
+            raise ValueError('model discovery timed out after 30 seconds') from exc
+        if result.returncode != 0:
+            raise ValueError('model discovery failed: ' + result.stderr.strip())
+        inventory = validate_inventory(load_json(inventory_path))
+        return install(target, model_inventory=inventory)
+
+
+def update_model_inventory(target, inventory):
+    """Update only owned model files; the installation manifest is authoritative."""
+    manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
+    manifest = load_json(manifest_path)
+    if not isinstance(manifest, dict) or manifest.get('schema_version') != 1:
+        raise ValueError('invalid installation manifest')
+    if manifest.get('repository') != str(REPO):
+        raise ValueError('installation belongs to a different checkout')
+    if manifest.get('project_root', str(target)) != str(target):
+        raise ValueError('installation belongs to a different project')
+    owned = manifest.get('files')
+    if not isinstance(owned, dict) or any(
+            not isinstance(name, str) or not isinstance(value, str) or
+            re.fullmatch(r'[0-9a-f]{64}', value) is None for name, value in owned.items()):
+        raise ValueError('invalid installation manifest file fingerprints')
+    inventory = validate_inventory(inventory)
+    expected, _ = expected_files(inventory)
+    models = {name: text for name, text in expected.items()
+              if name in ('.claude/agent-workflows/model-policy.json',
+                          '.claude/agent-workflows/model-routing.json')
+              or name.startswith('.claude/agents/')}
+    # Complete preflight before the first write, including later agent conflicts.
+    for name in models:
+        path = checked_target(target, name)
+        if name not in owned:
+            raise ValueError('preserving model file without installation ownership: ' + name)
+        if path.exists() and sha(path.read_text(encoding='utf-8')) != owned[name]:
+            raise ValueError('preserving locally edited model file: ' + name)
+    for name, text in models.items():
+        atomic_text(target / name, text)
+    manifest['files'] = {**owned, **{name: sha(text) for name, text in models.items()}}
+    manifest['model_inventory'] = inventory
+    # Each write is atomic; this is not a multi-file transaction on I/O failure.
+    atomic_text(manifest_path, json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
 
 
 def doctor(target):
@@ -481,32 +525,14 @@ def doctor(target):
     inventory = report.get('model_routing', {})
     routes = inventory.get('routes', {})
     fallback_count = sum(1 for r in routes.values() if r.get('fallback', False))
-    if fallback_count == len(routes) and routes:
+    manifest_path = target / '.claude/agent-workflows/installation.json'
+    if fallback_count == len(routes) and routes and manifest_path.is_file():
         discovered = _auto_discover_inventory(target)
         if discovered:
+            update_model_inventory(target, discovered)
+            report = check(target)
             fixes.append(f'Auto-discovered {len(discovered["models"])} gateway models (was: all fallback)')
-            # Only update model-related files, not orchestrator.md (may have local edits)
-            from agent_runtime.model_routing import routing_report, validate_inventory, validate_policy
-            policy = validate_policy(load_json(REPO / 'config/role_model_policy.json'))
-            inv = validate_inventory(discovered)
-            report_obj = routing_report(policy, inv)
-            mr_path = target / '.claude/agent-workflows' / 'model-routing.json'
-            atomic_text(mr_path, json.dumps(report_obj, ensure_ascii=False, indent=2) + '\n')
-            mp_path = target / '.claude/agent-workflows' / 'model-policy.json'
-            atomic_text(mp_path, json.dumps(policy, ensure_ascii=False, indent=2) + '\n')
-            mi_path = target / '.claude/agent-workflows' / 'model_inventory.json'
-            atomic_text(mi_path, json.dumps(inv, ensure_ascii=False, indent=2) + '\n')
-            # Update agent model fields
-            agents_dir = target / '.claude' / 'agents'
-            for role, route in report_obj['routes'].items():
-                agent_path = agents_dir / f'agent-{role}.md'
-                if agent_path.is_file():
-                    content = agent_path.read_text(encoding='utf-8')
-                    model_val = route['model'] or 'inherit'
-                    new_content = re.sub(r'model: \"[^\"]*\"', f'model: \"{model_val}\"', content)
-                    if new_content != content:
-                        atomic_text(agent_path, new_content)
-            fixes.append('Updated model-routing.json, model-policy.json, model_inventory.json, agent model fields')
+            fixes.append('Updated owned model files and installation inventory')
 
     # 2. Auto-source tmux config if running inside tmux
     if os.environ.get('TMUX'):

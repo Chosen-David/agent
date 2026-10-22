@@ -1,0 +1,226 @@
+test_doctor_model_conflicts_reject_before_any_write (test_install_recovery.InstallRecoveryTests.test_doctor_model_conflicts_reject_before_any_write) ... 
+  test_doctor_model_conflicts_reject_before_any_write (test_install_recovery.InstallRecoveryTests.test_doctor_model_conflicts_reject_before_any_write) (path='.claude/agent-workflows/model-policy.json') ... FAIL
+  test_doctor_model_conflicts_reject_before_any_write (test_install_recovery.InstallRecoveryTests.test_doctor_model_conflicts_reject_before_any_write) (path='.claude/agent-workflows/model-routing.json') ... FAIL
+  test_doctor_model_conflicts_reject_before_any_write (test_install_recovery.InstallRecoveryTests.test_doctor_model_conflicts_reject_before_any_write) (path='.claude/agents/agent-research-write.md') ... FAIL
+test_doctor_preserves_copy_manifest_and_unknown_metadata (test_install_recovery.InstallRecoveryTests.test_doctor_preserves_copy_manifest_and_unknown_metadata) ... FAIL
+test_doctor_preserves_nonmodel_local_edits (test_install_recovery.InstallRecoveryTests.test_doctor_preserves_nonmodel_local_edits) ... FAIL
+test_doctor_rejects_foreign_manifest_identity (test_install_recovery.InstallRecoveryTests.test_doctor_rejects_foreign_manifest_identity) ... 
+  test_doctor_rejects_foreign_manifest_identity (test_install_recovery.InstallRecoveryTests.test_doctor_rejects_foreign_manifest_identity) (field='repository') ... FAIL
+  test_doctor_rejects_foreign_manifest_identity (test_install_recovery.InstallRecoveryTests.test_doctor_rejects_foreign_manifest_identity) (field='project_root') ... FAIL
+test_doctor_symlink_conflict_preflight_preserves_earlier_files (test_install_recovery.InstallRecoveryTests.test_doctor_symlink_conflict_preflight_preserves_earlier_files) ... FAIL
+test_doctor_updates_manifest_report_and_repeat_lifecycle (test_install_recovery.InstallRecoveryTests.test_doctor_updates_manifest_report_and_repeat_lifecycle) ... FAIL
+test_doctor_without_manifest_does_not_install_or_discover (test_install_recovery.InstallRecoveryTests.test_doctor_without_manifest_does_not_install_or_discover) ... FAIL
+test_explicit_discovery_errors_clean_owned_output (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_errors_clean_owned_output) ... 
+  test_explicit_discovery_errors_clean_owned_output (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_errors_clean_owned_output) (kind='timeout') ... ERROR
+  test_explicit_discovery_errors_clean_owned_output (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_errors_clean_owned_output) (kind='nonzero') ... ERROR
+  test_explicit_discovery_errors_clean_owned_output (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_errors_clean_owned_output) (kind='json') ... FAIL
+  test_explicit_discovery_errors_clean_owned_output (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_errors_clean_owned_output) (kind='schema') ... FAIL
+test_explicit_discovery_first_install_and_owned_cleanup (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_first_install_and_owned_cleanup) ... ERROR
+test_explicit_discovery_installer_conflict_preserves_user_inventory (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_installer_conflict_preserves_user_inventory) ... FAIL
+test_explicit_discovery_preserves_user_inventory_on_success (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_preserves_user_inventory_on_success) ... FAIL
+
+======================================================================
+ERROR: test_explicit_discovery_errors_clean_owned_output (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_errors_clean_owned_output) (kind='timeout')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 98, in test_explicit_discovery_errors_clean_owned_output
+    setup.discover(self.root)
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/setup.py", line 467, in discover
+    result = run([sys.executable, str(discover_script), '--output', str(inventory_path)],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 94, in failure
+    raise subprocess.TimeoutExpired(command, kwargs.get('timeout', 30))
+subprocess.TimeoutExpired: Command '['/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python', '/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/scripts/discover_models.py', '--output', '/tmp/install recovery b5y0ekio/.claude/agent-workflows/model_inventory.json']' timed out after 30 seconds
+
+======================================================================
+ERROR: test_explicit_discovery_errors_clean_owned_output (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_errors_clean_owned_output) (kind='nonzero')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 98, in test_explicit_discovery_errors_clean_owned_output
+    setup.discover(self.root)
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/setup.py", line 470, in discover
+    raise RuntimeError('model discovery failed: ' + result.stderr.strip())
+RuntimeError: model discovery failed: fixture error
+
+======================================================================
+ERROR: test_explicit_discovery_first_install_and_owned_cleanup (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_first_install_and_owned_cleanup)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 56, in test_explicit_discovery_first_install_and_owned_cleanup
+    report = setup.discover(self.root)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/setup.py", line 467, in discover
+    result = run([sys.executable, str(discover_script), '--output', str(inventory_path)],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 1204, in _execute_mock_call
+    result = effect(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 42, in discovered
+    output.write_text(json.dumps(inventory()), encoding='utf-8')
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1047, in write_text
+    with self.open(mode='w', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/pathlib.py", line 1013, in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/tmp/install recovery 0y1e5v2b/.claude/agent-workflows/model_inventory.json'
+
+======================================================================
+FAIL: test_doctor_model_conflicts_reject_before_any_write (test_install_recovery.InstallRecoveryTests.test_doctor_model_conflicts_reject_before_any_write) (path='.claude/agent-workflows/model-policy.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 151, in test_doctor_model_conflicts_reject_before_any_write
+    with self.assertRaisesRegex(ValueError, 'locally edited|preserving'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_doctor_model_conflicts_reject_before_any_write (test_install_recovery.InstallRecoveryTests.test_doctor_model_conflicts_reject_before_any_write) (path='.claude/agent-workflows/model-routing.json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 151, in test_doctor_model_conflicts_reject_before_any_write
+    with self.assertRaisesRegex(ValueError, 'locally edited|preserving'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_doctor_model_conflicts_reject_before_any_write (test_install_recovery.InstallRecoveryTests.test_doctor_model_conflicts_reject_before_any_write) (path='.claude/agents/agent-research-write.md')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 151, in test_doctor_model_conflicts_reject_before_any_write
+    with self.assertRaisesRegex(ValueError, 'locally edited|preserving'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_doctor_preserves_copy_manifest_and_unknown_metadata (test_install_recovery.InstallRecoveryTests.test_doctor_preserves_copy_manifest_and_unknown_metadata)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 214, in test_doctor_preserves_copy_manifest_and_unknown_metadata
+    self.assertEqual(setup.check(self.root)['errors'], [])
+AssertionError: Lists differ: ['missing/stale managed file: .claude/agen[242 chars].md'] != []
+
+First list contains 4 additional elements.
+First extra element 0:
+'missing/stale managed file: .claude/agent-workflows/model-routing.json'
+
++ []
+- ['missing/stale managed file: .claude/agent-workflows/model-routing.json',
+-  'missing/stale managed file: .claude/agents/agent-research-assistant.md',
+-  'missing/stale managed file: .claude/agents/agent-research-write.md',
+-  'missing/stale managed file: .claude/agents/agent-research-review.md']
+
+======================================================================
+FAIL: test_doctor_preserves_nonmodel_local_edits (test_install_recovery.InstallRecoveryTests.test_doctor_preserves_nonmodel_local_edits)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 137, in test_doctor_preserves_nonmodel_local_edits
+    self.assertEqual(report['model_routing']['routes']['research-write']['model'], 'claude-opus-5-5')
+AssertionError: None != 'claude-opus-5-5'
+
+======================================================================
+FAIL: test_doctor_rejects_foreign_manifest_identity (test_install_recovery.InstallRecoveryTests.test_doctor_rejects_foreign_manifest_identity) (field='repository')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 172, in test_doctor_rejects_foreign_manifest_identity
+    with self.assertRaisesRegex(ValueError, 'different|another'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_doctor_rejects_foreign_manifest_identity (test_install_recovery.InstallRecoveryTests.test_doctor_rejects_foreign_manifest_identity) (field='project_root')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 172, in test_doctor_rejects_foreign_manifest_identity
+    with self.assertRaisesRegex(ValueError, 'different|another'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_doctor_symlink_conflict_preflight_preserves_earlier_files (test_install_recovery.InstallRecoveryTests.test_doctor_symlink_conflict_preflight_preserves_earlier_files)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 198, in test_doctor_symlink_conflict_preflight_preserves_earlier_files
+    self.assertEqual(snapshot(self.root), before)
+AssertionError: {'CLA[237382 chars]er": "anthropic",\n      "model": "claude-opus[50482 chars]2\n'} != {'CLA[237382 chars]er": null,\n      "model": null,\n      "trans[52170 chars]2\n'}
+Diff is 946998 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_doctor_updates_manifest_report_and_repeat_lifecycle (test_install_recovery.InstallRecoveryTests.test_doctor_updates_manifest_report_and_repeat_lifecycle)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 111, in test_doctor_updates_manifest_report_and_repeat_lifecycle
+    self.assertEqual(report['model_routing']['routes']['research-write']['model'], 'claude-opus-5-5')
+AssertionError: None != 'claude-opus-5-5'
+
+======================================================================
+FAIL: test_doctor_without_manifest_does_not_install_or_discover (test_install_recovery.InstallRecoveryTests.test_doctor_without_manifest_does_not_install_or_discover)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 182, in test_doctor_without_manifest_does_not_install_or_discover
+    discover.assert_not_called()
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/unittest/mock.py", line 910, in assert_not_called
+    raise AssertionError(msg)
+AssertionError: Expected '_auto_discover_inventory' to not have been called. Called 1 times.
+Calls: [call(PosixPath('/tmp/install recovery rblnyoci'))].
+
+======================================================================
+FAIL: test_explicit_discovery_errors_clean_owned_output (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_errors_clean_owned_output) (kind='json')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 100, in test_explicit_discovery_errors_clean_owned_output
+    self.assertEqual(snapshot(self.root), before)
+AssertionError: {'.cl[19 chars]s/model_inventory.json': b'partial'} != {'.cl[19 chars]s/model_inventory.json': b'user inventory: preserve exactly\n'}
+- {'.claude/agent-workflows/model_inventory.json': b'partial'}
+?                                                      ----- -
+
++ {'.claude/agent-workflows/model_inventory.json': b'user inventory: preserve exa'
+?                                                    ++++++++++++++++ ++++++++++
+
++                                                  b'ctly\n'}
+
+======================================================================
+FAIL: test_explicit_discovery_errors_clean_owned_output (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_errors_clean_owned_output) (kind='schema')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 97, in test_explicit_discovery_errors_clean_owned_output
+    with self.assertRaises(ValueError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_explicit_discovery_installer_conflict_preserves_user_inventory (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_installer_conflict_preserves_user_inventory)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 80, in test_explicit_discovery_installer_conflict_preserves_user_inventory
+    self.assertEqual(snapshot(self.root), before)
+AssertionError: {'.cl[41 chars]': b'{"schema_version": 1, "models": [{"provid[123 chars]}]}'} != {'.cl[41 chars]': b'user inventory: preserve exactly\n'}
+Diff is 785 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_explicit_discovery_preserves_user_inventory_on_success (test_install_recovery.InstallRecoveryTests.test_explicit_discovery_preserves_user_inventory_on_success)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-install-recovery-1756/tests/test_install_recovery.py", line 70, in test_explicit_discovery_preserves_user_inventory_on_success
+    self.assertEqual(sentinel.read_bytes(), before)
+AssertionError: b'{"schema_version": 1, "models": [{"provid[122 chars]]}]}' != b'user inventory: preserve exactly\n'
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.724s
+
+FAILED (failures=14, errors=3)

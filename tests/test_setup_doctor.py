@@ -30,6 +30,7 @@ class SetupDoctorTests(unittest.TestCase):
         self.assertFalse((self.root / '.claude').exists())
 
     def test_all_fallback_discovery_unavailable(self):
+        setup.install(self.root, model_inventory=setup.EMPTY_INVENTORY)
         initial = {'model_routing': {'routes': {'writer': {'fallback': True}}},
                    'errors': ['fixture needs setup'], 'status': 'needs_setup'}
         with patch.object(setup, 'check', return_value=initial), patch.object(

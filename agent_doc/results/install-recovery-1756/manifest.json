@@ -1,0 +1,63 @@
+{
+  "task": "INSTALL-RECOVERY-01",
+  "baseline": "61a7ee343d36f9e211fd697282c78743a2160ab2",
+  "scope": "Offline explicit discovery ownership and installed doctor model-file/manifest/report recovery, not service or performance validation",
+  "environment": {
+    "python": "3.12.14",
+    "system": "Linux",
+    "machine": "x86_64"
+  },
+  "commands": [
+    "python -m unittest discover -s tests -p test_install_recovery.py -v",
+    "python -O -m unittest discover -s tests -p test_install_recovery.py -v",
+    "combined unittest discover test_setup.py,test_setup_portable.py,test_model_discovery_setup.py,test_setup_doctor.py,test_model_routing.py,test_install_profiles.py,test_role_process.py",
+    "before v2: python -m unittest discover -s tests -p test_install_recovery.py -k nonobject -v"
+  ],
+  "tests": {
+    "baseline_initial_cases": 11,
+    "baseline_initial_failures": 14,
+    "baseline_initial_errors": 3,
+    "candidate_final_cases": 16,
+    "optimized_final_cases": 16,
+    "integration_final_cases": 57,
+    "integration_initial_failures": 1,
+    "nonobject_before_cases": 2,
+    "nonobject_before_errors": 6,
+    "independent_final_baseline_cases": 16,
+    "independent_final_baseline_failures": 18,
+    "independent_final_baseline_errors": 9
+  },
+  "sha256": {
+    "setup.py": "ca0a973fce898818ab3f5e471353075445e522f460635dba1462e987dbcf0507",
+    "tests/test_install_recovery.py": "bb3f138b56b013f73ccf4dd837c034ee688d30597a8df711ec4e5b70d224c029",
+    "tests/test_setup_doctor.py": "d51c5b31e47b30858ccf5bca6bc78be525e9b04b09f239b0a3a454ac088a05b4",
+    "scripts/run_role.py": "8ebe9c973e776633e1d71d1bb0003890ea76ecfcb0e78617625de19916da02d5",
+    "AGENTS.md": "ef5bc14e7814dfa5de4b17b7650ea5b94836379c9aa43aae92a34353501ae45c",
+    "agent_doc/guide/GUIDE.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "review": "ACCEPT usable-with-scope; native separate context, not authenticated runtime receipt",
+  "limits": [
+    "No real gateway/model/tmux server, Windows, quality/cost/speed claim",
+    "Manifest-last single-file atomic writes are not multi-file I/O failure/crash/concurrency transactions",
+    "SYSTEM99 remains unfinished; no new paper reading count"
+  ],
+  "evidence_sha256": {
+    "reproduction.log": "c5e2d800fcf9c0bf77298157cf645fbdef367fc8d0a6661d89508b9ef996cdaf",
+    "baseline.log": "31ba8678c58ab888ea295dfa3c4ec757867fb3a42f1a1cd6e096863f1d19ef8d",
+    "candidate-v3.log": "231bab3f2058741eda042a4661000e0e67c4f621d1f359f875147e518480d445",
+    "optimized-v3.log": "758c165cd9ed0041a24192a4263172f58b60d54d2ef629860a6ab5c75c8f7df4",
+    "integration-initial.log": "57ac6426d106ef1c9305fe491ff8717135a50e61e4946294a87e85e7c793477c",
+    "integration-v3.log": "7057414556ae1504bef1de15ae513e917bcb4bfc81d25cfc9ae85d0483e2e377",
+    "nonobject-before.log": "3a3aee8fe83c0bfa3b2dd22afc1d3c0e6263bf1e60a70a833cdeeddc2fc3ddb7",
+    "plan-review.md": "64d00a0ad7c5a80ed9fac6b349716752a3a5171c292d7cd60f4f9261d426e826",
+    "plan-review-v2.md": "527604decf0a9137a21ed1ad0e1d1e4415e4580594e9e3175bec5ce974198442",
+    "result-review-v1.md": "221e87626a7f160699ca2fcce7a74397d538e3f321ae233cd0774271424c70ee",
+    "result-review.md": "5ad323802dc5b6791bc898310852fbf5b23effd15a9fbdd353908a7475b59694",
+    "reviewer-v2-baseline.log": "31ed26dc8d1fc89dc7c637cf2bc5fb7e2ac1a097a928b4cccfc8f80a5aa0434f",
+    "reviewer-v2-probes.log": "0fd13cc73aec07415062283953924e102fc17fa765b839335bb40a6d08dbffde",
+    "reviewer-v2-normal.log": "0af3e78ca408dcfc62bddab2a879cee19a9128fc7ffbc929e8b5223d183ec835",
+    "reviewer-v2-optimized.log": "fbbcc15f3509880b1c2d25d3d0cb63cb23e2c1f9022a95b1db54e271fe686505",
+    "reviewer-v2-integration.log": "6e57d847e8fb9248bc46395508238e26bccaefe01d590ef955ba6c8f9bc7695b"
+  },
+  "evidence_limit": "Producer optimized-v3.log is incomplete on final read (9 lines, no summary); not independent support for test count. Retained unchanged; full independent optimized and integration raw logs support final acceptance. Difference from earlier captured stdout remains unexplained."
+}
