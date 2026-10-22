@@ -232,14 +232,41 @@ def project_document_layout(target):
     return task, directories
 
 
+def _auto_discover_inventory(target):
+    """Try auto-discovery only when there's a usable gateway in the environment.
+    Returns None if discovery is not possible (caller falls back to previous/empty)."""
+    from subprocess import run, PIPE
+    discover_script = REPO / 'scripts' / 'discover_models.py'
+    tmp = target / '.claude' / 'agent-workflows' / '_discovery_tmp.json'
+    try:
+        env_base = os.environ.get('ANTHROPIC_BASE_URL')
+        if not env_base:
+            return None
+        result = run([sys.executable, str(discover_script), '--output', str(tmp)],
+                     capture_output=True, text=True, cwd=str(target), timeout=30, check=False)
+        if result.returncode != 0:
+            return None
+        return load_json(tmp)
+    except (OSError, ValueError):
+        return None
+    finally:
+        if tmp.exists():
+            tmp.unlink()
+
+
 def install(target, *, model_inventory=None, copy_skills=False):
     target = installation_root(target)
     manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
     previous = json.loads(manifest_path.read_text(encoding='utf-8')) if manifest_path.exists() else {}
     if previous and previous.get('repository') != str(REPO):
         raise ValueError('target belongs to another checkout; uninstall that installation first')
-    inventory = validate_inventory(model_inventory if model_inventory is not None else
-                                   previous.get('model_inventory', EMPTY_INVENTORY))
+    if model_inventory is not None:
+        inventory = validate_inventory(model_inventory)
+    elif previous.get('model_inventory') and previous['model_inventory'].get('models'):
+        inventory = validate_inventory(previous['model_inventory'])
+    else:
+        discovered = _auto_discover_inventory(target)
+        inventory = validate_inventory(discovered) if discovered else EMPTY_INVENTORY
     files, links = expected_files(inventory)
     previous_copies = previous.get('skill_copies', {})
     copies = {}
@@ -431,6 +458,19 @@ def uninstall(target):
     return {'status': 'uninstalled', 'preserved_local_edits': preserved}
 
 
+def discover(target):
+    """Auto-discover gateway models, write inventory, and install with it."""
+    from subprocess import run, PIPE
+    target = installation_root(target)
+    discover_script = REPO / 'scripts' / 'discover_models.py'
+    inventory_path = target / '.claude' / 'agent-workflows' / 'model_inventory.json'
+    result = run([sys.executable, str(discover_script), '--output', str(inventory_path)],
+                 capture_output=True, text=True, cwd=str(target), check=False)
+    if result.returncode != 0:
+        raise RuntimeError('model discovery failed: ' + result.stderr.strip())
+    return install(target, model_inventory=load_json(inventory_path))
+
+
 def main():
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, 'reconfigure'):
@@ -440,16 +480,24 @@ def main():
     group = parser.add_mutually_exclusive_group()
     group.add_argument('--check', action='store_true', help='read-only installation/host check')
     group.add_argument('--uninstall', action='store_true', help='remove only owned, unmodified generated files')
+    group.add_argument('--discover', action='store_true',
+                       help='Auto-discover gateway models via /v1/models and install with discovered inventory')
     parser.add_argument('--model-inventory', help='Explicit host-supported model metadata JSON; no credentials')
     parser.add_argument('--copy-skills', action='store_true', help='copy skills (Windows default); preserve existing links')
     args = parser.parse_args()
     if sys.version_info < (3, 10):
         parser.error('Python 3.10+ required')
-    if (args.model_inventory or args.copy_skills) and (args.check or args.uninstall):
-        parser.error('--model-inventory/--copy-skills apply only to installation/update')
+    if args.model_inventory and (args.check or args.uninstall or args.discover):
+        parser.error('--model-inventory conflicts with --check/--uninstall/--discover')
+    if args.discover and (args.check or args.uninstall):
+        parser.error('--discover is mutually exclusive with --check/--uninstall')
     try:
-        inventory = load_json(args.model_inventory) if args.model_inventory else None
-        result = check(args.target) if args.check else uninstall(args.target) if args.uninstall else install(args.target, model_inventory=inventory, copy_skills=args.copy_skills)
+        if args.discover:
+            result = discover(args.target)
+        elif args.model_inventory:
+            result = install(args.target, model_inventory=load_json(args.model_inventory), copy_skills=args.copy_skills)
+        else:
+            result = check(args.target) if args.check else uninstall(args.target) if args.uninstall else install(args.target, copy_skills=args.copy_skills)
     except (OSError, ValueError) as exc:
         parser.exit(2, f'setup blocked: {exc}\n')
     print(json.dumps(result, ensure_ascii=False, indent=2))

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "verified_on": "2026-10-21",
+  "verified_on": "2026-10-22",
   "fallback": "inherit",
   "models": {
     "opus": {
@@ -26,21 +26,59 @@
     "glm": {
       "provider": "zai",
       "model": "glm-5.3"
+    },
+    "gpt-6": {
+      "provider": "openai",
+      "model": "gpt-6-sol"
+    },
+    "gpt-6-thinking": {
+      "provider": "openai",
+      "model": "gpt-6.1-sol"
+    },
+    "kimi-thinking": {
+      "provider": "moonshot",
+      "model": "kimi-k2.6-thinking"
+    },
+    "deepseek-flash-v4": {
+      "provider": "deepseek",
+      "model": "deepseek-v4-flash"
+    },
+    "gemini-flash": {
+      "provider": "google",
+      "model": "gemini-3.5-flash"
+    },
+    "longcat-thinking": {
+      "provider": "meituan",
+      "model": "longcat-2.0-preview-thinking"
+    },
+    "glm-flash": {
+      "provider": "zai",
+      "model": "glm-5.3-flash"
+    },
+    "qwen-coder": {
+      "provider": "alibaba",
+      "model": "qwen3-coder-fp8-meituan"
     }
   },
   "roles": {
     "planner-main": {
       "candidates": [
-        "opus"
+        "opus",
+        "gpt-6-thinking",
+        "kimi-thinking",
+        "longcat-thinking"
       ],
       "requires": [
         "tools"
       ],
-      "rationale": "复杂目标分解、跨角色协调"
+      "rationale": "复杂目标分解、跨角色协调；需要最强推理能力"
     },
     "review-main": {
       "candidates": [
-        "opus"
+        "opus",
+        "gpt-6-thinking",
+        "kimi-thinking",
+        "longcat-thinking"
       ],
       "requires": [
         "tools"
@@ -49,7 +87,10 @@
     },
     "research-assistant": {
       "candidates": [
-        "opus"
+        "opus",
+        "gpt-6",
+        "kimi-thinking",
+        "longcat-thinking"
       ],
       "requires": [
         "tools"
@@ -58,7 +99,9 @@
     },
     "research-explore": {
       "candidates": [
-        "deepseek-reasoning"
+        "deepseek-reasoning",
+        "kimi-thinking",
+        "longcat-thinking"
       ],
       "requires": [
         "tools"
@@ -67,7 +110,9 @@
     },
     "research-implement-optimize": {
       "candidates": [
-        "glm"
+        "glm",
+        "qwen-coder",
+        "deepseek-reasoning"
       ],
       "requires": [
         "tools"
@@ -76,7 +121,10 @@
     },
     "research-figures": {
       "candidates": [
-        "sonnet"
+        "sonnet",
+        "kimi",
+        "gemini-flash",
+        "gpt-6"
       ],
       "requires": [
         "tools",
@@ -86,7 +134,10 @@
     },
     "research-write": {
       "candidates": [
-        "opus"
+        "opus",
+        "gpt-6-thinking",
+        "kimi-thinking",
+        "longcat-thinking"
       ],
       "requires": [
         "tools"
@@ -95,7 +146,10 @@
     },
     "research-review": {
       "candidates": [
-        "opus"
+        "opus",
+        "gpt-6-thinking",
+        "kimi-thinking",
+        "longcat-thinking"
       ],
       "requires": [
         "tools"
@@ -104,7 +158,9 @@
     },
     "research-read-pdf": {
       "candidates": [
-        "kimi"
+        "kimi",
+        "gemini-flash",
+        "gpt-6"
       ],
       "requires": [
         "tools",
@@ -114,7 +170,9 @@
     },
     "paper-reading-companion": {
       "candidates": [
-        "kimi"
+        "kimi",
+        "gemini-flash",
+        "gpt-6"
       ],
       "requires": [
         "tools",
@@ -124,7 +182,9 @@
     },
     "explain-research-concepts": {
       "candidates": [
-        "deepseek-reasoning"
+        "deepseek-reasoning",
+        "kimi-thinking",
+        "longcat-thinking"
       ],
       "requires": [
         "tools"
@@ -133,7 +193,9 @@
     },
     "travel-planner": {
       "candidates": [
-        "kimi"
+        "kimi",
+        "gpt-6",
+        "gemini-flash"
       ],
       "requires": [
         "tools"
@@ -142,7 +204,10 @@
     },
     "research-data-visualization": {
       "candidates": [
-        "sonnet"
+        "sonnet",
+        "kimi",
+        "gemini-flash",
+        "gpt-6"
       ],
       "requires": [
         "tools",
@@ -152,7 +217,10 @@
     },
     "research-diagrams": {
       "candidates": [
-        "sonnet"
+        "sonnet",
+        "kimi",
+        "gemini-flash",
+        "gpt-6"
       ],
       "requires": [
         "tools",
@@ -162,7 +230,9 @@
     },
     "code-reading": {
       "candidates": [
-        "kimi"
+        "kimi",
+        "deepseek-reasoning",
+        "gpt-6"
       ],
       "requires": [
         "tools"
@@ -171,16 +241,20 @@
     },
     "code-organization": {
       "candidates": [
-        "deepseek-fast"
+        "deepseek-fast",
+        "deepseek-flash-v4",
+        "glm-flash"
       ],
       "requires": [
         "tools"
       ],
-      "rationale": "常规文件组织和结构化整理"
+      "rationale": "常规文件组织和结构化整理；速度优先"
     },
     "model-with-knowledge": {
       "candidates": [
-        "deepseek-reasoning"
+        "deepseek-reasoning",
+        "kimi-thinking",
+        "longcat-thinking"
       ],
       "requires": [
         "tools"
@@ -189,7 +263,9 @@
     },
     "gpu-experiment-dispatch": {
       "candidates": [
-        "glm"
+        "glm",
+        "qwen-coder",
+        "deepseek-reasoning"
       ],
       "requires": [
         "tools"
