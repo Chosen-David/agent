@@ -49,6 +49,63 @@ class DispatchContextTests(unittest.TestCase):
                     ['agent_doc/task/TASK.md'],['TASK.md'],['a\x00b'],[''],['x']*33):
             b=copy.deepcopy(self.request);b['write_scope']=bad
             with self.assertRaises(ValueError):prepare_dispatch(self.root,b)
+    def test_scope_ancestors_cannot_include_reserved_outputs(self):
+        for scope in ('.', 'agent_doc', 'agent_doc/task', 'doc'):
+            for inherit in (False, True):
+                with self.subTest(scope=scope, inherit=inherit):
+                    request=copy.deepcopy(self.request);request['write_scope']=[scope]
+                    with self.assertRaises(ValueError):
+                        prepare_dispatch(self.root,request,force_inherit=inherit)
+
+    def test_scope_aliases_cannot_target_reserved_outputs(self):
+        task=self.root/'agent_doc/task/TASK.md';task.parent.mkdir();task.write_text('fixture task index')
+        try:
+            (self.root/'guide-alias').symlink_to('agent_doc/guide',target_is_directory=True)
+            (self.root/'index-alias').symlink_to('agent_doc/task/TASK.md')
+            (self.root/'task-alias').symlink_to('agent_doc/task',target_is_directory=True)
+        except (OSError,NotImplementedError) as exc:
+            self.skipTest('native symlinks unavailable: '+str(exc))
+        for scope in ('guide-alias', 'guide-alias/GUIDE.md', 'guide-alias/future.md',
+                      'index-alias', 'task-alias', 'task-alias/TASK.md'):
+            for inherit in (False,True):
+                with self.subTest(scope=scope,inherit=inherit):
+                    request=copy.deepcopy(self.request);request['write_scope']=[scope]
+                    with self.assertRaises(ValueError):
+                        prepare_dispatch(self.root,request,force_inherit=inherit)
+        self.assertEqual(task.read_text(),'fixture task index')
+        self.assertEqual((self.root/'agent_doc/guide/GUIDE.md').read_text(),
+                         'human directive: keep cancellation')
+
+    def test_allowed_internal_alias_keeps_plan_and_native_settings(self):
+        (self.root/'outputs').mkdir()
+        try:
+            (self.root/'output-alias').symlink_to('outputs',target_is_directory=True)
+            (self.root/'scope-loop').symlink_to('scope-loop')
+        except (OSError,NotImplementedError) as exc:
+            self.skipTest('native symlinks unavailable: '+str(exc))
+        request=copy.deepcopy(self.request);request['write_scope']=['output-alias/future.txt']
+        plan=prepare_dispatch(self.root,request)
+        self.assertEqual(plan['write_scope'],request['write_scope'])
+        self.assertEqual(json.loads(plan['input_text'])['write_scope'],request['write_scope'])
+        self.assertEqual(plan['params'],prepare_dispatch(self.root,self.request)['params'])
+        request['write_scope']=['scope-loop/new.txt']
+        with self.assertRaises(ValueError):prepare_dispatch(self.root,request)
+
+    def test_cli_rejects_guide_alias_without_writes(self):
+        try:
+            (self.root/'guide-alias').symlink_to('agent_doc/guide',target_is_directory=True)
+        except (OSError,NotImplementedError) as exc:
+            self.skipTest('native symlinks unavailable: '+str(exc))
+        request=copy.deepcopy(self.request);request['write_scope']=['guide-alias/GUIDE.md']
+        p=self.root/'request.json';p.write_text(json.dumps(request),encoding='utf-8')
+        guide=self.root/'agent_doc/guide/GUIDE.md';before=guide.read_bytes()
+        cli=Path(__file__).resolve().parents[1]/'scripts/dispatch_context.py'
+        result=subprocess.run([sys.executable,str(cli),'--root',str(self.root),'--request',p.name],
+                              capture_output=True,text=True,timeout=10)
+        self.assertEqual(result.returncode,1,result.stdout+result.stderr)
+        self.assertIn('error',json.loads(result.stdout))
+        self.assertEqual(before,guide.read_bytes())
+
     def test_actual_cli_no_writes_or_inference(self):
         p=self.root/'request.json';p.write_text(json.dumps(self.request),encoding='utf-8')
         before={str(x.relative_to(self.root)):x.read_bytes() for x in self.root.rglob('*') if x.is_file()}

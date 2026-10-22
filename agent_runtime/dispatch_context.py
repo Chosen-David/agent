@@ -33,13 +33,22 @@ def prepare_dispatch(root,request,*,force_inherit=False,max_chars=12000):
         if not isinstance(scope,str) or not scope.strip() or '\0' in scope or len(scope)>512:
             raise ValueError('bounded write scope paths required')
         rel=Path(scope)
-        if rel.is_absolute() or '..' in rel.parts or not (root/rel).resolve().is_relative_to(root):
+        try:
+            target=(root/rel).resolve()
+        except RuntimeError as exc:
+            raise ValueError('write scope path cannot be resolved') from exc
+        if rel.is_absolute() or '..' in rel.parts or not target.is_relative_to(root):
             raise ValueError('write scope must stay inside project')
-        parts=tuple(p.casefold() for p in rel.parts)
-        if any(parts[i] in ('doc','agent_doc') and parts[i+1]=='guide' for i in range(len(parts)-1)):
-            raise ValueError('human-only guide is outside sub-agent write scope')
-        if rel.as_posix().casefold() in ('task.md','agent_doc/task/task.md'):
-            raise ValueError('task index is single-writer main-AI output, outside sub-agent write scope')
+        # Both aliases and encompassing directories must honor reserved ownership.
+        for candidate in (rel,target.relative_to(root)):
+            parts=tuple(p.casefold() for p in candidate.parts)
+            guides=(('agent_doc','guide'),('doc','guide'))
+            if (any(parts[i] in ('doc','agent_doc') and parts[i+1]=='guide' for i in range(len(parts)-1)) or
+                    any(parts[:len(g)]==g or g[:len(parts)]==parts for g in guides)):
+                raise ValueError('human-only guide is outside sub-agent write scope')
+            indexes=(('task.md',),('agent_doc','task','task.md'))
+            if any(parts[:len(index)]==index or index[:len(parts)]==parts for index in indexes):
+                raise ValueError('task index is single-writer main-AI output, outside sub-agent write scope')
     parent=request['parent'];keys={'thread_id','last_turn_id','cwd','model','reasoning_effort','approval_policy','sandbox','config'}
     if not isinstance(parent,dict) or set(parent)!=keys:raise ValueError('native parent settings required')
     for k in keys-{'config'}:
