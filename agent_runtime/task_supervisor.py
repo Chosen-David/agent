@@ -119,8 +119,14 @@ def validate_live_snapshot(live):
     return live
 
 
+TMUX_CONF = Path(__file__).parent / 'tmux.conf'
+
+
 def tmux(*args, check=True):
-    return subprocess.run(['tmux', '-L', TMUX_SOCKET, '-f', '/dev/null', *args],
+    # Load bundled tmux.conf (mouse, vi copy-pipe, 256color) if present;
+    # fall back to /dev/null when running into an environment without the conf.
+    conf = str(TMUX_CONF) if TMUX_CONF.is_file() else '/dev/null'
+    return subprocess.run(['tmux', '-L', TMUX_SOCKET, '-f', conf, *args],
                           capture_output=True, text=True, check=check, timeout=10)
 
 
