@@ -473,6 +473,70 @@ def discover(target):
     return install(target, model_inventory=load_json(inventory_path))
 
 
+def doctor(target):
+    """Diagnose and auto-fix common environment issues. Idempotent."""
+    target = installation_root(target)
+    report = check(target)
+    fixes = []
+
+    # 1. Auto-discover models if inventory is empty (only update model files)
+    inventory = report.get('model_routing', {})
+    routes = inventory.get('routes', {})
+    fallback_count = sum(1 for r in routes.values() if r.get('fallback', False))
+    if fallback_count == len(routes) and routes:
+        discovered = _auto_discover_inventory(target)
+        if discovered:
+            fixes.append(f'Auto-discovered {len(discovered["models"])} gateway models (was: all fallback)')
+            # Only update model-related files, not orchestrator.md (may have local edits)
+            from agent_runtime.model_routing import routing_report, validate_inventory, validate_policy
+            policy = validate_policy(load_json(REPO / 'config/role_model_policy.json'))
+            inv = validate_inventory(discovered)
+            report_obj = routing_report(policy, inv)
+            mr_path = target / '.claude/agent-workflows' / 'model-routing.json'
+            atomic_text(mr_path, json.dumps(report_obj, ensure_ascii=False, indent=2) + '\n')
+            mp_path = target / '.claude/agent-workflows' / 'model-policy.json'
+            atomic_text(mp_path, json.dumps(policy, ensure_ascii=False, indent=2) + '\n')
+            mi_path = target / '.claude/agent-workflows' / 'model_inventory.json'
+            atomic_text(mi_path, json.dumps(inv, ensure_ascii=False, indent=2) + '\n')
+            # Update agent model fields
+            import re, os
+            agents_dir = target / '.claude' / 'agents'
+            for role, route in report_obj['routes'].items():
+                agent_path = agents_dir / f'agent-{role}.md'
+                if agent_path.is_file():
+                    content = agent_path.read_text(encoding='utf-8')
+                    model_val = route['model'] or 'inherit'
+                    new_content = re.sub(r'model: \"[^\"]*\"', f'model: \"{model_val}\"', content)
+                    if new_content != content:
+                        atomic_text(agent_path, new_content)
+            fixes.append('Updated model-routing.json, model-policy.json, model_inventory.json, agent model fields')
+
+    # 2. Auto-source tmux config if running inside tmux
+    if os.environ.get('TMUX'):
+        tmux_conf = REPO / 'agent_runtime' / 'tmux.conf'
+        if tmux_conf.is_file():
+            r = subprocess.run(['tmux', 'source-file', str(tmux_conf)],
+                               capture_output=True, text=True, timeout=5, check=False)
+            if r.returncode == 0:
+                fixes.append('Applied tmux.conf (mouse/clipboard/256color)')
+            else:
+                fixes.append(f'tmux source-file failed: {r.stderr.strip()[:100]}')
+
+    # 3. Check Python version
+    py_ver = sys.version_info
+    py_ok = py_ver >= (3, 10)
+
+    report['doctor'] = {
+        'fixes_applied': fixes,
+        'python_ok': py_ok,
+        'python_version': sys.version.split()[0],
+        'in_tmux': bool(os.environ.get('TMUX')),
+        'needs_restart': True,
+        'restart_hint': 'Agent configs updated. Restart Claude Code to load new agent model/language settings.',
+    }
+    return report
+
+
 def main():
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, 'reconfigure'):
@@ -484,17 +548,21 @@ def main():
     group.add_argument('--uninstall', action='store_true', help='remove only owned, unmodified generated files')
     group.add_argument('--discover', action='store_true',
                        help='Auto-discover gateway models via /v1/models and install with discovered inventory')
+    group.add_argument('--doctor', action='store_true',
+                       help='Auto-diagnose: discover models + source tmux + report health')
     parser.add_argument('--model-inventory', help='Explicit host-supported model metadata JSON; no credentials')
     parser.add_argument('--copy-skills', action='store_true', help='copy skills (Windows default); preserve existing links')
     args = parser.parse_args()
     if sys.version_info < (3, 10):
         parser.error('Python 3.10+ required')
-    if args.model_inventory and (args.check or args.uninstall or args.discover):
-        parser.error('--model-inventory conflicts with --check/--uninstall/--discover')
+    if args.model_inventory and (args.check or args.uninstall or args.discover or args.doctor):
+        parser.error('--model-inventory conflicts with --check/--uninstall/--discover/--doctor')
     if args.discover and (args.check or args.uninstall):
         parser.error('--discover is mutually exclusive with --check/--uninstall')
     try:
-        if args.discover:
+        if args.doctor:
+            result = doctor(args.target)
+        elif args.discover:
             result = discover(args.target)
         elif args.model_inventory:
             result = install(args.target, model_inventory=load_json(args.model_inventory), copy_skills=args.copy_skills)
