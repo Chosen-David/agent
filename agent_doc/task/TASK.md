@@ -1,5 +1,9 @@
 # Project tasks
 
+## 2026-10-22
+
+- [x] [PAPER-SKILLS-01] 论文Agent内置固定版本ARIS与nature-writing，离线安装/调用和独立试用通过；Skills已保存，main发布回读另核。 ([详情](task_details/PAPER-SKILLS-01.md))
+
 ## 2026-10-21
 
 - [x] [ITER10-20261021B] Ten context/memory/cache/portability fixes verified and published; final scoped suite passed. ([detail](task_details/ITER10-20261021B.md))

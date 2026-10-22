@@ -1,9 +1,11 @@
 ---
 name: research-write
-description: "根据研究证据写作、重构和修订论文，优先具体模板，核验引用并组织图文与 PDF 构建。用于完整论文或章节写作、改投与 revision；证据不足输出工作稿和缺口，不编造结果。"
+description: "根据研究证据写作、重构和修订论文，核验引用并组织图文与 PDF 构建。用于完整论文或章节写作、改投与 revision；内置 ARIS 与 nature-writing，按需离线调用规划和论证方法。证据不足输出工作稿和缺口，不编造结果。"
 ---
 
 # 论文写作
+
+用户指定 ARIS、nature-writing，或需要其论文规划/论证重构方法时，先读 [内置论文技能调用](references/paper-skills.md)。原始技能、共享引用、工具与许可已离线打包；按任务选取片段，不默认展开全套管线。
 
 先读 [完整工作流](references/workflow.md) 的第 1 节和任务相关章节，再执行其中完整 Agent Prompt。长文件按索引分段阅读，执行前不要仅凭标题猜测要求。
 
