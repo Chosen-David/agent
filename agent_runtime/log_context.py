@@ -22,12 +22,18 @@ def log_view(root, path, expected_sha256, *, needles=(), head=2, tail=2, context
         raise ValueError('source changed; refresh selection')
     lines=data.decode('utf-8').splitlines(keepends=True)
     keep=set(range(min(head,len(lines))))|set(range(max(0,len(lines)-tail),len(lines)))
+    # Every selected line contains at least one character. Packed formats also
+    # cap expanded text, so this lower bound is safe for all three encodings.
+    if len(keep)>max_chars:
+        raise ValueError('selected log exceeds budget; no silent truncation')
     counts={n:0 for n in needles}
     for i,line in enumerate(lines):
         for needle in needles:
             if needle in line:
                 counts[needle]+=1
                 keep.update(range(max(0,i-context),min(len(lines),i+context+1)))
+                if len(keep)>max_chars:
+                    raise ValueError('selected log exceeds budget; no silent truncation')
     # Preserve every requested literal match; never hide excess matches at LIMIT.
     value={'schema_version':'log-view/v1','project_root':str(root),'source':{'path':path,'sha256':expected_sha256},
            'selection':{'head':head,'tail':tail,'context':context,'needles':list(needles)},

@@ -32,3 +32,14 @@ class LogViewTests(unittest.TestCase):
     def test_literal_is_not_regex(self):
         v=self.view('.*\nother\n',needles=['.*'],head=0,tail=0,context=0)
         self.assertEqual([r['line'] for r in v['lines']],[1])
+
+    def test_impossible_line_budget_rejects_before_json_serialization(self):
+        from unittest.mock import patch
+        with patch('agent_runtime.log_context.json.dumps', side_effect=AssertionError('oversized selection serialized')):
+            with self.assertRaisesRegex(ValueError, 'selected log exceeds budget; no silent truncation'):
+                self.view('ERROR\n' * 1002, needles=['ERROR'], max_chars=1000)
+
+    def test_initial_selection_and_packed_raw_caps_still_reject(self):
+        for encoding in ('lines', 'chunks', 'runs'):
+            with self.subTest(encoding=encoding), self.assertRaisesRegex(ValueError, 'selected log exceeds budget'):
+                self.view('x\n' * 1002, head=1000, tail=1000, max_chars=1000, encoding=encoding)

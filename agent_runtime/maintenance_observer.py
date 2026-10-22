@@ -30,7 +30,16 @@ def read_bound(root, path, *, max_bytes=2 * 1024 * 1024):
                 raise ValueError('source exceeds budget; no partial context')
             if not stat.S_ISREG(info.st_mode):
                 raise ValueError('required source is not regular')
-            data = stream.read(max_bytes + 1)
+            if stream.seekable():
+                # Probe the observed size plus a growth sentinel, not the ceiling.
+                initial = min(info.st_size + 1, max_bytes + 1)
+                data = stream.read(initial)
+                if len(data) == initial and initial <= max_bytes:
+                    del data
+                    stream.seek(0)
+                    data = stream.read(max_bytes + 1)
+            else:
+                data = stream.read(max_bytes + 1)
         if len(data) > max_bytes:
             raise ValueError('source exceeds budget; no partial context')
         return data
