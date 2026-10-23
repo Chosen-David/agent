@@ -14,7 +14,7 @@ import errno
 import hashlib
 import json
 import math
-from bisect import insort
+from bisect import bisect_right
 import os
 from pathlib import Path
 import re
@@ -490,12 +490,15 @@ class ResultStore:
                     score += 1000  # Matching frozen conditions outrank vocabulary overlap.
                 if score:
                     hit_count += 1
-                    insort(hits, {'run_id': name, 'record_sha256': shown['record_ref']['sha256'],
+                    # Python 3.9 lacks key=; hits is bounded by the caller's limit (at most 20).
+                    position = bisect_right([(-hit['score'], hit['run_id']) for hit in hits],
+                                            (-score, name))
+                    hits.insert(position, {'run_id': name, 'record_sha256': shown['record_ref']['sha256'],
                                  'record_path': shown['record_ref']['path'], 'summary': record['summary'],
                                  'origin': record['origin'], 'score': score,
                                  'match': 'exact-context' if exact else 'lexical',
                                  'stored_validation': record['validation_at_registration']['status'],
-                                 'applicability': 'unchecked'}, key=lambda hit: (-hit['score'], hit['run_id']))
+                                 'applicability': 'unchecked'})
                     if len(hits) > limit:
                         hits.pop()
             except (OSError, ValueError, KeyError, TypeError, _ResultJSONDepthError) as exc:

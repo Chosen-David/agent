@@ -2,6 +2,8 @@
 
 ## 2026-10-23
 
+- [x] [PY39-RESULT-01] 结果排名改兼容API，3.9/3.12各113项通过，既有历史检索失败恢复；同属未完成SYSTEM-99，发布回读另核。 ([详情](task_details/PY39-RESULT-01.md))
+
 - [x] [REF-DEDUP-20261023] Agent库reference去重(224→97文件, -1.38MB) + agent-*.md条件加载修复(explain -83%, code-reading -77% input tokens)。 ([详情](task_details/REF-DEDUP-20261023.md))
 
 - [x] [MEM-RECONCILE-20261023] MemoryLedger.reconcile()只读健康检查：dependency_staleness + newer_sibling_in_scope + contradictions信号。 ([详情](task_details/MEM-RECONCILE-20261023.md))
