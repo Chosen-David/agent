@@ -334,6 +334,9 @@ def basis_context(root, record, request, *, known_knowledge_refs=(), known_memor
             check_handoff_knowledge(root, {'knowledge_refs': list(known_knowledge_refs)},
                                     dict(request, knowledge_refs=[]))
         corpus = corpus or KnowledgeStore(root / request['knowledge_root'])
+        # Hydration may acquire a newer snapshot than the earlier basis check.
+        if payload['knowledge_refs']:
+            corpus.check_refs(payload['knowledge_refs'])
         for ref in payload['knowledge_refs']:
             if ref in known_knowledge_refs:
                 omitted.append(ref['id'])

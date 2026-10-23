@@ -1,5 +1,9 @@
 # Project tasks
 
+## 2026-10-24
+
+- [x] [KNOWLEDGE-HYDRATE-01] 修复交接中旧知识哈希/新正文混用；两解释器77项及补强专项通过，独立复核接受，发布回读另核，同属未完成SYSTEM-99。 ([详情](task_details/KNOWLEDGE-HYDRATE-01.md))
+
 ## 2026-10-23
 
 - [x] [MEM-SNAPSHOT-01] reconcile原生读取共用事务，保留自定义list；独审接受有限范围，3.9既有DDL锁错误仍未决，同属未完成SYSTEM-99。 ([详情](task_details/MEM-SNAPSHOT-01.md))
