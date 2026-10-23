@@ -97,6 +97,17 @@ class PromptContextTests(unittest.TestCase):
         self.assertIn('版本A专属内容。', chosen['prompt'])
         self.assertIn('版本B专属内容。', chosen['prompt'])
 
+    def test_all_shared_markers_deduped_from_real_files(self):
+        # Real orchestrator.md and research_orchestrator.md share all 4 markers.
+        # With dedup, the second file's shared sections become short refs.
+        root = Path('.').resolve()
+        full = compose_entries(root, deduplicate=False)
+        chosen = compose_entries(root)
+        # Total dedup savings includes the tmux section (1,667 chars)
+        self.assertLess(len(chosen['prompt']), len(full['prompt']))
+        # The tmux marker appears in short-ref form for the second entry
+        self.assertIn('已在前文完整提供，逐条适用', chosen['prompt'])
+
     def test_dedup_shared_returns_newly_emitted(self):
         emitted = set()
         block = SHARED_MARKERS[0] + '\nhello\n'

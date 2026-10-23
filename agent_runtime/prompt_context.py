@@ -11,7 +11,8 @@ MARKER = '【执行前反思与决策门禁】'
 # Each is deduped independently when its content matches exactly.
 SHARED_MARKERS = ('【已证实实验污染的即时处置】',
                   '【实验/测量数据后的强制独立验证】',
-                  '【项目文档治理与执行依据】')
+                  '【项目文档治理与执行依据】',
+                  '【tmux 常驻监督与 agent_doc/task/TASK.md 闭环（2026-10-06 用户配置）】')
 
 
 def _read(root, name):
