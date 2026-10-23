@@ -597,8 +597,8 @@ class MemoryLedger:
         for entry in active:
             if not entry['scope']:
                 continue
-            newer_siblings = [e for e in scope_groups.get(entry['scope'][0], [])
-                              if e['id'] != entry['id'] and e['created_at'] > entry['created_at']]
+            newer_siblings = {e['id'] for s in entry['scope'] for e in scope_groups.get(s, [])
+                              if e['id'] != entry['id'] and e['created_at'] > entry['created_at']}
             if newer_siblings:
                 potentially_obsolete.append({
                     'id': entry['id'], 'scope': entry['scope'],
