@@ -100,17 +100,10 @@ def catalog():
     return result
 
 
-def agent_text(role, description, model='inherit'):
-    name = role['id']
-    # JSON strings are also valid quoted YAML scalars; no extra YAML dependency.
-    return f'''---
-name: agent-{name}
-description: {json.dumps(description, ensure_ascii=False)}
-model: {json.dumps(model)}
-skills:
-  - {name}
----
-
+# Shared agent body — single source of truth for the 11-line instruction block
+# generated into every agent-*.md by agent_text(). Keep in sync with the
+# "扩展约定" section of prompts/orchestrator.md which documents this contract.
+_AGENT_BODY = '''\
 默认使用中文回复，除非用户用英文提问或明确要求英文。技术术语/代码/路径保留原文。
 回复简洁直接，不废话不客套。代码注释精简，不写显而易见的注释。
 按预加载的 {name} Skill 执行主 AI 分配的任务。不得替换用户目标或扩大授权。
@@ -122,8 +115,21 @@ skills:
 按当前任务实际需要选择性读取 Skill 内 execution/workflow 等引用；短问答/简单任务不强制加载全文。
 实验/测量数据须按 references/result_validation_workflow.md 经独立 verify_experiment_result；未通过不用于结论。
 向主 AI 返回结论、真实证据、验收状态、未完成项与恢复条件。
-不要自行声明全链完成；由主 AI 按任务范围汇总。仅向已存在且获授权的监督运行交接状态，不自动创建监督器。
-'''
+不要自行声明全链完成；由主 AI 按任务范围汇总。仅向已存在且获授权的监督运行交接状态，不自动创建监督器。'''
+
+
+def agent_text(role, description, model='inherit'):
+    name = role['id']
+    # JSON strings are also valid quoted YAML scalars; no extra YAML dependency.
+    return f'''---
+name: agent-{name}
+description: {json.dumps(description, ensure_ascii=False)}
+model: {json.dumps(model)}
+skills:
+  - {name}
+---
+
+{_AGENT_BODY.format(name=name)}'''
 
 
 def expected_files(inventory=None):
