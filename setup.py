@@ -407,6 +407,13 @@ def uninstall(target):
     target = installation_root(target)
     manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
     manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+    # Check every removal loop's input before the first owned file is deleted.
+    if (not isinstance(manifest, dict)
+            or any(not isinstance(manifest.get(field), dict) for field in ('files', 'links'))
+            or not isinstance(manifest.get('skill_copies', {}), dict)
+            or any(not isinstance(value, str)
+                   for field in ('files', 'links') for value in manifest[field].values())):
+        raise ValueError('invalid installation manifest; no files removed')
     expected, links = expected_files()
     if manifest.get('repository') != str(REPO):
         raise ValueError('installation belongs to a different checkout')

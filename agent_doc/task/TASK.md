@@ -2,6 +2,8 @@
 
 ## 2026-10-23
 
+- [x] [UNINSTALL-PREFLIGHT-01] 损坏所有权清单卸载前拒绝，避免先删受管文件后崩溃；3.9/3.12各39项及独立复核通过，同属未完成SYSTEM-99；发布回读另核。 ([详情](task_details/UNINSTALL-PREFLIGHT-01.md))
+
 - [x] [PY39-INGEST-01] Python3.9知识导入newline接口修复；实际3.9/3.12各117项与独立隔离导入复核通过，发布回读另核，同属SYSTEM-99。 ([详情](task_details/PY39-INGEST-01.md))
 
 ## 2026-10-22
