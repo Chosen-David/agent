@@ -557,7 +557,7 @@ def doctor(target):
 
     # 3. Check Python version
     py_ver = sys.version_info
-    py_ok = py_ver >= (3, 10)
+    py_ok = py_ver >= (3, 9)
 
     report['doctor'] = {
         'fixes_applied': fixes,
@@ -591,8 +591,8 @@ def main():
     parser.add_argument('--model-inventory', help='Explicit host-supported model metadata JSON; no credentials')
     parser.add_argument('--copy-skills', action='store_true', help='copy skills (Windows default); preserve existing links')
     args = parser.parse_args()
-    if sys.version_info < (3, 10):
-        parser.error('Python 3.10+ required')
+    if sys.version_info < (3, 9):
+        parser.error('Python 3.9+ required. Current: {}.{}'.format(*sys.version_info[:2]))
     if args.model_inventory and (args.check or args.uninstall or args.discover or args.doctor):
         parser.error('--model-inventory conflicts with --check/--uninstall/--discover/--doctor')
     if args.discover and (args.check or args.uninstall):
