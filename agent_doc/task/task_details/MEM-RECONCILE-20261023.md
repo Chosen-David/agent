@@ -1,5 +1,8 @@
 # MEM-RECONCILE-20261023: 记忆自动对齐与过时记忆清理
 
+Task-ID: MEM-RECONCILE-20261023
+Date: 2026-10-23
+
 ## Plan
 
 1. 分析当前记忆管理机制的两层架构与清理空白

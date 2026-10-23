@@ -1,5 +1,8 @@
 # DOCTOR-RESTART-01
 
+Task-ID: DOCTOR-RESTART-01
+Date: 2026-10-22
+
 ## Plan
 
 同一SYSTEM-99批次的低风险诊断提示修复；基线bb33a88a9c35fcecb7ef58f0a892ba95a84fa3f7。用户授权Agent代码/测试/必要文档及验证后普通直推main。guide为空且只读。needs_restart仅描述本次doctor是否确实改变/恢复受管模型配置，不推断当前Claude会话已加载状态；tmux-only与无更改不要求重启。保持完整预检、原错误、库存/manifest同步；不新增host能力、监督器、架构或付费资源。

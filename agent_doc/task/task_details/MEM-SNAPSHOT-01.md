@@ -1,5 +1,8 @@
 # MEM-SNAPSHOT-01
 
+Task-ID: MEM-SNAPSHOT-01
+Date: 2026-10-23
+
 ## Plan
 
 同SYSTEM-99，基线6e32ef824603bc891f36e15787d7e5d4bc64b309。reconcile的active读取另开连接，与状态/依赖读取不共用快照，确定性更正可生成既非更正前也非更正后的报告。拟机械提取list原连接内正文为私有_list_on(db,status,scope)，公共list仍校验status/开连接后调用，reconcile复用其已打开事务读active/状态/依赖。保留原过滤、错误优先级、_get和JSON解析、不改字段、写入、更正权限或预算；独立复核计划后再改生产代码。

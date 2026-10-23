@@ -1,5 +1,8 @@
 # STATE-UTF8-01
 
+Task-ID: STATE-UTF8-01
+Date: 2026-10-23
+
 ## Plan
 
 同一SYSTEM-99批次，基线653b1f7d1670208be951fdf22159d588a8381c90。公共atomic_json写入使用默认locale，但读取契约UTF-8；在非UTF-8环境写中文/emoji失败。仅将fdopen显式设encoding=UTF-8，不改变字段、JSON格式、fsync/replace、所有权及回滚边界。普通低风险编码修复按轻量回归，不涉及架构或权限协议变更。

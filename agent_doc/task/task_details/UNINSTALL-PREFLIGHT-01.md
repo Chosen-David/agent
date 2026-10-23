@@ -1,5 +1,8 @@
 # UNINSTALL-PREFLIGHT-01
 
+Task-ID: UNINSTALL-PREFLIGHT-01
+Date: 2026-10-23
+
 ## Plan
 
 同一SYSTEM-99批次，基线0b2453a67b6b22a537bdd3dcefd2c457a33a57f3。仅修卸载受管manifest类型预检：在删除前确认对象、files/links映射、skill_copies可选映射及files/links字符串值。保留所有权、已编辑文件保留、旧manifest缺skill_copies兼容、路径/guide与原I/O语义，不承诺任意磁盘异常回滚。

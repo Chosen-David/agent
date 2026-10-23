@@ -1,5 +1,8 @@
 # MEM-SCOPE-01
 
+Task-ID: MEM-SCOPE-01
+Date: 2026-10-23
+
 ## Plan
 
 同SYSTEM-99，基线7e5c76835ef9a32194017316759318143f6a487f。reconcile newer_sibling_in_scope仅读scope[0]，漏计其他共享scope的新条目。改遍历全部scope，按id去重；保持只读候选提示，不自动失效或更正，不改变known correction权威、字段/预算/原contradictions提示。普通低风险诊断修复按轻量回归，独立SQLite并发快照问题暂不重构。

@@ -1,5 +1,8 @@
 # PY39-INGEST-01
 
+Task-ID: PY39-INGEST-01
+Date: 2026-10-23
+
 ## Plan
 
 SYSTEM-99 同批有界兼容修复，基线 a1f61112366bff8393d6f85b2b1c8c35e4829c31。该提交允许 Python3.9 安装，但 Knowledge 导入仍调用3.10新增的 Path.write_text(newline=)。只替换为既有 Path.open(..., newline=)；保留UTF-8、LF、候选验证、快照、哈希、临时目录与rename语义。由权威源同步Skill镜像，guide只读，不扩大所有Skill的最低版本承诺。

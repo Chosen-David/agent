@@ -1,5 +1,8 @@
 # PY39-RESULT-01
 
+Task-ID: PY39-RESULT-01
+Date: 2026-10-23
+
 ## Plan
 
 同SYSTEM-99，基线4fa6a474568247f139e3673467bf1a316d804ec1。实际3.9结果搜索在insort(key=...)失败，命中变errors并遗漏。改用3.9支持的bisect_right在最多20个命中排名键上定位，再插入原记录。保持(-score, run_id)并列顺序、limit/max_scan、partial、错误与证据门禁，无新依赖/缓存/检索算法。
