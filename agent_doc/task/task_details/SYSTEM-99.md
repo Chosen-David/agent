@@ -473,3 +473,5 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 [证据](../../advice/DOCTOR-RESTART-01.md)；原tmux/live模型/质量/usage/成本未决，
 不计新轮或性能收益。新增2610.10590v1正文§§1–9阅读，本次仅1篇，不重计清理前记录；
 归档可恢复不证明语义完整，真实host上下文投影及总账验证继续open。发布/readback另核。
+
+- 2026-10-23续接：main a1f61112放宽安装Python门槛后，真实3.9导入5 errors已修复（PY39-INGEST-01）；3.9/3.12各117知识回归及独立隔离导入通过，证据见../../advice/PY39-INGEST-01.md。不扩大所有Skill版本承诺，无性能/模型收益，原真实宿主、输入暴露、全部actor usage与任务质量缺口仍open；普通发布回读另核。

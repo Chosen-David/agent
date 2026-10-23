@@ -40,15 +40,19 @@ def ingest(root, metadata_path, body_path):
         folder=stage/'entries'/d['id']
         _require(not folder.exists(), 'import path collision')
         folder.mkdir()
-        (folder/'entry.json').write_text(json.dumps(d,ensure_ascii=False,indent=2)+'\n', encoding='utf-8', newline='\n')
-        (folder/'entry.md').write_text(body, encoding='utf-8', newline='\n')
+        # Path.write_text gained newline in 3.10; Path.open also supports 3.9.
+        with (folder/'entry.json').open('w', encoding='utf-8', newline='\n') as stream:
+            stream.write(json.dumps(d,ensure_ascii=False,indent=2)+'\n')
+        with (folder/'entry.md').open('w', encoding='utf-8', newline='\n') as stream:
+            stream.write(body)
         receipt={'schema_version':1,'id':d['id'],'status':'candidate',
                  'imported_at':datetime.now(timezone.utc).isoformat(),
                  'metadata_sha256':hashlib.sha256(raw.encode()).hexdigest(),
                  'body_sha256':hashlib.sha256(body.encode()).hexdigest(),
                  'sources':d['sources'],
                  'scope':'Local attributed draft only; no claim of source verification or correctness.'}
-        (folder/'provenance.txt').write_text(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n', encoding='utf-8', newline='\n')
+        with (folder/'provenance.txt').open('w', encoding='utf-8', newline='\n') as stream:
+            stream.write(json.dumps(receipt,ensure_ascii=False,indent=2)+'\n')
         candidate=KnowledgeStore(stage)
         destination=guard_write_path(store.root/'entries'/d['id'])
         _require(not destination.exists(), 'import target exists')

@@ -132,6 +132,7 @@ class ReadBoundaryTests(unittest.TestCase):
         self.assertEqual(receipt['metadata_sha256'], hashlib.sha256(expected_meta.encode()).hexdigest())
         self.assertEqual(receipt['body_sha256'], hashlib.sha256(expected_body.encode()).hexdigest())
         self.assertEqual((self.root / receipt['path'] / 'entry.md').read_text(), expected_body)
+        self.assertEqual((self.root / receipt['path'] / 'entry.md').read_bytes(), expected_body.encode('utf-8'))
         loaded = KnowledgeStore(self.root)
         for kid, record in self.store.records.items():
             self.assertEqual(loaded.records[kid], record)

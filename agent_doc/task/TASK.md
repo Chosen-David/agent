@@ -1,5 +1,9 @@
 # Project tasks
 
+## 2026-10-23
+
+- [x] [PY39-INGEST-01] Python3.9知识导入newline接口修复；实际3.9/3.12各117项与独立隔离导入复核通过，发布回读另核，同属SYSTEM-99。 ([详情](task_details/PY39-INGEST-01.md))
+
 ## 2026-10-22
 
 - [x] [DOCTOR-RESTART-01] 诊断重启提示按本次实际配置变化生成；8/16专项普通及-O、独立CLI/恢复/冲突复核通过，发布回读另核。 ([详情](task_details/DOCTOR-RESTART-01.md))
