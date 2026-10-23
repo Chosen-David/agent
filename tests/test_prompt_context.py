@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from agent_runtime.prompt_context import compose_entries, ENTRIES, MARKER
+from agent_runtime.prompt_context import compose_entries, ENTRIES, MARKER, SHARED_MARKERS, _dedup_shared
 from agent_runtime.token_usage import short_probe_usage
 
 class PromptContextTests(unittest.TestCase):
@@ -63,6 +63,51 @@ class PromptContextTests(unittest.TestCase):
             result=compose_entries(self.root)
             self.assertIn(original,result['prompt'])
             self.assertEqual(result['documents'][-1]['policy'],'retained')
+
+    def test_shared_markers_dedup_across_entries(self):
+        # When a SHARED_MARKERS section is byte-identical across entries,
+        # only the first occurrence is kept; later ones become short refs.
+        shared_block = SHARED_MARKERS[0] + '\n' + '固定共享正文用于去重测试。'
+        for key, path in ENTRIES.items():
+            p = self.root/path
+            text = p.read_text(encoding='utf-8')
+            # Insert the shared block inside the existing ```text fence
+            text = text.replace('```text\n', '```text\n' + shared_block + '\n', 1)
+            p.write_text(text, encoding='utf-8')
+        chosen = compose_entries(self.root)
+        # The shared block appears fully only once
+        self.assertEqual(chosen['prompt'].count('固定共享正文用于去重测试。'), 1)
+        # Later entries got a short reference
+        self.assertIn('已在前文完整提供，逐条适用', chosen['prompt'])
+        # Source files are not modified
+        for key, path in ENTRIES.items():
+            p = self.root/path
+            content = p.read_text(encoding='utf-8')
+            self.assertIn('固定共享正文用于去重测试。', content)
+
+    def test_differing_shared_marker_is_retained(self):
+        # If a SHARED_MARKERS section differs across entries, both are kept.
+        blockA = SHARED_MARKERS[0] + '\n' + '版本A专属内容。'
+        blockB = SHARED_MARKERS[0] + '\n' + '版本B专属内容。'
+        p = self.root/ENTRIES['general']
+        p.write_text(p.read_text(encoding='utf-8').replace('```text\n', '```text\n' + blockA + '\n', 1), encoding='utf-8')
+        p = self.root/ENTRIES['research']
+        p.write_text(p.read_text(encoding='utf-8').replace('```text\n', '```text\n' + blockB + '\n', 1), encoding='utf-8')
+        chosen = compose_entries(self.root)
+        self.assertIn('版本A专属内容。', chosen['prompt'])
+        self.assertIn('版本B专属内容。', chosen['prompt'])
+
+    def test_dedup_shared_returns_newly_emitted(self):
+        emitted = set()
+        block = SHARED_MARKERS[0] + '\nhello\n'
+        text = 'title\n\n```text\n' + block + '```\nsuffix'
+        text2, newly = _dedup_shared(text, emitted)
+        self.assertEqual(len(newly), 1)
+        emitted.update(newly)
+        # Second call with same block replaces it
+        text3, newly2 = _dedup_shared(text, emitted)
+        self.assertEqual(len(newly2), 0)
+        self.assertIn('已在前文完整提供', text3)
 
     def test_symlink_read_refusal(self):
         p=self.root/ENTRIES['research']; saved=self.root/'saved.md'; p.rename(saved)
