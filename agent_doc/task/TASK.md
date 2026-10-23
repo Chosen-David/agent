@@ -2,6 +2,8 @@
 
 ## 2026-10-23
 
+- [x] [MEM-SNAPSHOT-01] reconcile原生读取共用事务，保留自定义list；独审接受有限范围，3.9既有DDL锁错误仍未决，同属未完成SYSTEM-99。 ([详情](task_details/MEM-SNAPSHOT-01.md))
+
 - [x] [MEM-SCOPE-01] reconcile跨scope漏计修复，3.9/3.12各58项、-O专项通过；保留只读提示，同属未完成SYSTEM-99，发布回读另核。 ([详情](task_details/MEM-SCOPE-01.md))
 
 - [x] [ITER-10ROUNDS-20261023] 手动触发10轮不间断优化：R3-R10已完成并推main (±2,500 lines, +7,467 chars dedup, tests fixed)。 ([详情](task_details/ITER-10ROUNDS-20261023.md))

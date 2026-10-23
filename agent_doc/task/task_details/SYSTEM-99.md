@@ -485,3 +485,5 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 - 2026-10-23续接PY39-RESULT-01：3.9结果搜索insort(key=...)不兼容导致每个匹配变error/空列表；保留原排序/预算语义换兼容插入API，两解释器各113回归与-O专项通过，[证据](../../advice/PY39-RESULT-01.md)。STATE-UTF8记录的既有历史检索失败恢复，首轮fixture入口失败保留；无性能/模型或新轮完成主张，原协议/真实后端/质量/usage未决继续保留；发布回读另核。
 
 - 2026-10-23续接MEM-SCOPE-01：reconcile只看scope[0]漏计后续共享scope，新条目跨scope改按ID去重；真实3.9/3.12各58回归、-O专项通过，[证据](../../advice/MEM-SCOPE-01.md)。只读提示，不自动correct/失效；跨连接快照、目录alias边界及原真实宿主/质量/全部usage/协议未决继续保留。无新轮或性能收益，发布回读另核。
+
+- 2026-10-23续接MEM-SNAPSHOT-01：真实WAL并发correct曾使reconcile混合active旧快照与依赖新状态（2/1）；原生list改同事务，保留覆盖并明示自定义快照未知。3.12相关138通过，3.9相关138项1既有schema行工厂DDL锁error，在隔离6e32基线同错；独审3.12相关49/3.9其余40及两解释器-O各4通过，[证据](../../advice/MEM-SNAPSHOT-01.md)。未宣称全绿/性能/新轮完成；该3.9边界、目录alias、协议及真实宿主/质量/usage缺口继续open，发布readback另核。

@@ -373,64 +373,67 @@ class MemoryLedger:
         if status not in ('active', 'candidate', 'stale', 'superseded', 'all'):
             raise MemoryError('unknown status')
         with self._connect() as db:
-            filtered = (type(self) is MemoryLedger and type(status) is str and status != 'all'
-                        and (db.execute('SELECT 1 FROM entries WHERE status<>? LIMIT 1',
-                                        (status,)).fetchone() or
-                             (type(scope) is str and db.execute(
-                                 'SELECT 1 FROM entries WHERE scope IS NOT '
-                                 '(SELECT scope FROM entries LIMIT 1) LIMIT 1').fetchone())))
-            # Uniform scopes cannot discriminate among valid rows. Keep the
-            # original path there to avoid decoding all metadata twice when
-            # every row matches; raw SQL equality is only a routing guard.
-            if filtered:
-                try:
-                    db.execute('SELECT child,parent FROM dependencies LIMIT 0')
-                except sqlite3.OperationalError:
-                    # Preserve legacy failures even if no requested-status row
-                    # exists, rather than hiding a missing dependency table.
-                    filtered = False
-            if filtered:
-                # Decode all JSON metadata first, preserving failures even on
-                # excluded historical entries. SQLite json_valid is not a
-                # substitute for Python decoding (BLOB/UTF-8/depth semantics).
-                documents = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' "
-                                       "AND name='document_dependencies'").fetchone()
-                scoped = type(scope) is str
-                identity = ',e.id,e.status' if scoped else ''
-                if documents:
-                    metadata = db.execute(
-                        'SELECT e.scope,d.entry_id,d.snapshot' + identity + ' FROM entries e '
-                        'LEFT JOIN document_dependencies d ON d.entry_id=e.id '
-                        'ORDER BY e.created_at,e.id').fetchall()
-                else:
-                    identity = ',id,status' if scoped else ''
-                    metadata = db.execute('SELECT scope,NULL,NULL' + identity +
-                                          ' FROM entries ORDER BY created_at,id').fetchall()
-                if scoped:
-                    decoded = []
-                    for entry_scope, document_id, snapshot, entry_id, entry_status in metadata:
-                        parsed_scope = json.loads(entry_scope)
-                        if document_id is not None:
-                            json.loads(snapshot)
-                        decoded.append((entry_id, entry_status, parsed_scope))
-                    # Complete *all* JSON decoding before membership: a selected
-                    # null scope must not hide a later malformed JSON error.
-                    # Preserve Python membership and status short-circuiting,
-                    # not SQL LIKE/json_each (strings/dicts differ from arrays).
-                    rows = [(entry_id,) for entry_id, entry_status, parsed_scope in decoded
-                            if entry_status == status and scope in parsed_scope]
-                else:
-                    for entry_scope, document_id, snapshot in metadata:
-                        json.loads(entry_scope)
-                        if document_id is not None:
-                            json.loads(snapshot)
-                    rows = db.execute('SELECT id FROM entries WHERE status=? ORDER BY created_at,id',
-                                      (status,)).fetchall()
+            return self._list_on(db, status, scope)
+
+    def _list_on(self, db, status, scope):
+        filtered = (type(self) is MemoryLedger and type(status) is str and status != 'all'
+                    and (db.execute('SELECT 1 FROM entries WHERE status<>? LIMIT 1',
+                                    (status,)).fetchone() or
+                         (type(scope) is str and db.execute(
+                             'SELECT 1 FROM entries WHERE scope IS NOT '
+                             '(SELECT scope FROM entries LIMIT 1) LIMIT 1').fetchone())))
+        # Uniform scopes cannot discriminate among valid rows. Keep the
+        # original path there to avoid decoding all metadata twice when
+        # every row matches; raw SQL equality is only a routing guard.
+        if filtered:
+            try:
+                db.execute('SELECT child,parent FROM dependencies LIMIT 0')
+            except sqlite3.OperationalError:
+                # Preserve legacy failures even if no requested-status row
+                # exists, rather than hiding a missing dependency table.
+                filtered = False
+        if filtered:
+            # Decode all JSON metadata first, preserving failures even on
+            # excluded historical entries. SQLite json_valid is not a
+            # substitute for Python decoding (BLOB/UTF-8/depth semantics).
+            documents = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' "
+                                   "AND name='document_dependencies'").fetchone()
+            scoped = type(scope) is str
+            identity = ',e.id,e.status' if scoped else ''
+            if documents:
+                metadata = db.execute(
+                    'SELECT e.scope,d.entry_id,d.snapshot' + identity + ' FROM entries e '
+                    'LEFT JOIN document_dependencies d ON d.entry_id=e.id '
+                    'ORDER BY e.created_at,e.id').fetchall()
             else:
-                rows = db.execute('SELECT id FROM entries ORDER BY created_at,id').fetchall()
-            values = [self._get(db, r[0]) for r in rows]
-            return [v for v in values if (status == 'all' or v['status'] == status)
-                    and (scope is None or scope in v['scope'])]
+                identity = ',id,status' if scoped else ''
+                metadata = db.execute('SELECT scope,NULL,NULL' + identity +
+                                      ' FROM entries ORDER BY created_at,id').fetchall()
+            if scoped:
+                decoded = []
+                for entry_scope, document_id, snapshot, entry_id, entry_status in metadata:
+                    parsed_scope = json.loads(entry_scope)
+                    if document_id is not None:
+                        json.loads(snapshot)
+                    decoded.append((entry_id, entry_status, parsed_scope))
+                # Complete *all* JSON decoding before membership: a selected
+                # null scope must not hide a later malformed JSON error.
+                # Preserve Python membership and status short-circuiting,
+                # not SQL LIKE/json_each (strings/dicts differ from arrays).
+                rows = [(entry_id,) for entry_id, entry_status, parsed_scope in decoded
+                        if entry_status == status and scope in parsed_scope]
+            else:
+                for entry_scope, document_id, snapshot in metadata:
+                    json.loads(entry_scope)
+                    if document_id is not None:
+                        json.loads(snapshot)
+                rows = db.execute('SELECT id FROM entries WHERE status=? ORDER BY created_at,id',
+                                  (status,)).fetchall()
+        else:
+            rows = db.execute('SELECT id FROM entries ORDER BY created_at,id').fetchall()
+        values = [self._get(db, r[0]) for r in rows]
+        return [v for v in values if (status == 'all' or v['status'] == status)
+                and (scope is None or scope in v['scope'])]
 
     def index(self, status='active', scope=None, *, limit=20, after_id=None,
               expected_snapshot=None, max_chars=20000):
@@ -544,7 +547,11 @@ class MemoryLedger:
         a scope.
         """
         with self._connect() as db:
-            active = self.list('active', scope)
+            bound_list = self.list
+            builtin_list = (getattr(bound_list, '__func__', None) is _BUILTIN_LIST
+                            and getattr(bound_list, '__self__', None) is self)
+            active = (self._list_on(db, 'active', scope) if builtin_list
+                      else bound_list('active', scope))
             superseded = {r[0] for r in db.execute(
                 'SELECT id FROM entries WHERE status=\'superseded\'').fetchall()}
             stale = {r[0] for r in db.execute(
@@ -624,12 +631,14 @@ class MemoryLedger:
                   'potentially_obsolete_total': len(potentially_obsolete), 'flagged': flagged,
                   'potentially_obsolete': potentially_obsolete,
                   'contradictions': contradictions,
-                  'scope': 'read-only analysis; no ledger changes; correct() or accept() required to revise'}
+                  'scope': ('read-only analysis; no ledger changes; correct() or accept() required to revise'
+                            + ('' if builtin_list else '; custom list snapshot consistency unchecked'))}
         if len(_index_json(result)) + 1 > max_chars:
             raise MemoryError('reconcile result exceeds max_chars; reduce scope or increase limit')
         return result
 
 
+_BUILTIN_LIST = MemoryLedger.list
 _BUILTIN_GET = MemoryLedger._get
 _BUILTIN_READ_ENTRY = _read_entry
 _BUILTIN_PUBLIC_CHECK = MemoryLedger.check
