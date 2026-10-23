@@ -2,6 +2,8 @@
 
 ## 2026-10-23
 
+- [x] [ITER-10ROUNDS-20261023] 手动触发10轮不间断优化：R3-R10已完成并推main (±2,500 lines, +7,467 chars dedup, tests fixed)。 ([详情](task_details/ITER-10ROUNDS-20261023.md))
+
 - [x] [PY39-RESULT-01] 结果排名改兼容API，3.9/3.12各113项通过，既有历史检索失败恢复；同属未完成SYSTEM-99，发布回读另核。 ([详情](task_details/PY39-RESULT-01.md))
 
 - [x] [REF-DEDUP-20261023] Agent库reference去重(224→97文件, -1.38MB) + agent-*.md条件加载修复(explain -83%, code-reading -77% input tokens)。 ([详情](task_details/REF-DEDUP-20261023.md))
