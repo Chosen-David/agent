@@ -82,15 +82,56 @@ class MemorySchemaTests(unittest.TestCase):
         self.assertEqual(self.ledger.check(['leaf'])[0]['id'], 'leaf')
         self.assertEqual(len(self.schema_queries(trace)), 4)
 
-    def test_replaced_global_row_factory_keeps_same_connection_ddl_behavior(self):
+    def test_replaced_global_row_factory_keeps_uncached_schema_reads(self):
         original = memory.sqlite3.Row
+        seen = []
+
         def custom_row(cursor, values):
             row = original(cursor, values)
-            if (cursor.description[0][0] == 'id' and row[0] == 'a'):
+            if cursor.description[0][0] == 'id':
+                seen.append(row[0])
+            return row
+
+        with patch.object(memory.sqlite3, 'Row', custom_row):
+            values, trace = self.trace_check(['leaf'])
+        self.assertEqual([v['id'] for v in values], ['leaf'])
+        self.assertEqual(seen, ['leaf', 'a', 'parent', 'b'])
+        self.assertEqual(len(self.schema_queries(trace)), 4)
+
+    def test_replaced_global_row_factory_keeps_same_connection_ddl_behavior(self):
+        original = memory.sqlite3.Row
+        hits = []
+
+        def custom_row(cursor, values):
+            row = original(cursor, values)
+            if cursor.description[0][0] == 'id' and row[0] == 'a':
+                hits.append('a')
                 cursor.connection.execute('DROP TABLE IF EXISTS document_dependencies')
             return row
-        with patch.object(memory.sqlite3, 'Row', custom_row):
-            self.assertEqual(self.ledger.check(['leaf'])[0]['id'], 'leaf')
+
+        def outcome(ledger, direct):
+            hits.clear()
+            try:
+                with patch.object(memory.sqlite3, 'Row', custom_row):
+                    if direct:
+                        with ledger._connect() as db:
+                            result = memory.MemoryLedger._check(db, ['leaf'], ledger.root)
+                    else:
+                        result = ledger.check(['leaf'])
+                return ('result', result)
+            except memory.MemoryError as exc:
+                # DDL in a row callback may be rejected in some environments.
+                # Require the same precise legacy failure.
+                self.assertIsInstance(exc.__cause__, memory.sqlite3.OperationalError)
+                self.assertIn('locked', str(exc.__cause__))
+                return ('error', type(exc), exc.args, type(exc.__cause__), exc.__cause__.args)
+            finally:
+                self.assertEqual(hits, ['a'])
+
+        with tempfile.TemporaryDirectory() as tmp:
+            reference = memory.MemoryLedger(Path(tmp), create=True)
+            reference.path.write_bytes(self.ledger.path.read_bytes())
+            self.assertEqual(outcome(self.ledger, False), outcome(reference, True))
 
     def test_schema_changes_between_calls_and_direct_get_are_fresh(self):
         self.ledger.check(['leaf'])
