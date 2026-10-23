@@ -2,6 +2,10 @@
 
 ## 2026-10-23
 
+- [x] [REF-DEDUP-20261023] Agent库reference去重(224→97文件, -1.38MB) + agent-*.md条件加载修复(explain -83%, code-reading -77% input tokens)。 ([详情](task_details/REF-DEDUP-20261023.md))
+
+- [x] [MEM-RECONCILE-20261023] MemoryLedger.reconcile()只读健康检查：dependency_staleness + newer_sibling_in_scope + contradictions信号。 ([详情](task_details/MEM-RECONCILE-20261023.md))
+
 - [x] [STATE-UTF8-01] 检查点固定UTF-8，3.12相关47/-O2/监督16(1skip)、3.9专项5通过；3.9相邻既有失败保留，同属未完成SYSTEM-99，发布回读另核。 ([详情](task_details/STATE-UTF8-01.md))
 
 - [x] [UNINSTALL-PREFLIGHT-01] 损坏所有权清单卸载前拒绝，避免先删受管文件后崩溃；3.9/3.12各39项及独立复核通过，同属未完成SYSTEM-99；发布回读另核。 ([详情](task_details/UNINSTALL-PREFLIGHT-01.md))
