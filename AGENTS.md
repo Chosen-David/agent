@@ -67,21 +67,8 @@ When planning or revising a task chain, follow [causal task orchestration](workf
 
 When the main AI confirms a defect affects an active experiment, immediately stop only the bound affected job, even near completion. Follow `workflows/experiment_execution_contract.md` contamination handling: revoke first, verify actual exit/fencing, recoverably quarantine active results and dependent references, validate the repair, then use fresh identities/caches within existing authorization. Suspicion is not confirmation; missing external job control must be reported honestly. `agent_runtime.contamination` is a trusted host API, not an installed scheduler.
 
-## Hot reload (no session restart)
+## Reloading changed instructions
 
-Claude Code caches agent definitions at session start. After editing
-`.claude/agents/agent-*.md` (model field, language, instructions), the changes
-do NOT take effect in the current session by default. To work around this:
+Check the actual host/version and effective definition before claiming a change is loaded. Current [Claude Code subagent docs](https://code.claude.com/docs/en/sub-agents#write-subagent-files) describe watchers for existing `~/.claude/agents/` and `.claude/agents/` directories: the next delegation uses detected edits. Restart when the directory did not exist at session start, it belongs to an `--add-dir` directory, or the session uses `--disable-slash-commands`. Do not blindly pass a cached or unsupported model name to override the host's routing/capability policy; other hosts have their own delegation contracts.
 
-1. **Before each subagent delegation**, Read the current `.claude/agents/agent-<role>.md`
-   frontmatter, extract the current `model:` value, and pass `model=<current value>`
-   explicitly to the Agent tool call to override the cached version.
-2. **Orchestrator rule changes** (autonomous execution, anti-ask, etc.) should be
-   written to the project's `CLAUDE.md` (not only `orchestrator.md`) — CLAUDE.md is
-   injected into the system prompt every turn and is not subject to session caching.
-3. **Skill file changes**: skills are read on invocation, no extra handling needed.
-4. **TASK.md / GUIDE.md / memory**: already read per session/task turn, naturally hot.
-
-Items modified this turn that need full restart to take effect: agent-*.md model
-fields (16 agents). With rule 1 above, subsequent delegations will use the
-on-disk latest version even without restart.
+Root/user `CLAUDE.md` is loaded at session start, not re-read from disk each turn. The [prompt-caching docs](https://code.claude.com/docs/en/prompt-caching#editing-claude-md-mid-session) describe applying edits after `/clear`, `/compact`, or restart. Keep shared rules in their authoritative source and navigate to them; writing another copy does not prove current-session loading. Skills load at invocation; changed source files do not retroactively replace earlier context. Re-read relevant TASK/guide/memory versions explicitly when resuming or dispatching, as required above. File changes alone are never a live loading receipt.

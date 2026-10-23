@@ -475,3 +475,5 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 归档可恢复不证明语义完整，真实host上下文投影及总账验证继续open。发布/readback另核。
 
 - 2026-10-23续接：main a1f61112放宽安装Python门槛后，真实3.9导入5 errors已修复（PY39-INGEST-01）；3.9/3.12各117知识回归及独立隔离导入通过，证据见../../advice/PY39-INGEST-01.md。不扩大所有Skill版本承诺，无性能/模型收益，原真实宿主、输入暴露、全部actor usage与任务质量缺口仍open；普通发布回读另核。
+
+- 2026-10-23续接HOST-RELOAD-01：基线01856214263d9a43be3fc3985ccfc37981ed79e9新增热加载说明与当前官方文档冲突，修正为带目录/会话例外的watcher及根CLAUDE启动快照语义，保留实际readback和宿主路由边界；来源/限制见../../advice/HOST-RELOAD-01.md。无CLI热加载或性能验收；原SYSTEM-99未决范围不变，普通发布回读另核。
