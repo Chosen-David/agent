@@ -7,6 +7,11 @@ ENTRIES = {'decision': 'prompts/decision_review.md',
            'general': 'prompts/orchestrator.md',
            'research': 'prompts/research_orchestrator.md'}
 MARKER = '【执行前反思与决策门禁】'
+# Additional sections that are byte-identical across multiple entries.
+# Each is deduped independently when its content matches exactly.
+SHARED_MARKERS = ('【已证实实验污染的即时处置】',
+                  '【实验/测量数据后的强制独立验证】',
+                  '【项目文档治理与执行依据】')
 
 
 def _read(root, name):
@@ -26,10 +31,10 @@ def _read(root, name):
     return raw.decode('utf-8'), hashlib.sha256(raw).hexdigest()
 
 
-def _span(text):
+def _span(text, marker=MARKER):
     # Ambiguous repeated/quoted markers never establish a shared global scope.
     starts = [match.start() for match in
-              re.finditer('^' + re.escape(MARKER), text, re.MULTILINE)]
+              re.finditer('^' + re.escape(marker), text, re.MULTILINE)]
     if len(starts) != 1:
         return None
     start = starts[0]
@@ -57,11 +62,29 @@ def _span(text):
             fence, global_text = None, False
         offset += len(line)
     ends = [i for token in ('\n【', '\n```')
-            if (i := text.find(token, start + len(MARKER))) >= 0]
+            if (i := text.find(token, start + len(marker))) >= 0]
     if not ends:
         return None
     block = text[start:min(ends)].rstrip()
     return start, start + len(block)
+
+
+def _dedup_shared(text, emitted_blocks, markers=SHARED_MARKERS):
+    """Replace byte-identical shared sections with short references.
+    Returns (text, newly_emitted_blocks).
+    """
+    newly = []
+    for marker in markers:
+        loc = _span(text, marker)
+        if loc is None:
+            continue
+        block = text[loc[0]:loc[1]]
+        if block in emitted_blocks:
+            ref = marker + '已在前文完整提供，逐条适用。'
+            text = text[:loc[0]] + ref + text[loc[1]:]
+        else:
+            newly.append(block)
+    return text, newly
 
 
 def compose_entries(root, entries=('decision', 'general', 'research'), *,
@@ -83,6 +106,7 @@ def compose_entries(root, entries=('decision', 'general', 'research'), *,
         raise ValueError('canonical shared decision scope is missing or ambiguous')
     policy = canonical[span[0]:span[1]]
     emitted = False
+    emitted_blocks = set()
     rows, parts = [], []
     for entry in entries:
         name = ENTRIES[entry]
@@ -96,6 +120,9 @@ def compose_entries(root, entries=('decision', 'general', 'research'), *,
             else:
                 emitted = True
                 disposition = 'shared-full'
+        if deduplicate:
+            text, newly = _dedup_shared(text, emitted_blocks)
+            emitted_blocks.update(newly)
         rows.append({'entry':entry, 'path':name, 'sha256':digest, 'policy':disposition})
         parts.append('Document: ' + name + '\n' + text)
     prompt = '\n\n'.join(parts)
