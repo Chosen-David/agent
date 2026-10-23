@@ -171,7 +171,12 @@ def checked_skill_link(target, relative):
 
 
 def skill_snapshot(path):
-    """Fingerprint portable skill contents; reject aliases and foreign additions."""
+    """Fingerprint portable skill contents; resolve symlinks to their targets.
+
+    Symlinks inside a skill directory are followed to their real content for both
+    fingerprinting and copying.  This lets shared reference files live in a single
+    canonical location (``shared-references/``) while each skill holds a symlink.
+    """
     if path.is_symlink() or not path.is_dir():
         raise ValueError('skill copy is not a regular directory: ' + str(path))
     result = {}
@@ -179,11 +184,12 @@ def skill_snapshot(path):
         relative = child.relative_to(path)
         if '__pycache__' in relative.parts or child.suffix == '.pyc' or child.name == '.DS_Store':
             continue
-        if child.is_symlink():
-            raise ValueError('symbolic link inside skill copy: ' + str(child))
-        if child.is_file():
-            result[relative.as_posix()] = hashlib.sha256(child.read_bytes()).hexdigest()
-        elif child.is_dir():
+        resolved = child.resolve() if child.is_symlink() else child
+        if child.is_symlink() and not resolved.exists():
+            raise ValueError('broken symbolic link inside skill copy: ' + str(child))
+        if resolved.is_file():
+            result[relative.as_posix()] = hashlib.sha256(resolved.read_bytes()).hexdigest()
+        elif resolved.is_dir():
             result[relative.as_posix() + '/'] = ''
         else:
             raise ValueError('unsupported skill entry: ' + str(child))
@@ -194,7 +200,8 @@ def replace_skill_copy(path, source, previous):
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=path.parent, prefix='.skill-') as stage:
         staged = Path(stage) / 'new'
-        shutil.copytree(source, staged, ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '.DS_Store'))
+        shutil.copytree(source, staged, symlinks=False,
+                        ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '.DS_Store'))
         backup = Path(stage) / 'previous'
         if os.path.lexists(path):
             if path.is_symlink() or skill_snapshot(path) != previous:
