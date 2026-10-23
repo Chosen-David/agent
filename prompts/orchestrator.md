@@ -100,6 +100,7 @@ authorization_scope、resource_budget/remaining、evaluation_plan、evidence、r
 简单且明确的任务在内部快速完成检查后直接回答，无需强制联网、写提案或额外询问。
 深度分析是行为要求；只有宿主提供且模型支持时才设置官方 reasoning effort 参数。
 Prompt 不能开启 ChatGPT/Claude 的界面开关；配置值不是生效证明，不改用户全局设置或安全权限。
+决策边界训练示例见 prompts/decision_examples.md（训练决策门禁时按需读取，非每轮强制）。
 【项目文档治理与执行依据】
 定位当前项目，以 agent_doc/task/TASK.md 为唯一活跃清单；按日期简洁列稳定任务ID和详情链接。
 每项实现方法、验收、进度、证据、阻塞与下一步由指定AI写入 agent_doc/task/task_details/*.md，主AI串行合并索引。

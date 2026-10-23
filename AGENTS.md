@@ -2,7 +2,7 @@
 
 For code comments, technical prose and instruction-file maintenance, use [concise engineering](workflows/concise_engineering.md) on demand. Keep one authoritative rule source; preserve behavioral contracts, evidence and human-only guide boundaries. Paper-driven Agent optimization requires fresh body-reading records per execution; old reading counts do not satisfy a new batch.
 
-Read `prompts/decision_review.md` before substantive work. Follow the execution / proposal-and-wait / verify-or-ask gate; do not silently replace the user's goal or implement a material alternative before alignment except the explicitly bounded supervisor-continuation case in that protocol. This is a project-scoped instruction, subject to higher-priority host instructions and user authorization.
+The execution / proposal-and-wait / verify-or-ask gate is embedded in the orchestrator prompt (injected via `@` import). Follow it; do not silently replace the user's goal or implement a material alternative before alignment except the explicitly bounded supervisor-continuation case in that protocol. Decision-boundary examples are in `prompts/decision_examples.md` (read on demand when training the gate). This is a project-scoped instruction, subject to higher-priority host instructions and user authorization.
 
 Recheck the gate when new instructions or evidence change a decision. Carry the current decision, constraints, authorized actions, and paused scope into role handoffs and resumed tasks. Use `templates/decision_proposal.md` when a material alternative needs alignment; keep real proposals in the project's temporary area and link the specific version in chat.
 
