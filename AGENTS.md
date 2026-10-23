@@ -66,3 +66,22 @@ When planning or revising a task chain, follow [causal task orchestration](workf
 ## Confirmed experiment contamination
 
 When the main AI confirms a defect affects an active experiment, immediately stop only the bound affected job, even near completion. Follow `workflows/experiment_execution_contract.md` contamination handling: revoke first, verify actual exit/fencing, recoverably quarantine active results and dependent references, validate the repair, then use fresh identities/caches within existing authorization. Suspicion is not confirmation; missing external job control must be reported honestly. `agent_runtime.contamination` is a trusted host API, not an installed scheduler.
+
+## Hot reload (no session restart)
+
+Claude Code caches agent definitions at session start. After editing
+`.claude/agents/agent-*.md` (model field, language, instructions), the changes
+do NOT take effect in the current session by default. To work around this:
+
+1. **Before each subagent delegation**, Read the current `.claude/agents/agent-<role>.md`
+   frontmatter, extract the current `model:` value, and pass `model=<current value>`
+   explicitly to the Agent tool call to override the cached version.
+2. **Orchestrator rule changes** (autonomous execution, anti-ask, etc.) should be
+   written to the project's `CLAUDE.md` (not only `orchestrator.md`) — CLAUDE.md is
+   injected into the system prompt every turn and is not subject to session caching.
+3. **Skill file changes**: skills are read on invocation, no extra handling needed.
+4. **TASK.md / GUIDE.md / memory**: already read per session/task turn, naturally hot.
+
+Items modified this turn that need full restart to take effect: agent-*.md model
+fields (16 agents). With rule 1 above, subsequent delegations will use the
+on-disk latest version even without restart.
