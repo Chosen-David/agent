@@ -533,6 +533,102 @@ class MemoryLedger:
         with self._connect() as db:
             return [self._get(db, ref) for ref in self._descendants(db, entry_id)]
 
+    def reconcile(self, scope=None, *, detect_contradictions=False, max_chars=20000):
+        """Read-only memory health check: flag potentially stale active entries.
+
+        Never modifies the ledger or deletes entries. Returns signals only:
+        the caller decides what to correct. Signals include dependency_staleness
+        (an active entry descends from something superseded), temporal_decay
+        (ancient entries with recent siblings covering the same scope), and
+        optional contradiction detection between user_confirmed entries sharing
+        a scope.
+        """
+        with self._connect() as db:
+            active = self.list('active', scope)
+            superseded = {r[0] for r in db.execute(
+                'SELECT id FROM entries WHERE status=\'superseded\'').fetchall()}
+            stale = {r[0] for r in db.execute(
+                'SELECT id FROM entries WHERE status=\'stale\'').fetchall()}
+            # Collect all dependency edges while connection is open.
+            all_edges = db.execute('SELECT child, parent FROM dependencies').fetchall()
+
+        # Build a child->parents adjacency map from cached edges.
+        parent_map = {}
+        for child, parent in all_edges:
+            parent_map.setdefault(child, set()).add(parent)
+
+        def _ancestors(eid):
+            collected, stack = set(), [eid]
+            while stack:
+                current = stack.pop()
+                for p in parent_map.get(current, set()) - collected:
+                    collected.add(p)
+                    stack.append(p)
+            return collected
+
+        flagged = []
+        for entry in active:
+            eid = entry['id']
+            signals = []
+            ancestors = _ancestors(eid)
+            superseded_anc = ancestors & superseded
+            stale_anc = ancestors & stale
+            if superseded_anc:
+                signals.append({'dependency_staleness': {
+                    'superseded_ancestors': sorted(superseded_anc),
+                    'detail': 'active entry depends on superseded memory; verify it is still valid'}})
+            if stale_anc:
+                signals.append({'dependency_staleness': {
+                    'stale_ancestors': sorted(stale_anc),
+                    'detail': 'active entry depends on stale memory; revalidation recommended'}})
+            if signals:
+                flagged.append({'id': eid, 'kind': entry['kind'],
+                                'scope': entry['scope'], 'content_chars': len(entry['content']),
+                                'signals': signals})
+
+        # Temporal decay: active entries whose scope has newer active siblings.
+        # An older active entry in a scope where a newer confirmed entry already
+        # exists may be obsolete even without explicit correction.
+        scope_groups = {}
+        for entry in active:
+            for s in entry['scope']:
+                scope_groups.setdefault(s, []).append(entry)
+        potentially_obsolete = []
+        for entry in active:
+            if not entry['scope']:
+                continue
+            newer_siblings = [e for e in scope_groups.get(entry['scope'][0], [])
+                              if e['id'] != entry['id'] and e['created_at'] > entry['created_at']]
+            if newer_siblings:
+                potentially_obsolete.append({
+                    'id': entry['id'], 'scope': entry['scope'],
+                    'newer_sibling_count': len(newer_siblings),
+                    'signal': 'newer_sibling_in_scope'})
+
+        contradictions = []
+        if detect_contradictions:
+            confirmed = [e for e in active if e['evidence'] == 'user_confirmed']
+            by_scope = {}
+            for e in confirmed:
+                for s in e['scope']:
+                    by_scope.setdefault(s, []).append(e)
+            for s, entries in by_scope.items():
+                if len(entries) > 1:
+                    contradictions.append({'scope': s,
+                                           'user_confirmed_count': len(entries),
+                                           'entry_ids': [e['id'] for e in entries],
+                                           'signal': 'multiple_confirmed_in_scope'})
+
+        result = {'schema_version': 'memory-reconcile/v1', 'project_root': str(self.root),
+                  'active_total': len(active), 'flagged_total': len(flagged),
+                  'potentially_obsolete_total': len(potentially_obsolete), 'flagged': flagged,
+                  'potentially_obsolete': potentially_obsolete,
+                  'contradictions': contradictions,
+                  'scope': 'read-only analysis; no ledger changes; correct() or accept() required to revise'}
+        if len(_index_json(result)) + 1 > max_chars:
+            raise MemoryError('reconcile result exceeds max_chars; reduce scope or increase limit')
+        return result
+
 
 _BUILTIN_GET = MemoryLedger._get
 _BUILTIN_READ_ENTRY = _read_entry
@@ -612,9 +708,15 @@ def main(argv=None):
         reading = sub.add_parser(command)
         reading.add_argument('id')
         reading.add_argument('--max-chars', type=int, default=20000)
+    reconcile = sub.add_parser('reconcile',
+                               help='read-only staleness analysis; flags active entries needing review')
+    reconcile.add_argument('--scope', help='limit analysis to a single scope tag')
+    reconcile.add_argument('--detect-contradictions', action='store_true',
+                           help='also flag multiple user_confirmed entries sharing a scope')
+    reconcile.add_argument('--max-chars', type=int, default=20000)
     args = parser.parse_args(argv)
     try:
-        bounded_read = args.command in ('list', 'history', 'impact', 'check', 'storage')
+        bounded_read = args.command in ('list', 'history', 'impact', 'check', 'storage', 'reconcile')
         if bounded_read and not 256 <= args.max_chars <= 200000:
             raise MemoryError('read max_chars must be 256..200000')
         document_refs = (_load_document_refs(args.document_refs)
@@ -639,6 +741,9 @@ def main(argv=None):
                                   expected_snapshot=args.snapshot, max_chars=args.max_chars)
         elif args.command == 'storage':
             result = ledger.storage()
+        elif args.command == 'reconcile':
+            result = ledger.reconcile(scope=args.scope, detect_contradictions=args.detect_contradictions,
+                                      max_chars=args.max_chars)
         else:
             result = getattr(ledger, args.command)(args.id)
         compact = bounded_read if args.compact is None else args.compact

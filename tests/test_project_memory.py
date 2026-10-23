@@ -248,6 +248,42 @@ class MemoryTests(unittest.TestCase):
         self.assertEqual(failed.returncode, 2)
         self.assertIn('stale', json.loads(failed.stderr)['error'])
 
+    def test_reconcile_flags_newer_sibling_temporal_decay(self):
+        self.ledger.add('old', 'observation', 'Training 4h', 'user', [], ['perf'], 'user_confirmed')
+        self.ledger.add('new', 'observation', 'Training 2h', 'user', ['old'], ['perf'], 'user_confirmed')
+        result = self.ledger.reconcile()
+        self.assertEqual(result['active_total'], 2)
+        self.assertEqual(result['potentially_obsolete_total'], 1)
+        self.assertEqual(result['potentially_obsolete'][0]['id'], 'old')
+        self.assertEqual(result['potentially_obsolete'][0]['signal'], 'newer_sibling_in_scope')
+
+    def test_reconcile_flags_contradictions_when_requested(self):
+        self.ledger.add('a', 'observation', 'Fact X', 'user', [], ['s'], 'user_confirmed')
+        self.ledger.add('b', 'claim', 'Fact Y contradicts X', 'user', [], ['s'], 'user_confirmed')
+        no_contradictions = self.ledger.reconcile(detect_contradictions=False)
+        self.assertEqual(no_contradictions['contradictions'], [])
+        with_contradictions = self.ledger.reconcile(detect_contradictions=True)
+        self.assertEqual(len(with_contradictions['contradictions']), 1)
+        self.assertEqual(with_contradictions['contradictions'][0]['scope'], 's')
+
+    def test_reconcile_empty_ledger(self):
+        result = self.ledger.reconcile()
+        self.assertEqual(result['active_total'], 0)
+        self.assertEqual(result['flagged_total'], 0)
+        self.assertEqual(result['flagged'], [])
+
+    def test_reconcile_does_not_modify_ledger(self):
+        self.ledger.add('x', 'observation', 'Stable fact', 'user', [], ['k'], 'user_confirmed')
+        self.ledger.reconcile()
+        self.assertEqual(self.ledger.list('active')[0]['status'], 'active')
+        self.assertEqual(self.ledger.list('active')[0]['content'], 'Stable fact')
+
+    def test_reconcile_scope_filter(self):
+        self.ledger.add('p', 'observation', 'Perf note', 'user', [], ['perf'], 'user_confirmed')
+        self.ledger.add('q', 'observation', 'Style note', 'user', [], ['style'], 'user_confirmed')
+        result = self.ledger.reconcile(scope='perf')
+        self.assertEqual(result['active_total'], 1)
+
 
 class DocumentMemoryTests(unittest.TestCase):
     def test_guide_revision_invalidates_bound_interpretations_not_raw_measurements(self):
@@ -286,7 +322,6 @@ class DocumentMemoryTests(unittest.TestCase):
             ledger.correct('intent', 'intent-v2', 'Correction', 'owner:2', 'reason',
                            document_refs=snapshot_project_docs(root))
             ledger.check(['intent-v2'])
-
 
 if __name__ == '__main__':
     unittest.main()
