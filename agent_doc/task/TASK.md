@@ -2,6 +2,8 @@
 
 ## 2026-10-24
 
+- [x] [WORKER-FINAL-01] 最终拒绝保留旧报告并交接最新原因给存活维护；双版本各113项（1skip）及独审旧实现负控通过，真实宿主仍未验收，同属SYSTEM-99。 ([详情](task_details/WORKER-FINAL-01.md))
+
 - [x] [WORKER-CANCEL-01] 完成复核保留已取消状态；双版本各109项（1skip）、独立旧实现负控通过，广义宿主清理未验收，同属SYSTEM-99。 ([详情](task_details/WORKER-CANCEL-01.md))
 
 - [x] [INSTALL-ALIASES-01] 恢复Codex共享源码安装与轻量检出依赖；双版本各70项、独立135别名字节核验及负控通过，真实宿主仍未验收，同属SYSTEM-99。 ([详情](task_details/INSTALL-ALIASES-01.md))

@@ -246,9 +246,10 @@ def worker(config):
                     if report['all_reportable']:
                         scheduler.stop(monitor_id)
                         monitor = store.snapshot(config['run_id'])['monitor']
-                        final = publish(config, store, result_verifier=result_verifier, plan_review_verifier=plan_review_verifier, monitor=scheduler.read(monitor_id) if monitor else None)
-                        atomic_json(state_dir / 'final-report.json', final)
-                        return 0
+                        report = publish(config, store, result_verifier=result_verifier, plan_review_verifier=plan_review_verifier, monitor=scheduler.read(monitor_id) if monitor else None)
+                        if report['all_reportable']:
+                            atomic_json(state_dir / 'final-report.json', report)
+                            return 0
                 try:
                     if time.monotonic() >= next_maintenance:
                         snap = store.snapshot(config['run_id'])
