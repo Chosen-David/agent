@@ -277,6 +277,20 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true", help="fail if generated references are stale")
     args = parser.parse_args()
+    # Different role-local links cannot share one generated file. Validate the
+    # complete write set before touching even an unrelated stale destination.
+    targets = {}
+    for source, destinations in MAPPINGS.items():
+        for destination in destinations:
+            expected = ((ROOT / source).read_bytes()
+                        if source in RAW_COPY_SOURCES or source.endswith(('.json', '.py'))
+                        else render(source, destination).encode('utf-8'))
+            target = (ROOT / destination).resolve()
+            previous = targets.get(target)
+            if previous is not None and previous[1] != expected:
+                print('conflicting generated aliases:', previous[0], destination)
+                return 1
+            targets[target] = (destination, expected)
     stale = []
     for source, destinations in MAPPINGS.items():
         for destination in destinations:

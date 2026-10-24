@@ -40,6 +40,19 @@ python -m agent_runtime.project_memory --root /absolute/project check REQUIRED_I
 python -m agent_runtime.project_memory --root /absolute/project storage
 ```
 
+`reconcile` 执行只读健康检查，识别 active 条目中的潜在过时/矛盾信号，**不修改账本**：
+
+```bash
+python -m agent_runtime.project_memory --root /absolute/project reconcile
+python -m agent_runtime.project_memory --root /absolute/project reconcile --scope perf
+python -m agent_runtime.project_memory --root /absolute/project reconcile --detect-contradictions
+```
+
+返回三类信号（均为建议，须人工确认后用 `correct`/`accept` 处理）：
+- `dependency_staleness`：active 条目传递依赖 superseded/stale 条目，需核验有效性。
+- `newer_sibling_in_scope`：同 scope 内存在更新的 active 条目，旧条目可能已过时。
+- `multiple_confirmed_in_scope`：同 scope 多条 `user_confirmed` 共存，可能是矛盾候选（需 `--detect-contradictions` 开启）。
+
 `index` 默认只列 active，保留顺序及全部非content元数据，附正文/完整条目SHA；scope是精确成员过滤。它只供导航：来源、deps、状态标记和哈希均不授信，不可凭目录回答需要正文的事实。实际消费继续走 `check` 或 `basis_context` 的当前依赖/文档门禁；`history` 用于包含失效条目的审计。后续页必须带原snapshot，项目/过滤条件/完整所选条目变化拒绝继续，应重新查首页；`partial` 和 `next_after_id` 表示尚有页。所有页、必要正文与后续调用都计成本，完整阅读或短条目可能更贵，不默认节省总tokens。
 
 每次目录仍执行完整list筛选与快照重算，不宣称减少数据库读取/CPU；字符硬上限包含完整compact JSON及换行，只保留整条元数据，首条放不下即报错。原文保留在现有私有账本，不新增持久摘要或跨上下文“已读”缓存。`storage` 仅执行观察SQL，报告主文件大小、逻辑页/空闲页、状态计数及索引名；主文件stat不含WAL/SHM/备份，且不与并发写入构成原子磁盘计量。SQLite读连接可能有自身日志/SHM生命周期副作用，不能把逻辑空闲页当可删除证据或已回收磁盘。工具不执行VACUUM、删cache、删记忆或后台维护。纯Skill包没有runtime时不假称这些CLI已安装。

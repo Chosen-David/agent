@@ -2,6 +2,8 @@
 
 ## 2026-10-24
 
+- [x] [REFERENCE-ALIAS-01] 生成引用冲突写前拒绝，4处漂移恢复；双版本回归及独审负控通过，7个既有旅行导航子场景仍未决，同属SYSTEM-99。 ([详情](task_details/REFERENCE-ALIAS-01.md))
+
 - [x] [SUPERVISOR-TERMINAL-01] 恢复终态重新验收并保留取消；修前误报已复现，双版本各79项（1skip）、-O及独审负控通过，发布回读另核，同属SYSTEM-99。 ([详情](task_details/SUPERVISOR-TERMINAL-01.md))
 
 - [x] [CODEX-INSTRUCTION-TYPE-01] Codex全局指令非普通文件写前拒绝；双版本各36回归、-O专项及独审负控通过，发布回读另核，同属未完成SYSTEM-99。 ([详情](task_details/CODEX-INSTRUCTION-TYPE-01.md))
