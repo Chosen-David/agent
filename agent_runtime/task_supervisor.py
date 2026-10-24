@@ -336,6 +336,36 @@ def status(config):
             'final_report': str(state_dir / 'final-report.json') if (state_dir / 'final-report.json').exists() else None}
 
 
+def _terminal_receipt(config, store, engine):
+    """Revalidate a historical completion marker without dispatching any work."""
+    receipt = status(config)
+    if receipt['runtime_status'] == 'cancelled':
+        receipt['status'] = 'cancelled'
+        return receipt
+    if not receipt['final_report']:
+        return None
+    with store.transaction() as db:
+        plan, state = store.load(db, config['run_id'])
+        if state['status'] != 'cancelled':
+            engine._check_done(plan, state)
+            engine._summary(plan, state)
+            store.save(db, config['run_id'], state)
+    report = publish(config, store, result_verifier=engine.result_verifier,
+                     plan_review_verifier=engine.plan_review_verifier)
+    # Verification callbacks/publication may have observed a cancellation.
+    receipt = status(config)
+    if receipt['runtime_status'] == 'cancelled':
+        receipt['status'] = 'cancelled'
+    elif report['all_reportable'] and receipt['runtime_status'] == 'done':
+        report['monitor'] = receipt['monitor']
+        atomic_json(Path(config['state_dir']) / 'final-report.json', report)
+        receipt['status'] = 'completed'
+    else:
+        receipt['status'] = 'blocked'
+        receipt['reason'] = 'previous final report failed fresh terminal verification; inspect progress.json'
+    return receipt
+
+
 def start(plan_path, project_root, state_dir, adapter=None, *, allow_legacy=False):
     if not shutil.which('tmux'):
         raise RuntimeError('tmux unavailable; supervisor was NOT started (no foreground fallback)')
@@ -376,7 +406,7 @@ def start(plan_path, project_root, state_dir, adapter=None, *, allow_legacy=Fals
         store = Store(state_dir / 'state.sqlite')
         store.create(plan, project_root=root)
         # Backend code is selected only by this explicit host argument.
-        _, _, _, _, plan_verifier = load_backend(config, store)
+        handlers, authorize, _, result_verifier, plan_verifier = load_backend(config, store)
         from .plan_review import check_plan_review
         check_plan_review(plan, root, plan_verifier, allow_legacy=allow_legacy)
         atomic_json(state_dir / 'source-snapshot.json', {
@@ -385,6 +415,12 @@ def start(plan_path, project_root, state_dir, adapter=None, *, allow_legacy=Fals
             'guide_reviews': plan.get('guide_reviews'), 'advice_assessments': plan.get('advice_assessments')})
         atomic_json(config_path, config)
         existing = tmux('has-session', '-t', '=' + config['session'], check=False).returncode == 0
+        engine = ManagedEngine(config, store, handlers, authorize, result_verifier=result_verifier,
+                               plan_review_verifier=plan_verifier)
+        receipt = _terminal_receipt(config, store, engine)
+        if receipt is not None:
+            atomic_json(state_dir / 'receipt.json', receipt)
+            return receipt
         if not existing:
             guard_write_path(state_dir / 'final-report.json').unlink(missing_ok=True)
             guard_write_path(state_dir / 'live.json').unlink(missing_ok=True)
@@ -393,12 +429,14 @@ def start(plan_path, project_root, state_dir, adapter=None, *, allow_legacy=Fals
             tmux('new-session', '-d', '-s', config['session'], '-c', str(CODE_ROOT), command)
         for _ in range(50):
             receipt = status(config)
+            if receipt['runtime_status'] == 'cancelled' or receipt['final_report']:
+                terminal = _terminal_receipt(config, store, engine)
+                if terminal is not None:
+                    receipt = terminal
+                    break
             if receipt.get('guard_blocked'):
                 receipt['status'] = 'blocked'
                 receipt['reason'] = 'worker crash retry limit reached; explicit recovery required'
-                break
-            if receipt['final_report'] or receipt['runtime_status'] == 'cancelled':
-                receipt['status'] = 'completed' if receipt['final_report'] else 'cancelled'
                 break
             if (receipt['live'] and receipt['monitor'] and receipt['monitor']['live']
                     and receipt['monitor']['status'] == 'active'):

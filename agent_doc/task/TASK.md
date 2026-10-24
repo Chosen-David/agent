@@ -2,6 +2,8 @@
 
 ## 2026-10-24
 
+- [x] [SUPERVISOR-TERMINAL-01] 恢复终态重新验收并保留取消；修前误报已复现，双版本各79项（1skip）、-O及独审负控通过，发布回读另核，同属SYSTEM-99。 ([详情](task_details/SUPERVISOR-TERMINAL-01.md))
+
 - [x] [CODEX-INSTRUCTION-TYPE-01] Codex全局指令非普通文件写前拒绝；双版本各36回归、-O专项及独审负控通过，发布回读另核，同属未完成SYSTEM-99。 ([详情](task_details/CODEX-INSTRUCTION-TYPE-01.md))
 
 - [x] [KNOWLEDGE-HYDRATE-01] 修复交接中旧知识哈希/新正文混用；两解释器77项及补强专项通过，独立复核接受，发布回读另核，同属未完成SYSTEM-99。 ([详情](task_details/KNOWLEDGE-HYDRATE-01.md))
