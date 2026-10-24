@@ -211,6 +211,8 @@ def synchronize(repo, destination, state, codex_home, *, adopt=False, check=Fals
         raise ValueError('Global AGENTS.override.md shadows integration; preserve and resolve explicitly')
     if instruction_path.is_symlink():
         raise ValueError('Linked global AGENTS.md requires manual review')
+    if instruction_path.exists() and not instruction_path.is_file():
+        raise ValueError('Global AGENTS.md is not a regular file; preserved for review')
     current = instruction_path.read_bytes() if instruction_path.exists() else b''
     block = template.replace(b'{{REPOSITORY}}', repo.as_posix().encode('utf-8')).strip()
     instructions, old_block = merge_instructions(current, block)

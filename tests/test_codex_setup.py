@@ -178,6 +178,52 @@ class CodexSetupTests(unittest.TestCase):
         import stat
         self.assertTrue(stat.S_ISFIFO(local.stat().st_mode))
 
+    @unittest.skipUnless(hasattr(os, 'mkfifo'), 'Named pipes require POSIX')
+    def test_nonregular_global_instructions_block_cli_before_writes(self):
+        self.sync()
+        target = self.home/'AGENTS.md'
+        original = target.read_bytes()
+        manifest = (self.state/'installation.json').read_bytes()
+        skills = {p.relative_to(self.dest): p.read_bytes()
+                  for p in self.dest.rglob('*') if p.is_file()}
+        script = Path(__file__).resolve().parents[1]/'scripts/setup_codex.py'
+        for kind in ('directory', 'fifo'):
+            for check in (False, True):
+                with self.subTest(kind=kind, check=check):
+                    target.unlink()
+                    if kind == 'directory':
+                        target.mkdir()
+                    else:
+                        os.mkfifo(target)
+                    identity = target.stat()
+                    try:
+                        command = [sys.executable, str(script), '--repo', str(self.repo),
+                                   '--dest', str(self.dest), '--state', str(self.state),
+                                   '--codex-home', str(self.home)]
+                        if check:
+                            command.append('--check')
+                        try:
+                            result = subprocess.run(command, capture_output=True, text=True, timeout=3)
+                        except subprocess.TimeoutExpired:
+                            self.fail('nonregular global instructions blocked synchronization')
+                        self.assertEqual(result.returncode, 1)
+                        self.assertEqual(json.loads(result.stdout)['status'], 'blocked')
+                        self.assertIn('not a regular file', result.stdout)
+                        self.assertNotIn('Traceback', result.stderr)
+                        self.assertEqual((target.stat().st_dev, target.stat().st_ino),
+                                         (identity.st_dev, identity.st_ino))
+                        self.assertEqual((self.state/'installation.json').read_bytes(), manifest)
+                        self.assertEqual({p.relative_to(self.dest): p.read_bytes()
+                                          for p in self.dest.rglob('*') if p.is_file()}, skills)
+                        for name in ('pending.json', 'sync.lock', 'backups'):
+                            self.assertFalse((self.state/name).exists())
+                    finally:
+                        if kind == 'directory':
+                            target.rmdir()
+                        else:
+                            target.unlink()
+                        target.write_bytes(original)
+
     def test_managed_instruction_edit_is_preserved(self):
         self.sync()
         p = self.home/'AGENTS.md'
