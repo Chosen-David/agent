@@ -1,5 +1,9 @@
 # Project tasks
 
+## 2026-10-25
+
+- [x] [COPY-DIRECTORY-01] 源码目录链接完整指纹与副本本地修改保护；双版本各77项及独审旧实现负控通过，并发/真实宿主仍未验收，同属未完成SYSTEM-99。 ([详情](task_details/COPY-DIRECTORY-01.md))
+
 ## 2026-10-24
 
 - [x] [WORKER-FINAL-01] 最终拒绝保留旧报告并交接最新原因给存活维护；双版本各113项（1skip）及独审旧实现负控通过，真实宿主仍未验收，同属SYSTEM-99。 ([详情](task_details/WORKER-FINAL-01.md))

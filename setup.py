@@ -176,29 +176,44 @@ def checked_skill_link(target, relative):
     return path
 
 
-def skill_snapshot(path):
-    """Fingerprint portable skill contents; resolve symlinks to their targets.
-
-    Symlinks inside a skill directory are followed to their real content for both
-    fingerprinting and copying.  This lets shared reference files live in a single
-    canonical location (``shared-references/``) while each skill holds a symlink.
-    """
+def skill_snapshot(path, *, follow_directory_links=False):
+    """Fingerprint copied bytes; only source trees may follow directory aliases."""
     if path.is_symlink() or not path.is_dir():
         raise ValueError('skill copy is not a regular directory: ' + str(path))
     result = {}
-    for child in sorted(path.rglob('*')):
-        relative = child.relative_to(path)
-        if '__pycache__' in relative.parts or child.suffix == '.pyc' or child.name == '.DS_Store':
-            continue
-        resolved = child.resolve() if child.is_symlink() else child
-        if child.is_symlink() and not resolved.exists():
-            raise ValueError('broken symbolic link inside skill copy: ' + str(child))
-        if resolved.is_file():
-            result[relative.as_posix()] = hashlib.sha256(resolved.read_bytes()).hexdigest()
-        elif resolved.is_dir():
-            result[relative.as_posix() + '/'] = ''
-        else:
-            raise ValueError('unsupported skill entry: ' + str(child))
+    ancestors = set()
+
+    def visit(directory):
+        try:
+            resolved_directory = directory.resolve()
+        except RuntimeError as error:
+            raise ValueError('cyclic directory symbolic link: ' + str(directory)) from error
+        if resolved_directory in ancestors:
+            raise ValueError('cyclic directory symbolic link: ' + str(directory))
+        ancestors.add(resolved_directory)
+        for child in sorted(directory.iterdir()):
+            if child.name in ('__pycache__', '.DS_Store') or child.name.endswith('.pyc'):
+                continue
+            relative = child.relative_to(path).as_posix()
+            try:
+                resolved = child.resolve() if child.is_symlink() else child
+            except RuntimeError as error:
+                raise ValueError('cyclic symbolic link inside skill copy: ' + str(child)) from error
+            if child.is_symlink() and not resolved.exists():
+                raise ValueError('broken symbolic link inside skill copy: ' + str(child))
+            if resolved.is_file():
+                result[relative] = hashlib.sha256(resolved.read_bytes()).hexdigest()
+            elif resolved.is_dir():
+                if child.is_symlink() and not follow_directory_links:
+                    raise ValueError('directory symbolic link inside skill copy: ' + str(child))
+                result[relative + '/'] = ''
+                visit(child)
+            else:
+                raise ValueError('unsupported skill entry: ' + str(child))
+
+        ancestors.remove(resolved_directory)
+
+    visit(path)
     return result
 
 
@@ -300,7 +315,7 @@ def install(target, *, model_inventory=None, copy_skills=False):
         # Preserve established links; new Windows installs do not require admin
         # or Developer Mode. Explicit copies are also useful for Unix deployments.
         if not linked and (copy_skills or os.name == 'nt' or relative in previous_copies):
-            copies[relative] = skill_snapshot(Path(source))
+            copies[relative] = skill_snapshot(Path(source), follow_directory_links=True)
     claude = checked_target(target, 'CLAUDE.md')
     task_file, document_directories = project_document_layout(target)
     old = claude.read_text(encoding='utf-8') if claude.exists() else ''
@@ -379,7 +394,7 @@ def check(target):
             path = checked_skill_link(target, relative)
             if relative in manifest.get('skill_copies', {}):
                 if (skill_snapshot(path) != manifest['skill_copies'][relative] or
-                        manifest['skill_copies'][relative] != skill_snapshot(Path(expected))):
+                        manifest['skill_copies'][relative] != skill_snapshot(Path(expected), follow_directory_links=True)):
                     errors.append('missing/stale/edited skill copy: ' + relative)
             elif not path.is_symlink() or path.resolve() != Path(expected) or not (path / 'SKILL.md').is_file():
                 errors.append('missing/broken skill link: ' + relative)
