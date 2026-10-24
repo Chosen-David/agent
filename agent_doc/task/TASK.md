@@ -2,6 +2,8 @@
 
 ## 2026-10-24
 
+- [x] [WORKER-CANCEL-01] 完成复核保留已取消状态；双版本各109项（1skip）、独立旧实现负控通过，广义宿主清理未验收，同属SYSTEM-99。 ([详情](task_details/WORKER-CANCEL-01.md))
+
 - [x] [INSTALL-ALIASES-01] 恢复Codex共享源码安装与轻量检出依赖；双版本各70项、独立135别名字节核验及负控通过，真实宿主仍未验收，同属SYSTEM-99。 ([详情](task_details/INSTALL-ALIASES-01.md))
 
 - [x] [REFERENCE-ALIAS-01] 生成引用冲突写前拒绝，4处漂移恢复；双版本回归及独审负控通过，7个既有旅行导航子场景仍未决，同属SYSTEM-99。 ([详情](task_details/REFERENCE-ALIAS-01.md))

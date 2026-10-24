@@ -290,6 +290,8 @@ class Engine:
             raise PlanReviewError(str(exc)) from exc
 
     def _check_done(self, plan, state):
+        if state['status'] == 'cancelled':
+            return False
         try:
             self._review_plan(plan)
         except ValueError as exc:
