@@ -34,7 +34,7 @@
 
 ```bash
 git clone --filter=blob:none --depth 1 --sparse https://github.com/Chosen-David/agent.git
-git -C agent sparse-checkout set agent_runtime scripts config templates plugins prompts workflows knowledge examples apps docs/codex_adoption docs/token_optimization docs/assets/readme
+git -C agent sparse-checkout set agent_runtime scripts config templates plugins shared-references prompts workflows knowledge examples apps docs/codex_adoption docs/token_optimization docs/assets/readme
 python3 agent/setup.py --target /absolute/path/to/ProjectA
 ```
 

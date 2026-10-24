@@ -2,6 +2,8 @@
 
 ## 2026-10-24
 
+- [x] [INSTALL-ALIASES-01] 恢复Codex共享源码安装与轻量检出依赖；双版本各70项、独立135别名字节核验及负控通过，真实宿主仍未验收，同属SYSTEM-99。 ([详情](task_details/INSTALL-ALIASES-01.md))
+
 - [x] [REFERENCE-ALIAS-01] 生成引用冲突写前拒绝，4处漂移恢复；双版本回归及独审负控通过，7个既有旅行导航子场景仍未决，同属SYSTEM-99。 ([详情](task_details/REFERENCE-ALIAS-01.md))
 
 - [x] [SUPERVISOR-TERMINAL-01] 恢复终态重新验收并保留取消；修前误报已复现，双版本各79项（1skip）、-O及独审负控通过，发布回读另核，同属SYSTEM-99。 ([详情](task_details/SUPERVISOR-TERMINAL-01.md))

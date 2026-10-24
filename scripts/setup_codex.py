@@ -11,6 +11,7 @@ import hashlib
 import io
 import json
 import os
+import posixpath
 from pathlib import Path, PurePosixPath
 import re
 import subprocess
@@ -89,18 +90,62 @@ def committed(repo):
         raise ValueError('Skill/template source is dirty; commit and verify before synchronization')
     archive = zipfile.ZipFile(io.BytesIO(git('-c', 'core.autocrlf=false', '-c', 'core.eol=lf', 'archive', '--format=zip', revision,
         'templates/codex_global_instructions.md', *paths.values())))
+    # Resolve only committed file aliases in the product's shared namespaces.
+    # Export regular bytes; working-tree and installed symlinks are never followed.
+    entries, blobs, alias_sources = {}, {}, set()
+    if any((item.external_attr >> 16) & 0o170000 == 0o120000
+           for item in archive.infolist()):
+        for row in git('ls-tree', '-rz', revision).split(b'\0'):
+            if row:
+                metadata, path = row.split(b'\t', 1)
+                entries[path.decode('utf-8')] = metadata.decode('ascii').split()
+
+    def alias_bytes(logical):
+        current, seen = logical, set()
+        while True:
+            entry = entries.get(current)
+            if entry is None or entry[1] != 'blob' or current in seen or len(seen) >= 32:
+                raise ValueError('Unsafe committed skill alias: ' + logical)
+            mode, _, sha = entry
+            if sha not in blobs:
+                blobs[sha] = git('cat-file', 'blob', sha)
+            alias_sources.add(current)
+            if mode in ('100644', '100755'):
+                return blobs[sha]
+            if mode != '120000':
+                raise ValueError('Unsafe committed skill alias: ' + logical)
+            seen.add(current)
+            target = blobs[sha].decode('utf-8')
+            if (not target or target.startswith('/') or '\\' in target
+                    or any(ord(char) < 32 for char in target)):
+                raise ValueError('Unsafe committed skill alias: ' + logical)
+            current = posixpath.normpath(posixpath.join(posixpath.dirname(current), target))
+            parts = PurePosixPath(current).parts
+            allowed = ((len(parts) == 2 and parts[0] == 'shared-references')
+                       or (len(parts) == 2 and parts[0] == 'agent_runtime'
+                           and parts[1].endswith('.py'))
+                       or (len(parts) == 4 and parts[:3] == ('plugins', 'research-assistant', 'shared-scripts')
+                           and parts[3].endswith('.py')))
+            if not allowed:
+                raise ValueError('Unsafe committed skill alias: ' + logical)
+
     files = {}
     for item in archive.infolist():
         if item.is_dir():
             continue
-        if (item.external_attr >> 16) & 0o170000 == 0o120000:
-            raise ValueError('Symlink in committed skill; review before installing')
+        is_alias = (item.external_attr >> 16) & 0o170000 == 0o120000
+        if is_alias and (item.filename == 'templates/codex_global_instructions.md'
+                         or not any(item.filename.startswith(prefix + '/') for prefix in paths.values())):
+            raise ValueError('Symlink outside registered skill; review before installing')
+        data = alias_bytes(item.filename) if is_alias else archive.read(item)
         for name, prefix in paths.items():
             if item.filename.startswith(prefix + '/'):
                 relative = PurePosixPath(item.filename[len(prefix) + 1:])
                 if relative.is_absolute() or '..' in relative.parts:
                     raise ValueError('Unsafe archive path')
-                files[name + '/' + relative.as_posix()] = archive.read(item)
+                files[name + '/' + relative.as_posix()] = data
+    if alias_sources and git('status', '--porcelain', '--', *sorted(alias_sources)).strip():
+        raise ValueError('Skill/template source is dirty; commit and verify before synchronization')
     for name in paths:
         if name + '/SKILL.md' not in files:
             raise ValueError('Skill manifest missing: ' + name)
