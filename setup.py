@@ -11,6 +11,8 @@ import re
 import shutil
 import subprocess
 import sys
+import stat
+from typing import NamedTuple
 import tempfile
 
 from agent_runtime.external_json import load_json
@@ -176,59 +178,204 @@ def checked_skill_link(target, relative):
     return path
 
 
-def skill_snapshot(path, *, follow_directory_links=False):
-    """Fingerprint copied bytes; only source trees may follow directory aliases."""
-    if path.is_symlink() or not path.is_dir():
-        raise ValueError('skill copy is not a regular directory: ' + str(path))
-    result = {}
+class SkillCopyLimits(NamedTuple):
+    max_entries: int = 100000
+    max_bytes: int = 268435456
+    max_file_bytes: int = 33554432
+    max_depth: int = 64
+
+
+def checked_limits(limits):
+    if not isinstance(limits, SkillCopyLimits):
+        raise ValueError('skill copy limits must be SkillCopyLimits')
+    if any(type(x) is not int or x <= 0 for x in limits):
+        raise ValueError('skill copy limits must be positive integers')
+    if limits.max_depth > 128:
+        raise ValueError('skill copy supported depth ceiling is 128')
+    return limits
+
+
+class SkillCopyLimitError(ValueError):
+    pass
+
+
+class SkillBudget:
+    def __init__(self, limits=SkillCopyLimits()):
+        self.limits = checked_limits(limits)
+        self.entries = self.accepted_bytes = self.read_bytes = self.written_bytes = 0
+        self.error = None
+
+    def check(self):
+        if self.error is not None:
+            raise self.error
+
+    def fail(self, kind, path):
+        if self.error is None:
+            self.error = SkillCopyLimitError('skill copy limit ' + kind + ' exceeded: ' + str(path))
+        raise self.error
+
+    def entry(self, path):
+        self.check()
+        if self.entries >= self.limits.max_entries:
+            self.fail('entries', path)
+        self.entries += 1
+
+
+def walk_skill(root, budget, *, follow_directory_links, on_file, on_directory):
+    root = Path(root)
+    budget.check()
+    if root.is_symlink() or not root.is_dir():
+        raise ValueError('skill copy is not a regular directory: ' + str(root))
     ancestors = set()
 
-    def visit(directory):
+    def visit(directory, depth):
+        budget.check()
+        if depth > budget.limits.max_depth:
+            budget.fail('depth', directory)
         try:
-            resolved_directory = directory.resolve()
+            identity = directory.resolve()
         except RuntimeError as error:
             raise ValueError('cyclic directory symbolic link: ' + str(directory)) from error
-        if resolved_directory in ancestors:
+        if identity in ancestors:
             raise ValueError('cyclic directory symbolic link: ' + str(directory))
-        ancestors.add(resolved_directory)
-        for child in sorted(directory.iterdir()):
-            if child.name in ('__pycache__', '.DS_Store') or child.name.endswith('.pyc'):
-                continue
-            relative = child.relative_to(path).as_posix()
-            try:
-                resolved = child.resolve() if child.is_symlink() else child
-            except RuntimeError as error:
-                raise ValueError('cyclic symbolic link inside skill copy: ' + str(child)) from error
-            if child.is_symlink() and not resolved.exists():
-                raise ValueError('broken symbolic link inside skill copy: ' + str(child))
-            if resolved.is_file():
-                result[relative] = hashlib.sha256(resolved.read_bytes()).hexdigest()
-            elif resolved.is_dir():
-                if child.is_symlink() and not follow_directory_links:
-                    raise ValueError('directory symbolic link inside skill copy: ' + str(child))
-                result[relative + '/'] = ''
-                visit(child)
-            else:
-                raise ValueError('unsupported skill entry: ' + str(child))
+        ancestors.add(identity)
+        try:
+            children = []
+            with os.scandir(directory) as stream:
+                for entry in stream:
+                    child = directory / entry.name
+                    budget.entry(child)
+                    children.append(child)
+            for child in sorted(children):
+                if child.name in ('__pycache__', '.DS_Store') or child.name.endswith('.pyc'):
+                    continue
+                relative = child.relative_to(root).as_posix()
+                try:
+                    linked = child.is_symlink()
+                    resolved = child.resolve() if linked else child
+                except RuntimeError as error:
+                    raise ValueError('cyclic symbolic link inside skill copy: ' + str(child)) from error
+                if linked and not resolved.exists():
+                    raise ValueError('broken symbolic link inside skill copy: ' + str(child))
+                mode = resolved.stat().st_mode
+                if stat.S_ISREG(mode):
+                    on_file(relative, resolved)
+                elif stat.S_ISDIR(mode):
+                    if linked and not follow_directory_links:
+                        raise ValueError('directory symbolic link inside skill copy: ' + str(child))
+                    if depth + 1 > budget.limits.max_depth:
+                        budget.fail('depth', child)
+                    on_directory(relative, resolved, False)
+                    visit(child, depth + 1)
+                    on_directory(relative, resolved, True)
+                else:
+                    raise ValueError('unsupported skill entry: ' + str(child))
+        finally:
+            ancestors.remove(identity)
 
-        ancestors.remove(resolved_directory)
+    visit(root, 0)
 
-    visit(path)
+
+def file_chunks(path, budget):
+    budget.check()
+    fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NONBLOCK', 0) | getattr(os, 'O_BINARY', 0))
+    try:
+        info = os.fstat(fd)
+        if not stat.S_ISREG(info.st_mode):
+            raise ValueError('unsupported skill entry: ' + str(path))
+        if info.st_size > budget.limits.max_file_bytes:
+            budget.fail('file bytes', path)
+        if info.st_size > budget.limits.max_bytes - budget.accepted_bytes:
+            budget.fail('total bytes', path)
+        accepted = 0
+        while True:
+            budget.check()
+            file_left = budget.limits.max_file_bytes - accepted
+            total_left = budget.limits.max_bytes - budget.accepted_bytes
+            chunk = os.read(fd, min(65536, file_left + 1, total_left + 1))
+            budget.read_bytes += len(chunk)
+            if len(chunk) > file_left:
+                budget.fail('file bytes', path)
+            if len(chunk) > total_left:
+                budget.fail('total bytes', path)
+            if not chunk:
+                return
+            accepted += len(chunk)
+            budget.accepted_bytes += len(chunk)
+            yield chunk
+    finally:
+        os.close(fd)
+
+
+def bound_budget(skill_limits, budget):
+    if budget is not None and not isinstance(budget, SkillBudget):
+        raise ValueError('skill copy shared budget must be SkillBudget')
+    selected = checked_limits(skill_limits if skill_limits is not None else
+                              budget.limits if budget is not None else SkillCopyLimits())
+    if budget is not None and budget.limits != selected:
+        raise ValueError('skill copy limits differ from shared budget')
+    return budget if budget is not None else SkillBudget(selected)
+
+
+def skill_snapshot(path, *, follow_directory_links=False, skill_limits=None, budget=None):
+    budget = bound_budget(skill_limits, budget)
+    result = {}
+
+    def file(relative, resolved):
+        digest = hashlib.sha256()
+        for chunk in file_chunks(resolved, budget):
+            digest.update(chunk)
+        result[relative] = digest.hexdigest()
+
+    def directory(relative, resolved, leaving):
+        if not leaving:
+            result[relative + '/'] = ''
+
+    walk_skill(path, budget, follow_directory_links=follow_directory_links, on_file=file, on_directory=directory)
     return result
 
 
-def replace_skill_copy(path, source, previous, expected):
+def copy_skill(source, staged, *, skill_limits=None, budget=None):
+    budget = bound_budget(skill_limits, budget)
+    budget.check()
+    source, staged = Path(source), Path(staged)
+    staged.mkdir()
+
+    def file(relative, resolved):
+        destination = staged / relative
+        with destination.open('xb') as output:
+            for chunk in file_chunks(resolved, budget):
+                output.write(chunk)
+                budget.written_bytes += len(chunk)
+        shutil.copystat(resolved, destination)
+
+    def directory(relative, resolved, leaving):
+        destination = staged / relative
+        if leaving:
+            shutil.copystat(resolved, destination)
+        else:
+            destination.mkdir()
+
+    walk_skill(source, budget, follow_directory_links=True, on_file=file, on_directory=directory)
+    shutil.copystat(source, staged)
+
+
+def replace_skill_copy(path, source, previous, expected, *, skill_limits=None,
+                       copy_budget=None, stage_budget=None, previous_budget=None):
+    copy_budget = bound_budget(skill_limits, copy_budget)
+    limits = copy_budget.limits
+    stage_budget = bound_budget(limits, stage_budget)
+    previous_budget = bound_budget(limits, previous_budget)
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=path.parent, prefix='.skill-') as stage:
         staged = Path(stage) / 'new'
-        shutil.copytree(source, staged, symlinks=False,
-                        ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '.DS_Store'))
+        copy_skill(source, staged, skill_limits=limits, budget=copy_budget)
         # Bind the materialized generation, even if the source changed back.
-        if skill_snapshot(staged) != expected:
+        if skill_snapshot(staged, skill_limits=limits, budget=stage_budget) != expected:
             raise ValueError('skill source changed during copy: ' + str(source))
         backup = Path(stage) / 'previous'
         if os.path.lexists(path):
-            if path.is_symlink() or skill_snapshot(path) != previous:
+            if path.is_symlink() or skill_snapshot(path, skill_limits=limits, budget=previous_budget) != previous:
                 raise ValueError('preserving locally edited skill: ' + str(path))
             path.rename(backup)
         try:
@@ -285,7 +432,10 @@ def _auto_discover_inventory(target):
         return None
 
 
-def install(target, *, model_inventory=None, copy_skills=False):
+def install(target, *, model_inventory=None, copy_skills=False, skill_limits=None):
+    limits = checked_limits(skill_limits if skill_limits is not None else SkillCopyLimits())
+    old_budget, source_budget = SkillBudget(limits), SkillBudget(limits)
+    copy_budget, stage_budget, previous_budget = (SkillBudget(limits) for _ in range(3))
     target = installation_root(target)
     manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
     previous = json.loads(manifest_path.read_text(encoding='utf-8')) if manifest_path.exists() else {}
@@ -311,14 +461,15 @@ def install(target, *, model_inventory=None, copy_skills=False):
         path = checked_skill_link(target, relative)
         linked = path.is_symlink() and path.resolve() == Path(source)
         if relative in previous_copies:
-            if not path.is_dir() or path.is_symlink() or skill_snapshot(path) != previous_copies[relative]:
+            if not path.is_dir() or path.is_symlink() or skill_snapshot(path, skill_limits=limits, budget=old_budget) != previous_copies[relative]:
                 raise ValueError('preserving locally edited skill: ' + relative)
         elif os.path.lexists(path) and not linked:
             raise ValueError('preserving existing skill: ' + relative)
         # Preserve established links; new Windows installs do not require admin
         # or Developer Mode. Explicit copies are also useful for Unix deployments.
         if not linked and (copy_skills or os.name == 'nt' or relative in previous_copies):
-            copies[relative] = skill_snapshot(Path(source), follow_directory_links=True)
+            copies[relative] = skill_snapshot(Path(source), follow_directory_links=True,
+                                              skill_limits=limits, budget=source_budget)
     claude = checked_target(target, 'CLAUDE.md')
     task_file, document_directories = project_document_layout(target)
     old = claude.read_text(encoding='utf-8') if claude.exists() else ''
@@ -341,7 +492,9 @@ def install(target, *, model_inventory=None, copy_skills=False):
         path.parent.mkdir(parents=True, exist_ok=True)
         if relative in copies:
             if copies[relative] != previous_copies.get(relative):
-                replace_skill_copy(path, source, previous_copies.get(relative), copies[relative])
+                replace_skill_copy(path, source, previous_copies.get(relative), copies[relative],
+                                   skill_limits=limits, copy_budget=copy_budget,
+                                   stage_budget=stage_budget, previous_budget=previous_budget)
         elif not os.path.lexists(path):
             path.symlink_to(source, target_is_directory=True)
     atomic_text(claude, merged)
@@ -363,10 +516,12 @@ def install(target, *, model_inventory=None, copy_skills=False):
                 'managed_block_sha256': sha(block()),
                 'model_inventory': inventory}
     atomic_text(manifest_path, json.dumps(manifest, ensure_ascii=False, indent=2) + '\n')
-    return check(target)
+    return check(target, skill_limits=limits)
 
 
-def check(target):
+def check(target, *, skill_limits=None):
+    limits = checked_limits(skill_limits if skill_limits is not None else SkillCopyLimits())
+    installed_budget, source_budget = SkillBudget(limits), SkillBudget(limits)
     target = installation_root(target)
     errors = []
     manifest = {}
@@ -396,8 +551,9 @@ def check(target):
         try:
             path = checked_skill_link(target, relative)
             if relative in manifest.get('skill_copies', {}):
-                if (skill_snapshot(path) != manifest['skill_copies'][relative] or
-                        manifest['skill_copies'][relative] != skill_snapshot(Path(expected), follow_directory_links=True)):
+                if (skill_snapshot(path, skill_limits=limits, budget=installed_budget) != manifest['skill_copies'][relative] or
+                        manifest['skill_copies'][relative] != skill_snapshot(Path(expected), follow_directory_links=True,
+                                                                          skill_limits=limits, budget=source_budget)):
                     errors.append('missing/stale/edited skill copy: ' + relative)
             elif not path.is_symlink() or path.resolve() != Path(expected) or not (path / 'SKILL.md').is_file():
                 errors.append('missing/broken skill link: ' + relative)
@@ -434,7 +590,9 @@ def check(target):
             'next': 'Start/restart Claude Code in target, inspect /memory and /agents, then read human guide, agent_doc/task/TASK.md, task details and assessed advice.'}
 
 
-def uninstall(target):
+def uninstall(target, *, skill_limits=None):
+    limits = checked_limits(skill_limits if skill_limits is not None else SkillCopyLimits())
+    preflight_budget, removal_budget = SkillBudget(limits), SkillBudget(limits)
     target = installation_root(target)
     manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
     manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
@@ -458,6 +616,16 @@ def uninstall(target):
         if relative not in links:
             raise ValueError('unexpected managed link')
         checked_skill_link(target, relative)
+    # A resource refusal must retain ownership metadata for an explicit retry.
+    for relative in manifest['links']:
+        if relative in manifest.get('skill_copies', {}):
+            try:
+                skill_snapshot(checked_skill_link(target, relative),
+                               skill_limits=limits, budget=preflight_budget)
+            except SkillCopyLimitError:
+                raise
+            except (OSError, ValueError):
+                pass  # Existing local edits/invalid copies are preserved below.
     claude = checked_target(target, 'CLAUDE.md')
     claude_text = claude.read_text(encoding='utf-8') if claude.exists() else None
     existing_block = managed_block(claude_text) if claude_text is not None else None
@@ -476,7 +644,9 @@ def uninstall(target):
         path = checked_skill_link(target, relative)
         if relative in manifest.get('skill_copies', {}):
             try:
-                unchanged = skill_snapshot(path) == manifest['skill_copies'][relative]
+                unchanged = skill_snapshot(path, skill_limits=limits, budget=removal_budget) == manifest['skill_copies'][relative]
+            except SkillCopyLimitError:
+                raise
             except (OSError, ValueError):
                 unchanged = False
             if unchanged:
@@ -499,8 +669,9 @@ def uninstall(target):
     return {'status': 'uninstalled', 'preserved_local_edits': preserved}
 
 
-def discover(target):
+def discover(target, *, skill_limits=None):
     """Discover into owned temporary storage, then run installer preflight."""
+    limits = checked_limits(skill_limits if skill_limits is not None else SkillCopyLimits())
     target = installation_root(target)
     discover_script = REPO / 'scripts' / 'discover_models.py'
     with tempfile.TemporaryDirectory(prefix='agent-model-discovery-') as directory:
@@ -514,7 +685,7 @@ def discover(target):
         if result.returncode != 0:
             raise ValueError('model discovery failed: ' + result.stderr.strip())
         inventory = validate_inventory(load_json(inventory_path))
-        return install(target, model_inventory=inventory)
+        return install(target, model_inventory=inventory, skill_limits=limits)
 
 
 def update_model_inventory(target, inventory):
@@ -557,10 +728,11 @@ def update_model_inventory(target, inventory):
     return changed
 
 
-def doctor(target):
+def doctor(target, *, skill_limits=None):
     """Diagnose and auto-fix common environment issues. Idempotent."""
+    limits = checked_limits(skill_limits if skill_limits is not None else SkillCopyLimits())
     target = installation_root(target)
-    report = check(target)
+    report = check(target, skill_limits=limits)
     fixes = []
     warnings = []
     configs_changed = False
@@ -574,7 +746,7 @@ def doctor(target):
         discovered = _auto_discover_inventory(target)
         if discovered:
             configs_changed = update_model_inventory(target, discovered)
-            report = check(target)
+            report = check(target, skill_limits=limits)
             fixes.append(f'Auto-discovered {len(discovered["models"])} gateway models (was: all fallback)')
             fixes.append('Updated owned model files and installation inventory')
 
@@ -628,6 +800,12 @@ def main():
                        help='Auto-diagnose: discover models + source tmux + report health')
     parser.add_argument('--model-inventory', help='Explicit host-supported model metadata JSON; no credentials')
     parser.add_argument('--copy-skills', action='store_true', help='copy skills (Windows default); preserve existing links')
+    defaults = SkillCopyLimits()
+    for field, unit in (('entries', 'enumerated children'), ('bytes', 'accepted content bytes per phase'),
+                        ('file_bytes', 'accepted content bytes per file'), ('depth', 'directory levels; supported maximum 128')):
+        parser.add_argument('--skill-max-' + field.replace('_', '-'), type=int,
+                            default=getattr(defaults, 'max_' + field),
+                            help='copied-skill limit: ' + unit + ' (default %(default)s)')
     args = parser.parse_args()
     if sys.version_info < (3, 9):
         parser.error('Python 3.9+ required. Current: {}.{}'.format(*sys.version_info[:2]))
@@ -636,14 +814,16 @@ def main():
     if args.discover and (args.check or args.uninstall):
         parser.error('--discover is mutually exclusive with --check/--uninstall')
     try:
+        limits = checked_limits(SkillCopyLimits(args.skill_max_entries, args.skill_max_bytes,
+                                               args.skill_max_file_bytes, args.skill_max_depth))
         if args.doctor:
-            result = doctor(args.target)
+            result = doctor(args.target, skill_limits=limits)
         elif args.discover:
-            result = discover(args.target)
+            result = discover(args.target, skill_limits=limits)
         elif args.model_inventory:
-            result = install(args.target, model_inventory=load_json(args.model_inventory), copy_skills=args.copy_skills)
+            result = install(args.target, model_inventory=load_json(args.model_inventory), copy_skills=args.copy_skills, skill_limits=limits)
         else:
-            result = check(args.target) if args.check else uninstall(args.target) if args.uninstall else install(args.target, copy_skills=args.copy_skills)
+            result = check(args.target, skill_limits=limits) if args.check else uninstall(args.target, skill_limits=limits) if args.uninstall else install(args.target, copy_skills=args.copy_skills, skill_limits=limits)
     except (OSError, ValueError) as exc:
         parser.exit(2, f'setup blocked: {exc}\n')
     print(json.dumps(result, ensure_ascii=False, indent=2))

@@ -128,9 +128,10 @@ class PortableSetup(unittest.TestCase):
                 alias = nested / 'cycle'
                 alias.symlink_to(destination, target_is_directory=True)
                 try:
-                    with patch.object(setup.shutil, 'copytree', side_effect=AssertionError('cycle reached copy')):
+                    with patch.object(setup, 'copy_skill', side_effect=AssertionError('cycle reached copy')) as not_copied:
                         with self.assertRaisesRegex(ValueError, 'cyclic directory'):
                             setup.install(self.target, copy_skills=True)
+                        not_copied.assert_not_called()
                     self.assertFalse(self.target.exists())
                 finally:
                     alias.unlink()
@@ -180,9 +181,10 @@ class PortableSetup(unittest.TestCase):
             (later / 'cycle').symlink_to(later, target_is_directory=True)
             for target in (self.target, self.root / 'fresh'):
                 with self.subTest(target=target.name):
-                    with patch.object(setup.shutil, 'copytree', side_effect=AssertionError('cycle reached copy')):
+                    with patch.object(setup, 'copy_skill', side_effect=AssertionError('cycle reached copy')) as not_copied:
                         with self.assertRaisesRegex(ValueError, 'cyclic directory'):
                             setup.install(target, copy_skills=True)
+                        not_copied.assert_not_called()
             self.assertEqual(before, snapshot())
             self.assertFalse((self.root / 'fresh').exists())
 
@@ -245,7 +247,7 @@ class PortableSetup(unittest.TestCase):
     def test_copy_stage_drift_preserves_owned_generation(self):
         payload = self.source / 'SKILL.md'
         original = payload.read_bytes()
-        copier = shutil.copytree
+        copier = setup.copy_skill
         for established in (False, True):
             with self.subTest(established=established):
                 payload.write_bytes(original)
@@ -270,9 +272,10 @@ class PortableSetup(unittest.TestCase):
                     finally:
                         payload.write_bytes(expected)
 
-                with patch.object(setup.shutil, 'copytree', side_effect=changing_copy):
+                with patch.object(setup, 'copy_skill', side_effect=changing_copy) as invoked:
                     with self.assertRaisesRegex(ValueError, 'source changed during copy'):
                         setup.install(target, copy_skills=True)
+                self.assertEqual(invoked.call_count, 1)
                 self.assertEqual(len(calls), 1)
                 if established:
                     self.assertEqual(setup.skill_snapshot(skill), previous)
@@ -293,7 +296,7 @@ class PortableSetup(unittest.TestCase):
         external.mkdir()
         child = external / 'child.md'
         (self.source / 'alias-stage').symlink_to(external, target_is_directory=True)
-        copier = shutil.copytree
+        copier = setup.copy_skill
         for operation in ('edit', 'add', 'delete'):
             with self.subTest(operation=operation):
                 child.write_bytes(b'original')
@@ -322,9 +325,10 @@ class PortableSetup(unittest.TestCase):
                         child.write_bytes(b'original')
                         added.unlink(missing_ok=True)
 
-                with patch.object(setup.shutil, 'copytree', side_effect=changing_copy):
+                with patch.object(setup, 'copy_skill', side_effect=changing_copy) as invoked:
                     with self.assertRaisesRegex(ValueError, 'source changed during copy'):
                         setup.install(target, copy_skills=True)
+                self.assertEqual(invoked.call_count, 1)
                 self.assertEqual(setup.skill_snapshot(skill), before)
                 self.assertEqual(manifest.read_bytes(), manifest_before)
                 self.assertEqual(setup.install(target)['status'], 'configured')
@@ -332,7 +336,7 @@ class PortableSetup(unittest.TestCase):
     def test_copy_stage_ignored_change_and_restored_source_are_coherent(self):
         payload = self.source / 'SKILL.md'
         original = payload.read_bytes()
-        copier = shutil.copytree
+        copier = setup.copy_skill
 
         def coherent_copy(source, staged, *args, **kwargs):
             if Path(source) == self.source:
@@ -341,8 +345,9 @@ class PortableSetup(unittest.TestCase):
                 (self.source / '.DS_Store').write_bytes(b'ignored')
             return copier(source, staged, *args, **kwargs)
 
-        with patch.object(setup.shutil, 'copytree', side_effect=coherent_copy):
+        with patch.object(setup, 'copy_skill', side_effect=coherent_copy) as invoked:
             self.assertEqual(setup.install(self.target, copy_skills=True)['status'], 'configured')
+        self.assertEqual(invoked.call_count, 1)
         self.assertEqual((self.target / self.relative / 'SKILL.md').read_bytes(), original)
         self.assertFalse((self.target / self.relative / '.DS_Store').exists())
 
@@ -351,7 +356,7 @@ class PortableSetup(unittest.TestCase):
         skill = self.target / self.relative
         previous = setup.skill_snapshot(skill)
         expected = setup.skill_snapshot(self.source, follow_directory_links=True)
-        copier = shutil.copytree
+        copier = setup.copy_skill
         for mode in ('copy-error', 'invalid', 'mismatch'):
             with self.subTest(mode=mode):
                 def invalid_copy(source, staged, *args, **kwargs):
@@ -364,10 +369,11 @@ class PortableSetup(unittest.TestCase):
                         (Path(staged) / 'SKILL.md').write_bytes(b'mismatched stage')
                     return result
 
-                with patch.object(setup.shutil, 'copytree', side_effect=invalid_copy), \
+                with patch.object(setup, 'copy_skill', side_effect=invalid_copy) as invoked, \
                      patch.object(Path, 'rename', side_effect=AssertionError('destination moved')):
                     with self.assertRaises((ValueError, OSError)):
                         setup.replace_skill_copy(skill, self.source, previous, expected)
+                self.assertEqual(invoked.call_count, 1)
                 self.assertEqual(setup.skill_snapshot(skill), previous)
                 self.assertEqual(list(skill.parent.glob('.skill-*')), [])
 
