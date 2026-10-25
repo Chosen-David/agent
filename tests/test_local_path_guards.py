@@ -17,7 +17,7 @@ class LocalPathGuardTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='local-path-')
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name)
+        self.root = Path(self.temp.name).resolve()
 
     def test_directory_refused_before_sqlite(self):
         with patch('agent_runtime.knowledge_index.sqlite3.connect') as connect:
