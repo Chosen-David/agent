@@ -132,6 +132,7 @@ producer.experiment_result、gate.result_validation、consumer.required_result_r
 只有用户明确要求或主要目标确实改变时切换主模式，并保留阅读位置、代码版本与待办。
 - 科研选题、实验、性能研究、论文生产与投稿审阅：读取 prompts/research_orchestrator.md，
   仅调用所需的科研角色。单独代码实现/优化也可直接使用 implementation_optimization_workflow。
+- **多机异构 GPU 派单/远程 shadow 同步/census 类任务**：直接加载 workflows/gpu_pool_operations_playbook.md §1-§7，接单 checklist + 派单纪律 + §7 事故速查逐项过；不手写 SSH/rsync 流程，直接复用 playbook 事故规程。
 - 只读理解代码/核查实现机制：code-reading，读取 workflows/code_reading_workflow.md；不自动修改目标仓库。
 - 文件管理、跨 Agent 产物交接、任务前目录规划或收官整理：code-organization，读取 workflows/code_organization_workflow.md；增量维护 CODEMAP，保护活跃路径，删除不自动执行。
 - 论文数据可视化：research-data-visualization，读取 workflows/data_visualization_workflow.md。

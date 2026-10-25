@@ -101,3 +101,19 @@
 | 验收：怎么算完成 | 本文 §6 + 既有独立验收纪律 | 正式收口产物 + commit 可验证据 |
 
 本文是运维规程不是收益证明：§5 的 12h→6h 等数字为该池单轮实测观测，复用前按自己池的任务时长重估；各机环境细节（端口、通道脚本、认证方式）以逐机验证为准，本文不提供可照抄的机器配置。
+
+## 7. 已知事故速查（shadow / census / worktree 陷阱，≥3 次独立事故固化）
+
+以下模式在两览室（shadow iter2→iter3d 链路）至少触发过 3 次独立事故，派单/部署/census 脚本前 checklist 过一遍：
+
+| # | 陷阱 | 表现 | 规程 |
+|---|---|---|---|
+| T1 | **shadow 包 md5 对齐后未 census 全 champion flags** | census 默认走生产口径但 shadow 包是影子实现，结果偏差 ~20% 且不报错 | 同 md5 后必须 `--tli_subspace tail --tia_level2_cmp_ratio 4 ...` 全套 champion flags 显式传参 |
+| T2 | **shadow 包缺失 tli_layer_skip_mask.json** | 079 门控不生效 → 方法臂 = 全 KV 基线臂，TPOT 差异消失 | census 前把 `exp/trace/results/tli_layer_skip_mask.json` 拷到 shadow 包对应路径 |
+| T3 | **capture 期 profiler cuda_us 全 0**（CUDA Graph 模式限制） | opattr 归因误读"copy 类不存在" → 错误优化方向 | graph 模式 busy 以 CUPTI/census 设备时间为准；profiler 的 cuda_us 字段参考形状不参考数值 |
+| T4 | **生产 KV 是 head-major 置换视图** | `is_contiguous()` 返回 False → 门控全关 → 优化零收益 | 查门控必须走 `stride(2)==1`，不能看 `is_contiguous()` |
+| T5 | **跨机 rsync 兼容性**A 机 yum 源无 rsync / B 机走非标端口 / C 机用 sshpass | 报 No such file / Connection refused / exit 5 + 似密码错 | 每台机独立：①`mkdir -p` 目标 ②sshpass 必须 `-e`（走 SSHPASS 环境变量） ③回传前小文件双端 md5 校验 |
+| T6 | **pc40 宿主仓库被其他会话切到非生产分支** | shadow 包 tli_indexer ≠ 生产 commit，census/判决全偏 | 判决类脚本开工前 `git log -1` 核对远端；被切走则 `git worktree add` 到生产 SHA 隔离执行 |
+| T7 | **census 采集被并行会话 GPU0 大任务污染** | gemm 时间非单调（如 4.36/5.71/5.14），bottleneck 结论无效 | 重跑前 `nvidia-smi` 确认 compute-apps 无冲突进程；被污染的 run 整组废弃，不拿第二次覆盖 |
+
+固化来源：MEMORY.md E166h / E166d2 / E168i / E168j / E168h 段；geometry_verdict / opattr_verdict 事件。
