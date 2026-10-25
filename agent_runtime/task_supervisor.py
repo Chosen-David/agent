@@ -245,6 +245,13 @@ def worker(config):
                     report = publish(config, store, result_verifier=result_verifier, plan_review_verifier=plan_review_verifier)
                     if report['all_reportable']:
                         scheduler.stop(monitor_id)
+                        # Report validation does not recheck handler evidence changed
+                        # across the monitor-stop boundary.
+                        with store.transaction() as db:
+                            plan, state = store.load(db, config['run_id'])
+                            engine._check_done(plan, state)
+                            engine._summary(plan, state)
+                            store.save(db, config['run_id'], state)
                         monitor = store.snapshot(config['run_id'])['monitor']
                         report = publish(config, store, result_verifier=result_verifier, plan_review_verifier=plan_review_verifier, monitor=scheduler.read(monitor_id) if monitor else None)
                         if report['all_reportable']:

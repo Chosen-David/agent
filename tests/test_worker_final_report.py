@@ -1,10 +1,12 @@
 import json
+from copy import deepcopy
 import os
 import signal
 import unittest
 from unittest.mock import patch
 
 from agent_runtime import task_supervisor as supervisor
+from agent_runtime.core import Store
 from agent_runtime.plan_review import PlanReviewError
 from agent_runtime.scheduler import LocalScheduler
 from tests import test_worker_cancellation as cancellation
@@ -98,10 +100,108 @@ class WorkerFinalReportTests(unittest.TestCase):
                         path.write_bytes(b'invalid report after accepted observation')
 
                 LocalScheduler(value.store).heartbeat('foreign-test-service')
+                before = value.store.snapshot(value.plan['run_id'])['state']['tasks']['T1']
                 report = self.assert_recovery(value, self.run_worker(value, change, recover=True), marker)
                 node = report['requirements'][0]['nodes'][0]
-                self.assertEqual(node['status'], 'needs_review')
+                self.assertEqual(node['status'], 'failed')
                 self.assertTrue(node['reason'])
+                self.assert_terminal_evidence_preserved(value, {'T1': before})
+
+    def assert_terminal_evidence_preserved(self, value, before):
+        state = value.store.snapshot(value.plan['run_id'])['state']
+        self.assertEqual(state['status'], 'failed')
+        for task_id, old in before.items():
+            node = state['tasks'][task_id]
+            self.assertEqual(node['status'], 'failed')
+            for field in ('evidence', 'attempts', 'dispatches'):
+                self.assertEqual(node.get(field), old.get(field))
+
+    def test_artifact_changes_at_monitor_stop_reach_live_recovery(self):
+        for mutation in ('bytes', 'missing', 'directory'):
+            with self.subTest(mutation=mutation):
+                value = self.project()
+                marker = (value.state_dir / 'final-report.json').read_bytes()
+                before = value.store.snapshot(value.plan['run_id'])['state']['tasks']
+
+                def change():
+                    artifact = value.root / 'result.txt'
+                    if mutation == 'bytes':
+                        artifact.write_bytes(b'changed at monitor stop')
+                    else:
+                        artifact.unlink()
+                        if mutation == 'directory':
+                            artifact.mkdir()
+
+                LocalScheduler(value.store).heartbeat('foreign-test-service')
+                self.assert_recovery(value, self.run_worker(value, change, recover=True), marker)
+                self.assert_terminal_evidence_preserved(value, before)
+
+    def test_post_stop_verifier_exception_is_not_a_success_report(self):
+        value = self.project()
+        marker = (value.state_dir / 'final-report.json').read_bytes()
+        before = value.store.snapshot(value.plan['run_id'])['state']['tasks']
+        stopped = []
+        verify = supervisor.ArtifactHandler.verify
+
+        def verify_at_boundary(handler, task, evidence):
+            if stopped:
+                raise RuntimeError('verification unavailable after monitor stop')
+            return verify(handler, task, evidence)
+
+        LocalScheduler(value.store).heartbeat('foreign-test-service')
+        with patch.object(supervisor.ArtifactHandler, 'verify', verify_at_boundary):
+            self.assert_recovery(value, self.run_worker(
+                value, lambda: stopped.append(True), recover=True), marker)
+        self.assert_terminal_evidence_preserved(value, before)
+
+    def test_post_stop_check_invalidates_completed_dependency_without_replay(self):
+        value = cancellation.fixture.WorkerTests()
+        value.setUp()
+        self.addCleanup(value.doCleanups)
+        child = deepcopy(value.plan['tasks'][0])
+        child.update(task_id='T2', depends_on=['T1'])
+        child['report_path'] = child['report_path'].replace('T1', 'T2')
+        child['done_when']['artifacts'][0]['path'] = 'child.txt'
+        value.plan['tasks'].append(child)
+        supervisor.atomic_json(value.root / child['report_path'], {
+            'task_id': 'T2', 'summary': 'dependent fixture',
+            'data': [{'kind': 'synthetic', 'description': 'local dependency evidence'}]})
+        for name in ('result.txt', 'child.txt'):
+            (value.root / name).write_bytes(b'ok')
+        value.state_dir = value.root / 'dependent-run'
+        value.store = Store(value.state_dir / 'state.sqlite')
+        value.store.create(value.plan)
+        value.config['state_dir'] = str(value.state_dir)
+        value.config_path = value.state_dir / 'launch.json'
+        supervisor.atomic_json(value.config_path, value.config)
+        process = value.launch()
+        cancellation.fixture.wait_for((value.state_dir / 'final-report.json').exists)
+        process.wait(timeout=4)
+        self.assertEqual(process.returncode, 0, process.stderr.read())
+        marker = (value.state_dir / 'final-report.json').read_bytes()
+        before = value.store.snapshot(value.plan['run_id'])['state']['tasks']
+        LocalScheduler(value.store).heartbeat('foreign-test-service')
+        with patch.object(supervisor.ArtifactHandler, 'run', side_effect=AssertionError('terminal replay')):
+            self.assert_recovery(value, self.run_worker(
+                value, lambda: (value.root / 'result.txt').write_bytes(b'changed'), recover=True), marker)
+        self.assert_terminal_evidence_preserved(value, before)
+        state = value.store.snapshot(value.plan['run_id'])['state']
+        self.assertIn('depends on invalid evidence', state['tasks']['T2']['reason'])
+
+    def test_unchanged_artifact_is_verified_after_stop_without_running_actions(self):
+        value = self.project()
+        stopped, checks = [], []
+        verify = supervisor.ArtifactHandler.verify
+
+        def verify_at_boundary(handler, task, evidence):
+            checks.append(bool(stopped))
+            return verify(handler, task, evidence)
+
+        with patch.object(supervisor.ArtifactHandler, 'verify', verify_at_boundary), \
+             patch.object(supervisor.ArtifactHandler, 'run', side_effect=AssertionError('terminal replay')):
+            self.assertEqual(self.run_worker(value, lambda: stopped.append(True)), [])
+        self.assertIn(True, checks)
+        self.assertTrue(json.loads((value.state_dir / 'final-report.json').read_text())['all_reportable'])
 
     def test_final_review_rejection_reaches_recovery_with_current_reason(self):
         value = self.project()
