@@ -2,7 +2,7 @@
 
 ## 2026-10-25
 
-- [ ] [CI-PORTABLE-01] 修复文档清理旧 Python API、Windows 安装模式断言与 CI 链接检出；本地回归通过，等待真实四矩阵回读。 ([详情](task_details/CI-PORTABLE-01.md))
+- [x] [CI-PORTABLE-01] 文档清理旧 Python API、Windows 安装/规范路径测试及链接检出已修复；真实 Ubuntu/Windows × Python3.10/3.12 四矩阵全绿并回读。 ([详情](task_details/CI-PORTABLE-01.md))
 
 - [x] [TRAVEL-CLOSURE-01] 旅行物化副本导航与越界/缺失/锚点负控通过，修正7个基址误判；双版本各42项及独审通过，原生宿主/质量仍未验收，同属SYSTEM-99。 ([详情](task_details/TRAVEL-CLOSURE-01.md))
 
