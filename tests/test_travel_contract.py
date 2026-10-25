@@ -10,6 +10,8 @@ from decimal import Decimal
 import json
 from pathlib import Path
 import re
+import shutil
+import tempfile
 import unittest
 from urllib.parse import unquote, urlsplit
 
@@ -56,6 +58,35 @@ def local_target(source, href):
     if parsed.scheme or parsed.netloc:
         return None
     return (source.parent / unquote(parsed.path)).resolve() if parsed.path else source.resolve()
+
+
+def check_materialized_navigation(plugin, entries):
+    """Check copied bundle paths; source aliases have a different relative base."""
+    plugin = plugin.resolve()
+    pending, visited, edges = list(entries), set(), []
+    while pending:
+        source = pending.pop().resolve()
+        if not source.is_relative_to(plugin) or not source.is_file():
+            raise AssertionError('Missing or outside bundle entry: ' + str(source))
+        if source in visited:
+            continue
+        visited.add(source)
+        for href in markdown_links(source.read_text(encoding='utf-8')):
+            target = local_target(source, href)
+            if target is None:
+                continue
+            if not target.is_relative_to(plugin):
+                raise AssertionError('Bundle navigation escapes: ' + href)
+            if not target.is_file():
+                raise AssertionError('Missing local target: ' + href)
+            fragment = unquote(urlsplit(href).fragment)
+            if (fragment and target.suffix == '.md'
+                    and fragment not in markdown_anchors(target.read_text(encoding='utf-8'))):
+                raise AssertionError('Missing Markdown anchor: ' + href)
+            edges.append((source, href, target))
+            if target.suffix == '.md':
+                pending.append(target)
+    return visited, edges
 
 
 def iso(value):
@@ -213,28 +244,23 @@ class TravelDocumentationContractChecks(unittest.TestCase):
         self.assertIn(WORKFLOW.resolve(), [local_target(SKILL, link)
                                           for link in markdown_links(SKILL.read_text())])
 
-    def test_plugin_navigation_closes_inside_distributable_subtree(self):
-        pending, visited = [SKILL, LEGACY], set()
-        while pending:
-            source = pending.pop().resolve()
-            if source in visited:
-                continue
-            visited.add(source)
-            for href in markdown_links(source.read_text()):
-                target = local_target(source, href)
-                if target is None:
-                    continue
-                with self.subTest(source=source.relative_to(ROOT), href=href):
-                    self.assertTrue(target.is_relative_to(PLUGIN.resolve()),
-                                    'Installed plugin must not require repository-only files')
-                    self.assertTrue(target.is_file(), f'Missing local target: {target}')
-                    fragment = unquote(urlsplit(href).fragment)
-                    if fragment and target.suffix == '.md':
-                        self.assertIn(fragment, markdown_anchors(target.read_text()),
-                                      f'Missing Markdown anchor: {href}')
-                if target.suffix == '.md':
-                    pending.append(target)
-        self.assertTrue({CONTRACT.resolve(), WORKFLOW.resolve()} <= visited)
+    def test_materialized_plugin_navigation_closes_inside_bundle(self):
+        # copytree follows source aliases, as setup.py --copy-skills does.
+        # This checks the local artifact, not marketplace or model loading.
+        with tempfile.TemporaryDirectory() as directory:
+            plugin = Path(directory) / 'travel-assistant'
+            shutil.copytree(PLUGIN, plugin, symlinks=False)
+            for source in PLUGIN.rglob('*'):
+                if source.is_file():
+                    copied = plugin / source.relative_to(PLUGIN)
+                    self.assertFalse(copied.is_symlink())
+                    self.assertEqual(copied.read_bytes(), source.read_bytes())
+            skill = plugin / SKILL.relative_to(PLUGIN)
+            legacy = plugin / LEGACY.relative_to(PLUGIN)
+            visited, edges = check_materialized_navigation(plugin, [skill, legacy])
+            self.assertTrue({plugin / CONTRACT.relative_to(PLUGIN),
+                             plugin / WORKFLOW.relative_to(PLUGIN)} <= visited)
+            self.assertEqual((len(visited), len(edges)), (14, 23))
 
     def test_top_level_navigation_resolves(self):
         for href in markdown_links(TOP_LEVEL.read_text()):
@@ -307,6 +333,56 @@ class TravelDocumentationContractChecks(unittest.TestCase):
             markdown_links('[missing][undefined]')
         self.assertIsNone(local_target(SKILL, 'https://example.invalid/path#anchor'))
         self.assertFalse(local_target(SKILL, '../../../../README.md').is_relative_to(PLUGIN))
+
+
+class MaterializedNavigationChecks(unittest.TestCase):
+    def test_relative_reference_unicode_and_cycles_are_retained(self):
+        with tempfile.TemporaryDirectory() as directory:
+            plugin = Path(directory)
+            (plugin / 'sub').mkdir()
+            entry = plugin / 'SKILL.md'
+            entry.write_text('[child][local]\n\n[local]: sub/child.md#标题-title\n', encoding='utf-8')
+            (plugin / 'sub/child.md').write_text(
+                '# 标题 Title\n[back](../SKILL.md) [self](#标题-title)\n', encoding='utf-8')
+            visited, edges = check_materialized_navigation(plugin, [entry])
+            self.assertEqual(visited, {entry, plugin / 'sub/child.md'})
+            self.assertEqual(len(edges), 3)
+
+    def test_missing_targets_anchors_and_parent_escape_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            plugin = root / 'bundle'
+            plugin.mkdir()
+            entry = plugin / 'SKILL.md'
+            (plugin / 'present.md').write_text('# Present\n', encoding='utf-8')
+            (root / 'outside.md').write_text('# Outside\n', encoding='utf-8')
+            for target, reason in (('missing.md', 'Missing local'),
+                                   ('present.md#absent', 'Missing Markdown anchor'),
+                                   ('../outside.md', 'escapes')):
+                with self.subTest(target=target):
+                    entry.write_text('[target](' + target + ')', encoding='utf-8')
+                    with self.assertRaisesRegex(AssertionError, reason):
+                        check_materialized_navigation(plugin, [entry])
+
+    def test_file_and_directory_link_escapes_are_rejected(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            plugin, outside = root / 'bundle', root / 'outside'
+            plugin.mkdir(); outside.mkdir()
+            (outside / 'target.md').write_text('# Outside\n', encoding='utf-8')
+            entry = plugin / 'SKILL.md'
+            for is_directory in (False, True):
+                with self.subTest(directory=is_directory):
+                    link = plugin / ('directory' if is_directory else 'file.md')
+                    try:
+                        link.symlink_to(outside if is_directory else outside / 'target.md',
+                                        target_is_directory=is_directory)
+                    except OSError:
+                        self.skipTest('symlink permission unavailable')
+                    target = 'directory/target.md' if is_directory else 'file.md'
+                    entry.write_text('[target](' + target + ')', encoding='utf-8')
+                    with self.assertRaisesRegex(AssertionError, 'escapes'):
+                        check_materialized_navigation(plugin, [entry])
 
 
 class SyntheticTravelSpecificationExamples(unittest.TestCase):
