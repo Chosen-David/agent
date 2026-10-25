@@ -104,7 +104,7 @@ class ContextCliOutputTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         text = result.stdout.decode('utf-8')
         self.assertIn('\U00010000', text)
-        self.assertEqual(json.loads(text)['project_root'], str(self.root))
+        self.assertEqual(json.loads(text)['project_root'], str(self.root.resolve()))
 
     def document_fixture(self, count):
         rows = ['# Tasks', '## 2026-10-21']
