@@ -233,6 +233,155 @@ class PortableSetup(unittest.TestCase):
         self.assertEqual(setup.uninstall(self.target)['preserved_local_edits'], [])
         self.assertTrue(canonical.is_file())
 
+    def test_copy_stage_drift_preserves_owned_generation(self):
+        payload = self.source / 'SKILL.md'
+        original = payload.read_bytes()
+        copier = shutil.copytree
+        for established in (False, True):
+            with self.subTest(established=established):
+                payload.write_bytes(original)
+                target = self.root / ('update' if established else 'fresh')
+                skill = target / self.relative
+                manifest = target / '.claude/agent-workflows/installation.json'
+                if established:
+                    setup.install(target, copy_skills=True)
+                previous = setup.skill_snapshot(skill) if established else None
+                manifest_before = manifest.read_bytes() if established else None
+                expected = original + b'\nselected update\n'
+                payload.write_bytes(expected)
+                calls = []
+
+                def changing_copy(source, staged, *args, **kwargs):
+                    if Path(source) != self.source:
+                        return copier(source, staged, *args, **kwargs)
+                    payload.write_bytes(expected + b'intermediate bytes\n')
+                    try:
+                        calls.append(str(staged))
+                        return copier(source, staged, *args, **kwargs)
+                    finally:
+                        payload.write_bytes(expected)
+
+                with patch.object(setup.shutil, 'copytree', side_effect=changing_copy):
+                    with self.assertRaisesRegex(ValueError, 'source changed during copy'):
+                        setup.install(target, copy_skills=True)
+                self.assertEqual(len(calls), 1)
+                if established:
+                    self.assertEqual(setup.skill_snapshot(skill), previous)
+                    self.assertEqual(manifest.read_bytes(), manifest_before)
+                else:
+                    self.assertFalse(skill.exists())
+                    self.assertFalse(manifest.exists())
+                self.assertEqual(list(skill.parent.glob('.skill-*')), [])
+                self.assertEqual(setup.install(target, copy_skills=True)['status'], 'configured')
+                self.assertEqual((skill / 'SKILL.md').read_bytes(), expected)
+                before = manifest.read_bytes()
+                setup.install(target)
+                self.assertEqual(manifest.read_bytes(), before)
+                self.assertEqual(setup.uninstall(target)['preserved_local_edits'], [])
+
+    def test_copy_stage_alias_subtree_edit_add_delete_rejected(self):
+        external = self.root / 'external-stage'
+        external.mkdir()
+        child = external / 'child.md'
+        (self.source / 'alias-stage').symlink_to(external, target_is_directory=True)
+        copier = shutil.copytree
+        for operation in ('edit', 'add', 'delete'):
+            with self.subTest(operation=operation):
+                child.write_bytes(b'original')
+                target = self.root / operation
+                setup.install(target, copy_skills=True)
+                skill = target / self.relative
+                before = setup.skill_snapshot(skill)
+                manifest = target / '.claude/agent-workflows/installation.json'
+                manifest_before = manifest.read_bytes()
+                marker = self.source / ('update-' + operation + '.md')
+                marker.write_bytes(b'selected update')
+
+                def changing_copy(source, staged, *args, **kwargs):
+                    if Path(source) != self.source:
+                        return copier(source, staged, *args, **kwargs)
+                    added = external / 'added.md'
+                    if operation == 'edit':
+                        child.write_bytes(b'intermediate')
+                    elif operation == 'add':
+                        added.write_bytes(b'intermediate')
+                    else:
+                        child.unlink()
+                    try:
+                        return copier(source, staged, *args, **kwargs)
+                    finally:
+                        child.write_bytes(b'original')
+                        added.unlink(missing_ok=True)
+
+                with patch.object(setup.shutil, 'copytree', side_effect=changing_copy):
+                    with self.assertRaisesRegex(ValueError, 'source changed during copy'):
+                        setup.install(target, copy_skills=True)
+                self.assertEqual(setup.skill_snapshot(skill), before)
+                self.assertEqual(manifest.read_bytes(), manifest_before)
+                self.assertEqual(setup.install(target)['status'], 'configured')
+
+    def test_copy_stage_ignored_change_and_restored_source_are_coherent(self):
+        payload = self.source / 'SKILL.md'
+        original = payload.read_bytes()
+        copier = shutil.copytree
+
+        def coherent_copy(source, staged, *args, **kwargs):
+            if Path(source) == self.source:
+                payload.write_bytes(original + b'transient before copy')
+                payload.write_bytes(original)
+                (self.source / '.DS_Store').write_bytes(b'ignored')
+            return copier(source, staged, *args, **kwargs)
+
+        with patch.object(setup.shutil, 'copytree', side_effect=coherent_copy):
+            self.assertEqual(setup.install(self.target, copy_skills=True)['status'], 'configured')
+        self.assertEqual((self.target / self.relative / 'SKILL.md').read_bytes(), original)
+        self.assertFalse((self.target / self.relative / '.DS_Store').exists())
+
+    def test_copy_stage_invalid_or_mismatched_tree_never_moves_destination(self):
+        setup.install(self.target, copy_skills=True)
+        skill = self.target / self.relative
+        previous = setup.skill_snapshot(skill)
+        expected = setup.skill_snapshot(self.source, follow_directory_links=True)
+        copier = shutil.copytree
+        for mode in ('copy-error', 'invalid', 'mismatch'):
+            with self.subTest(mode=mode):
+                def invalid_copy(source, staged, *args, **kwargs):
+                    if mode == 'copy-error':
+                        raise OSError('injected copy failure')
+                    result = copier(source, staged, *args, **kwargs)
+                    if mode == 'invalid':
+                        (Path(staged) / 'unexpected-alias').symlink_to(self.source, target_is_directory=True)
+                    else:
+                        (Path(staged) / 'SKILL.md').write_bytes(b'mismatched stage')
+                    return result
+
+                with patch.object(setup.shutil, 'copytree', side_effect=invalid_copy), \
+                     patch.object(Path, 'rename', side_effect=AssertionError('destination moved')):
+                    with self.assertRaises((ValueError, OSError)):
+                        setup.replace_skill_copy(skill, self.source, previous, expected)
+                self.assertEqual(setup.skill_snapshot(skill), previous)
+                self.assertEqual(list(skill.parent.glob('.skill-*')), [])
+
+    def test_copy_stage_publish_failure_restores_previous_copy(self):
+        setup.install(self.target, copy_skills=True)
+        skill = self.target / self.relative
+        previous = setup.skill_snapshot(skill)
+        (self.source / 'update.md').write_bytes(b'new generation')
+        expected = setup.skill_snapshot(self.source, follow_directory_links=True)
+        rename = Path.rename
+
+        def fail_publish(path, target):
+            if path.name == 'new' and Path(target) == skill:
+                raise OSError('injected publish failure')
+            return rename(path, target)
+
+        with patch.object(Path, 'rename', new=fail_publish):
+            with self.assertRaisesRegex(OSError, 'publish failure'):
+                setup.replace_skill_copy(skill, self.source, previous, expected)
+        self.assertEqual(setup.skill_snapshot(skill), previous)
+        setup.replace_skill_copy(skill, self.source, previous, expected)
+        self.assertEqual(setup.skill_snapshot(skill), expected)
+
     def test_simple_entry_loads_orchestration_only_on_demand(self):
         self.assertNotIn('@.claude/agent-workflows/orchestrator.md', setup.block())
         self.assertIn('`.claude/agent-workflows/orchestrator.md`', setup.block())

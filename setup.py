@@ -217,12 +217,15 @@ def skill_snapshot(path, *, follow_directory_links=False):
     return result
 
 
-def replace_skill_copy(path, source, previous):
+def replace_skill_copy(path, source, previous, expected):
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=path.parent, prefix='.skill-') as stage:
         staged = Path(stage) / 'new'
         shutil.copytree(source, staged, symlinks=False,
                         ignore=shutil.ignore_patterns('__pycache__', '*.pyc', '.DS_Store'))
+        # Bind the materialized generation, even if the source changed back.
+        if skill_snapshot(staged) != expected:
+            raise ValueError('skill source changed during copy: ' + str(source))
         backup = Path(stage) / 'previous'
         if os.path.lexists(path):
             if path.is_symlink() or skill_snapshot(path) != previous:
@@ -338,7 +341,7 @@ def install(target, *, model_inventory=None, copy_skills=False):
         path.parent.mkdir(parents=True, exist_ok=True)
         if relative in copies:
             if copies[relative] != previous_copies.get(relative):
-                replace_skill_copy(path, source, previous_copies.get(relative))
+                replace_skill_copy(path, source, previous_copies.get(relative), copies[relative])
         elif not os.path.lexists(path):
             path.symlink_to(source, target_is_directory=True)
     atomic_text(claude, merged)
