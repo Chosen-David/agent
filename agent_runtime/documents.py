@@ -160,11 +160,30 @@ def _remove_stage(parent_fd, name, identity):
         raise DocumentsUnavailable('staging identity changed; manual recovery required') from exc
     try:
         observed = os.fstat(fd)
+        if (observed.st_dev, observed.st_ino) != identity:
+            raise DocumentsUnavailable('staging identity changed; manual recovery required')
+
+        def fail(error):
+            raise error
+
+        # fwalk keeps cleanup descriptor-relative on Python 3.9/3.10 too;
+        # shutil.rmtree only gained dir_fd in Python 3.11.
+        for _, directories, files, directory_fd in os.fwalk(
+                '.', topdown=False, onerror=fail, follow_symlinks=False, dir_fd=fd):
+            for child in files:
+                os.unlink(child, dir_fd=directory_fd)
+            for child in directories:
+                mode = os.stat(child, dir_fd=directory_fd, follow_symlinks=False).st_mode
+                if stat.S_ISLNK(mode):
+                    os.unlink(child, dir_fd=directory_fd)
+                else:
+                    os.rmdir(child, dir_fd=directory_fd)
+        named = os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
+        if (named.st_dev, named.st_ino) != identity:
+            raise DocumentsUnavailable('staging identity changed; manual recovery required')
+        os.rmdir(name, dir_fd=parent_fd)
     finally:
         os.close(fd)
-    if (observed.st_dev, observed.st_ino) != identity:
-        raise DocumentsUnavailable('staging identity changed; manual recovery required')
-    shutil.rmtree(name, dir_fd=parent_fd)
 
 
 @contextmanager

@@ -284,6 +284,96 @@ print(json.dumps({'schema_version':'documents-result/v1','status':'ok','result':
             os.close(fd)
         self.assertEqual((original / 'sentinel').read_text(), 'keep')
 
+    def test_stage_cleanup_nested_tree_does_not_follow_links(self):
+        parent = Path(self.temp.name)
+        stage = parent / 'stage'
+        nested = stage / 'nested' / 'deeper'
+        nested.mkdir(parents=True)
+        (nested / 'partial.txt').write_text('partial')
+        outside = parent / 'outside'
+        outside.mkdir()
+        sentinel = outside / 'sentinel'
+        sentinel.write_text('keep')
+        (stage / 'directory-link').symlink_to(outside, target_is_directory=True)
+        (nested / 'file-link').symlink_to(sentinel)
+        (nested / 'dangling-link').symlink_to(parent / 'missing')
+        observed = stage.stat()
+        fd = os.open(parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        try:
+            tools._remove_stage(fd, stage.name, (observed.st_dev, observed.st_ino))
+        finally:
+            os.close(fd)
+        self.assertFalse(stage.exists())
+        self.assertEqual(sentinel.read_text(), 'keep')
+
+    def test_stage_cleanup_remains_bound_after_parent_rename(self):
+        parent = Path(self.temp.name) / 'parent'
+        stage = parent / 'stage'
+        stage.mkdir(parents=True)
+        (stage / 'partial.txt').write_text('partial')
+        observed = stage.stat()
+        fd = os.open(parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        moved = parent.with_name('moved')
+        try:
+            parent.rename(moved)
+            foreign = parent / 'stage'
+            foreign.mkdir(parents=True)
+            (foreign / 'sentinel').write_text('keep')
+            tools._remove_stage(fd, stage.name, (observed.st_dev, observed.st_ino))
+        finally:
+            os.close(fd)
+        self.assertFalse((moved / 'stage').exists())
+        self.assertEqual((foreign / 'sentinel').read_text(), 'keep')
+
+    def test_stage_cleanup_replacement_during_walk_is_preserved_and_fd_closed(self):
+        parent = Path(self.temp.name)
+        stage = parent / 'stage'
+        stage.mkdir()
+        (stage / 'partial.txt').write_text('partial')
+        observed = stage.stat()
+        walk = os.fwalk
+        opened = []
+
+        def replace(*args, **kwargs):
+            opened.append(kwargs['dir_fd'])
+            stage.rename(parent / 'original')
+            stage.mkdir()
+            (stage / 'sentinel').write_text('keep')
+            return walk(*args, **kwargs)
+
+        fd = os.open(parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        try:
+            with patch.object(tools.os, 'fwalk', side_effect=replace):
+                with self.assertRaisesRegex(tools.DocumentsUnavailable, 'manual recovery'):
+                    tools._remove_stage(fd, stage.name, (observed.st_dev, observed.st_ino))
+            with self.assertRaises(OSError):
+                os.fstat(opened[0])
+        finally:
+            os.close(fd)
+        self.assertEqual((stage / 'sentinel').read_text(), 'keep')
+        self.assertEqual(list((parent / 'original').iterdir()), [])
+
+    def test_stage_cleanup_walk_failure_propagates_and_closes_fd(self):
+        stage = Path(self.temp.name) / 'stage'
+        stage.mkdir()
+        observed = stage.stat()
+        opened = []
+
+        def fail(*args, **kwargs):
+            opened.append(kwargs['dir_fd'])
+            raise OSError('walk failed')
+
+        fd = os.open(stage.parent, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+        try:
+            with patch.object(tools.os, 'fwalk', side_effect=fail):
+                with self.assertRaisesRegex(OSError, 'walk failed'):
+                    tools._remove_stage(fd, stage.name, (observed.st_dev, observed.st_ino))
+            with self.assertRaises(OSError):
+                os.fstat(opened[0])
+        finally:
+            os.close(fd)
+        self.assertTrue(stage.is_dir())
+
 
 @unittest.skipUnless(os.environ.get('AGENT_DOCUMENTS_TEST_WHEELHOUSE') and pinned_document_platform(),
                      'explicit cached wheels and pinned document platform required')

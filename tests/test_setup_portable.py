@@ -200,9 +200,18 @@ class PortableSetup(unittest.TestCase):
         self.assertEqual(setup.install(self.target)['status'], 'configured')
         link_target = self.root / 'linked'
         self.assertEqual(setup.install(link_target)['status'], 'configured')
-        self.assertTrue((link_target / self.relative).is_symlink())
+        installed = link_target / self.relative
+        self.assertEqual(installed.is_symlink(), os.name != 'nt')
+        if os.name == 'nt':
+            installed_manifest = json.loads(
+                (link_target / '.claude/agent-workflows/installation.json').read_bytes())
+            self.assertEqual(installed_manifest['skill_copies'][self.relative],
+                             setup.skill_snapshot(installed))
+        else:
+            self.assertEqual(installed.resolve(), self.source.resolve())
         self.assertEqual(setup.install(link_target, copy_skills=True)['status'], 'configured')
-        self.assertTrue((link_target / self.relative).is_symlink())
+        self.assertEqual(installed.is_symlink(), os.name != 'nt')
+        self.assertEqual(setup.check(link_target)['status'], 'configured')
         self.assertEqual(setup.uninstall(link_target)['preserved_local_edits'], [])
         self.assertTrue((self.source / 'empty-alias').is_symlink())
         self.assertTrue(empty.is_dir())
