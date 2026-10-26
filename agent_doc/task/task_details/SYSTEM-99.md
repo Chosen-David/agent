@@ -169,6 +169,8 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 
 ## Progress
 
+- 2026-10-26 目标覆盖续读：实际精读GACC 2610.21893v1正文§§1–5及声明附录，对照完整目标覆盖/单问准确率、目标错配、固定reader/judge和prefix截断局限。[记录](../../results/goal-coverage-reading-20261026/reading.md)映射Mailbox/basis/dispatch/token-probe；不把离线QA或参考tokenizer当真实任务成功/全部费用，不复制静默截断策略。历史检索部分结果/错误保留，无旧pass复用；未确认新生产缺陷，无测试/benchmark/收益主张。同批新正文记录13篇，不重复计独审；SYSTEM-99及旧受阻门禁继续未完成。
+
 - 2026-10-26 PROMPT-SCOPE-01原生续接：Windows两组新增raw断言遗漏原生CRLF，首发CI40342330469保持失败，完整错误片段保留。版本化独审后只修测试oracle，加入LF/CRLF源及完整raw字节/JSON完整prompt对照；同三模块35项通过，无skip，独审和新原生CI另核。[续接证据](../../results/prompt-scope-native-20261026/report-v2.md)。生产代码与旧证据不变，无新论文计数或门禁重置，SYSTEM-99未完成。
 
 - 2026-10-26 PROMPT-SCOPE-01：提示词去重器的Unicode伪围栏会错认范围或拒绝真实范围，实际CLI也存在cp936输出失败。修前23方法52失败/8错误子场景保留，复用两个既有工具原地修复，三模块35方法通过，无skip，独审和原生CI另核。[证据](../../results/prompt-scope-20261026/report.md)区分提示词预算与JSON包；新精读MemDev 2610.27524v1正文及声明附录，同批新正文记录12篇，GACC仅下载不计。保留适用性/记忆构建成本限制，无模型质量/性能或整轮完成主张，旧受阻门禁不重置。
