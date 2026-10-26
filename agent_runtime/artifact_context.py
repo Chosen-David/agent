@@ -10,6 +10,7 @@ from difflib import SequenceMatcher
 from pathlib import Path
 
 from .result_validation import LIMIT, _bound, _json, _need, _ref
+from .context_serialization import ContextBudgetError
 
 SCHEMA = 'artifact-comparison/v2'
 
@@ -156,9 +157,11 @@ def compare_artifacts(root, before_ref, after_ref, *, full=False, max_chars=2000
             _need(type(count) is int and count >= 0, 'token_counter must return a nonnegative integer')
             if best is None or count < best[0]:
                 best = (count, packet)
-        _need(best is not None, 'comparison exceeds budget; never truncate either version')
+        if best is None:
+            raise ContextBudgetError('comparison exceeds budget; never truncate either version')
         output = best[1]
-    _need(len(_json_text(output)) <= max_chars, 'comparison exceeds budget; never truncate either version')
+    if len(_json_text(output)) > max_chars:
+        raise ContextBudgetError('comparison exceeds budget; never truncate either version')
     return output
 
 

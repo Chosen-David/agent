@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 32
+Version: 38
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -159,7 +159,11 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 [独立方案复核](../../results/system99/independent-stage-u4-plan.md)批准。当前只登记可发布的
 `PROPOSED / blocked-on-real-host`检查点，尚未安装、实现或声称体验/性能收益，不另造竞争TASK。
 
+阶段V（CONTEXT-WIRE-01，Version38）：按[固定方案](../../results/context-wire-20261026/plan-v4.md)先确认五个CLI的真实终端编码与完整wire预算反例，再复用既有serializer原地修复。保留内容/父设置/旧数据错误协议及artifact预算范围，成功完整UTF-8，显示预算拒绝不输出部分成功包；仅有界本地回归和独立复核，不重试/重置PID、ALIAS、role或Codex旧受阻预算，不以本阶段代替全库/真实宿主质量门禁。
+
 ## Progress
+
+- 2026-10-26 CONTEXT-WIRE-01：五个实际CLI的UTF-8/最终wire字符预算反例已确认，原地接入既有输出器，保留取消/异议/完整依赖与父设置、数据错误协议及artifact原预算范围。修前/首轮fixture错误及三次调用原始日志均保留；当前119项相关回归通过，独立结果复核另核。新七方法已加入既有四矩阵安装CI，发布后另读回结果；这不是全库/PID、模型质量、真实tokens/费用或整轮完成。[范围与证据](../../results/context-wire-20261026/report.md)。
 
 - 2026-10-26 协作/代码任务续读：新增精读MAST 2503.13657v3、Agentless 2407.01489v2及SWE-agent 2405.15793v3正文和声明附录，清理后同批新增正文记录累计10篇（不含遗失55篇/独审重读）。[阅读与源码映射](../../results/coordination-code-reading-20261026/reading.md)区分消息/ACK、声明依赖与真实任务验收，保留生成测试oracle失效、局部定位/观察裁剪和成本分母限制。未确认新的生产缺陷；无测试/benchmark/收益或整轮完成主张，旧受阻预算不重置。最新1b348c33四组安装CI成功，仅安装范围；原生PID/遗失候选/真实加载、任务质量与全部调用成本缺口仍open。
 

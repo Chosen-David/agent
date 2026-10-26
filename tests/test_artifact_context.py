@@ -101,8 +101,10 @@ class ArtifactContextTests(unittest.TestCase):
             self.assertEqual(restore_comparison(self.root,proc.stdout,a,b),(before,after))
         self.assertEqual(contents,{p.name:p.read_bytes() for p in self.root.iterdir()})
         proc=subprocess.run(command+['--max-chars','2'],capture_output=True,text=True,timeout=10)
-        self.assertEqual(proc.returncode,1)
-        self.assertIn('never truncate',json.loads(proc.stdout)['error'])
+        self.assertEqual(proc.returncode,2)
+        self.assertEqual(proc.stdout,'')
+        self.assertIn('budget',json.loads(proc.stderr)['error'])
+        self.assertEqual(contents,{p.name:p.read_bytes() for p in self.root.iterdir()})
 
     def test_restore_rejects_oversized_before_parse_or_text_encode(self):
         a=self.save('a','prefix\n'*50+'old');b=self.save('b','prefix\n'*50+'new')

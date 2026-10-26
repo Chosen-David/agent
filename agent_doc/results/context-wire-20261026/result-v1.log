@@ -1,0 +1,35 @@
+E..E.........................................................................F.........................................
+======================================================================
+ERROR: test_all_success_packets_are_utf8_under_legacy_terminal (test_context_cli_wire.ContextWireTests.test_all_success_packets_are_utf8_under_legacy_terminal) (script='dispatch_context.py', args=['--request', 'dispatch.json'])
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/tests/test_context_cli_wire.py", line 126, in test_all_success_packets_are_utf8_under_legacy_terminal
+    self.assert_packet(script, args, value)
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/tests/test_context_cli_wire.py", line 75, in assert_packet
+    self.assertEqual(value['project_root'], str(self.root))
+                     ~~~~~^^^^^^^^^^^^^^^^
+KeyError: 'project_root'
+
+======================================================================
+ERROR: test_dispatch_main_never_launches_a_process (test_context_cli_wire.ContextWireTests.test_dispatch_main_never_launches_a_process)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/tests/test_context_cli_wire.py", line 173, in test_dispatch_main_never_launches_a_process
+    self.assert_packet('dispatch_context.py', [], json.loads(out.getvalue()))
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/tests/test_context_cli_wire.py", line 75, in assert_packet
+    self.assertEqual(value['project_root'], str(self.root))
+                     ~~~~~^^^^^^^^^^^^^^^^
+KeyError: 'project_root'
+
+======================================================================
+FAIL: test_cli_is_self_contained_and_never_writes_guide (test_artifact_context.ArtifactContextTests.test_cli_is_self_contained_and_never_writes_guide)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/tests/test_artifact_context.py", line 104, in test_cli_is_self_contained_and_never_writes_guide
+    self.assertEqual(proc.returncode,1)
+AssertionError: 2 != 1
+
+----------------------------------------------------------------------
+Ran 119 tests in 11.800s
+
+FAILED (failures=1, errors=2)

@@ -21,14 +21,18 @@ def render_context(value, *, compact=False, indent=None):
                       separators=(',',':') if compact else None)
 
 
-def render_cli_context(value, *, max_chars=20000, compact=False, indent=None):
+def render_cli_context(value, *, max_chars=20000, compact=False, indent=None,
+                       max_chars_limit=1000000):
     """Count the complete printed JSON including native newline translation.
 
     This bounds displayed characters, not database reads, allocations or tokens.
     Use standard text stdout after configure_utf8_output, then print once.
     """
-    if type(max_chars) is not int or not 1 <= max_chars <= 1000000:
-        raise ContextBudgetError('display max_chars must be 1..1000000')
+    # Artifact comparison historically allows 16 MiB; other callers keep 1M.
+    if type(max_chars_limit) is not int or not 1 <= max_chars_limit <= 16 * 1024 * 1024:
+        raise ContextBudgetError('invalid display budget ceiling')
+    if type(max_chars) is not int or not 1 <= max_chars <= max_chars_limit:
+        raise ContextBudgetError(f'display max_chars must be 1..{max_chars_limit}')
     text = render_context(value, compact=compact, indent=indent)
     count = len(text) + text.count('\n') * (len(os.linesep) - 1) + len(os.linesep)
     if count > max_chars:
