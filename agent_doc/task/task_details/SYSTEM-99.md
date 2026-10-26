@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 43
+Version: 44
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -171,7 +171,12 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 
 阶段Z（RESULT-DISPATCH-FRESHNESS-01，Version43）：原最小生产插入方案被独审退回，因新增verifier可能跨越已检查租约；仅批准[诊断v2](../../results/result-dispatch-diagnosis-20261027/diagnosis-plan-v2.md)一次四案例执行，保留两个普通失败断言及完整原始日志。未改生产或测试发现范围；结果/复用与租约的有界检查顺序须新版设计和独审，不宣称已有跨存储/动作原子性，也不重试旧受阻门禁。
 
+阶段Z续接（同一RESULT-DISPATCH-FRESHNESS-01，Version44）：按[独审v3方案](../../results/result-dispatch-fix-20261027/plan-v3.md)把新独立验收回调放在claim检查之前，之后只核对本次live proof的manifest/所有artifact/review evidence、撤销、登记SHA及同一纯TTL规则，最终绑定实际dispatched_task。原入口与执行后门禁保留，不以保存proof授信；不声称被动IO后租约、跨存储或外部动作原子性。新固定反例先存，定向138及独审138通过后仅发布限域修复，原生四矩阵另核，旧受阻门禁不重置。
+
 ## Progress
+
+- 2026-10-27 结果派发v3原地修复：live验收→claim→无verifier的绑定复查，覆盖required/reuse及登记、更正证据、撤销、TTL和后续verifier改动；真实Context/Store受控租约过期、取消、token更换均阻止handler。新15方法修前15断言失败（含阶段计数对照，非15个独立bug），修后/独审各138通过无skip。[完整证据](../../results/result-dispatch-fix-20261027/report.md)保留原退回/负例及全部日志。四矩阵另核，正文数仍14，无性能/模型质量或整轮完成主张；旧门禁继续open。
+
 
 - 2026-10-27 结果派发负例：required_result_refs在真实lookup或current回调中失效，两例均先执行handler一次才post-action blocked；四方法两个失败/两个对照通过，原始代码hash稳定，独审只接受负例诊断。[证据](../../results/result-dispatch-diagnosis-20261027/report.md)保留退回方案、精确夹具与日志；生产修复仍未批准，result_reuse/实际租约过期未执行复现。新增Concord 2610.05281v2正文§§1–6/Table1/图注阅读，同批新正文14篇，无模型/性能或整轮完成主张，旧门禁不重置。
 

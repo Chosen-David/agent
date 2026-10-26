@@ -17,8 +17,8 @@ from .core import Outcome, validate
 from .external_json import regular_bytes as external_regular_bytes, strict_json
 from .project_memory import check_task_memory
 from .knowledge import check_task_knowledge
-from .result_validation import check_task_results, validate_result_plan
-from .result_store import ResultStore, check_task_reuse, register_task_result
+from .result_validation import _check_validated_bindings, check_task_results, validate_result_plan
+from .result_store import ResultStore, _check_reuse_bindings, check_task_reuse, register_task_result
 from .project_docs import (CANONICAL_TASK, assert_ai_writable, check_document_refs,
                            check_task_documents, guard_write_path, parse_requirements,
                            project_root_for_task, regular_bytes, resolve_task_file, snapshot_project_docs,
@@ -423,17 +423,24 @@ class ReportingHandler:
                                            'observed_scanned': current['scanned']})
         else:
             dispatched_task['prior_result_search'] = copy.deepcopy(self._prior_searches[search_key])
+        # Lookup and host callbacks may invalidate earlier result checks. Keep
+        # independent callbacks before the claim gate; only binding reads follow.
+        try:
+            result_proofs = check_task_results(self.root, dispatched_task, self.result_verifier)
+            reuse_proofs = check_task_reuse(self.root, dispatched_task, self.result_verifier)
+        except (OSError, ValueError) as exc:
+            return Outcome('blocked', f'pre-dispatch result reconciliation required: {exc}')
         if context is not None and hasattr(context, 'current') and not context.current():
             return Outcome('blocked', 'claim no longer current after prior-result lookup')
-        # Lookup and host callbacks may outlive or invalidate the initial checks.
-        # Recheck declared inputs before starting work; this does not make the
-        # final check and an external action one atomic operation.
         try:
-            check_task_memory(self.root, task)
-            check_task_knowledge(self.root, task)
-            check_task_documents(self.root, task)
+            for proof in result_proofs:
+                _check_validated_bindings(self.root, proof)
+            _check_reuse_bindings(self.root, dispatched_task, reuse_proofs)
+            check_task_memory(self.root, dispatched_task)
+            check_task_knowledge(self.root, dispatched_task)
+            check_task_documents(self.root, dispatched_task)
         except (OSError, ValueError) as exc:
-            return Outcome('blocked', f'pre-dispatch document/memory/knowledge reconciliation required: {exc}')
+            return Outcome('blocked', f'pre-dispatch document/memory/knowledge/result reconciliation required: {exc}')
         outcome = self.handler.run(dispatched_task, context)
         try:
             check_task_results(self.root, task, self.result_verifier)

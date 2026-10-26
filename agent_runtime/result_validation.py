@@ -379,6 +379,27 @@ def inspect_result(root, contract, verifier=None):
     return base
 
 
+def _check_validated_bindings(root, proof):
+    """Recheck this invocation's live-validated bindings, never grant acceptance.
+
+    No verifier callback or persisted proof reuse: the caller retains the live
+    gate and owns claim checks. These reads are not an atomic action fence.
+    """
+    root = Path(root).resolve()
+    _need(isinstance(proof, dict) and proof.get('status') == 'usable-with-scope',
+          'live validated result proof required')
+    from .contamination import assert_not_revoked
+    assert_not_revoked(root, result_id=proof['result_id'])
+    manifest = _json(_bound(root, {'path': proof['manifest_path'],
+                                 'sha256': proof['manifest_sha256']}))
+    assert_not_revoked(root, result_id=proof['result_id'], run_id=manifest['run_id'])
+    for field in ('artifact_hashes', 'review_evidence'):
+        _need(isinstance(proof.get(field), dict), 'validated evidence bindings required')
+        for path, digest in proof[field].items():
+            _hash_bound(root, {'path': path, 'sha256': digest})
+    return manifest
+
+
 def check_task_results(root, task, verifier=None, report=None):
     """Consumer/runtime hook; raw producers remain explicitly unaccepted.
 

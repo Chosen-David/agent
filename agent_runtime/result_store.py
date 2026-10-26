@@ -23,7 +23,7 @@ import tempfile
 import time
 
 from .project_docs import assert_ai_writable
-from .result_validation import inspect_result
+from .result_validation import _check_validated_bindings, inspect_result
 from .legacy_result_paths import legacy_read_binding, check_relocated_digest, relocated_digest_matches
 
 HOME = 'agent_doc/results'
@@ -560,16 +560,14 @@ class ResultStore:
         except (OSError, ValueError, KeyError, TypeError) as exc:
             status, decision = 'stale', 'rerun'
             reasons.append(str(exc))
-        if max_age_seconds is not None:
-            if record.get('measured_at') is None or bound_measured_at != record.get('measured_at'):
-                decision = 'verify_delta' if decision != 'rerun' else decision
-                reasons.append('measurement time missing or not bound to manifest execution.completed_at; freshness cannot be established')
-            else:
-                instant = dt.datetime.now(dt.timezone.utc) if now is None else _timestamp(now)
-                age = (instant - _timestamp(record['measured_at'])).total_seconds()
-                if age < 0 or age > max_age_seconds:
-                    decision = 'verify_delta' if decision != 'rerun' else decision
-                    reasons.append('measurement outside requested freshness window')
+        instant = None
+        if (max_age_seconds is not None and record.get('measured_at') is not None
+                and bound_measured_at == record['measured_at']):
+            instant = dt.datetime.now(dt.timezone.utc) if now is None else _timestamp(now)
+        age_reasons = _measurement_age_reasons(record, bound_measured_at, max_age_seconds, instant)
+        if age_reasons:
+            decision = 'verify_delta' if decision != 'rerun' else decision
+            reasons.extend(age_reasons)
         if explicit_reproduction or new_claim:
             decision = 'rerun'
             reasons.append('explicit reproduction/new-claim validation must execute; prior results are baseline only')
@@ -587,6 +585,17 @@ class ResultStore:
         return {'schema_version': 'project-result-decision/v1', 'query': query,
                 'search': search, 'results': results,
                 'status': search['status'], 'automatic_skip_authorized': False}
+
+
+def _measurement_age_reasons(record, bound_measured_at, max_age_seconds, instant):
+    if max_age_seconds is None:
+        return []
+    _need(type(max_age_seconds) in (int, float) and math.isfinite(max_age_seconds)
+          and max_age_seconds >= 0, 'max_age_seconds must be finite and nonnegative')
+    if record.get('measured_at') is None or bound_measured_at != record.get('measured_at'):
+        return ['measurement time missing or not bound to manifest execution.completed_at; freshness cannot be established']
+    age = (instant - _timestamp(record['measured_at'])).total_seconds()
+    return ['measurement outside requested freshness window'] if age < 0 or age > max_age_seconds else []
 
 
 def check_task_reuse(root, task, verifier=None):
@@ -610,6 +619,29 @@ def check_task_reuse(root, task, verifier=None):
     _need(result['decision'] == 'reuse', 'prior result cannot be reused: ' + '; '.join(result['reasons']))
     return [{'run_id': result['run_id'], 'record_sha256': result['record_sha256'],
              'context': deepcopy(selection['context']), 'decision': 'reuse', 'result_proof': result['proof']}]
+
+
+def _check_reuse_bindings(root, task, proofs):
+    """Read-only closure of this invocation's live reuse decision; no acceptance."""
+    selection = task.get('result_reuse')
+    if selection is None:
+        _need(not proofs, 'unexpected reuse proof')
+        return
+    _need(len(proofs) == 1, 'live reuse proof required')
+    proof = proofs[0]
+    _need(proof['run_id'] == selection['run_id'] and proof['context'] == selection['context'],
+          'reuse selection changed after validation')
+    shown = ResultStore(root).show(proof['run_id'])
+    _need(shown['record_ref']['sha256'] == proof['record_sha256'] == selection['record_sha256'],
+          'prior result registry record changed; replan')
+    manifest = _check_validated_bindings(root, proof['result_proof'])
+    measured = manifest.get('execution', {}).get('completed_at')
+    cap = selection.get('max_age_seconds')
+    instant = (dt.datetime.now(dt.timezone.utc) if cap is not None
+               and shown['record'].get('measured_at') is not None
+               and measured == shown['record']['measured_at'] else None)
+    reasons = _measurement_age_reasons(shown['record'], measured, cap, instant)
+    _need(not reasons, 'prior result cannot be reused: ' + '; '.join(reasons))
 
 
 def register_task_result(root, task):
