@@ -1,6 +1,8 @@
 """Recoverable display must preserve all decision gates and never confer trust."""
 from copy import deepcopy
+import hashlib
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -84,3 +86,79 @@ class ValidationContextTests(unittest.TestCase):
             target.write_bytes((self.root / receipt['record_ref']['path']).read_bytes())
             with self.assertRaisesRegex(ValueError, 'another project'):
                 restore_validation_context(Path(other), receipt['record_ref'])
+
+    def native_cli(self, script, *args):
+        return subprocess.run([sys.executable, str(ROOT / 'scripts' / script),
+                               '--root', str(self.root), *args], capture_output=True,
+                              env=dict(os.environ, PYTHONUTF8='0', PYTHONIOENCODING='cp936'),
+                              timeout=20)
+
+    def file_hashes(self):
+        return {p.relative_to(self.root).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+                for p in self.root.rglob('*') if p.is_file()}
+
+    def test_native_restore_preserves_full_unicode_observations(self):
+        for status in ('pending', 'invalid', 'usable-with-scope'):
+            result = deepcopy(self.result)
+            result.update(status=status, scope='范围 \U00010000\r\n原文',
+                          errors=['异议 \U00010000', '取消：不消费'], next_action='重新核验 \U00010000')
+            result['proof'].update(status=status, limitations=['仅显示 \U00010000'],
+                                   artifact_hashes={'产物\U00010000.txt': '1' * 64},
+                                   review_evidence={'异议\U00010000.txt': '2' * 64})
+            # Arbitrary saved observations are display-only, never live acceptance.
+            receipt = write_validation_context(self.root, result,
+                                              'agent_doc/results/native-' + status)
+            before = self.file_hashes()
+            for formatting in ((), ('--compact',)):
+                with self.subTest(status=status, formatting=formatting):
+                    out = self.native_cli('validation_context.py', '--path',
+                        receipt['record_ref']['path'], '--sha256', receipt['record_ref']['sha256'],
+                        *formatting)
+                    self.assertEqual(out.returncode, 0, out.stderr)
+                    self.assertEqual(out.stderr, b'')
+                    self.assertEqual(json.loads(out.stdout.decode('utf-8')), result)
+            self.assertEqual(self.file_hashes(), before)
+
+    def test_native_inspection_pending_and_display_roundtrip(self):
+        scope = '当前范围 \U00010000\r\n保留更正、依赖与异议'
+        plan = json.loads((self.root / 'validation-plan.json').read_bytes())
+        manifest = json.loads((self.root / 'manifest.json').read_bytes())
+        plan['scope'] = manifest['scope'] = self.contract['scope'] = scope
+        raw = json.dumps(plan, ensure_ascii=False).encode('utf-8')
+        (self.root / 'validation-plan.json').write_bytes(raw)
+        self.contract['validation_plan']['sha256'] = hashlib.sha256(raw).hexdigest()
+        manifest['validation_plan'] = dict(self.contract['validation_plan'])
+        (self.root / 'manifest.json').write_bytes(json.dumps(manifest, ensure_ascii=False).encode('utf-8'))
+        (self.root / 'contract.json').write_bytes(json.dumps(self.contract, ensure_ascii=False).encode('utf-8'))
+        expected = inspect_result(self.root, self.contract)
+        self.assertEqual(expected['status'], 'pending')
+        self.assertIsNotNone(expected['proof'])
+        before = self.file_hashes()
+        for formatting in ((), ('--compact',)):
+            with self.subTest(formatting=formatting):
+                out = self.native_cli('validate_experiment_result.py', '--contract',
+                                     str(self.root / 'contract.json'), *formatting)
+                self.assertEqual(out.returncode, 2, out.stderr)
+                self.assertEqual(out.stderr, b'')
+                self.assertEqual(json.loads(out.stdout.decode('utf-8')), expected)
+        self.assertEqual(self.file_hashes(), before)
+        out = self.native_cli('validate_experiment_result.py', '--contract',
+            str(self.root / 'contract.json'), '--context-dir', 'agent_doc/results/native-inspect')
+        self.assertEqual(out.returncode, 2, out.stderr)
+        self.assertEqual(out.stderr, b'')
+        receipt = json.loads(out.stdout.decode('utf-8'))
+        self.assertEqual(receipt['status'], 'pending')
+        self.assertEqual(receipt['scope'], scope)
+        self.assertEqual(receipt['errors'], expected['errors'])
+        self.assertEqual(restore_validation_context(self.root, receipt['record_ref']), expected)
+
+    def test_native_input_failure_retains_utf8_error_protocol(self):
+        broken = self.root / 'duplicate.json'
+        broken.write_bytes('{"异议\U00010000":1,"异议\U00010000":2}'.encode('utf-8'))
+        before = self.file_hashes()
+        out = self.native_cli('validate_experiment_result.py', '--contract', str(broken))
+        self.assertEqual(out.returncode, 2)
+        self.assertEqual(out.stdout, b'')
+        self.assertEqual(json.loads(out.stderr.decode('utf-8')),
+                         {'status': 'error', 'error': 'duplicate JSON key: 异议\U00010000'})
+        self.assertEqual(self.file_hashes(), before)

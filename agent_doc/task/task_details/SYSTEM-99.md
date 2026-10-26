@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 41
+Version: 42
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -167,7 +167,12 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 
 阶段X续接（同一PROMPT-SCOPE-01，Version41）：首次原生CI在Windows暴露新增raw测试误将标准CRLF输出当LF，旧失败运行保持失败。[版本化修正](../../results/prompt-scope-native-20261026/plan-v2.md)只改测试原生换行oracle，扩为LF/CRLF源及完整raw字节比较，JSON内prompt仍逐字相等；生产逻辑不变。独审方案后执行同三模块续接回归/独审和新原生四矩阵，旧结果/record不改、不重试旧源码或重置任何已耗尽门禁。原生print转换不是源字节一致或下游模型语义已验收。
 
+阶段Y（VALIDATION-UTF8-01，Version42）：按独立批准的限域方案，为实验验收检查及保存记录恢复两个CLI复用既有configure_utf8_output；保留完整JSON、退出状态、可信adapter选择和显示不授信边界，不新增截断/预算或旧实现副本。原生cp936反例先存，三类观察记录完整恢复、真实pending检查及重复Unicode键错误分别验收；定向双模块和独审通过后普通发布，四矩阵另核，不重置旧受阻门禁，无模型/性能或整轮完成主张。
+
 ## Progress
+
+- 2026-10-26 VALIDATION-UTF8-01：两个验收CLI原地复用UTF-8配置，保留完整观察记录与pending/错误协议；修前29方法9失败/1解码错误子场景，修后及独审各29通过，无skip。[证据](../../results/validation-utf8-20261026/report.md)保留原日志与精确源码边界；四矩阵另核，无新正文计数、性能/模型质量或整轮完成主张，旧受阻门禁不重置。此前fcba9e56四组安装CI已完成通过。
+
 
 - 2026-10-26 目标覆盖续读：实际精读GACC 2610.21893v1正文§§1–5及声明附录，对照完整目标覆盖/单问准确率、目标错配、固定reader/judge和prefix截断局限。[记录](../../results/goal-coverage-reading-20261026/reading.md)映射Mailbox/basis/dispatch/token-probe；不把离线QA或参考tokenizer当真实任务成功/全部费用，不复制静默截断策略。历史检索部分结果/错误保留，无旧pass复用；未确认新生产缺陷，无测试/benchmark/收益主张。同批新正文记录13篇，不重复计独审；SYSTEM-99及旧受阻门禁继续未完成。
 
