@@ -215,3 +215,85 @@ class AppServerUsageTests(unittest.TestCase):
                 for k in ('last','total'):events[2]['params']['tokenUsage'][k]['totalTokens']=119
             else:events.append(events[-1])
             with self.assertRaises(ValueError):self.parse(events)
+
+class PromptPhysicalScopeTests(unittest.TestCase):
+    setUp = PromptContextTests.setUp
+    separators = ('\v', '\f', '\x1c', '\x1d', '\x1e', '\x85', '\u2028', '\u2029')
+
+    def unknown(self, sep, marker=None):
+        return ('# Literal source\nProse' + sep + '```text\n' +
+                (self.block if marker is None else marker + '\nShared evidence constraint.') +
+                '\n【local】\nKeep literal local context.\n```\n')
+
+    def test_nonphysical_openers_never_authorize_policy_pruning(self):
+        p = self.root / ENTRIES['research']
+        for sep in self.separators:
+            with self.subTest(separator=repr(sep)):
+                original = self.unknown(sep)
+                p.write_bytes(original.encode('utf-8'))
+                result = compose_entries(self.root)
+                self.assertIn(original, result['prompt'])
+                self.assertEqual(result['documents'][-1]['policy'], 'retained')
+                self.assertEqual(p.read_bytes(), original.encode('utf-8'))
+
+    def test_unknown_canonical_scope_fails_closed(self):
+        p = self.root / ENTRIES['decision']
+        for sep in self.separators:
+            with self.subTest(separator=repr(sep)):
+                original = self.unknown(sep)
+                p.write_bytes(original.encode('utf-8'))
+                with self.assertRaisesRegex(ValueError, 'canonical shared decision scope'):
+                    compose_entries(self.root)
+                self.assertEqual(p.read_bytes(), original.encode('utf-8'))
+
+    def test_extra_shared_markers_keep_unverified_source_exact(self):
+        for sep in self.separators:
+            for marker in SHARED_MARKERS:
+                with self.subTest(separator=repr(sep), marker=marker):
+                    original = self.unknown(sep, marker)
+                    emitted = {marker + '\nShared evidence constraint.'}
+                    actual, added = _dedup_shared(original, emitted)
+                    self.assertEqual(actual, original)
+                    self.assertEqual(added, [])
+                    self.assertEqual(emitted, {marker + '\nShared evidence constraint.'})
+
+    def test_nonphysical_closers_do_not_reject_real_global_scope(self):
+        for sep in self.separators:
+            with self.subTest(separator=repr(sep)):
+                originals = {}
+                for key, path in ENTRIES.items():
+                    text = ('# ' + key + '\n```text\nProse' + sep + '```\n' +
+                            self.block + '\n【local】\nKeep ' + key + ' constraints.\n```\n')
+                    (self.root / path).write_bytes(text.encode('utf-8'))
+                    originals[path] = text.encode('utf-8')
+                result = compose_entries(self.root)
+                self.assertEqual(result['prompt'].count(self.block), 1)
+                self.assertEqual([row['policy'] for row in result['documents']],
+                                 ['shared-full', 'shared-reference', 'shared-reference'])
+                for key, path in ENTRIES.items():
+                    self.assertIn('Prose' + sep + '```\n', result['prompt'])
+                    self.assertIn('Keep ' + key + ' constraints.', result['prompt'])
+                    self.assertEqual((self.root / path).read_bytes(), originals[path])
+
+    def test_real_cli_preserves_unknown_scope_in_utf8_raw_and_json(self):
+        import os, subprocess, sys
+        p = self.root / ENTRIES['research']
+        for sep in ('\u2028', '\u2029'):
+            for as_json in (False, True):
+                with self.subTest(separator=repr(sep), as_json=as_json):
+                    original = self.unknown(sep)
+                    p.write_bytes(original.encode('utf-8'))
+                    before = {name: (self.root / name).read_bytes() for name in ENTRIES.values()}
+                    command = [sys.executable, '-B', str(Path(__file__).resolve().parents[1] / 'scripts/prompt_context.py'),
+                               '--root', str(self.root), *(['--json'] if as_json else [])]
+                    completed = subprocess.run(command, capture_output=True, timeout=15,
+                                               env=dict(os.environ, PYTHONUTF8='0', PYTHONIOENCODING='cp936'))
+                    self.assertEqual(completed.returncode, 0, completed.stderr)
+                    self.assertEqual(completed.stderr, b'')
+                    text = completed.stdout.decode('utf-8')
+                    if as_json:
+                        value = json.loads(text)
+                        self.assertEqual(value['documents'][-1]['policy'], 'retained')
+                        text = value['prompt']
+                    self.assertIn(original, text)
+                    self.assertEqual({name: (self.root / name).read_bytes() for name in ENTRIES.values()}, before)

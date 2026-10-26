@@ -3,6 +3,8 @@ import hashlib
 from pathlib import Path
 import re
 
+from .project_docs import physical_lines
+
 ENTRIES = {'decision': 'prompts/decision_review.md',
            'general': 'prompts/orchestrator.md',
            'research': 'prompts/research_orchestrator.md'}
@@ -43,7 +45,7 @@ def _span(text, marker=MARKER):
     # ~~~markdown or <!-- ... --> cannot establish global instructions.
     offset, fence, seen_fence, comment = 0, None, False, False
     global_text = False
-    for line in text.splitlines(keepends=True):
+    for line in physical_lines(text, keepends=True):
         if offset == start:
             if comment or fence is None or not global_text:
                 return None
