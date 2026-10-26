@@ -277,23 +277,41 @@ class PromptPhysicalScopeTests(unittest.TestCase):
 
     def test_real_cli_preserves_unknown_scope_in_utf8_raw_and_json(self):
         import os, subprocess, sys
-        p = self.root / ENTRIES['research']
-        for sep in ('\u2028', '\u2029'):
-            for as_json in (False, True):
-                with self.subTest(separator=repr(sep), as_json=as_json):
-                    original = self.unknown(sep)
-                    p.write_bytes(original.encode('utf-8'))
-                    before = {name: (self.root / name).read_bytes() for name in ENTRIES.values()}
-                    command = [sys.executable, '-B', str(Path(__file__).resolve().parents[1] / 'scripts/prompt_context.py'),
-                               '--root', str(self.root), *(['--json'] if as_json else [])]
-                    completed = subprocess.run(command, capture_output=True, timeout=15,
-                                               env=dict(os.environ, PYTHONUTF8='0', PYTHONIOENCODING='cp936'))
-                    self.assertEqual(completed.returncode, 0, completed.stderr)
-                    self.assertEqual(completed.stderr, b'')
-                    text = completed.stdout.decode('utf-8')
-                    if as_json:
-                        value = json.loads(text)
-                        self.assertEqual(value['documents'][-1]['policy'], 'retained')
-                        text = value['prompt']
-                    self.assertIn(original, text)
-                    self.assertEqual({name: (self.root / name).read_bytes() for name in ENTRIES.values()}, before)
+        for ending in ('\n', '\r\n'):
+            for sep in ('\u2028', '\u2029'):
+                for as_json in (False, True):
+                    with self.subTest(ending=repr(ending), separator=repr(sep), as_json=as_json):
+                        sources = {}
+                        for key, name in ENTRIES.items():
+                            original = (self.unknown(sep) if key == 'research' else
+                                        '# ' + key + '\n\n```text\n' + self.block +
+                                        '\n【local】\nKeep ' + key + ' constraints.\n```\n')
+                            sources[key] = original.replace('\n', ending)
+                            (self.root / name).write_bytes(sources[key].encode('utf-8'))
+                        before = {name: (self.root / name).read_bytes() for name in ENTRIES.values()}
+                        pieces = []
+                        for key, name in ENTRIES.items():
+                            literal = sources[key]
+                            if key == 'general':
+                                literal = literal.replace(self.block.replace('\n', ending),
+                                                          '【共享决策协议已在前文完整提供，逐条适用】')
+                            pieces.append('Document: ' + name + '\n' + literal)
+                        expected_prompt = '\n\n'.join(pieces)
+                        command = [sys.executable, '-B', str(Path(__file__).resolve().parents[1] / 'scripts/prompt_context.py'),
+                                   '--root', str(self.root), *(['--json'] if as_json else [])]
+                        completed = subprocess.run(command, capture_output=True, timeout=15,
+                                                   env=dict(os.environ, PYTHONUTF8='0', PYTHONIOENCODING='cp936'))
+                        self.assertEqual(completed.returncode, 0, completed.stderr)
+                        self.assertEqual(completed.stderr, b'')
+                        text = completed.stdout.decode('utf-8')
+                        self.assertTrue(text.endswith(os.linesep))
+                        if as_json:
+                            value = json.loads(text)
+                            self.assertEqual(value['documents'][-1]['policy'], 'retained')
+                            self.assertEqual(value['prompt'], expected_prompt)
+                            self.assertIn(sources['research'], value['prompt'])
+                        else:
+                            expected_wire = (expected_prompt + '\n').replace('\n', os.linesep)
+                            self.assertEqual(completed.stdout, expected_wire.encode('utf-8'))
+                            self.assertIn(sources['research'].replace('\n', os.linesep), text)
+                        self.assertEqual({name: (self.root / name).read_bytes() for name in ENTRIES.values()}, before)

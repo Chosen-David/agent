@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 40
+Version: 41
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -165,7 +165,11 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 
 阶段X（PROMPT-SCOPE-01，Version40）：按[固定方案](../../results/prompt-scope-20261026/plan.md)核对提示词去重器剩余的Unicode伪围栏范围及真实CLI UTF-8输出。仅复用既有physical_lines和configure_utf8_output，未知范围完整保留，重复块仍须精确相等；不改marker/歧义/预算/独立入口或prompt源。先独审逐字oracle、保存旧源码失败，再执行三模块有界回归与独立复核，原生四矩阵另核；不重置旧门禁。新增MemDev正文记录检查历史适用性、救回/伤害和成本分母，GACC仅下载不计。无模型任务质量、tokens/费用、性能或整轮完成主张。
 
+阶段X续接（同一PROMPT-SCOPE-01，Version41）：首次原生CI在Windows暴露新增raw测试误将标准CRLF输出当LF，旧失败运行保持失败。[版本化修正](../../results/prompt-scope-native-20261026/plan-v2.md)只改测试原生换行oracle，扩为LF/CRLF源及完整raw字节比较，JSON内prompt仍逐字相等；生产逻辑不变。独审方案后执行同三模块续接回归/独审和新原生四矩阵，旧结果/record不改、不重试旧源码或重置任何已耗尽门禁。原生print转换不是源字节一致或下游模型语义已验收。
+
 ## Progress
+
+- 2026-10-26 PROMPT-SCOPE-01原生续接：Windows两组新增raw断言遗漏原生CRLF，首发CI40342330469保持失败，完整错误片段保留。版本化独审后只修测试oracle，加入LF/CRLF源及完整raw字节/JSON完整prompt对照；同三模块35项通过，无skip，独审和新原生CI另核。[续接证据](../../results/prompt-scope-native-20261026/report-v2.md)。生产代码与旧证据不变，无新论文计数或门禁重置，SYSTEM-99未完成。
 
 - 2026-10-26 PROMPT-SCOPE-01：提示词去重器的Unicode伪围栏会错认范围或拒绝真实范围，实际CLI也存在cp936输出失败。修前23方法52失败/8错误子场景保留，复用两个既有工具原地修复，三模块35方法通过，无skip，独审和原生CI另核。[证据](../../results/prompt-scope-20261026/report.md)区分提示词预算与JSON包；新精读MemDev 2610.27524v1正文及声明附录，同批新正文记录12篇，GACC仅下载不计。保留适用性/记忆构建成本限制，无模型质量/性能或整轮完成主张，旧受阻门禁不重置。
 
