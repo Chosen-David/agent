@@ -175,6 +175,9 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 
 ## Progress
 
+- 2026-10-27 抽象持久化续读：实际精读2610.27406v1正文§§1–5及声明附录，区分临时指导、历史暴露、相关性标签与可授信知识；[记录](../../results/anti-persistence-reading-20261027/reading.md)保留held-out调用成本/日志排除/受控实验及统计边界。同批新正文15篇；保留MemoryLedger修订/更正传播、原Skill/历史与人类guide，不新增共享日志/自适应选择器。worker最终交付/真实宿主及全部调用质量成本缺口继续open；advice围栏解析静态差异尚未复现，不判无缺陷。仅文献/源码独审，无新测试、模型、性能或整轮完成主张，旧门禁不重试。
+
+
 - 2026-10-27 结果派发v3原地修复：live验收→claim→无verifier的绑定复查，覆盖required/reuse及登记、更正证据、撤销、TTL和后续verifier改动；真实Context/Store受控租约过期、取消、token更换均阻止handler。新15方法修前15断言失败（含阶段计数对照，非15个独立bug），修后/独审各138通过无skip。[完整证据](../../results/result-dispatch-fix-20261027/report.md)保留原退回/负例及全部日志。四矩阵另核，正文数仍14，无性能/模型质量或整轮完成主张；旧门禁继续open。
 
 
