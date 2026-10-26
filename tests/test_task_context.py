@@ -37,3 +37,69 @@ class TaskViewTests(unittest.TestCase):
         v=task_view(self.root,['NOW'],hashlib.sha256(self.path.read_bytes()).hexdigest())
         self.assertIn('example row, not a canonical task',v['text'])
         self.assertEqual(v['omitted_task_rows'],1)
+
+class TaskPhysicalLineTests(unittest.TestCase):
+    setUp = TaskViewTests.setUp
+    separators = ('\v', '\f', '\x1c', '\x1d', '\x1e', '\x85', '\u2028', '\u2029')
+
+    def view_chunks(self, chunks, selected, omitted):
+        text = ''.join(chunks)
+        raw = text.encode('utf-8')
+        self.path.write_bytes(raw)
+        view = task_view(self.root, selected, hashlib.sha256(raw).hexdigest())
+        kept = [i for i in range(len(chunks)) if i not in omitted]
+        self.assertEqual(view['text'], ''.join(chunks[i] for i in kept))
+        self.assertEqual(view['source_lines'], [i + 1 for i in kept])
+        self.assertEqual(view['omitted_task_rows'], len(omitted))
+        self.assertEqual(self.path.read_bytes(), raw)
+        return view
+
+    def test_nonphysical_separators_preserve_instruction_suffixes(self):
+        for sep in self.separators:
+            with self.subTest(separator=repr(sep)):
+                chunks = ['# Global\n', '## 2026-10-26\n',
+                          'Correction stays' + sep + '- [ ] [OLD] this is literal constraint text\n',
+                          '- [ ] [OLD] old task ([detail](task_details/OLD.md))\n',
+                          '- [ ] [NOW] current task ([detail](task_details/NOW.md))\n']
+                self.view_chunks(chunks, ['NOW'], {3})
+
+    def test_nonphysical_fence_prefix_does_not_hide_real_tasks(self):
+        for sep in self.separators:
+            with self.subTest(separator=repr(sep)):
+                chunks = ['## 2026-10-26\n', 'Literal prefix' + sep + '```md\n',
+                          '- [ ] [OLD] old task ([detail](task_details/OLD.md))\n',
+                          '- [ ] [NOW] current task ([detail](task_details/NOW.md))\n']
+                self.view_chunks(chunks, ['NOW'], {2})
+
+    def test_titles_and_source_positions_follow_physical_lines(self):
+        for sep in self.separators:
+            for ending in ('\n', '\r\n', '\r'):
+                with self.subTest(separator=repr(sep), ending=repr(ending)):
+                    chunks = ['## 2026-10-26' + ending,
+                              '- [ ] [OLD] omit' + sep + 'entire title ([detail](task_details/OLD.md))' + ending,
+                              'Constraint' + sep + 'literal' + ending,
+                              '- [ ] [NOW] keep' + sep + 'entire title ([detail](task_details/NOW.md))']
+                    self.view_chunks(chunks, ['NOW'], {1})
+
+    def test_actual_cli_retains_literal_constraints_and_positions(self):
+        import json, os, subprocess, sys
+        for sep in self.separators:
+            with self.subTest(separator=repr(sep)):
+                chunks = ['## 2026-10-26\r\n',
+                          'Cancellation' + sep + '- [ ] [OLD] retained literal condition\r\n',
+                          '- [ ] [OLD] old task ([detail](task_details/OLD.md))\r\n',
+                          '- [ ] [NOW] current task ([detail](task_details/NOW.md))']
+                raw = ''.join(chunks).encode('utf-8')
+                self.path.write_bytes(raw)
+                command = [sys.executable, '-B', str(Path(__file__).resolve().parents[1] / 'scripts/task_context.py'),
+                           '--root', str(self.root), '--task-id', 'NOW', '--sha256', hashlib.sha256(raw).hexdigest(),
+                           '--compact']
+                completed = subprocess.run(command, capture_output=True, timeout=15,
+                                           env=dict(os.environ, PYTHONUTF8='0', PYTHONIOENCODING='cp936'))
+                self.assertEqual(completed.returncode, 0, completed.stderr)
+                self.assertEqual(completed.stderr, b'')
+                view = json.loads(completed.stdout.decode('utf-8'))
+                self.assertEqual(view['text'], chunks[0] + chunks[1] + chunks[3])
+                self.assertEqual(view['source_lines'], [1, 2, 4])
+                self.assertEqual(view['omitted_task_rows'], 1)
+                self.assertEqual(self.path.read_bytes(), raw)

@@ -2,6 +2,7 @@
 import hashlib,json,re
 from .advice_poll import _root,_path
 from .maintenance_observer import read_bound
+from .project_docs import physical_lines
 
 def _bound_topics(root,path,expected_sha256,max_chars):
     root=_root(root);_path(path)
@@ -12,7 +13,7 @@ def _bound_topics(root,path,expected_sha256,max_chars):
     data=read_bound(root,path)
     if hashlib.sha256(data).hexdigest()!=expected_sha256:
         raise ValueError('advice changed; refresh topic selection')
-    lines=data.decode('utf-8').splitlines(keepends=True)
+    lines=physical_lines(data.decode('utf-8'),keepends=True)
     if any('<!--' in line for line in lines):
         raise ValueError('HTML comment layout requires full source; no partial markup')
     topics=[];fence=None
