@@ -2,7 +2,7 @@
 import hashlib,json,re
 from .advice_poll import _root,_path
 from .maintenance_observer import read_bound
-from .project_docs import physical_lines
+from .project_docs import physical_lines,_fence_transition
 
 def _bound_topics(root,path,expected_sha256,max_chars):
     root=_root(root);_path(path)
@@ -18,12 +18,8 @@ def _bound_topics(root,path,expected_sha256,max_chars):
         raise ValueError('HTML comment layout requires full source; no partial markup')
     topics=[];fence=None
     for i,line in enumerate(lines):
-        marker=re.match(r'(`{3,}|~{3,})',line.lstrip())
-        if marker:
-            token=marker[1]
-            if fence is None:fence=token
-            elif token[0]==fence[0] and len(token)>=len(fence) and not line.lstrip()[len(token):].strip():fence=None
-            continue
+        fence,marker=_fence_transition(line.rstrip('\r\n'),fence)
+        if marker:continue
         if fence is not None:continue
         if topics and re.match(r'^#\s',line):
             raise ValueError('multiple document-level titles; use full source')

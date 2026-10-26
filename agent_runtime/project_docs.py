@@ -508,19 +508,25 @@ def physical_lines(text, *, keepends=False):
     return lines if keepends else [line.rstrip('\r\n') for line in lines]
 
 
+def _fence_transition(line, fence):
+    """Shared top-level fence grammar; callers choose their EOF policy."""
+    marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', line)
+    if marker:
+        token, tail = marker.groups()
+        if fence is None and (token[0] != '`' or '`' not in tail):
+            fence = token
+        elif fence and token[0] == fence[0] and len(token) >= len(fence) and not tail.strip(' \t'):
+            fence = None
+    return fence, marker is not None
+
+
 def outside_fences(text):
     """Yield literal line offsets outside CommonMark-style fenced examples."""
     offset, fence = 0, None
     for raw in physical_lines(text, keepends=True):
         line = raw.rstrip('\r\n')
-        marker = re.match(r'^ {0,3}(`{3,}|~{3,})(.*)$', line)
-        if marker:
-            token, tail = marker.groups()
-            if fence is None and (token[0] != '`' or '`' not in tail):
-                fence = token
-            elif fence and token[0] == fence[0] and len(token) >= len(fence) and not tail.strip(' \t'):
-                fence = None
-        elif fence is None:
+        fence, marker = _fence_transition(line, fence)
+        if not marker and fence is None:
             yield offset, offset + len(raw), line
         offset += len(raw)
 
