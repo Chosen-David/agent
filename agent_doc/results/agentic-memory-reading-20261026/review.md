@@ -1,0 +1,19 @@
+# 独立复核：动作链记忆阅读检查点
+2026-10-26；结论：approve，仅限下列文献解读、静态源码映射及文档边界。
+独立读取私有HTML的MemoryArena §§1–5及C.2/C.3、AMA-Bench §§1–7及C/G，含相应表格和图注文字。
+未精读其它附录，未查看PDF页面或图像像素；原始txt为单行抽取，核查以HTML正文结构为准。
+任务规模与环境/领域划分符合两文；MemoryArena的环境依赖SR、子任务PS及约束级sPS未混用。
+C.3最深层表值与“到零”修辞的冲突及近似oracle的有限性已保留，不能据此断言充分状态已提供。
+AMA主评测的固定轨迹离线QA与另行双环境、有限系统的动作链补证已分开；相关性未外推为普遍预测保证。
+LLM局部语义抽象的图不等同无损DOM/AST解析或已验证因果真值；暂缓迁移合理。
+消融支持组件在该设置中的作用，不能隔离所有设计因素；默认embedding差异、成本口径与judge样本限制已保留。
+静态逐段核对artifact_context比较/恢复、advice_context显式H2视图、reference_context恢复和ReportingHandler.run/verify。
+源码支持所述原文/顺序保留及声明依赖检查意图；没有证明隐藏依赖发现、自然语言理解或环境动作正确。
+inputs的全部baseline_refs经git show d39f5ba1447a283daaa6ec0189cbdd11b114987e重新计算匹配；两份HTML SHA亦匹配。
+SYSTEM-99相对该基线仅在Progress增加记录，稳定Plan及TASK索引未变；人类guide与外来zip未写入。
+reading.md SHA256：99ffa6082fb63ffc9e771eaf718f455b778be899828721e56d0e1cf9730ec3ec
+inputs.json SHA256：f2ac1dcd82e7c5c8ac9554d22b6bd2b673a9d70bbde46d1075ca1952ea958160
+SYSTEM-99.md SHA256：9e41efaee4cb78b90ec1ad417c633c702e10bb372defedf22b5fe673bbb07310
+本复核未运行测试、模型benchmark或被评测后端；主控和独审实际AI推理总用量未知，不能记零。
+旧门禁、预算及未完成状态不重置；本结论不接受性能、模型质量、阅读门槛或整轮完成。
+后续register_history只可在本复核之后用于发现：contract=null、status=unknown，不产生复用授信。
