@@ -1,0 +1,32 @@
+test_noncurrent_claim_blocks_handler (__main__.ResultDispatchDiagnosis.test_noncurrent_claim_blocks_handler) ... {"case": "__main__.ResultDispatchDiagnosis.test_noncurrent_claim_blocks_handler", "status": "blocked", "reason": "claim no longer current after prior-result lookup", "handler_calls": 0}
+ok
+test_result_changed_during_current_blocks_before_work (__main__.ResultDispatchDiagnosis.test_result_changed_during_current_blocks_before_work) ... {"case": "__main__.ResultDispatchDiagnosis.test_result_changed_during_current_blocks_before_work", "status": "blocked", "reason": "post-action document/result reconciliation required: experiment result invalid: stale artifact: raw.json; preserve raw data; main AI diagnoses, repairs within authorization, creates a new result/run and versioned plan, reruns and independently revalidates", "handler_calls": 1}
+FAIL
+test_result_changed_during_real_lookup_blocks_before_work (__main__.ResultDispatchDiagnosis.test_result_changed_during_real_lookup_blocks_before_work) ... {"case": "__main__.ResultDispatchDiagnosis.test_result_changed_during_real_lookup_blocks_before_work", "status": "blocked", "reason": "post-action document/result reconciliation required: experiment result invalid: stale artifact: raw.json; preserve raw data; main AI diagnoses, repairs within authorization, creates a new result/run and versioned plan, reruns and independently revalidates", "handler_calls": 1}
+FAIL
+test_unchanged_result_allows_one_pending_handler (__main__.ResultDispatchDiagnosis.test_unchanged_result_allows_one_pending_handler) ... ok
+
+======================================================================
+FAIL: test_result_changed_during_current_blocks_before_work (__main__.ResultDispatchDiagnosis.test_result_changed_during_current_blocks_before_work)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/.agent-runs/context-coherence-0105/diagnose_result_dispatch.py", line 78, in test_result_changed_during_current_blocks_before_work
+    self.assert_blocked_before_work(outcome)
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/.agent-runs/context-coherence-0105/diagnose_result_dispatch.py", line 47, in assert_blocked_before_work
+    self.assertEqual(self.handler.calls, 0, 'post-work rejection cannot undo handler work')
+AssertionError: 1 != 0 : post-work rejection cannot undo handler work
+
+======================================================================
+FAIL: test_result_changed_during_real_lookup_blocks_before_work (__main__.ResultDispatchDiagnosis.test_result_changed_during_real_lookup_blocks_before_work)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/.agent-runs/context-coherence-0105/diagnose_result_dispatch.py", line 63, in test_result_changed_during_real_lookup_blocks_before_work
+    self.assert_blocked_before_work(outcome)
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/.agent-runs/context-coherence-0105/diagnose_result_dispatch.py", line 47, in assert_blocked_before_work
+    self.assertEqual(self.handler.calls, 0, 'post-work rejection cannot undo handler work')
+AssertionError: 1 != 0 : post-work rejection cannot undo handler work
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.699s
+
+FAILED (failures=2)

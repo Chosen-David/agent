@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 42
+Version: 43
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -169,7 +169,12 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 
 阶段Y（VALIDATION-UTF8-01，Version42）：按独立批准的限域方案，为实验验收检查及保存记录恢复两个CLI复用既有configure_utf8_output；保留完整JSON、退出状态、可信adapter选择和显示不授信边界，不新增截断/预算或旧实现副本。原生cp936反例先存，三类观察记录完整恢复、真实pending检查及重复Unicode键错误分别验收；定向双模块和独审通过后普通发布，四矩阵另核，不重置旧受阻门禁，无模型/性能或整轮完成主张。
 
+阶段Z（RESULT-DISPATCH-FRESHNESS-01，Version43）：原最小生产插入方案被独审退回，因新增verifier可能跨越已检查租约；仅批准[诊断v2](../../results/result-dispatch-diagnosis-20261027/diagnosis-plan-v2.md)一次四案例执行，保留两个普通失败断言及完整原始日志。未改生产或测试发现范围；结果/复用与租约的有界检查顺序须新版设计和独审，不宣称已有跨存储/动作原子性，也不重试旧受阻门禁。
+
 ## Progress
+
+- 2026-10-27 结果派发负例：required_result_refs在真实lookup或current回调中失效，两例均先执行handler一次才post-action blocked；四方法两个失败/两个对照通过，原始代码hash稳定，独审只接受负例诊断。[证据](../../results/result-dispatch-diagnosis-20261027/report.md)保留退回方案、精确夹具与日志；生产修复仍未批准，result_reuse/实际租约过期未执行复现。新增Concord 2610.05281v2正文§§1–6/Table1/图注阅读，同批新正文14篇，无模型/性能或整轮完成主张，旧门禁不重置。
+
 
 - 2026-10-26 VALIDATION-UTF8-01：两个验收CLI原地复用UTF-8配置，保留完整观察记录与pending/错误协议；修前29方法9失败/1解码错误子场景，修后及独审各29通过，无skip。[证据](../../results/validation-utf8-20261026/report.md)保留原日志与精确源码边界；四矩阵另核，无新正文计数、性能/模型质量或整轮完成主张，旧受阻门禁不重置。此前fcba9e56四组安装CI已完成通过。
 
