@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 45
+Version: 46
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -174,6 +174,8 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 阶段Z续接（同一RESULT-DISPATCH-FRESHNESS-01，Version44）：按[独审v3方案](../../results/result-dispatch-fix-20261027/plan-v3.md)把新独立验收回调放在claim检查之前，之后只核对本次live proof的manifest/所有artifact/review evidence、撤销、登记SHA及同一纯TTL规则，最终绑定实际dispatched_task。原入口与执行后门禁保留，不以保存proof授信；不声称被动IO后租约、跨存储或外部动作原子性。新固定反例先存，定向138及独审138通过后仅发布限域修复，原生四矩阵另核，旧受阻门禁不重置。
 
 阶段AA（ADVICE-FENCE-01，Version45）：按[独审方案](../../results/advice-fence-20261027/plan.md)固定建议字面H2围栏反例与拒绝路径；仅提取既有公共围栏状态规则供两消费者复用，保留公共消费者原行为与建议未闭合/注释拒绝。主控一次修前/修后与独立一次定向回归、原生四矩阵分别核查，保存失败与限定范围后普通发布；不扩成完整Markdown解析、目录迁移或性能/模型质量验收，不重置旧受阻门禁。
+
+阶段AB（COMMUNICATION-UTF8-01，Version46）：按[独审方案](../../results/communication-utf8-20261027/plan.md)固定native通信CLI在cp936/ascii的完整消息、消费/context和Unicode错误输出；保留消费依据先于显示持久化、ACK独立与原退出协议。只复用现有UTF8配置，两行生产变化；一次修前/修后及独立一次定向回归，原始失败保留后普通发布，四原生矩阵另核。此入口不同于先前五context-wire及两validationCLI，不重置其额度或旧fullsuite/PID/alias/role/model门禁；无模型/性能或整轮完成主张。
 
 ## Progress
 
@@ -586,3 +588,5 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 - 2026-10-27续接：新增2608.31057v1正文§§1–6/附录A–F精读及独立限域复核，近期可恢复新正文链15→16；2610.08101v1已在research-i记录，本次重读不计数。[记录](../../results/working-memory-reading-20261027/reading.md)区分名义上限/实际上下文、主/辅助计量、重复调用/修复成功及开发/留出结果。核对现有no-tool计量与Windows专属短探针边界，未运行模型/测试或改生产，不据此引入OA/GA或迁移目录；真实任务质量/全部actor费用、旧门禁与同批系统验收继续open。Plan45不变，普通发布回读另核。
 
 - 2026-10-27续接：实际审查consume/prepare/ACK/impact、消费者范围与依赖上下文；独审未确认新契约缺陷。prepare后续预算/水合失败仍可留下validated_handoff登记，既有定义不等于模型已读/派发或外部效果，不扩报完成量。新增2609.15397v1正文§§1–6/Tables1–4精读/独审，[记录](../../results/tool-boundary-reading-20261027/reading.md)保留接口注释/实际工具行为、内部观察/外部效果和概念/证明边界，近期可恢复正文16→17；无生产/测试/模型或性能新证据。Plan45及同批未决/旧额度不变；普通发布回读另核。
+
+- 2026-10-27续接COMMUNICATION-UTF8-01：真实cp936/ascii子进程在消费依据已保存后因Unicode输出崩溃，修前80项中24子案例普通失败（3新方法，非24独立缺陷）；错误JSON也丢失原受控协议。只加既有UTF8配置import/main调用，原CLI/DB/ACK/预算语义不改。修后80/独审80通过且无skip，原始失败/代码/数据复核见[证据](../../results/communication-utf8-20261027/report.md)；目录登记unknown不授信。原生四矩阵/普通发布回读另核，同SYSTEM99未决、旧门禁和17正文计数不变，不计整轮完成或性能收益。

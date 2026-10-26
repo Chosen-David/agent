@@ -14,7 +14,7 @@ import sqlite3
 import re
 
 from scripts.validate_handoff import _consumer_contract, _load_json, validate
-from .context_serialization import render_context
+from .context_serialization import render_context, configure_utf8_output
 from .project_docs import guard_write_path
 
 
@@ -470,6 +470,7 @@ class Mailbox:
 
 
 def main():
+    configure_utf8_output()
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--db', required=True)
     parser.add_argument('--compact', action='store_true', help='preserve all JSON fields without formatting whitespace')

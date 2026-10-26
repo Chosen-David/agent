@@ -1,0 +1,32 @@
+import hashlib,json,os,subprocess,sys,time
+from pathlib import Path
+root=Path(__file__).resolve().parents[2]
+r=Path(__file__).resolve().parent
+label=sys.argv[1]
+if label not in ('baseline','fixed','independent'):raise SystemExit('unknown label')
+log=r/(label+'.log');meta=r/(label+'.json')
+if log.exists() or meta.exists():raise SystemExit('label already used; no retry')
+budget=r/'budget.json'
+if not budget.exists():
+    if label!='baseline':raise SystemExit('baseline required')
+    budget.write_text(json.dumps({'started':time.time(),'max_seconds':600}))
+b=json.loads(budget.read_text())
+remaining=600-(time.time()-b['started'])
+if remaining<=0:raise SystemExit('branch elapsed; no reset')
+files=['agent_runtime/communication.py','agent_runtime/context_serialization.py','tests/test_communication.py','tests/test_communication_output.py','.github/workflows/portable-install.yml']
+def hashes():return {f:hashlib.sha256((root/f).read_bytes()).hexdigest() for f in files}
+modules=['test_communication_output','test_communication','test_communication_regressions','test_communication_batch','test_communication_task_scope','test_communication_snapshot','test_handoff_consumer','test_handoff_scope','test_handoff_basis','test_handoff_encoding','test_handoff_knowledge_snapshot']
+cmd=[sys.executable,'-B','-m','unittest','-v',*modules]
+start=time.time();before=hashes()
+with log.open('xb') as out:
+    try:
+        p=subprocess.run(cmd,cwd=root,stdout=out,stderr=subprocess.STDOUT,
+            env=dict(os.environ,PYTHONPATH=str(root/'tests')+os.pathsep+str(root)),timeout=min(120,remaining))
+        code=p.returncode
+    except subprocess.TimeoutExpired:code='timeout'
+after=hashes()
+value={'label':label,'command':cmd,'cwd':str(root),'exit_code':code,'elapsed_seconds':time.time()-start,
+       'branch_elapsed_seconds':time.time()-b['started'],'before':before,'after':after,
+       'stable':before==after,'log_sha256':hashlib.sha256(log.read_bytes()).hexdigest()}
+meta.write_text(json.dumps(value,indent=2)+'\n')
+print(json.dumps(value));print(log.read_text()[-550:])
