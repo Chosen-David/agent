@@ -1,0 +1,37 @@
+{
+  "task": "SYSTEM-99",
+  "leaf": "PID-STAT-BYTES",
+  "head": "4e63f0e43499fd862ed0ec1235da7e9064b788ab",
+  "goal": "Independently diagnose/fix ASCII decoding of valid arbitrary process-name bytes while preserving failclosed PID-reuse checks. Not assertionoforiginal1157failurecause.",
+  "recovery": "Oldscratchrepocandidate/rawlogs/checkpointpruned; Librarysearch no relevant recoverymatch. Reclone main clean; no ALIAS reconstruction/retry/budgetreset. Old paper55 is historicallyreported only; privatebodyrecords unavailable,0new.",
+  "sources": {
+    "agent_runtime/task_supervisor.py": "22bcbf87292c80e5b7c58a5c368719f941b271b287d7b341ddc45c4609e37df2",
+    "tests/test_managed_supervisor.py": "bb5ac997ef838357eaef8e8efe53c948a6bcc8efd3545e4b9cf2b536c798e520",
+    "AGENTS.md": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+    "agent_doc/task/TASK.md": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+    "agent_doc/task/task_details/SYSTEM-99.md": "6f66a70f722cafc592b9bd5bbc6e521cc5a0e63c7e30445e7968320d519f38f6"
+  },
+  "allowed_changes": [
+    "agent_runtime/task_supervisor.py read_process_starttime only",
+    "tests/test_process_identity.py",
+    "SYSTEM99 Progress/evidence only"
+  ],
+  "method": "Read procstat as bytes; split afterfinal closingparen; decode onlyfield22 decimalASCII. Keep read/short/malformed errors None; neverturnunreadable identitylive. No newprocessregistry or fallbackidentity.",
+  "controls": [
+    "ActualOS byte-name childviaPR_SET_NAME onLinux, bounded5s, no descendants, owns onlychild name and restores/exits; strictreturn/errno checked, oldNone vsbinarynumericreference mismatch retained.",
+    "Deterministic actualdecoder fixtures for ASCII,UTF8/invalidbyte,spaces/parentheses/newline comm; missing/short/malformed/OSError returnsNone; original PID-reuse workerstatus test remainsunchanged.",
+    "Beforeexactnewtestfile onoldproduction; aftersame tests+existingmanagedsupervisor regression; independentcode/rawreview. Nofullsuite/ALIASsuite/rolecapture/Codexrerun or oldpassreuse."
+  ],
+  "limits": {
+    "targeted_test_invocations_max": 4,
+    "total_seconds": 300,
+    "individual_command_timeout_seconds": 120,
+    "testchild_timeout_seconds": 5,
+    "no_models_services_gpu": true
+  },
+  "publication": "Onlyiftargetedcorrectness and independentreviewaccepted; report existingfullsuiteALIASgateunknown unresolved. Fetchmain, nonforce connectedGitHubiflocalHTTPSauthunavailable; readbacktree/SHA, CI.",
+  "sources_primary": [
+    "https://man7.org/linux/man-pages/man2/pr_set_name.2const.html",
+    "https://man7.org/linux/man-pages/man5/proc_pid_stat.5.html"
+  ]
+}

@@ -1,0 +1,79 @@
+test_malformed_identity_is_unavailable (tests.test_process_identity.ProcessIdentityTests.test_malformed_identity_is_unavailable) ... 
+  test_malformed_identity_is_unavailable (tests.test_process_identity.ProcessIdentityTests.test_malformed_identity_is_unavailable) (data=b'0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0') ... FAIL
+  test_malformed_identity_is_unavailable (tests.test_process_identity.ProcessIdentityTests.test_malformed_identity_is_unavailable) (data=b'7 (python) S 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0\n') ... FAIL
+  test_malformed_identity_is_unavailable (tests.test_process_identity.ProcessIdentityTests.test_malformed_identity_is_unavailable) (data=b'7 (python) S 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 +1 0 0\n') ... FAIL
+  test_malformed_identity_is_unavailable (tests.test_process_identity.ProcessIdentityTests.test_malformed_identity_is_unavailable) (data=b'7 (python) S 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 12x 0 0\n') ... FAIL
+test_name_bytes_do_not_change_identity (tests.test_process_identity.ProcessIdentityTests.test_name_bytes_do_not_change_identity) ... 
+  test_name_bytes_do_not_change_identity (tests.test_process_identity.ProcessIdentityTests.test_name_bytes_do_not_change_identity) (comm=b'\xe8\xbf\x9b\xe7\xa8\x8b') ... FAIL
+  test_name_bytes_do_not_change_identity (tests.test_process_identity.ProcessIdentityTests.test_name_bytes_do_not_change_identity) (comm=b'\xffpid') ... FAIL
+test_native_byte_names_preserve_start_ticks (tests.test_process_identity.ProcessIdentityTests.test_native_byte_names_preserve_start_ticks) ... FAIL
+test_read_errors_are_unavailable (tests.test_process_identity.ProcessIdentityTests.test_read_errors_are_unavailable) ... ok
+
+======================================================================
+FAIL: test_malformed_identity_is_unavailable (tests.test_process_identity.ProcessIdentityTests.test_malformed_identity_is_unavailable) (data=b'0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/tests/test_process_identity.py", line 41, in test_malformed_identity_is_unavailable
+    self.assertIsNone(self.parse(data))
+AssertionError: '0' is not None
+
+======================================================================
+FAIL: test_malformed_identity_is_unavailable (tests.test_process_identity.ProcessIdentityTests.test_malformed_identity_is_unavailable) (data=b'7 (python) S 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 -1 0 0\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/tests/test_process_identity.py", line 41, in test_malformed_identity_is_unavailable
+    self.assertIsNone(self.parse(data))
+AssertionError: '-1' is not None
+
+======================================================================
+FAIL: test_malformed_identity_is_unavailable (tests.test_process_identity.ProcessIdentityTests.test_malformed_identity_is_unavailable) (data=b'7 (python) S 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 +1 0 0\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/tests/test_process_identity.py", line 41, in test_malformed_identity_is_unavailable
+    self.assertIsNone(self.parse(data))
+AssertionError: '+1' is not None
+
+======================================================================
+FAIL: test_malformed_identity_is_unavailable (tests.test_process_identity.ProcessIdentityTests.test_malformed_identity_is_unavailable) (data=b'7 (python) S 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 12x 0 0\n')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/tests/test_process_identity.py", line 41, in test_malformed_identity_is_unavailable
+    self.assertIsNone(self.parse(data))
+AssertionError: '12x' is not None
+
+======================================================================
+FAIL: test_name_bytes_do_not_change_identity (tests.test_process_identity.ProcessIdentityTests.test_name_bytes_do_not_change_identity) (comm=b'\xe8\xbf\x9b\xe7\xa8\x8b')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/tests/test_process_identity.py", line 35, in test_name_bytes_do_not_change_identity
+    self.assertEqual(self.parse(stat_record(comm)), '012345')
+AssertionError: None != '012345'
+
+======================================================================
+FAIL: test_name_bytes_do_not_change_identity (tests.test_process_identity.ProcessIdentityTests.test_name_bytes_do_not_change_identity) (comm=b'\xffpid')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/tests/test_process_identity.py", line 35, in test_name_bytes_do_not_change_identity
+    self.assertEqual(self.parse(stat_record(comm)), '012345')
+AssertionError: None != '012345'
+
+======================================================================
+FAIL: test_native_byte_names_preserve_start_ticks (tests.test_process_identity.ProcessIdentityTests.test_native_byte_names_preserve_start_ticks)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1303/tests/test_process_identity.py", line 81, in test_native_byte_names_preserve_start_ticks
+    self.assertEqual([row['actual'] for row in rows], [row['expected'] for row in rows], rows)
+AssertionError: Lists differ: ['141', '141', '141'] != ['8326468', '8326468', '8326468']
+
+First differing element 0:
+'141'
+'8326468'
+
+- ['141', '141', '141']
++ ['8326468', '8326468', '8326468'] : [{'name_hex': '70696420706c61696e29', 'expected': '8326468', 'actual': '141', 'comm_present': True}, {'name_hex': '757466385fc3a929', 'expected': '8326468', 'actual': '141', 'comm_present': True}, {'name_hex': 'ff2070696420290a', 'expected': '8326468', 'actual': '141', 'comm_present': True}]
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.103s
+
+FAILED (failures=7)
+PID_NAME_OBSERVATIONS [{"name_hex": "70696420706c61696e29", "expected": "8326468", "actual": "141", "comm_present": true}, {"name_hex": "757466385fc3a929", "expected": "8326468", "actual": "141", "comm_present": true}, {"name_hex": "ff2070696420290a", "expected": "8326468", "actual": "141", "comm_present": true}]
