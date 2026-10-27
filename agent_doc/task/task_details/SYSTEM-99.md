@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 49
+Version: 50
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -182,6 +182,8 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 阶段AD（TASK-FENCE-NATIVE-01，Version48）：阶段AC原生CI暴露测试夹具错误，Windows调用POSIX/tmux supervisor因fcntl导入失败；原生产修复与140项Linux证据保留，不伪称旧testhash覆盖新版。只拆分tests/test_task_fence.py组合CLI测试：POSIXprepare在Windows显式skip，跨平台task_view CLI及canonical/legacy prepare API仍完整执行，原断言保留并加强输入/输出身份。8方法预期Linux全执行、Windows7执行/1明确不支持入口skip；不增加Windows supervisor支持、不shim、不改生产或CI矩阵。独审确切方案后，仅一次新提交触发四矩阵验证，无本地旧runner重跑/重置/CI重试；新CI及独立原始数据复核另核，保持SYSTEM99未完成。具体证据与范围见[原生修正](../../results/task-fence-native-20261027/report.md)。
 
 阶段AE（MIGRATE-FENCE-01，Version49）：只修既有显式legacy迁移函数的第三处独立围栏扫描，复用现有状态转移并保留原marker行追加。需求解析/日期证据分块必须一致，原始归档字节/SHA、既有derived trim/CRLF归一化、重基址、详情/索引身份、冲突预检、源重读、指针最后发布和幂等语义不改。不对真实仓库/用户项目执行迁移或改变目录架构；全用临时夹具。独审六方法/七模块后一次baseline/fixed/independent共享900秒（180/命令、15/CLI），无旧runner/额度重置，精确块/日期/归档/拒绝验收；独立原始数据复核后普通发布，新增可移植迁移测试的四原生矩阵另核。范围见[迁移方案](../../results/migrate-fence-20261027/plan.md)；无性能/模型或整轮完成主张，原SYSTEM99未决与18正文计数不变。
+
+阶段AF（MEMORY-RECONCILE-COUNT-01，Version50）：仅原地优化记忆健康检查的temporal sibling统计；重复scope签名复用去重ID时间索引，单次签名直接计数，保留严格新于/同刻、自身ID排除、多scope去重、原序和自定义list语义。SQL快照/更正/状态/依赖/矛盾/预算/接口不改，无持久缓存或旧实现副本。冻结六项合同和producer→独立verify_experiment_result→发布门禁，单baseline/fixed/independent共享900秒、180/命令、15/CLI、每布局5样本，不重置旧额度。验收为36方法、三种1600条真实SQLite合成布局及schema/完整输出/只读身份，性能门槛固定<=.70/.70/1.25；独立代码/原始数据接受后普通发布，四原生矩阵另核。[方案和证据](../../results/memory-sibling-count-20261027/report.md)限定管理CPU，不替代模型质量/总费用/真实宿主；19正文及原系统级未决不变。
 
 ## Progress
 
@@ -606,3 +608,5 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 - 2026-10-27续接MIGRATE-FENCE-01：迁移旧状态扫描与需求解析不一致，修前81项中11失败/59KeyError子案例（四新方法，非70缺陷）；8个成功迁移漏出的是derived详情尾部证据，原始归档字节仍保留。按Version49原地复用公共规则，固定测试修后81/独审81通过、无skip，原始失败/分类/来源见[证据](../../results/migrate-fence-20261027/report.md)。无真实项目迁移、无旧实现副本/额度重置；四原生矩阵和普通发布回读另核，历史登记unknown不授信。系统级真实宿主/输入/质量/全部用量费用/跨库等未决继续open，不计性能或整轮完成。
 
 - 2026-10-27续接：新增2610.25516v1正文§§1–7/四表/六图注精读及独立四模块源码复核，[记录](../../results/compaction-room-reading-20261027/reading.md)保留数值待澄清项与压缩暂缓条件。近期可恢复正文18→19；既有显示/单turn计量接口不冒充真实会话预算、完整质量或费用验收。无生产改动、测试或模型调用，Plan49及既有未决/耗尽额度不变，不计性能提升或整轮完成。独立记录为源码/报告复核，不是受信运行时认证；历史登记unknown，普通发布回读另核。
+
+- 2026-10-27续接MEMORY-RECONCILE-COUNT-01：保留同条件效率基线，修前/修后/独立各36项全部通过、无skip；三种1600条SQLite合成布局每组5样本，重复scope统计原地复用且全部输出/schema/只读身份一致。[原始数据/独审](../../results/memory-sibling-count-20261027/report.md)支持有限管理CPU降时，单次签名控制不作归因收益。首审返修、全部慢样本保留，运行时无可信provider仍pending；原生CI和普通发布另核。无模型/token/费用或系统轮次完成主张，19正文和旧未决/额度不变。

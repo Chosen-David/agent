@@ -7,6 +7,7 @@ Entry content and dependency IDs never change; corrections create new revisions.
 from __future__ import annotations
 
 import argparse
+from bisect import bisect_right
 from contextlib import contextmanager
 import hashlib
 import json
@@ -600,16 +601,38 @@ class MemoryLedger:
         for entry in active:
             for s in entry['scope']:
                 scope_groups.setdefault(s, []).append(entry)
-        potentially_obsolete = []
-        for entry in active:
-            if not entry['scope']:
+        signature_groups = {}
+        for position, entry in enumerate(active):
+            if entry['scope']:
+                signature_groups.setdefault(frozenset(entry['scope']), []).append(position)
+        newer_counts = [0] * len(active)
+        for scopes, positions in signature_groups.items():
+            if len(positions) == 1:
+                position = positions[0]
+                entry = active[position]
+                newer_counts[position] = len({e['id'] for s in scopes for e in scope_groups[s]
+                                              if e['id'] != entry['id'] and
+                                              e['created_at'] > entry['created_at']})
                 continue
-            newer_siblings = {e['id'] for s in entry['scope'] for e in scope_groups.get(s, [])
-                              if e['id'] != entry['id'] and e['created_at'] > entry['created_at']}
-            if newer_siblings:
+            # Reuse one union per signature, retaining custom-list ID deduplication.
+            latest = {}
+            for s in scopes:
+                for entry in scope_groups[s]:
+                    eid, timestamp = entry['id'], entry['created_at']
+                    if eid not in latest or timestamp > latest[eid]:
+                        latest[eid] = timestamp
+            timestamps = sorted(latest.values())
+            for position in positions:
+                entry = active[position]
+                count = len(timestamps) - bisect_right(timestamps, entry['created_at'])
+                # A custom list can repeat this ID at a later timestamp.
+                newer_counts[position] = count - (latest[entry['id']] > entry['created_at'])
+        potentially_obsolete = []
+        for entry, count in zip(active, newer_counts):
+            if count:
                 potentially_obsolete.append({
                     'id': entry['id'], 'scope': entry['scope'],
-                    'newer_sibling_count': len(newer_siblings),
+                    'newer_sibling_count': count,
                     'signal': 'newer_sibling_in_scope'})
 
         contradictions = []

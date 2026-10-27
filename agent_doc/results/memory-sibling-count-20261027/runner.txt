@@ -1,0 +1,46 @@
+"""One baseline/fixed/independent admission per frozen900s lineage."""
+import json
+import os
+from pathlib import Path
+import subprocess
+import sys
+import time
+
+ROOT = Path(__file__).resolve().parents[2]
+HERE = Path(__file__).resolve().parent
+label = sys.argv[1]
+assert label in ('baseline', 'fixed', 'independent')
+started_path = HERE / 'started.json'
+if label == 'baseline':
+    fd = os.open(started_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    with os.fdopen(fd, 'w') as f: json.dump({'started': time.time(), 'max_seconds': 900}, f)
+started = json.loads(started_path.read_text())['started']
+remaining = 900 - (time.time() - started)
+assert remaining > 0, 'shared branch budget exhausted'
+fd = os.open(HERE / (label + '.admitted'), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+os.close(fd)
+modules = ['test_memory_sibling_counts', 'test_memory_reconcile_scopes',
+           'test_memory_reconcile_snapshot', 'test_memory_output', 'test_project_memory']
+child = '''import importlib.util,json,sys,unittest
+from pathlib import Path
+sys.path.insert(0,'tests')
+suite=unittest.TestSuite()
+for m in MODULES: suite.addTests(unittest.defaultTestLoader.loadTestsFromName(m))
+r=unittest.TextTestRunner(verbosity=2).run(suite)
+print(json.dumps({'methods':r.testsRun,'failures':len(r.failures),'errors':len(r.errors),'skips':len(r.skipped)}),flush=True)
+if not r.wasSuccessful():sys.exit(1)
+spec=importlib.util.spec_from_file_location('frozen_bench',BENCH)
+b=importlib.util.module_from_spec(spec);spec.loader.exec_module(b);b.run(OUTPUT)
+'''.replace('MODULES', repr(modules)).replace('BENCH', repr(str(HERE / 'benchmark.py'))).replace('OUTPUT', repr(str(HERE / (label + '-bench.json'))))
+then = time.time()
+with (HERE / (label + '.log')).open('wb') as log:
+    try:
+        r = subprocess.run([sys.executable, '-c', child], cwd=ROOT, stdout=log, stderr=subprocess.STDOUT,
+                           timeout=min(180, remaining))
+        status = {'exit_code': r.returncode}
+    except subprocess.TimeoutExpired:
+        status = {'exit_code': None, 'timeout': True}
+status.update(label=label, elapsed_seconds=time.time()-then, branch_elapsed_seconds=time.time()-started)
+(HERE / (label + '.json')).write_text(json.dumps(status, indent=2)+'\n')
+print(json.dumps(status))
+sys.exit(0 if status['exit_code']==0 else 1)
