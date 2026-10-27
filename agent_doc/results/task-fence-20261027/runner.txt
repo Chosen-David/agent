@@ -1,0 +1,31 @@
+import hashlib,json,os,subprocess,sys,time
+from pathlib import Path
+root=Path(__file__).resolve().parents[2]
+r=Path(__file__).resolve().parent
+label=sys.argv[1]
+if label not in ('baseline','fixed','independent'):raise SystemExit('unknown label')
+log=r/(label+'.log');meta=r/(label+'.json')
+if log.exists() or meta.exists():raise SystemExit('label already used; no retry')
+budget=r/'budget.json'
+if not budget.exists():
+    if label!='baseline':raise SystemExit('baseline required')
+    budget.write_text(json.dumps({'started':time.time(),'max_seconds':900}))
+b=json.loads(budget.read_text());remaining=900-(time.time()-b['started'])
+if remaining<=0:raise SystemExit('branch elapsed; no reset')
+files=['agent_runtime/project_docs.py','agent_runtime/task_context.py','tests/test_task_fence.py']
+def hashes():return {f:hashlib.sha256((root/f).read_bytes()).hexdigest() for f in files}
+modules=['test_task_fence','test_task_context','test_task_manifest','test_task_source_snapshot','test_task_navigation','test_task_navigation_regressions','test_repository_task_integration','test_project_docs_acceptance','test_project_docs_init','test_advice_fence']
+cmd=[sys.executable,'-B','-m','unittest','-v',*modules]
+start=time.time();before=hashes()
+with log.open('xb') as out:
+    try:
+        p=subprocess.run(cmd,cwd=root,stdout=out,stderr=subprocess.STDOUT,
+            env=dict(os.environ,PYTHONPATH=str(root/'tests')+os.pathsep+str(root)),timeout=min(180,remaining))
+        code=p.returncode
+    except subprocess.TimeoutExpired:code='timeout'
+after=hashes()
+value={'label':label,'command':cmd,'cwd':str(root),'exit_code':code,'elapsed_seconds':time.time()-start,
+       'branch_elapsed_seconds':time.time()-b['started'],'before':before,'after':after,
+       'stable':before==after,'log_sha256':hashlib.sha256(log.read_bytes()).hexdigest()}
+meta.write_text(json.dumps(value,indent=2)+'\n')
+print(json.dumps(value));print(log.read_text()[-700:])

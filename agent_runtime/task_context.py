@@ -4,7 +4,7 @@ import json
 import re
 from .advice_poll import _root
 from .maintenance_observer import read_bound
-from .project_docs import TASK_PATTERN, parse_requirements, physical_lines
+from .project_docs import TASK_PATTERN, parse_requirements, physical_lines, _fence_transition
 
 
 def task_view(root, task_ids, expected_sha256, *, max_chars=20000):
@@ -26,14 +26,8 @@ def task_view(root, task_ids, expected_sha256, *, max_chars=20000):
         raise ValueError('unknown task ID; no silent omission')
     kept, numbers, fence = [], [], None
     for number, line in enumerate(physical_lines(text, keepends=True), 1):
-        marker = re.match(r'(`{3,}|~{3,})', line.lstrip())
+        fence, marker = _fence_transition(line.rstrip('\r\n'), fence)
         if marker:
-            token = marker[1]
-            if fence is None:
-                fence = token
-            elif (token[0] == fence[0] and len(token) >= len(fence)
-                  and not line.lstrip()[len(token):].strip()):
-                fence = None
             match = None
         else:
             match = TASK_PATTERN.match(line) if fence is None else None

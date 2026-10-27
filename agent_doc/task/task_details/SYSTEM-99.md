@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 46
+Version: 47
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -176,6 +176,8 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 阶段AA（ADVICE-FENCE-01，Version45）：按[独审方案](../../results/advice-fence-20261027/plan.md)固定建议字面H2围栏反例与拒绝路径；仅提取既有公共围栏状态规则供两消费者复用，保留公共消费者原行为与建议未闭合/注释拒绝。主控一次修前/修后与独立一次定向回归、原生四矩阵分别核查，保存失败与限定范围后普通发布；不扩成完整Markdown解析、目录迁移或性能/模型质量验收，不重置旧受阻门禁。
 
 阶段AB（COMMUNICATION-UTF8-01，Version46）：按[独审方案](../../results/communication-utf8-20261027/plan.md)固定native通信CLI在cp936/ascii的完整消息、消费/context和Unicode错误输出；保留消费依据先于显示持久化、ACK独立与原退出协议。只复用现有UTF8配置，两行生产变化；一次修前/修后及独立一次定向回归，原始失败保留后普通发布，四原生矩阵另核。此入口不同于先前五context-wire及两validationCLI，不重置其额度或旧fullsuite/PID/alias/role/model门禁；无模型/性能或整轮完成主张。
+
+阶段AC（TASK-FENCE-01）：canonical/legacy任务摄取与只读视图复用现有top-level围栏状态规则；只替换parse_requirements/task_view两处旧lstrip/strip状态转移，公共helper/outside_fences/advice字节不改。保留字面任务/日期/详情规则、有效未闭合围栏EOF语义、非任务全文/行号、SHA快照、完整预算及审核授权门禁，不扩展完整Markdown容器/HTML解析。独审冻结七方法及十模块后，单baseline/fixed/independent共享900秒、单命令180秒、CLI15秒，无重试或旧额度重置；legacy完整任务集合、canonical快照/prepare与原生CLI只生成受保护占位草稿，不启动作业。保存修前失败，经独立代码/原始数据验收后普通发布，原生四矩阵另核；准确范围见[阶段方案](../../results/task-fence-20261027/plan.md)。同批质量/总成本/真实宿主与既有未决门禁不变，无性能或整轮完成主张。
 
 ## Progress
 
@@ -592,3 +594,5 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 - 2026-10-27续接COMMUNICATION-UTF8-01：真实cp936/ascii子进程在消费依据已保存后因Unicode输出崩溃，修前80项中24子案例普通失败（3新方法，非24独立缺陷）；错误JSON也丢失原受控协议。只加既有UTF8配置import/main调用，原CLI/DB/ACK/预算语义不改。修后80/独审80通过且无skip，原始失败/代码/数据复核见[证据](../../results/communication-utf8-20261027/report.md)；目录登记unknown不授信。原生四矩阵/普通发布回读另核，同SYSTEM99未决、旧门禁和17正文计数不变，不计整轮完成或性能收益。
 
 - 2026-10-27续接：新增2609.36526v1正文及选定附录精读、独立七域/源码复核，[记录](../../results/counterfactual-reading-20261027/reading.md)保留表间数值疑点与初稿阅读范围返修。近期可恢复正文17→18，复读不计数；任务视图/记忆reconcile仅静态审查，TASK两处旧围栏规则为待复现候选，未确认新缺陷。无生产/测试/模型或性能新证据；Plan46、原系统级未决与旧额度不变，不计整轮完成。历史登记unknown不授信；普通发布/回读另核。
+
+- 2026-10-27续接TASK-FENCE-01：旧围栏逻辑使legacy prepare静默遗漏真实任务、canonical同输入因孤立详情拒绝草稿，非法关闭符还提升示例任务/日期。按Version47复用公共规则，无旧实现副本；修前140项中53失败/176受控错误子案例（六新方法，非229缺陷），同测试修后140/独立140通过且无skip。[证据](../../results/task-fence-20261027/report.md)保留原始失败/分类及独审，登记unknown不授信。原生四矩阵与普通发布回读另核；同SYSTEM99仍未完成，18正文计数/旧额度/真实质量与总成本缺口不变，不计性能收益或新轮。

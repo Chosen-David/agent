@@ -161,14 +161,8 @@ def parse_requirements(text, *, canonical=False):
     """Stable IDs outside fences; canonical records bind date and detail path."""
     items, fence, date = [], None, None
     for line in physical_lines(text):
-        marker = re.match(r'(`{3,}|~{3,})', line.lstrip())
+        fence, marker = _fence_transition(line, fence)
         if marker:
-            token = marker.group(1)
-            if fence is None:
-                fence = token
-            elif (token[0] == fence[0] and len(token) >= len(fence)
-                  and not line.lstrip()[len(token):].strip()):
-                fence = None
             continue
         if fence:
             continue
