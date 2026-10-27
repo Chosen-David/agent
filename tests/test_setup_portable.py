@@ -383,14 +383,17 @@ class PortableSetup(unittest.TestCase):
         previous = setup.skill_snapshot(skill)
         (self.source / 'update.md').write_bytes(b'new generation')
         expected = setup.skill_snapshot(self.source, follow_directory_links=True)
-        rename = Path.rename
+        publisher = getattr(setup, '_publish_skill', None)
+        rename = publisher or Path.rename
 
         def fail_publish(path, target):
-            if path.name == 'new' and Path(target) == skill:
+            if path.name in ('new', 'ready') and Path(target) == skill:
                 raise OSError('injected publish failure')
             return rename(path, target)
 
-        with patch.object(Path, 'rename', new=fail_publish):
+        boundary = (patch.object(setup, '_publish_skill', new=fail_publish) if publisher
+                    else patch.object(Path, 'rename', new=fail_publish))
+        with boundary:
             with self.assertRaisesRegex(OSError, 'publish failure'):
                 setup.replace_skill_copy(skill, self.source, previous, expected)
         self.assertEqual(setup.skill_snapshot(skill), previous)

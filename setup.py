@@ -16,6 +16,7 @@ from typing import NamedTuple
 import tempfile
 
 from agent_runtime.external_json import load_json
+from agent_runtime.knowledge_ingest import _publish_entry as _publish_skill
 from agent_runtime.model_routing import EMPTY_INVENTORY, routing_report, validate_inventory, validate_policy
 
 REPO = Path(__file__).resolve().parent
@@ -360,6 +361,16 @@ def copy_skill(source, staged, *, skill_limits=None, budget=None):
     shutil.copystat(source, staged)
 
 
+class SkillCopyRecoveryError(ValueError):
+    """A failed rollback retains the original copy at an explicit recovery path."""
+    def __init__(self, recovery_path, publication_error, rollback_error):
+        self.recovery_path = recovery_path
+        self.publication_error = publication_error
+        self.rollback_error = rollback_error
+        super().__init__(f'skill replacement blocked; previous copy retained at {recovery_path}; '
+                         f'publication: {publication_error}; rollback: {rollback_error}')
+
+
 def replace_skill_copy(path, source, previous, expected, *, skill_limits=None,
                        copy_budget=None, stage_budget=None, previous_budget=None):
     copy_budget = bound_budget(skill_limits, copy_budget)
@@ -367,23 +378,38 @@ def replace_skill_copy(path, source, previous, expected, *, skill_limits=None,
     stage_budget = bound_budget(limits, stage_budget)
     previous_budget = bound_budget(limits, previous_budget)
     path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(dir=path.parent, prefix='.skill-') as stage:
-        staged = Path(stage) / 'new'
+    stage = Path(tempfile.mkdtemp(dir=path.parent, prefix='.skill-'))
+    retained = False
+    try:
+        staged = stage / 'new'
         copy_skill(source, staged, skill_limits=limits, budget=copy_budget)
         # Bind the materialized generation, even if the source changed back.
         if skill_snapshot(staged, skill_limits=limits, budget=stage_budget) != expected:
             raise ValueError('skill source changed during copy: ' + str(source))
-        backup = Path(stage) / 'previous'
+        ready = stage / 'ready'
+        # Exercise native no-replace support before moving the original copy.
+        _publish_skill(staged, ready)
+        backup = stage / 'previous'
         if os.path.lexists(path):
             if path.is_symlink() or skill_snapshot(path, skill_limits=limits, budget=previous_budget) != previous:
                 raise ValueError('preserving locally edited skill: ' + str(path))
             path.rename(backup)
         try:
-            staged.rename(path)
-        except OSError:
+            _publish_skill(ready, path)
+        except (OSError, ValueError) as publication_error:
             if backup.exists():
-                backup.rename(path)
+                try:
+                    _publish_skill(backup, path)
+                except (OSError, ValueError) as rollback_error:
+                    retained = True
+                    raise SkillCopyRecoveryError(backup, publication_error, rollback_error) from publication_error
             raise
+    finally:
+        if not retained:
+            # Keep TemporaryDirectory's portable read-only cleanup behavior.
+            # Its unique trash directory owns the otherwise absent destination.
+            with tempfile.TemporaryDirectory(dir=path.parent, prefix='.skill-cleanup-') as trash:
+                os.rename(stage, Path(trash) / 'stage')
 
 
 def project_document_layout(target):

@@ -1,0 +1,153 @@
+{
+  "schema_version": "repair-proposal/v1",
+  "task": "SYSTEM-99",
+  "proposed_plan_version": 52,
+  "head": "2cdf16fc06ef1697163a6207cf841aff4a6dab75",
+  "scope": "Bounded postbackup target-preservation repair in setup.replace_skill_copy, reusing existing knowledge_ingest._publish_entry; safe no-clobber rollback with explicitly retained oldbackup on conflict; actual install lifecycle regression. No full installer transaction/hostileFS/real model claim.",
+  "authorization": "Current user authorizes in-place reliability fix+necessaryregressions+ordinarymain publication; human guide allreadonly.",
+  "prior_results": {
+    "record": "agent_doc/results/copy-target-diagnosis-20261027/record.json",
+    "sha256": "ee17558a5c46899be01a666935b9089b22a7a356137c24d5d05838cf856156ae",
+    "decision": "Reuse reviewed negative witnesses as problem evidence only. Their2reviews and producer/independent1 consumed; do not rerun old4. New expanded repair acceptance includes before/after lifecycle/recovery behavior; no reset COPYRESOURCE/STAGE/fullsuite/PID/rolecapture."
+  },
+  "methods": [
+    "Import existing knowledge_ingest._publish_entry into setup as _publish_skill; it remains sole native no-replace implementation, existing knowledge/standalone behavior unchanged. Cross-domain privateutility coupling acknowledged; extracting sharedmodule rejected here to avoid broadening accepted ABI/Skill packaging surface.",
+    "Use explicit mkdtemp + try/finally scopedcleanup. After existing copy+stagefingerprint validation, publish staged new into private stage/ready via sameprimitive as native capability check before moving oldtarget. Existing pre-move fingerprint and resourceguards remain. This probes currentfilesystem/interface but does not guarantee latercalls cannot fail.",
+    "Move previous ownedtarget into stage/previous asbefore; publishready with no-replace. On OSError or ValueError publicationfailure, attempt no-replace rollback ifbackup exists. Successful rollback rethrows originalpublicationerror. If rollbackrefuses/fails, retainwholeownedstage including exactoldbackup/newcandidate, and raise SkillCopyRecoveryError(ValueError) with recovery_path and original/rollbackerrors; CLIexistingcontrolledblock exit2. No automatic cleanup or reinstall of retainedbackup. Normal success/failurebeforeoldmove/uncontendedrollback cleanup asbefore.",
+    "Keep target-before-backup race/parent/substitution/cleanupidentity/hostilewriter/globalmultifileatomicity explicitlyopen. Recovery backup is exceptional data preservation, not an active legacyimplementation. No agent_doc migration/schema change or newlockservice."
+  ],
+  "candidates": [
+    {
+      "choice": "Reuse existing nativeprimitive",
+      "decision": "chosen",
+      "tradeoff": "singleimplementation/minimalproductionfootprint; existing KnowledgeError diagnostics include import context unless wrapped at installerboundary."
+    },
+    {
+      "choice": "Extract genericsharedmodule",
+      "decision": "defer",
+      "tradeoff": "cleaner layering but touches prior knowledge ABItests and standaloneclosure without necessity forthisboundedfix."
+    },
+    {
+      "choice": "exists-check+rename or advisorylock",
+      "decision": "reject",
+      "tradeoff": "Does not enforce preservation against writer atsyscallboundary."
+    }
+  ],
+  "allowed_writes": [
+    "setup.py",
+    "tests/test_setup_publication.py",
+    "tests/test_setup_portable.py",
+    ".github/workflows/portable-install.yml",
+    "agent_doc/task/task_details/SYSTEM-99.md",
+    "agent_doc/results/copy-target-fix-20261027/",
+    ".agent-runs/copy-target-fix-2103/"
+  ],
+  "test_plan": {
+    "new_methods": [
+      "publication claimant empty/nonempty/file preserveidentity+bytes and exactoldbackup retained",
+      "rollback EIO with same3claimants preservesboth claimant and oldbackup/newcandidate; typedrecoveryerror+originalcause",
+      "normalreplacement cleansprivate stages",
+      "uncontendedEIOrollback restores oldidentity+fingerprint andcleansstage",
+      "privatecapability refusal leavesoldunmoved/copiesclean (baseline-onlyskip ifnewhelperabsent)",
+      "actual installer failed-update→check needs_setup→manualownedfixture restore→retry→checkconfigured→uninstall; unchangedoriginalmanifest and claimant",
+      "actual CLI fullcatalog copy install→check→repeat→uninstall with explicit EMPTY_INVENTORY; no modeldiscovery; percommand30s"
+    ],
+    "existing_fixture_alignment": "test_copy_stage_publish_failure_restores_previous_copy patch sameactualpublication boundary dynamically (oldPath.rename/newsetup._publish_skill) with exacttarget andcandidate name new/ready. Assertionsremain.",
+    "suite": [
+      "tests.test_setup_publication",
+      "tests.test_setup_portable",
+      "tests.test_setup_limits",
+      "tests.test_setup",
+      "tests.test_knowledge_ingest_publication",
+      "tests.test_knowledge_read_boundary"
+    ],
+    "runner": "One unittest subprocess perphase, suite fixed; env removes ANTHROPIC_BASE_URL only to preventgatewaydiscovery. No fullsuite/nativebackend probes. Syncreference check once fixed andonce independent.",
+    "native_ci": "Add newmodule step toexisting4matrix andmacOS (step.env TMPDIR runner.temp permitted); retain alloldchecks. Baselineexpected failures are Linuxfocused beforeacceptance; fixedmodule executes everynewcase all5jobs, document existingplatformskips."
+  },
+  "resource_budget": {
+    "plan_review_max_cycles": 2,
+    "baseline_invocations": 1,
+    "fixed_invocations": 1,
+    "independent_invocations": 1,
+    "command_timeout_seconds": 120,
+    "cli_child_timeout_seconds": 30,
+    "shared_deadline_epoch": 1793108435.3530695,
+    "ci_publications": 1,
+    "no_retry": true,
+    "on_failure": "Preserve evidence and stop dependent branch; no newphase undernewID to reset spent limits."
+  },
+  "document_refs": {
+    "AGENTS.md": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+    "agent_doc/task/TASK.md": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+    "agent_doc/task/task_details/SYSTEM-99.md": "f1ede2904b87f83f51b2f7b1aa752f2974a484f46bc47e874f9b2d0ae17ad2f8",
+    "agent_doc/guide/GUIDE.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_doc/guide/README.md": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261",
+    "agent_doc/task/task_details/COPY-STAGE-01.md": "bdc1e581538d693add03c2ab41c59d458763f0b7fc48cb62868da7b09a8bc6a7",
+    "agent_doc/task/task_details/COPY-RESOURCE-01.md": "68fccc8526d835ec74dd368664596e07cd71b7b96a50a5ec753c59130aaaaa73"
+  },
+  "sources": {
+    "setup.py": "d5273177d6bb1dc6dcdc63168505367b6114bb18919c27c2945c297e305cbfcd",
+    "agent_runtime/knowledge_ingest.py": "5349e9c44f3be03d1a7dbc291562dfe98a71f1c532d302c49a8ffd5aa381e039",
+    "tests/test_setup_portable.py": "9e3ccfd3d65c93326e625d1de86e4a41fc46306cba7090e066ae9f1ca67aded9",
+    ".github/workflows/portable-install.yml": "c3405d3931999e5c2d4ef3bd1467ec095ffb25f27e4d6220faf3ebd044da1013"
+  },
+  "dag": [
+    {
+      "id": "produce",
+      "owner": "root",
+      "produces_data": true,
+      "task_type": "experiment",
+      "experiment_result": {
+        "result_id": "copy-target-fix-20261027",
+        "producer_task_id": "produce",
+        "producer_actor": "root",
+        "manifest_path": "agent_doc/results/copy-target-fix-20261027/manifest.json",
+        "validation_plan": {
+          "path": ".agent-runs/copy-target-fix-2103/validation-plan.json",
+          "sha256": "d705c253a4908702e26ad3a3249b2763861e00766d6b21c1549fc6458a20e37b"
+        },
+        "scope": "Bounded postbackup target-preservation repair in setup.replace_skill_copy, reusing existing knowledge_ingest._publish_entry; safe no-clobber rollback with explicitly retained oldbackup on conflict; actual install lifecycle regression. No full installer transaction/hostileFS/real model claim."
+      }
+    },
+    {
+      "id": "verify",
+      "owner": "fresh-reviewer",
+      "action": "verify_experiment_result",
+      "depends_on": [
+        "produce"
+      ],
+      "result_validation": {
+        "result_id": "copy-target-fix-20261027",
+        "producer_task_id": "produce",
+        "producer_actor": "root",
+        "manifest_path": "agent_doc/results/copy-target-fix-20261027/manifest.json",
+        "validation_plan": {
+          "path": ".agent-runs/copy-target-fix-2103/validation-plan.json",
+          "sha256": "d705c253a4908702e26ad3a3249b2763861e00766d6b21c1549fc6458a20e37b"
+        },
+        "scope": "Bounded postbackup target-preservation repair in setup.replace_skill_copy, reusing existing knowledge_ingest._publish_entry; safe no-clobber rollback with explicitly retained oldbackup on conflict; actual install lifecycle regression. No full installer transaction/hostileFS/real model claim."
+      }
+    },
+    {
+      "id": "report",
+      "owner": "root",
+      "depends_on": [
+        "verify"
+      ],
+      "required_result_refs": [
+        {
+          "result_id": "copy-target-fix-20261027",
+          "producer_task_id": "produce",
+          "producer_actor": "root",
+          "manifest_path": "agent_doc/results/copy-target-fix-20261027/manifest.json",
+          "validation_plan": {
+            "path": ".agent-runs/copy-target-fix-2103/validation-plan.json",
+            "sha256": "d705c253a4908702e26ad3a3249b2763861e00766d6b21c1549fc6458a20e37b"
+          },
+          "scope": "Bounded postbackup target-preservation repair in setup.replace_skill_copy, reusing existing knowledge_ingest._publish_entry; safe no-clobber rollback with explicitly retained oldbackup on conflict; actual install lifecycle regression. No full installer transaction/hostileFS/real model claim."
+        }
+      ]
+    }
+  ],
+  "trust": "Descriptive offlineDAG notdeployed or validate_result_plan certified. Actualfreshreviewer source/data acceptance required; native provider/ReviewSession absent remainsunknown. Reviewrolemodelusageunknown; no evaluatedtaskmodelcalls."
+}
