@@ -1,0 +1,27 @@
+{
+  "task": "SYSTEM-99",
+  "proposed_version": 53,
+  "scope": "MANIFEST-SHAPE-01 offline installer malformed-container CLI correctness, not old recovery re-execution or whole-batch acceptance",
+  "intent": "Before metadata consumers/discovery/writes, reject nonobject manifest, present nonmapping files/links/skill_copies and present invalid model inventory. check/doctor return existing needs_setup JSON; mutating CLI exits2 setup blocked. Preserve all fixture paths/bytes/links on refusal.",
+  "implementation": "Add single setup.py validation helper accepting object, optional files/links/skill_copies iff dict, present model_inventory validated by existing validate_inventory; no new schema/legacy implementation. Use immediately after JSON load in install/check/uninstall/update_model_inventory; keep uninstall required mapping/value preflight and updater strict fingerprint/identity checks. Missing file install remains {}, absent optional inventory/managed hash remains supported. check fallback is diagnostic only; do not persist fallback or grant ownership.",
+  "reference_boundary": "Four draft test methods:4 nonobject bodies*4realCLI operations;3mapping fields*4badtypes*4operations;3badinventories*4commands; real valid legacy install/check/doctor/uninstall control. Each bad input written only in owned installed fixture, snapshot before each command includes directory/link/file bytes; env removes gateway/TMUX; child cwd separatecanonicalownedroot, UTF8, timeout20s. No provider or actual tmux.",
+  "tests": "Draft test_setup_manifest.py frozen before baseline, copy byte-identical to tests/test_setup_manifest.py after approval. Exact command: python -B -m unittest tests.test_setup_manifest tests.test_setup tests.test_setup_portable tests.test_setup_limits tests.test_install_recovery tests.test_model_routing tests.test_setup_doctor tests.test_model_discovery_setup -v. baseline/fixed/independent once each, command120sec, overall1200sec, max2planreviews. Env removes ANTHROPIC_BASE_URL and TMUX. No performance timer claim.",
+  "prior_results": "Two formal searches preserved, second314scanned partialfalse with missing-record errors retained; target install-recovery-1756 unregistered. Read actual old plan-review-v2 and final result-review: top-level check fallback accepted; nested corrupt metadata/install malformed paths explicitly excluded. Reuse as design constraint only, no old empirical count or execution reused. Prior test modules run here only as impact regressions for changed shared caller validator; do not replay old experiment scripts/old budgets.",
+  "acceptance": "Retain baseline failures; fixed+independent suite allpass; independent source and rawdata review, exactfixturebytes; no assertion weakening. Existing lifecycle/limits/copy ownership/doctor/updater semantics retained. CI adds new module to existing install matrix and macOS step; publish only exact owned paths after fresh fetch/nonforce CAS/readback. Native completion separate from local acceptance.",
+  "risk": "No manifest authenticity or comprehensive semantic/path/hash validation claim; no automatic repair/rewrite of bad metadata, no duplicate production path. Last-read->write/hostileFS/multifiletransaction remainopen. Host/provider/fullmodelquality/allactorcost and old exhausted gates unchanged. No new paper credit, samebatch21.",
+  "guide": "Whole guide read-only, unchanged AGENTS/TASK/guide hashes from priorcheckpoint; only main writes setup/tests/workflow/stable SYSTEM99 plan+progress and owned result packet. No migration or competing tasklist.",
+  "resources": {
+    "started": 1793113333.8707697,
+    "deadline": 1793114533.8707707,
+    "review_max": 2,
+    "baseline_max": 1,
+    "fixed_max": 1,
+    "independent_max": 1,
+    "command_seconds": 120,
+    "cli_seconds": 20,
+    "ci_publications": 1,
+    "old_budgets": "unchanged consumed; this is a distinct malformed-container acceptance delta, not rerun of INSTALL-RECOVERY-01"
+  },
+  "draft_test_sha256": "f1de03b819dff7dd1909e52d600c5c955453b264b84718921c86ee77510e344d",
+  "source_sha256": "f1d87894a7d6de6f87007443a0bfb4fe50dc0005108eeec386f53343ad2deefc"
+}

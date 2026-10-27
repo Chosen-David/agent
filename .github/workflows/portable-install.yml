@@ -33,6 +33,7 @@ jobs:
       - run: python -B -m unittest discover -s tests -p test_setup_portable.py -v
       - run: python -B -m unittest discover -s tests -p test_setup_limits.py -v
       - run: python -B -m unittest discover -s tests -p test_setup_publication.py -v
+      - run: python -B -m unittest discover -s tests -p test_setup_manifest.py -v
       - run: python -B -m unittest discover -s tests -p test_role_process.py -v
       - run: python -B -m unittest discover -s tests -p test_install_profiles.py -v
       - run: python -B -m unittest discover -s tests -p test_memory_output.py -v
@@ -67,6 +68,9 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -B -m unittest discover -s tests -p test_setup_publication.py -v
+        env:
+          TMPDIR: ${{ runner.temp }}
+      - run: python -B -m unittest discover -s tests -p test_setup_manifest.py -v
         env:
           TMPDIR: ${{ runner.temp }}
       - run: python -B -m unittest discover -s tests -p 'test_knowledge_ingest*.py' -v

@@ -1,0 +1,47 @@
+import hashlib
+import json
+import os
+from pathlib import Path
+import platform
+import subprocess
+import sys
+import time
+
+run = Path(__file__).resolve().parent
+root = run.parents[1]
+phase = sys.argv[1]
+if phase not in ('baseline', 'fixed', 'independent'):
+    raise SystemExit('unknown phase')
+budget = json.loads((run / 'budget.json').read_text())
+remaining = budget['deadline'] - time.time()
+if remaining <= 0:
+    raise SystemExit('shared deadline expired')
+with (run / (phase + '.started')).open('x') as stream:
+    stream.write(str(time.time()))
+env = dict(os.environ)
+env.pop('ANTHROPIC_BASE_URL', None)
+env.pop('TMUX', None)
+command = [sys.executable, '-B', '-m', 'unittest',
+           'tests.test_setup_manifest', 'tests.test_setup',
+           'tests.test_setup_portable', 'tests.test_setup_limits',
+           'tests.test_install_recovery', 'tests.test_model_routing',
+           'tests.test_setup_doctor', 'tests.test_model_discovery_setup', '-v']
+refs = ['setup.py', 'tests/test_setup_manifest.py', 'agent_runtime/model_routing.py']
+hashes = {name: hashlib.sha256((root / name).read_bytes()).hexdigest() for name in refs}
+meta = {'phase': phase, 'argv': command, 'cwd': str(root),
+        'python': sys.version, 'platform': platform.platform(), 'source_hashes': hashes,
+        'environment': 'inherited except ANTHROPIC_BASE_URL/TMUX removed; no live gateway/tmux',
+        'started': time.time(), 'deadline': budget['deadline'],
+        'note': 'elapsed is bookkeeping, no performance metric'}
+with (run / (phase + '.stdout')).open('wb') as out, (run / (phase + '.stderr')).open('wb') as err:
+    try:
+        result = subprocess.run(command, cwd=root, env=env, stdout=out, stderr=err,
+                                timeout=min(120, remaining), check=False)
+        meta['exit_code'] = result.returncode
+    except subprocess.TimeoutExpired:
+        meta['timed_out'] = True
+meta['finished'] = time.time()
+meta['hashes_unchanged'] = all(hashlib.sha256((root / name).read_bytes()).hexdigest() == value
+                               for name, value in hashes.items())
+(run / (phase + '.json')).write_text(json.dumps(meta, indent=2) + '\n')
+print(json.dumps(meta))

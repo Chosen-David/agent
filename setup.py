@@ -458,13 +458,24 @@ def _auto_discover_inventory(target):
         return None
 
 
+def validate_installation_manifest(value):
+    if (not isinstance(value, dict)
+            or any(field in value and not isinstance(value[field], dict)
+                   for field in ('files', 'links', 'skill_copies'))):
+        raise ValueError('invalid installation manifest')
+    if 'model_inventory' in value:
+        validate_inventory(value['model_inventory'])
+    return value
+
+
 def install(target, *, model_inventory=None, copy_skills=False, skill_limits=None):
     limits = checked_limits(skill_limits if skill_limits is not None else SkillCopyLimits())
     old_budget, source_budget = SkillBudget(limits), SkillBudget(limits)
     copy_budget, stage_budget, previous_budget = (SkillBudget(limits) for _ in range(3))
     target = installation_root(target)
     manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
-    previous = json.loads(manifest_path.read_text(encoding='utf-8')) if manifest_path.exists() else {}
+    previous = validate_installation_manifest(
+        json.loads(manifest_path.read_text(encoding='utf-8'))) if manifest_path.exists() else {}
     if previous and previous.get('repository') != str(REPO):
         raise ValueError('target belongs to another checkout; uninstall that installation first')
     if model_inventory is not None:
@@ -553,9 +564,7 @@ def check(target, *, skill_limits=None):
     manifest = {}
     manifest_path = target / '.claude/agent-workflows/installation.json'
     try:
-        manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
-        if not isinstance(manifest, dict):
-            raise ValueError('invalid installation manifest')
+        manifest = validate_installation_manifest(json.loads(manifest_path.read_text(encoding='utf-8')))
         if manifest.get('repository') != str(REPO):
             errors.append('installation belongs to a different checkout')
         if manifest.get('project_root', str(target)) != str(target):
@@ -621,7 +630,7 @@ def uninstall(target, *, skill_limits=None):
     preflight_budget, removal_budget = SkillBudget(limits), SkillBudget(limits)
     target = installation_root(target)
     manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
-    manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
+    manifest = validate_installation_manifest(json.loads(manifest_path.read_text(encoding='utf-8')))
     # Check every removal loop's input before the first owned file is deleted.
     if (not isinstance(manifest, dict)
             or any(not isinstance(manifest.get(field), dict) for field in ('files', 'links'))
@@ -717,7 +726,7 @@ def discover(target, *, skill_limits=None):
 def update_model_inventory(target, inventory):
     """Update owned model files and return whether their contents changed."""
     manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
-    manifest = load_json(manifest_path)
+    manifest = validate_installation_manifest(load_json(manifest_path))
     if not isinstance(manifest, dict) or manifest.get('schema_version') != 1:
         raise ValueError('invalid installation manifest')
     if manifest.get('repository') != str(REPO):
