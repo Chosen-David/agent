@@ -1,0 +1,40 @@
+test_normal_replacement_control (__main__.TargetOwnershipDiagnosis.test_normal_replacement_control) ... ok
+test_publication_preserves_competing_empty_destination (__main__.TargetOwnershipDiagnosis.test_publication_preserves_competing_empty_destination) ... FAIL
+test_rollback_preserves_competing_empty_destination (__main__.TargetOwnershipDiagnosis.test_rollback_preserves_competing_empty_destination) ... FAIL
+test_uncontended_fault_restores_original_control (__main__.TargetOwnershipDiagnosis.test_uncontended_fault_restores_original_control) ... ok
+
+======================================================================
+FAIL: test_publication_preserves_competing_empty_destination (__main__.TargetOwnershipDiagnosis.test_publication_preserves_competing_empty_destination)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1459/.agent-runs/copy-target-diag-2000/probe.py", line 90, in test_publication_preserves_competing_empty_destination
+    self.schedule('publication-claim', claim=True)
+  File "/workspace/scratch/6416f20dc59b/agent-run-1459/.agent-runs/copy-target-diag-2000/probe.py", line 76, in schedule
+    self.assertIsNotNone(error, 'competing destination must refuse publication')
+AssertionError: unexpectedly None : competing destination must refuse publication
+
+======================================================================
+FAIL: test_rollback_preserves_competing_empty_destination (__main__.TargetOwnershipDiagnosis.test_rollback_preserves_competing_empty_destination)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1459/.agent-runs/copy-target-diag-2000/probe.py", line 93, in test_rollback_preserves_competing_empty_destination
+    self.schedule('rollback-claim', claim=True, fail=True)
+  File "/workspace/scratch/6416f20dc59b/agent-run-1459/.agent-runs/copy-target-diag-2000/probe.py", line 77, in schedule
+    self.assertEqual(state['final_identity'], state['claim_identity'],
+AssertionError: Lists differ: [27, 1583659] != [27, 1583665]
+
+First differing element 1:
+1583659
+1583665
+
+- [27, 1583659]
+?            -
+
++ [27, 1583665]
+?           +
+ : competing empty destination must keep its native identity
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.008s
+
+FAILED (failures=2)

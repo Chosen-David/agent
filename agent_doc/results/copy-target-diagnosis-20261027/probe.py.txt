@@ -1,0 +1,109 @@
+"""Four owned temporary-directory schedules; never a production installer patch."""
+import errno
+import hashlib
+import importlib.util
+import json
+from pathlib import Path
+import platform
+import sys
+import tempfile
+import unittest
+from unittest.mock import patch
+
+ROOT = Path(__file__).resolve().parents[2]
+SOURCE_SHA = 'd5273177d6bb1dc6dcdc63168505367b6114bb18919c27c2945c297e305cbfcd'
+assert hashlib.sha256((ROOT / 'setup.py').read_bytes()).hexdigest() == SOURCE_SHA
+sys.path.insert(0, str(ROOT))
+spec = importlib.util.spec_from_file_location('copy_target_bootstrap', ROOT / 'setup.py')
+setup = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(setup)
+OUTPUT = Path(sys.argv.pop(1)).resolve()
+OUTPUT.mkdir(exist_ok=False)
+STATES = []
+
+
+def identity(path):
+    if not path.exists():
+        return None
+    stat = path.stat()
+    return [stat.st_dev, stat.st_ino]
+
+
+def contents(path):
+    return {p.relative_to(path).as_posix(): p.read_text(encoding='utf-8')
+            for p in sorted(path.rglob('*')) if p.is_file()} if path.exists() else None
+
+
+class TargetOwnershipDiagnosis(unittest.TestCase):
+    def schedule(self, name, *, claim=False, fail=False):
+        with tempfile.TemporaryDirectory(prefix='copy-target-', dir=OUTPUT) as temp:
+            base = Path(temp).resolve()
+            source, target = base / 'source', base / 'installed'
+            source.mkdir(); target.mkdir()
+            (source / 'SKILL.md').write_text('# New skill\n', encoding='utf-8')
+            (target / 'SKILL.md').write_text('# Original owned skill\n', encoding='utf-8')
+            previous, expected = setup.skill_snapshot(target), setup.skill_snapshot(source)
+            state = {'case': name, 'claim': claim, 'fault': fail,
+                     'original_identity': identity(target), 'publication_calls': 0}
+            rename = Path.rename
+
+            def intercept(path, destination):
+                if (path.name == 'new' and path.parent.name.startswith('.skill-')
+                        and Path(destination) == target):
+                    state['publication_calls'] += 1
+                    state['original_moved_before_hook'] = not target.exists()
+                    if claim:
+                        target.mkdir()
+                        state['claim_identity'] = identity(target)
+                    if fail:
+                        raise OSError(errno.EIO, 'controlled publication fault')
+                return rename(path, destination)
+
+            error = None
+            with patch.object(Path, 'rename', intercept):
+                try:
+                    setup.replace_skill_copy(target, source, previous, expected)
+                except OSError as exc:
+                    error = exc
+            state.update(error=None if error is None else {'type': type(error).__name__, 'errno': error.errno},
+                         final_identity=identity(target), final_contents=contents(target),
+                         stages_remaining=[p.name for p in base.glob('.skill-*')])
+            STATES.append(state)
+            self.assertEqual(state['publication_calls'], 1)
+            self.assertTrue(state['original_moved_before_hook'])
+            self.assertEqual(state['stages_remaining'], [])
+            if claim:
+                self.assertIsNotNone(error, 'competing destination must refuse publication')
+                self.assertEqual(state['final_identity'], state['claim_identity'],
+                                 'competing empty destination must keep its native identity')
+                self.assertEqual(state['final_contents'], {})
+            elif fail:
+                self.assertIsNotNone(error)
+                self.assertEqual(error.errno, errno.EIO)
+                self.assertEqual(state['final_identity'], state['original_identity'])
+                self.assertEqual(state['final_contents'], {'SKILL.md': '# Original owned skill\n'})
+            else:
+                self.assertIsNone(error)
+                self.assertEqual(state['final_contents'], {'SKILL.md': '# New skill\n'})
+
+    def test_publication_preserves_competing_empty_destination(self):
+        self.schedule('publication-claim', claim=True)
+
+    def test_rollback_preserves_competing_empty_destination(self):
+        self.schedule('rollback-claim', claim=True, fail=True)
+
+    def test_normal_replacement_control(self):
+        self.schedule('normal-control')
+
+    def test_uncontended_fault_restores_original_control(self):
+        self.schedule('fault-control', fail=True)
+
+
+if __name__ == '__main__':
+    suite = unittest.defaultTestLoader.loadTestsFromTestCase(TargetOwnershipDiagnosis)
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+    record = {'source_sha256': SOURCE_SHA, 'platform': platform.platform(),
+              'python': sys.version, 'states': STATES, 'tests': result.testsRun,
+              'failures': len(result.failures), 'errors': len(result.errors), 'skips': len(result.skipped)}
+    (OUTPUT / 'states.json').write_text(json.dumps(record, indent=2) + '\n', encoding='utf-8')
+    raise SystemExit(0 if result.wasSuccessful() else 1)
