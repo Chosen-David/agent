@@ -1,0 +1,35 @@
+"""Frozen bounded repair checks, one invocation per phase, no hidden retries."""
+import hashlib,json,os,platform,subprocess,sys,time
+from pathlib import Path
+p=Path('.agent-runs/ingest-publish-1702')
+phase=sys.argv[1]
+assert phase in ('baseline','fixed','independent')
+with (p/(phase+'.claimed')).open('x') as stream:
+    stream.write(str(time.time()))
+started=p/'shared-start.json'
+if phase=='baseline':
+    with started.open('x') as stream: json.dump({'epoch':time.time()},stream)
+elapsed=time.time()-json.loads(started.read_text())['epoch']
+assert 0<=elapsed<1200, 'shared repair budget expired'
+phase_start=time.monotonic()
+commands=[[sys.executable,'-B','-m','unittest','discover','-s','tests','-p',name,'-v'] for name in (
+    'test_knowledge_ingest_publication.py','test_knowledge_ingest_scope.py',
+    'test_knowledge_read_boundary.py','test_knowledge_index.py')]
+commands.append([sys.executable,'-B','scripts/sync_plugin_references.py','--check'])
+results=[]
+for i,command in enumerate(commands):
+    remaining=min(90,300-(time.monotonic()-phase_start),1200-(time.time()-json.loads(started.read_text())['epoch']))
+    assert remaining>0,'branch/shared budget expired'
+    log=p/(phase+'-'+str(i)+'.log')
+    with log.open('wb') as stream:
+        try:
+            code=subprocess.run(command,stdout=stream,stderr=subprocess.STDOUT,timeout=remaining).returncode
+        except subprocess.TimeoutExpired:
+            code='timeout'
+    results.append({'command':command,'exit_code':code,'log':str(log),'log_sha256':hashlib.sha256(log.read_bytes()).hexdigest()})
+    if code=='timeout': break
+files=['agent_runtime/knowledge_ingest.py','plugins/research-assistant/skills/model-with-knowledge/scripts/knowledge_ingest.py','tests/test_knowledge_ingest_publication.py','tests/test_knowledge_ingest_scope.py','tests/test_knowledge_read_boundary.py','tests/test_knowledge_index.py','agent_runtime/knowledge.py','agent_runtime/knowledge_index.py','agent_runtime/project_docs.py','scripts/sync_plugin_references.py']
+summary={'phase':phase,'commands':results,'phase_elapsed_seconds':time.monotonic()-phase_start,'shared_elapsed_seconds':time.time()-json.loads(started.read_text())['epoch'],'environment':{'python':sys.version,'platform':platform.platform()},'source_hashes':{f:hashlib.sha256(Path(f).read_bytes()).hexdigest() for f in files},'status':'pass' if len(results)==5 and all(r['exit_code']==0 for r in results) else 'failed'}
+(p/(phase+'-summary.json')).write_text(json.dumps(summary,ensure_ascii=False,indent=2)+'\n')
+print(json.dumps(summary))
+raise SystemExit(0 if summary['status']=='pass' else 1)

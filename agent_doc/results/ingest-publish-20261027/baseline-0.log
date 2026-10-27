@@ -1,0 +1,55 @@
+test_body_edit_during_last_copy_is_refused (test_knowledge_ingest_publication.ImportPublicationTests.test_body_edit_during_last_copy_is_refused) ... FAIL
+test_dependency_removal_during_last_copy_is_refused (test_knowledge_ingest_publication.ImportPublicationTests.test_dependency_removal_during_last_copy_is_refused) ... FAIL
+test_missing_symbol_and_unsupported_platform_fail_closed (test_knowledge_ingest_publication.ImportPublicationTests.test_missing_symbol_and_unsupported_platform_fail_closed) ... skipped 'baseline lacks explicit no-replace publisher; ABI tests apply to repair'
+test_native_publisher_preserves_all_existing_targets (test_knowledge_ingest_publication.ImportPublicationTests.test_native_publisher_preserves_all_existing_targets) ... 
+  test_native_publisher_preserves_all_existing_targets (test_knowledge_ingest_publication.ImportPublicationTests.test_native_publisher_preserves_all_existing_targets) (kind='empty') ... FAIL
+test_native_publisher_preserves_dangling_target (test_knowledge_ingest_publication.ImportPublicationTests.test_native_publisher_preserves_dangling_target) ... ok
+test_posix_abi_and_error_propagation_without_unsafe_fallback (test_knowledge_ingest_publication.ImportPublicationTests.test_posix_abi_and_error_propagation_without_unsafe_fallback) ... skipped 'baseline lacks explicit no-replace publisher; ABI tests apply to repair'
+test_success_keeps_complete_pair_provenance_and_reference (test_knowledge_ingest_publication.ImportPublicationTests.test_success_keeps_complete_pair_provenance_and_reference) ... ok
+test_target_claimed_after_final_guard_is_preserved (test_knowledge_ingest_publication.ImportPublicationTests.test_target_claimed_after_final_guard_is_preserved) ... FAIL
+test_windows_uses_native_rename_and_propagates_collision (test_knowledge_ingest_publication.ImportPublicationTests.test_windows_uses_native_rename_and_propagates_collision) ... skipped 'baseline lacks explicit no-replace publisher; ABI tests apply to repair'
+
+======================================================================
+FAIL: test_body_edit_during_last_copy_is_refused (test_knowledge_ingest_publication.ImportPublicationTests.test_body_edit_during_last_copy_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1459/tests/test_knowledge_ingest_publication.py", line 67, in test_body_edit_during_last_copy_is_refused
+    self._late_edit(remove=False)
+  File "/workspace/scratch/6416f20dc59b/agent-run-1459/tests/test_knowledge_ingest_publication.py", line 55, in _late_edit
+    with self.assertRaises(KnowledgeError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: KnowledgeError not raised
+
+======================================================================
+FAIL: test_dependency_removal_during_last_copy_is_refused (test_knowledge_ingest_publication.ImportPublicationTests.test_dependency_removal_during_last_copy_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1459/tests/test_knowledge_ingest_publication.py", line 64, in test_dependency_removal_during_last_copy_is_refused
+    self._late_edit(remove=True)
+  File "/workspace/scratch/6416f20dc59b/agent-run-1459/tests/test_knowledge_ingest_publication.py", line 55, in _late_edit
+    with self.assertRaises(KnowledgeError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: KnowledgeError not raised
+
+======================================================================
+FAIL: test_native_publisher_preserves_all_existing_targets (test_knowledge_ingest_publication.ImportPublicationTests.test_native_publisher_preserves_all_existing_targets) (kind='empty')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1459/tests/test_knowledge_ingest_publication.py", line 95, in test_native_publisher_preserves_all_existing_targets
+    with self.assertRaises((OSError, KnowledgeError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: (<class 'OSError'>, <class 'agent_runtime.knowledge.KnowledgeError'>) not raised
+
+======================================================================
+FAIL: test_target_claimed_after_final_guard_is_preserved (test_knowledge_ingest_publication.ImportPublicationTests.test_target_claimed_after_final_guard_is_preserved)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/6416f20dc59b/agent-run-1459/tests/test_knowledge_ingest_publication.py", line 181, in test_target_claimed_after_final_guard_is_preserved
+    with self.assertRaises((OSError, KnowledgeError)):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: (<class 'OSError'>, <class 'agent_runtime.knowledge.KnowledgeError'>) not raised
+
+----------------------------------------------------------------------
+Ran 9 tests in 0.022s
+
+FAILED (failures=4, skipped=3)

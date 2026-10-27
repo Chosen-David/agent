@@ -1,0 +1,123 @@
+{
+  "id": "INGEST-PUBLISH-01",
+  "task": "SYSTEM-99",
+  "plan_version": 51,
+  "head": "a8a176f12852ffd3909e6ef2de429080e29d53e6",
+  "intent": "In-place bounded reliability repair of final-copy invalidation and directory no-clobber; same unfinished SYSTEM99. No new performance/model/round claim.",
+  "guide": "Entire guide directory readonly; empty GUIDE and human-only README unchanged; user authorizes main regular push. No agent_doc migration.",
+  "scope": "Move the existing final live snapshot comparison after final staging copy, then use one native no-replace directory operation. This closes the measured copy window and preserves target ownership at publication, not atomic corpus transaction, arbitrary external edit between final check/publication, parent races, cleanup identity or full system acceptance.",
+  "design": "Private _publish_entry in sole knowledge_ingest source; Linux libc renameat2 absolute paths/AT_FDCWD(-100),NOREPLACE1; Darwin renamex_np EXCL4; Windows os.rename. Missing capability/unsupported OS fail closed, errors propagated, no unsafe fallback. Existing docs publisher is Linux descriptor-relative with a different adapter/status contract; do not alter accepted docs path or create second ingest implementation. Existing byte-exact standalone source mirror updated.",
+  "primary_sources": [
+    {
+      "url": "https://raw.githubusercontent.com/apple-oss-distributions/xnu/xnu-12377.1.9/bsd/sys/stdio.h",
+      "version": "xnu-12377.1.9",
+      "section": "renamex_np declaration, RENAME_EXCL=0x00000004, macOS10.12 availability"
+    },
+    {
+      "url": "https://man7.org/linux/man-pages/man2/rename.2.html",
+      "section": "renameat2 RENAME_NOREPLACE and filesystem support"
+    },
+    {
+      "url": "https://docs.python.org/3/library/os.html#os.rename",
+      "section": "Windows existing-destination failure"
+    }
+  ],
+  "prior_results": {
+    "query_path": ".agent-runs/ingest-publish-1702/prior-search.json",
+    "scanned": 308,
+    "partial": true,
+    "errors": 25,
+    "decision": "Diagnosis exact-source raw evidence read and all17 refs hashed, baseline hazards retained. Current independent reviewer must revalidate old raw/code before relying on it; not authenticated runtime reuse. Four unrelated adoption hits rejected. New frozen9-method repair regression and existing modules, not replay of consumed diagnostic probes or old fullsuite/PID/backend gates.",
+    "diagnosis_record_sha256": "b87a89f576eb2ff390b1b63180dfb096ae494c1b0e31ee304fbd110d2029187f"
+  },
+  "acceptance": {
+    "pre_fix": "Run frozen new safety suite and existing3 modules + mirror sync once before production change. Expect observed last-copy and POSIX empty target assertions to fail; preserve exact failures. Three ABI-only methods explicitly skip on absent baseline helper. No baseline green requirement.",
+    "fixed": "Same frozen9 methods + existing scope/read-boundary/index suites and sync allpass on Linux, no skips; candidate/provenance/ref equality and cleanup/control checks. Independent source/raw/code review plus one identical replay; no repair acceptance from exit alone.",
+    "native": "Existing Ubuntu/Windows3.10/3.12 jobs gain targeted ingest/scope/read-boundary/index steps; macOS3.12 separate targeted5min job. No corresponding platform success claim until actual new tests executed/pass. Preserve any native failure; no rerun or hide/skipping of new safety methods. Symlink skip if OS lacks privilege must be explicit.",
+    "six_validity_criteria": [
+      "intent/problem alignment and retained negative baseline",
+      "actual code/input/raw correctness and temporal hook reachability",
+      "deterministic boundary assertions; no statistical timing/speedup inference",
+      "same frozen tests/source/environment, baseline skips disclosed, no claim portability from mocks",
+      "once-per-phase resource and timeout checks, no paid models/backends/fullsuite reset",
+      "finite scope, no runtime-authenticated verifier/global allclear, native claims bounded by actualCI"
+    ]
+  },
+  "resources": {
+    "plan_review_calls_max": 2,
+    "baseline_calls_max": 1,
+    "fixed_calls_max": 1,
+    "independent_calls_max": 1,
+    "per_command_seconds": 90,
+    "per_phase_seconds": 300,
+    "shared_execution_seconds": 1200,
+    "retries": 0,
+    "native_CI": "one normal push, existing4 jobs plus one macOS3.12 targeted5min job, no rerun"
+  },
+  "dag": [
+    {
+      "id": "baseline",
+      "owner": "root",
+      "depends_on": []
+    },
+    {
+      "id": "implement",
+      "owner": "root",
+      "depends_on": [
+        "baseline"
+      ]
+    },
+    {
+      "id": "fixed-checks",
+      "owner": "root",
+      "depends_on": [
+        "implement"
+      ]
+    },
+    {
+      "id": "verify_experiment_result",
+      "owner": "fresh independent reviewer",
+      "depends_on": [
+        "fixed-checks"
+      ]
+    },
+    {
+      "id": "publish-native-CI",
+      "owner": "root",
+      "depends_on": [
+        "verify_experiment_result"
+      ]
+    }
+  ],
+  "runtime_boundary": "Actual offline fresh delegated review, not authenticated repository ReviewSession or deployed DAG; result catalog historical unknown, not a fake trusted verifier. CI after ordinary authorized main checkpoint, no full-round completion.",
+  "allowed_writes": [
+    "agent_runtime/knowledge_ingest.py",
+    "plugins/research-assistant/skills/model-with-knowledge/scripts/knowledge_ingest.py",
+    "tests/test_knowledge_ingest_publication.py",
+    ".github/workflows/portable-install.yml",
+    "agent_doc/task/task_details/SYSTEM-99.md",
+    "agent_doc/results/ingest-publish-20261027/",
+    ".agent-runs/ingest-publish-1702/"
+  ],
+  "bindings": {
+    "agent_runtime/knowledge_ingest.py": "29a1b5e75232bfc2d5badf103f102ae045cec61ff24948abb626ab5412309c44",
+    "plugins/research-assistant/skills/model-with-knowledge/scripts/knowledge_ingest.py": "29a1b5e75232bfc2d5badf103f102ae045cec61ff24948abb626ab5412309c44",
+    "tests/test_knowledge_ingest_scope.py": "a09576e86f870d8aaba3199663e45826127ca0042fa5c18d6f49e800d074efde",
+    "tests/test_knowledge_read_boundary.py": "a816582b4cd169749234c19622f4e9abcb833abb9738f59cce75f3b7e81d57da",
+    "tests/test_knowledge_index.py": "7b57535f9f1c6c74c02cf3aa66c1f376de9cc000a2b54db65348ecffacc2f67d",
+    "agent_runtime/knowledge.py": "eb17aab6668435d6dea09b4010cc2410fbd66844e60fcfb1bef4d4817971eb01",
+    "agent_runtime/knowledge_index.py": "9c8d54b373144557433a4e59f31563dd5cce5c883177148c88b2ae615e070cdd",
+    "agent_runtime/project_docs.py": "3e4190d4c256fb59ad456849ab00dd80534b096c4a29a52c081ae9d117395be5",
+    "scripts/sync_plugin_references.py": "5c296df84bd091866b8fe696b8a98aaea000db6985bafb95a3889f8cc04c934d",
+    "AGENTS.md": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+    "agent_doc/guide/GUIDE.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_doc/guide/README.md": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261",
+    "agent_doc/task/TASK.md": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+    "agent_doc/task/task_details/SYSTEM-99.md": "92097de42f79546e6bd2857b6c1f5afff905b82c70291b3472143f297f0049d2",
+    ".agent-runs/ingest-publish-1702/knowledge_ingest.py.proposed": "5349e9c44f3be03d1a7dbc291562dfe98a71f1c532d302c49a8ffd5aa381e039",
+    ".agent-runs/ingest-publish-1702/portable-install.yml.proposed": "e19d35fee3a6122c6ad1db3b870a3245a5fc2b6b5a7530277a954511b00dae44",
+    ".agent-runs/ingest-publish-1702/test_knowledge_ingest_publication.py": "5414b964d3892b83cc07424a4ce0583bb5d1cd0522cc6469a13f8864ecb641a6",
+    ".agent-runs/ingest-publish-1702/run_checks.py": "70a2c39e0517db76632c91294e1810109ab1e55fe4b23e30b696d51411a1b5c4",
+    ".agent-runs/ingest-publish-1702/prior-search.json": "c21227524dc9283cf6577fba8c62163892c81ebbf86e44e0a8bb8e2b92b0acd8"
+  }
+}
