@@ -1,0 +1,49 @@
+{
+  "id": "INGEST-PUBLICATION-DIAG-01",
+  "task": "SYSTEM-99",
+  "head": "05c4ece5c20d713504ac3deab208425cdf7a8bfe",
+  "purpose": "diagnosis only; no production fix or performance claim",
+  "prior_results": "Actual search scanned307, partial=true,25 missing-record errors; five lexical hits unrelated corpus adoption/math and no matching publication-interleave result. U3 is documents-only Linux no-replace, not portable ingest evidence. PY39-INGEST newline and scope tests do not exercise final publication window. No result reused as acceptance.",
+  "method": "Four isolated temporary minimal-corpus unittest cases: ordinary success, dependency removal during final private copy, empty concurrent target immediately before rename, nonempty target control. Deterministic same-process interposition, not scheduler coverage or hostile filesystem proof. Intended refusal/preservation assertions can fail; save full logs and observations.",
+  "acceptance": "No requirement baseline passes. Classify confirmed only if hook executes and observations show canonical mutation/success/invalid closure or changed target inode, independently reviewed. Keep both passing controls and all failures. No new defect inference from old titles.",
+  "risks": "No real corpus writes; no models/backends/CLI installs, full suites or exhausted branches. Platform-dependent POSIX empty target evidence limited to actual Linux. No portable fix yet: existing documents helper is Linux-only and replacing import with it would remove supported portable behavior.",
+  "resources": {
+    "plan_review_max_calls": 2,
+    "producer_max_calls": 1,
+    "independent_max_calls": 1,
+    "each_command_timeout_seconds": 180,
+    "shared_wall_seconds": 600,
+    "retries": 0
+  },
+  "dag": [
+    {
+      "id": "diagnose",
+      "owner": "root",
+      "depends_on": []
+    },
+    {
+      "id": "verify_experiment_result",
+      "owner": "fresh independent reviewer",
+      "depends_on": [
+        "diagnose"
+      ]
+    },
+    {
+      "id": "checkpoint-publication",
+      "owner": "root",
+      "depends_on": [
+        "verify_experiment_result"
+      ]
+    }
+  ],
+  "runtime_boundary": "Descriptive offline DAG. No authenticated ReviewSession/ManagedEngine/verifier installed; stored evidence cannot authorize runtime reuse.",
+  "bindings": {
+    "agent_runtime/knowledge_ingest.py": "29a1b5e75232bfc2d5badf103f102ae045cec61ff24948abb626ab5412309c44",
+    "agent_runtime/knowledge.py": "eb17aab6668435d6dea09b4010cc2410fbd66844e60fcfb1bef4d4817971eb01",
+    "agent_runtime/project_docs.py": "3e4190d4c256fb59ad456849ab00dd80534b096c4a29a52c081ae9d117395be5",
+    ".agent-runs/ingest-publication-1600/probe.py": "ae5af95966bccef715c0eaf4859b3182256f654cefee20f906611d03c2808d81",
+    "knowledge/entries/math.cauchy-schwarz.json": "8bba6ef1feeb77117e15dfe5da8bdf73a0347a66205759fd94b4b775c335f46f",
+    "knowledge/entries/math.cauchy-schwarz.md": "8715c3d2eb26ae567e926113cba8c44c003b59c6cb68a49da244373ba79515fd",
+    ".agent-runs/ingest-publication-1600/prior-search.json": "20aef83508c53a1dabb400cd145ddbd0031d2b2908eb9b54f4c55d5d670ffbe4"
+  }
+}

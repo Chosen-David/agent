@@ -1,0 +1,16 @@
+import hashlib,json,os,platform,subprocess,sys,time
+from pathlib import Path
+p=Path('.agent-runs/ingest-publication-1600')
+phase=sys.argv[1]
+assert phase in ('producer','independent')
+claim=p/(phase+'.claimed')
+with claim.open('x') as stream: stream.write(str(time.time()))
+start=time.monotonic()
+env=dict(os.environ,PYTHONPATH=str(Path.cwd()),PROBE_OBSERVATIONS=str((p/(phase+'-observations.json')).resolve()))
+command=[sys.executable,str(p/'probe.py')]
+with (p/(phase+'.log')).open('wb') as log:
+    result=subprocess.run(command,env=env,stdout=log,stderr=subprocess.STDOUT,timeout=180)
+summary={'phase':phase,'command':command,'exit_code':result.returncode,'elapsed_seconds':time.monotonic()-start,'python':sys.version,'platform':platform.platform(),'probe_sha256':hashlib.sha256((p/'probe.py').read_bytes()).hexdigest(),'production_sha256':hashlib.sha256(Path('agent_runtime/knowledge_ingest.py').read_bytes()).hexdigest(),'result':'diagnostic observations; expected intended-safety assertions may fail, not a passing regression'}
+(p/(phase+'-summary.json')).write_text(json.dumps(summary,indent=2)+'\n')
+print(json.dumps(summary))
+raise SystemExit(result.returncode)

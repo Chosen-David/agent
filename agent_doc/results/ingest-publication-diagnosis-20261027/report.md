@@ -1,0 +1,22 @@
+# Knowledge import publication diagnosis
+
+SYSTEM-99 / INGEST-PUBLICATION-DIAG-01, source `05c4ece5c20d713504ac3deab208425cdf7a8bfe`. This is a diagnosis checkpoint, not a production fix or completed optimization round.
+
+Both single-run phases on Python3.12.14 / Linux6.18.55 x86_64 / glibc2.39 produced the same four-method outcome: **two intended-safety failures, two passing controls, no errors or skips**. Full nonzero exits, raw logs and hook observations are retained. Execution durations are metadata, not benchmark results.
+
+| Frozen schedule | Observed behavior in each phase | Meaning |
+| --- | --- | --- |
+| Remove both prerequisite files after final private copy | ingest returns success; candidate directory is visible; fresh KnowledgeStore rejects missing target | Import can accept invalid declared dependency closure after the last live corpus check. The hook, not ingest, deleted the prerequisite. |
+| Create an empty target immediately before genuine os.rename | ingest returns success; created target identity changes; candidate files occupy the path | This actual Linux rename replaces another owner's empty directory after the earlier existence check. |
+| Create a nonempty target at the same point | rename raises OSError; directory identity and owner.txt bytes preserved | Existing nonempty collision protection works for this schedule. |
+| No intervention | fresh store reference matches receipt; imported status remains candidate | Normal import control works. |
+
+The combined staged corpus is validated before the live snapshot comparison. A second copy into destination-filesystem staging then occurs before the final rename. The dependency injection happens during that second copy; the old scope test changes the first copy and is caught earlier. Existence checking plus atomic visibility does not provide no-replacement semantics. Python's [os.rename documentation](https://docs.python.org/3/library/os.html#os.rename), checked2026-10-27, distinguishes Unix empty-directory replacement from Windows refusal. Neither the documentation nor this probe supplies portable transactional corpus guarantees.
+
+No production source, its standalone Skill mirror, human guide, TASK index, or existing evidence changed. The mirror and source are byte-identical. Archived probe/wrapper text is immutable diagnostic evidence, not an alternative production implementation. Same-process hooks establish specific schedules; they are not multiprocess stress tests, event-frequency estimates, hostile-filesystem protection or measurements of Windows/macOS behavior. Existing CI success does not cover these private probes. These failures are not installed as deliberately failing CI regressions.
+
+The actual prior query scanned307 records with partial=true and25 missing-record errors. Five lexical candidates concern corpus adoption or unrelated mathematical data, not this publication window; none is reused as acceptance. The earlier documents U3 no-replace helper is Linux-specific and does not establish a portable knowledge-import fix. Missing historical matches do not prove the full catalog contains no related evidence.
+
+Next repair work must freeze an explicit publication/ownership contract before code changes: shorten the post-validation copy window and decide how supported platforms refuse replacement, while preserving complete-pair visibility, candidate/provenance semantics, dependency validation and reader behavior. Rechecking after copying alone leaves a check-to-publication race; a cooperative lock alone cannot constrain arbitrary external writers. A Linux-only helper cannot silently replace portable behavior. No repair design, schema migration, new backend or platform restriction is approved by this diagnosis. Keep these exact failure witnesses for the separately reviewed fix scope rather than replaying this consumed diagnosis.
+
+Independent fresh-context source/data review gates this checkpoint, not an authenticated repository ReviewSession or trusted runtime verifier. Catalog registration remains unknown historical-reference trust. Shared execution budget is600seconds; producer1 and independent1 are consumed, no retry. All older exhausted/blocked gates remain unchanged. No fresh paper body was read here;20 same-batch reading records remain. Performance, model quality, full costs, host loading, broad concurrency and SYSTEM-99 end-to-end acceptance remain open.

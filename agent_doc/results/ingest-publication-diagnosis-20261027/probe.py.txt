@@ -1,0 +1,112 @@
+"""Deterministic publication interleavings; no production corpus writes."""
+import json
+import os
+from pathlib import Path
+import shutil
+import tempfile
+import unittest
+from unittest.mock import patch
+from agent_runtime.knowledge import KnowledgeError, KnowledgeStore
+from agent_runtime.knowledge_ingest import ingest
+
+REPO = Path.cwd()
+OBSERVATIONS = []
+
+class PublicationProbe(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.base = Path(self.tmp.name)
+        self.root = self.base / 'knowledge'
+        entries = self.root / 'entries'
+        entries.mkdir(parents=True)
+        for suffix in ('json', 'md'):
+            shutil.copyfile(REPO / 'knowledge/entries' / ('math.cauchy-schwarz.' + suffix),
+                            entries / ('math.cauchy-schwarz.' + suffix))
+        data = json.loads((entries / 'math.cauchy-schwarz.json').read_text(encoding='utf-8'))
+        data.update(id='math.publication-probe', status='candidate',
+                    requires=[{'id': 'math.cauchy-schwarz', 'version': 1}], relations=[])
+        self.meta = self.base / 'draft.json'
+        self.body = self.base / 'draft.md'
+        self.meta.write_text(json.dumps(data), encoding='utf-8')
+        self.body.write_text('# Draft\nUnverified.\n', encoding='utf-8')
+        self.destination = entries / data['id']
+
+    def observe(self, **values):
+        OBSERVATIONS.append({'case': self._testMethodName, **values})
+
+    def test_unchanged_corpus_control(self):
+        receipt = ingest(self.root, self.meta, self.body)
+        self.assertEqual(KnowledgeStore(self.root).ref('math.publication-probe'), receipt['knowledge_ref'])
+        self.assertEqual(receipt['status'], 'candidate')
+        self.observe(receipt_matches=True)
+
+    def test_dependency_removed_during_final_copy_is_refused(self):
+        original = shutil.copytree
+        changed = False
+        def interleave(src, dst, *args, **kwargs):
+            nonlocal changed
+            result = original(src, dst, *args, **kwargs)
+            if Path(src).name == 'math.publication-probe' and Path(dst).name == 'entry':
+                for suffix in ('json', 'md'):
+                    (self.root / 'entries' / ('math.cauchy-schwarz.' + suffix)).unlink()
+                changed = True
+            return result
+        error = None
+        try:
+            with patch.object(shutil, 'copytree', interleave):
+                ingest(self.root, self.meta, self.body)
+        except KnowledgeError as exc:
+            error = str(exc)
+        corpus_error = None
+        try:
+            KnowledgeStore(self.root)
+        except KnowledgeError as exc:
+            corpus_error = str(exc)
+        self.observe(interleaving_executed=changed, refusal=error,
+                     imported_entry_exists=self.destination.exists(), final_corpus_error=corpus_error)
+        self.assertTrue(changed)
+        self.assertIsNotNone(error, 'ingest accepted after required dependency removal')
+        self.assertFalse(self.destination.exists())
+
+    @unittest.skipUnless(os.name == 'posix', 'POSIX directory rename semantics')
+    def test_empty_concurrent_target_is_preserved(self):
+        self._target_collision(empty=True)
+
+    def test_nonempty_concurrent_target_control(self):
+        self._target_collision(empty=False)
+
+    def _target_collision(self, *, empty):
+        original = os.rename
+        claimed = None
+        def interleave(src, dst, *args, **kwargs):
+            nonlocal claimed
+            if Path(dst) == self.destination:
+                self.destination.mkdir()
+                if not empty:
+                    (self.destination / 'owner.txt').write_bytes(b'concurrent owner')
+                info = self.destination.stat()
+                claimed = (info.st_dev, info.st_ino)
+            return original(src, dst, *args, **kwargs)
+        error = None
+        try:
+            with patch.object(os, 'rename', interleave):
+                ingest(self.root, self.meta, self.body)
+        except (OSError, KnowledgeError) as exc:
+            error = type(exc).__name__ + ': ' + str(exc)
+        info = self.destination.stat()
+        preserved = claimed == (info.st_dev, info.st_ino)
+        self.observe(interleaving_executed=claimed is not None, refusal=error,
+                     target_identity_preserved=preserved,
+                     target_files=sorted(p.name for p in self.destination.iterdir()))
+        self.assertIsNotNone(claimed)
+        self.assertIsNotNone(error, 'ingest replaced an existing destination')
+        self.assertTrue(preserved)
+        if not empty:
+            self.assertEqual((self.destination / 'owner.txt').read_bytes(), b'concurrent owner')
+
+if __name__ == '__main__':
+    suite = unittest.defaultTestLoader.loadTestsFromTestCase(PublicationProbe)
+    result = unittest.TextTestRunner(verbosity=2).run(suite)
+    Path(os.environ['PROBE_OBSERVATIONS']).write_text(json.dumps(OBSERVATIONS, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+    raise SystemExit(not result.wasSuccessful())
