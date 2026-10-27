@@ -17,23 +17,23 @@ ROOT=Path(__file__).resolve().parents[1]
 class IndexTests(unittest.TestCase):
     def setUp(self):
         self.tmp=tempfile.TemporaryDirectory();self.addCleanup(self.tmp.cleanup)
-        self.root=Path(self.tmp.name)/'knowledge'
+        self.root=Path(self.tmp.name).resolve()/'knowledge'
         shutil.copytree(ROOT/'knowledge',self.root)
         self.store=KnowledgeStore(self.root)
         self.total_count=len(self.store.records)
         self.published_ids={kid for kid, record in self.store.records.items() if record['status']=='published'}
         self.published_count=len(self.published_ids)
-        self.db=Path(self.tmp.name)/'cache/search.sqlite'
+        self.db=Path(self.tmp.name).resolve()/'cache/search.sqlite'
 
     def test_incremental_noop_update_remove_and_rebuild(self):
         self.assertEqual(build_index(self.store,self.db)['updated'],self.published_count)
         self.assertEqual(build_index(self.store,self.db)['unchanged'],self.published_count)
-        p=self.root/'entries/math.low-rank-svd.md';p.write_text(p.read_text()+'\nAdditional boundary.\n')
+        p=self.root/'entries/math.low-rank-svd.md';p.write_text(p.read_text(encoding='utf-8')+'\nAdditional boundary.\n', encoding='utf-8')
         fresh=KnowledgeStore(self.root)
         with self.assertRaisesRegex(KnowledgeError,'stale'):
             indexed_search(fresh,self.db,'low rank')
         self.assertEqual(build_index(fresh,self.db)['updated'],1)
-        p=self.root/'entries/physics.dimensionless.json';d=json.loads(p.read_text());d['status']='deprecated';p.write_text(json.dumps(d))
+        p=self.root/'entries/physics.dimensionless.json';d=json.loads(p.read_text(encoding='utf-8'));d['status']='deprecated';p.write_text(json.dumps(d), encoding='utf-8')
         fresh=KnowledgeStore(self.root)
         self.assertEqual(build_index(fresh,self.db)['removed'],1)
         results=indexed_search(fresh,self.db,'量纲',limit=min(len(fresh.records),20))['results']
@@ -72,14 +72,14 @@ class IndexTests(unittest.TestCase):
         with closing(sqlite3.connect(self.db)) as c, c:
             self.assertEqual(c.execute('SELECT count(*) FROM valuable').fetchone()[0],0)
         self.db.unlink();build_index(self.store,self.db)
-        other=Path(self.tmp.name)/'other';shutil.copytree(self.root,other)
+        other=Path(self.tmp.name).resolve()/'other';shutil.copytree(self.root,other)
         with self.assertRaisesRegex(KnowledgeError,'different corpus'):
             build_index(KnowledgeStore(other),self.db)
 
     def test_failed_reindex_preserves_previous_index(self):
         build_index(self.store,self.db)
         p=self.root/'entries/math.low-rank-svd.md'
-        p.write_text(p.read_text()+'\nChanged content.\n')
+        p.write_text(p.read_text(encoding='utf-8')+'\nChanged content.\n', encoding='utf-8')
         fresh=KnowledgeStore(self.root)
         with patch('agent_runtime.knowledge_index.sections', side_effect=RuntimeError('interrupted writer')):
             with self.assertRaisesRegex(RuntimeError, 'interrupted'):
@@ -104,9 +104,9 @@ class IndexTests(unittest.TestCase):
 
     def test_alias_only_section_lane_without_fabricated_excerpt(self):
         path=self.root/'entries/math.cauchy-schwarz.json'
-        metadata=json.loads(path.read_text())
+        metadata=json.loads(path.read_text(encoding='utf-8'))
         metadata['aliases'].append('zqxmetadataonly')
-        path.write_text(json.dumps(metadata))
+        path.write_text(json.dumps(metadata), encoding='utf-8')
         store=KnowledgeStore(self.root)
         build_index(store,self.db)
         row=indexed_search(store,self.db,'zqxmetadataonly')['results'][0]
@@ -187,10 +187,10 @@ class IndexTests(unittest.TestCase):
         self.assertTrue(indexed_search(self.store,self.db,'topk')['results'])
 
     def draft(self):
-        d=json.loads((self.root/'entries/math.cauchy-schwarz.json').read_text())
+        d=json.loads((self.root/'entries/math.cauchy-schwarz.json').read_text(encoding='utf-8'))
         d.update(id='math.import-example',status='candidate',requires=[],relations=[])
-        metadata=Path(self.tmp.name)/'draft.json';body=Path(self.tmp.name)/'draft.md'
-        metadata.write_text(json.dumps(d));body.write_text('# Draft\nUnverified educational example.\n')
+        metadata=Path(self.tmp.name).resolve()/'draft.json';body=Path(self.tmp.name).resolve()/'draft.md'
+        metadata.write_text(json.dumps(d), encoding='utf-8');body.write_text('# Draft\nUnverified educational example.\n', encoding='utf-8')
         return metadata,body
 
     def test_ingest_records_provenance_and_stays_candidate(self):
@@ -211,19 +211,19 @@ class IndexTests(unittest.TestCase):
         with self.assertRaisesRegex(KnowledgeError,'already exists'): ingest(self.root,meta,body)
 
     def test_bad_import_does_not_change_corpus(self):
-        meta,body=self.draft();d=json.loads(meta.read_text());d['requires']=[{'id':'math.missing','version':1}];meta.write_text(json.dumps(d))
+        meta,body=self.draft();d=json.loads(meta.read_text(encoding='utf-8'));d['requires']=[{'id':'math.missing','version':1}];meta.write_text(json.dumps(d), encoding='utf-8')
         with self.assertRaises(KnowledgeError): ingest(self.root,meta,body)
         self.assertEqual(KnowledgeStore(self.root).snapshot,self.store.snapshot)
-        d['requires']=[];d['status']='published';meta.write_text(json.dumps(d))
+        d['requires']=[];d['status']='published';meta.write_text(json.dumps(d), encoding='utf-8')
         with self.assertRaisesRegex(KnowledgeError,'candidate'): ingest(self.root,meta,body)
         self.assertEqual(KnowledgeStore(self.root).snapshot,self.store.snapshot)
 
     def test_isolated_index_and_tree_cli(self):
-        skill=Path(self.tmp.name)/'isolated'
+        skill=Path(self.tmp.name).resolve()/'isolated'
         shutil.copytree(ROOT/'plugins/research-assistant/skills/model-with-knowledge',skill)
         cmd=[sys.executable,'-I',str(skill/'scripts/knowledge.py'),'--root',str(skill/'assets/knowledge')]
         for args in (['index','--db',str(self.db)],['search','量纲','--index',str(self.db)],['tree','math.symmetry-quotient']):
-            result=subprocess.run(cmd+args,cwd=self.tmp.name,capture_output=True,text=True)
+            result=subprocess.run(cmd+args,cwd=self.tmp.name,capture_output=True,text=True,encoding='utf-8')
             self.assertEqual(result.returncode,0,result.stderr)
             self.assertIsInstance(json.loads(result.stdout),dict)
 

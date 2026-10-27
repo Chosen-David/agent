@@ -24,17 +24,17 @@ class ReadBoundaryTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        self.base = Path(self.tmp.name)
+        self.base = Path(self.tmp.name).resolve()
         self.root = self.base / 'knowledge'
         shutil.copytree(ROOT / 'knowledge', self.root)
         self.store = KnowledgeStore(self.root)
 
     def draft(self):
-        data = json.loads((self.root / 'entries/math.cauchy-schwarz.json').read_text())
+        data = json.loads((self.root / 'entries/math.cauchy-schwarz.json').read_text(encoding='utf-8'))
         data.update(id='math.read-boundary', status='candidate', requires=[], relations=[])
         meta, body = self.base / 'draft.json', self.base / 'draft.md'
-        meta.write_text(json.dumps(data))
-        body.write_text('# Draft\nUnverified.\n')
+        meta.write_text(json.dumps(data), encoding='utf-8')
+        body.write_text('# Draft\nUnverified.\n', encoding='utf-8')
         return meta, body
 
     def growth_hook(self, target, extra, calls):
@@ -131,7 +131,7 @@ class ReadBoundaryTests(unittest.TestCase):
         receipt = ingest(self.root, meta, body)
         self.assertEqual(receipt['metadata_sha256'], hashlib.sha256(expected_meta.encode()).hexdigest())
         self.assertEqual(receipt['body_sha256'], hashlib.sha256(expected_body.encode()).hexdigest())
-        self.assertEqual((self.root / receipt['path'] / 'entry.md').read_text(), expected_body)
+        self.assertEqual((self.root / receipt['path'] / 'entry.md').read_text(encoding='utf-8'), expected_body)
         self.assertEqual((self.root / receipt['path'] / 'entry.md').read_bytes(), expected_body.encode('utf-8'))
         loaded = KnowledgeStore(self.root)
         for kid, record in self.store.records.items():
@@ -151,7 +151,7 @@ class ReadBoundaryTests(unittest.TestCase):
         meta, body = self.draft()
         result = subprocess.run([sys.executable, '-I', str(isolated / 'scripts/knowledge.py'),
                                  '--root', str(self.root), 'ingest', str(meta), str(body)],
-                                cwd=self.base, capture_output=True, text=True, timeout=30)
+                                cwd=self.base, capture_output=True, text=True, encoding='utf-8', timeout=30)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual(json.loads(result.stdout)['status'], 'candidate')
         self.assertIn('math.read-boundary', KnowledgeStore(self.root).records)

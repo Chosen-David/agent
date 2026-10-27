@@ -17,11 +17,11 @@ class IngestScopeTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        self.base = Path(self.tmp.name)
+        self.base = Path(self.tmp.name).resolve()
         self.root = self.base / 'knowledge'
         shutil.copytree(ROOT / 'knowledge', self.root)
         self.meta, self.body = self.base / 'draft.json', self.base / 'draft.md'
-        data = json.loads((self.root / 'entries/math.cauchy-schwarz.json').read_text())
+        data = json.loads((self.root / 'entries/math.cauchy-schwarz.json').read_text(encoding='utf-8'))
         data.update(id='math.scope-import', status='candidate', requires=[], relations=[])
         self.meta.write_text(json.dumps(data), encoding='utf-8')
         self.body.write_text('# Draft\nUnverified.\n', encoding='utf-8')
@@ -72,7 +72,7 @@ class IngestScopeTests(unittest.TestCase):
             ingest(self.root, self.meta, self.body)
         link.unlink()
         orphan = self.root / 'entries' / 'orphan.md'
-        orphan.write_text('no metadata')
+        orphan.write_text('no metadata', encoding='utf-8')
         with self.assertRaisesRegex(KnowledgeError, 'orphan'):
             ingest(self.root, self.meta, self.body)
         orphan.unlink()
@@ -81,14 +81,14 @@ class IngestScopeTests(unittest.TestCase):
 
     def test_invalid_dependency_and_duplicate_leave_corpus_unchanged(self):
         original = KnowledgeStore(self.root).snapshot
-        data = json.loads(self.meta.read_text())
+        data = json.loads(self.meta.read_text(encoding='utf-8'))
         data['requires'] = [{'id': 'math.missing', 'version': 1}]
-        self.meta.write_text(json.dumps(data))
+        self.meta.write_text(json.dumps(data), encoding='utf-8')
         with self.assertRaisesRegex(KnowledgeError, 'missing'):
             ingest(self.root, self.meta, self.body)
         self.assertEqual(KnowledgeStore(self.root).snapshot, original)
         data['requires'] = []
-        self.meta.write_text(json.dumps(data))
+        self.meta.write_text(json.dumps(data), encoding='utf-8')
         ingest(self.root, self.meta, self.body)
         imported = KnowledgeStore(self.root).snapshot
         with self.assertRaisesRegex(KnowledgeError, 'already exists'):
@@ -110,7 +110,7 @@ class IngestScopeTests(unittest.TestCase):
             result = original(src, dst, *args, **kwargs)
             if Path(src) in (self.root, self.root / 'entries') and not mutated:
                 mutated = True
-                with (self.root / 'entries/math.cauchy-schwarz.md').open('a') as stream:
+                with (self.root / 'entries/math.cauchy-schwarz.md').open('a', encoding='utf-8') as stream:
                     stream.write('\nConcurrent edit.\n')
             return result
         with patch.object(shutil, 'copytree', changing):
