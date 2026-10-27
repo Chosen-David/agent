@@ -732,13 +732,8 @@ def migrate(root, date):
     current, current_date = None, date
     fence = None
     for line_number, line in enumerate(lines, 1):
-        marker = re.match(r'(`{3,}|~{3,})', line.lstrip())
+        fence, marker = _fence_transition(line.rstrip('\r\n'), fence)
         if marker:
-            token = marker[1]
-            if fence is None:
-                fence = token
-            elif token[0] == fence[0] and len(token) >= len(fence):
-                fence = None
             if current:
                 blocks[current].append(line)
             continue
