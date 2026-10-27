@@ -126,35 +126,45 @@ class TaskFenceTests(unittest.TestCase):
         self.assertEqual([t['task_id'] for t in legacy_draft['tasks']], ['KEEP', 'CORRECT', 'NEXT'])
         self.assertEqual(legacy_draft['task_source']['sha256'], hashlib.sha256(source.read_bytes()).hexdigest())
 
-    def test_actual_cli_prepares_and_reads_complete_task_scope(self):
+    @unittest.skipIf(os.name == 'nt', 'POSIX supervisor imports fcntl; portable prepare API is tested separately')
+    def test_actual_prepare_cli_keeps_complete_protected_draft(self):
+        raw, sha = self.canonical_fixture()
+        before = {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        output = self.root / '.agent-runs/draft.json'
+        command = [sys.executable, '-B', '-m', 'agent_runtime.task_supervisor', 'prepare',
+                   '--project-root', str(self.root), '--run-id', 'fence-cli',
+                   '--authorization-reference', 'synthetic fixture only', '--out', str(output)]
+        run = subprocess.run(command, cwd=Path(__file__).resolve().parents[1], capture_output=True, timeout=15,
+            env=dict(os.environ, PYTHONUTF8='0', PYTHONIOENCODING='cp936'))
+        self.assertEqual(run.returncode, 0, run.stderr)
+        self.assertEqual(run.stderr, b'')
+        self.assertEqual(json.loads(run.stdout.decode('utf-8')),
+                         {'status': 'draft', 'plan': str(output), 'tasks': 3})
+        draft = json.loads(output.read_bytes())
+        self.assertEqual([t['task_id'] for t in draft['tasks']], ['KEEP', 'CORRECT', 'NEXT'])
+        self.assertEqual(draft['task_source']['sha256'], sha)
+        self.assertIn('plan_review', draft)
+        self.assertTrue(all(t['action'] == 'configure_host_action' for t in draft['tasks']))
+        after = {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
+        self.assertEqual({p: after[p] for p in before}, before)
+        self.assertEqual(set(after) - set(before), {Path('.agent-runs/draft.json')})
+        self.assertEqual(self.path.read_bytes(), raw)
+
+    def test_actual_task_view_cli_keeps_complete_scope(self):
         raw, sha = self.canonical_fixture()
         before = {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
         repo = Path(__file__).resolve().parents[1]
-        output = self.root / '.agent-runs/draft.json'
-        commands = [
-            [sys.executable, '-B', '-m', 'agent_runtime.task_supervisor', 'prepare',
-             '--project-root', str(self.root), '--run-id', 'fence-cli',
-             '--authorization-reference', 'synthetic fixture only', '--out', str(output)],
-            [sys.executable, '-B', str(repo / 'scripts/task_context.py'), '--root', str(self.root),
-             '--task-id', 'CORRECT', '--sha256', sha, '--compact']]
-        for number, command in enumerate(commands):
-            with self.subTest(command=number):
-                run = subprocess.run(command, cwd=repo, capture_output=True, timeout=15,
-                    env=dict(os.environ, PYTHONUTF8='0', PYTHONIOENCODING='cp936'))
-                self.assertEqual(run.returncode, 0, run.stderr)
-                self.assertEqual(run.stderr, b'')
-                value = json.loads(run.stdout.decode('utf-8'))
-                if number == 0:
-                    self.assertEqual(value, {'status': 'draft', 'plan': str(output), 'tasks': 3})
-                    draft = json.loads(output.read_bytes())
-                    self.assertEqual([t['task_id'] for t in draft['tasks']], ['KEEP', 'CORRECT', 'NEXT'])
-                    self.assertIn('plan_review', draft)
-                    self.assertTrue(all(t['action'] == 'configure_host_action' for t in draft['tasks']))
-                else:
-                    self.assertEqual(value['source_lines'], [1, 3, 4, 5, 6])
-                    self.assertEqual(value['text'], '## 2026-10-27\n\n    ```\n' + self.row('CORRECT') + '\n    ```\n')
-                    self.assertEqual(value['omitted_task_rows'], 2)
+        command = [sys.executable, '-B', str(repo / 'scripts/task_context.py'), '--root', str(self.root),
+                   '--task-id', 'CORRECT', '--sha256', sha, '--compact']
+        run = subprocess.run(command, cwd=repo, capture_output=True, timeout=15,
+            env=dict(os.environ, PYTHONUTF8='0', PYTHONIOENCODING='cp936'))
+        self.assertEqual(run.returncode, 0, run.stderr)
+        self.assertEqual(run.stderr, b'')
+        value = json.loads(run.stdout.decode('utf-8'))
+        self.assertEqual(value['source_lines'], [1, 3, 4, 5, 6])
+        self.assertEqual(value['text'], '## 2026-10-27\n\n    ```\n' + self.row('CORRECT') + '\n    ```\n')
+        self.assertEqual(value['omitted_task_rows'], 2)
+        self.assertEqual(value['source'], {'path': 'agent_doc/task/TASK.md', 'sha256': sha})
         after = {p.relative_to(self.root): p.read_bytes() for p in self.root.rglob('*') if p.is_file()}
-        self.assertEqual({p: after[p] for p in before}, before)
-        self.assertEqual(set(after) - set(before), {Path('.agent-runs/draft.json')} if output.exists() else set())
+        self.assertEqual(after, before)
         self.assertEqual(self.path.read_bytes(), raw)

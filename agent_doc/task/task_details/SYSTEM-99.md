@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 47
+Version: 48
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -178,6 +178,8 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 阶段AB（COMMUNICATION-UTF8-01，Version46）：按[独审方案](../../results/communication-utf8-20261027/plan.md)固定native通信CLI在cp936/ascii的完整消息、消费/context和Unicode错误输出；保留消费依据先于显示持久化、ACK独立与原退出协议。只复用现有UTF8配置，两行生产变化；一次修前/修后及独立一次定向回归，原始失败保留后普通发布，四原生矩阵另核。此入口不同于先前五context-wire及两validationCLI，不重置其额度或旧fullsuite/PID/alias/role/model门禁；无模型/性能或整轮完成主张。
 
 阶段AC（TASK-FENCE-01）：canonical/legacy任务摄取与只读视图复用现有top-level围栏状态规则；只替换parse_requirements/task_view两处旧lstrip/strip状态转移，公共helper/outside_fences/advice字节不改。保留字面任务/日期/详情规则、有效未闭合围栏EOF语义、非任务全文/行号、SHA快照、完整预算及审核授权门禁，不扩展完整Markdown容器/HTML解析。独审冻结七方法及十模块后，单baseline/fixed/independent共享900秒、单命令180秒、CLI15秒，无重试或旧额度重置；legacy完整任务集合、canonical快照/prepare与原生CLI只生成受保护占位草稿，不启动作业。保存修前失败，经独立代码/原始数据验收后普通发布，原生四矩阵另核；准确范围见[阶段方案](../../results/task-fence-20261027/plan.md)。同批质量/总成本/真实宿主与既有未决门禁不变，无性能或整轮完成主张。
+
+阶段AD（TASK-FENCE-NATIVE-01，Version48）：阶段AC原生CI暴露测试夹具错误，Windows调用POSIX/tmux supervisor因fcntl导入失败；原生产修复与140项Linux证据保留，不伪称旧testhash覆盖新版。只拆分tests/test_task_fence.py组合CLI测试：POSIXprepare在Windows显式skip，跨平台task_view CLI及canonical/legacy prepare API仍完整执行，原断言保留并加强输入/输出身份。8方法预期Linux全执行、Windows7执行/1明确不支持入口skip；不增加Windows supervisor支持、不shim、不改生产或CI矩阵。独审确切方案后，仅一次新提交触发四矩阵验证，无本地旧runner重跑/重置/CI重试；新CI及独立原始数据复核另核，保持SYSTEM99未完成。具体证据与范围见[原生修正](../../results/task-fence-native-20261027/report.md)。
 
 ## Progress
 
@@ -596,3 +598,5 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 - 2026-10-27续接：新增2609.36526v1正文及选定附录精读、独立七域/源码复核，[记录](../../results/counterfactual-reading-20261027/reading.md)保留表间数值疑点与初稿阅读范围返修。近期可恢复正文17→18，复读不计数；任务视图/记忆reconcile仅静态审查，TASK两处旧围栏规则为待复现候选，未确认新缺陷。无生产/测试/模型或性能新证据；Plan46、原系统级未决与旧额度不变，不计整轮完成。历史登记unknown不授信；普通发布/回读另核。
 
 - 2026-10-27续接TASK-FENCE-01：旧围栏逻辑使legacy prepare静默遗漏真实任务、canonical同输入因孤立详情拒绝草稿，非法关闭符还提升示例任务/日期。按Version47复用公共规则，无旧实现副本；修前140项中53失败/176受控错误子案例（六新方法，非229缺陷），同测试修后140/独立140通过且无skip。[证据](../../results/task-fence-20261027/report.md)保留原始失败/分类及独审，登记unknown不授信。原生四矩阵与普通发布回读另核；同SYSTEM99仍未完成，18正文计数/旧额度/真实质量与总成本缺口不变，不计性能收益或新轮。
+
+- 2026-10-27续接原生CI分类：5e6b4ee9的Ubuntu两组成功、Windows两组仅新测试POSIXprepare导入fcntl失败；主控及初审漏判平台边界，原失败保留。Version48仅修测试组织，生产hash不变；Windows显式不验POSIX原生入口，APIprepare/原生view断言仍执行，不以skip冒称Windows supervisor可用。独审新方案通过，最终新四矩阵/回读及结果复核待核；原140项仅绑定旧测试，原始记录不改写。18正文及SYSTEM99真实质量/全部用量成本等未决不变，无性能或整轮完成主张。
