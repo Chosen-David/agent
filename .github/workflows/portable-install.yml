@@ -57,8 +57,6 @@ jobs:
 
   ingest-macos:
     runs-on: macos-latest
-    env:
-      TMPDIR: ${{ runner.temp }}
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
@@ -68,6 +66,12 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -B -m unittest discover -s tests -p 'test_knowledge_ingest*.py' -v
+        env:
+          TMPDIR: ${{ runner.temp }}
       - run: python -B -m unittest discover -s tests -p test_knowledge_read_boundary.py -v
+        env:
+          TMPDIR: ${{ runner.temp }}
       - run: python -B -m unittest discover -s tests -p test_knowledge_index.py -v
+        env:
+          TMPDIR: ${{ runner.temp }}
       - run: python -B scripts/sync_plugin_references.py --check

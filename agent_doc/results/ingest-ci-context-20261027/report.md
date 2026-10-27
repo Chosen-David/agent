@@ -1,0 +1,5 @@
+# CI context correction
+
+The first repair commit produced workflow40479842837 completed/failure with zero jobs; it was never a native test failure or success. The job-level runner context in the reviewed v2 YAML was invalid. The exact annotation could not be retrieved; this diagnosis relies on the official context-availability table and the actual source/zero-job metadata.
+
+Move only the same TMPDIR expression to each macOS test step env, where runner is allowed. Production and all test bytes, argv, job counts, timeouts and action revisions remain unchanged. No local or old diagnostic checks are replayed, no CI rerun endpoint is called, and original plan/result evidence and consumed budgets remain intact. This is separately authorized ordinary CI syntax repair; failure.json explicitly records the original one-push limit exception instead of pretending the v2 plan authorized new bytes or that a third plan review occurred. Native acceptance remains pending until the corrected workflow actually executes.
