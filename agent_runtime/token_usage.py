@@ -1,6 +1,19 @@
 """Strict server accounting for a fresh one-turn, no-tool Codex short probe."""
 import json
 
+
+def _usage_object(value, label):
+    if not isinstance(value, dict):
+        raise ValueError(label + ' must be an object')
+    return value
+
+
+def _usage_items(value):
+    if not isinstance(value, list) or any(not isinstance(item, dict) for item in value):
+        raise ValueError('native turn items must be a list of objects')
+    return value
+
+
 def short_appserver_usage(events, thread_id, turn_id):
     """Account one fresh no-tool RPC turn; never sum cumulative updates."""
     if any(not isinstance(identity, str) or not identity for identity in (thread_id, turn_id)):
@@ -11,14 +24,15 @@ def short_appserver_usage(events, thread_id, turn_id):
     done = False
     allowed_items = {'userMessage', 'agentMessage', 'reasoning'}
     for event in events:
+        event = _usage_object(event, 'native event')
         method = event.get('method', '')
-        params = event.get('params', {})
+        params = _usage_object(event.get('params', {}), 'native params')
         if method == 'error':
             raise ValueError('server error during probe')
         if params.get('threadId') != thread_id:
             continue
         if method in ('turn/started', 'turn/completed'):
-            turn = params.get('turn', {})
+            turn = _usage_object(params.get('turn', {}), 'native turn')
             if turn.get('id') != turn_id:
                 raise ValueError('unexpected turn on fresh probe thread')
             if done:
@@ -28,23 +42,24 @@ def short_appserver_usage(events, thread_id, turn_id):
             else:
                 if not starts or turn.get('status') != 'completed' or turn.get('error'):
                     raise ValueError('probe turn did not successfully complete')
-                if any(i.get('type') not in allowed_items for i in turn.get('items', [])):
+                if any(i.get('type') not in allowed_items for i in _usage_items(turn.get('items', []))):
                     raise ValueError('probe executed tools or other work')
                 completed.append(turn)
                 done = True
         elif method == 'thread/tokenUsage/updated':
             if done or not starts or params.get('turnId') != turn_id:
                 raise ValueError('usage outside active fresh turn')
-            snapshots.append(params.get('tokenUsage', {}))
+            snapshots.append(_usage_object(params.get('tokenUsage', {}), 'native usage'))
         elif method in ('item/started', 'item/completed'):
             if done or not starts or params.get('turnId') != turn_id:
                 raise ValueError('item outside active fresh turn')
-            if params.get('item', {}).get('type') not in allowed_items:
+            if _usage_object(params.get('item', {}), 'native item').get('type') not in allowed_items:
                 raise ValueError('probe executed tools or other work')
     if len(starts) != 1 or len(completed) != 1 or not snapshots:
         raise ValueError('one complete fresh turn and server usage are required')
     snapshot = snapshots[-1]
-    last, total = snapshot.get('last', {}), snapshot.get('total', {})
+    last = _usage_object(snapshot.get('last', {}), 'current usage')
+    total = _usage_object(snapshot.get('total', {}), 'cumulative usage')
     keys = ('inputTokens', 'cachedInputTokens', 'outputTokens', 'totalTokens', 'reasoningOutputTokens')
     if any(type(counts.get(k)) is not int or counts[k] < 0
            for counts in (last, total) for k in keys):
@@ -94,7 +109,7 @@ def short_probe_usage(lines):
             any(e.get('type') in ('error','turn.failed') for e in events)):
         raise ValueError('need one successful fresh server turn; no resumed/cumulative snapshots')
     if any(e.get('type','').startswith('item.') and
-           e.get('item',{}).get('type') not in ('agent_message','reasoning') for e in events):
+           _usage_object(e.get('item',{}), 'probe item').get('type') not in ('agent_message','reasoning') for e in events):
         raise ValueError('probe executed tools or other work; bounded no-tool accounting is invalid')
     usage = turns[0].get('usage', {})
     required = ('input_tokens','cached_input_tokens','output_tokens')

@@ -1,0 +1,71 @@
+"""One reserved offline regression phase; no backend or model entry points."""
+import hashlib
+import json
+import os
+from pathlib import Path
+import signal
+import subprocess
+import sys
+import time
+
+run = Path(__file__).resolve().parent
+root = run.parents[1]
+phase = sys.argv[1]
+if phase not in ('baseline', 'fixed', 'independent'):
+    raise ValueError('unknown phase')
+plan_path = run / 'plan-v2.json'
+plan = json.loads(plan_path.read_bytes())
+budget_path = run / 'budget.json'
+budget = json.loads(budget_path.read_bytes())
+key = phase + '_used'
+if budget[key] or time.time() >= budget['deadline_epoch']:
+    raise ValueError('phase consumed or shared deadline expired')
+for ref in plan['source_refs']:
+    if phase != 'baseline' and ref['path'] in (
+            'agent_runtime/token_usage.py', 'agent_runtime/turn_usage.py', '.github/workflows/portable-install.yml'):
+        continue
+    if hashlib.sha256((root / ref['path']).read_bytes()).hexdigest() != ref['sha256']:
+        raise ValueError('frozen input changed: ' + ref['path'])
+if hashlib.sha256((root / 'agent_doc/task/task_details/SYSTEM-99.md').read_bytes().split(b'## Progress')[0]).hexdigest() != plan['stable_task_sha256']:
+    raise ValueError('stable task changed')
+out = run / phase
+out.mkdir()
+budget[key] = 1
+budget_path.write_text(json.dumps(budget, indent=2) + '\n')
+commands = [plan['command']]
+if phase != 'baseline':
+    commands.append(['python', '-B', 'scripts/sync_plugin_references.py', '--check'])
+results = []
+for index, command in enumerate(commands):
+    allowance = min(60, budget['deadline_epoch'] - time.time())
+    if allowance <= 0:
+        raise ValueError('shared deadline expired')
+    started = time.time()
+    proc = subprocess.Popen(command, cwd=root, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                            start_new_session=True)
+    timed_out = False
+    try:
+        stdout, stderr = proc.communicate(timeout=allowance)
+    except subprocess.TimeoutExpired:
+        timed_out = True
+        try:
+            os.killpg(proc.pid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        stdout, stderr = proc.communicate(timeout=5)
+    prefix = out / ('unit' if index == 0 else 'sync')
+    Path(str(prefix) + '.stdout').write_bytes(stdout)
+    Path(str(prefix) + '.stderr').write_bytes(stderr)
+    results.append({'argv': command, 'exit_code': proc.returncode, 'timeout': timed_out,
+                    'elapsed_seconds_bookkeeping_only': time.time() - started,
+                    'stdout_sha256': hashlib.sha256(stdout).hexdigest(),
+                    'stderr_sha256': hashlib.sha256(stderr).hexdigest()})
+    if proc.returncode or timed_out:
+        break
+metadata = {'phase': phase, 'plan_sha256': hashlib.sha256(plan_path.read_bytes()).hexdigest(),
+            'source_refs': [{'path': ref['path'], 'sha256': hashlib.sha256((root / ref['path']).read_bytes()).hexdigest()}
+                            for ref in plan['source_refs']], 'commands': results,
+            'scope': 'offline bounded source regression; no performance or model claim'}
+(out / 'execution.json').write_text(json.dumps(metadata, ensure_ascii=False, indent=2) + '\n')
+print(json.dumps({'phase': phase, 'commands': len(results), 'exit_code': results[-1]['exit_code']}))
+sys.exit(0 if all(x['exit_code'] == 0 and not x['timeout'] for x in results) else 1)

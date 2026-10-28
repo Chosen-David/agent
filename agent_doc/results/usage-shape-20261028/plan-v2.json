@@ -1,0 +1,138 @@
+{
+  "schema_version": "bounded-source-fix-plan/v1",
+  "task": "SYSTEM-99",
+  "plan_version": 54,
+  "base": "3f3f9f6810574541718936352a4ee23ece73d737",
+  "authorization": "Current user continuous reliability/maintainability improvement, nonforce main push; sole human guide directory read-only; same unfinished SYSTEM99",
+  "stable_task_sha256": "f6acab0acab813d56ea379700221747fbfd354262bd7223290527a208161bbee",
+  "intent": "Validate only consumed native/JSONL container shapes before .get/iteration, returning ValueError for malformed shapes; preserve exact valid accounting outputs, no costs or model success inferred.",
+  "assumptions": [
+    "Actual native payloads are JSON objects/arrays; customized Python tuple item lists are not JSON arrays. Unknown unrelated methods and optional omitted items stay compatible.",
+    "No source or backend execution beyond offline test command; old token probe/C20/role/PID/fullsuite etc consumed budgets remain unchanged.",
+    "This bounded code regression is not a new performance/scientific experiment, no provider usage or E2E quality measurement."
+  ],
+  "source_refs": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed"
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    },
+    {
+      "path": "agent_runtime/token_usage.py",
+      "sha256": "10d04dac588d04a915180b8f2b57b890a336e0aaa1865a0d9e34253eefa778e1"
+    },
+    {
+      "path": "agent_runtime/turn_usage.py",
+      "sha256": "6f32b515ec80f430698ec5304b80fb77dad229bed3cef227e363c81945c2adfc"
+    },
+    {
+      "path": "tests/test_usage_shapes.py",
+      "sha256": "452432ce841997893e3c7185513d92e5f68576f6229b6e521ac58bef108b6af0"
+    },
+    {
+      "path": "tests/test_turn_usage.py",
+      "sha256": "dd6456ab0bebaf8ae5c70ffa76ad7de997d3e39f5bbae9d0f220d20c56897955"
+    },
+    {
+      "path": "tests/test_usage_identity.py",
+      "sha256": "1935a2277f2f2e6dfef26af368bee7cc161843161d848581520af43337af16f9"
+    },
+    {
+      "path": "tests/test_prompt_context.py",
+      "sha256": "53e0e26fe1cd9fd21a99ef1b50e66ae07688227792c84e30c9ac633bfac47fcc"
+    },
+    {
+      "path": ".github/workflows/portable-install.yml",
+      "sha256": "98baf01d6a9f29a56557ed47404f91954593e99cee6f4f7e1190ca5de0862533"
+    }
+  ],
+  "prior_search": {
+    "path": ".agent-runs/usage-shape-0858/prior-search-note.json",
+    "sha256": "1d6dac4a702efb0fa607b1c110f06b10810b070572ee003a495ab135c8a7f6cd"
+  },
+  "method": [
+    "Add private _usage_object/_usage_items in token_usage; reuse in both native parsers and JSONL item consumption; turn_usage imports the sole helper implementations. Do not catch arbitrary AttributeError around functions.",
+    "Check consumed event/params/turn/item/usage containers, plus terminal items as list of objects, before existing fields/arithmetic logic. Missing optional items defaults to []; missing required counts remains rejected. Reject malformed earlier usage containers rather than ignoring them behind a later valid snapshot.",
+    "No schemas/inventory/role routing/CLI invocations/global auth changes. Add test_usage_shapes.py step to install four-matrix and macOS jobs only, commands/actions/permissions otherwise unchanged."
+  ],
+  "allowed_writes": [
+    "agent_runtime/token_usage.py",
+    "agent_runtime/turn_usage.py",
+    "tests/test_usage_shapes.py",
+    ".github/workflows/portable-install.yml",
+    "agent_doc/task/task_details/SYSTEM-99.md",
+    "agent_doc/results/usage-shape-20261028/*",
+    ".agent-runs/usage-shape-0858/*"
+  ],
+  "tests": [
+    "tests.test_usage_shapes",
+    "tests.test_usage_identity",
+    "tests.test_turn_usage",
+    "tests.test_prompt_context"
+  ],
+  "test_methods": [
+    "test_native_wrong_containers_fail_controlled",
+    "test_jsonl_wrong_item_containers_fail_controlled",
+    "test_native_complete_outputs_and_scope_preserved",
+    "test_jsonl_complete_output_preserved"
+  ],
+  "command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "tests.test_usage_shapes",
+    "tests.test_usage_identity",
+    "tests.test_turn_usage",
+    "tests.test_prompt_context",
+    "-v"
+  ],
+  "acceptance": [
+    "Baseline records malformed-input uncontrolled errors or acceptance, valid complete-output controls pass. Preserve exact stdout/stderr/exit/hash and test source before repair.",
+    "Fixed and independent same four modules no failures/errors/skips; input unchanged, actual integer-zero and fresh/current scope/full output stay correct. Existing identity/order/no-tool/counter negative controls retain rejection.",
+    "Independent source/raw-data check, exact same frozen tests and source hashes; sync references check once fixed and once independent. Native CI exact four new methods execute on all five jobs; a pending job remains pending.",
+    "No backend invocation, no old regression/fullsuite/model budget reopening, no universal truth/performance/E2E claim."
+  ],
+  "dag": [
+    "review_plan -> baseline_once -> in_place_fix -> fixed_once -> independent_verify_once -> exact_nonforce_publication -> native_ci_readback"
+  ],
+  "resources": {
+    "plan_review_max": 2,
+    "baseline_max": 1,
+    "fixed_max": 1,
+    "independent_max": 1,
+    "command_timeout_seconds": 60,
+    "shared_wall_seconds": 1200,
+    "deadline_epoch": 1793150566.9051683,
+    "ci_publication_max": 1,
+    "no_retries": true,
+    "model_or_backend_invocations": 0
+  },
+  "recovery": "Keep failed stages/raw files; new wake/run IDs do not reset this contract. If unsupported/mismatched result, checkpoint unresolved. No native ReviewSession/provider proof is claimed by manual independent review.",
+  "version": 2,
+  "previous_plan": {
+    "path": ".agent-runs/usage-shape-0858/plan-v1.json",
+    "sha256": "084817ee7409db234e6e4f0854f9287b8365578962eca0d5a4e61762c82c3d2b"
+  },
+  "previous_feedback": {
+    "path": ".agent-runs/usage-shape-0858/plan-review-v1.md",
+    "sha256": "549593638f2ffc3fb217e9c25d02641776d28d05d4a88143d938e9558a58e0d0"
+  },
+  "capture": {
+    "path": ".agent-runs/usage-shape-0858/capture.py",
+    "sha256": "aa072efee5cc79a390572ea28197751b9c2166ca94978fb187f6acad3738d4cb",
+    "purpose": "exact frozen command capture with phase-reservation, remaining shared deadline, owned process-group timeout kill/reap; no actual backend probe. Fixed/independent add one sync --check. Controller elapsed seconds are bookkeeping, not performance."
+  },
+  "revision": "Fix actual passed-object preservation oracle in valid native/zero/omitted-item fixtures and inherited/fresh control; preserve four method identities and full expected dictionaries. Capture controller frozen before execution; all original limits/deadline preserved."
+}
