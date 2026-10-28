@@ -1,0 +1,31 @@
+# MemPABench interaction-preference reading
+
+2610.30485v1, *Why Bother Me Again? Benchmarking Personal Agent Memory for Interaction Preferences*, Jialin Li et al.; submitted2026-10-21T22:08:49UTC. Primary https://arxiv.org/html/2610.30485v1 . Read main1–6, D.4/E/F/G.3–4/H and openingI.4 through character287500; Tables1–3/10–13/20–21 and Figures1–9 captions in that scope. References, other appendices/detailed tables and remainingI.4 rubrics, rendered images, author code/raw replication excluded.2000partial plus2101completion count as one body after independent review/public readback.
+
+## Method and experiments
+
+Acquisition, setting selection and delivered behavior are distinct stages. Four anonymized television personas have14attributes×work/personal contexts;20of112cells change once. Each user's99-session timeline combines94live accumulation sessions and5prerecorded change events. Histories/worlds are on-policy and condition-specific, not a shared frozen trajectory.33probes/user include28final and5pre-event; threeprobe repeats do not provide threeindependent longitudinal histories. Probes fork world/memory snapshots, omit prior raw conversations and discard their effects.
+
+Four PA backbones use temperature.7, up to8192outputtokens/call and40calls/userturn. Retrieval conditions top10/cap4000tokens differ from File memory reading the full consolidated file. File/Mem0 use DeepSeek memory models while MemOS usesGPT5.5; extraction/storage/access differ as bundles, not one isolated selector. NoMemory/Oracle skip accumulation and use worlds from each user's DeepSeek File-run checkpoint with memories cleared. Oracle exposes target/definition, a diagnostic intervention rather than a mathematical upper bound on every behavior score. No task/code quality, same-world-across-all-arms or matched absolute cost conclusion follows.
+
+PA calls an explicit IX selector once per active attribute/session. Wrapper applies pass-through, selective rendering, delivery or execution controls without seeing gold target; it can withhold rationale fields/actions but not repair wrong setting choices or contrary text in the public reply. Memory receives delivered exchanges/toolresults/IXcalls, not withheld material or gold. Wrapper execution is part of the evaluated harness, not a production-ready capability demonstrated in this repository.
+
+PSA is exact final setting choice; CS requires both work/personal selections, PET both pre/final selections. BRS judges delivered text/executed trajectory against target while blind to selected-setting call; PRS uses the same simulator reset to reread the probe. BRS and task completion are explicitly decoupled in the readI.4 template. Directly asking the preference scores1 by that protocol; it is not a universal rule to avoid task clarification/required permission. Rendered tool args/results can be truncated at200characters for scoring. Invalid quote/tool evidence can cause judge rescoring; no claim of an unrepaired single-call cost.
+
+## Results, controls and limitations
+
+- File PSA59.2 vsNoMemory49.6, reported+9.6pp cluster-bootstrap interval[+3.9,+15.6]; retrieval systems around50%. File PET improves but CS point estimate is lower, with its difference interval crossing zero; not evidence of equivalence or a proven CS regression. Cross-context carry-over increases, so globalizing preferences can damage applicability.
+- Sampled pre-selection inputs found applicable preferences in7/334retrieval probes vs60/111File. TwoUserB store cases localize missing evidence to retrieval, not universal storage or causal superiority of full-file loading. Literal record presence does not certify correct use.
+- Oracle-selected hard settings still have low realized pass rates, conditional on correct selection and BRS>=4. Wrapper-hidden rationale can be restated publicly; other examples show overlong replies or guessing missing task facts. These are conditional judge-defined behavior outcomes, not task success, safety, universal model rankings or success of this library.
+- Failure policy matters: missing/invalid IX selection can trigger within-turn reminders and probe reruns (at least3runs), then floors for model-contract failure (PSA0/BRS1) without dropping denominator. Sixothercases are not rerun. Unresolved missing artifacts are incomplete rather than zero; oneOraclePRS rating is absent. Reported67final+3pre floors and conditional/paired score populations must remain distinct. Threeprobe repeats are not a complete record of every recovery call.
+- Bootstrap5000resamples draws probes within each of fourusers, carrying all backbone/repeat outcomes together; CS/PET draw pairs/cells. These intervals do not measure a new population of realusers or independent end-to-end run variation. Narrow retrieval-vsNoMemory intervals are not general equivalence tests.
+- Gemini gives bothBRS/PRS; a418probe alternative-judge sample weakens but does not remove judge-dependence. Human preference-exposure audit covers File-memory sessions only; fictional personas/authored fallback preference cells limit generalization. Leakage rules reject/retry messages; posthoc flagged/sampled/swept1839sentences plus~300human reviews report no identified leakage, not exhaustive human proof over every generated sentence. Correlation and audit agreement do not establish absolute correctness.
+- No complete matched all-role/provider-cost or wall-time accounting was established in readscope. Reported per-session/probe timings and token caps are not actual complete modelinput counts, bills or net gains. FullFile vsbounded retrieval, different write models, wrapper, sharedsimulator/judges and condition-specific histories limit component attribution. Author implementations/data were not run or statistically reproduced.
+
+## Repository relation and decision
+
+采用评价方向：分开核验偏好/更正是否写入、在正确上下文和时间被取回、选择是否正确，以及实际输出/动作是否兑现；同时保存任务成功与偏好符合度、恢复调用和全角色成本。声明正确或hash完整不能替代实际动作和完整输入证据。此方向不是新实验批准。
+
+只读关系：MemoryLedger更正保留不可变历史并使依赖解释失效；basis_context保存必需项、候选/反对项及声明祖先；派发准备依赖宿主的完整性/历史声明，不能自动证明模型行为。源文件/结构化传输的精确恢复不能证明跨上下文偏好范围保留。当前用户明确授权与guide/宿主边界优先，交互偏好不能授权额外外发或绕过权限。
+
+暂缓新增默认全File加载、自动偏好全局化、IX包装器、共享聊天池、删除历史或agent_doc迁移。恢复需真实宿主、留出任务/上下文变更、完整实际输入、全角色用量/费用、最终任务质量与更正/异议/依赖保留的同条件独立验收。无生产修改、旧实现副本、测试/实验模型或后端、性能结果。独立AI审核1次，全角色tokens/费用unknown；手工独审非可信runtime认证，历史登记unknown。Plan54/旧耗尽门禁不变，SYSTEM99未完成；公开可恢复阅读链29→30仅合计本篇一次。
