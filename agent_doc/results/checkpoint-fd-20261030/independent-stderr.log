@@ -1,0 +1,26 @@
+test_normal_unicode_checkpoint (__main__.CheckpointDescriptorDiagnosis.test_normal_unicode_checkpoint) ... ok
+test_serialization_failure_preserves_existing_and_closes_fd (__main__.CheckpointDescriptorDiagnosis.test_serialization_failure_preserves_existing_and_closes_fd) ... ok
+test_stream_construction_failure_preserves_state_and_releases_fd (__main__.CheckpointDescriptorDiagnosis.test_stream_construction_failure_preserves_state_and_releases_fd) ... 
+  test_stream_construction_failure_preserves_state_and_releases_fd (__main__.CheckpointDescriptorDiagnosis.test_stream_construction_failure_preserves_state_and_releases_fd) (check='raw descriptor closed', existing=False) ... FAIL
+  test_stream_construction_failure_preserves_state_and_releases_fd (__main__.CheckpointDescriptorDiagnosis.test_stream_construction_failure_preserves_state_and_releases_fd) (check='raw descriptor closed', existing=True) ... FAIL
+
+======================================================================
+FAIL: test_stream_construction_failure_preserves_state_and_releases_fd (__main__.CheckpointDescriptorDiagnosis.test_stream_construction_failure_preserves_state_and_releases_fd) (check='raw descriptor closed', existing=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/.agent-runs/checkpoint-fd-diag-0200/diagnosis.py", line 86, in test_stream_construction_failure_preserves_state_and_releases_fd
+    self.assertTrue(is_closed, 'raw fd remains open after fdopen construction failure')
+AssertionError: False is not true : raw fd remains open after fdopen construction failure
+
+======================================================================
+FAIL: test_stream_construction_failure_preserves_state_and_releases_fd (__main__.CheckpointDescriptorDiagnosis.test_stream_construction_failure_preserves_state_and_releases_fd) (check='raw descriptor closed', existing=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/.agent-runs/checkpoint-fd-diag-0200/diagnosis.py", line 86, in test_stream_construction_failure_preserves_state_and_releases_fd
+    self.assertTrue(is_closed, 'raw fd remains open after fdopen construction failure')
+AssertionError: False is not true : raw fd remains open after fdopen construction failure
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.008s
+
+FAILED (failures=2)

@@ -1,0 +1,7 @@
+# Same-batch source audit
+
+Current main d243266e9b9707ea6aac666e21a3ba8edb8e3a34 / stable Plan56 / completed body records42. Read communication.py check_plan/prepare_event/receipt validation and Mailbox construction/publication transaction paths, plus task_manifest.review. These sections alone do not establish a new communication or report-acceptance defect. An attempted read of nonexistent agent_runtime/local_path_guards.py supplied no evidence; actual guards are imported from project_docs and already known boundaries remain.
+
+New hypothesis is narrowly atomic_json's ownership between mkstemp and successful fdopen construction. Prior RESULT-FD-95 covered ResultStore read/check/save; its old pass/measurements are not reused as proof for task_manifest.atomic_json. The already finished validation_context publication repair concerns a separate writer and final-record availability. No old runner, full-suite gate, native fixture commit budget, PID/model probe or MemDerive review is reopened here.
+
+The diagnostic plan permits only a fresh frozen temporary-file fixture and one independent repeat after explicit plan approval. It cannot authorize production implementation, bootstrap a real tmux/backend, prove failure frequency, descriptor exhaustion in deployment, performance improvement, all-platform correctness or full task quality. The Python-owned descriptor observation uses fstat, not the previously blocked /proc PID premise. Each fault descriptor is observed before runner cleanup; no other process or user's resource is touched.
