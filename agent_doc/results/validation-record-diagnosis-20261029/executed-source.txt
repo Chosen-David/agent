@@ -1,0 +1,75 @@
+"""Frozen local write-recovery diagnosis; never invokes a result verifier."""
+import hashlib
+import json
+import os
+from pathlib import Path
+import sys
+import tempfile
+import unittest
+from unittest.mock import patch
+
+ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT))
+from agent_runtime.validation_context import write_validation_context, restore_validation_context
+
+OBSERVATIONS = []
+DIRECTORY = 'agent_doc/results/display-diagnosis'
+RESULT = {'status': 'invalid', 'scope': 'local recovery only',
+          'errors': ['retain failure'], 'next_action': 'independent verification required', 'proof': None}
+
+class Diagnosis(unittest.TestCase):
+    def setUp(self):
+        self.temporary = tempfile.TemporaryDirectory()
+        self.addCleanup(self.temporary.cleanup)
+        self.root = Path(self.temporary.name).resolve()
+
+    def test_stream_construction_failure_does_not_poison_same_request_retry(self):
+        failure = None
+        with patch('agent_runtime.validation_context.os.fdopen', side_effect=OSError('injected stream construction failure')):
+            try:
+                write_validation_context(self.root, RESULT, DIRECTORY)
+            except OSError as exc:
+                failure = str(exc)
+        finals = sorted((self.root / DIRECTORY).glob('validation-*.json'))
+        failed_files = [{'name': p.name, 'bytes': p.stat().st_size,
+                         'sha256': hashlib.sha256(p.read_bytes()).hexdigest()} for p in finals]
+        retry_error = None
+        restored = None
+        try:
+            receipt = write_validation_context(self.root, RESULT, DIRECTORY)
+            restored = restore_validation_context(self.root, receipt['record_ref'])
+        except (OSError, ValueError) as exc:
+            retry_error = type(exc).__name__ + ': ' + str(exc)
+        OBSERVATIONS.append({'case': 'stream-construction-failure', 'injected_failure': failure,
+                             'finals_after_failure': failed_files, 'retry_error': retry_error,
+                             'retry_restores_complete_result': restored == RESULT})
+        self.assertEqual(failure, 'injected stream construction failure')
+        with self.subTest(invariant='no incomplete published final record'):
+            self.assertEqual(failed_files, [])
+        with self.subTest(invariant='same request succeeds after transient failure without manual deletion'):
+            self.assertIsNone(retry_error)
+            self.assertEqual(restored, RESULT)
+
+    def test_success_roundtrip_and_idempotency_control(self):
+        receipt = write_validation_context(self.root, RESULT, DIRECTORY)
+        before = (self.root / receipt['record_ref']['path']).read_bytes()
+        self.assertEqual(restore_validation_context(self.root, receipt['record_ref']), RESULT)
+        self.assertEqual(write_validation_context(self.root, RESULT, DIRECTORY), receipt)
+        self.assertEqual((self.root / receipt['record_ref']['path']).read_bytes(), before)
+        OBSERVATIONS.append({'case': 'success-and-idempotency', 'complete': True})
+
+    def test_existing_changed_record_remains_immutable_control(self):
+        receipt = write_validation_context(self.root, RESULT, DIRECTORY)
+        target = self.root / receipt['record_ref']['path']
+        target.write_bytes(b'preexisting changed record')
+        with self.assertRaises(ValueError):
+            write_validation_context(self.root, RESULT, DIRECTORY)
+        self.assertEqual(target.read_bytes(), b'preexisting changed record')
+        OBSERVATIONS.append({'case': 'changed-record-preserved', 'complete': True})
+
+if __name__ == '__main__':
+    run = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.loadTestsFromTestCase(Diagnosis))
+    print(json.dumps({'tests_run': run.testsRun, 'failure_assertions': len(run.failures),
+                      'errors': len(run.errors), 'skips': len(run.skipped),
+                      'observations': OBSERVATIONS}, ensure_ascii=False, sort_keys=True))
+    raise SystemExit(0 if run.wasSuccessful() else 1)

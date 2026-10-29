@@ -1,0 +1,35 @@
+test_existing_changed_record_remains_immutable_control (__main__.Diagnosis.test_existing_changed_record_remains_immutable_control) ... ok
+test_stream_construction_failure_does_not_poison_same_request_retry (__main__.Diagnosis.test_stream_construction_failure_does_not_poison_same_request_retry) ... 
+  test_stream_construction_failure_does_not_poison_same_request_retry (__main__.Diagnosis.test_stream_construction_failure_does_not_poison_same_request_retry) (invariant='no incomplete published final record') ... FAIL
+  test_stream_construction_failure_does_not_poison_same_request_retry (__main__.Diagnosis.test_stream_construction_failure_does_not_poison_same_request_retry) (invariant='same request succeeds after transient failure without manual deletion') ... FAIL
+test_success_roundtrip_and_idempotency_control (__main__.Diagnosis.test_success_roundtrip_and_idempotency_control) ... ok
+
+======================================================================
+FAIL: test_stream_construction_failure_does_not_poison_same_request_retry (__main__.Diagnosis.test_stream_construction_failure_does_not_poison_same_request_retry) (invariant='no incomplete published final record')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/.agent-runs/validation-record-diagnosis-2059/diagnose.py", line 48, in test_stream_construction_failure_does_not_poison_same_request_retry
+    self.assertEqual(failed_files, [])
+AssertionError: Lists differ: [{'name': 'validation-c23e7b51a217c76ad4f4[137 chars]55'}] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+{'name': 'validation-c23e7b51a217c76ad4f4f7afa898fa0190c30ea8c38718758af065f5ad316cd6.json', 'bytes': 0, 'sha256': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}
+
++ []
+- [{'bytes': 0,
+-   'name': 'validation-c23e7b51a217c76ad4f4f7afa898fa0190c30ea8c38718758af065f5ad316cd6.json',
+-   'sha256': 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855'}]
+
+======================================================================
+FAIL: test_stream_construction_failure_does_not_poison_same_request_retry (__main__.Diagnosis.test_stream_construction_failure_does_not_poison_same_request_retry) (invariant='same request succeeds after transient failure without manual deletion')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/.agent-runs/validation-record-diagnosis-2059/diagnose.py", line 50, in test_stream_construction_failure_does_not_poison_same_request_retry
+    self.assertIsNone(retry_error)
+AssertionError: 'ResultValidationError: existing context record changed; preserve and repair' is not None
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.014s
+
+FAILED (failures=2)
