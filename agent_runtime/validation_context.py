@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import re
+import tempfile
 
 from .result_validation import LIMIT, _bytes, _json, _need, _path, _ref
 from .project_docs import assert_ai_writable, guard_write_path
@@ -63,19 +64,26 @@ def write_validation_context(root, result, relative_directory, *, compact_storag
     target = _path(root, relative)
     assert_ai_writable(supplied_root, relative)
     guard_write_path(supplied_root / relative)
-    try:
-        fd = os.open(target, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_NOFOLLOW', 0), 0o600)
-    except FileExistsError:
+    if target.exists():
         _need(_bytes(root, relative) == data, 'existing context record changed; preserve and repair')
     else:
-        # Keep ownership even if constructing/entering the stream fails.
+        fd, temporary = tempfile.mkstemp(prefix='.validation-', dir=directory)
         try:
-            with os.fdopen(fd, 'wb', closefd=False) as stream:
-                stream.write(data)
-                stream.flush()
-                os.fsync(stream.fileno())
+            try:
+                with os.fdopen(fd, 'wb', closefd=False) as stream:
+                    stream.write(data)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+            finally:
+                os.close(fd)
+            assert_ai_writable(supplied_root, relative)
+            guard_write_path(supplied_root / relative)
+            try:
+                os.link(temporary, target, follow_symlinks=False)
+            except FileExistsError:
+                _need(_bytes(root, relative) == data, 'existing context record changed; preserve and repair')
         finally:
-            os.close(fd)
+            os.unlink(temporary)
     display = deepcopy(result)
     hidden = {}
     if display['proof'] is not None:

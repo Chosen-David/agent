@@ -1,0 +1,113 @@
+test_pending_full_roundtrip_and_idempotency (tests.test_validation_context.ValidationContextTests.test_pending_full_roundtrip_and_idempotency) ... ok
+test_failures_limits_and_verifier_are_preserved (tests.test_validation_context.ValidationContextTests.test_failures_limits_and_verifier_are_preserved) ... ok
+test_path_unknown_fields_and_modified_record_refuse (tests.test_validation_context.ValidationContextTests.test_path_unknown_fields_and_modified_record_refuse) ... ok
+test_real_cli_default_pending_exit_and_restore (tests.test_validation_context.ValidationContextTests.test_real_cli_default_pending_exit_and_restore) ... ok
+test_rebased_guide_root_cannot_write (tests.test_validation_context.ValidationContextTests.test_rebased_guide_root_cannot_write) ... ok
+test_identical_record_copied_to_other_project_cannot_restore (tests.test_validation_context.ValidationContextTests.test_identical_record_copied_to_other_project_cannot_restore) ... ok
+test_native_restore_preserves_full_unicode_observations (tests.test_validation_context.ValidationContextTests.test_native_restore_preserves_full_unicode_observations) ... ok
+test_native_inspection_pending_and_display_roundtrip (tests.test_validation_context.ValidationContextTests.test_native_inspection_pending_and_display_roundtrip) ... ok
+test_native_input_failure_retains_utf8_error_protocol (tests.test_validation_context.ValidationContextTests.test_native_input_failure_retains_utf8_error_protocol) ... ok
+test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) ... 
+  test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='no failed final or temporary record', phase='construct') ... FAIL
+  test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='same valid request retries without deleting records', phase='construct') ... FAIL
+  test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='no failed final or temporary record', phase='write') ... FAIL
+  test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='same valid request retries without deleting records', phase='write') ... FAIL
+  test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='no failed final or temporary record', phase='flush') ... FAIL
+  test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='not published before fsync completes', phase='fsync') ... FAIL
+  test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='no failed final or temporary record', phase='fsync') ... FAIL
+
+======================================================================
+FAIL: test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='no failed final or temporary record', phase='construct')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/tests/test_validation_context.py", line 203, in test_staging_failures_preserve_retry_and_close_descriptor
+    self.assertEqual(list((self.root / relative).iterdir()), [])
+AssertionError: Lists differ: [PosixPath('/tmp/tmpoafcaqq1/agent_doc/res[101 chars]on')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+PosixPath('/tmp/tmpoafcaqq1/agent_doc/results/failure-construct/validation-9d6886d2319c956f847ba7ec73c5001edf29eadeb901a0cb19465453fe943053.json')
+
+- [PosixPath('/tmp/tmpoafcaqq1/agent_doc/results/failure-construct/validation-9d6886d2319c956f847ba7ec73c5001edf29eadeb901a0cb19465453fe943053.json')]
++ []
+
+======================================================================
+FAIL: test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='same valid request retries without deleting records', phase='construct')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/tests/test_validation_context.py", line 211, in test_staging_failures_preserve_retry_and_close_descriptor
+    self.assertIsNone(retry_error)
+AssertionError: "ResultValidationError('existing context record changed; preserve and repair')" is not None
+
+======================================================================
+FAIL: test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='no failed final or temporary record', phase='write')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/tests/test_validation_context.py", line 203, in test_staging_failures_preserve_retry_and_close_descriptor
+    self.assertEqual(list((self.root / relative).iterdir()), [])
+AssertionError: Lists differ: [PosixPath('/tmp/tmpoafcaqq1/agent_doc/res[97 chars]on')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+PosixPath('/tmp/tmpoafcaqq1/agent_doc/results/failure-write/validation-9d6886d2319c956f847ba7ec73c5001edf29eadeb901a0cb19465453fe943053.json')
+
+- [PosixPath('/tmp/tmpoafcaqq1/agent_doc/results/failure-write/validation-9d6886d2319c956f847ba7ec73c5001edf29eadeb901a0cb19465453fe943053.json')]
++ []
+
+======================================================================
+FAIL: test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='same valid request retries without deleting records', phase='write')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/tests/test_validation_context.py", line 211, in test_staging_failures_preserve_retry_and_close_descriptor
+    self.assertIsNone(retry_error)
+AssertionError: "ResultValidationError('existing context record changed; preserve and repair')" is not None
+
+======================================================================
+FAIL: test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='no failed final or temporary record', phase='flush')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/tests/test_validation_context.py", line 203, in test_staging_failures_preserve_retry_and_close_descriptor
+    self.assertEqual(list((self.root / relative).iterdir()), [])
+AssertionError: Lists differ: [PosixPath('/tmp/tmpoafcaqq1/agent_doc/res[97 chars]on')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+PosixPath('/tmp/tmpoafcaqq1/agent_doc/results/failure-flush/validation-9d6886d2319c956f847ba7ec73c5001edf29eadeb901a0cb19465453fe943053.json')
+
+- [PosixPath('/tmp/tmpoafcaqq1/agent_doc/results/failure-flush/validation-9d6886d2319c956f847ba7ec73c5001edf29eadeb901a0cb19465453fe943053.json')]
++ []
+
+======================================================================
+FAIL: test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='not published before fsync completes', phase='fsync')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/tests/test_validation_context.py", line 193, in syncing
+    self.assertEqual(list((self.root / relative).glob('validation-*.json')), [])
+AssertionError: Lists differ: [PosixPath('/tmp/tmpoafcaqq1/agent_doc/res[97 chars]on')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+PosixPath('/tmp/tmpoafcaqq1/agent_doc/results/failure-fsync/validation-9d6886d2319c956f847ba7ec73c5001edf29eadeb901a0cb19465453fe943053.json')
+
+- [PosixPath('/tmp/tmpoafcaqq1/agent_doc/results/failure-fsync/validation-9d6886d2319c956f847ba7ec73c5001edf29eadeb901a0cb19465453fe943053.json')]
++ []
+
+======================================================================
+FAIL: test_staging_failures_preserve_retry_and_close_descriptor (tests.test_validation_context.ValidationContextTests.test_staging_failures_preserve_retry_and_close_descriptor) (invariant='no failed final or temporary record', phase='fsync')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/tests/test_validation_context.py", line 203, in test_staging_failures_preserve_retry_and_close_descriptor
+    self.assertEqual(list((self.root / relative).iterdir()), [])
+AssertionError: Lists differ: [PosixPath('/tmp/tmpoafcaqq1/agent_doc/res[97 chars]on')] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+PosixPath('/tmp/tmpoafcaqq1/agent_doc/results/failure-fsync/validation-9d6886d2319c956f847ba7ec73c5001edf29eadeb901a0cb19465453fe943053.json')
+
+- [PosixPath('/tmp/tmpoafcaqq1/agent_doc/results/failure-fsync/validation-9d6886d2319c956f847ba7ec73c5001edf29eadeb901a0cb19465453fe943053.json')]
++ []
+
+----------------------------------------------------------------------
+Ran 10 tests in 1.070s
+
+FAILED (failures=7)

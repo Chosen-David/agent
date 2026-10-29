@@ -1,0 +1,103 @@
+    def test_staging_failures_preserve_retry_and_close_descriptor(self):
+        from unittest.mock import patch
+        import errno
+        real_fdopen = os.fdopen
+        for phase in ('construct', 'write', 'flush', 'fsync'):
+            with self.subTest(phase=phase):
+                relative = 'agent_doc/results/failure-' + phase
+                descriptors = []
+                class Stream:
+                    def __init__(inner, stream): inner.stream = stream
+                    def __enter__(inner): return inner
+                    def __exit__(inner, *args): return inner.stream.__exit__(*args)
+                    def fileno(inner): return inner.stream.fileno()
+                    def write(inner, data):
+                        if phase == 'write':
+                            inner.stream.write(data[:7])
+                            raise OSError('injected write failure')
+                        return inner.stream.write(data)
+                    def flush(inner):
+                        inner.stream.flush()
+                        if phase == 'flush': raise OSError('injected flush failure')
+                def opening(fd, *args, **kwargs):
+                    descriptors.append(fd)
+                    if phase == 'construct': raise OSError('injected construct failure')
+                    return Stream(real_fdopen(fd, *args, **kwargs))
+                def syncing(fd):
+                    with self.subTest(invariant='not published before fsync completes'):
+                        self.assertEqual(list((self.root / relative).glob('validation-*.json')), [])
+                    if phase == 'fsync': raise OSError('injected fsync failure')
+                with patch('agent_runtime.validation_context.os.fdopen', side_effect=opening), \
+                     patch('agent_runtime.validation_context.os.fsync', side_effect=syncing):
+                    with self.assertRaisesRegex(OSError, 'injected'):
+                        write_validation_context(self.root, self.result, relative)
+                for fd in descriptors:
+                    with self.assertRaises(OSError) as error: os.fstat(fd)
+                    self.assertEqual(error.exception.errno, errno.EBADF)
+                with self.subTest(invariant='no failed final or temporary record'):
+                    self.assertEqual(list((self.root / relative).iterdir()), [])
+                retry_error = None
+                receipt = None
+                try:
+                    receipt = write_validation_context(self.root, self.result, relative)
+                except (OSError, ValueError) as exc:
+                    retry_error = repr(exc)
+                with self.subTest(invariant='same valid request retries without deleting records'):
+                    self.assertIsNone(retry_error)
+                if receipt is not None:
+                    self.assertEqual(restore_validation_context(self.root, receipt['record_ref']), self.result)
+                    self.assertEqual([p.name for p in (self.root / relative).iterdir()],
+                                     [Path(receipt['record_ref']['path']).name])
+
+    def test_publication_error_is_closed_and_same_request_retries(self):
+        from unittest.mock import patch
+        import errno
+        for code in (errno.EIO, errno.ENOTSUP):
+            with self.subTest(code=code):
+                relative = 'agent_doc/results/link-error-' + str(code)
+                with patch('agent_runtime.validation_context.os.link', side_effect=OSError(code, 'injected publication failure')) as publishing:
+                    with self.assertRaises(OSError) as error:
+                        write_validation_context(self.root, self.result, relative)
+                    self.assertEqual(error.exception.errno, code)
+                    self.assertEqual(publishing.call_count, 1)
+                self.assertEqual(list((self.root / relative).iterdir()), [])
+                receipt = write_validation_context(self.root, self.result, relative)
+                self.assertEqual(restore_validation_context(self.root, receipt['record_ref']), self.result)
+
+    def test_publication_preserves_identical_or_different_racing_target(self):
+        from unittest.mock import patch
+        import stat
+        for matching in (True, False):
+            with self.subTest(matching=matching):
+                relative = 'agent_doc/results/race-' + str(matching)
+                observed = {}
+                def competing(source, target, **kwargs):
+                    data = Path(source).read_bytes()
+                    observed['bytes'] = data if matching else b'competing record'
+                    Path(target).write_bytes(observed['bytes'])
+                    observed['target'] = Path(target)
+                    observed['identity'] = (Path(target).stat().st_dev, Path(target).stat().st_ino)
+                    self.assertEqual(stat.S_IMODE(Path(source).stat().st_mode) & 0o077 if os.name != 'nt' else 0, 0)
+                    raise FileExistsError('competing target')
+                with patch('agent_runtime.validation_context.os.link', side_effect=competing) as publishing:
+                    if matching:
+                        receipt = write_validation_context(self.root, self.result, relative)
+                        self.assertEqual(restore_validation_context(self.root, receipt['record_ref']), self.result)
+                    else:
+                        with self.assertRaisesRegex(ValueError, 'existing context record changed'):
+                            write_validation_context(self.root, self.result, relative)
+                    self.assertEqual(publishing.call_count, 1)
+                target = observed['target']
+                self.assertEqual(target.read_bytes(), observed['bytes'])
+                self.assertEqual((target.stat().st_dev, target.stat().st_ino), observed['identity'])
+                self.assertEqual(list((self.root / relative).iterdir()), [target])
+
+    def test_existing_record_idempotency_does_not_require_new_publication(self):
+        from unittest.mock import patch
+        receipt = write_validation_context(self.root, self.result, 'agent_doc/results/no-new-publication')
+        before = self.file_hashes()
+        with patch('agent_runtime.validation_context.os.fsync', side_effect=OSError('must not restage')), \
+             patch('agent_runtime.validation_context.os.link', side_effect=OSError('must not republish')):
+            self.assertEqual(write_validation_context(self.root, self.result,
+                             'agent_doc/results/no-new-publication'), receipt)
+        self.assertEqual(self.file_hashes(), before)

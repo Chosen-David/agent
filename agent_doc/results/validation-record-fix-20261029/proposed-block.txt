@@ -1,0 +1,20 @@
+    if target.exists():
+        _need(_bytes(root, relative) == data, 'existing context record changed; preserve and repair')
+    else:
+        fd, temporary = tempfile.mkstemp(prefix='.validation-', dir=directory)
+        try:
+            try:
+                with os.fdopen(fd, 'wb', closefd=False) as stream:
+                    stream.write(data)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+            finally:
+                os.close(fd)
+            assert_ai_writable(supplied_root, relative)
+            guard_write_path(supplied_root / relative)
+            try:
+                os.link(temporary, target, follow_symlinks=False)
+            except FileExistsError:
+                _need(_bytes(root, relative) == data, 'existing context record changed; preserve and repair')
+        finally:
+            os.unlink(temporary)
