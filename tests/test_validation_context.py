@@ -255,7 +255,9 @@ class ValidationContextTests(unittest.TestCase):
                 target = observed['target']
                 self.assertEqual(target.read_bytes(), observed['bytes'])
                 self.assertEqual((target.stat().st_dev, target.stat().st_ino), observed['identity'])
-                self.assertEqual(list((self.root / relative).iterdir()), [target])
+                members = list((self.root / relative).iterdir())
+                self.assertEqual(len(members), 1)
+                self.assertTrue(members[0].samefile(target))
 
     def test_existing_record_idempotency_does_not_require_new_publication(self):
         from unittest.mock import patch

@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 55
+Version: 56
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -194,6 +194,8 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 阶段AJ（USAGE-SHAPE-01，Version54）：续接0759仅源码候选，限三个离线用量解析器的JSON容器类型拒绝。共享私有对象/条目列表校验，原地补event/params/turn/item/tokenUsage/last/total读取边界，不转换坏值为零，不放宽no-tool、身份、终态顺序、缓存/推理子集或fresh/current计量口径；缺失可选items及无关事件兼容保留。冻结四新方法与四模块；独立方案审核后单次修前/修后/独审，各命令60秒、共享1200秒、最多两次方案审核，无后端/模型/旧probe或旧耗尽门禁重跑。保留完整原始失败、有效零值/完整输出/输入不变控制及源码复核后普通发布；五组原生CI新增离线形状方法另核。本阶段仅受控错误处理，不以异常数冒充独立缺陷，不声称token/费用/性能或整轮完成；同批24篇正文、真实宿主/全部用量/任务质量等未决保持。
 
 阶段AK（VALIDATION-RECORD-FIX-01，Version55）：承接d023cfef已独审诊断，按冻结限域方案原地改写显示记录发布边界：完整同目录私有暂存write/flush/fsync并关闭后guard+link不覆盖发布，既有同字节幂等/异字节拒绝、schema/hash/权限与live验收门禁保持；失败只清理本方temp，不删旧坏记录，无replace fallback。固定A+既有9方法修前对照，完整三模块修后/独审含B/C/D发布专项；各执行1次、120秒/命令、300秒/分支、共享1200秒、方案最多2次，无旧额度重置。保存原始失败，经独立源码/数据验收后普通发布；四个Ubuntu/Windows原生矩阵另核，macOS job不运行validation_context。敌意父目录/暂存替换、目录断电持久性、全事务与真实宿主/质量/全费用仍open；无性能或整轮完成主张。具体范围见新修复结果的plan-v1，未取得可信runtime回执不宣称受保护链已派发。
+
+阶段AK原生续接（VALIDATION-RECORD-NATIVE-01，Version56）：保留1e8283fb原生Windows失败与全部旧额度；仅把竞争目标目录成员的Path字面相等修为唯一成员+samefile实际身份，原字节/inode/权限/接受拒绝断言全留，无skip、无生产变化。第二次且最后独立方案审核后仅一次新源码提交触发新四矩阵CI，不重跑旧job或本地baseline/fixed/independent；外部CI后续只读结果，未完成前保持原生未验。真实宿主/质量/费用与SYSTEM99系统级未决不变。
 
 ## Progress
 
@@ -682,3 +684,5 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 - 2026-10-29续接VALIDATION-RECORD-DIAG-01：固定方案经一次独立批准，主控/独立各一次真实writer临时夹具诊断，均3方法/2失败断言跨1注入方法、2控制通过、0error/skip。os.fdopen构造异常后留下零字节最终哈希文件，撤销故障后的相同请求被existing-record字节检查拒绝；[完整失败/方案/独审](../../results/validation-record-diagnosis-20261029/report.md)保留，未把空记录错误授信或断言数称为独立根因。仅本机确定性恢复缺口，未修生产、未测发生率/性能/模型质量或CLI/跨OS/全并发。plan/producer/verify各1已消耗，不重启旧门禁；后续须新版本不覆盖原子发布方案及独立审核/修前修后/原生验收，不能自动删除既有坏记录。runtime历史登记unknown，非可信认证；Plan54/guide/唯一TASK及40正文不变，SYSTEM99全部系统级未决继续open。
 
 - 2026-10-29续接VALIDATION-RECORD-FIX-01：Version55一次独立方案审核后原地采用完整暂存write/flush/fsync/关闭再guard+link不覆盖发布，既有字节/hash/schema/验收门禁保持。冻结baseline旧9+A共10，7失败断言均A；修后/独审各39方法（37通过、2明确Windows junction skip），四新方法全通过。[原始失败/冻结方案/独审](../../results/validation-record-fix-20261029/report.md)保留；B/C/D只新发布机制专项，不比较不同总方法数当收益。构造/部分write/flush/fsync及EIO/ENOTSUP、同异竞争目标/FD/temp/幂等限定验收，close/unlink失败/敌意替换/目录断电/全事务/真实宿主未验；无性能或模型质量结论。plan实际1/2、baseline/fixed/independent各1已用，不重启旧门禁；四Ubuntu/Windows原生新方法CI及普通发布回读另核，macOS job不跑validation_context。历史登记unknown非可信认证，guide/唯一TASK及40正文保持，SYSTEM99全输入/质量/全费用/并发恢复等未决不关闭。
+
+- 2026-10-29续接VALIDATION-RECORD-NATIVE-01：原CI40889582083中Windows3.12在C末行把RUNNER~1/runneradmin同目录别名判为不同；其余12方法及bytes/inode/行为断言通过。Version56用原第二次/最后方案审核批准仅改唯一成员+samefile身份断言，原失败与旧测试hash保留；[原生修正证据](../../results/validation-record-native-20261029/report.md)记录无新本地测试/旧CI重跑、无生产变化，只有一次新source提交触发四矩阵待验。40正文、全部旧额度/guide/唯一TASK和SYSTEM99系统级未决保持；不把原Linux通过或新版未运行当Windows已验。
