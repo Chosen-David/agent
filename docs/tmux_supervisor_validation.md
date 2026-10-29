@@ -1,5 +1,9 @@
 # tmux / TASK.md / Claude setup 验证记录
 
+## 终端标题
+
+`agent_runtime/tmux.conf` 启用 `set-titles`，标题格式为 `#{session_name}`，用于让支持动态标题的外层终端显示当前 attach 的会话名。已运行的 server 可在 tmux 内执行 `tmux source-file /绝对路径/agent/agent_runtime/tmux.conf`；此命令同时加载该文件中的鼠标、复制和显示设置。终端若固定了自定义标签名，需在终端设置中允许应用更新标题。此设置不重命名会话或窗口；普通 `tmux attach -t NAME` 连接的 server 也须已加载此配置。2026-10-29 当前编辑容器无 tmux 命令，未验证实际终端标题更新。
+
 日期：2026-10-06。基线：`b1fabee7f44ee30d91dfa1b416bd13bc3beb5e4e`。本轮修改仅在 agent 仓库，未修改 SGLang、用户服务器、模型凭据或平台内部监督配置。
 
 ## 实现范围
