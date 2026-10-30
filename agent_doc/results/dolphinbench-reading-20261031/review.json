@@ -1,0 +1,364 @@
+{
+  "schema": "manual-static-paper-reading-review/v1",
+  "task": "SYSTEM-99",
+  "role": "dolphinbench-reading-independent-review",
+  "attempt": 1,
+  "max_attempts": 1,
+  "deadline": "2026-10-30T18:23:16.821119+00:00",
+  "time": {
+    "first_independently_observed_utc": "2026-10-30T18:08:52+00:00",
+    "first_read_started": "earlier in this same invocation, exact start not instrumented",
+    "completed_at": "2026-10-30T18:10:54.954737+00:00",
+    "within_deadline": true
+  },
+  "verdict": "accept",
+  "compact_verdict": {
+    "verdict": "accept",
+    "scope": "frozen DolphinBench reading/source static content only",
+    "required_issues": [],
+    "optional_clarifications": [
+      "DB-C01",
+      "DB-C02"
+    ],
+    "checks": {
+      "intent": {
+        "status": "pass",
+        "reason": "Independent static review of the new DolphinBench reading only, within the same unfinished SYSTEM-99 batch. No empirical reproduction, source modification, backend acceptance or global completion is inferred."
+      },
+      "guide": {
+        "status": "pass",
+        "reason": "GUIDE.md is zero bytes; guide/README.md explains human-only ownership and has been read. Both files and the whole guide directory remained read-only. AGENTS.md, project-document governance and relevant Plan63/current SYSTEM-99 boundaries were checked."
+      },
+      "assumptions": {
+        "status": "pass",
+        "reason": "The reading distinguishes user-message token counts from complete agent trajectories, finite model-specific 2+2 certification from universal solvability, published aggregate comparisons from causal component effects, and external author claims from locally verified implementation."
+      },
+      "prior_results": {
+        "status": "pass",
+        "reason": "No old empirical result is reused for a new benchmark or local improvement claim. Producer source.json reports a prior catalog query with 367 scanned, 25 errors and no returned matches; that is explicitly incomplete evidence, not proof of absence. The recovery report preserves 59 matching/6 missing old refs and all old failed/frozen gates. This review does not restore missing originals or revalidate old scientific results."
+      },
+      "acceptance": {
+        "status": "pass",
+        "reason": "Full available primary paper text, all its sections/subsections, both tables, both diagram captions and extractable flows, and all 31 references were read. Full named README and static homepage were read; all 10 frozen refs match. No blocking misstatement in reading.md/source.json was found. Acceptance is limited to this reading record."
+      },
+      "risk": {
+        "status": "pass",
+        "reason": "No author implementation, dataset, official-run traces, dynamic leaderboard or linked internal documentation was read or executed. No real service actions, remote authentication, models, probes, tests, paying or production changes occurred. Missing appendix/full judge prompt, visual audit, raw cost and run uncertainty remain explicit limitations."
+      },
+      "resources": {
+        "status": "pass",
+        "reason": "One reserved manual independent attempt, completed before the frozen deadline. Only review.json is written, below 1 MiB. No additional agents or runtime ReviewSession were invoked. Provider-wide tokens/cost are not exposed and remain unknown; no new paid service was started."
+      }
+    }
+  },
+  "full_review": {
+    "summary": "Accept the frozen DolphinBench reading as an accurate, appropriately scoped static body-reading record. The scientific mechanisms, all reported result groups, important negative results and limits are represented faithfully. This is a manual independent review, not protected runtime acceptance or verification of author code/data/results.",
+    "review_object": {
+      "project_root": "/workspace/scratch/95d615402a52/agent-run-2205",
+      "task": "SYSTEM-99",
+      "paper": "DolphinBench: Mapping the Pareto Frontier of Agent Memory",
+      "paper_id": "2609.24971v2",
+      "available_header": "arXiv:2609.24971v2 [cs.CL] 22 Sep 2026",
+      "manifest": "agent_doc/results/dolphinbench-reading-20261031/review-inputs.json",
+      "manifest_sha256": "d586639d4bfa38f6a4aa5610225fbd89938ce77e883ab7ae2fbf2ca8376f5ba0",
+      "producer_reading_sha256": "f00c71b77f332c5ecb3ad3f7b0110606f2654e902fec2fc78884172da320b519",
+      "producer_source_sha256": "44749ffc9f48b03ea9f4d575deac6b8c55d73a558e31dfd8d5e7798e9c92e4e2"
+    },
+    "findings": [
+      {
+        "id": "DB-R01",
+        "status": "supported",
+        "location": "Paper Abstract, §§1–3; reading.md method/construction",
+        "assessment": "Action-conditioned evaluation requires the agent to recognize that historical facts matter, then act through simulated apps. Direct QA retrieval hints are reduced but the format does not prove every implicit clue absent. Three synthetic knowledge-work personas have 200 tests each, totaling 600; 3,400–5,128 messages and roughly 500k o200k_base tokens per persona count user content only. Agents generate their own assistant replies during ingestion, so fixed user messages do not imply fixed full trajectories, tokens or costs."
+      },
+      {
+        "id": "DB-R02",
+        "status": "supported",
+        "location": "Paper §3.1; Figures 1–2",
+        "assessment": "The full hierarchy is persona definitions → overall narrative/quarters/weeks → app records and tool outputs → user messages → grounded facts and source alignment → task/request/check construction → finite verification/revision. Figure 1 includes source/fact links and revise/recheck. Figure 2 requires both oracle-supported runs to pass and both unsupported runs to fail. GPT-5.6-Luna receives only the original necessary messages, not an unconstrained full-history retrieval challenge. This is a selection certificate for that model and four attempts, not universal no-history impossibility, perfect full-history success, or four-run independent performance replication for each Table 2 configuration. Reading.md states these limits correctly."
+      },
+      {
+        "id": "DB-R03",
+        "status": "supported",
+        "location": "Paper §3.2; worked example",
+        "assessment": "Task pass is a conjunction of every required check on actual tool actions/results. GPT-5.6-Sol handles semantic equivalence from the request and checked call arguments; deterministic checks handle identifiers, values, dates, lists and tool requirements. Recipient and required content must match in the same email call; a single send cannot satisfy two distinct required emails. An acknowledgment, correct recall or success statement is insufficient. No complete semantic-judge prompt or all task-level checks are embedded in this HTML; reading.md does not claim to have read them."
+      },
+      {
+        "id": "DB-R04",
+        "status": "supported",
+        "location": "Table 1 and §§2.1–2.3",
+        "assessment": "All benchmark rows and partial-property footnotes were read. The three axes are action format, cost plus latency, and finite solvability certification; partial properties differ across prior benchmarks. The LoCoMo 99/1540=6.4% and approximately 63% intentionally incorrect-answer judge acceptance are attributed external audit claims, not independently reproduced findings. Reading.md preserves that distinction and does not award extra paper credit for citations."
+      },
+      {
+        "id": "DB-R05",
+        "status": "supported",
+        "location": "Table 2; §§3.2 and 4",
+        "assessment": "All 13 configuration rows and all accuracy/agent-cost/memory-cost/total-cost/median-latency entries were checked against reading.md. Accuracy denominator is 600 tasks. Total dollars cover ingestion, testing and memory processing; latency is the median individual test time across personas and includes tools, not ingestion duration or a mean. Compatible integer pass totals, inferred only from rounded percentages, are Luna [394,424,411,417,355], M3 [159,287,284,246,120], Sonnet [158,194,215]. Those are arithmetic compatibility checks, not independently observed run counts. Reading.md retains the published totals despite displayed rounded component discrepancies: Luna Mem0/Honcho/Supermemory sums exceed totals by $0.01, and Sonnet Honcho sum is $0.01 below. Raw unrounded billing data were not read, so there is no verified cost-accounting defect or certified complete billing."
+      },
+      {
+        "id": "DB-R06",
+        "status": "supported",
+        "location": "Paper §4; reading.md experimental comparison",
+        "assessment": "Luna Mem0 improves displayed accuracy by 5 percentage points and latency 44.35→37.69s at higher total cost 61.48→96.21 dollars. Luna Hindsight is 1 point higher accuracy and cheaper than Honcho but slower. Supermemory underperforms built-in for both Hermes models and costs more; for M3 it is also slower (20.00 vs 26.50%, 497.70 vs 107.03 dollars, 137.52 vs 51.40s). The highest score is 70.67%, leaving substantial errors. Memory rankings change across harness/model groups. Changes involving both model and harness cannot establish single-factor causality. No algorithm training or orthogonal component ablation is reported; comparing complete memory systems does not isolate a local retrieval-module change. No repeated-run confidence interval or broad noninferiority claim is supported."
+      },
+      {
+        "id": "DB-R07",
+        "status": "supported",
+        "location": "Paper §5 and §6",
+        "assessment": "All five limitations are present: synthetic language/style/inconsistency; only three knowledge-work domains; simulated apps without full outages or other-user edits; one to four separately scored actions rather than long workflows; and completed ingestion before testing rather than continuous interleaving. These limit direct transfer to SYSTEM-99 real-host coordination, online corrections, concurrent recovery and whole-workflow quality. The conclusion proposes future growth rather than reporting those extensions as completed."
+      },
+      {
+        "id": "DB-R08",
+        "status": "supported-with-scope",
+        "location": "Pinned author root README; static homepage; source.json provenance",
+        "assessment": "The complete README independently supports persona token counts Alex500109/Morgan500100/Riley500056, ingestion order, separate stores, completed checkpoints, fresh tests/app state, no subsequent-memory contamination, excluded fact/expected-answer/grade inputs, base+override app-state description, manifest claims, and Apache2 license. README describes code/data/results and reproductions; those linked artifacts were not inspected. The paper is CC BY4, not the README Apache2 license. The producer pins commit81cb6f8405b40a9e76089cef650806a80af06ea2/tree dff8520ba9427c4167bb77f9079f15488f8dc135; the local README bytes are hash-verified, while remote commit identity/exact experiment-code correspondence are not independently re-fetched or certified here."
+      },
+      {
+        "id": "DB-R09",
+        "status": "supported-with-scope",
+        "location": "Complete 4301-character author homepage text",
+        "assessment": "The homepage still says Loading results, so no dynamic leaderboard is read. It states fresh sessions, isolated app state, read-only completed test memory and ingestion/testing cost. Test018 names Jake’s suggested #eng-all although adjacent marketing prose says No channel named. Reading.md correctly limits that sentence to absence of the correct governing channel rule, rather than claiming no channel string occurs. Synthetic dates extending into2027 do not establish future real-user data. The homepage demo does not validate actual rules, action traces or release integrity."
+      },
+      {
+        "id": "DB-R10",
+        "status": "supported",
+        "location": "reading.md repository relation; source.json status_at_freeze; frozen current task/recovery evidence",
+        "assessment": "Adoption is limited to later authorized evaluation design: fixed inputs and corrections, actual autonomous retrieval/action checks, complete cost attribution and latency distributions, independent acceptance and controls. No new memory pool, policy, service, payment, directory migration or automatic sending is authorized. Existing TASK, MemoryLedger, correction closure, handoff and result contracts remain. source.json status_at_freeze pending/new_credit0/history59 is explicitly historical and is not a current contradictory claim needing repair. This new independent acceptance can support only this paper’s one reading completion after parent reconciliation/publication; it neither recertifies old59 nor closes SYSTEM-99 or repairs the six missing old originals."
+      }
+    ],
+    "checks": {
+      "intent": {
+        "status": "pass",
+        "reason": "Independent static review of the new DolphinBench reading only, within the same unfinished SYSTEM-99 batch. No empirical reproduction, source modification, backend acceptance or global completion is inferred."
+      },
+      "guide": {
+        "status": "pass",
+        "reason": "GUIDE.md is zero bytes; guide/README.md explains human-only ownership and has been read. Both files and the whole guide directory remained read-only. AGENTS.md, project-document governance and relevant Plan63/current SYSTEM-99 boundaries were checked."
+      },
+      "assumptions": {
+        "status": "pass",
+        "reason": "The reading distinguishes user-message token counts from complete agent trajectories, finite model-specific 2+2 certification from universal solvability, published aggregate comparisons from causal component effects, and external author claims from locally verified implementation."
+      },
+      "prior_results": {
+        "status": "pass",
+        "reason": "No old empirical result is reused for a new benchmark or local improvement claim. Producer source.json reports a prior catalog query with 367 scanned, 25 errors and no returned matches; that is explicitly incomplete evidence, not proof of absence. The recovery report preserves 59 matching/6 missing old refs and all old failed/frozen gates. This review does not restore missing originals or revalidate old scientific results."
+      },
+      "acceptance": {
+        "status": "pass",
+        "reason": "Full available primary paper text, all its sections/subsections, both tables, both diagram captions and extractable flows, and all 31 references were read. Full named README and static homepage were read; all 10 frozen refs match. No blocking misstatement in reading.md/source.json was found. Acceptance is limited to this reading record."
+      },
+      "risk": {
+        "status": "pass",
+        "reason": "No author implementation, dataset, official-run traces, dynamic leaderboard or linked internal documentation was read or executed. No real service actions, remote authentication, models, probes, tests, paying or production changes occurred. Missing appendix/full judge prompt, visual audit, raw cost and run uncertainty remain explicit limitations."
+      },
+      "resources": {
+        "status": "pass",
+        "reason": "One reserved manual independent attempt, completed before the frozen deadline. Only review.json is written, below 1 MiB. No additional agents or runtime ReviewSession were invoked. Provider-wide tokens/cost are not exposed and remain unknown; no new paid service was started."
+      }
+    },
+    "required_issues": [],
+    "optional_clarifications": [
+      {
+        "id": "DB-C01",
+        "severity": "nonblocking",
+        "location": "Future summaries of Table2",
+        "text": "If integer pass counts are useful, label them as counts compatible with rounded published percentages rather than raw observed run counts. The present reading does not need these added."
+      },
+      {
+        "id": "DB-C02",
+        "severity": "nonblocking",
+        "location": "Future provenance summaries",
+        "text": "Continue to distinguish hash-checked local README content from independently verified remote commit identity and actual paper-code correspondence. This review does not re-fetch commit metadata or inspect author implementation."
+      }
+    ],
+    "acceptance_limits": [
+      "No PDF page or pixel/visual audit; diagrams covered as captions and extractable vector flow text only.",
+      "No appendix, independently numbered mathematical equations or complete judge prompt in supplied HTML; none invented.",
+      "No author source, dataset, release manifest contents, traces, dynamic leaderboard, internal linked documents or paid execution inspected.",
+      "No verification of external Table1 literature/audit primary originals beyond this paper’s reference list.",
+      "No benchmark reproduction, causal mechanism validation, complete billing validation or local performance/model-quality improvement acceptance.",
+      "Manual review output is not a trusted ReviewSession receipt; old Windows/FD/backend/StageI and other consumed/expired gates are unchanged."
+    ]
+  },
+  "required_issues": [],
+  "optional_clarifications": [
+    {
+      "id": "DB-C01",
+      "severity": "nonblocking",
+      "location": "Future summaries of Table2",
+      "text": "If integer pass counts are useful, label them as counts compatible with rounded published percentages rather than raw observed run counts. The present reading does not need these added."
+    },
+    {
+      "id": "DB-C02",
+      "severity": "nonblocking",
+      "location": "Future provenance summaries",
+      "text": "Continue to distinguish hash-checked local README content from independently verified remote commit identity and actual paper-code correspondence. This review does not re-fetch commit metadata or inspect author implementation."
+    }
+  ],
+  "read_coverage": {
+    "paper_text": {
+      "path": ".agent-runs/research-continuation-0204/dolphin.txt",
+      "characters": 32468,
+      "read_ranges": [
+        [
+          0,
+          32468
+        ]
+      ],
+      "scope": "entire available extraction including abstract, main1–6,2.1–2.3,3.1–3.2,all named construction/limitation subsections,worked example,Tables1–2,Figures1–2captions+extractable flow text,all31references; HTML interface boilerplate also visible"
+    },
+    "paper_html": {
+      "path": ".agent-runs/research-continuation-0204/dolphin.html",
+      "bytes": 168407,
+      "sha256_verified": true,
+      "coverage": "HTML structure, all section headings,table/figure identification and captions crosschecked against fully read extraction; not visual pixel/PDF audit"
+    },
+    "producer_reading": {
+      "path": "agent_doc/results/dolphinbench-reading-20261031/reading.md",
+      "coverage": "full"
+    },
+    "producer_source": {
+      "path": "agent_doc/results/dolphinbench-reading-20261031/source.json",
+      "coverage": "full"
+    },
+    "author_readme": {
+      "path": ".agent-runs/research-continuation-0204/author-README.md",
+      "coverage": "full root README,7405UTF8bytes; no linked code/docs/data/results read"
+    },
+    "author_homepage": {
+      "path": ".agent-runs/research-continuation-0204/author-site.txt",
+      "characters": 4301,
+      "read_ranges": [
+        [
+          0,
+          4301
+        ]
+      ],
+      "coverage": "full current static extracted text; no dynamic leaderboard or dataset page"
+    },
+    "project": {
+      "AGENTS.md": "full",
+      "agent_doc/guide/GUIDE.md": "full,empty",
+      "agent_doc/guide/README.md": "full",
+      "agent_doc/task/TASK.md": "hash checked full bytes; relevant SYSTEM-99 lines and surrounding status/navigation read",
+      "agent_doc/results/legacy-text-20261031/plan63-prefix.txt": "hash checked full bytes; beginning baseline/stable bounds and final11000characters read; not claiming complete historical Plan63 narrative coverage",
+      "agent_doc/task/task_details/SYSTEM-99.md": "selected current tail recovery/reading/legacy/Traverse status; truncated historical output not counted as read",
+      "agent_doc/results/recovery-20261030-2205/report.md": "full"
+    },
+    "workflows_read": [
+      "workflows/project_document_workflow.md",
+      "workflows/paper_reading_companion_workflow.md",
+      "plugins/research-assistant/skills/paper-reading-companion/references/execution.md",
+      "workflows/dual_main_workflow.md",
+      "workflows/knowledge_access_workflow.md"
+    ],
+    "other_workflow_scope": "reviewer_workflow.md was initially requested with a truncated combined output; not claimed fully read or applied as formal venue manuscript review.",
+    "knowledge_access": {
+      "status": "bounded-primary-inputs",
+      "source": "Frozen primary paper, full named author materials and applicable project docs provide all evidence needed for this static record review. No new empirical reuse or theorem application; no machine corpus query or live external novelty search claimed.",
+      "knowledge_refs": []
+    }
+  },
+  "ref_verification": {
+    "manifest_sha256": "d586639d4bfa38f6a4aa5610225fbd89938ce77e883ab7ae2fbf2ca8376f5ba0",
+    "matched": 10,
+    "missing": 0,
+    "mismatched": 0,
+    "refs": [
+      {
+        "path": "agent_doc/results/dolphinbench-reading-20261031/reading.md",
+        "sha256": "f00c71b77f332c5ecb3ad3f7b0110606f2654e902fec2fc78884172da320b519",
+        "actual_sha256": "f00c71b77f332c5ecb3ad3f7b0110606f2654e902fec2fc78884172da320b519",
+        "bytes": 8259,
+        "status": "match"
+      },
+      {
+        "path": "agent_doc/results/dolphinbench-reading-20261031/source.json",
+        "sha256": "44749ffc9f48b03ea9f4d575deac6b8c55d73a558e31dfd8d5e7798e9c92e4e2",
+        "actual_sha256": "44749ffc9f48b03ea9f4d575deac6b8c55d73a558e31dfd8d5e7798e9c92e4e2",
+        "bytes": 3364,
+        "status": "match"
+      },
+      {
+        "path": ".agent-runs/research-continuation-0204/dolphin.html",
+        "sha256": "c2f3a6f27db3da76d476b2e22765df9862716eddfde2aaadeba1590ea814b7e9",
+        "actual_sha256": "c2f3a6f27db3da76d476b2e22765df9862716eddfde2aaadeba1590ea814b7e9",
+        "bytes": 168407,
+        "status": "match"
+      },
+      {
+        "path": ".agent-runs/research-continuation-0204/dolphin.txt",
+        "sha256": "ee22c7e689d592ee614898dafed296ef1b4cc36baa8968bd6a7325ad28de433c",
+        "actual_sha256": "ee22c7e689d592ee614898dafed296ef1b4cc36baa8968bd6a7325ad28de433c",
+        "bytes": 32707,
+        "status": "match"
+      },
+      {
+        "path": ".agent-runs/research-continuation-0204/author-README.md",
+        "sha256": "00f1e9f3ee9f054fd9339ef8c19cb07246d0a885b6231b436608e101dd149531",
+        "actual_sha256": "00f1e9f3ee9f054fd9339ef8c19cb07246d0a885b6231b436608e101dd149531",
+        "bytes": 7405,
+        "status": "match"
+      },
+      {
+        "path": ".agent-runs/research-continuation-0204/author-site.txt",
+        "sha256": "9cc0adac9d2c1484eab55b296ad740121a59cbc08917aec3084b0a58e56e0b02",
+        "actual_sha256": "9cc0adac9d2c1484eab55b296ad740121a59cbc08917aec3084b0a58e56e0b02",
+        "bytes": 4373,
+        "status": "match"
+      },
+      {
+        "path": "AGENTS.md",
+        "sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+        "actual_sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+        "bytes": 14108,
+        "status": "match"
+      },
+      {
+        "path": "agent_doc/task/TASK.md",
+        "sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+        "actual_sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+        "bytes": 69666,
+        "status": "match"
+      },
+      {
+        "path": "agent_doc/results/legacy-text-20261031/plan63-prefix.txt",
+        "sha256": "3d1df1fbc8efe06e1ccb56110cb725f17f4417298fb6ae158cd576b52cd7b31d",
+        "actual_sha256": "3d1df1fbc8efe06e1ccb56110cb725f17f4417298fb6ae158cd576b52cd7b31d",
+        "bytes": 45082,
+        "status": "match"
+      },
+      {
+        "path": "agent_doc/results/recovery-20261030-2205/report.md",
+        "sha256": "6e81ed894c4e6c3a7a3c4332cd229edcbd909ed0300880dd927c01aa00cb0268",
+        "actual_sha256": "6e81ed894c4e6c3a7a3c4332cd229edcbd909ed0300880dd927c01aa00cb0268",
+        "bytes": 2305,
+        "status": "match"
+      }
+    ]
+  },
+  "guide_refs": [
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261",
+      "bytes": 1804
+    }
+  ],
+  "actions": {
+    "author_code_data_results_read": false,
+    "author_code_data_results_executed": false,
+    "tests_models_probes_services_payments": false,
+    "remote_authentication": false,
+    "additional_agents": 0,
+    "old_gate_reset_or_rerun": false,
+    "public_files_written": false,
+    "allowed_write_only": ".agent-runs/dolphinbench-review-0210/review.json",
+    "protected_runtime_receipt": false,
+    "all_role_tokens_and_cost": "unknown"
+  }
+}
