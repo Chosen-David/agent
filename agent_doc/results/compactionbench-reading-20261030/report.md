@@ -1,0 +1,5 @@
+# CompactionBench reading checkpoint
+
+Completed the fixed October2026 preprint's full scientific body and appendices; one independent static review accepts. [reading.md](reading.md) is the concise scientific record. [review-status.json](review-status.json) preserves precise identity, coverage and the immutable location/hash of the full original private feedback; it is an index, not a replacement transcript. No arXiv identifier is invented. Source PDF/text and detailed reading history remain at their bound original paths; public acquisition-only and earlier partial states are superseded without changing old evidence.
+
+No production/test/workflow change, author experiment reproduction or new compaction policy. Ordinary exact publication/readback makes same-batch53→54, not a completed optimization round. Manual reading acceptance is not trusted runtime or performance acceptance. Plan61, guide/uniqueTASK and all consumed source/other finite gates remain unchanged. Source87a288 five CI jobs are successful; documentation CI is tracked separately. SYSTEM99 known gaps remain open.
