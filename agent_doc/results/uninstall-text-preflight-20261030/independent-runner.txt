@@ -1,0 +1,36 @@
+"""One bounded, independent invocation of the frozen 55-method command."""
+import datetime, hashlib, json, os, platform, signal, subprocess, sys, time
+from pathlib import Path
+root = Path(__file__).resolve().parents[2]
+run = Path(__file__).resolve().parent
+plan = json.loads((root / '.agent-runs/uninstall-text-preflight-2004/plan-v1.json').read_bytes())
+deadline = datetime.datetime.fromisoformat(plan['deadline'])
+now = lambda: datetime.datetime.now(datetime.timezone.utc)
+remaining = (deadline-now()).total_seconds()
+if remaining <= 10:
+    raise SystemExit('cleanup reserve unavailable; independent gate not executed')
+env = dict(os.environ)
+for key in ('ANTHROPIC_BASE_URL', 'TMUX'):
+    env.pop(key, None)
+command = [sys.executable, *plan['fixed_and_independent_command'][1:]]
+fd = os.open(run/'independent.once', os.O_WRONLY|os.O_CREAT|os.O_EXCL, 0o600)
+os.close(fd)
+started = now(); tick = time.monotonic(); child = None; timed_out=False; code=None
+with (run/'independent.stdout').open('xb') as out, (run/'independent.stderr').open('xb') as err:
+    try:
+        child = subprocess.Popen(command, cwd=root, env=env, stdout=out, stderr=err, start_new_session=True)
+        try:
+            timeout = min(120, (deadline-now()).total_seconds()-10)
+            code = child.wait(timeout=max(0, timeout))
+        except subprocess.TimeoutExpired:
+            timed_out=True
+            os.killpg(child.pid, signal.SIGKILL)
+            code=child.wait(timeout=10)
+    finally:
+        if child is not None and child.poll() is None:
+            os.killpg(child.pid, signal.SIGKILL)
+            child.wait(timeout=10)
+meta={'command':command,'cwd':str(root),'started_at':started.isoformat(),'ended_at':now().isoformat(),'timeout_seconds':timeout,'deadline':deadline.isoformat(),'cleanup_reserve_seconds':10,'elapsed_seconds':time.monotonic()-tick,'exit_code':code,'timed_out':timed_out,'pid':child.pid if child else None,'owned_session':True,'reaped': child is not None and child.poll() is not None,'environment_overrides':{'ANTHROPIC_BASE_URL':'removed','TMUX':'removed'},'python':sys.version,'platform':platform.platform(),'budget':{'attempt':1,'maximum':1},'timing_scope':'resource accounting only; no performance claim'}
+(run/'independent.json').write_text(json.dumps(meta,indent=2)+'\n')
+print(json.dumps(meta))
+raise SystemExit(code)

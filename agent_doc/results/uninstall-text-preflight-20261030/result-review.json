@@ -1,0 +1,511 @@
+{
+  "schema_version": "manual-independent-scoped-result-review/v1",
+  "reviewer": "/root/uninstall_text_result_review_2009",
+  "project_root": "/workspace/scratch/95d615402a52/agent-run-1202",
+  "task": "SYSTEM-99",
+  "scope": "SETUP-UNINSTALL-TEXT-PREFLIGHT-01",
+  "decision": "usable-with-scope",
+  "started_at": "2026-10-30T12:09:52.430034+00:00",
+  "completed_at": "2026-10-30T12:12:02.475279+00:00",
+  "deadline": "2026-10-30T12:30:23.216259+00:00",
+  "result_inputs": {
+    "path": ".agent-runs/uninstall-text-preflight-2004/result-inputs.json",
+    "sha256": "69ffce02af007cef0d7cb5a7ab1502c0986c58736dc85ebe543cda2cb475ba15"
+  },
+  "approved_plan": {
+    "path": ".agent-runs/uninstall-text-preflight-2004/plan-v1.json",
+    "sha256": "36b6741574a84e9a6e8f4ae3efc2d03252628fd50277dcad5ccc8546e4683df6"
+  },
+  "full_plan_review": {
+    "path": ".agent-runs/uninstall-text-plan-review-2006/review-v1.json",
+    "sha256": "c9e51f479b7cced41416870fd32323ee4eac41fd8279e55f7dc91de5821b36f2"
+  },
+  "checks": {
+    "implementation": {
+      "verdict": "pass",
+      "reason": "Compared actual frozen base/candidate and current source. Exact production delta binds checked_target and invokes _installed_text for each existing regular manifest-owned file during preflight. This runs before all managed-file/skill removals and CLAUDE rewrite. Deletion loop remains byte-for-byte unchanged and rereads text/hash before unlink. _installed_text uses regular_bytes, strict UTF-8 and prior universal-newline normalization. Shared helper/schema/ownership rules remain unchanged.",
+      "evidence": [
+        {
+          "path": "setup.py",
+          "sha256": "ef6fce44d9cfd4f3d0d16b2ceb0adb745df0e90517c04fd1221110b5318e658a"
+        },
+        {
+          "path": "agent_runtime/external_json.py",
+          "sha256": "f154b63e6852b3fec6285e2dae9c749d2a8a34943746fac22c61cd9658fce849"
+        },
+        {
+          "path": "tests/test_uninstall_text.py",
+          "sha256": "57131bb32004d7169c7820c01ca627b1d4395934a7cf60af29560fd287effd3e"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/integrity-before.json",
+          "sha256": "38ac0e5c9394df73c3d393138fdf437854a7ac3b0f81ea81f707a8f1ceaa87b1"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/integrity-after.json",
+          "sha256": "3cd532d74e7598d9259fb4197e1b32afda9bbc5ce3308ce094a55aeefee2caf2"
+        }
+      ]
+    },
+    "reference_boundary": {
+      "verdict": "pass",
+      "reason": "Read new5 test source and complete snapshot helper. Last manifest file, with multiple files asserted, is the late discriminator. Static invalid UTF-8 and >16MiB CLI calls assert exit2, empty stdout, setup blocked and no Traceback before full content/type/link/directory snapshot equality. Injected late API PermissionError separately verifies no removal; its CLI translation is code-inspected, not separately injected through a child. Valid edited/unowned bytes survive. Controlled edit after first read is preserved by second ownership read; baseline fails this discriminator. Snapshot excludes metadata/mtime/ACL certification.",
+      "evidence": [
+        {
+          "path": "tests/test_uninstall_text.py",
+          "sha256": "57131bb32004d7169c7820c01ca627b1d4395934a7cf60af29560fd287effd3e"
+        },
+        {
+          "path": "tests/test_setup_text.py",
+          "sha256": "aee61eb7921eada61e80f50581f3d14f10a75b3dd7b685ad47172d5c711c3350"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-preflight-2004/baseline.stderr",
+          "sha256": "e2b835c5beb24d241ca52a341f2c154075ffa69ecddf1649ef4da6845a7b01be"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-preflight-2004/fixed.stderr",
+          "sha256": "2b8d4a6c0a8cd4f0c6231cb17d8e35b3299c849c77ffed69c64e7117bee8dc84"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/independent.stderr",
+          "sha256": "2a8635568d09c6d6c74731999de1b8c26fd51f45b05f278c315ed086f91b8453"
+        },
+        {
+          "path": "setup.py",
+          "sha256": "ef6fce44d9cfd4f3d0d16b2ceb0adb745df0e90517c04fd1221110b5318e658a"
+        }
+      ]
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "Read raw producer baseline/fixed stderr and execution metadata, not only pass reports. Baseline has exactly5 unique methods:4 intended FAIL and1 valid control ok, no errors/skips; three failures occur at snapshot comparison after CLI/error protocol assertions and fourth at edit ownership preservation. Fixed has55 unique ok methods with OK trailer and no failures/errors/skips. Independent raw55 IDs/order exactly match fixed. AST source counts5+2+17+15+16=55; imported snapshot module does not expose its TestCase as a new-module class. All32 refs and literal input hash matched before and after. Raw logs are preserved fully; unittest itself abbreviates large assertion diffs, whose failure identities and traces remain visible.",
+      "evidence": [
+        {
+          "path": ".agent-runs/uninstall-text-preflight-2004/baseline.stderr",
+          "sha256": "e2b835c5beb24d241ca52a341f2c154075ffa69ecddf1649ef4da6845a7b01be"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-preflight-2004/fixed.stderr",
+          "sha256": "2b8d4a6c0a8cd4f0c6231cb17d8e35b3299c849c77ffed69c64e7117bee8dc84"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/independent.stderr",
+          "sha256": "2a8635568d09c6d6c74731999de1b8c26fd51f45b05f278c315ed086f91b8453"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/independent.json",
+          "sha256": "744bc4b89dd14cec61592d7e4d0ced5a86569fd601b34199a5b2466c3722a5e1"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/integrity-before.json",
+          "sha256": "38ac0e5c9394df73c3d393138fdf437854a7ac3b0f81ea81f707a8f1ceaa87b1"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/integrity-after.json",
+          "sha256": "3cd532d74e7598d9259fb4197e1b32afda9bbc5ce3308ce094a55aeefee2caf2"
+        }
+      ]
+    },
+    "numerical_sanity": {
+      "verdict": "not_applicable",
+      "reason": "Explicitly allowed by frozen inputs: this is boolean installation correctness, not numerical/scientific estimation. No numerical tolerance, NaN/Inf computation, scientific units or accuracy statistic is asserted; method accounting is verified under data_integrity.",
+      "evidence": [
+        {
+          "path": "tests/test_uninstall_text.py",
+          "sha256": "57131bb32004d7169c7820c01ca627b1d4395934a7cf60af29560fd287effd3e"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-preflight-2004/baseline.stderr",
+          "sha256": "e2b835c5beb24d241ca52a341f2c154075ffa69ecddf1649ef4da6845a7b01be"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-preflight-2004/fixed.stderr",
+          "sha256": "2b8d4a6c0a8cd4f0c6231cb17d8e35b3299c849c77ffed69c64e7117bee8dc84"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/independent.stderr",
+          "sha256": "2a8635568d09c6d6c74731999de1b8c26fd51f45b05f278c315ed086f91b8453"
+        }
+      ]
+    },
+    "measurement_validity": {
+      "verdict": "not_applicable",
+      "reason": "Explicitly allowed: no speedup, token/cost, statistical model-quality or performance claim.5-method baseline and55-method fixed/independent timings have different scopes and cannot be compared for performance. Extra per-file bounded read and transient decoding memory are acknowledged; elapsed time is resource accounting only.",
+      "evidence": [
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/run-independent.py",
+          "sha256": "d9208151b787b57a08dd8be11c4687b8ef523f94a71d1ddda45f074435c88a80"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/independent.json",
+          "sha256": "744bc4b89dd14cec61592d7e4d0ced5a86569fd601b34199a5b2466c3722a5e1"
+        },
+        {
+          "path": "setup.py",
+          "sha256": "ef6fce44d9cfd4f3d0d16b2ceb0adb745df0e90517c04fd1221110b5318e658a"
+        }
+      ]
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "Executed frozen exact55 once using independent owned runner/once marker and raw stdout/stderr/metadata; substituted current sys.executable for frozen python as producer did. ANTHROPIC_BASE_URL/TMUX removed, owned subprocess session,120-second limit bounded by shared deadline less10-second cleanup reserve, no retry. Actual exit0, no timeout, child reaped. Current bound source matches candidates before/after. This is a local Linux Python3.12 execution; five native CI invocations remain separately required.",
+      "evidence": [
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/run-independent.py",
+          "sha256": "d9208151b787b57a08dd8be11c4687b8ef523f94a71d1ddda45f074435c88a80"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/independent.json",
+          "sha256": "744bc4b89dd14cec61592d7e4d0ced5a86569fd601b34199a5b2466c3722a5e1"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/independent.stderr",
+          "sha256": "2a8635568d09c6d6c74731999de1b8c26fd51f45b05f278c315ed086f91b8453"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/integrity-before.json",
+          "sha256": "38ac0e5c9394df73c3d393138fdf437854a7ac3b0f81ea81f707a8f1ceaa87b1"
+        },
+        {
+          "path": ".agent-runs/uninstall-text-result-review-2009/integrity-after.json",
+          "sha256": "3cd532d74e7598d9259fb4197e1b32afda9bbc5ce3308ce094a55aeefee2caf2"
+        }
+      ]
+    }
+  },
+  "full_feedback": [
+    "No blocking defect found within the frozen static late managed-text refusal scope. The minimal preflight read closes the observed prior partial-removal sequence without caching a stale ownership decision for the removal loop.",
+    "The raw baseline is discriminating: invalid UTF-8, oversized text and injected late read error expose removed earlier files; valid edited/unowned data control already passes. The fourth failure shows why preserving deletion-time reread matters. Fixed and independent both pass the same55 methods.",
+    "The historical SETUP-TEXT report explicitly excludes late managed-text no-mutation and documents partial uninstall. The full20261023 uninstall review covers malformed manifest shape and explicitly excludes transaction guarantees. Neither historical result is promoted into acceptance of this new property.",
+    "Prior-results search is357scanned/partial=true/25missing-record errors; only the old text report gives a directly relevant boundary. Empty knowledge query is not evidence of global absence. Existing old failed/paused gates, FD57 and backend/process/full-suite budgets are untouched; no old runner was retried.",
+    "The two CLI refusal assertions are real offline child setup.py invocations. The injected read-error case is an API simulation, and no extra cross-process permission-error probe was run. This distinction should remain in reporting.",
+    "The module-alias reuse invokes only SetupTextTests.snapshot(self); no imported TestCase class is discoverable as a new-module class. The source-defined method counts and raw unique IDs agree at55 without duplicated old text-reader methods.",
+    "Workflow delta adds the new module to four Ubuntu/Windows matrix instances and one macOS job; macOS TMPDIR stays attached to each relevant step. Source configuration is not native CI execution evidence. Root must inspect actual new-module execution and omissions before native-platform acceptance.",
+    "Review writes are restricted to this run namespace. No source, guide, TASK, shared helper, network/backend/GPU/FD or full-suite mutation/probe was made. The sole behavioral invocation is the authorized independent55.",
+    "This manual scoped independent review is not an authenticated ReviewSession/runtime dispatch receipt, deployed-host proof or universal project certificate. It does not establish model task quality, total costs, performance or SYSTEM-99 completion. Root owns integration, publication, remote readback and native CI acceptance."
+  ],
+  "blocking_findings": [],
+  "nonblocking_observations": [
+    {
+      "location": "tests/test_uninstall_text.py snapshot and blocked_cli",
+      "finding": "Content/type/link/directory equality supports the fixture-level no-removal/no-content-write claim; it does not certify metadata/ACL/mtime or every OS effect."
+    },
+    {
+      "location": "setup.py uninstall",
+      "finding": "Current directories/FIFOs at managed text paths remain preserved local edits because is_file is false. Static symlink guards remain unchanged; no new general special-file rejection contract."
+    }
+  ],
+  "limitations": [
+    "One extra bounded16MiB read of each regular managed file: no speedup claim; transient perfile text memory, total I/O roughly doubles text reading",
+    "Concurrent mutation after preflight and later unlink/write errors/crash can still partially uninstall; no cross-file atomicity or security guarantee against hostile OS writer",
+    "Existing directory/FIFO managed local edits preserved as before, not newly rejected; symlink checks unchanged",
+    "Manual independent scoped plan/result reviews are not trusted ReviewSession/deployedhost/wholeproject certification",
+    "Existing deletion-time read then unlink retains a race if a writer edits after that final read. Concurrent mutation after preflight, late skill/CLAUDE/manifest I/O failures or process crash can still leave partial uninstall; no cross-file atomicity or rollback.",
+    "Local Linux Python3.12 only. Native Windows/macOS and other configured Python versions require actual CI readback. These tests do not cover all permissions/filesystem implementations.",
+    "No trusted runtime/ReviewSession, live model/provider, GPU, deployment, full-suite or performance certification; SYSTEM-99 remains open and all old failed/paused scopes stay preserved."
+  ],
+  "reference_integrity": {
+    "before": {
+      "path": ".agent-runs/uninstall-text-result-review-2009/integrity-before.json",
+      "sha256": "38ac0e5c9394df73c3d393138fdf437854a7ac3b0f81ea81f707a8f1ceaa87b1"
+    },
+    "after": {
+      "path": ".agent-runs/uninstall-text-result-review-2009/integrity-after.json",
+      "sha256": "3cd532d74e7598d9259fb4197e1b32afda9bbc5ce3308ce094a55aeefee2caf2"
+    },
+    "all32_matched_before_after": true,
+    "literal_input_matched_before_after": true,
+    "references": [
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/setup.py.base.txt",
+        "expected_sha256": "7ee643e950122ec8db8f903cf8f1d109302bbd4371ed9ebb549e236f5dd539d5",
+        "actual_sha256": "7ee643e950122ec8db8f903cf8f1d109302bbd4371ed9ebb549e236f5dd539d5",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/setup.py.candidate",
+        "expected_sha256": "ef6fce44d9cfd4f3d0d16b2ceb0adb745df0e90517c04fd1221110b5318e658a",
+        "actual_sha256": "ef6fce44d9cfd4f3d0d16b2ceb0adb745df0e90517c04fd1221110b5318e658a",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/test_uninstall_text.py.candidate",
+        "expected_sha256": "57131bb32004d7169c7820c01ca627b1d4395934a7cf60af29560fd287effd3e",
+        "actual_sha256": "57131bb32004d7169c7820c01ca627b1d4395934a7cf60af29560fd287effd3e",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/portable-install.yml.base.txt",
+        "expected_sha256": "6a0cef84c44ef962e2452c30bf0ba2b790cde783f84789c88e3197a95e282a23",
+        "actual_sha256": "6a0cef84c44ef962e2452c30bf0ba2b790cde783f84789c88e3197a95e282a23",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/portable-install.yml.candidate",
+        "expected_sha256": "c5efc0f280f7ecb4de419e9c14fc80964b5a7ac9330f25c376422d31e07fe49d",
+        "actual_sha256": "c5efc0f280f7ecb4de419e9c14fc80964b5a7ac9330f25c376422d31e07fe49d",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/plan-prefix-v62.txt",
+        "expected_sha256": "1843627266601e05d79922c11c94a5aa2e9ba6a1ef62765372ab664d88ae5178",
+        "actual_sha256": "1843627266601e05d79922c11c94a5aa2e9ba6a1ef62765372ab664d88ae5178",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/run-regression.py",
+        "expected_sha256": "6785e064ed178f89d9acb7debdd45d85ed72eeedba41666d3c4a969b7a898ec5",
+        "actual_sha256": "6785e064ed178f89d9acb7debdd45d85ed72eeedba41666d3c4a969b7a898ec5",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/prior-results.json",
+        "expected_sha256": "e25c23afe59c67d3f7fd2013f59e6bf6d1240c34e3cd6c99536e8cb952408aa5",
+        "actual_sha256": "e25c23afe59c67d3f7fd2013f59e6bf6d1240c34e3cd6c99536e8cb952408aa5",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/knowledge.json",
+        "expected_sha256": "4b91a6fbd7bf8ce902a97abd260049811f1dea3df5f24ada3f884808c0f757a5",
+        "actual_sha256": "4b91a6fbd7bf8ce902a97abd260049811f1dea3df5f24ada3f884808c0f757a5",
+        "matches": true
+      },
+      {
+        "path": "AGENTS.md",
+        "expected_sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+        "actual_sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+        "matches": true
+      },
+      {
+        "path": "agent_doc/task/TASK.md",
+        "expected_sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+        "actual_sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+        "matches": true
+      },
+      {
+        "path": "agent_doc/guide/GUIDE.md",
+        "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "actual_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "matches": true
+      },
+      {
+        "path": "agent_doc/guide/README.md",
+        "expected_sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261",
+        "actual_sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261",
+        "matches": true
+      },
+      {
+        "path": "agent_runtime/external_json.py",
+        "expected_sha256": "f154b63e6852b3fec6285e2dae9c749d2a8a34943746fac22c61cd9658fce849",
+        "actual_sha256": "f154b63e6852b3fec6285e2dae9c749d2a8a34943746fac22c61cd9658fce849",
+        "matches": true
+      },
+      {
+        "path": "tests/test_setup_text.py",
+        "expected_sha256": "aee61eb7921eada61e80f50581f3d14f10a75b3dd7b685ad47172d5c711c3350",
+        "actual_sha256": "aee61eb7921eada61e80f50581f3d14f10a75b3dd7b685ad47172d5c711c3350",
+        "matches": true
+      },
+      {
+        "path": "tests/test_uninstall_manifest.py",
+        "expected_sha256": "418e13152492e40e59f967c2984b03b9f792728e1163f73f2086d868efe1c81b",
+        "actual_sha256": "418e13152492e40e59f967c2984b03b9f792728e1163f73f2086d868efe1c81b",
+        "matches": true
+      },
+      {
+        "path": "tests/test_setup.py",
+        "expected_sha256": "b609531eb121e7cb535bb941c2b20aa45e984d3fbb6548659c645575bcdc45d9",
+        "actual_sha256": "b609531eb121e7cb535bb941c2b20aa45e984d3fbb6548659c645575bcdc45d9",
+        "matches": true
+      },
+      {
+        "path": "tests/test_setup_portable.py",
+        "expected_sha256": "a39f722b0bade4f87a6468df1fa71e7a4ce8463320e56b24bd47011fe3e006f9",
+        "actual_sha256": "a39f722b0bade4f87a6468df1fa71e7a4ce8463320e56b24bd47011fe3e006f9",
+        "matches": true
+      },
+      {
+        "path": "tests/test_install_recovery.py",
+        "expected_sha256": "93b507d991045ed8b3583600ccdc5f586445f3c221d8b9a815a3adaaf1ee1ed9",
+        "actual_sha256": "93b507d991045ed8b3583600ccdc5f586445f3c221d8b9a815a3adaaf1ee1ed9",
+        "matches": true
+      },
+      {
+        "path": "agent_doc/results/uninstall-preflight-20261023/independent-review.md",
+        "expected_sha256": "53d17069b430ea65e8738032aad9421174eb308d30f62cabe92fc3000a9379bd",
+        "actual_sha256": "53d17069b430ea65e8738032aad9421174eb308d30f62cabe92fc3000a9379bd",
+        "matches": true
+      },
+      {
+        "path": "agent_doc/results/setup-text-entry-20261030/report.md",
+        "expected_sha256": "1bff37086cae107115c86c3cdf4dcf0dd665eec6e08d585046cce95da68584fc",
+        "actual_sha256": "1bff37086cae107115c86c3cdf4dcf0dd665eec6e08d585046cce95da68584fc",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/plan-v1.json",
+        "expected_sha256": "36b6741574a84e9a6e8f4ae3efc2d03252628fd50277dcad5ccc8546e4683df6",
+        "actual_sha256": "36b6741574a84e9a6e8f4ae3efc2d03252628fd50277dcad5ccc8546e4683df6",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-plan-review-2006/review-v1.json",
+        "expected_sha256": "c9e51f479b7cced41416870fd32323ee4eac41fd8279e55f7dc91de5821b36f2",
+        "actual_sha256": "c9e51f479b7cced41416870fd32323ee4eac41fd8279e55f7dc91de5821b36f2",
+        "matches": true
+      },
+      {
+        "path": "setup.py",
+        "expected_sha256": "ef6fce44d9cfd4f3d0d16b2ceb0adb745df0e90517c04fd1221110b5318e658a",
+        "actual_sha256": "ef6fce44d9cfd4f3d0d16b2ceb0adb745df0e90517c04fd1221110b5318e658a",
+        "matches": true
+      },
+      {
+        "path": "tests/test_uninstall_text.py",
+        "expected_sha256": "57131bb32004d7169c7820c01ca627b1d4395934a7cf60af29560fd287effd3e",
+        "actual_sha256": "57131bb32004d7169c7820c01ca627b1d4395934a7cf60af29560fd287effd3e",
+        "matches": true
+      },
+      {
+        "path": ".github/workflows/portable-install.yml",
+        "expected_sha256": "c5efc0f280f7ecb4de419e9c14fc80964b5a7ac9330f25c376422d31e07fe49d",
+        "actual_sha256": "c5efc0f280f7ecb4de419e9c14fc80964b5a7ac9330f25c376422d31e07fe49d",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/baseline.stdout",
+        "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "actual_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/baseline.stderr",
+        "expected_sha256": "e2b835c5beb24d241ca52a341f2c154075ffa69ecddf1649ef4da6845a7b01be",
+        "actual_sha256": "e2b835c5beb24d241ca52a341f2c154075ffa69ecddf1649ef4da6845a7b01be",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/baseline.json",
+        "expected_sha256": "6648d7b67da113d81bdd1410b3dc19bb9a03a9950b494c9421470282e9dd1b1f",
+        "actual_sha256": "6648d7b67da113d81bdd1410b3dc19bb9a03a9950b494c9421470282e9dd1b1f",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/fixed.stdout",
+        "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "actual_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/fixed.stderr",
+        "expected_sha256": "2b8d4a6c0a8cd4f0c6231cb17d8e35b3299c849c77ffed69c64e7117bee8dc84",
+        "actual_sha256": "2b8d4a6c0a8cd4f0c6231cb17d8e35b3299c849c77ffed69c64e7117bee8dc84",
+        "matches": true
+      },
+      {
+        "path": ".agent-runs/uninstall-text-preflight-2004/fixed.json",
+        "expected_sha256": "a680bac890dfc680576ec5f4427c89f307ff7a32cba7bd82b6298c2210f7b534",
+        "actual_sha256": "a680bac890dfc680576ec5f4427c89f307ff7a32cba7bd82b6298c2210f7b534",
+        "matches": true
+      }
+    ]
+  },
+  "independent_execution": {
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-B",
+      "-m",
+      "unittest",
+      "tests.test_uninstall_text",
+      "tests.test_uninstall_manifest",
+      "tests.test_setup",
+      "tests.test_setup_portable",
+      "tests.test_install_recovery",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/95d615402a52/agent-run-1202",
+    "started_at": "2026-10-30T12:10:03.811160+00:00",
+    "ended_at": "2026-10-30T12:10:10.598882+00:00",
+    "timeout_seconds": 120,
+    "deadline": "2026-10-30T12:30:23.216259+00:00",
+    "cleanup_reserve_seconds": 10,
+    "elapsed_seconds": 6.787734464000096,
+    "exit_code": 0,
+    "timed_out": false,
+    "pid": 6,
+    "owned_session": true,
+    "reaped": true,
+    "environment_overrides": {
+      "ANTHROPIC_BASE_URL": "removed",
+      "TMUX": "removed"
+    },
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+    "budget": {
+      "attempt": 1,
+      "maximum": 1
+    },
+    "timing_scope": "resource accounting only; no performance claim"
+  },
+  "independent_artifacts": [
+    {
+      "path": ".agent-runs/uninstall-text-result-review-2009/run-independent.py",
+      "sha256": "d9208151b787b57a08dd8be11c4687b8ef523f94a71d1ddda45f074435c88a80"
+    },
+    {
+      "path": ".agent-runs/uninstall-text-result-review-2009/independent.once",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".agent-runs/uninstall-text-result-review-2009/independent.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".agent-runs/uninstall-text-result-review-2009/independent.stderr",
+      "sha256": "2a8635568d09c6d6c74731999de1b8c26fd51f45b05f278c315ed086f91b8453"
+    },
+    {
+      "path": ".agent-runs/uninstall-text-result-review-2009/independent.json",
+      "sha256": "744bc4b89dd14cec61592d7e4d0ced5a86569fd601b34199a5b2466c3722a5e1"
+    },
+    {
+      "path": ".agent-runs/uninstall-text-result-review-2009/integrity-before.json",
+      "sha256": "38ac0e5c9394df73c3d393138fdf437854a7ac3b0f81ea81f707a8f1ceaa87b1"
+    },
+    {
+      "path": ".agent-runs/uninstall-text-result-review-2009/integrity-after.json",
+      "sha256": "3cd532d74e7598d9259fb4197e1b32afda9bbc5ce3308ce094a55aeefee2caf2"
+    }
+  ],
+  "producer_observations": {
+    "baseline": {
+      "methods": 5,
+      "failures": 4,
+      "ok": 1,
+      "errors": 0,
+      "skips": 0
+    },
+    "fixed": {
+      "methods": 55,
+      "ok": 55,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    },
+    "independent": {
+      "methods": 55,
+      "ok": 55,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0
+    }
+  },
+  "budget": {
+    "independent_attempts_used": 1,
+    "independent_max": 1,
+    "retries": 0,
+    "no_old_gate_reset": true
+  },
+  "next_owner": "/root: integrate this scoped review with concrete source/native CI/publication evidence; keep SYSTEM-99 unresolved requirements open"
+}

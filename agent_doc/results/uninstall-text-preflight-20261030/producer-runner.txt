@@ -1,0 +1,58 @@
+import datetime
+import json
+import os
+from pathlib import Path
+import platform
+import signal
+import subprocess
+import sys
+import time
+
+root = Path(__file__).resolve().parents[2]
+run = Path(__file__).resolve().parent
+plan = json.loads((run / 'plan-v1.json').read_text())
+kind = sys.argv[1]
+if kind not in ('baseline', 'fixed'):
+    raise SystemExit('baseline or fixed required')
+if datetime.datetime.now(datetime.timezone.utc) >= datetime.datetime.fromisoformat(plan['deadline']):
+    raise SystemExit('scope deadline expired')
+remaining = (datetime.datetime.fromisoformat(plan['deadline']) - datetime.datetime.now(datetime.timezone.utc)).total_seconds()
+if remaining <= 10:
+    raise SystemExit('scope cleanup reserve unavailable')
+regression_env = dict(os.environ)
+for name in ('ANTHROPIC_BASE_URL', 'TMUX'):
+    regression_env.pop(name, None)
+marker = run / (kind + '.once')
+fd = os.open(marker, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+os.close(fd)
+command = plan['baseline_command'] if kind == 'baseline' else plan['fixed_and_independent_command']
+command = [sys.executable, *command[1:]]
+started = datetime.datetime.now(datetime.timezone.utc)
+tick = time.monotonic()
+timed_out = False
+child = None
+with (run / (kind + '.stdout')).open('xb') as stdout, (run / (kind + '.stderr')).open('xb') as stderr:
+    os.chmod(stdout.name, 0o600)
+    os.chmod(stderr.name, 0o600)
+    try:
+        child = subprocess.Popen(command, cwd=root, stdout=stdout, stderr=stderr, start_new_session=True, env=regression_env)
+        try:
+            remaining = (datetime.datetime.fromisoformat(plan['deadline']) - datetime.datetime.now(datetime.timezone.utc)).total_seconds()
+            code = child.wait(timeout=max(0, min(plan['budget']['command_timeout_seconds'], remaining - 10)))
+        except subprocess.TimeoutExpired:
+            timed_out = True
+            os.killpg(child.pid, signal.SIGKILL)
+            code = child.wait(timeout=10)
+    finally:
+        if child is not None and child.poll() is None:
+            os.killpg(child.pid, signal.SIGKILL)
+            child.wait(timeout=10)
+meta = {'kind': kind, 'command': command, 'started_at': started.isoformat(),
+        'ended_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'exit_code': code, 'timed_out': timed_out, 'elapsed_seconds': time.monotonic() - tick,
+        'python': sys.version, 'platform': platform.platform(),
+        'environment_overrides': {'ANTHROPIC_BASE_URL': 'removed', 'TMUX': 'removed'},
+        'timing_scope': 'regression resource accounting, not performance evidence'}
+(run / (kind + '.json')).write_text(json.dumps(meta, indent=2) + '\n')
+print(json.dumps(meta))
+raise SystemExit(code)

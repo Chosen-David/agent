@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 61
+Version: 62
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -206,6 +206,9 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 
 
 阶段（SETUP-TEXT-ENTRY-01，Version61）：按独审冻结方案，把安装目标中的CLAUDE/受管文本读取复用既有普通文件非阻塞有界读取；拒绝静态链接和超过16MiB输入，保留UTF-8及CRLF/CR通用换行指纹、用户内容/旧所有权和原错误协议。install复用同次文本做比较与指纹，check把错误记为needs_setup，model refresh完整预检后才写；不改共享helper、清单schema、Skill/guide/索引或宣称全安装事务。固定六方法真实临时CLI/API反例与55方法相邻回归，单baseline/fixed/independent各一次、命令120秒、FIFO3秒/普通CLI20秒、共享1800秒、方案至多2次，新源码CI提交1次。先独审方案/修前失败，再原地实施与独立代码/数据复核；全部旧耗尽scope不重试/重置。实际原生平台分别验收，Windows无FIFO跳过保留；53正文不增计，真实宿主/完整输入/任务质量/全费用/并发恢复与SYSTEM99整轮仍open。
+
+
+阶段SETUP-UNINSTALL-TEXT-PREFLIGHT-01：在删除任何受管文件前预读全部现存普通受管文本，使静态较后UTF8/16MiB/读取错误不造成先删后拒绝；保留删除时重新读取/指纹判断，不以预检快照误删后续用户编辑。沿用非普通内容与合法编辑保留、元数据和链接守卫，不改共享helper、schema或guide；非整个卸载事务/所有并发和I/O故障回滚。独立方案通过后一次修前反例、一次修后必要回归及一次独立代码/数据复核，固定完整失败与有限原生CI范围后普通发布；旧SETUP-TEXT/JSON等有限门禁仍冻结，不重跑其旧runner或增加额度。无性能/真实宿主/模型质量/全费用结论，SYSTEM99保持未完成。
 
 ## Progress
 
@@ -734,3 +737,5 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 - 2026-10-30 SETUP-TEXT-ENTRY-01：保留v1CI TMPDIR归属/换行oracle两项revise和原候选，v2独审approve后原地复用既有regular_bytes读取安装目标文本，保留通用换行和指纹单次快照，Plan60→61。修前6方法14拒绝断言失败（6FIFO超时/4链接接受/4新增16MiB上限接受），生命周期控制通过；修后和独立各55通过/0error/skip。[原始日志与六域复核](../../results/setup-text-entry-20261030/report.md)保留新增上限及较后受管文件卸载部分失败风险，不声称全安装事务/全输入零修改或速度收益。plan2/2、baseline/fixed/independent各1/1已消费，新源码五组CI另核；旧门禁不重试/重置。CompactionBench实际3/15页和下一页/哈希检查点已存，未全文/独审不计数，53篇不变；无新模型实验或性能结论。guide/唯一TASK不变，SYSTEM99真实宿主/完整输入/质量/全角色成本/并发恢复等未决继续open，非整轮完成。
 
 - 2026-10-30续接：完成CompactionBench官方2026-10预印本全部15逻辑页/主文1–7与附录A/A.1/B/B.1，Table1–6/Figure1–6图注/Algorithms1–3/Eq1–3及第7页视觉核对，一次独立全文静态复核accept。以官方PDF URL+精确SHA固定版本，不补造arXiv号；[简明记录与完整原反馈历史引用](../../results/compactionbench-reading-20261030/report.md)保留方法/实验/消融/局限及本库暂缓采用的关系。旧3/6/9页记录均仅历史partial0credit；普通精确发布回读后同批53→54，仅一篇，无生产/test/workflow变化、作者复现或性能结论。87a288五组原生CI通过，新增文本方法24pass/6WindowsFIFOskip；源码scope所有有限额度已消费不重启。Plan61/guide/唯一TASK及旧门禁不变；SYSTEM99实际宿主/完整输入/最终质量/全角色成本/并发恢复与已记录卸载部分失败风险继续open，非整轮完成。
+
+- 2026-10-30 SETUP-UNINSTALL-TEXT-PREFLIGHT-01：独立方案approve后Plan61→62，只补旧文本读取范围明确排除的静态较后卸载预检。新5方法修前4判别失败/1正常编辑控制通过，修后与独立同55方法各全通过/0error/skip；实际CLI解码/超限与API注入读取错误分开，删除时指纹重读未移除。[完整原失败/方案/六域独审](../../results/uninstall-text-preflight-20261030/report.md)限定内容/类型/链接/目录快照，不称元数据认证、整个卸载事务或任意并发/后续IOfailure回滚；多一次有界文本读取未测性能。plan1/2、baseline/fixed/independent各1/1已用，源码五组CI和普通发布回读另核，旧耗尽门禁保持冻结。2610.31778v1正文1–5/附录6.1–6.11.2/表1–3/图1–11图注已读，精确版本/续接检查点保留但独审未完成，54篇不增计；guide/唯一TASK不变。手工独审非可信runtime回执，历史登记unknown；SYSTEM99真实宿主/完整输入/最终质量/全角色费用/并发恢复未决，不算整轮完成。

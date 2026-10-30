@@ -1,0 +1,49 @@
+test_late_invalid_utf8_preserves_complete_install (tests.test_uninstall_text.UninstallTextTests.test_late_invalid_utf8_preserves_complete_install) ... FAIL
+test_late_oversize_text_preserves_complete_install (tests.test_uninstall_text.UninstallTextTests.test_late_oversize_text_preserves_complete_install) ... FAIL
+test_late_read_error_preserves_complete_install (tests.test_uninstall_text.UninstallTextTests.test_late_read_error_preserves_complete_install) ... FAIL
+test_ownership_is_rechecked_after_preflight (tests.test_uninstall_text.UninstallTextTests.test_ownership_is_rechecked_after_preflight) ... FAIL
+test_valid_local_edits_and_unowned_data_survive_uninstall (tests.test_uninstall_text.UninstallTextTests.test_valid_local_edits_and_unowned_data_survive_uninstall) ... ok
+
+======================================================================
+FAIL: test_late_invalid_utf8_preserves_complete_install (tests.test_uninstall_text.UninstallTextTests.test_late_invalid_utf8_preserves_complete_install)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/tests/test_uninstall_text.py", line 51, in test_late_invalid_utf8_preserves_complete_install
+    self.blocked_cli()
+  File "/workspace/scratch/95d615402a52/agent-run-1202/tests/test_uninstall_text.py", line 47, in blocked_cli
+    self.assertEqual(self.snapshot(), before)
+AssertionError: {'.cl[6951 chars]lows/installation.json': ('file', b'{\n  "sche[9538 chars]y',)} != {'.cl[6951 chars]lows/model-policy.json': ('file', b'{\n  "sche[292314 chars]y',)}
+Diff is 957484 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_late_oversize_text_preserves_complete_install (tests.test_uninstall_text.UninstallTextTests.test_late_oversize_text_preserves_complete_install)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/tests/test_uninstall_text.py", line 55, in test_late_oversize_text_preserves_complete_install
+    self.blocked_cli()
+  File "/workspace/scratch/95d615402a52/agent-run-1202/tests/test_uninstall_text.py", line 47, in blocked_cli
+    self.assertEqual(self.snapshot(), before)
+AssertionError: {'.cl[6951 chars]lows/installation.json': ('file', b'{\n  "sche[16786732 chars]y',)} != {'.cl[6951 chars]lows/model-policy.json': ('file', b'{\n  "sche[17069508 chars]y',)}
+Diff is 58978628 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_late_read_error_preserves_complete_install (tests.test_uninstall_text.UninstallTextTests.test_late_read_error_preserves_complete_install)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/tests/test_uninstall_text.py", line 69, in test_late_read_error_preserves_complete_install
+    self.assertEqual(self.snapshot(), before)
+AssertionError: {'.cl[6951 chars]lows/installation.json': ('file', b'{\n  "sche[16898 chars]y',)} != {'.cl[6951 chars]lows/model-policy.json': ('file', b'{\n  "sche[299674 chars]y',)}
+Diff is 991512 characters long. Set self.maxDiff to None to see it.
+
+======================================================================
+FAIL: test_ownership_is_rechecked_after_preflight (tests.test_uninstall_text.UninstallTextTests.test_ownership_is_rechecked_after_preflight)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-1202/tests/test_uninstall_text.py", line 97, in test_ownership_is_rechecked_after_preflight
+    self.assertIn(self.relative, result['preserved_local_edits'])
+AssertionError: '.claude/agents/agent-gpu-experiment-dispatch.md' not found in []
+
+----------------------------------------------------------------------
+Ran 5 tests in 4.310s
+
+FAILED (failures=4)

@@ -656,7 +656,10 @@ def uninstall(target, *, skill_limits=None):
     for relative in manifest['files']:
         if relative not in expected:
             raise ValueError('unexpected managed path')
-        checked_target(target, relative)
+        path = checked_target(target, relative)
+        # Decode before any removal; recheck ownership below since this is not a transaction.
+        if path.is_file():
+            _installed_text(target, relative)
     for relative in manifest['links']:
         if relative not in links:
             raise ValueError('unexpected managed link')
