@@ -1,0 +1,36 @@
+{
+  "task": "SYSTEM-99",
+  "kind": "readonly static source audit, outside frozen paper independent-review acceptance",
+  "actual_reads": {
+    "agent_runtime/turn_usage.py": "all39lines",
+    "agent_runtime/token_usage.py": "all126lines",
+    "agent_runtime/handoff_basis.py": "270-360",
+    "agent_runtime/prompt_context.py": "75-145"
+  },
+  "refs": [
+    {
+      "path": "agent_runtime/turn_usage.py",
+      "sha256": "a7e6ab3a76fae2f480d700f3705fc4e44a0537309ec09b6bf450c283e6e1dce2"
+    },
+    {
+      "path": "agent_runtime/token_usage.py",
+      "sha256": "e55a31b5f75328eb39b2b60bbf3e3aa9ecf3cfcee0e54d636df194b595944b7d"
+    },
+    {
+      "path": "agent_runtime/handoff_basis.py",
+      "sha256": "20b4e127726f046b564086d2c5028ba92e986c6b796784a23cfe94971071f50a"
+    },
+    {
+      "path": "agent_runtime/prompt_context.py",
+      "sha256": "65772323070de699fd6719786fb4d21ab94c13c282658d6bb39f98557c0cdad3"
+    }
+  ],
+  "findings": [
+    "usage readers intentionally accept only one no-tool turn; fresh reader finaltotal==last vs currentreader cumulative>=last. Cached input stays a subset, never subtract as zero billed cost. These are bounded token shape/identity/arithmetic parsers, not all-role cost collection or provider completeness certification.",
+    "No new confirmed implementation defect from this static scope. Do not merge similar parsers mechanically: fresh versus inherited-thread contracts differ. No test/backend/probe or model calls performed.",
+    "basis_context artifact references are not source contents, complete declared basis failclosed is not semantic loading proof; exact prompt dedup confined to same packet."
+  ],
+  "remaining": "Actual provider input/allactors turns/toolcalls/retries/cache/pricing and final quality still unknown; old probes/StageI/FD/sourceCI gates frozen",
+  "performance_claim": false,
+  "recorded_at": "2026-10-30T13:10:44.338862+00:00"
+}

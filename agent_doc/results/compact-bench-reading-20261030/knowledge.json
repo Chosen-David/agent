@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "algo.nsa-native-training",
+      "version": 1,
+      "sha256": "881e71e4805ef18c4c2aecab243aef639e51ada5c48e5e5894b8ae45e249cd13",
+      "title": "NSA：原生稀疏训练不等于无损替换",
+      "summary": "ACL 2025 的 NSA 在共同训练设置下保持多数任务质量，并有明确退化项；它是训练架构变化，不能直接套到未训练的密集模型。",
+      "status": "published",
+      "assumptions": [
+        "model: 27B total / 3B active MoE with GQA",
+        "training: 270B tokens at 8k then 32k continuation",
+        "method: compression selection sliding-window branches"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.nsa-native-training"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "context"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "context",
+            "continuation"
+          ]
+        }
+      ],
+      "score": 7
+    },
+    {
+      "id": "math.betting-test-martingale",
+      "version": 1,
+      "sha256": "a082de859efe25ad7cef832d8c8433aaf0f72cd92399d6601c24eebe37cb5ca9",
+      "title": "可预测下注、条件均值与序贯检验有效性",
+      "summary": "有界观测在零假设下具有固定条件均值时，合法且只使用过去信息的乘积证据构成非负鞅；由Ville界控制任意停止误报。边际均值相同不够。",
+      "status": "published",
+      "assumptions": [
+        "过滤族 F_t 包含当前全部可用历史；X_t∈[0,1] 几乎处处",
+        "零假设下 E[X_t|F_(t-1)]=m，固定 m∈(0,1)，不能仅有边际均值m",
+        "lambda_t 是 F_(t-1) 可测，并满足 -1/(1-m)≤lambda_t≤1/m",
+        "初始财富 W_0=1；错误预算 alpha∈(0,1) 在检验前规定"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-betting/verify.py",
+          "docs/knowledge_learning/2026-10-07-betting/checks.json"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "evidence"
+          ]
+        }
+      ],
+      "score": 5
+    }
+  ]
+}
