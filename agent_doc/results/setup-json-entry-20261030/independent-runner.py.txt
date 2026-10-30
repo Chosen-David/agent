@@ -1,0 +1,71 @@
+import datetime as dt
+import hashlib
+import json
+import os
+from pathlib import Path
+import platform
+import signal
+import subprocess
+import sys
+import time
+
+root = Path(__file__).resolve().parents[2]
+run = Path(__file__).resolve().parent
+input_path = root / '.agent-runs/setup-json-1702/result-review-inputs.json'
+expected_input = '40dc6ed7c9ccf3fe7593e5927b0dfe3b55d41bcd94ce5ff4061bce7f444276be'
+assert hashlib.sha256(input_path.read_bytes()).hexdigest() == expected_input
+inputs = json.loads(input_path.read_bytes())
+def hashes():
+    return [{'path': ref['path'], 'sha256': hashlib.sha256((root / ref['path']).read_bytes()).hexdigest(), 'expected_sha256': ref['sha256']} for ref in inputs['refs']]
+def save(name, value):
+    with (run / name).open('x') as f:
+        os.chmod(f.name, 0o600)
+        f.write(json.dumps(value, indent=2) + '\n')
+before = hashes()
+save('hashes-before.json', before)
+assert len(before) == 32 and all(r['sha256'] == r['expected_sha256'] for r in before)
+deadline = dt.datetime.fromisoformat(inputs['deadline'])
+remaining = (deadline-dt.datetime.now(dt.timezone.utc)).total_seconds()
+if remaining <= 10:
+    raise SystemExit('refused: cleanup reserve unavailable')
+fd = os.open(run / 'independent.once', os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+os.close(fd)
+env = dict(os.environ)
+for name in ('ANTHROPIC_BASE_URL', 'TMUX'):
+    env.pop(name, None)
+command = inputs['command']
+started = dt.datetime.now(dt.timezone.utc)
+tick = time.monotonic()
+child = None
+code = None
+timed_out = False
+cleanup_error = None
+with (run / 'independent.stdout').open('xb') as stdout, (run / 'independent.stderr').open('xb') as stderr:
+    os.chmod(stdout.name, 0o600)
+    os.chmod(stderr.name, 0o600)
+    try:
+        child = subprocess.Popen(command, cwd=root, env=env, stdout=stdout, stderr=stderr, start_new_session=True)
+        remaining = (deadline-dt.datetime.now(dt.timezone.utc)).total_seconds()
+        wait_cap = max(0, min(120, remaining-10))
+        try:
+            code = child.wait(timeout=wait_cap)
+        except subprocess.TimeoutExpired:
+            timed_out = True
+            os.killpg(child.pid, signal.SIGKILL)
+            try:
+                code = child.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                cleanup_error = 'owned process group SIGKILL sent but reap exceeded 10 seconds'
+    finally:
+        if child is not None and child.poll() is None and not timed_out:
+            os.killpg(child.pid, signal.SIGKILL)
+            try:
+                code = child.wait(timeout=10)
+            except subprocess.TimeoutExpired:
+                cleanup_error = 'owned process group SIGKILL sent but reap exceeded 10 seconds'
+after = hashes()
+save('hashes-after.json', after)
+meta = {'command':command,'cwd':str(root),'started_at':started.isoformat(),'ended_at':dt.datetime.now(dt.timezone.utc).isoformat(),'elapsed_seconds':time.monotonic()-tick,'wait_cap_seconds':wait_cap,'deadline':inputs['deadline'],'exit_code':code,'timed_out':timed_out,'cleanup_error':cleanup_error,'start_new_session':True,'environment_override_names':['ANTHROPIC_BASE_URL','TMUX'],'environment_override_action':'removed from copied environment','python':sys.version,'platform':platform.platform(),'bound_refs_before_match':all(r['sha256']==r['expected_sha256'] for r in before),'bound_refs_after_match':all(r['sha256']==r['expected_sha256'] for r in after),'input_sha256':expected_input,'runner_sha256':hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),'resource_accounting_only':'elapsed time is not performance evidence','attempt':1,'max_attempts':1}
+save('independent-meta.json',meta)
+print(json.dumps(meta))
+raise SystemExit(code if code is not None else 1)

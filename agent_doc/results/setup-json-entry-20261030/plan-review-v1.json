@@ -1,0 +1,178 @@
+{
+  "schema_version": "manual-plan-review/v1",
+  "decision": "revise",
+  "scope": "SETUP-JSON-ENTRY-01, same SYSTEM99, proposed Plan60",
+  "project_root": "/workspace/scratch/95d615402a52/agent-run-1202",
+  "reviewer": "/root/setup_json_plan_review_1708",
+  "authority": "Manual independent static review only; not trusted ReviewSession, protected dispatch authorization, or result acceptance.",
+  "plan_review_cycle": {
+    "charged": 1,
+    "max": 2,
+    "remaining_after_this_review": 1,
+    "all_prior_finite_gates": "frozen including FD57; no resets"
+  },
+  "time": {
+    "started_at": null,
+    "started_at_limitation": "Review start timestamp was not captured; do not infer an exact start from later observations.",
+    "first_recorded_clock_observation": "2026-10-30T09:08:25Z",
+    "completed_at": "2026-10-30T09:10:05.626699+00:00",
+    "shared_deadline": "2026-10-30T09:36:50.106372+00:00"
+  },
+  "checks": {
+    "intent": {
+      "verdict": "pass",
+      "reason": "A narrow repair to the three actual installation metadata readers is aligned with unfinished SYSTEM99; no system-wide completion, backend or performance claim is proposed."
+    },
+    "guide": {
+      "verdict": "pass",
+      "reason": "GUIDE.md is empty and README preserves the human-only directory boundary. Candidate fixtures initialize only empty guide directories through existing install code, and neither new tests nor write set create guide files. Stable Plan candidate changes Version59 to60 and appends only stageAN, retaining prior paused scopes."
+    },
+    "assumptions": {
+      "verdict": "fail",
+      "reason": "Helper nonblocking/strict parsing reuse is appropriate, but portable final-symlink refusal is not guaranteed without O_NOFOLLOW; check lacks the existing explicit guard. Offline environment assumption is not enforced for SetupTests."
+    },
+    "prior_results": {
+      "verdict": "pass",
+      "reason": "The recorded lexical hits concern unrelated FIFO mathematical transport and memory packing, not installer behavior. partial/errors are retained and no empirical reuse is claimed; knowledge retrieval remains unchecked and supplies no correctness authority."
+    },
+    "acceptance": {
+      "verdict": "fail",
+      "reason": "Static method count is8 manifest plus17 setup plus8 doctor=33. New tests exercise real CLI install/check/doctor/uninstall for duplicate keys, NaN, FIFO and symlink, preserve project snapshots and external temporary symlink target, and retain four original manifest methods. Portable symlink acceptance is currently contradicted by R2. Only finite declared cases may be accepted after actual results."
+    },
+    "risk": {
+      "verdict": "fail",
+      "reason": "Production diff is otherwise exactly three json.loads/read_text substitutions with existing load_json. No schema/ownership changes, no destructive targets outside TemporaryDirectory, and no human guide writes appear. R1 permits unintended discovery; R2 leaves a platform-specific boundary hole. Hostile-parent races, whole transactions and live sessions remain unclaimed."
+    },
+    "resources": {
+      "verdict": "fail",
+      "reason": "One baseline, one fixed, one independent,120seconds each, two plan reviews and one source CI commit are bounded with old gates frozen. Exclusive markers prevent ordinary rerun of baseline/fixed and owned process-group cleanup is present. R3 leaves the shared deadline unenforced during a late-running child."
+    }
+  },
+  "blocking_findings": [
+    {
+      "id": "R1",
+      "severity": "high",
+      "blocking": true,
+      "location": ".agent-runs/setup-json-1702/run-regression.py: subprocess.Popen; tests/test_setup.py: SetupTests; setup.py:441-456",
+      "problem": "Runner inherits the full ambient environment. The new manifest CLI fixture clears ANTHROPIC_BASE_URL and TMUX, but the 17 adjacent SetupTests methods do not. Their setup.install calls generally omit model_inventory, allowing _auto_discover_inventory to execute scripts/discover_models.py whenever ANTHROPIC_BASE_URL is inherited. This violates the frozen offline/no-network scope and can consume the timeout on unintended discovery.",
+      "requested_change": "Pass a copied environment with ANTHROPIC_BASE_URL and TMUX removed to the top-level regression child, for both exact commands, and require the same environment for the independent command. Preserve existing doctor unit mocks. Bind the revised runner and plan before execution.",
+      "verification": "Static inspection must show explicit sanitized env on Popen and equivalent independent invocation; then use only the already-budgeted baseline/fixed/independent executions."
+    },
+    {
+      "id": "R2",
+      "severity": "high",
+      "blocking": true,
+      "location": ".agent-runs/setup-json-1702/setup.py.candidate: check manifest read; agent_runtime/external_json.py: regular_bytes flags; new linked-manifest CLI test",
+      "problem": "The proposed check() read has no explicit final-symlink guard. regular_bytes uses getattr(os, O_NOFOLLOW, 0), so on platforms without O_NOFOLLOW, notably Windows, a supported file symlink to the valid original manifest is opened as a regular target. --check can return configured and --doctor can proceed rather than controlled refusal. install/uninstall already call checked_target and reject the leaf. The candidate therefore does not meet its cross-entry symlink-refusal contract on a supported-symlink Windows host.",
+      "requested_change": "Within this setup-manifest scope, add an explicit existing-path guard for check() inside its caught-error boundary, reusing checked_target or equivalent existing guard, without modifying the frozen shared helper or weakening/skipping the new symlink assertions. Version the source candidate and adoption description to include this necessary guard.",
+      "verification": "Static path review must establish controlled needs_setup for check/doctor when the manifest is a symlink even without O_NOFOLLOW. The frozen linked-manifest test should run normally where symlink creation is available; native CI remains separately required."
+    },
+    {
+      "id": "R3",
+      "severity": "medium",
+      "blocking": true,
+      "location": ".agent-runs/setup-json-1702/run-regression.py: deadline admission and child.wait",
+      "problem": "The runner checks the shared deadline only before admission, then permits a fresh 120-second wait plus up to10 seconds cleanup. A launch close to09:36:50.106372Z can run beyond the frozen shared deadline. The independent execution protocol has no concrete matching deadline enforcement in the submitted runner.",
+      "requested_change": "Reserve cleanup time inside the same deadline, cap execution by remaining shared time and refuse starts without the reserve; require equivalent enforcement for the independent command. Do not extend the deadline or reset any counter.",
+      "verification": "Static inspection of revised timeout/deadline arithmetic and cleanup ownership; no extra execution is authorized by this review."
+    }
+  ],
+  "nonblocking_observations": [
+    "FIFO snapshot records non-file/non-link entries generically as directories, but the new FIFO method separately checks S_ISFIFO after each completed refusal; bytes and symlink targets are still snapshotted without following links.",
+    "The new Windows linked-manifest test may skip when symlink creation itself is unavailable; this cannot justify a skip on a host that supports symlinks merely because O_NOFOLLOW is absent.",
+    "Runner reads the bound plan rather than hardcoding commands; approval requires the exact frozen plan/runner hashes to remain checked before execution.",
+    "No baseline/fixed/independent test, reviewed source import, network/backend/model invocation, old gate, or probe was run by this reviewer. Static reads, diffs, hashes and this one review-artifact write are the only actions."
+  ],
+  "reviewed_refs": [
+    {
+      "path": ".agent-runs/setup-json-1702/plan-v1.json",
+      "sha256": "06c5b9d510d8189bbed8eb10facb16985688c81c7103cd2d181d0958bbc965fe"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed"
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    },
+    {
+      "path": "setup.py",
+      "sha256": "266695381405f094c502658d17cdea7791d240cf9fa398db9f13a306064f0082"
+    },
+    {
+      "path": "agent_runtime/external_json.py",
+      "sha256": "f154b63e6852b3fec6285e2dae9c749d2a8a34943746fac22c61cd9658fce849"
+    },
+    {
+      "path": "tests/test_setup_manifest.py",
+      "sha256": "8cd95ed58dfd09e95026248bbdd6e2094d7973ca2d2e02b1713f5864bbddf611"
+    },
+    {
+      "path": "tests/test_setup.py",
+      "sha256": "b609531eb121e7cb535bb941c2b20aa45e984d3fbb6548659c645575bcdc45d9"
+    },
+    {
+      "path": "tests/test_setup_doctor.py",
+      "sha256": "664d3a8ac44145b7b142ccd1f5049b251dfc0f33894b8819df3c0f35c7c4a544"
+    },
+    {
+      "path": ".github/workflows/portable-install.yml",
+      "sha256": "9ad2474968f689445bdefa5c1337ef3bc06da381b5f82f5a2b5407414fda5cba"
+    },
+    {
+      "path": ".agent-runs/setup-json-1702/setup.py.candidate",
+      "sha256": "33d5ea8752f02026f399fdfd19706df0491e2a9509431a632cc03f281826ea06"
+    },
+    {
+      "path": ".agent-runs/setup-json-1702/test_setup_manifest.py.candidate",
+      "sha256": "4d962e26b2adcc6f70ff24152a1cd92d60d99c070406c7d3fc4e7c7148a48d1d"
+    },
+    {
+      "path": ".agent-runs/setup-json-1702/SYSTEM-99-prefix.candidate",
+      "sha256": "eb466e00f710733dd0d584cdefb0fa0c8879fba79eb0c010899080a7c85131bd"
+    },
+    {
+      "path": ".agent-runs/setup-json-1702/prior-results.json",
+      "sha256": "668767059135ae02d11af8e83577812dbea7a6f34c16a399be9113b6388a0a64"
+    },
+    {
+      "path": ".agent-runs/setup-json-1702/knowledge.json",
+      "sha256": "b0db11870ed965cb55b9032534de55e7b87f4a376ded60e335f5431048745e5c"
+    },
+    {
+      "path": ".agent-runs/setup-json-1702/plan-review-inputs.json",
+      "sha256": "6c1fefc9364c62db5ea78933285d53bf0bacaa7cb8af1518254f2e54f11472d0"
+    },
+    {
+      "path": ".agent-runs/setup-json-1702/run-regression.py",
+      "sha256": "6117010613f8f5977bb378aa94bd3f5bca662da2154aae0d8b7792d5eb7fd29d"
+    },
+    {
+      "path": "workflows/project_document_workflow.md",
+      "sha256": "6ee07eca5091187b27e02056c3ae83f66183cfc07dc4c7af5c80742ffacdaaf4"
+    },
+    {
+      "path": "workflows/result_validation_workflow.md",
+      "sha256": "349cebab1a78baa63b5c7d422f239c2d802f9f77a1ad180ceb4871ebea372888"
+    },
+    {
+      "path": "workflows/dual_main_workflow.md",
+      "sha256": "639f19cf9de42d65935b3a42b8e9f6e8aa6e4a2145254ad59202642974eb9644"
+    },
+    {
+      "path": "agent_doc/task/task_details/SYSTEM-99.md",
+      "sha256": "175daa811e6929b9b2d8e0373fdd8d446c7d291f546b8067094c9c2fc43f261c"
+    }
+  ],
+  "hash_validation": "All15 plan refs plus exact plan and supplemental runner hashes matched submitted values at read time; hashes establish identity only.",
+  "next_action": "Planner may use only remaining review2/2 to submit a versioned correction addressing R1-R3 within the unchanged shared deadline. Do not execute the current candidate. Preserve all prior evidence and frozen gates."
+}

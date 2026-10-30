@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 59
+Version: 60
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -201,6 +201,8 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 阶段AL（INTAKE-CONSUMER-01，Version58）：对公开apply_intake消费入口复用build_intake既有问题合同，拒绝空/超20/归一化重复ID及既有无效问题字段，保留合法答案/default/free-text/missing/unknown语义与输入不变。仅替换问题校验三行为共享入口，不引入第二schema或把CONFIRMED当用户授权。固定既有7+新4方法（9非法子案例+有效往返控制），单baseline/fixed/independent各一次、60秒/命令/共享1200秒、方案最多2次；独审方案后先保存修前失败，再修复/独立源码及原始日志复核，普通发布并另核五组原生CI新增intake方法。版本58只用于该独立消费校验范围，未采纳的FD候选57及其plan1/1revise仍冻结，所有其它旧额度不重置。仅库API局部可靠性/回归，不声称真实补问交互、权限、宿主部署、性能或SYSTEM99整轮完成；48正文不变。
 
 阶段AM（INVENTORY-SCAN-01，Version59）：对artifact索引与项目文档inventory共用扫描错误回调，scandir根目录/子目录EACCES或EIO不能成为成功的空/部分清单。保留缺省advice/guide空值、读取哈希/路径/required语义，无新schema/目录迁移。冻结6新方法（8拒绝子案例+2正常/缺省控制）及原artifact/digest/init回归；独审方案后baseline/fixed/independent各一次、60秒/命令、共享1200秒、方案最多2次，无重试。仅临时advice/legacyTASK夹具，不创建人类guide；同步既有Skill源码镜像。独审源码/失败和修后日志后普通发布，五组原生CI新增6方法另核。旧耗尽gate/未采纳FD57不重置；仅扫描失败处理，不保证跨文件事务/敌对父目录/隐藏依赖、真实宿主/最终质量/全费用，48精读不增计，非SYSTEM99整轮完成。
+
+阶段AN（SETUP-JSON-ENTRY-01，Version60）：安装/检查/卸载三入口的installation.json读取复用既有load_json，check在既有错误捕获内复用checked_target拒绝链接，与模型清单更新保持相同有界/非阻塞/严格JSON边界；不改schema、所有权、CLI状态、配置发现或人类guide。冻结已有4+新4manifest方法及setup/doctor相邻回归；实际离线CLI控制FIFO、symlink、重复键和非有限数，保存修前失败，合法旧字段/安装检查卸载及用户内容控制保留。先独审准确候选；baseline/fixed/independent各一次，120秒/命令、共享1800秒、方案最多2次，原生源码CI提交一次；拒绝/超时保留不重试。仅当前安装元数据入口的新限域回归，全部旧耗尽gate/FD57仍冻结；无网络模型/tmux/backend探测、无新共享pool或迁移、无性能/真实会话加载/最终质量/全费用/整轮完成主张。
 
 ## Progress
 
@@ -721,3 +723,5 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 - 2026-10-30续接：2605.23311v1主文1–7/附录A–I、Eq1–14/Tables1–30/Figures1–3图注完整阅读和一次独立全文静态复核accept。[记录](../../results/dart-reading-20261030/report.md)保留实例身份/边界认证/恢复时下游承诺与副作用门禁差异、审计分母和排除项、强局部/LangGraph负对照及ETL耗时回退，不将论文收益迁入本库。作者版本对应/证明假设限定未关闭；补充源码/博客阅读另标未在原独审范围。普通发布精确回读后同批50→51，仅一篇；Plan59/guide/唯一TASK和全部旧耗尽范围不变，无生产/test/workflow修改、后端重试、实验复现或性能结论。35aee827五组CI状态通过；SYSTEM99真实宿主/完整输入/最终质量/全角色费用/并发恢复等继续open，非整轮完成。
 
 - 2026-10-30续接：完成2610.36523v1主文1–7/附录A–D及B.1/C.1/D.1、Eq1–3/Tables1–9/Figures1–7图注与alttext阅读，一次独立全文静态复核accept。[记录](../../results/hsc-reading-20261030/report.md)分开证据恢复、约束遵守、完成操作重复和最终质量；保留Kimi均值退化、评分敏感方向翻转、宽松字段评分与action分母局限。文件工作仅报告非执行；o200k可见token匹配非全角色成本。普通发布精确回读后同批51→52，仅一篇，无生产/test/workflow修改、模型/实验复现或性能提升结论。ec146109五组CI通过仅原范围；根CLAUDE复用AGENTS，无依据另造权威。Plan59/guide/唯一TASK及全部旧耗尽门禁不变；SYSTEM99真实宿主/完整输入/最终质量/全角色费用/并发恢复继续open，非整轮完成。
+
+- 2026-10-30 SETUP-JSON-ENTRY-01：保留v1三项revise及原候选后v2独审approve，Version59→60仅新增安装元数据范围。install/check/uninstall复用既有load_json，check在既有错误捕获内复用checked_target；不改共享helper/schema/所有权/guide。8方法修前14拒绝子案例失败（含四CLI真实FIFO超时，非14bugs），修后与独立各33方法通过/0error/skip；合法旧字段、生命周期、用户内容和目标保留均覆盖。[完整失败/候选/独审](../../results/setup-json-entry-20261030/report.md)仅限本机离线边界，非性能/真实会话加载/质量/全费用验收。plan2/2、baseline/fixed/independent各1/1已用，无重试/旧门禁重置；五组既有manifest原生CI新源码另核。52正文不增计，未采纳FD57及所有旧耗尽scope仍冻结；SYSTEM99真实宿主/完整输入/最终质量/全角色费用/并发恢复等继续open，非整轮完成。

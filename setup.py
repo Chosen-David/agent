@@ -475,7 +475,7 @@ def install(target, *, model_inventory=None, copy_skills=False, skill_limits=Non
     target = installation_root(target)
     manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
     previous = validate_installation_manifest(
-        json.loads(manifest_path.read_text(encoding='utf-8'))) if manifest_path.exists() else {}
+        load_json(manifest_path)) if manifest_path.exists() else {}
     if previous and previous.get('repository') != str(REPO):
         raise ValueError('target belongs to another checkout; uninstall that installation first')
     if model_inventory is not None:
@@ -562,9 +562,9 @@ def check(target, *, skill_limits=None):
     target = installation_root(target)
     errors = []
     manifest = {}
-    manifest_path = target / '.claude/agent-workflows/installation.json'
     try:
-        manifest = validate_installation_manifest(json.loads(manifest_path.read_text(encoding='utf-8')))
+        manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
+        manifest = validate_installation_manifest(load_json(manifest_path))
         if manifest.get('repository') != str(REPO):
             errors.append('installation belongs to a different checkout')
         if manifest.get('project_root', str(target)) != str(target):
@@ -630,7 +630,7 @@ def uninstall(target, *, skill_limits=None):
     preflight_budget, removal_budget = SkillBudget(limits), SkillBudget(limits)
     target = installation_root(target)
     manifest_path = checked_target(target, '.claude/agent-workflows/installation.json')
-    manifest = validate_installation_manifest(json.loads(manifest_path.read_text(encoding='utf-8')))
+    manifest = validate_installation_manifest(load_json(manifest_path))
     # Check every removal loop's input before the first owned file is deleted.
     if (not isinstance(manifest, dict)
             or any(not isinstance(manifest.get(field), dict) for field in ('files', 'links'))

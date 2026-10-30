@@ -1,6 +1,7 @@
 """Malformed installation metadata at actual offline CLI entry points."""
 import json
 import os
+import stat
 from pathlib import Path
 import subprocess
 import sys
@@ -94,6 +95,65 @@ class SetupManifestTests(unittest.TestCase):
         self.assertEqual(sentinel.read_bytes(), b'user notes\r\n')
         self.assertFalse(self.manifest.exists())
 
+
+
+    def refused_raw(self, raw):
+        for command in [(), ('--check',), ('--doctor',), ('--uninstall',)]:
+            with self.subTest(command=command):
+                self.manifest.write_bytes(raw)
+                before = self.snapshot()
+                self.cli(*command, expected=2)
+                self.assertEqual(self.snapshot(), before)
+
+    def test_duplicate_manifest_keys_are_refused_without_mutation(self):
+        raw = json.dumps(self.original).encode('utf-8')
+        self.refused_raw(b'{"repository":"foreign-checkout",' + raw[1:])
+
+    def test_nonfinite_manifest_values_are_refused_without_mutation(self):
+        raw = json.dumps(self.original).encode('utf-8')
+        self.refused_raw(b'{"unused_diagnostic":NaN,' + raw[1:])
+
+    @unittest.skipUnless(hasattr(os, 'mkfifo'), 'FIFO requires POSIX')
+    def test_fifo_manifest_is_refused_without_blocking(self):
+        self.manifest.unlink()
+        os.mkfifo(self.manifest)
+        before = self.snapshot()
+        for command in [(), ('--check',), ('--doctor',), ('--uninstall',)]:
+            with self.subTest(command=command):
+                try:
+                    result = subprocess.run(
+                        [sys.executable, '-B', str(setup.REPO / 'setup.py'),
+                         '--target', str(self.project), *command],
+                        cwd=self.root, env=self.env, capture_output=True,
+                        encoding='utf-8', errors='strict', timeout=3)
+                except subprocess.TimeoutExpired:
+                    self.fail('manifest FIFO blocked CLI instead of controlled refusal')
+                self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+                self.assertNotIn('Traceback', result.stderr)
+                if command in (('--check',), ('--doctor',)):
+                    self.assertEqual(json.loads(result.stdout)['status'], 'needs_setup')
+                else:
+                    self.assertEqual(result.stdout, '')
+                    self.assertIn('setup blocked:', result.stderr)
+                self.assertEqual(self.snapshot(), before)
+                self.assertTrue(stat.S_ISFIFO(self.manifest.lstat().st_mode))
+
+    def test_linked_manifest_is_refused_and_target_preserved(self):
+        target = self.root / 'manifest-target.json'
+        original = self.manifest.read_bytes()
+        target.write_bytes(original)
+        self.manifest.unlink()
+        try:
+            self.manifest.symlink_to(target)
+        except OSError as exc:
+            self.skipTest('file symlink unavailable: ' + str(exc))
+        before = self.snapshot()
+        for command in [(), ('--check',), ('--doctor',), ('--uninstall',)]:
+            with self.subTest(command=command):
+                self.cli(*command, expected=2)
+                self.assertEqual(self.snapshot(), before)
+                self.assertEqual(target.read_bytes(), original)
+                self.assertTrue(self.manifest.is_symlink())
 
 if __name__ == '__main__':
     unittest.main()

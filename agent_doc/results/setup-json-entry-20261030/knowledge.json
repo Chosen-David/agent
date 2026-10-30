@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "algo.rl-sft-trajectory-concentration",
+      "version": 1,
+      "sha256": "4c7afd59193e92088e409e2170dcae236c4dde6860807a4d1d16a32544552cd7",
+      "title": "RL／SFT 推理路径：区分成功率、路径多样性与采样预算",
+      "summary": "ICLR 2026 的既有模型比较中，RL 常压缩错误和正确路径，SFT 扩充正确路径；应联合检查 pass@1、pass@k 与聚类代理，不能断言 RL 永远不产生新能力。",
+      "status": "published",
+      "assumptions": [
+        "models: Table 1 Qwen 1.5B/7B/14B Base/RL/SFT/SFT+RL checkpoints; observational comparison",
+        "tasks: AIME24/AIME25/AMC23; HumanEval for Table 1 7B models",
+        "sampling: 256 responses/problem; temperature 0.6; top_p 0.95; model-dependent 4096/16000 context cap",
+        "metric: correct/incorrect UPGMA chrF clusters at similarity 60; pass@k; not latent capability proof"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-checked",
+        "checks": [
+          "docs/knowledge_learning/2026-10-08-rl-probability/report.md#algo.rl-sft-trajectory-concentration"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "json"
+          ]
+        }
+      ],
+      "score": 1
+    },
+    {
+      "id": "math.bilinear-quadratic-inertia",
+      "version": 1,
+      "sha256": "3cf008fec876c92712f421a7b71c6bef6ef7fac2082ea651305658ddfc862dee",
+      "title": "双线性型、二次型与实合同惯性",
+      "summary": "SᵀAS 的正、负、零惯性指数与 A 相同。",
+      "status": "published",
+      "assumptions": [
+        "A 为实对称 n×n；x=Sy，S 可逆。极化 q(x)=B(x,x) 恢复 B 的公式要求对称且特征不为2。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "正文逐项来源/证明核查；非 Lean 形式化证明",
+          "docs/knowledge_learning/2026-10-07-algebra/verify.py 与 checks.json：公开有限算例，不替代一般定理证明"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "json"
+          ]
+        }
+      ],
+      "score": 1
+    }
+  ]
+}
