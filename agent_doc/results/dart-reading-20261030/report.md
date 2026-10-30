@@ -1,0 +1,7 @@
+# DART semantic-recovery reading
+
+Completed2605.23311v1 main1–7 and AppendicesA–I, equations/tables and figure captions; one independent full-body/static review accepts the frozen note with no required revisions. Source acquisition metadata is historical; artifact-status.json supplies current coverage and trust limits. Additional author-module/AWS reading is explicitly outside that frozen review.
+
+Keep instance identity, reviewed boundary and restore-time dependency/effect admission distinct. Preserve comparable-row exclusions, all audit denominators, stronger local/LangGraph baselines, deterministic latency regression, no-failure overhead and underspecified proof assumptions. No generic whole-task rerun or new checkpoint controller is adopted. Author paper/source correspondence and exact hosted model versions remain unknown.
+
+No production/test/workflow changes, model calls, experiment reproduction or repository quality/performance/token/cost gain. Existing worker restart, MemoryLedger, directed handoff and uniqueTASK remain. Evidence registration is historical unknown/contractNone; manual review is not trusted runtime acceptance. Ordinary verified publication makes same-batch count50→51, not a completed optimization round. Plan59, guide/TASK and all consumed scopes remain unchanged. Prior35aee827 five CI jobs succeeded at status readback; SYSTEM99 realhost/fullinput/quality/all-role cost/concurrent-recovery gaps remain open.
