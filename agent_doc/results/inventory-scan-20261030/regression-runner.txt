@@ -1,0 +1,42 @@
+import datetime as dt
+import hashlib
+import json
+from pathlib import Path
+import platform
+import subprocess
+import sys
+import time
+
+root = Path(__file__).resolve().parents[2]
+run = Path(__file__).resolve().parent
+phase = sys.argv[1]
+if phase not in ('baseline', 'fixed'):
+    raise SystemExit('producer permits baseline/fixed only')
+plan = json.loads((run / 'plan-v2.json').read_text())
+now = dt.datetime.now(dt.timezone.utc)
+if now >= dt.datetime.fromisoformat(plan['resources']['shared_deadline']):
+    raise SystemExit('frozen deadline expired')
+with (run / (phase + '.started')).open('x') as marker:
+    marker.write(now.isoformat())
+argv = plan['commands'][phase]
+started = time.monotonic()
+try:
+    result = subprocess.run(argv, cwd=root, capture_output=True, timeout=60)
+    code, stdout, stderr = result.returncode, result.stdout, result.stderr
+except subprocess.TimeoutExpired as exc:
+    code, stdout, stderr = 'timeout', exc.stdout or b'', exc.stderr or b''
+for suffix, content in [('stdout', stdout), ('stderr', stderr)]:
+    (run / (phase + '.' + suffix)).write_bytes(content)
+metadata = {'phase': phase, 'argv': argv, 'started_at': now.isoformat(),
+            'finished_at': dt.datetime.now(dt.timezone.utc).isoformat(),
+            'exit_code': code, 'elapsed_seconds': time.monotonic()-started,
+            'elapsed_scope': 'resource accounting only, no performance comparison',
+            'python': sys.version, 'platform': platform.platform(),
+            'stdout_sha256': hashlib.sha256(stdout).hexdigest(),
+            'stderr_sha256': hashlib.sha256(stderr).hexdigest(),
+            'code_refs': {p: hashlib.sha256((root/p).read_bytes()).hexdigest()
+                          for p in ['agent_runtime/project_docs.py',
+                                    'agent_runtime/artifact_index.py',
+                                    'tests/test_inventory_scan_errors.py']}}
+(run / (phase + '.json')).write_text(json.dumps(metadata, indent=2)+'\n')
+print(json.dumps(metadata))

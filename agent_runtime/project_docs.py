@@ -209,6 +209,11 @@ def project_root_for_task(task_file):
     return path.parent
 
 
+def _inventory_error(exc):
+    # An unreadable subtree is unknown, not evidence of absence.
+    raise DocumentError(f'cannot inventory directory: {exc.filename}') from exc
+
+
 def _inventory(root, directory, *, hashes=True):
     path = _relative(root, directory)
     if not path.exists():
@@ -216,7 +221,7 @@ def _inventory(root, directory, *, hashes=True):
     if not path.is_dir():
         raise DocumentError(f'{directory} must be a directory')
     result = {}
-    for parent, directories, files in os.walk(path, followlinks=False):
+    for parent, directories, files in os.walk(path, followlinks=False, onerror=_inventory_error):
         for name in directories:
             _relative(root, Path(parent) / name)
         for name in files:

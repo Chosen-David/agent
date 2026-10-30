@@ -1,0 +1,87 @@
+{
+  "schema_version": "manual-independent-plan-review/v1",
+  "decision": "revise",
+  "project_root": "/workspace/scratch/95d615402a52/agent-run-1202",
+  "plan_path": ".agent-runs/inventory-scan-1303/plan-v1.json",
+  "plan_sha256": "d6d22ceb8e050c8a94782ba4ad40906cd19e1a632668dd1b2130fd4130a5919d",
+  "lineage": "INVENTORY-SCAN-01",
+  "review_invocation": 1,
+  "max_review_invocations": 2,
+  "reviewer": "/root/inventory_scan_review_1303",
+  "checks": {
+    "intent": {
+      "verdict": "pass",
+      "reason": "Narrow fail-closed treatment of scandir failures in both existing inventory consumers fits the frozen local reliability intent. No schema, migration, task pool or SGLang change is proposed."
+    },
+    "guide": {
+      "verdict": "pass",
+      "reason": "GUIDE.md is empty and README confines authorship; no guide writes allowed. New tests create only legacy TASK and advice fixtures. Canonical TASK retains SYSTEM-99 open. Before-prefix exactly matches current stable detail Plan; proposed after-prefix has the version inconsistency in F1."
+    },
+    "assumptions": {
+      "verdict": "pass",
+      "reason": "Current two os.walk sites omit onerror. Candidate uses one shared callback raising DocumentError from original OSError. Patching os.scandir exercises actual os.walk error handling rather than replacing inventory output; captured original scandir handles other paths. Path equality works with resolved temporary fixture roots across platforms; no chmod/root privilege assumptions."
+    },
+    "prior_results": {
+      "verdict": "pass",
+      "reason": "Both frozen actual lexical searches scan348 records with partial=true and25 missing-record errors. Retrieved metadata is unchecked; plan explicitly declines empirical reuse and exhaustive-absence claims. Knowledge search is empty. Existing artifact9, digest5 and init9 methods were read and do not cover scandir failure injection."
+    },
+    "acceptance": {
+      "verdict": "fail",
+      "reason": "Behavioral acceptance is discriminating and appropriately bounded, but frozen stable after-prefix contradicts proposed top-level plan version; resolve F1 before adoption. No runtime outcome is accepted by this review."
+    },
+    "risk": {
+      "verdict": "pass",
+      "reason": "Source diff is limited to shared callback plus onerror at two existing walks; callback preserves errno/filename via cause. Traversal error now intentionally aborts instead of returning partial data. Missing optional directories still return empty inventory. Existing existence/type/path races, atomicity, host deployment, filesystem security and quality/performance claims are excluded."
+    },
+    "resources": {
+      "verdict": "pass",
+      "reason": "Frozen budget is at most2 plan reviews, baseline/fixed/independent1 each,60s per command, shared deadline2026-10-30T05:26:23.198224+00:00, no retries and1 new source/CI commit. This consumes one review invocation only; no test execution or old budget resets occurred. Trusted runtime receipt and model cost/token metering remain unavailable, so this is manual local review and cannot authorize protected dispatch."
+    }
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "blocking",
+      "target": ".agent-runs/inventory-scan-1303/system-prefix-after.txt:8",
+      "problem": "Frozen after-prefix still declares top-level Version: 58 while plan proposed_plan is59 and stable_plan_reconciliation requires58→59. Appended phaseAM says Version59, leaving the authoritative stable detail version internally inconsistent. Applying exactly this prefix would not perform the promised stable version transition.",
+      "required_change": "Create a new frozen after-prefix with top-level Version: 59; preserve all original stable text except that explicit version transition and already proposed AM append. Freeze a new plan version with its new exact reference hash and retain v1 plus this full feedback. Do not apply source, tests or stable prefix before the remaining review approves the exact revised candidate.",
+      "revalidation": "Read revised prefix and diff against the original before-prefix; verify only top-level58→59 and the AM append, then rehash all revised plan refs and use the remaining second review invocation within the original deadline. No test/probe/retry or old-gate reset is needed."
+    }
+  ],
+  "candidate_analysis": {
+    "implementation": "The shared callback is defined before _inventory and imported by artifact_index without introducing a circular import. Both loops retain followlinks=False and existing path/digest handling. Existing generated Skill source is currently byte-identical to source and intended to receive exact candidate bytes.",
+    "baseline_expectation": "Statically expect six methods run: four rejection methods each test EACCES and EIO yielding exactly8 assertion failures on baseline because default os.walk suppresses each error. Each injection target is attempted once; finally verifies unchanged complete fixture file-byte mapping. Two readable/absent controls should pass. This expectation must be checked against actual raw baseline, not treated as observed.",
+    "fixed_expectation": "Candidate callback should cause all8 injected failures to raise DocumentError with original OSError cause, exact errno and filename. Readable control verifies complete names/hashes/count/required match and snapshot advice/guides; absent control verifies optional docs remain empty and TASK digest unchanged. Fixed/independent command includes6 new +9 artifact +5 digest +9 init methods,29 total before any explicitly reported existing skips.",
+    "cross_platform": "New tests use byte fixtures, pathlib, tempfile and synthetic errno errors; no symlink privilege, permission mode, shell or platform newline dependence. Frozen workflow adds new test module to Ubuntu/Windows Python3.10/3.12 and macOS3.12. CI executions are future separate evidence, not established by this review."
+  },
+  "observed_reference_hashes": {
+    "AGENTS.md": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+    "agent_doc/task/TASK.md": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+    "agent_doc/guide/GUIDE.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_doc/guide/README.md": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261",
+    "agent_runtime/project_docs.py": "3e4190d4c256fb59ad456849ab00dd80534b096c4a29a52c081ae9d117395be5",
+    "agent_runtime/artifact_index.py": "88ad916cd9c5aef3e14e835c5722e555fdaec0710c1ebdc67983ba398ee6389b",
+    "plugins/research-assistant/skills/model-with-knowledge/scripts/project_docs.py": "3e4190d4c256fb59ad456849ab00dd80534b096c4a29a52c081ae9d117395be5",
+    "tests/test_artifact_index.py": "90fa1230a0dfea4868524d20dbe8d330db577e13fc83011ce8e3cfd3809c4885",
+    "tests/test_artifact_digest_cache_regressions.py": "13aaf5a35bd52f11b24471e65759cab92c88fbe734fd2e4d4d99759cf7fcd6aa",
+    "tests/test_project_docs_init.py": "7962db9f19f5fea1540629da55b1aef5363c55361c96d6289330d50ed95f6b25",
+    ".github/workflows/portable-install.yml": "1c6dc5c19ef757c9b2fee3ffe9b3fd1f85d140105408c7890b973041572b4f2e",
+    ".agent-runs/inventory-scan-1303/system-prefix-after.txt": "176f7a34cb07cc1a8caf4847dd6aee6dd28af4dfdcc4bffa86f705d5e2be218b",
+    ".agent-runs/inventory-scan-1303/prior-results.json": "62f34f18cc2ccd384f32599698f614c3fcf348c1f1fbe4fc1617fe3f6423ac75",
+    ".agent-runs/inventory-scan-1303/system-prefix-before.txt": "e2d4cd1e69f666a6b14197f2b460a677d747ffca0795e2ebe1ca100faa0e4e4e",
+    ".agent-runs/inventory-scan-1303/artifact-after.txt": "c006f6a718adec1b72610f087d3805c718c013b82c8521955312a91c1bb0d658",
+    ".agent-runs/inventory-scan-1303/knowledge.json": "4b91a6fbd7bf8ce902a97abd260049811f1dea3df5f24ada3f884808c0f757a5",
+    ".agent-runs/inventory-scan-1303/tests-after.txt": "ba4cc5c2051039b140a962df7a84f8bbd388d252979f31201f9bfeeb7e0693cf",
+    ".agent-runs/inventory-scan-1303/prior-artifact.json": "c1facf0ea3ca55473f4ef3bec9b955e5fe59dc10855a5aed383c3d10337322f5",
+    ".agent-runs/inventory-scan-1303/docs-after.txt": "e40f80adf9b7378e4104eef0d541777da5a12dae6eb85873213bfd0c56e0abc5",
+    ".agent-runs/inventory-scan-1303/workflow-after.txt": "9ad2474968f689445bdefa5c1337ef3bc06da381b5f82f5a2b5407414fda5cba"
+  },
+  "all20_reference_hashes_match": true,
+  "scope": "Static independent plan/candidate review only. No results pre-reviewed. Approve/revise is not protected ReviewSession receipt or publication/tool authorization.",
+  "limitations": [
+    "No candidate imports, tests, probes, source writes, guide writes, old gate resets or publication performed. Only this review JSON is written.",
+    "No trusted runtime invocation receipt available; parent handoff identifies this fresh actual independent invocation, which is not a cryptographic host credential.",
+    "No empirical outcomes, native CI status, absolute absence of defects or platform executions certified.",
+    "Historical unadoptedFD57 and all spent old gates remain frozen; current stable58 remains unchanged."
+  ]
+}

@@ -1,0 +1,98 @@
+{
+  "task": "SYSTEM-99",
+  "lineage": "INVENTORY-SCAN-01",
+  "current_plan": 58,
+  "proposed_plan": 59,
+  "base_commit": "a5a4fd4279bea396cbb6c4ceffe32eeda6a1e83d",
+  "intent": "Refuse incomplete inventories caused by scandir errors, reuse shared error callback in existing project_docs and artifact_index; no new task pool/schema/migration",
+  "guide": "Human guide directory read-only; empty guide/current unique TASK unchanged; tests only own temporary advice and legacy TASK",
+  "assumptions": "Static candidate only; actual deterministic failure injections must establish defect. os.walk default ignores scandir OSError as documented https://docs.python.org/3.12/library/os.html#os.walk; local test error injection not real disk-failure prevalence or host deployment",
+  "prior_results": "Queries saved prior-results/prior-artifact; lexical results partial with25missingrecords; metadata only, no accepted empirical reuse. Knowledgequery empty. Old NPU artifact9tests cover layout/paths but not scandir errors. No exact accepted prior traversal-error evidence established, not exhaustive absence.",
+  "acceptance": "Frozen six new methods with four error methods (root/nested x artifact/snapshot), EACCES/EIO each; exactly8baseline assertion failures expected, two controls pass. All fixed/independent new6 + original artifact9/digest5/project_docs_init pass (existing platform skips reported, new6 no skip). Error cause exact errno/filename, one target call, complete fixture bytes unchanged. Readable inventory fullnames/hashes/required and snapshot, absent optional docs retained. Actual os.walk invokes patched scandir, not mocked inventory result.",
+  "implementation": "One _inventory_error in existing project_docs raises DocumentError from original OSError; both os.walk sites use onerror. Existing generated Skill project_docs copy synchronized; source candidate hashes frozen. No directory existence/path race redesign or partial schema.",
+  "risk": "project_docs is broadly used; change intentionally refuses previously suppressed scan errors rather than granting absence; absent optional dirs compatible. OSError cause retained. Application-level boundary only, snapshots not atomic. No CLI/engine/quality/performance certification.",
+  "resources": {
+    "plan_reviews_max": 2,
+    "plan_reviews_actual": 0,
+    "baseline_max": 1,
+    "fixed_max": 1,
+    "independent_max": 1,
+    "executions_actual": {
+      "baseline": 0,
+      "fixed": 0,
+      "independent": 0
+    },
+    "command_timeout_seconds": 60,
+    "shared_deadline": "2026-10-30T05:26:23.198224+00:00",
+    "retry": false,
+    "new_source_ci_commits_max": 1,
+    "old_gate_resets": 0
+  },
+  "commands": {
+    "baseline": [
+      "python",
+      "-B",
+      "-m",
+      "unittest",
+      "tests.test_inventory_scan_errors",
+      "-v"
+    ],
+    "fixed": [
+      "python",
+      "-B",
+      "-m",
+      "unittest",
+      "tests.test_inventory_scan_errors",
+      "tests.test_artifact_index",
+      "tests.test_artifact_digest_cache_regressions",
+      "tests.test_project_docs_init",
+      "-v"
+    ],
+    "independent": [
+      "python",
+      "-B",
+      "-m",
+      "unittest",
+      "tests.test_inventory_scan_errors",
+      "tests.test_artifact_index",
+      "tests.test_artifact_digest_cache_regressions",
+      "tests.test_project_docs_init",
+      "-v"
+    ]
+  },
+  "allowed_main_writes": [
+    "agent_runtime/project_docs.py",
+    "agent_runtime/artifact_index.py",
+    "plugins/research-assistant/skills/model-with-knowledge/scripts/project_docs.py",
+    "tests/test_inventory_scan_errors.py",
+    ".github/workflows/portable-install.yml",
+    "agent_doc/task/task_details/SYSTEM-99.md",
+    "agent_doc/results/inventory-scan-20261030/",
+    ".agent-runs/inventory-scan-1303/"
+  ],
+  "allowed_reviewer_write": ".agent-runs/inventory-scan-review-1303/",
+  "stable_plan_reconciliation": "Only after exact approval58\u219259 using frozen prefix; original58 preserved, unadoptedFD57andalloldgates frozen",
+  "source_refs": {
+    "AGENTS.md": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+    "agent_doc/task/TASK.md": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+    "agent_doc/guide/GUIDE.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_doc/guide/README.md": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261",
+    "agent_runtime/project_docs.py": "3e4190d4c256fb59ad456849ab00dd80534b096c4a29a52c081ae9d117395be5",
+    "agent_runtime/artifact_index.py": "88ad916cd9c5aef3e14e835c5722e555fdaec0710c1ebdc67983ba398ee6389b",
+    "plugins/research-assistant/skills/model-with-knowledge/scripts/project_docs.py": "3e4190d4c256fb59ad456849ab00dd80534b096c4a29a52c081ae9d117395be5",
+    "tests/test_artifact_index.py": "90fa1230a0dfea4868524d20dbe8d330db577e13fc83011ce8e3cfd3809c4885",
+    "tests/test_artifact_digest_cache_regressions.py": "13aaf5a35bd52f11b24471e65759cab92c88fbe734fd2e4d4d99759cf7fcd6aa",
+    "tests/test_project_docs_init.py": "7962db9f19f5fea1540629da55b1aef5363c55361c96d6289330d50ed95f6b25",
+    ".github/workflows/portable-install.yml": "1c6dc5c19ef757c9b2fee3ffe9b3fd1f85d140105408c7890b973041572b4f2e",
+    ".agent-runs/inventory-scan-1303/system-prefix-after.txt": "176f7a34cb07cc1a8caf4847dd6aee6dd28af4dfdcc4bffa86f705d5e2be218b",
+    ".agent-runs/inventory-scan-1303/prior-results.json": "62f34f18cc2ccd384f32599698f614c3fcf348c1f1fbe4fc1617fe3f6423ac75",
+    ".agent-runs/inventory-scan-1303/system-prefix-before.txt": "e2d4cd1e69f666a6b14197f2b460a677d747ffca0795e2ebe1ca100faa0e4e4e",
+    ".agent-runs/inventory-scan-1303/artifact-after.txt": "c006f6a718adec1b72610f087d3805c718c013b82c8521955312a91c1bb0d658",
+    ".agent-runs/inventory-scan-1303/knowledge.json": "4b91a6fbd7bf8ce902a97abd260049811f1dea3df5f24ada3f884808c0f757a5",
+    ".agent-runs/inventory-scan-1303/tests-after.txt": "ba4cc5c2051039b140a962df7a84f8bbd388d252979f31201f9bfeeb7e0693cf",
+    ".agent-runs/inventory-scan-1303/prior-artifact.json": "c1facf0ea3ca55473f4ef3bec9b955e5fe59dc10855a5aed383c3d10337322f5",
+    ".agent-runs/inventory-scan-1303/docs-after.txt": "e40f80adf9b7378e4104eef0d541777da5a12dae6eb85873213bfd0c56e0abc5",
+    ".agent-runs/inventory-scan-1303/workflow-after.txt": "9ad2474968f689445bdefa5c1337ef3bc06da381b5f82f5a2b5407414fda5cba"
+  },
+  "trust": "Manual actual independent plan/result calls, no trusted ReviewSession/runtime receipt; local low-risk regression scope, no protected dispatch claim"
+}

@@ -13,7 +13,7 @@ import os
 from pathlib import Path, PurePosixPath
 import re
 
-from .project_docs import DocumentError, regular_digest, _relative
+from .project_docs import DocumentError, regular_digest, _relative, _inventory_error
 
 INDEX_SCHEMA = 'artifact-index/v1'
 
@@ -66,7 +66,7 @@ def _walk(root, directory, max_entries, max_total_bytes=None):
     if path != root and root not in path.parents:
         raise DocumentError('index directory must live under the project root')
     files, total = {}, 0
-    for parent, directories, names in os.walk(path, followlinks=False):
+    for parent, directories, names in os.walk(path, followlinks=False, onerror=_inventory_error):
         # Reject symlinked directories that would let the walk escape the root.
         for name in directories:
             entry = Path(parent) / name
