@@ -1,0 +1,71 @@
+{
+  "reviewer": "legacy_text_plan_review_0109",
+  "scope_id": "SETUP-LEGACY-TEXT-01",
+  "attempt": 1,
+  "decision": "approve",
+  "plan_path": ".agent-runs/legacy-text-0107/plan-v1.json",
+  "plan_sha256": "432e30e580480f127cc9951c0bf349638536bb119be7ab4e0561af476eaa376d",
+  "review_clock_utc": "2026-10-30T17:10:44Z",
+  "clock_basis": "clock tool observed 2026-10-30 17:09:17 UTC during review and 17:10:44 UTC after review-record creation; neither is a regression execution duration",
+  "deadline_utc": "2026-10-30T17:38:25.484306Z",
+  "required_issues": [],
+  "optional_issues": [
+    {
+      "location": ".agent-runs/legacy-text-0107/runner.py",
+      "issue": "The runner uses POSIX killpg and start_new_session, appropriate to the current local Linux regression runner. It is not a portable native CI runner. CI correctly invokes unittest directly instead.",
+      "recommendation": "Keep this platform distinction in the final evidence; do not claim runner portability or arbitrary descendant cleanup from these fixtures. No candidate change is needed."
+    },
+    {
+      "location": ".agent-runs/legacy-text-0107/test-candidate.py.txt:RACE",
+      "issue": "The replacement tests deterministically replace the legacy leaf inside the patched is_file call. They cover that precise window, not replacement after checked_target or arbitrary hostile parent changes. Symlink creation errors are reported as unavailable-host skips.",
+      "recommendation": "Report exact native skips and this deterministic race scope. Do not broaden the result to every concurrent path replacement. No candidate change is needed."
+    }
+  ],
+  "compact_verdict": {
+    "intent": {"status": "pass", "reason": "One remaining legacy root TASK.md read in project_document_layout is distinct from prior installed CLAUDE/managed reads and uninstall preflight. The frozen source diff changes exactly that expression to the existing helper, preserving refusal ordering before installer writes."},
+    "guide": {"status": "pass", "reason": "Actual guide inventory contains empty GUIDE.md and explanatory README.md; both hashes match. No substantive human guide is invented. Allowed writes exclude guide and canonical index, and the target fixtures create only empty guide directories via existing install behavior. Plan63 retains the larger SYSTEM-99 goal and unfinished gates."},
+    "assumptions": {"status": "pass", "reason": "Static trace confirms checked_target is repeated by _installed_text after patched is_file, regular_bytes rejects nonregular descriptors and exceeds-16MiB inputs, and raw UTF8 decoding plus CRLF/CR replacement matches prior read_text semantics for valid bounded inputs. Explicit migration and dual-list checks remain in their prior order. No generic concurrency or whole-install transaction assumption is needed."},
+    "prior_results": {"status": "pass", "reason": "Frozen plan records a partial 364-entry search with 25 errors and rejects unrelated lexical hits; no exhaustive absence or empirical legacy-pointer reuse claim is made. Read prior text and native uninstall reports retain original scopes, failures and consumed limits. TRACE reading is background rationale, not measured benefit or authorization."},
+    "acceptance": {"status": "pass", "reason": "Seven new methods have real offline CLI and install API coverage, raw-byte/canonical preservation controls, bound/bound-plus-one cases, deterministic FIFO/link replacements, migration refusal and dual-list refusal. New class derives directly from unittest.TestCase and borrows only setUp/snapshot/cli, so importing fixture does not inherit its six tests. Static counts are 7+17+8+6=38. Baseline expected discriminators are three failing methods and four controls; subtests are not defect counts. Fixed and fresh independent commands and subsequent six-domain code/rawdata review are correctly separated."},
+    "risk": {"status": "pass", "reason": "New byte ceiling intentionally rejects formerly readable oversized legacy pointers. No shared reader, schema, guide, task interpretation, migration, old Windows oracle or old gate change is proposed. New native step precedes known uninstall failure in both matrix and macOS job, preserving the chance to inspect new tests even when later CI is red. Full CI green cannot be claimed from that checkpoint."},
+    "resources": {"status": "pass", "reason": "Frozen limits are explicit: two plan reviews, one baseline/fixed/independent each, 120-second commands, three-second race subprocess, 20-second ordinary CLI, shared 1800-second deadline and cleanup reserve, at most two source CI commits with narrowly limited second use, zero new backend/model calls. Runner owns a new process session, handles SIGINT/SIGTERM cancellation, uses killpg/wait on an active child, retains once markers/raw logs/input hashes, and refuses insufficient remaining time. These are reasonable for the exact bounded regression task."}
+  },
+  "hash_coverage": {
+    "expected_refs": 21,
+    "actual_refs_checked": 21,
+    "all_matched": true,
+    "method": "Read-only sha256sum of each actual pinned file; no project import or test execution",
+    "matched_paths": [
+      "AGENTS.md",
+      "agent_doc/task/TASK.md",
+      "agent_doc/guide/GUIDE.md",
+      "agent_doc/guide/README.md",
+      "setup.py",
+      "agent_runtime/external_json.py",
+      "tests/test_setup.py",
+      "tests/test_setup_manifest.py",
+      "tests/test_setup_text.py",
+      ".github/workflows/portable-install.yml",
+      "agent_doc/results/setup-text-entry-20261030/report.md",
+      "agent_doc/results/uninstall-text-native-20261030/report.md",
+      "agent_doc/results/trace-reading-20261030/reading.md",
+      ".agent-runs/legacy-text-0107/baseline-setup.py.txt",
+      ".agent-runs/legacy-text-0107/candidate-setup.py.txt",
+      ".agent-runs/legacy-text-0107/test-candidate.py.txt",
+      ".agent-runs/legacy-text-0107/baseline-workflow.yml.txt",
+      ".agent-runs/legacy-text-0107/candidate-workflow.yml.txt",
+      ".agent-runs/legacy-text-0107/plan62-prefix.txt",
+      ".agent-runs/legacy-text-0107/plan63-prefix-candidate.txt",
+      ".agent-runs/legacy-text-0107/runner.py"
+    ],
+    "plan_hash_also_matched": true
+  },
+  "full_review": "Approve this exact frozen plan for its stated manual, limited scope. I read AGENTS.md, project-document and dual-main governance, relevant decision/result governance, actual guide inventory, task index and relevant stable detail context, the frozen plan, source/helper/call sites, candidate tests and reused fixture methods, runner, workflow diffs, prefix candidate and pinned prior reports. All 21 reference hashes and the independently requested plan hash match. The production change is one expression with no duplicate helper and the new module has seven methods, not thirteen. Offline environment is coherent: runner removes ANTHROPIC_BASE_URL and TMUX for all inherited API execution, fixture CLI uses the same stripped environment, and install API fixture/race calls supply EMPTY_INVENTORY. No real model invocation is necessary. The FIFO baseline can safely fail through the inner three-second timeout; subprocess.run terminates/waits for its direct child, and TemporaryDirectory owns FIFO/link/external fixture cleanup. Fixed refusal compares all project entries except the intentionally externally replaced leaf, with the external referent bytes separately checked. CRLF and CR pointer lifecycle uses exact byte comparisons, and UTF8 behavior follows unchanged strict decode semantics. Bound count is bytes at 16*1024*1024, not characters, tokens or RSS. CI insertion is additive and correctly ahead of the old known red uninstall step on all five jobs. Baseline must precede the single production edit; failures, skips and native red outcomes must remain visible. Approval does not assert any result before the planned execution and fresh independent verification. No necessary semantic unknown was identified in this narrow static plan review.",
+  "trust_limits": [
+    "This is an actual separate reviewer invocation and manual artifact review, not an authenticated ReviewSession or protected-runtime dispatch receipt.",
+    "No imports, tests, baseline/fixed commands, model/backend probes, production writes, or native CI execution were performed by this reviewer.",
+    "Prior search completeness, inaccessible private reading records, remote state, native filesystem capabilities and final test results are not independently established by this static review.",
+    "No authorization, budget increase, reset of old gates, performance/model-quality conclusion, full CI green claim, whole-install transaction guarantee or SYSTEM-99 completion is granted.",
+    "Only the assigned review.json was written; root retains production ownership and must independently enforce host permissions and deadline at execution."
+  ]
+}

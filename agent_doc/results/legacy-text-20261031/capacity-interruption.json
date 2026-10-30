@@ -1,0 +1,37 @@
+{
+  "task": "SYSTEM-99",
+  "scope_id": "SETUP-LEGACY-TEXT-01",
+  "actor": "/root/legacy_text_result_verify_0114",
+  "host_error": "Agent errored: Selected model is at capacity. Please try a different model.",
+  "initial_parent_assumption_corrected": "Parent initially said independent command not executed; readback proves original command completed once. First rollback/checkpoint script stopped at its opening artifact-absence assertion and performed no writes. Source/test/workflow/input bytes remain frozen candidates.",
+  "observed": {
+    "independent.once": true,
+    "independent.json": true,
+    "independent.stdout": true,
+    "independent.stderr": true,
+    "review.json": false
+  },
+  "observed_command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "-B",
+    "-m",
+    "unittest",
+    "tests.test_setup_legacy_text",
+    "tests.test_setup",
+    "tests.test_setup_manifest",
+    "tests.test_setup_text",
+    "-v"
+  ],
+  "observed_interval": [
+    "2026-10-30T17:14:43.090705+00:00",
+    "2026-10-30T17:15:04.708050+00:00"
+  ],
+  "observed_exit_code": 0,
+  "observed_summary": "38pass,0error/skip; no complete manual review yet",
+  "meta_sha256": "d8eb5e9e9b54701a4e33ce7721516a4890a0a1d294b4588a96f2f169bf72f377",
+  "recovery": "same original reviewer/context asked to finish only pending read/review/write within original deadline; no new command, new request/cycle, finalized feedback replacement, retry/reset/reroute, or protected-runtime acceptance claimed.",
+  "independent_command_reservation_used": 1,
+  "independent_command_max": 1,
+  "actual_model_turn_usage_cost": "unknown; capacity failure and continuation retained",
+  "recorded_at": "2026-10-30T17:17:53.939758+00:00"
+}

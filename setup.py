@@ -440,7 +440,7 @@ def project_document_layout(target):
             raise ValueError('Legacy TASK.md requires explicit migration first: '
                              'python scripts/project_docs.py --root PROJECT migrate --date YYYY-MM-DD')
         # A migrated root file may be a pointer, but never another checkbox list.
-        if re.search(r'^\s*[-*+]\s+\[[ xX]\]', legacy.read_text(encoding='utf-8'), re.M):
+        if re.search(r'^\s*[-*+]\s+\[[ xX]\]', _installed_text(target, 'TASK.md'), re.M):
             raise ValueError('Two active task lists; preserve and reconcile TASK.md and agent_doc/task/TASK.md')
     return task, directories
 

@@ -1,0 +1,95 @@
+"""Run one frozen offline regression phase and retain raw outputs."""
+import datetime as dt
+import hashlib
+import json
+import os
+from pathlib import Path
+import platform
+import signal
+import subprocess
+import sys
+import time
+
+root = Path(__file__).resolve().parents[2]
+run = Path(__file__).resolve().parent
+plan = json.loads((run / 'plan-v1.json').read_text())
+kind = sys.argv[1]
+if kind not in ('baseline', 'fixed', 'independent'):
+    raise SystemExit('unknown phase')
+out = root / plan['independent_output_dir'] if kind == 'independent' else run
+out.mkdir(exist_ok=True)
+deadline = dt.datetime.fromisoformat(plan['deadline'])
+remaining = lambda: (deadline - dt.datetime.now(dt.timezone.utc)).total_seconds()
+if remaining() <= 10:
+    raise SystemExit('deadline/cleanup reserve unavailable')
+expected = dict(plan['execution_refs'])
+expected['setup.py'] = plan['baseline_source_sha256'] if kind == 'baseline' else plan['candidate_source_sha256']
+def hashes():
+    return {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in expected}
+before = hashes()
+if before != expected:
+    raise SystemExit('execution input mismatch')
+fd = os.open(out / (kind + '.once'), os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600)
+os.close(fd)
+command = plan['baseline_command'] if kind == 'baseline' else plan['fixed_and_independent_command']
+command = [sys.executable, *command[1:]]
+env = dict(os.environ)
+for name in ('ANTHROPIC_BASE_URL', 'TMUX'):
+    env.pop(name, None)
+child = None
+starting = False
+cleaning = False
+cancelled = None
+def cancel(number, frame):
+    global cancelled
+    cancelled = number
+    if not starting and not cleaning:
+        raise KeyboardInterrupt('owned regression cancelled')
+signal.signal(signal.SIGTERM, cancel)
+signal.signal(signal.SIGINT, cancel)
+started = dt.datetime.now(dt.timezone.utc)
+tick = time.monotonic()
+code = None
+timed_out = False
+error = None
+cleanup_error = None
+with (out / (kind + '.stdout')).open('xb') as stdout, (out / (kind + '.stderr')).open('xb') as stderr:
+    try:
+        starting = True
+        child = subprocess.Popen(command, cwd=root, env=env, stdout=stdout, stderr=stderr,
+                                 start_new_session=True)
+        starting = False
+        if cancelled is not None:
+            raise KeyboardInterrupt('cancelled during child creation')
+        try:
+            code = child.wait(timeout=max(0, min(120, remaining() - 10)))
+        except subprocess.TimeoutExpired:
+            timed_out = True
+    except BaseException as exc:
+        error = type(exc).__name__ + ': ' + str(exc)
+    finally:
+        starting = False
+        cleaning = True
+        if child is not None and child.poll() is None:
+            try:
+                os.killpg(child.pid, signal.SIGKILL)
+                code = child.wait(timeout=10)
+            except (OSError, subprocess.TimeoutExpired) as exc:
+                cleanup_error = type(exc).__name__ + ': ' + str(exc)
+        elif child is not None:
+            code = child.returncode
+after = hashes()
+meta = {'phase': kind, 'command': command, 'cwd': str(root),
+        'started_at': started.isoformat(), 'ended_at': dt.datetime.now(dt.timezone.utc).isoformat(),
+        'exit_code': code, 'timed_out': timed_out, 'cancelled': cancelled,
+        'error': error, 'cleanup_error': cleanup_error, 'input_hashes_before': before,
+        'input_hashes_after': after, 'inputs_match': before == expected == after,
+        'plan_sha256': hashlib.sha256((run / 'plan-v1.json').read_bytes()).hexdigest(),
+        'runner_sha256': hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+        'python': sys.version, 'platform': platform.platform(),
+        'environment_removed_names': ['ANTHROPIC_BASE_URL', 'TMUX'],
+        'elapsed_seconds': time.monotonic() - tick,
+        'timing_scope': 'resource accounting only, not performance evidence'}
+(out / (kind + '.json')).write_text(json.dumps(meta, indent=2) + '\n')
+print(json.dumps(meta))
+raise SystemExit(code if code is not None and not error and not cleanup_error and before == after else 2)

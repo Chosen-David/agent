@@ -1,0 +1,1563 @@
+test_exact_byte_bound_pointer_remains_accepted (tests.test_setup_legacy_text.LegacyTaskTextTests.test_exact_byte_bound_pointer_remains_accepted) ... ok
+test_fifo_replacement_after_type_check_is_refused (tests.test_setup_legacy_text.LegacyTaskTextTests.test_fifo_replacement_after_type_check_is_refused) ... FAIL
+test_legacy_without_canonical_still_requires_migration (tests.test_setup_legacy_text.LegacyTaskTextTests.test_legacy_without_canonical_still_requires_migration) ... ok
+test_link_replacement_after_type_check_is_refused (tests.test_setup_legacy_text.LegacyTaskTextTests.test_link_replacement_after_type_check_is_refused) ... FAIL
+test_oversize_legacy_pointer_refused_before_mutation (tests.test_setup_legacy_text.LegacyTaskTextTests.test_oversize_legacy_pointer_refused_before_mutation) ... 
+  test_oversize_legacy_pointer_refused_before_mutation (tests.test_setup_legacy_text.LegacyTaskTextTests.test_oversize_legacy_pointer_refused_before_mutation) (command=()) ... FAIL
+  test_oversize_legacy_pointer_refused_before_mutation (tests.test_setup_legacy_text.LegacyTaskTextTests.test_oversize_legacy_pointer_refused_before_mutation) (command=('--check',)) ... FAIL
+  test_oversize_legacy_pointer_refused_before_mutation (tests.test_setup_legacy_text.LegacyTaskTextTests.test_oversize_legacy_pointer_refused_before_mutation) (command=('--doctor',)) ... FAIL
+test_second_active_task_list_remains_refused (tests.test_setup_legacy_text.LegacyTaskTextTests.test_second_active_task_list_remains_refused) ... ok
+test_valid_pointer_newlines_and_lifecycle_preserved (tests.test_setup_legacy_text.LegacyTaskTextTests.test_valid_pointer_newlines_and_lifecycle_preserved) ... ok
+
+======================================================================
+FAIL: test_fifo_replacement_after_type_check_is_refused (tests.test_setup_legacy_text.LegacyTaskTextTests.test_fifo_replacement_after_type_check_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_setup_legacy_text.py", line 78, in race
+    result = subprocess.run(
+             ^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 550, in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 1209, in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 2116, in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+  File "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 1253, in _check_timeout
+    raise TimeoutExpired(
+subprocess.TimeoutExpired: Command '['/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python', '-B', '-c', "\nimport json, os, sys\nfrom pathlib import Path\nfrom unittest.mock import patch\nimport setup\ntarget, mode = Path(sys.argv[1]), sys.argv[2]\nlegacy = target / 'TASK.md'\nexternal = target.parent / 'external-pointer.txt'\nexternal.write_bytes(b'External pointer\\n')\noriginal = Path.is_file\nchanged = False\ndef is_file(path):\n    global changed\n    if path == legacy and not changed:\n        changed = True\n        legacy.unlink()\n        if mode == 'fifo':\n            os.mkfifo(legacy)\n        else:\n            try:\n                legacy.symlink_to(external)\n            except OSError as exc:\n                legacy.write_bytes(b'Legacy pointer\\n')\n                print(json.dumps({'skip': type(exc).__name__}))\n                raise SystemExit(0)\n        return True\n    return original(path)\nwith patch.object(Path, 'is_file', is_file):\n    try:\n        setup.install(target, model_inventory=setup.EMPTY_INVENTORY)\n    except ValueError as exc:\n        print(json.dumps({'blocked': True, 'reason': str(exc), 'changed': changed}))\n    else:\n        print(json.dumps({'blocked': False, 'changed': changed}))\n", '/tmp/installed text 8_8o6xlx/project', 'fifo']' timed out after 3 seconds
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_setup_legacy_text.py", line 98, in test_fifo_replacement_after_type_check_is_refused
+    self.race('fifo')
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_setup_legacy_text.py", line 83, in race
+    self.fail('legacy pointer replacement blocked the installer')
+AssertionError: legacy pointer replacement blocked the installer
+
+======================================================================
+FAIL: test_link_replacement_after_type_check_is_refused (tests.test_setup_legacy_text.LegacyTaskTextTests.test_link_replacement_after_type_check_is_refused)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_setup_legacy_text.py", line 101, in test_link_replacement_after_type_check_is_refused
+    self.race('link')
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_setup_legacy_text.py", line 89, in race
+    self.assertTrue(value['blocked'], value)
+AssertionError: False is not true : {'blocked': False, 'changed': True}
+
+======================================================================
+FAIL: test_oversize_legacy_pointer_refused_before_mutation (tests.test_setup_legacy_text.LegacyTaskTextTests.test_oversize_legacy_pointer_refused_before_mutation) (command=())
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_setup_legacy_text.py", line 63, in test_oversize_legacy_pointer_refused_before_mutation
+    self.cli(command, 2)
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_setup_text.py", line 53, in cli
+    self.assertEqual(result.returncode, expected, result.stdout + result.stderr)
+AssertionError: 0 != 2 : {
+  "status": "configured",
+  "target": "/tmp/installed text roomh4q2/project",
+  "skills": 16,
+  "subagents": 16,
+  "errors": [],
+  "skill_storage": "symlink",
+  "model_routing": {
+    "schema_version": 1,
+    "live_model_tested": false,
+    "routes": {
+      "planner-main": {
+        "role": "planner-main",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "review-main": {
+        "role": "review-main",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-assistant": {
+        "role": "research-assistant",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-explore": {
+        "role": "research-explore",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-implement-optimize": {
+        "role": "research-implement-optimize",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "glm",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "qwen-coder",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-figures": {
+        "role": "research-figures",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "sonnet",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-write": {
+        "role": "research-write",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-review": {
+        "role": "research-review",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-read-pdf": {
+        "role": "research-read-pdf",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "paper-reading-companion": {
+        "role": "paper-reading-companion",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "explain-research-concepts": {
+        "role": "explain-research-concepts",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "travel-planner": {
+        "role": "travel-planner",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-data-visualization": {
+        "role": "research-data-visualization",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "sonnet",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-diagrams": {
+        "role": "research-diagrams",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "sonnet",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "code-reading": {
+        "role": "code-reading",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "code-organization": {
+        "role": "code-organization",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "deepseek-fast",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "deepseek-flash-v4",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "glm-flash",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "model-with-knowledge": {
+        "role": "model-with-knowledge",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "gpu-experiment-dispatch": {
+        "role": "gpu-experiment-dispatch",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "glm",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "qwen-coder",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      }
+    }
+  },
+  "capabilities": {
+    "python": "3.12.14",
+    "claude_cli": null,
+    "tmux": null,
+    "model_auth": "not_checked",
+    "supervisor": "not_started",
+    "host_adapter": "project_specific"
+  },
+  "next": "Start/restart Claude Code in target, inspect /memory and /agents, then read human guide, agent_doc/task/TASK.md, task details and assessed advice."
+}
+
+
+======================================================================
+FAIL: test_oversize_legacy_pointer_refused_before_mutation (tests.test_setup_legacy_text.LegacyTaskTextTests.test_oversize_legacy_pointer_refused_before_mutation) (command=('--check',))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_setup_legacy_text.py", line 63, in test_oversize_legacy_pointer_refused_before_mutation
+    self.cli(command, 2)
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_setup_text.py", line 53, in cli
+    self.assertEqual(result.returncode, expected, result.stdout + result.stderr)
+AssertionError: 0 != 2 : {
+  "status": "configured",
+  "target": "/tmp/installed text roomh4q2/project",
+  "skills": 16,
+  "subagents": 16,
+  "errors": [],
+  "skill_storage": "symlink",
+  "model_routing": {
+    "schema_version": 1,
+    "live_model_tested": false,
+    "routes": {
+      "planner-main": {
+        "role": "planner-main",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "review-main": {
+        "role": "review-main",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-assistant": {
+        "role": "research-assistant",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-explore": {
+        "role": "research-explore",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-implement-optimize": {
+        "role": "research-implement-optimize",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "glm",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "qwen-coder",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-figures": {
+        "role": "research-figures",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "sonnet",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-write": {
+        "role": "research-write",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-review": {
+        "role": "research-review",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-read-pdf": {
+        "role": "research-read-pdf",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "paper-reading-companion": {
+        "role": "paper-reading-companion",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "explain-research-concepts": {
+        "role": "explain-research-concepts",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "travel-planner": {
+        "role": "travel-planner",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-data-visualization": {
+        "role": "research-data-visualization",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "sonnet",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-diagrams": {
+        "role": "research-diagrams",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "sonnet",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "code-reading": {
+        "role": "code-reading",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "code-organization": {
+        "role": "code-organization",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "deepseek-fast",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "deepseek-flash-v4",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "glm-flash",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "model-with-knowledge": {
+        "role": "model-with-knowledge",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "gpu-experiment-dispatch": {
+        "role": "gpu-experiment-dispatch",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "glm",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "qwen-coder",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      }
+    }
+  },
+  "capabilities": {
+    "python": "3.12.14",
+    "claude_cli": null,
+    "tmux": null,
+    "model_auth": "not_checked",
+    "supervisor": "not_started",
+    "host_adapter": "project_specific"
+  },
+  "next": "Start/restart Claude Code in target, inspect /memory and /agents, then read human guide, agent_doc/task/TASK.md, task details and assessed advice."
+}
+
+
+======================================================================
+FAIL: test_oversize_legacy_pointer_refused_before_mutation (tests.test_setup_legacy_text.LegacyTaskTextTests.test_oversize_legacy_pointer_refused_before_mutation) (command=('--doctor',))
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_setup_legacy_text.py", line 63, in test_oversize_legacy_pointer_refused_before_mutation
+    self.cli(command, 2)
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_setup_text.py", line 53, in cli
+    self.assertEqual(result.returncode, expected, result.stdout + result.stderr)
+AssertionError: 0 != 2 : {
+  "status": "configured",
+  "target": "/tmp/installed text roomh4q2/project",
+  "skills": 16,
+  "subagents": 16,
+  "errors": [],
+  "skill_storage": "symlink",
+  "model_routing": {
+    "schema_version": 1,
+    "live_model_tested": false,
+    "routes": {
+      "planner-main": {
+        "role": "planner-main",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "review-main": {
+        "role": "review-main",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-assistant": {
+        "role": "research-assistant",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-explore": {
+        "role": "research-explore",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-implement-optimize": {
+        "role": "research-implement-optimize",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "glm",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "qwen-coder",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-figures": {
+        "role": "research-figures",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "sonnet",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-write": {
+        "role": "research-write",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-review": {
+        "role": "research-review",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "opus",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-read-pdf": {
+        "role": "research-read-pdf",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "paper-reading-companion": {
+        "role": "paper-reading-companion",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "explain-research-concepts": {
+        "role": "explain-research-concepts",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "travel-planner": {
+        "role": "travel-planner",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-data-visualization": {
+        "role": "research-data-visualization",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "sonnet",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "research-diagrams": {
+        "role": "research-diagrams",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools",
+          "vision"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "sonnet",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "gemini-flash",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "code-reading": {
+        "role": "code-reading",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "kimi",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "code-organization": {
+        "role": "code-organization",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "deepseek-fast",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "deepseek-flash-v4",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "glm-flash",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "model-with-knowledge": {
+        "role": "model-with-knowledge",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "kimi-thinking",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "longcat-thinking",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      },
+      "gpu-experiment-dispatch": {
+        "role": "gpu-experiment-dispatch",
+        "provider": null,
+        "model": null,
+        "transport": "native",
+        "fallback": true,
+        "requires": [
+          "tools"
+        ],
+        "availability": "default_unverified",
+        "skipped": [
+          {
+            "candidate": "glm",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "qwen-coder",
+            "reason": "unavailable_or_unknown"
+          },
+          {
+            "candidate": "deepseek-reasoning",
+            "reason": "unavailable_or_unknown"
+          }
+        ]
+      }
+    }
+  },
+  "capabilities": {
+    "python": "3.12.14",
+    "claude_cli": null,
+    "tmux": null,
+    "model_auth": "not_checked",
+    "supervisor": "not_started",
+    "host_adapter": "project_specific"
+  },
+  "next": "Start/restart Claude Code in target, inspect /memory and /agents, then read human guide, agent_doc/task/TASK.md, task details and assessed advice.",
+  "doctor": {
+    "fixes_applied": [],
+    "warnings": [],
+    "python_ok": true,
+    "python_version": "3.12.14",
+    "in_tmux": false,
+    "needs_restart": false,
+    "restart_scope": "configuration changes made by this doctor call",
+    "restart_hint": "No agent configuration changed during this doctor call. Current session load state was not checked."
+  }
+}
+
+
+----------------------------------------------------------------------
+Ran 7 tests in 6.945s
+
+FAILED (failures=5)
