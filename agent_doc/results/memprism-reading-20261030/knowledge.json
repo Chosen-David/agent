@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "algo.qlora-memory",
+      "version": 1,
+      "sha256": "08684e7e9ae88964f84a9d275990341f2ed28dc78ae3fc3affeef8319d6eead3",
+      "title": "QLoRA：存储 dtype 与计算 dtype 分离",
+      "summary": "NeurIPS 2023 报告 65B 模型单 48GB GPU 微调可行；依赖量化冻结骨干、LoRA 和具体训练设置，不是任意 65B 训练均可放下。",
+      "status": "published",
+      "assumptions": [
+        "method: NF4 frozen backbone plus LoRA",
+        "model: 65B model in paper",
+        "metric: finetuning memory and task quality"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.qlora-memory"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "memory"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "memory"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "memory",
+            "task"
+          ]
+        }
+      ],
+      "score": 11
+    },
+    {
+      "id": "ds.hnsw-recall-budget",
+      "version": 1,
+      "sha256": "8f736520925598cd563890785a162bc50b45891506c859ab1685434dbd10d11c",
+      "title": "HNSW：ef、召回与内存预算",
+      "summary": "HNSW 的 ef/M/ef_construction 是召回、查询/构建成本和内存的折中；参数不能只按教程默认值宣称最优。",
+      "status": "published",
+      "assumptions": [
+        "operation: approximate vector nearest-neighbor search",
+        "metric: l2 ip or cosine",
+        "quality: approximate"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#ds.hnsw-recall-budget"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "memory"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "memory"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "memory"
+          ]
+        }
+      ],
+      "score": 10
+    }
+  ]
+}
