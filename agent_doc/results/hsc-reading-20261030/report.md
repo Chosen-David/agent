@@ -1,0 +1,7 @@
+# HSC-Bench task takeover reading
+
+Completed2610.36523v1 main1–7 and all AppendicesA–D, tables/equations and available figure captions; one independent full-body/static review accepts without required revisions. reading.md preserves exact identity, context preparation, controls, scoring rules, denominators, negative findings and limited repository relation. artifact-status.json supersedes acquisition-only status without changing source identity.
+
+Evidence recovery, adherence to prior commitments, completed-action nonrepetition and final task quality require separate checks. Preserve Kimi mean regression, full-history reference, criterion-sensitive direction reversals, permissive reporting criteria and action-count limitations. Visible o200k token matching is not full native-provider/all-role cost; reported file-work tasks do not execute code/tests. No new handoff strategy, memory pool, task list, completed-action suppression or architecture migration is adopted.
+
+No production/test/workflow change, model/benchmark execution, author experiment reproduction or repository performance gain. Registered evidence is historical unknown/contractNone; manual review is not trusted runtime acceptance. Exact ordinary publication/readback makes same-batch51→52, not a completed optimization round. Plan59, human guide/uniqueTASK and all expired scopes remain unchanged. Priorec146109 five CI jobs passed at status readback. SYSTEM99 realhost/fullinput/quality/allrole cost/concurrency remains open.
