@@ -1,0 +1,154 @@
+"""Installed text is untrusted; exercise real offline CLI and refresh paths."""
+import json
+import os
+from pathlib import Path
+import stat
+import subprocess
+import sys
+import tempfile
+import unittest
+
+import setup
+from agent_runtime.external_json import DEFAULT_JSON_LIMIT
+
+
+class SetupTextTests(unittest.TestCase):
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix='installed text ')
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name).resolve()
+        self.project = self.root / 'project'
+        self.project.mkdir()
+        self.env = dict(os.environ)
+        for name in ('ANTHROPIC_BASE_URL', 'TMUX'):
+            self.env.pop(name, None)
+        setup.install(self.project, model_inventory=setup.EMPTY_INVENTORY)
+        self.claude = self.project / 'CLAUDE.md'
+        self.managed = self.project / '.claude/agent-workflows/orchestrator.md'
+
+    def snapshot(self):
+        result = {}
+        for path in self.project.rglob('*'):
+            name = path.relative_to(self.project).as_posix()
+            mode = path.lstat().st_mode
+            if stat.S_ISLNK(mode):
+                result[name] = ('link', os.readlink(path))
+            elif stat.S_ISREG(mode):
+                result[name] = ('file', path.read_bytes())
+            elif stat.S_ISDIR(mode):
+                result[name] = ('directory',)
+            else:
+                result[name] = ('special', stat.S_IFMT(mode))
+        return result
+
+    def cli(self, command, expected, timeout=20):
+        try:
+            result = subprocess.run(
+                [sys.executable, '-B', str(setup.REPO / 'setup.py'),
+                 '--target', str(self.project), *command],
+                cwd=self.root, env=self.env, capture_output=True,
+                encoding='utf-8', errors='strict', timeout=timeout)
+        except subprocess.TimeoutExpired:
+            self.fail('installed text blocked CLI instead of controlled refusal')
+        self.assertEqual(result.returncode, expected, result.stdout + result.stderr)
+        self.assertNotIn('Traceback', result.stderr)
+        if command in (('--check',), ('--doctor',)):
+            self.assertEqual(json.loads(result.stdout)['status'],
+                             'configured' if expected == 0 else 'needs_setup')
+        elif expected == 2:
+            self.assertEqual(result.stdout, '')
+            self.assertIn('setup blocked:', result.stderr)
+        return result
+
+    def refuse_commands(self, commands, *, timeout=20):
+        before = self.snapshot()
+        for command in commands:
+            with self.subTest(command=command):
+                self.cli(command, 2, timeout=timeout)
+                self.assertEqual(self.snapshot(), before)
+
+    @unittest.skipUnless(hasattr(os, 'mkfifo'), 'FIFO requires POSIX')
+    def test_fifo_claude_is_refused_without_blocking_or_mutation(self):
+        self.claude.unlink()
+        os.mkfifo(self.claude)
+        self.refuse_commands([(), ('--check',), ('--doctor',), ('--uninstall',)], timeout=3)
+        self.assertTrue(stat.S_ISFIFO(self.claude.lstat().st_mode))
+
+    @unittest.skipUnless(hasattr(os, 'mkfifo'), 'FIFO requires POSIX')
+    def test_fifo_managed_text_is_refused_before_install_writes(self):
+        self.managed.unlink()
+        os.mkfifo(self.managed)
+        self.refuse_commands([()], timeout=3)
+        self.assertTrue(stat.S_ISFIFO(self.managed.lstat().st_mode))
+
+    def test_linked_claude_and_managed_text_are_not_accepted(self):
+        for index, path in enumerate((self.claude, self.managed)):
+            with self.subTest(path=path.name):
+                original = path.read_bytes()
+                target = self.root / ('external-' + str(index))
+                target.write_bytes(original)
+                path.unlink()
+                try:
+                    path.symlink_to(target)
+                except OSError as exc:
+                    path.write_bytes(original)
+                    self.skipTest('file symlink unavailable: ' + str(exc))
+                try:
+                    self.refuse_commands([(), ('--check',), ('--doctor',), ('--uninstall',)])
+                    self.assertEqual(target.read_bytes(), original)
+                    self.assertTrue(path.is_symlink())
+                finally:
+                    path.unlink()
+                    path.write_bytes(original)
+
+    def test_oversize_claude_is_refused_before_mutation(self):
+        original = self.claude.read_bytes()
+        self.assertLess(len(original), DEFAULT_JSON_LIMIT)
+        self.claude.write_bytes(original + b'x' * (DEFAULT_JSON_LIMIT + 1 - len(original)))
+        self.refuse_commands([(), ('--check',), ('--doctor',), ('--uninstall',)])
+
+    def test_universal_newlines_and_user_content_survive_lifecycle(self):
+        for newline in (b'\r\n', b'\r'):
+            with self.subTest(newline=newline):
+                setup.install(self.project, model_inventory=setup.EMPTY_INVENTORY)
+                self.managed.write_bytes(self.managed.read_text(encoding='utf-8').encode().replace(b'\n', newline))
+                original = self.claude.read_text(encoding='utf-8')
+                self.claude.write_bytes(('用户说明\n' + original).encode().replace(b'\n', newline))
+                sentinel = self.project / 'notes.txt'
+                sentinel.write_bytes(b'user notes\r\n')
+                self.cli(('--check',), 0)
+                self.cli((), 0)
+                self.cli(('--doctor',), 0)
+                self.cli(('--uninstall',), 0)
+                self.assertEqual(self.claude.read_text(encoding='utf-8'), '用户说明\n\n')
+                self.assertEqual(sentinel.read_bytes(), b'user notes\r\n')
+                self.claude.unlink()
+
+    @unittest.skipUnless(hasattr(os, 'mkfifo'), 'FIFO requires POSIX')
+    def test_model_refresh_fifo_is_refused_before_any_write(self):
+        path = self.project / '.claude/agents/agent-research-write.md'
+        self.assertTrue(path.is_file())
+        path.unlink()
+        os.mkfifo(path)
+        before = self.snapshot()
+        code = (
+            'import sys; from pathlib import Path; sys.path.insert(0,sys.argv[1]); import setup\n'
+            'try: setup.update_model_inventory(Path(sys.argv[2]),setup.EMPTY_INVENTORY)\n'
+            'except (OSError,ValueError) as exc: print("refresh blocked: "+str(exc),file=sys.stderr); sys.exit(2)\n'
+        )
+        try:
+            result = subprocess.run([sys.executable, '-B', '-c', code, str(setup.REPO), str(self.project)],
+                                    cwd=self.root, env=self.env, capture_output=True,
+                                    encoding='utf-8', errors='strict', timeout=3)
+        except subprocess.TimeoutExpired:
+            self.fail('installed text blocked model refresh instead of controlled refusal')
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertEqual(result.stdout, '')
+        self.assertIn('refresh blocked:', result.stderr)
+        self.assertNotIn('Traceback', result.stderr)
+        self.assertEqual(self.snapshot(), before)
+        self.assertTrue(stat.S_ISFIFO(path.lstat().st_mode))
+
+
+if __name__ == '__main__':
+    unittest.main()

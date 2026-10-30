@@ -15,7 +15,7 @@ import stat
 from typing import NamedTuple
 import tempfile
 
-from agent_runtime.external_json import load_json
+from agent_runtime.external_json import load_json, regular_bytes
 from agent_runtime.knowledge_ingest import _publish_entry as _publish_skill
 from agent_runtime.model_routing import EMPTY_INVENTORY, routing_report, validate_inventory, validate_policy
 
@@ -164,6 +164,13 @@ def checked_target(target, relative):
             raise ValueError('managed parent is a symbolic link: ' + relative)
     return path
 
+
+
+def _installed_text(target, relative):
+    """Read at most 16 MiB of regular installed UTF-8 text, without redirects."""
+    raw = regular_bytes(checked_target(target, relative))
+    # Preserve Path.read_text's universal-newline fingerprints and user prose.
+    return raw.decode('utf-8').replace('\r\n', '\n').replace('\r', '\n')
 
 
 def checked_skill_link(target, relative):
@@ -491,8 +498,9 @@ def install(target, *, model_inventory=None, copy_skills=False, skill_limits=Non
     # Preflight all conflicts before changing any files.
     for relative, text in files.items():
         path = checked_target(target, relative)
-        if path.exists() and path.read_text(encoding='utf-8') != text:
-            if sha(path.read_text(encoding='utf-8')) != previous.get('files', {}).get(relative):
+        previous_text = _installed_text(target, relative) if path.exists() else None
+        if previous_text is not None and previous_text != text:
+            if sha(previous_text) != previous.get('files', {}).get(relative):
                 raise ValueError('preserving existing or locally edited file: ' + relative)
     for relative, source in links.items():
         path = checked_skill_link(target, relative)
@@ -509,7 +517,7 @@ def install(target, *, model_inventory=None, copy_skills=False, skill_limits=Non
                                               skill_limits=limits, budget=source_budget)
     claude = checked_target(target, 'CLAUDE.md')
     task_file, document_directories = project_document_layout(target)
-    old = claude.read_text(encoding='utf-8') if claude.exists() else ''
+    old = _installed_text(target, 'CLAUDE.md') if claude.exists() else ''
     existing_block = managed_block(old)
     owned_block_hash = previous.get('managed_block_sha256')
     if previous and existing_block is None:
@@ -579,8 +587,10 @@ def check(target, *, skill_limits=None):
         errors.append('invalid model inventory in installation manifest')
     files, links = expected_files(inventory)
     for relative, expected in files.items():
-        path = target / relative
-        if not path.is_file() or path.read_text(encoding='utf-8') != expected:
+        try:
+            if _installed_text(target, relative) != expected:
+                errors.append('missing/stale managed file: ' + relative)
+        except (OSError, ValueError):
             errors.append('missing/stale managed file: ' + relative)
     for relative, expected in links.items():
         try:
@@ -596,7 +606,7 @@ def check(target, *, skill_limits=None):
             errors.append(str(exc))
     claude = target / 'CLAUDE.md'
     try:
-        claude_text = claude.read_text(encoding='utf-8')
+        claude_text = _installed_text(target, 'CLAUDE.md')
         existing_block = managed_block(claude_text)
         owned_block_hash = manifest.get('managed_block_sha256')
         if existing_block is None or block() != existing_block:
@@ -662,14 +672,14 @@ def uninstall(target, *, skill_limits=None):
             except (OSError, ValueError):
                 pass  # Existing local edits/invalid copies are preserved below.
     claude = checked_target(target, 'CLAUDE.md')
-    claude_text = claude.read_text(encoding='utf-8') if claude.exists() else None
+    claude_text = _installed_text(target, 'CLAUDE.md') if claude.exists() else None
     existing_block = managed_block(claude_text) if claude_text is not None else None
     preserved = []
     for relative, fingerprint in manifest['files'].items():
         if relative not in expected:
             raise ValueError('unexpected managed path')
         path = checked_target(target, relative)
-        if path.is_file() and sha(path.read_text(encoding='utf-8')) == fingerprint:
+        if path.is_file() and sha(_installed_text(target, relative)) == fingerprint:
             path.unlink()
         elif path.exists():
             preserved.append(relative)
@@ -750,7 +760,7 @@ def update_model_inventory(target, inventory):
         path = checked_target(target, name)
         if name not in owned:
             raise ValueError('preserving model file without installation ownership: ' + name)
-        previous = path.read_text(encoding='utf-8') if path.exists() else None
+        previous = _installed_text(target, name) if path.exists() else None
         if previous is not None and sha(previous) != owned[name]:
             raise ValueError('preserving locally edited model file: ' + name)
         changed = changed or previous != text

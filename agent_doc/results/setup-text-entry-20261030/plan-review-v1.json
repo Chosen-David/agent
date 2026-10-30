@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "scope": "SETUP-TEXT-ENTRY-01",
+  "task": "SYSTEM-99",
+  "review_attempt": 1,
+  "decision": "revise",
+  "started_at": "2026-10-30T11:10:13+00:00",
+  "reviewed_at": "2026-10-30T11:12:31.277746532+00:00",
+  "timing_note": "reviewed_at is actual UTC clock readback; started_at is approximate first read time",
+  "plan": {
+    "path": ".agent-runs/setup-text-1904/plan-v1.json",
+    "sha256": "9ced94edfee22bbf4f213bf22d57ee77dedc3bfa2bfed003c3a04f46012f3a57",
+    "version": 1,
+    "deadline": "2026-10-30T11:40:02.112332+00:00"
+  },
+  "independence": "Manual independent static plan review only; no trusted ReviewSession, protected dispatch, test execution, production imports, probes, network, models or backend invocation.",
+  "refs_verification": {
+    "checked_at": "2026-10-30T11:11:07.600311869+00:00",
+    "method": "sha256sum over all 18 exact paths listed in plan-v1.json; every returned digest equals its corresponding frozen manifest digest",
+    "expected": 18,
+    "matched": 18,
+    "mismatches": [],
+    "read_scope": "All 18 referenced files inspected; setup base/candidate equivalence established by full diff plus candidate source reading; stable plan historical body inspected as delta and latest relevant/frozen slices, not re-audited as new history."
+  },
+  "domains": {
+    "intent": {
+      "status": "pass",
+      "reason": "Installed target text is a distinct dependency from consumed SETUP-JSON metadata scope. Candidate handles real installer/check/uninstall/model-refresh text reads without claiming general reliability, current-session loading, performance or batch completion."
+    },
+    "guide": {
+      "status": "pass",
+      "reason": "GUIDE.md empty, README boundary explicit. Candidate changes no repository guide or TASK bytes, helper guards target and parents. Isolated temporary projects initialize guide directories only. Main owns later stable Plan61 addition and Progress. Read project_document_workflow."
+    },
+    "assumptions": {
+      "status": "pass",
+      "reason": "regular_bytes provides nonblocking regular-descriptor bounded bytes; checked_target rejects static leaf and parent links before reads. UTF-8 decoding plus CRLF then CR normalization matches Path.read_text universal newline ownership. 16MiB is an explicit new refusal boundary. Install comparisons/hash use same normalized snapshot. No hostile parent-race, cross-file snapshot or full transaction guarantee."
+    },
+    "prior_results": {
+      "status": "pass",
+      "reason": "Actual frozen result query is scanned355/partialtrue/25missing-record errors. setup-json-entry covers metadata, not installed target text. Both retrieved knowledge cards concern speculative decoding and are inapplicable. No empirical reuse or new paper credit; 53 unchanged. Adjacent same-source regressions do not reset historical gates."
+    },
+    "acceptance": {
+      "status": "fail",
+      "reason": "Six concrete tests use actual temp CLI/API: CLAUDE FIFO across four commands, managed FIFO install, static CLAUDE/managed links, cap+1 CLAUDE, CRLF/CR lifecycle, late agent FIFO refresh. Rejection snapshots preserve all regular bytes/link destinations/special types; external link target bytes separately checked. However lifecycle currently expects one LF after user prose, although original block plus trailing LF and the prefixed user line leave two LF after managed_block removal. This oracle would falsely fail baseline and fixed. Fixed/independent55 consists new6+setup17+doctor8+manifest8+recovery16. Empirical outcomes presently unknown."
+    },
+    "risk": {
+      "status": "fail",
+      "reason": "The new macOS test step was inserted before the existing manifest step's env mapping, transferring TMPDIR from test_setup_manifest to test_setup_text. This changes the existing macOS fixture environment beyond the requested additive CI coverage and can reintroduce resolved-path alias behavior."
+    },
+    "resources": {
+      "status": "pass",
+      "reason": "Finite plan reviews2, baseline/fixed/independent1 each, sourceCI1, shared1800s, command120s and reserve10s. Linux regression runner creates O_EXCL once markers, strips gateway/TMUX, retains exclusive raw logs, waits within remaining-minus10, kills and reaps owned process group on timeout/finally. Individual FIFO children use subprocess.run timeout3 and reap on timeout; normal CLI20. Runner is local POSIX, while tests have explicit native FIFO/capability skips. CI itself is not run by this reviewer."
+    }
+  },
+  "required_fixes": [
+    {
+      "id": "NEWLINE-ORACLE-02",
+      "path": ".agent-runs/setup-text-1904/test_setup_text.py.candidate",
+      "finding": "Lifecycle oracle expects one LF, but initial block() plus trailing LF and prefix user-line produce two remaining LF after existing uninstall behavior removes only managed_block",
+      "exact_fix": "Change the final normalized CLAUDE text assertion in test_universal_newlines_and_user_content_survive_lifecycle to expect user prose followed by two LF for both CRLF and CR cases. Keep production merge/uninstall semantics unchanged.",
+      "validation": "Static derivation: initial block + LF; prepend user prose + LF; uninstall replaces block only; remainder is user prose + LF + LF. Preserve lifecycle as passing baseline control. Re-freeze candidate digest in plan-v2. Main independently identified this before execution; reviewer confirms against merge_block/managed_block/uninstall source."
+    },
+    {
+      "id": "CI-TMPDIR-01",
+      "path": ".agent-runs/setup-text-1904/portable-install.yml.candidate",
+      "finding": "macOS test_setup_manifest's existing env: TMPDIR was displaced to the inserted test_setup_text step",
+      "exact_fix": "Keep the macOS manifest run followed immediately by its original env: {TMPDIR: ${{ runner.temp }}} mapping; insert the text run after that complete step, with its own identical env mapping. Preserve all other existing steps and environments.",
+      "validation": "Static v2 diff must contain only two additive text test steps, with no existing step losing or changing its env. Update candidate and plan reference digests in a versioned plan-v2; preserve v1 and this revise report."
+    }
+  ],
+  "boundaries": {
+    "no_execution_before_approval": true,
+    "old_gates": "FD/PID/ALIAS/Codex/role-stdout/validation/intake/inventory and consumed JSON scope remain frozen; no retry or reinterpretation",
+    "unknowns": [
+      "Actual baseline and fixed/independent results",
+      "Native Windows/macOS outcome and platform skips",
+      "Real tmux/session/model/backend quality, full input, total costs and concurrent recovery",
+      "Full uninstall no-mutation for arbitrary local edits is not claimed"
+    ],
+    "publication": "Only exact own files, normal nonforce main with current fetch/integration and remote readback after independent result acceptance. No protected dispatch claim."
+  },
+  "next_action": "Main may prepare immutable v2 with CI-TMPDIR-01 and NEWLINE-ORACLE-02 fixed, then use the second and final scoped plan review. Do not apply tests/source or run baseline under this revise."
+}

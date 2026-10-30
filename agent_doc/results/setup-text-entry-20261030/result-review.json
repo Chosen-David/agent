@@ -1,0 +1,496 @@
+{
+  "schema_version": "manual-offline-result-review/v1",
+  "task": "SYSTEM-99",
+  "scope": "SETUP-TEXT-ENTRY-01: local offline ordinary reliability regression of installed target UTF-8 text readers; exact Linux 55-method run only",
+  "verdict": "usable-with-scope",
+  "review_actor": "setup_text_result_review_1916",
+  "started_at": "2026-10-30T11:16:16+00:00",
+  "started_at_note": "First actual UTC readback after initial input read; not a fabricated tool-start timestamp",
+  "completed_at": "2026-10-30T11:18:58.909761+00:00",
+  "independence": "Separate manual code/raw-data review and own one-shot subprocess execution; not trusted ReviewSession, protected runtime dispatch, deployment certification, model-quality or performance certificate.",
+  "plan": {
+    "path": ".agent-runs/setup-text-1904/plan-v2.json",
+    "sha256": "a8dc38719e8107949fdda3ac8a936eae71b9b1afd33655e423d6f24002bdd685",
+    "version": 2,
+    "stable_plan": 61,
+    "shared_deadline": "2026-10-30T11:40:02.112332+00:00"
+  },
+  "frozen_result_inputs": {
+    "path": ".agent-runs/setup-text-1904/result-review-inputs.json",
+    "sha256": "b6e7fe303ad726123b79f67626a70a300be8e543f66dd22544d9700c7c31b18e"
+  },
+  "hash_verification": {
+    "provided_refs": 34,
+    "with_literal_input": 35,
+    "before_all_match": true,
+    "after_all_match": true,
+    "stable_prefix_matches_current_detail_before_Progress": true,
+    "evidence": [
+      {
+        "path": ".agent-runs/setup-text-result-review-1916/hashes-after.json",
+        "sha256": "d724deef8012fcc2e4ea3908b2febf6bbd0813b3af5f2c6962b7eded8750ce3a"
+      },
+      {
+        "path": ".agent-runs/setup-text-result-review-1916/hashes-before.json",
+        "sha256": "1f24c74f71b305e77a5dfe03396fd53c7e8e1ad87d17a9f0952913c1b8a3f63c"
+      }
+    ]
+  },
+  "execution": {
+    "kind": "independent",
+    "attempt": 1,
+    "max_attempts": 1,
+    "started_at": "2026-10-30T11:17:08.252353+00:00",
+    "ended_at": "2026-10-30T11:17:18.126712+00:00",
+    "command": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-B",
+      "-m",
+      "unittest",
+      "tests.test_setup_text",
+      "tests.test_setup",
+      "tests.test_setup_doctor",
+      "tests.test_setup_manifest",
+      "tests.test_install_recovery",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/95d615402a52/agent-run-1202",
+    "exit_code": 0,
+    "timed_out": false,
+    "effective_timeout_seconds": 120,
+    "deadline": "2026-10-30T11:40:02.112332+00:00",
+    "cleanup_reserve_seconds": 10,
+    "owned_process_group": 6,
+    "kill_sent": false,
+    "child_reaped": true,
+    "environment_removed_names": [
+      "ANTHROPIC_BASE_URL",
+      "CODEX_FLORA_CCA_GATEWAY_HOST_ALIASES",
+      "CODEX_FLORA_CCA_GATEWAY_RESOLUTION_HOST",
+      "TMUX"
+    ],
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.55-x86_64-with-glibc2.39",
+    "elapsed_seconds": 9.875921031998587,
+    "timing_scope": "regression accounting only, not performance evidence"
+  },
+  "observed_counts": {
+    "baseline": {
+      "attempts": 1,
+      "methods": 6,
+      "failed_assertions": 14,
+      "errors": 0,
+      "skips": 0,
+      "real_FIFO_timeout_failures": 6,
+      "static_link_acceptance_failures": 4,
+      "new_ceiling_acceptance_failures": 4,
+      "lifecycle_control_passed": true,
+      "exit_code": 1
+    },
+    "producer_fixed": {
+      "attempts": 1,
+      "methods": 55,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "exit_code": 0
+    },
+    "independent": {
+      "attempts": 1,
+      "max_attempts": 1,
+      "methods": 55,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "exit_code": 0,
+      "module_counts": [
+        6,
+        17,
+        8,
+        8,
+        16
+      ]
+    }
+  },
+  "domains": {
+    "implementation_correctness": {
+      "verdict": "pass",
+      "reason": "Read full production diff and affected helper/install/check/uninstall/model-refresh/CLI paths. checked_target refuses static leaf and parent links; regular_bytes opens nonblocking, fstats a regular descriptor, enforces the existing 16MiB byte bound, and refuses growth past the cap. UTF-8 decode plus CRLF then CR normalization retains prior Path.read_text semantics. Install compares and hashes one normalized snapshot; install and model refresh retain complete preflight before writes. check catches OSError/ValueError including decoding/helper errors as needs_setup. Uninstall path validation precedes deletion, but text content validation remains per-file during deletion. No unacceptable regression found within the explicitly adopted refusal scope; see late-uninstall assessment.",
+      "evidence": [
+        {
+          "path": "setup.py",
+          "sha256": "7ee643e950122ec8db8f903cf8f1d109302bbd4371ed9ebb549e236f5dd539d5"
+        },
+        {
+          "path": "tests/test_setup_text.py",
+          "sha256": "aee61eb7921eada61e80f50581f3d14f10a75b3dd7b685ad47172d5c711c3350"
+        },
+        {
+          "path": "agent_runtime/external_json.py",
+          "sha256": "f154b63e6852b3fec6285e2dae9c749d2a8a34943746fac22c61cd9658fce849"
+        }
+      ]
+    },
+    "reference_strength": {
+      "verdict": "pass",
+      "reason": "Oracles use real offline subprocess CLI and refresh API, independently observable return codes, health JSON, no traceback, actual FIFO file type, full project content/link/type snapshots and external link-target bytes. Newline control derives from unchanged managed-block removal (user prose plus two LF) for both CRLF and CR, with unrelated note bytes exact. Static redirect refusal uses both CLAUDE and managed leaves across all four CLI commands; existing parent-link and refresh preflight tests add coverage. No independent replacement implementation is asserted. V1 feedback and exact v2 corrections retained; only additive CI steps remain with original manifest TMPDIR intact.",
+      "evidence": [
+        {
+          "path": "setup.py",
+          "sha256": "7ee643e950122ec8db8f903cf8f1d109302bbd4371ed9ebb549e236f5dd539d5"
+        },
+        {
+          "path": "tests/test_setup_text.py",
+          "sha256": "aee61eb7921eada61e80f50581f3d14f10a75b3dd7b685ad47172d5c711c3350"
+        },
+        {
+          "path": "agent_runtime/external_json.py",
+          "sha256": "f154b63e6852b3fec6285e2dae9c749d2a8a34943746fac22c61cd9658fce849"
+        },
+        {
+          "path": ".agent-runs/setup-text-plan-review-1910/review-v1.json",
+          "sha256": "979ffbd9f6882a4e09c6c2c551bd1e17ad5fa87512092850dd0a8ce99940021e"
+        },
+        {
+          "path": ".agent-runs/setup-text-plan-review-1910/review-v2.json",
+          "sha256": "2b3cbf8f40cf78e26b737ff1a067010ef34e65314350802d1c1ed00de2d488b2"
+        },
+        {
+          "path": ".github/workflows/portable-install.yml",
+          "sha256": "6a0cef84c44ef962e2452c30bf0ba2b790cde783f84789c88e3197a95e282a23"
+        }
+      ]
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "All 34 supplied references plus literal input matched before and after review/run. Parsed raw baseline failure blocks and each of eight accepted-invalid-input JSON assertion payloads, plus all six timeout exception records; raw logs agree with six methods/fourteen failed assertions, no errors/skips, lifecycle pass. Fixed and independent logs each list the same 55 unique methods with OK and zero skips/errors. Source/test/workflow bytes match exact candidates, current detail stable prefix equals frozen Plan61 bytes. No dropped failures, retries, mixed-run logs, or reinterpretation of fourteen assertions as fourteen bugs. Snapshots are content/link/type checks, not OS metadata/race proofs.",
+      "evidence": [
+        {
+          "path": ".agent-runs/setup-text-1904/baseline.stderr",
+          "sha256": "8b953a1a9f30a5125afcb663fcdfea6262cd6d5abbaabd68648a5b0ba027f96b"
+        },
+        {
+          "path": ".agent-runs/setup-text-1904/fixed.stderr",
+          "sha256": "304674947f0f062ede6cf0a35013bf56ade8e74ba3e860a9ccbe8e81a5ab97aa"
+        },
+        {
+          "path": ".agent-runs/setup-text-result-review-1916/independent.stderr",
+          "sha256": "5503d604e4e937b7f5446371d53c57a7d209d03d78d4bee83846d225986ede97"
+        },
+        {
+          "path": ".agent-runs/setup-text-result-review-1916/raw-log-audit.json",
+          "sha256": "f51c72aac53ea827a81bc8b4be09e758fda4216fe128a89542b1f9d12d0c99df"
+        },
+        {
+          "path": ".agent-runs/setup-text-result-review-1916/hashes-after.json",
+          "sha256": "d724deef8012fcc2e4ea3908b2febf6bbd0813b3af5f2c6962b7eded8750ce3a"
+        },
+        {
+          "path": ".agent-runs/setup-text-result-review-1916/hashes-before.json",
+          "sha256": "1f24c74f71b305e77a5dfe03396fd53c7e8e1ad87d17a9f0952913c1b8a3f63c"
+        }
+      ]
+    },
+    "numerical_consistency": {
+      "verdict": "not_applicable",
+      "reason": "No floating-point algorithm, scientific numerical estimate, tolerance or statistical claim. Applicable integer accounting was checked: 6+17+8+8+16=55 methods; 6 timeout+4 link+4 ceiling assertions=14 baseline failures; byte ceiling is 16*1024*1024 and fixture is cap+1. Counts agree with raw logs and metadata.",
+      "evidence": [
+        {
+          "path": ".agent-runs/setup-text-1904/baseline.stderr",
+          "sha256": "8b953a1a9f30a5125afcb663fcdfea6262cd6d5abbaabd68648a5b0ba027f96b"
+        },
+        {
+          "path": ".agent-runs/setup-text-1904/fixed.stderr",
+          "sha256": "304674947f0f062ede6cf0a35013bf56ade8e74ba3e860a9ccbe8e81a5ab97aa"
+        },
+        {
+          "path": ".agent-runs/setup-text-result-review-1916/independent.stderr",
+          "sha256": "5503d604e4e937b7f5446371d53c57a7d209d03d78d4bee83846d225986ede97"
+        },
+        {
+          "path": ".agent-runs/setup-text-result-review-1916/raw-log-audit.json",
+          "sha256": "f51c72aac53ea827a81bc8b4be09e758fda4216fe128a89542b1f9d12d0c99df"
+        },
+        {
+          "path": "setup.py",
+          "sha256": "7ee643e950122ec8db8f903cf8f1d109302bbd4371ed9ebb549e236f5dd539d5"
+        },
+        {
+          "path": "tests/test_setup_text.py",
+          "sha256": "aee61eb7921eada61e80f50581f3d14f10a75b3dd7b685ad47172d5c711c3350"
+        },
+        {
+          "path": "agent_runtime/external_json.py",
+          "sha256": "f154b63e6852b3fec6285e2dae9c749d2a8a34943746fac22c61cd9658fce849"
+        }
+      ]
+    },
+    "measurement_validity": {
+      "verdict": "not_applicable",
+      "reason": "Elapsed times only document bounded regression execution; baseline six methods and fixed 55 are different workloads and imply no speedup. No performance, accuracy, model/backend quality, token or cost claim is accepted. Real FIFO timeouts discriminate blocking in the declared local case; bounded successful completion and mutation oracles support only these reliability cases.",
+      "evidence": [
+        {
+          "path": ".agent-runs/setup-text-1904/baseline.stderr",
+          "sha256": "8b953a1a9f30a5125afcb663fcdfea6262cd6d5abbaabd68648a5b0ba027f96b"
+        },
+        {
+          "path": ".agent-runs/setup-text-1904/fixed.stderr",
+          "sha256": "304674947f0f062ede6cf0a35013bf56ade8e74ba3e860a9ccbe8e81a5ab97aa"
+        },
+        {
+          "path": ".agent-runs/setup-text-result-review-1916/independent.stderr",
+          "sha256": "5503d604e4e937b7f5446371d53c57a7d209d03d78d4bee83846d225986ede97"
+        },
+        {
+          "path": ".agent-runs/setup-text-result-review-1916/raw-log-audit.json",
+          "sha256": "f51c72aac53ea827a81bc8b4be09e758fda4216fe128a89542b1f9d12d0c99df"
+        },
+        {
+          "path": ".agent-runs/setup-text-1904/baseline.json",
+          "sha256": "a7e3c925cfeec37a67263e5cd749b89ec5b84a0f938b14e3b8a08b47ead82443"
+        },
+        {
+          "path": ".agent-runs/setup-text-1904/fixed.json",
+          "sha256": "c2d8dd69f341985245ded6300dd5dac4d4fba3ce44a6f60b5ba1a6dff3134cd0"
+        },
+        {
+          "path": ".agent-runs/setup-text-result-review-1916/independent.json",
+          "sha256": "c2168d91b7e062aadb982a72cf6142fb8397bd8b36ec790f928fae058b8eb239"
+        }
+      ]
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "Independently executed the exact same five-module 55-method command once via own O_EXCL marker/exclusive logs. Suite removed ANTHROPIC_BASE_URL/TMUX and inherited gateway-named/known API base URL variables; Python and Linux versions recorded. Child ran in own session/process group, timeout min(120, remaining deadline minus 10 seconds), normal exit 0 reaped, no kill needed. Adjacent discovery/tmux behavior is explicitly mocked; no real discovery/network/models/backend, extra probe or retry occurred. Independent 55 agrees with producer fixed55. Native CI remains separate and unexecuted by reviewer.",
+      "evidence": [
+        {
+          "path": ".agent-runs/setup-text-result-review-1916/independent.json",
+          "sha256": "c2168d91b7e062aadb982a72cf6142fb8397bd8b36ec790f928fae058b8eb239"
+        },
+        {
+          "path": ".agent-runs/setup-text-result-review-1916/independent.stderr",
+          "sha256": "5503d604e4e937b7f5446371d53c57a7d209d03d78d4bee83846d225986ede97"
+        },
+        {
+          "path": ".agent-runs/setup-text-result-review-1916/independent.stdout",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "path": ".agent-runs/setup-text-result-review-1916/run-independent.py",
+          "sha256": "c39b7d81f9a9dbb96f790b6a6f936a1f6602fc4628081b29bd06ce99aba67144"
+        }
+      ]
+    }
+  },
+  "late_uninstall_assessment": {
+    "finding": "A late managed text file that is invalid UTF-8 or newly over 16MiB can raise during uninstall after earlier owned files have already been removed. Invalid UTF-8 had this partial-failure behavior in the original path; the new cap extends controlled refusal to oversized text.",
+    "severity_in_accepted_scope": "documented compatibility boundary, no blocking revision",
+    "reason": "16MiB text refusal was explicit in approved plan and dispatched scope; earlier deletions are owned/unmodified by existing checks, local offending file is preserved, ownership manifest remains because manifest unlink is after the loop, permitting explicit repair/recovery. No all-input no-mutation/full rollback claim is accepted. This behavior was established statically, not by an extra test.",
+    "evidence": [
+      {
+        "path": "setup.py",
+        "sha256": "7ee643e950122ec8db8f903cf8f1d109302bbd4371ed9ebb549e236f5dd539d5"
+      },
+      {
+        "path": "tests/test_setup_text.py",
+        "sha256": "aee61eb7921eada61e80f50581f3d14f10a75b3dd7b685ad47172d5c711c3350"
+      },
+      {
+        "path": "agent_runtime/external_json.py",
+        "sha256": "f154b63e6852b3fec6285e2dae9c749d2a8a34943746fac22c61cd9658fce849"
+      }
+    ]
+  },
+  "limitations": [
+    "All-command early refusal/no-mutation tests cover CLAUDE FIFO, cap+1 and static CLAUDE/managed symlinks; managed FIFO mutation protection is tested for install, and a late agent FIFO for model refresh. They do not prove every file/command combination.",
+    "New 16MiB refusal applies to installed text, not only JSON; oversized valid local text that previously worked now requires explicit recovery. Late managed uninstall refusal may leave earlier owned removals; no total uninstall rollback.",
+    "Hostile parent races, arbitrary external writer races, cross-file snapshots and multi-file transaction/whole-install rollback are not solved. Static symlink guarding and bounded descriptor read are narrower guarantees.",
+    "Only current Linux Python3.12.14 locally executed. Four Ubuntu/Windows matrix jobs plus macOS3.12 are configured for new module, not empirically accepted here. Windows lacks mkfifo and explicitly skips three new FIFO methods; symlink capability skips are explicit; no native outcome inferred.",
+    "No trusted runtime review identity, protected dispatch, real tmux/model discovery/backend/session loading, model task quality, performance, all costs, or full batch completion accepted. Existing exhausted/failed/unknown gates unchanged; paper count53 unchanged.",
+    "Finite content/link/type snapshots do not assert permissions/mtime/inode metadata equality, crash persistence, race safety, exhaustive boundary coverage or universal absence of defects."
+  ],
+  "required_fixes": [],
+  "next_action": "Root may consume this exact scoped manual review for ordinary authorized publication; native CI and remote readback remain separately required. Independent rerun entitlement is consumed; no independent rerun after verdict.",
+  "accepted_result_refs": [
+    {
+      "path": ".agent-runs/setup-text-1904/result-review-inputs.json",
+      "sha256": "b6e7fe303ad726123b79f67626a70a300be8e543f66dd22544d9700c7c31b18e"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/plan-v1.json",
+      "sha256": "9ced94edfee22bbf4f213bf22d57ee77dedc3bfa2bfed003c3a04f46012f3a57"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/plan-v2.json",
+      "sha256": "a8dc38719e8107949fdda3ac8a936eae71b9b1afd33655e423d6f24002bdd685"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/setup.py.base.txt",
+      "sha256": "e848e183a68e94bfe7223000ed1806112762d13fc59f4d467fe62c87d3447dd1"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/setup.py.candidate",
+      "sha256": "7ee643e950122ec8db8f903cf8f1d109302bbd4371ed9ebb549e236f5dd539d5"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/test_setup_text.py.candidate",
+      "sha256": "98f6b6bed30ad83314438605843cf9bac4f78dc9783b36f8fdc8190be57e5e98"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/test_setup_text-v2.py.candidate",
+      "sha256": "aee61eb7921eada61e80f50581f3d14f10a75b3dd7b685ad47172d5c711c3350"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/portable-install.yml.base.txt",
+      "sha256": "9ad2474968f689445bdefa5c1337ef3bc06da381b5f82f5a2b5407414fda5cba"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/portable-install.yml.candidate",
+      "sha256": "3b6ac7c668d9a28f18c6f7e192cb61e7e39ecd8e29e3aad6bdceadd2ca1b7764"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/portable-install-v2.yml.candidate",
+      "sha256": "6a0cef84c44ef962e2452c30bf0ba2b790cde783f84789c88e3197a95e282a23"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/plan-prefix-v61.txt",
+      "sha256": "a6a3d2f99e9e8884aab393668ba66baa7507f1829156cb072649ef961b9bab15"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/run-regression.py",
+      "sha256": "6785e064ed178f89d9acb7debdd45d85ed72eeedba41666d3c4a969b7a898ec5"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/run-regression-v2.py",
+      "sha256": "3c01257c03f5251bcdc5122d6f560e8c27ca56332924792547777acdc1edaece"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/prior-results.json",
+      "sha256": "c82f10ef7f886663b70a12984563ab36c22727ecfd7769cb5f70946c9d6c7c3f"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/knowledge.json",
+      "sha256": "e74f9c93fb62d1619192c1cc14cdf5d9387b52f4dfcbfc2e6899dbfba6f03ed6"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/baseline.json",
+      "sha256": "a7e3c925cfeec37a67263e5cd749b89ec5b84a0f938b14e3b8a08b47ead82443"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/baseline.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/baseline.stderr",
+      "sha256": "8b953a1a9f30a5125afcb663fcdfea6262cd6d5abbaabd68648a5b0ba027f96b"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/fixed.json",
+      "sha256": "c2d8dd69f341985245ded6300dd5dac4d4fba3ce44a6f60b5ba1a6dff3134cd0"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/fixed.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".agent-runs/setup-text-1904/fixed.stderr",
+      "sha256": "304674947f0f062ede6cf0a35013bf56ade8e74ba3e860a9ccbe8e81a5ab97aa"
+    },
+    {
+      "path": ".agent-runs/setup-text-plan-review-1910/review-v1.json",
+      "sha256": "979ffbd9f6882a4e09c6c2c551bd1e17ad5fa87512092850dd0a8ce99940021e"
+    },
+    {
+      "path": ".agent-runs/setup-text-plan-review-1910/review-v2.json",
+      "sha256": "2b3cbf8f40cf78e26b737ff1a067010ef34e65314350802d1c1ed00de2d488b2"
+    },
+    {
+      "path": "setup.py",
+      "sha256": "7ee643e950122ec8db8f903cf8f1d109302bbd4371ed9ebb549e236f5dd539d5"
+    },
+    {
+      "path": "tests/test_setup_text.py",
+      "sha256": "aee61eb7921eada61e80f50581f3d14f10a75b3dd7b685ad47172d5c711c3350"
+    },
+    {
+      "path": ".github/workflows/portable-install.yml",
+      "sha256": "6a0cef84c44ef962e2452c30bf0ba2b790cde783f84789c88e3197a95e282a23"
+    },
+    {
+      "path": "agent_runtime/external_json.py",
+      "sha256": "f154b63e6852b3fec6285e2dae9c749d2a8a34943746fac22c61cd9658fce849"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed"
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    },
+    {
+      "path": "tests/test_setup.py",
+      "sha256": "b609531eb121e7cb535bb941c2b20aa45e984d3fbb6548659c645575bcdc45d9"
+    },
+    {
+      "path": "tests/test_setup_doctor.py",
+      "sha256": "664d3a8ac44145b7b142ccd1f5049b251dfc0f33894b8819df3c0f35c7c4a544"
+    },
+    {
+      "path": "tests/test_setup_manifest.py",
+      "sha256": "1c524280387e4a86e3ea507b45606aee6f36b026c12e04b626143fd532293f8b"
+    },
+    {
+      "path": "tests/test_install_recovery.py",
+      "sha256": "93b507d991045ed8b3583600ccdc5f586445f3c221d8b9a815a3adaaf1ee1ed9"
+    },
+    {
+      "path": ".agent-runs/setup-text-result-review-1916/hashes-after.json",
+      "sha256": "d724deef8012fcc2e4ea3908b2febf6bbd0813b3af5f2c6962b7eded8750ce3a"
+    },
+    {
+      "path": ".agent-runs/setup-text-result-review-1916/hashes-before.json",
+      "sha256": "1f24c74f71b305e77a5dfe03396fd53c7e8e1ad87d17a9f0952913c1b8a3f63c"
+    },
+    {
+      "path": ".agent-runs/setup-text-result-review-1916/independent.json",
+      "sha256": "c2168d91b7e062aadb982a72cf6142fb8397bd8b36ec790f928fae058b8eb239"
+    },
+    {
+      "path": ".agent-runs/setup-text-result-review-1916/independent.once",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".agent-runs/setup-text-result-review-1916/independent.stderr",
+      "sha256": "5503d604e4e937b7f5446371d53c57a7d209d03d78d4bee83846d225986ede97"
+    },
+    {
+      "path": ".agent-runs/setup-text-result-review-1916/independent.stdout",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".agent-runs/setup-text-result-review-1916/raw-log-audit.json",
+      "sha256": "f51c72aac53ea827a81bc8b4be09e758fda4216fe128a89542b1f9d12d0c99df"
+    },
+    {
+      "path": ".agent-runs/setup-text-result-review-1916/run-independent.py",
+      "sha256": "c39b7d81f9a9dbb96f790b6a6f936a1f6602fc4628081b29bd06ce99aba67144"
+    },
+    {
+      "path": "workflows/result_validation_workflow.md",
+      "sha256": "349cebab1a78baa63b5c7d422f239c2d802f9f77a1ad180ceb4871ebea372888"
+    },
+    {
+      "path": "workflows/project_document_workflow.md",
+      "sha256": "6ee07eca5091187b27e02056c3ae83f66183cfc07dc4c7af5c80742ffacdaaf4"
+    }
+  ]
+}
