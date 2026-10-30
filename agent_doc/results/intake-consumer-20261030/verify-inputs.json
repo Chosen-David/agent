@@ -1,0 +1,57 @@
+{
+  "task": "SYSTEM-99",
+  "lineage": "INTAKE-CONSUMER-01",
+  "current_plan": 58,
+  "intent": "Independent code/rawlogs check plus one fixed local regression before publication",
+  "baseline": {
+    "methods": 11,
+    "failure_assertions": 9,
+    "errors": 0,
+    "skips": 0,
+    "rootcause": "shared consumer problem-contract validation missing; not9independentbugs"
+  },
+  "producer_fixed": {
+    "methods": 11,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0
+  },
+  "command": "python -B -m unittest tests.test_intake -v",
+  "resources": {
+    "independent_actual": 1,
+    "independent_max": 1,
+    "command_timeout_seconds": 60,
+    "shared_deadline": "2026-10-30T03:29:59.280291+00:00",
+    "baseline_reexecution_max": 0,
+    "retry": false,
+    "old_gate_resets": 0
+  },
+  "source_refs": {
+    "agent_runtime/intake.py": "8a51aca8437dc8e915a1cad6da67512457ff95ec6830e6ff4a040a825fda3a1b",
+    "tests/test_intake.py": "678cf6e40084f40cc1a47642fed88446062d8912287ed78e1df67eb0a6cdb48d",
+    ".github/workflows/portable-install.yml": "1c6dc5c19ef757c9b2fee3ffe9b3fd1f85d140105408c7890b973041572b4f2e",
+    "AGENTS.md": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+    "agent_doc/task/TASK.md": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+    "agent_doc/guide/GUIDE.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".agent-runs/intake-consumer-1104/plan-v1.json": "c23d6515d9b1b495394fe74167b6ac0d95bba46263b1633985cc558a11b73519",
+    ".agent-runs/intake-consumer-1104/source-before.txt": "ae9ee55722f3663a4353f79785a5eafeb396705b632869887a10b8cb1e793574",
+    ".agent-runs/intake-consumer-1104/source-after.txt": "8a51aca8437dc8e915a1cad6da67512457ff95ec6830e6ff4a040a825fda3a1b",
+    ".agent-runs/intake-consumer-1104/tests-before.txt": "3d98a2c7427905b2304fb6b714b72f278e7dcb03f118abd9993699e65367170d",
+    ".agent-runs/intake-consumer-1104/tests-after.txt": "678cf6e40084f40cc1a47642fed88446062d8912287ed78e1df67eb0a6cdb48d",
+    ".agent-runs/intake-consumer-1104/workflow-before.txt": "14f5069b2f3489d140a84351644302cdfeafcfb9f8bf68ca4160549db663d741",
+    ".agent-runs/intake-consumer-1104/workflow-after.txt": "1c6dc5c19ef757c9b2fee3ffe9b3fd1f85d140105408c7890b973041572b4f2e",
+    ".agent-runs/intake-consumer-1104/system-prefix-before.txt": "0a4da103f6621dc34a2b094177b60b3838318711e654a21410e4a4063fe33ba7",
+    ".agent-runs/intake-consumer-1104/system-prefix-after.txt": "e2d4cd1e69f666a6b14197f2b460a677d747ffca0795e2ebe1ca100faa0e4e4e",
+    ".agent-runs/intake-consumer-1104/run-regression.py": "3d683ab914c00ce756dd4617788a7fd18fcbb4ac44b39b9a5f539d868edf9d05",
+    ".agent-runs/intake-consumer-1104/baseline.json": "472e46a298548e178ad6a5bfba43e82c8a704118d20c8030ec8112fd3d01c8ec",
+    ".agent-runs/intake-consumer-1104/baseline.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".agent-runs/intake-consumer-1104/baseline.stderr": "f05ff98bbf043658c1ac6fd48d6e9715e6f237136e5aba6ccfbd5d83e6524cc3",
+    ".agent-runs/intake-consumer-1104/fixed.json": "7379105e0f7ed0e9e69f22dd9c4e40f6251467151df8891920d6a00567984e7d",
+    ".agent-runs/intake-consumer-1104/fixed.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".agent-runs/intake-consumer-1104/fixed.stderr": "e61eca8826b28a7f84368e422e04f119bde5915e2668e469fc27703ac7b99ea1",
+    ".agent-runs/intake-consumer-review-1104/plan-review-v1.json": "649b7764077f748d60fa46874cf0fa9911cb08509f6e1792c467ea3335a1585f"
+  },
+  "scope": "Lowrisk public libraryAPI only; no nativeUI/host/auth/performance/systemwide acceptance. Verify exactPlan58prefix and preserve old56/FD57freeze. All case/control checks per plan.",
+  "allowed_writes": ".agent-runs/intake-consumer-review-1104/independent.* and result-review.json only",
+  "trust": "Manual separatecontext lowriskregression review, not trusted runtime receipt"
+}

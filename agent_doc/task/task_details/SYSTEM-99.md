@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 56
+Version: 58
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -197,6 +197,8 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 
 阶段AK原生续接（VALIDATION-RECORD-NATIVE-01，Version56）：保留1e8283fb原生Windows失败与全部旧额度；仅把竞争目标目录成员的Path字面相等修为唯一成员+samefile实际身份，原字节/inode/权限/接受拒绝断言全留，无skip、无生产变化。第二次且最后独立方案审核后仅一次新源码提交触发新四矩阵CI，不重跑旧job或本地baseline/fixed/independent；外部CI后续只读结果，未完成前保持原生未验。真实宿主/质量/费用与SYSTEM99系统级未决不变。
 
+
+阶段AL（INTAKE-CONSUMER-01，Version58）：对公开apply_intake消费入口复用build_intake既有问题合同，拒绝空/超20/归一化重复ID及既有无效问题字段，保留合法答案/default/free-text/missing/unknown语义与输入不变。仅替换问题校验三行为共享入口，不引入第二schema或把CONFIRMED当用户授权。固定既有7+新4方法（9非法子案例+有效往返控制），单baseline/fixed/independent各一次、60秒/命令/共享1200秒、方案最多2次；独审方案后先保存修前失败，再修复/独立源码及原始日志复核，普通发布并另核五组原生CI新增intake方法。版本58只用于该独立消费校验范围，未采纳的FD候选57及其plan1/1revise仍冻结，所有其它旧额度不重置。仅库API局部可靠性/回归，不声称真实补问交互、权限、宿主部署、性能或SYSTEM99整轮完成；48正文不变。
 ## Progress
 
 - 2026-10-27 抽象持久化续读：实际精读2610.27406v1正文§§1–5及声明附录，区分临时指导、历史暴露、相关性标签与可授信知识；[记录](../../results/anti-persistence-reading-20261027/reading.md)保留held-out调用成本/日志排除/受控实验及统计边界。同批新正文15篇；保留MemoryLedger修订/更正传播、原Skill/历史与人类guide，不新增共享日志/自适应选择器。worker最终交付/真实宿主及全部调用质量成本缺口继续open；advice围栏解析静态差异尚未复现，不判无缺陷。仅文献/源码独审，无新测试、模型、性能或整轮完成主张，旧门禁不重试。
@@ -704,3 +706,5 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 - 2026-10-30续接：完成2610.09088v1 RippleCP正文§§1–7/附录A–I（G.1–G.11）、Eq1–4/Tables1–8及图注精读，一次独立静态复核accept且无阻断/补充项；[记录](../../results/ripplecp-reading-20261030/reading.md)保留10验证终点/12终止成本分母、首次与追加检查点fallback混杂、未运行学习/同预算策略、零字段未标注、逐item计时与措辞冲突及实际费用缺口。普通发布回读后可恢复46→47；仅采纳后续快照正确性/最终通过/恢复全成本分开核验方向，不实施放置策略/自动重试/新ledger/目录迁移。无生产/test/workflow改动、作者实验复现或性能结论；手工独审非可信runtime回执，历史登记unknown，全角色tokens/费用unknown。70fd610a五组CI全部成功仅原提交范围；Plan56/guide/唯一TASK及全部旧耗尽门禁不变，checkpointFD修复plan1/1revise仍冻结未实施。SYSTEM99真实宿主/完整输入/最终质量/总费用/并发恢复等未决继续open。
 
 - 2026-10-30续接：完成2608.22928v1执行编辑安全论文24页正文I–X/附录A.A–M、TablesI–III/Eq1–13及证明/图注精读，关键9–10页渲染核对；一次独立静态复核accept且无更正项。[记录](../../results/execution-edits-reading-20261030/reading.md)保留有限注册/全工具拦截/线性化事务前提、授权与远端完成区别、逐兼容结果最大不动点、Lean有限核心与一般纸面证明区别、指数枚举及合成计时限制。0904部分与0957补齐只计一篇，普通发布回读后可恢复47→48；仅采用恢复身份/重用及dispatch使旧候选失效的后续核验方向，不实施新策略/ledger/自动恢复或目录迁移。作者repo仅固定晚于PDF的Sep16main元数据，未验August论文对应源码/Lean构建/实验；无生产/test/workflow修改或性能结论，全角色tokens/费用unknown，手工独审非可信runtime回执、历史登记unknown。Plan56/guide/唯一TASK及旧耗尽门禁不变，checkpointFD修复plan1/1revise仍冻结。SYSTEM99真实宿主/完整输入/最终质量/总费用/并发恢复等未决不关闭。
+
+- 2026-10-30 INTAKE-CONSUMER-01：独立方案批准后Version56→58，仅新增独立消费校验范围，原56/未采纳FD57及全部旧额度保留。公开apply_intake复用build_intake问题合同，拒绝空/超20/归一化重复ID及既有无效字段；同一既有7+新4方法修前9拒绝断言失败（同一漏校验原因，非9bugs），修后及独立各11通过/0error/skip，完整JSON往返/default/missing/Unicode答案及输入不变控制保留。[冻结方案/原始失败/独审](../../results/intake-consumer-20261030/report.md)仅接受本机库API局部可靠性，无权限/交互宿主/性能结论；手工独审非可信runtime回执，登记unknown。plan实际1/2、baseline/fixed/independent各1/1已用，无重试/旧门禁重置；五组原生CI新增intake方法及普通发布回读另核。48正文不增计，NPU-ABSORB100总阻塞不改判；checkpointFD修复plan1/1revise仍冻结，SYSTEM99真实宿主/完整输入/最终质量/总费用/并发恢复等未决不关闭。

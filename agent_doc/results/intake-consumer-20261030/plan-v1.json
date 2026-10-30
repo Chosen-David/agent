@@ -1,0 +1,65 @@
+{
+  "task": "SYSTEM-99",
+  "lineage": "INTAKE-CONSUMER-01",
+  "current_plan": 56,
+  "proposed_plan": 58,
+  "base_commit": "a1445b36a950175b860b2d3d77e32d3b2e9b52c4",
+  "intent": "Repair intake consumer accepting malformed question contracts by reusing existing builder, no new authorization semantics",
+  "guide": "empty humanGUIDE/uniqueTASK unchanged; main writer only",
+  "assumptions": "public libraryAPI only; no actualinteractivehost/permission certification",
+  "prior_results": "347scanned/25errors; intake query partialfalse5 unrelated transport/memoryhits; broadquerypartialtrue3 unrelatedhits; knowledgeCARLoRA/RL unrelated. Reject all empirical reuse; no prior intake regression evidence found, not exhaustive absence. NPU-ABSORB100 old7tests not current independent acceptance.",
+  "acceptance": "Frozen7existing+4new methods,9invalid subcases via existing builder oracle, JSONroundtripmissing/default/unicodefreeanswer/fullinputimmutability controls. Save baseline actual failures. Fixed and independent all11 pass. Source exactsharedbuilder change; no question/answer mutation or duplicatevalidator.",
+  "risk": "CONFIRMED remains schema/completeness only, not humanapproval. Incoming questions normalized with the same publicbuilder contract; sourceclient keys/answers unchanged. No auth/default expansion beyond builder rules. Localtests not actualUI/host/wholeproject guarantee.",
+  "resources": {
+    "plan_reviews_max": 2,
+    "plan_reviews_actual": 0,
+    "baseline_max": 1,
+    "fixed_max": 1,
+    "independent_max": 1,
+    "executions_actual": {
+      "baseline": 0,
+      "fixed": 0,
+      "independent": 0
+    },
+    "command_timeout_seconds": 60,
+    "shared_deadline": "2026-10-30T03:29:59.280291+00:00",
+    "retry": false,
+    "new_source_ci_commits_max": 1,
+    "old_gate_resets": 0
+  },
+  "commands": {
+    "baseline": "python -B -m unittest tests.test_intake -v",
+    "fixed": "python -B -m unittest tests.test_intake -v",
+    "independent": "python -B -m unittest tests.test_intake -v"
+  },
+  "allowed_main_writes": [
+    "agent_runtime/intake.py",
+    "tests/test_intake.py",
+    ".github/workflows/portable-install.yml",
+    "agent_doc/task/task_details/SYSTEM-99.md",
+    "agent_doc/results/intake-consumer-20261030/",
+    ".agent-runs/intake-consumer-1104/"
+  ],
+  "allowed_reviewer_write": ".agent-runs/intake-consumer-review-1104/",
+  "stable_plan_reconciliation": "Only after approved exactnewscope:56→58; old56prefix retained, FDproposed57unadopted/frozen. NewPlan58doesnotresetoldgates.",
+  "source_refs": {
+    "AGENTS.md": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+    "agent_doc/task/TASK.md": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+    "agent_doc/guide/GUIDE.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "agent_runtime/intake.py": "ae9ee55722f3663a4353f79785a5eafeb396705b632869887a10b8cb1e793574",
+    "tests/test_intake.py": "3d98a2c7427905b2304fb6b714b72f278e7dcb03f118abd9993699e65367170d",
+    ".github/workflows/portable-install.yml": "14f5069b2f3489d140a84351644302cdfeafcfb9f8bf68ca4160549db663d741",
+    ".agent-runs/intake-consumer-1104/knowledge.json": "6df978a88bb3871027988f3825df1ce26bfb23e1bbacda218597f77a037de549",
+    ".agent-runs/intake-consumer-1104/prior-intake.json": "4c1defe5b64c5e1b1ae041b3405d8a77ea2f5f3deb7cb86abdaf9a6d87e20bef",
+    ".agent-runs/intake-consumer-1104/prior-results.json": "c97a2512f9450d8738b14608b4d6444a0950ec0be67419c2a31b488f68e6c0e3",
+    ".agent-runs/intake-consumer-1104/source-after.txt": "8a51aca8437dc8e915a1cad6da67512457ff95ec6830e6ff4a040a825fda3a1b",
+    ".agent-runs/intake-consumer-1104/source-before.txt": "ae9ee55722f3663a4353f79785a5eafeb396705b632869887a10b8cb1e793574",
+    ".agent-runs/intake-consumer-1104/system-prefix-after.txt": "e2d4cd1e69f666a6b14197f2b460a677d747ffca0795e2ebe1ca100faa0e4e4e",
+    ".agent-runs/intake-consumer-1104/system-prefix-before.txt": "0a4da103f6621dc34a2b094177b60b3838318711e654a21410e4a4063fe33ba7",
+    ".agent-runs/intake-consumer-1104/tests-after.txt": "678cf6e40084f40cc1a47642fed88446062d8912287ed78e1df67eb0a6cdb48d",
+    ".agent-runs/intake-consumer-1104/tests-before.txt": "3d98a2c7427905b2304fb6b714b72f278e7dcb03f118abd9993699e65367170d",
+    ".agent-runs/intake-consumer-1104/workflow-after.txt": "1c6dc5c19ef757c9b2fee3ffe9b3fd1f85d140105408c7890b973041572b4f2e",
+    ".agent-runs/intake-consumer-1104/workflow-before.txt": "14f5069b2f3489d140a84351644302cdfeafcfb9f8bf68ca4160549db663d741"
+  },
+  "trust": "Manual independent plan/result review; not trustedruntime/ReviewSession. Lowrisk localregression scope per result_validation workflow, no claimed protectedDAGdispatch."
+}

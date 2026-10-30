@@ -62,5 +62,60 @@ class IntakeTests(unittest.TestCase):
             apply_intake(self.build(), ['platform'])
 
 
+class IntakeConsumerTests(unittest.TestCase):
+    @staticmethod
+    def question(qid='target'):
+        return {'id': qid, 'question': 'Target?', 'options': ['yes'],
+                'allow_free_text': False, 'default': 'yes'}
+
+    def reject_without_mutation(self, questions):
+        from copy import deepcopy
+        request = {'schema_version': 'intake/v1', 'questions': questions}
+        original = deepcopy(request)
+        try:
+            with self.assertRaises(IntakeError):
+                apply_intake(request)
+        finally:
+            self.assertEqual(request, original)
+
+    def test_apply_rejects_empty_and_oversized_question_sets(self):
+        for questions in ([], [self.question(str(i)) for i in range(21)]):
+            with self.subTest(count=len(questions)):
+                self.reject_without_mutation(questions)
+
+    def test_apply_rejects_duplicate_normalized_ids(self):
+        for qid in ('target', ' target '):
+            with self.subTest(second_id=qid):
+                self.reject_without_mutation([self.question(), self.question(qid)])
+
+    def test_apply_rejects_invalid_question_contract_fields(self):
+        changes = ({'question': ''}, {'options': ['yes', 'yes']},
+                   {'options': ['yes', '2', '3', '4', '5', '6']},
+                   {'allow_free_text': 'true'}, {'default': 'not-an-option'})
+        for change in changes:
+            with self.subTest(change=change):
+                self.reject_without_mutation([dict(self.question(), **change)])
+
+    def test_roundtrip_preserves_answers_defaults_missing_and_inputs(self):
+        import json
+        from copy import deepcopy
+        request = json.loads(json.dumps(build_intake([
+            {'id': 'target', 'question': 'Target?', 'options': ['yes'], 'default': 'yes'},
+            {'id': 'note', 'question': 'Note?', 'options': ['none'], 'allow_free_text': True},
+        ])))
+        before = deepcopy(request)
+        missing = apply_intake(request)
+        self.assertFalse(missing['complete'])
+        self.assertEqual(missing['confirmed'], {'target': 'yes'})
+        self.assertEqual(missing['missing'], ['note'])
+        answers = {'note': '恢复 ✓'}
+        answers_before = deepcopy(answers)
+        complete = apply_intake(request, answers)
+        self.assertTrue(complete['complete'])
+        self.assertEqual(complete['confirmed'], {'target': 'yes', 'note': '恢复 ✓'})
+        self.assertEqual(request, before)
+        self.assertEqual(answers, answers_before)
+
+
 if __name__ == '__main__':
     unittest.main()

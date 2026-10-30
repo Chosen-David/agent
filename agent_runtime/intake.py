@@ -76,9 +76,7 @@ def apply_intake(request, answers=None):
     """
     if not (isinstance(request, dict) and request.get('schema_version') == INTAKE_SCHEMA):
         raise IntakeError('apply_intake requires an intake/v1 request')
-    questions = request.get('questions')
-    if not isinstance(questions, list):
-        raise IntakeError('intake request has invalid questions')
+    questions = build_intake(request.get('questions'))['questions']
     if answers is not None and not isinstance(answers, dict):
         raise IntakeError('answers must be a mapping of question id -> string')
     answers = answers or {}

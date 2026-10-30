@@ -1,0 +1,94 @@
+{
+  "schema_version": "manual-local-result-review/v1",
+  "decision": "usable-with-scope",
+  "task": "SYSTEM-99",
+  "lineage": "INTAKE-CONSUMER-01",
+  "reviewer": "/root/intake_consumer_review_1104",
+  "completed_utc": "2026-10-30T03:15:08.163565+00:00",
+  "deadline": "2026-10-30T03:29:59.280291+00:00",
+  "blocking_findings": [],
+  "checks": {
+    "implementation": {
+      "verdict": "pass",
+      "reason": "Exact frozen production diff replaces list-only validation with build_intake(request.get(questions))[questions]. Full builder/consumer source reviewed. Canonical builder outputs remain builder-compatible; normalization creates new question dicts, strips IDs/text, supplies optional defaults without modifying requests; answer lookup/default/free text/unknown-ID behavior unchanged. Options are shared references but never written. Actual source/tests/workflow match approved candidates."
+    },
+    "reference_boundary": {
+      "verdict": "pass",
+      "reason": "Oracle is existing public builder contract inspected independently, plus explicit literal malformed fixtures expecting IntakeError, not copied candidate-validator code. Nine subcases cover empty/21 questions, exact and whitespace-normalized duplicate IDs, blank question, duplicate/6 options, nonboolean allow_free_text, invalid default. Seven original methods retained. JSON roundtrip checks missing/default/free Unicode answers; full equality checks request/answer immutability and full malformed request equality in finally. This is targeted coverage, not exhaustive every builder branch."
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "All verify-inputs refs byte hashes verified before and after independent run. Baseline and producer fixed metadata bind same11-method test hash and correct before/after source hashes. Raw baseline shows9 IntakeError-not-raised assertion failures across3 new methods,0errors/skip; valid roundtrip and7 existing pass. Single shared missing consumer contract validation root cause, not9independentbugs. Producer fixed rawlog11pass. Independent rawlog separately11pass/0fail/0error/0skip. Source/workflow/prefix exact candidate identity confirmed; Plan58 changes Version and addsAL, retaining old56stage; Progress FD57unadopted plan1/1revise remains intact."
+    },
+    "numerical_sanity": {
+      "verdict": "not_applicable",
+      "reason": "No floating-point numerical result or numeric scientific claim. Method/subcase/failure denominators and status totals were directly reconciled against logs in data_integrity; no performance comparison inferred."
+    },
+    "measurement_validity": {
+      "verdict": "not_applicable",
+      "reason": "Local functional regression only; elapsed wall time stored solely for resource accounting. No performance,accuracy,statistical benefit or timing claim."
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "Exactly one independent python -B -m unittest tests.test_intake -v ran from exact repo with subprocess60sec timeout before original shared deadline. Python3.12.14; returncode0; all11methods pass. Own stdout,stderr and argv/time/Python/source/tests hashes saved. No baseline replay,other tests,host/backend/model calls,retries or old gate reset."
+    }
+  },
+  "bound_hashes": {
+    "agent_runtime/intake.py": "8a51aca8437dc8e915a1cad6da67512457ff95ec6830e6ff4a040a825fda3a1b",
+    "tests/test_intake.py": "678cf6e40084f40cc1a47642fed88446062d8912287ed78e1df67eb0a6cdb48d",
+    ".github/workflows/portable-install.yml": "1c6dc5c19ef757c9b2fee3ffe9b3fd1f85d140105408c7890b973041572b4f2e",
+    "AGENTS.md": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+    "agent_doc/task/TASK.md": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+    "agent_doc/guide/GUIDE.md": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".agent-runs/intake-consumer-1104/plan-v1.json": "c23d6515d9b1b495394fe74167b6ac0d95bba46263b1633985cc558a11b73519",
+    ".agent-runs/intake-consumer-1104/source-before.txt": "ae9ee55722f3663a4353f79785a5eafeb396705b632869887a10b8cb1e793574",
+    ".agent-runs/intake-consumer-1104/source-after.txt": "8a51aca8437dc8e915a1cad6da67512457ff95ec6830e6ff4a040a825fda3a1b",
+    ".agent-runs/intake-consumer-1104/tests-before.txt": "3d98a2c7427905b2304fb6b714b72f278e7dcb03f118abd9993699e65367170d",
+    ".agent-runs/intake-consumer-1104/tests-after.txt": "678cf6e40084f40cc1a47642fed88446062d8912287ed78e1df67eb0a6cdb48d",
+    ".agent-runs/intake-consumer-1104/workflow-before.txt": "14f5069b2f3489d140a84351644302cdfeafcfb9f8bf68ca4160549db663d741",
+    ".agent-runs/intake-consumer-1104/workflow-after.txt": "1c6dc5c19ef757c9b2fee3ffe9b3fd1f85d140105408c7890b973041572b4f2e",
+    ".agent-runs/intake-consumer-1104/system-prefix-before.txt": "0a4da103f6621dc34a2b094177b60b3838318711e654a21410e4a4063fe33ba7",
+    ".agent-runs/intake-consumer-1104/system-prefix-after.txt": "e2d4cd1e69f666a6b14197f2b460a677d747ffca0795e2ebe1ca100faa0e4e4e",
+    ".agent-runs/intake-consumer-1104/run-regression.py": "3d683ab914c00ce756dd4617788a7fd18fcbb4ac44b39b9a5f539d868edf9d05",
+    ".agent-runs/intake-consumer-1104/baseline.json": "472e46a298548e178ad6a5bfba43e82c8a704118d20c8030ec8112fd3d01c8ec",
+    ".agent-runs/intake-consumer-1104/baseline.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".agent-runs/intake-consumer-1104/baseline.stderr": "f05ff98bbf043658c1ac6fd48d6e9715e6f237136e5aba6ccfbd5d83e6524cc3",
+    ".agent-runs/intake-consumer-1104/fixed.json": "7379105e0f7ed0e9e69f22dd9c4e40f6251467151df8891920d6a00567984e7d",
+    ".agent-runs/intake-consumer-1104/fixed.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".agent-runs/intake-consumer-1104/fixed.stderr": "e61eca8826b28a7f84368e422e04f119bde5915e2668e469fc27703ac7b99ea1",
+    ".agent-runs/intake-consumer-review-1104/plan-review-v1.json": "649b7764077f748d60fa46874cf0fa9911cb08509f6e1792c467ea3335a1585f",
+    ".agent-runs/intake-consumer-1104/verify-inputs.json": "1c52b3bfae29162d0868c1c7389a5e5e30b904b124dca7e027e07d10beceb9cc",
+    ".agent-runs/intake-consumer-review-1104/independent.json": "be3303e1c9d34b305156457ab0fc021665c61394791448dd167af2f0d1f093f4",
+    ".agent-runs/intake-consumer-review-1104/independent.stdout": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    ".agent-runs/intake-consumer-review-1104/independent.stderr": "9a3592a3999364f0c52e16ffa83112b8991f4f7af24199f54f8d72e9352d2cb4"
+  },
+  "raw_logs": [
+    ".agent-runs/intake-consumer-1104/baseline.stdout",
+    ".agent-runs/intake-consumer-1104/baseline.stderr",
+    ".agent-runs/intake-consumer-1104/fixed.stdout",
+    ".agent-runs/intake-consumer-1104/fixed.stderr",
+    ".agent-runs/intake-consumer-review-1104/independent.stdout",
+    ".agent-runs/intake-consumer-review-1104/independent.stderr"
+  ],
+  "resources": {
+    "plan_reviews_actual": 1,
+    "plan_reviews_max": 2,
+    "producer_baseline_actual": 1,
+    "producer_fixed_actual": 1,
+    "independent_actual": 1,
+    "independent_max": 1,
+    "independent_timeout_seconds": 60,
+    "independent_execution_metadata": ".agent-runs/intake-consumer-review-1104/independent.json",
+    "retries": 0,
+    "old_gate_resets": 0,
+    "full_role_tokens_and_cost": "unknown"
+  },
+  "scope": "Exact low-risk public intake/v1 library consumer validation repair and frozen11-method regression on local Python3.12/Linux; usable for reporting this bounded repair, subject to separate publication/native CI verification.",
+  "limitations": [
+    "Manual independent review, not trusted runtime receipt or ReviewSession authentication.",
+    "Native five-job CI has only workflow configuration reviewed; no native execution accepted here.",
+    "Valid JSON builder roundtrip dynamically tested; manually supplied builder-compatible whitespace/missing-optional normalization additionally established by source inspection only.",
+    "No actual interactive UI/host/permission semantics,performance,whole-project correctness or SYSTEM-99 completion acceptance.",
+    "Other builder branches remain shared existing contract code,not exhaustive new malformed-input coverage; full role usage/cost unknown."
+  ]
+}

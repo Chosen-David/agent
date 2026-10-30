@@ -1,0 +1,48 @@
+from pathlib import Path
+import datetime, hashlib, json, subprocess, sys, time
+root = Path(__file__).resolve().parents[2]
+p = root / '.agent-runs/intake-consumer-1104'
+phase = sys.argv[1]
+if phase not in ('baseline', 'fixed'):
+    raise SystemExit('main runner is limited to baseline/fixed')
+plan = json.loads((p / 'plan-v1.json').read_text())
+state_path = p / 'checkpoint.json'
+state = json.loads(state_path.read_text())
+usage = state['resource_usage']
+key = phase + '_actual'
+if usage[key] != 0:
+    raise SystemExit('phase already consumed; no replay')
+now = datetime.datetime.now(datetime.timezone.utc)
+deadline = datetime.datetime.fromisoformat(usage['shared_deadline'])
+remaining = (deadline - now).total_seconds()
+if remaining <= 0:
+    raise SystemExit('shared deadline expired')
+expected_source = p / ('source-before.txt' if phase == 'baseline' else 'source-after.txt')
+for actual, expected in ((root / 'agent_runtime/intake.py', expected_source),
+                         (root / 'tests/test_intake.py', p / 'tests-after.txt')):
+    if actual.read_bytes() != expected.read_bytes():
+        raise SystemExit('unexpected source or tests')
+usage[key] += 1
+state_path.write_text(json.dumps(state, indent=2) + '\n')
+argv = [sys.executable, '-B', '-m', 'unittest', 'tests.test_intake', '-v']
+start = time.monotonic()
+try:
+    proc = subprocess.run(argv, cwd=root, capture_output=True,
+                          timeout=min(60, remaining))
+    stdout, stderr, code, timed_out = proc.stdout, proc.stderr, proc.returncode, False
+except subprocess.TimeoutExpired as exc:
+    stdout, stderr, code, timed_out = exc.stdout or b'', exc.stderr or b'', None, True
+(p / (phase + '.stdout')).write_bytes(stdout)
+(p / (phase + '.stderr')).write_bytes(stderr)
+meta = {'phase': phase, 'argv': argv, 'cwd': str(root), 'started_at': now.isoformat(),
+        'completed_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        'elapsed_seconds_for_resource_accounting_only': time.monotonic() - start,
+        'returncode': code, 'timed_out': timed_out, 'python': sys.version,
+        'source_sha256': hashlib.sha256((root / 'agent_runtime/intake.py').read_bytes()).hexdigest(),
+        'tests_sha256': hashlib.sha256((root / 'tests/test_intake.py').read_bytes()).hexdigest(),
+        'stdout_sha256': hashlib.sha256(stdout).hexdigest(),
+        'stderr_sha256': hashlib.sha256(stderr).hexdigest(),
+        'performance_measurement': False}
+(p / (phase + '.json')).write_text(json.dumps(meta, indent=2) + '\n')
+print(json.dumps(meta))
+raise SystemExit(code if code is not None else 124)
