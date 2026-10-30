@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "algo.nsa-native-training",
+      "version": 1,
+      "sha256": "881e71e4805ef18c4c2aecab243aef639e51ada5c48e5e5894b8ae45e249cd13",
+      "title": "NSA：原生稀疏训练不等于无损替换",
+      "summary": "ACL 2025 的 NSA 在共同训练设置下保持多数任务质量，并有明确退化项；它是训练架构变化，不能直接套到未训练的密集模型。",
+      "status": "published",
+      "assumptions": [
+        "model: 27B total / 3B active MoE with GQA",
+        "training: 270B tokens at 8k then 32k continuation",
+        "method: compression selection sliding-window branches"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-applicable",
+        "checks": [
+          "docs/knowledge_learning/2026-10-06-engineering/report.md#algo.nsa-native-training"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "context"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "context"
+          ]
+        }
+      ],
+      "score": 6
+    },
+    {
+      "id": "math.packetized-completion",
+      "version": 1,
+      "sha256": "8d5b2f66aa5b36d31e4c5046eea243386b27f8927669ed045e29ad72d026e76d",
+      "title": "FIFO 完成量、整块边界与末端延迟",
+      "summary": "正长度有界FIFO前缀完成量是处理量的整块截断；完整边界命中时间不变，但中间取整、乱序和验证等待不能沿用此保证。服务曲线弱化不是实际新增延迟。",
+      "status": "published",
+      "assumptions": [
+        "0<l_i≤L<∞，Q_n→∞，输入有限且packetized；空初始、单调右连续、每有限时段有限到达。",
+        "单流同序无丢弃FIFO；D_f≤A且完整边界即时可见D_c=P(D_f)，单位是累计工作量而非任务数。",
+        "服务弱化另需合法的普通服务曲线；形状/平均速率不提供严格服务保证。",
+        "完成延迟等价仅针对同一输出的完整边界末端取整，不保证任意部分工作阈值、中间packetizer、乱序工人或验证等待。"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-packet-entry-20261009/：独立结果审核后才发布；公开精确/词法结构检查，不是Lean或模型/GPU/e2e/token验证。"
+        ]
+      },
+      "matches": [
+        {
+          "field": "content",
+          "terms": [
+            "context"
+          ]
+        }
+      ],
+      "score": 1
+    }
+  ]
+}
