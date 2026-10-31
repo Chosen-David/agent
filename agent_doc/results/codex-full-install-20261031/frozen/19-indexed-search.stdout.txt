@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "sqlite-fts5-rrf-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.topk-margin",
+      "version": 1,
+      "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792",
+      "title": "有界分数误差下的 Top-k 稳定性",
+      "summary": "用边界分数间隔判断近似排序能否保留 Top-k 集合。",
+      "status": "published",
+      "assumptions": [
+        "有限 n 个实分数，1≤k<n，原分数降序排列",
+        "每个分数均满足绝对误差≤ε，而不是仅平均误差",
+        "边界间隔 Δ=s_(k)−s_(k+1) 严格大于 2ε"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 中的命题、推导与边界；非形式化证明",
+          "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 1
+        },
+        {
+          "retriever": "section-bm25",
+          "rank": 1
+        },
+        {
+          "retriever": "curated-structure",
+          "rank": 1
+        }
+      ],
+      "score": 0.04918032786885246,
+      "sections": [
+        {
+          "node": "s1",
+          "title": "Top-k 的充分条件",
+          "start_line": 1,
+          "end_line": 2,
+          "excerpt": "# Top-k 的充分条件\n\n"
+        },
+        {
+          "node": "s2",
+          "title": "命题与推导",
+          "start_line": 3,
+          "end_line": 8,
+          "excerpt": "## 命题与推导\n若每项 |s_i−s_hat_i|≤ε 且 Δ=s_(k)−s_(k+1)>2ε，则 Top-k 集合不变。\n对任何原集合内 i 与集合外 j，\ns_hat_i−s_hat_j ≥ s_i−s_j−2ε ≥ Δ−2ε > 0。\n这保证集合，不保证集合内部顺序。本命题是本库给出的推导，不能冒称来源原文定理。\n\n"
+        }
+      ]
+    },
+    {
+      "id": "math.residual-interval-screening",
+      "version": 1,
+      "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+      "title": "正交残差包络与安全候选筛除",
+      "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+      "status": "published",
+      "assumptions": [
+        "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+        "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+        "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+        "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+          "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 4
+        },
+        {
+          "retriever": "section-bm25",
+          "rank": 4
+        },
+        {
+          "retriever": "curated-structure",
+          "rank": 5
+        }
+      ],
+      "score": 0.046634615384615385,
+      "sections": [
+        {
+          "node": "s2",
+          "title": "问题触发与对象",
+          "start_line": 5,
+          "end_line": 7,
+          "excerpt": "## 问题触发与对象\n已压缩向量用于检索或attention候选筛选，但平均重建误差小仍可能漏掉关键token。目标是在有限有效集合里保留原分数Top-k的一个解。q,k_i∈R^d，P=UUᵀ，UᵀU=I，s_i=qᵀk_i，h_i=qᵀPk_i。无概率/独立性假设；P可以来自数据，但该次查询和全部键必须用同一投影。\n\n"
+        },
+        {
+          "node": "s3",
+          "title": "假设、结论与证明",
+          "start_line": 8,
+          "end_line": 16,
+          "excerpt": "## 假设、结论与证明\n1≤k≤N；有效分数有限，mask后只在合法token上做秩统计。精确实数下，r_q=(I−P)q、r_i=(I−P)k_i，因P正交，s_i−h_i=r_qᵀr_i。由Cauchy–Schwarz，|s_i−h_i|≤e_i=||r_q||₂||r_i||₂。若分数有正缩放c（如1/√d），h与e都乘c。\n\n设L_i=h_i−e_i，U_i=h_i+e_i；更一般也可用任何已证明的逐项外包区间。tau为L的第k大值，C={i:U_i≥tau}。至少k个下界≥tau，故对应的真实分数≥tau，且这些token全在C。任何删项满足s_j≤U_j<tau；它严格低于至少k个真实分数，因此不可能是Top-k必需成员。在C内按真实s精确重排取k个，即是全集的一个Top-k解。候选数至少k、至多N，不能保证严格缩小。严格筛除U<tau，不得把U=tau也删掉。\n\n不保证某个固定tie-break标签集合；要求稳定token ID排序时需另加入二元顺序协议。所谓“精确重排”是原目标分数，换模型分数、换温度、换有效长度或低精度proxy均不继承结论。\n\n若希望直接输出proxy所选S（|S|=k），可检查min_{i∈S}L_i>max_{j∉S}U_j；满足才证唯一分界，不满足只是未知，不是错误的证明。不同token的e无需用同一全局ε，故比统一margin条件更灵活；它不声称所有情况下更紧。\n\n"
+        }
+      ]
+    },
+    {
+      "id": "prob.conformal-policy-control",
+      "version": 1,
+      "sha256": "c80d9008b17bdac2f9c77995c4c490c476f7d72aba816e513ce395b41cdfb304",
+      "title": "Conformal Policy Control：非单调风险校准与近似权重的保证边界",
+      "summary": "ICML 2026 将校准作用于策略偏离程度；风险保证是带稳定性余项的边际期望界，精确多轮权重与实用近似须区分。",
+      "status": "published",
+      "assumptions": [
+        "loss: bounded loss in [0,B]; known acceptable-risk reference policy",
+        "policy: mutually absolutely continuous policies; computable likelihoods; stable context distribution",
+        "calibration: gCRC exchangeability plus Lipschitz/replace-one stability; CPC exact weighted calibration plus relative replace-one stability",
+        "guarantee: marginal expected risk, not per-context or high-probability safety"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-checked",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.conformal-policy-control"
+        ]
+      },
+      "matches": [
+        {
+          "retriever": "document-bm25",
+          "rank": 6
+        },
+        {
+          "retriever": "section-bm25",
+          "rank": 2
+        },
+        {
+          "retriever": "curated-structure",
+          "rank": 7
+        }
+      ],
+      "score": 0.04620592054390803,
+      "sections": [
+        {
+          "node": "s2",
+          "title": "问题触发",
+          "start_line": 3,
+          "end_line": 6,
+          "excerpt": "## 问题触发\n\n非单调风险校准；conformal policy control；safe policy importance weighting；反馈协变量偏移；expected risk stability。\n\n"
+        },
+        {
+          "node": "s4",
+          "title": "前提",
+          "start_line": 17,
+          "end_line": 23,
+          "excerpt": "## 前提\n\n- loss：bounded loss in [0,B]; known acceptable-risk reference policy\n- policy：mutually absolutely continuous policies; computable likelihoods; stable context distribution\n- calibration：gCRC exchangeability plus Lipschitz/replace-one stability; CPC exact weighted calibration plus relative replace-one stability\n- guarantee：marginal expected risk, not per-context or high-probability safety\n\n"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,162 @@
+"""One offline full committed-catalog install and installed-tool acceptance probe."""
+from pathlib import Path, PurePosixPath
+import datetime
+import hashlib
+import json
+import os
+import posixpath
+import re
+import signal
+import subprocess
+import sys
+import time
+
+ROOT = Path(__file__).resolve().parents[2]
+RUN = Path(__file__).resolve().parent
+BASE = 'f88df350429f97fc1868ebd7f1304eaac5a3ed05'
+SANDBOX = RUN / 'sandbox'
+STAGES = []
+DEADLINE = datetime.datetime.fromisoformat("2026-10-31T05:47:37.545398+00:00")
+
+
+def remaining_budget(cap):
+    remaining = (DEADLINE-datetime.datetime.now(datetime.timezone.utc)).total_seconds()
+    if remaining <= 6:
+        raise TimeoutError("original deadline exhausted; no retry")
+    return min(cap, remaining-6)
+
+
+def sha(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def git(*args):
+    return subprocess.check_output(['git', *args], cwd=ROOT, timeout=remaining_budget(60))
+
+
+def stage(name, args, *, cwd, expected=0):
+    admitted_timeout = remaining_budget(90)
+    out, err = RUN / (name+'.stdout'), RUN / (name+'.stderr')
+    command = [sys.executable, '-I', '-B', *map(str, args)]
+    before = time.monotonic()
+    row = {'name':name,'command':command,'cwd':str(cwd),'expected_exit':expected,
+           'started_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),
+           'deadline':DEADLINE.isoformat(),'admitted_timeout_seconds':admitted_timeout}
+    with (RUN/(name+'.reserved.json')).open('x') as f:
+        json.dump(row, f)
+    with out.open('xb') as stdout, err.open('xb') as stderr:
+        process = subprocess.Popen(command,cwd=cwd,stdin=subprocess.DEVNULL,stdout=stdout,stderr=stderr,
+            start_new_session=True,env={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'})
+        row['pid'] = process.pid
+        try:
+            row['exit_code'] = process.wait(timeout=admitted_timeout)
+        except subprocess.TimeoutExpired:
+            os.killpg(process.pid,signal.SIGTERM)
+            try:
+                row['exit_code'] = process.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                os.killpg(process.pid,signal.SIGKILL)
+                row['exit_code'] = process.wait(timeout=3)
+            row['timed_out'] = True
+    row['elapsed_seconds'] = time.monotonic()-before
+    row['finished_at'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
+    row['logs'] = [{'path':str(p.relative_to(ROOT)),'sha256':sha(p.read_bytes()),'bytes':p.stat().st_size}
+                   for p in (out,err)]
+    STAGES.append(row)
+    (RUN/(name+'.json')).write_text(json.dumps(row,indent=2)+'\n')
+    assert not row.get('timed_out'), 'stage timeout; no retry'
+    assert all(p.stat().st_size<=1024*1024 for p in (out,err)), 'log too large; not a hard output/disk quota'
+    assert row['exit_code']==expected, (name,row['exit_code'])
+    return json.loads(out.read_bytes()) if out.stat().st_size else None
+
+
+def tree_bytes(root):
+    return {str(p.relative_to(root)):sha(p.read_bytes()) for p in sorted(root.rglob('*')) if p.is_file()}
+
+
+def main():
+    remaining_budget(90)
+    with (RUN/'execution-reserved.json').open('x') as f:
+        json.dump({'base':BASE,'started_at':datetime.datetime.now(datetime.timezone.utc).isoformat()},f)
+    assert git('rev-parse','HEAD').decode().strip()==BASE
+    assert not SANDBOX.exists()
+    entries={}
+    for row in git('ls-tree','-rz',BASE).split(b'\0'):
+        remaining_budget(60)
+        if row:
+            info,path=row.split(b'\t',1);entries[path.decode()]=info.decode().split()
+    registry=json.loads(git('show',BASE+':config/role_registry.json'))['roles']
+    blobs={}
+    def resolve(logical):
+        seen=set()
+        while True:
+            remaining_budget(60)
+            assert logical not in seen and len(seen)<32
+            seen.add(logical);mode,kind,oid=entries[logical];assert kind=='blob'
+            if oid not in blobs:blobs[oid]=git('cat-file','blob',oid)
+            data=blobs[oid]
+            if mode in ('100644','100755'):return data
+            assert mode=='120000'
+            logical=posixpath.normpath(posixpath.join(posixpath.dirname(logical),data.decode()))
+    expected={}
+    for role in registry:
+        remaining_budget(60)
+        prefix=PurePosixPath(role['skill']).parent.as_posix()+'/'
+        for path in entries:
+            remaining_budget(60)
+            if path.startswith(prefix):expected[role['id']+'/'+path[len(prefix):]]=sha(resolve(path))
+    assert len(registry)==16 and len(expected)<=5000
+    assert sum(len(b) for b in blobs.values())<=64*1024*1024
+    remaining_budget(90)
+    SANDBOX.mkdir();home=SANDBOX/'codex-home';home.mkdir();dest=SANDBOX/'skills';state=SANDBOX/'state';empty=SANDBOX/'empty';empty.mkdir()
+    preferences=b'Acceptance fixture preference\r\n'
+    (home/'AGENTS.md').write_bytes(preferences)
+    install=[ROOT/'scripts/setup_codex.py','--repo',ROOT,'--dest',dest,'--state',state,'--codex-home',home]
+    result=stage('install',install,cwd=empty)
+    assert result['status']=='configured' and result['skills']==16 and result['files']==len(expected)
+    manifest=json.loads((state/'installation.json').read_bytes());assert manifest['revision']==BASE and manifest['files']==expected
+    assert tree_bytes(dest)==expected and not any(p.is_symlink() for p in dest.rglob('*'))
+    assert (home/'AGENTS.md').read_bytes().startswith(preferences)
+    (RUN/'installed-manifest.json').write_bytes((state/'installation.json').read_bytes())
+    (RUN/'expected-git-files.json').write_text(json.dumps(expected,indent=2)+'\n')
+    stage('check-before',install+['--check'],cwd=empty)
+    before=tree_bytes(dest)
+    skill=dest/'model-with-knowledge';tool=skill/'scripts/knowledge.py';corpus=skill/'assets/knowledge'
+    search=stage('file-search',[tool,'--root',corpus,'search','top-k ranking stability','--limit','3'],cwd=empty)
+    assert isinstance(search,dict) and search.get('schema_version')==1
+    assert search.get('backend')=='files-lexical-v1' and search.get('applicability')=='unchecked'
+    assert isinstance(search.get('results'),list) and search['results'], 'nonempty lexical smoke only'
+    assert re.fullmatch(r'[0-9a-f]{64}',search.get('snapshot',''))
+    snapshot=search['snapshot']
+    shown=stage('show',[tool,'--root',corpus,'show','math.topk-margin'],cwd=empty)
+    assert shown['id']=='math.topk-margin' and shown['status']=='published' and shown['knowledge_refs']
+    refs=RUN/'knowledge-refs.json';refs.write_text(json.dumps({'knowledge_refs':shown['knowledge_refs']},ensure_ascii=False)+'\n')
+    checked=stage('check-refs',[tool,'--root',corpus,'check-refs',refs],cwd=empty);assert checked['valid'] is True and checked['snapshot']==snapshot
+    db=SANDBOX/'search.sqlite'
+    index=stage('index',[tool,'--root',corpus,'index','--db',db],cwd=empty)
+    assert index['backend']=='sqlite-fts5-rrf-v1' and index['snapshot']==snapshot and index['indexed']>0
+    hits=stage('indexed-search',[tool,'--root',corpus,'search','top-k ranking stability','--index',db,'--limit','3'],cwd=empty)
+    assert isinstance(hits,dict) and hits.get('schema_version')==1
+    assert hits.get('backend')=='sqlite-fts5-rrf-v1' and hits.get('applicability')=='unchecked'
+    assert hits.get('snapshot')==snapshot and isinstance(hits.get('results'),list) and hits['results']
+    stage('check-after',install+['--check'],cwd=empty)
+    assert tree_bytes(dest)==before and (home/'AGENTS.md').read_bytes().startswith(preferences)
+    edited=dest/'model-with-knowledge/SKILL.md';edited.write_bytes(edited.read_bytes()+b'\nAcceptance fixture local edit\n')
+    edited_before=tree_bytes(dest);manifest_before=(state/'installation.json').read_bytes();global_before=(home/'AGENTS.md').read_bytes()
+    blocked=stage('local-edit-block',[*install,'--check'],cwd=empty,expected=1)
+    assert blocked['status']=='blocked' and 'Locally changed' in blocked['reason']
+    assert tree_bytes(dest)==edited_before and (state/'installation.json').read_bytes()==manifest_before and (home/'AGENTS.md').read_bytes()==global_before
+    assert not (state/'pending.json').exists() and not (state/'sync.lock').exists()
+    remaining_budget(1)
+    return {'status':'observed-offline-success','base':BASE,'roles':len(registry),'files':len(expected),'all_exported_regular_files_match_independent_Git_blob_reference':True,'isolated_installed_tool_stages':sum(x['name'] in {'file-search','show','check-refs','index','indexed-search'} for x in STAGES),'read_only_tools_preserve_installed_tree':True,'local_edit_expected_block_preserved':True,'stage_count':len(STAGES),'stages':STAGES,'source':{'installer_sha256':sha((ROOT/'scripts/setup_codex.py').read_bytes()),'registry_sha256':sha((ROOT/'config/role_registry.json').read_bytes())},'scope':'offline Linux full committed catalog/install/check/installed code operations; not native host skill discovery/model use/scientific correctness/performance/allrolecost','all_role_model_tokens_cost':'unknown'}
+
+
+if __name__=='__main__':
+    try:
+        report=main()
+    except BaseException as exc:
+        report={'status':'failed-or-incomplete-no-retry','error':type(exc).__name__+': '+str(exc),'stages':STAGES}
+        (RUN/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+        raise
+    (RUN/'report.json').write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
+    print(json.dumps({k:v for k,v in report.items() if k!='stages'}))

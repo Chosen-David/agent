@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "snapshot": "767a8fd84623613078f4e645afa2eb671e00bf1c71186c669830d809df218d18",
+  "backend": "files-lexical-v1",
+  "applicability": "unchecked",
+  "results": [
+    {
+      "id": "math.topk-margin",
+      "version": 1,
+      "sha256": "8ec1eb1965bfe909c5d0033901ee0237b3cbbb6e2cf34c799ee05d8ac8035792",
+      "title": "有界分数误差下的 Top-k 稳定性",
+      "summary": "用边界分数间隔判断近似排序能否保留 Top-k 集合。",
+      "status": "published",
+      "assumptions": [
+        "有限 n 个实分数，1≤k<n，原分数降序排列",
+        "每个分数均满足绝对误差≤ε，而不是仅平均误差",
+        "边界间隔 Δ=s_(k)−s_(k+1) 严格大于 2ε"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "同名 Markdown 中的命题、推导与边界；非形式化证明",
+          "tests/test_knowledge.py 的可复算实例；有限样例不是一般证明"
+        ]
+      },
+      "matches": [
+        {
+          "field": "title",
+          "terms": [
+            "top-k"
+          ]
+        },
+        {
+          "field": "aliases",
+          "terms": [
+            "ranking",
+            "stability",
+            "top-k"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "ranking"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "top-k"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "top-k"
+          ]
+        }
+      ],
+      "score": 28
+    },
+    {
+      "id": "prob.conformal-policy-control",
+      "version": 1,
+      "sha256": "c80d9008b17bdac2f9c77995c4c490c476f7d72aba816e513ce395b41cdfb304",
+      "title": "Conformal Policy Control：非单调风险校准与近似权重的保证边界",
+      "summary": "ICML 2026 将校准作用于策略偏离程度；风险保证是带稳定性余项的边际期望界，精确多轮权重与实用近似须区分。",
+      "status": "published",
+      "assumptions": [
+        "loss: bounded loss in [0,B]; known acceptable-risk reference policy",
+        "policy: mutually absolutely continuous policies; computable likelihoods; stable context distribution",
+        "calibration: gCRC exchangeability plus Lipschitz/replace-one stability; CPC exact weighted calibration plus relative replace-one stability",
+        "guarantee: marginal expected risk, not per-context or high-probability safety"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "not-checked",
+        "checks": [
+          "docs/knowledge_learning/2026-10-07-rl-probability/report.md#prob.conformal-policy-control"
+        ]
+      },
+      "matches": [
+        {
+          "field": "aliases",
+          "terms": [
+            "stability"
+          ]
+        },
+        {
+          "field": "structures",
+          "terms": [
+            "stability"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "stability"
+          ]
+        }
+      ],
+      "score": 10
+    },
+    {
+      "id": "math.residual-interval-screening",
+      "version": 1,
+      "sha256": "8d775ddac76af9c7d192d55a3d240e26a863873c3a072223b6222dc27caa0129",
+      "title": "正交残差包络与安全候选筛除",
+      "summary": "以逐token投影残差构造分数区间，保留上界不低于第k大下界的候选；精确重排可恢复一个原Top-k解，不承诺稀疏输出或e2e保真。",
+      "status": "published",
+      "assumptions": [
+        "有限实向量q与k_i，同一正交投影P=P^T=P^2；1≤k≤N且所有分数有限",
+        "每个token都有有效逐项分数包络L_i≤s_i≤U_i；均值、校准分位数或经验残差不可替代",
+        "保留U_i≥tau，其中tau是第k大L_i；精确重排使用原目标分数和相同有效集合",
+        "浮点实现须另证明外包舍入/正交性/量化/点积误差；本条一般结论在精确实数下"
+      ],
+      "verification": {
+        "source": "checked",
+        "proof": "derivation-reviewed",
+        "checks": [
+          "agent_doc/results/math-screening-20261008/independent_verification.json: independent mathematical/source and finite-code-data review; no formal proof",
+          "agent_doc/results/math-screening-20261008/raw.json:45 exact cases,20 float diagnostics,6 refusal witnesses; not GPU/model testing"
+        ]
+      },
+      "matches": [
+        {
+          "field": "structures",
+          "terms": [
+            "ranking"
+          ]
+        },
+        {
+          "field": "summary",
+          "terms": [
+            "top-k"
+          ]
+        },
+        {
+          "field": "content",
+          "terms": [
+            "top-k"
+          ]
+        }
+      ],
+      "score": 8
+    }
+  ]
+}
