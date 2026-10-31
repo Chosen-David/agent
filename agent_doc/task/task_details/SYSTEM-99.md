@@ -793,3 +793,6 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 
 
 - DENSE-HANDOFF-01按读过的完整路径资源核算/操作分工思路实现有界密集残图准入，Plan64→65三版独审后精确采用，未换算法/独审/目录权威。完整Mailbox publish→prepare_context→ACK合成路径，主测dense128/192下降60.34/75.70%，独立96.764→37.041ms、275.991→61.921ms（61.72/77.56%）；控制≤15%退化、单flow Pythonpeak差≤2MiB，两者均满足固定门槛。[完整源/方案/三审/原数据/六域独审](../../results/dense-handoff-20261031/report.md)保留负结果、共享CPU、条件函数切换和峰值/临时fixture未全保存限制。同fixture完整payload相同；跨fixturecreated_at/hash不同不混同。两者各41方法/31差分，新增六late-dense错误保留原诊断；更正拒绝和ACK存在/pending安全不冒称完整receipt字节/全传播。独立usable-with-scope，手工非trusted runtime；native五job新增41-method步骤另核。plan3/3、producer1/3、independent1/3已用，原08:01:10.510799Z不变；旧scope不重置。无模型/终局质量/token/全角色费用收益，论文67/CAVERT partial不增，SYSTEM99实际宿主/全输入/终局质量/全费用/并发恢复仍open，非整轮完成。
+
+
+- 交接原生CI夹具续修：按用户既有修复授权有界补充复核，保留此前主控误判需再确认的原记录/3of3/原deadline，不重写旧门禁。只改五处可信fixture路径/bytes/locale-free JSON捕获，50断言AST/生产守卫/工作流不变。本机与独立各41项exit0、0skip/error，手工六域usable-with-scope；[精确方案、完整双审、三原失败日志与新回归](../../results/handoff-fixture-portability-20261031/report.md)保留原生五job待验边界。补充plan/local/result/ind各1、sourceCI1、自动retry0，09:30Z截止；无新性能/模型质量/token/费用结论。Plan65/唯一TASK/guide及旧其它未决保持，同一SYSTEM99未完成。

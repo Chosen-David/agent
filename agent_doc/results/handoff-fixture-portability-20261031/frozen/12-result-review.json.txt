@@ -1,0 +1,134 @@
+{
+  "schema_version": "manual-independent-result-review/v1",
+  "task": "SYSTEM-99",
+  "decision": "usable-with-scope",
+  "review_kind": "Independent fresh host source/raw-log review and one actual execution; not authenticated ReviewSession receipt or migration",
+  "reviewed_at": "2026-10-31T09:09:33.849532+00:00",
+  "deadline": "2026-10-31T09:30:00Z",
+  "checked_refs": [
+    {
+      "path": ".agent-runs/dense-handoff-1504/ci-continuation-1704/plan.json",
+      "sha256": "c7cf7bd1a34e770d090acf15546ae2dff0ac56b09e4bf7fcb412999713b764ca",
+      "actual_sha256": "c7cf7bd1a34e770d090acf15546ae2dff0ac56b09e4bf7fcb412999713b764ca",
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/dense-handoff-1504/ci-continuation-1704/plan-review.json",
+      "sha256": "57b11bfb93386e92e54c80ce6fbcbd4548456e129e0c5b2b73c9bb041ffed60d",
+      "actual_sha256": "57b11bfb93386e92e54c80ce6fbcbd4548456e129e0c5b2b73c9bb041ffed60d",
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/dense-handoff-1504/ci-continuation-1704/local.log",
+      "sha256": "08eb814c9a8f55de33fab8f1938d7fc8debc7298819b5ad1ceec3e798111d039",
+      "actual_sha256": "08eb814c9a8f55de33fab8f1938d7fc8debc7298819b5ad1ceec3e798111d039",
+      "matches": true
+    },
+    {
+      "path": "tests/test_handoff_basis.py",
+      "sha256": "09e7b287e4b860d52186767ce2c3b734633882e549526fc74d667ddadcb79c84",
+      "actual_sha256": "09e7b287e4b860d52186767ce2c3b734633882e549526fc74d667ddadcb79c84",
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/dense-handoff-1504/ci-fixture-candidate.py",
+      "sha256": "09e7b287e4b860d52186767ce2c3b734633882e549526fc74d667ddadcb79c84",
+      "actual_sha256": "09e7b287e4b860d52186767ce2c3b734633882e549526fc74d667ddadcb79c84",
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/dense-handoff-1504/native-124476515399.log",
+      "sha256": "a551036c3d95eebc9f33d9a0d275aa3a4fbeb0759a4c7300fa9b103a78425a1d",
+      "actual_sha256": "a551036c3d95eebc9f33d9a0d275aa3a4fbeb0759a4c7300fa9b103a78425a1d",
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/dense-handoff-1504/native-124476515528.log",
+      "sha256": "09637a821018fc5d4b904ed2c4a5b27747669d92684ec5aafecf4ed17eb267d3",
+      "actual_sha256": "09637a821018fc5d4b904ed2c4a5b27747669d92684ec5aafecf4ed17eb267d3",
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/dense-handoff-1504/native-124476515646.log",
+      "sha256": "eaf99fa84a62daf6356c17fd91ff58e5e9164363369cd7500ce526d8906d4826",
+      "actual_sha256": "eaf99fa84a62daf6356c17fd91ff58e5e9164363369cd7500ce526d8906d4826",
+      "matches": true
+    }
+  ],
+  "source_review": {
+    "base": "e4954f2358de96980d150fb1a13c21b9ffdab7d1",
+    "original_test_sha256": "8af871a6b9cfe9afbaff2494d7720b86e3fc5fe77b15bc1d2887ea0caf7b3a0c",
+    "candidate_sha256": "09e7b287e4b860d52186767ce2c3b734633882e549526fc74d667ddadcb79c84",
+    "tracked_diff_paths": [
+      "tests/test_handoff_basis.py"
+    ],
+    "diff_hunks": 5,
+    "original_assertion_ast_count": 50,
+    "assertion_ast_identical": true,
+    "production_or_workflow_changed": false,
+    "skip_xfail_or_continue_on_error_added": false
+  },
+  "domains": {
+    "implementation_correctness": {
+      "status": "usable-with-scope",
+      "reason": "Exact approved candidate is applied only to tests/test_handoff_basis.py. Five hunks canonicalize the newly allocated trusted fixture root, append identical ASCII suffixes to existing raw corpus bytes in three mutations, and capture CLI bytes. All 50 original assert/assertRaises call ASTs are identical, 20 BasisTests remain, and no skip or assertion weakening is present. KnowledgeStore still rejects supplied symlink roots/ancestors before resolving, symlink entries and escaping reads; production code is unchanged. This fixture canonicalization must not be copied into untrusted production validation."
+    },
+    "reference_integrity": {
+      "status": "usable-with-scope",
+      "reason": "All eight result-input references independently hashed and matched, including exact plan and full prior review, actual applied source, candidate and all three historical raw failure logs. Original source read directly from e4954f2 hashes to the plan-bound original. Full plan/prior feedback inspected; manual approval57b11bfb is supplemental only and does not reset old3/3 reviews or expired original deadline."
+    },
+    "data_integrity": {
+      "status": "usable-with-scope",
+      "reason": "Three byte appends retain every previous corpus byte and add the same intended ASCII suffix. Binary stdout/stderr capture removes locale conversion; unchanged exit-code and json.loads assertions still reject unsuccessful/invalid JSON CLI output. json.loads(bytes) supports JSON encoding detection and does not establish an exclusive UTF8 wire contract. Historical macOS log shows41 tests/errors20 in fixture setUp at symlink guard; Windows3.10 and3.12 each show41/errors4: three CP1252 corpus reads plus subprocess CP1252 reader error leading to NoneType concatenation. Those raw failure files remain unchanged."
+    },
+    "numerical_scope": {
+      "status": "usable-with-scope",
+      "reason": "No algorithm, production numeric path, graph ordering, thresholds, budgets or statistical claim changed. Existing synthetic token-counter test remains explicitly synthetic; 41 regression methods are software correctness evidence only. No scientific quality, model quality, token/bill reduction, latency speedup or production performance conclusion is supported by this review."
+    },
+    "measurement_validity": {
+      "status": "usable-with-scope",
+      "reason": "Root local raw log independently inspected:41 method lines all ok, Ran41 in16.519s and OK, hash matches; root supplied actual outer exec84202 exit0 observation is attributed rather than re-created. Independent exact command executed once with complete raw stdout/stderr redirected; actual outer session41417 completion exit0 observed in tool result,41 method lines all ok, Ran41 in12.337s, OK and no skips/errors. Durations are unittest observations, not a comparative benchmark."
+    },
+    "reproducibility": {
+      "status": "usable-with-scope",
+      "reason": "Exact command, working directory, environment identity, source and raw-log hashes are recorded. Independent host run reproduced local success under Linux/Python3.12.14. This does not reproduce macOS or Windows native behavior. All five native jobs and each actual41-method step must succeed before portable CI closure; an earlier failure can leave a regression step skipped/unreached and cannot be accepted as success."
+    }
+  },
+  "execution": {
+    "command": "python -B -m unittest tests.test_claim_graph_residual tests.test_handoff_basis tests.test_communication -v",
+    "shell_command": "python -B -m unittest tests.test_claim_graph_residual tests.test_handoff_basis tests.test_communication -v > .agent-runs/dense-handoff-1504/ci-continuation-1704/independent.log 2>&1",
+    "cwd": "/workspace/scratch/95d615402a52/agent-run-2205",
+    "tool_session_id": 41417,
+    "outer_exit_code": 0,
+    "outer_exit_observed": true,
+    "executed": 41,
+    "method_ok_lines": 41,
+    "errors": 0,
+    "failures": 0,
+    "skips": 0,
+    "elapsed_seconds_unittest": 12.337,
+    "log_path": ".agent-runs/dense-handoff-1504/ci-continuation-1704/independent.log",
+    "log_sha256": "56f3fed3de2e559f98530fa2105167eeef97456fe6eb0e8616f43a1a9c0736ec",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "independent_executions_used": 1,
+    "independent_executions_max": 1,
+    "retries": 0
+  },
+  "local_execution": {
+    "raw_log_sha256": "08eb814c9a8f55de33fab8f1938d7fc8debc7298819b5ad1ceec3e798111d039",
+    "executed": 41,
+    "method_ok_lines": 41,
+    "elapsed_seconds_unittest": 16.519,
+    "result": "OK",
+    "outer_exit_code": 0,
+    "outer_exit_provenance": "Root supplied actual exec session84202 exit0 observation; not independently witnessed by this reviewer"
+  },
+  "blocking_findings": [],
+  "remaining_limits": [
+    "Native all-five-job and actual41-method step evidence pending; portable CI closure remains unproven.",
+    "No retries, benchmarks, network calls or production edits performed by reviewer. One result review and one independent execution consumed, no refund.",
+    "Historical failures/full prior feedback/old3of3/deadline remain historical. Existing routine-fix authorization accepted under higher-priority developer instructions; this is not authenticated ReviewSession or host-adapter approval."
+  ],
+  "overall": "Accept exact fixture repair as locally reproduced and usable within this bounded software-regression scope. Proceed only to authorized publication/native inspection; do not claim portable closure until actual required native outcomes are verified."
+}

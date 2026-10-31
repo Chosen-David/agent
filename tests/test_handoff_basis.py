@@ -36,7 +36,7 @@ class BasisTests(unittest.TestCase):
 
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(); self.addCleanup(self.tmp.cleanup)
-        self.root = Path(self.tmp.name)
+        self.root = Path(self.tmp.name).resolve()
         shutil.copytree(ROOT / 'knowledge', self.root / 'corpus')
         self.refs = KnowledgeStore(self.root / 'corpus').get('math.topk-margin')['knowledge_refs']
         self.memory = MemoryLedger(self.root, create=True)
@@ -97,14 +97,14 @@ class BasisTests(unittest.TestCase):
 
     def test_knowledge_change_targets_only_using_claims_and_cache_does_not_bypass(self):
         seq = self.send(); self.box.consume_handoff('writer', seq, self.request)
-        f = self.root / 'corpus/entries/math.topk-margin.md'; f.write_text(f.read_text() + '\ncorrection\n')
+        f = self.root / 'corpus/entries/math.topk-margin.md'; f.write_bytes(f.read_bytes() + b'\ncorrection\n')
         self.assertEqual(self.box.impact()[0]['claim_ids'], ['certificate', 'paper'])
         with self.assertRaisesRegex(ValueError, 'stale'):
             self.box.prepare_context('writer', seq, self.request, known_knowledge_refs=self.refs)
 
     def test_unrelated_corpus_edit_does_not_invalidate_pinned_dependencies(self):
         seq = self.send(); self.box.consume_handoff('writer', seq, self.request)
-        f = self.root / 'corpus/entries/physics.dimensionless.md'; f.write_text(f.read_text() + '\nnew example\n')
+        f = self.root / 'corpus/entries/physics.dimensionless.md'; f.write_bytes(f.read_bytes() + b'\nnew example\n')
         self.assertEqual(self.box.impact(), [])
         self.box.consume_handoff('writer', seq, self.request)
 
@@ -127,7 +127,7 @@ class BasisTests(unittest.TestCase):
                    '--plan', str(self.root / 'plan.json'), '--root', str(self.root)]
         for args in (['context', 'writer', str(seq), '--request', str(self.root / 'request.json')],
                      ['usage'], ['impact']):
-            output = subprocess.run(command + args, text=True, capture_output=True)
+            output = subprocess.run(command + args, capture_output=True)
             self.assertEqual(output.returncode, 0, output.stdout + output.stderr)
             json.loads(output.stdout)
 
@@ -201,7 +201,7 @@ class BasisTests(unittest.TestCase):
             basis_context(self.root, self.record, self.request, max_chars=100000,
                           known_knowledge_refs=[self.refs[-1]])
         seq = self.send(); self.box.consume_handoff('writer', seq, self.request)
-        f = self.root / 'corpus/entries/math.cauchy-schwarz.md'; f.write_text(f.read_text() + '\ncorrected\n')
+        f = self.root / 'corpus/entries/math.cauchy-schwarz.md'; f.write_bytes(f.read_bytes() + b'\ncorrected\n')
         self.assertEqual(self.box.impact()[0]['claim_ids'], ['certificate', 'paper'])
 
     def test_budget_rejection_is_atomic_and_never_truncates_prerequisites(self):
