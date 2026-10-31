@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 67
+Version: 69
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -221,6 +221,12 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 
 
 阶段ENGINE-PRE-ACTION-CLAIM（Version67）：按既有持续优化授权，保留ReportingHandler Version44及全部旧失败；仅在Engine执行前的授权/计划审核回调之后再次检查真实Context当前租约、取消、token与doing状态，失效则不进入handler；不延租、不退款、不重放、不改最终stale结果处理或对外动作原子性。六固定CPU场景使用真实保护计划/审核认证夹具和SQLite，验证late review的到期/取消/token变更、late authorization到期、健康及拒权；修前保存失败，独审后修复，修后与独立定向回归并核原生五job。仅范围内可靠性，不称性能/模型/全链验收。
+
+
+阶段ENGINE-PRE-ACTION-AUTHORITY（Version68，同批续接）：分别核对计划审核、动作权限和认领有效性；保留认领前拒权和认领后的早期current检查，将既有派发前host authorize移到审核回调返回后（不增加健康派发的授权调用次数），再以真实Context.current检查租约/取消/token，拒绝False或异常后进入handler。修前固定仅新增两权限失效case的marker/进入时权限反例，保留六既有认领边界；独立方案→负例→精确候选→同条件回归/独立结果→原生平台验收。无外部动作原子围栏/新authority缓存或接口、延租退款、自动重放或agent_doc迁移；原scope失败/异议/期限完整保留，本阶段非新整轮，实际宿主/完整上下文/质量/全费用验收仍open。
+
+
+阶段ENGINE-AUTHORITY-BINDINGS（Version69，取代未发布v2）：v2经100有限case后独审撤回，因授权回调后缺已审输入新鲜度复查；完整旧意见/字节/数据保留。本补充仅用本次live审核后栈内完整plan含receipt指纹与原projectroot，authorize后复用current_inputs重验绑定，不再调用verifier，最后current门禁；不以指纹授信，不持久化cache。显式对比原675与未发布v2在task/receipt/TASK/审核证据/采纳advice变更时的实际handler写入；v3须同时保留权限False/异常拒绝与健康两授权调用、新全部边界、独立结果和原生验收。无外部原子fence、超时抢占、later-revocation保证、ledger迁移/退款/旧scope重演；同SYSTEM99未完成。
 
 ## Progress
 
@@ -810,3 +816,10 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 
 
 - Engine原生夹具补修：d469的mac新六case在共享setUp首次atomic_json前路径规范化过晚，原6error完整日志保留，主控另取Windows3.12同栈6error原日志。只将共享trusted TemporaryDirectory根初始化加.resolve()，42断言/15测试名/其余AST、生产守卫与Engine/新六case/工作流全不变；本机与独立各21全pass0skip。[完整一行候选、原日志、补充方案/独审与原始21输出](../../results/engine-claim-fixture-20261031/report.md)限定alias因果为源码推断不伪造未打印路径。显式补充plan1/local1/ind1/result1/newCI1待核、13:00Z原期限，保留Engine旧预算/REVISE/首次污染及11semaphore清理未知；Plan67稳定区/唯一TASK/人类guide不变，无新论文计数/速度模型费用结论，同批仍open。
+
+
+### 2026-10-31 — ENGINE-PRE-ACTION-AUTHORITY-01 v4 checkpoint
+
+- 修复审核回调撤权后仍进入 handler：原 main 的两种真实入口/标记断言失败；现有第二次 authorize 移到审核后，再复用输入绑定检查，最后检查 current。protected 完整计划/回执与文件绑定固定原 root；legacy 恢复晚到 policy/lineage 检查并保留 adapter 输入兼容。
+- 本地与独立各 108 方法：107 通过、1 既有 real-tmux opt-in 跳过，新增入口模块 16 项全通过；实际多进程排他与终止恢复通过。撤回 v2 的五个先执行后拦截负结果、v3 legacy 静态异议及完整反馈均保留。[唯一证据索引](../../results/engine-pre-action-authority-20261031/record.json)。
+- Permission to Retry 与 CAVERT 的既读方法用于区分权限/租约、回执/实际使用及持续有效；本次新增正文精读计数 0，不重计旧论文。新增被动校验成本未测，不报速度、token、费用或任务质量收益。发布时原生 CI 待回读；不保证外部原子准入。SYSTEM-99 同批未决全链/真实宿主/上下文与质量范围继续开放，不计新完成轮次。

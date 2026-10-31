@@ -502,21 +502,27 @@ class Engine:
             task, handler, context = claim
             executed, review_blocked, outcome, effect_observation = False, False, None, None
             try:
-                if not context.current() or not self._authorized(plan, task, handler):
+                if not context.current():
                     outcome = Outcome('blocked', 'authorization revoked or claim no longer current')
                 else:
                     self._review_plan(plan)
-                    # Host policy/review callbacks may outlive the checked claim.
-                    if not context.current():
-                        outcome = Outcome('blocked', 'claim no longer current after plan review')
+                    from .plan_review import _capture_input_recheck
+                    recheck = _capture_input_recheck(plan, self.project_root)
+                    # Review may revoke authority; policy may change reviewed inputs.
+                    if not self._authorized(plan, task, handler):
+                        outcome = Outcome('blocked', 'authorization revoked after plan review')
                     else:
-                        executed = True
-                        outcome = handler.run(task, context)
-                        self._review_plan(plan)
-                        if outcome.status == 'complete' and not (outcome.evidence and handler.verify(task, outcome.evidence)):
-                            outcome = Outcome('failed', 'completion evidence rejected by verifier')
-                        if outcome.status not in ('complete', 'pending', 'retry', 'blocked', 'failed'):
-                            outcome = Outcome('failed', 'invalid adapter outcome')
+                        recheck()
+                        if not context.current():
+                            outcome = Outcome('blocked', 'claim no longer current after authorization')
+                        else:
+                            executed = True
+                            outcome = handler.run(task, context)
+                            self._review_plan(plan)
+                            if outcome.status == 'complete' and not (outcome.evidence and handler.verify(task, outcome.evidence)):
+                                outcome = Outcome('failed', 'completion evidence rejected by verifier')
+                            if outcome.status not in ('complete', 'pending', 'retry', 'blocked', 'failed'):
+                                outcome = Outcome('failed', 'invalid adapter outcome')
             except PlanReviewError as exc:
                 review_blocked = True
                 if executed:

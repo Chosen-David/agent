@@ -1,0 +1,87 @@
+class AuthorizationBindingTests(unittest.TestCase):
+    def boundary(self, kind):
+        fixture = review_fixtures.PlanReviewTests()
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        root = fixture.root
+        target = None
+        if kind == 'advice':
+            from agent_runtime import project_docs as docs
+            from agent_runtime.task_manifest import prepare
+            import hashlib
+            target = root / 'agent_doc/advice/late.md'
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(b'Synthetic adopted advice.\n')
+            old = fixture.plan['tasks'][0]
+            fixture.plan = prepare(root, 'r1', 'manual', 'synthetic test instruction', lineage_id='logical-T1')
+            fixture.plan['tasks'][0].update(action=old['action'], done_when=old['done_when'])
+            docs.bind_advice(fixture.plan, [{'path': 'agent_doc/advice/late.md',
+                'sha256': hashlib.sha256(target.read_bytes()).hexdigest(), 'task_refs': ['T1'],
+                'disposition': 'adopt', 'reason': 'Synthetic acceptance fixture.',
+                'guide_alignment': 'compatible'}])
+        elif kind == 'evidence':
+            import hashlib
+            target = root / 'review-evidence.txt'
+            target.write_bytes(b'Synthetic approved evidence.\n')
+            fixture.plan['plan_review']['evidence_refs'].append({
+                'path': 'review-evidence.txt', 'sha256': hashlib.sha256(target.read_bytes()).hexdigest()})
+        elif kind == 'task-source':
+            target = root / 'TASK.md'
+        fixture.approve()
+        store = Store(root / 'bindings.sqlite')
+        store.create(fixture.plan, project_root=root)
+        entered, changed = [], []
+        calls = [0]
+        marker = root / 'binding-handler.txt'
+
+        class Handler(ArtifactHandler):
+            def run(self, task, context):
+                entered.append(context.current())
+                marker.write_bytes(b'unreviewed entry')
+                return super().run(task, context)
+
+        def authorize(plan, task, handler):
+            calls[0] += 1
+            db = sqlite3.connect(store.path)
+            try:
+                state = json.loads(db.execute("SELECT state FROM chains WHERE id='r1'").fetchone()[0])
+            finally:
+                db.close()
+            if not changed and state['tasks']['T1']['status'] == 'doing':
+                changed.append(kind)
+                if kind == 'task-input':
+                    task.setdefault('inputs', {})['unreviewed_adapter_field'] = 'changed'
+                elif kind == 'receipt':
+                    plan['plan_review_receipt']['proof'] = 'unreviewed-proof'
+                else:
+                    target.write_bytes(target.read_bytes() + b'changed\n')
+            return True
+
+        handler = Handler(root)
+        engine = Engine(store, {'verify_artifacts': handler}, authorize=authorize,
+                        project_root=root, plan_review_verifier=fixture.session.verify,
+                        clock=lambda: fixture.now[0], lease_seconds=5)
+        state = engine.tick('r1', 'authorization-binding')
+        print('AUTHORITY_BINDING_PROBE ' + json.dumps({
+            'kind': kind, 'changed': changed, 'entered_current': entered,
+            'marker_hex': marker.read_bytes().hex() if marker.exists() else None,
+            'status': state['status'], 'authorization_calls': calls[0]}, sort_keys=True))
+        self.assertEqual(changed, [kind])
+        self.assertEqual(entered, [], 'authorization must not bypass reviewed input bindings')
+        self.assertFalse(marker.exists())
+        self.assertNotEqual(state['status'], 'done')
+
+    def test_authorizer_task_input_mutation(self):
+        self.boundary('task-input')
+
+    def test_authorizer_receipt_mutation(self):
+        self.boundary('receipt')
+
+    def test_authorizer_task_source_mutation(self):
+        self.boundary('task-source')
+
+    def test_authorizer_review_evidence_mutation(self):
+        self.boundary('evidence')
+
+    def test_authorizer_adopted_advice_mutation(self):
+        self.boundary('advice')

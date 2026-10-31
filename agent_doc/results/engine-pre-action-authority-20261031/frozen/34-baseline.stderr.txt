@@ -1,0 +1,47 @@
+test_authority_revoked_during_review (tests.test_engine_pre_action_claim.PreActionClaimTests.test_authority_revoked_during_review) ... FAIL
+test_authorization_exact_expiry (tests.test_engine_pre_action_claim.PreActionClaimTests.test_authorization_exact_expiry) ... ok
+test_denied_authorization_never_claims (tests.test_engine_pre_action_claim.PreActionClaimTests.test_denied_authorization_never_claims) ... ok
+test_healthy_review_enters_once (tests.test_engine_pre_action_claim.PreActionClaimTests.test_healthy_review_enters_once) ... ok
+test_policy_unavailable_after_review (tests.test_engine_pre_action_claim.PreActionClaimTests.test_policy_unavailable_after_review) ... FAIL
+test_review_cancellation (tests.test_engine_pre_action_claim.PreActionClaimTests.test_review_cancellation) ... ok
+test_review_exact_expiry (tests.test_engine_pre_action_claim.PreActionClaimTests.test_review_exact_expiry) ... ok
+test_review_owner_token_change (tests.test_engine_pre_action_claim.PreActionClaimTests.test_review_owner_token_change) ... ok
+
+======================================================================
+FAIL: test_authority_revoked_during_review (tests.test_engine_pre_action_claim.PreActionClaimTests.test_authority_revoked_during_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_engine_pre_action_claim.py", line 125, in test_authority_revoked_during_review
+    self.boundary('authority-revoked')
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_engine_pre_action_claim.py", line 94, in boundary
+    self.assertEqual(entered, [], 'handler must not start with a stale claim')
+AssertionError: Lists differ: [True] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+True
+
+- [True]
++ [] : handler must not start with a stale claim
+
+======================================================================
+FAIL: test_policy_unavailable_after_review (tests.test_engine_pre_action_claim.PreActionClaimTests.test_policy_unavailable_after_review)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_engine_pre_action_claim.py", line 128, in test_policy_unavailable_after_review
+    self.boundary('authority-error')
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_engine_pre_action_claim.py", line 94, in boundary
+    self.assertEqual(entered, [], 'handler must not start with a stale claim')
+AssertionError: Lists differ: [True] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+True
+
+- [True]
++ [] : handler must not start with a stale claim
+
+----------------------------------------------------------------------
+Ran 8 tests in 0.882s
+
+FAILED (failures=2)

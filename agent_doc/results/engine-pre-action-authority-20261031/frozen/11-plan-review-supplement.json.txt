@@ -1,0 +1,38 @@
+{
+  "schema_version": "manual-independent-plan-review-correction/v1",
+  "project_root": "/workspace/scratch/95d615402a52/agent-run-2205",
+  "task": "SYSTEM-99",
+  "decision": "revise",
+  "supersedes_execution_acceptance": {
+    "path": ".agent-runs/engine-authority-2102/bindings/plan-review.json",
+    "sha256": "13ecc000e229560872cf2f8a16343a391e8dbc82e178d929f1f345ac6193d419",
+    "original_decision": "approve",
+    "original_bytes_preserved": true
+  },
+  "selected_plan": {
+    "path": ".agent-runs/engine-authority-2102/bindings/plan.json",
+    "sha256": "4ceec85621d903cf7fd0f1ba0143fcd510eec0a27643860dd4254f76017c5bf4"
+  },
+  "summary": "Withdraw original v3 execution approval after concrete previously missed legacy-to-protected freshness regression. No test executed; exact original feedback remains unchanged.",
+  "finding": {
+    "blocking": true,
+    "target": "core-candidate.py Engine.tick initially legacy recheck=None -> successful final authorize -> handler",
+    "feedback": "Original675 invoked check_plan_review after second authorize, including policy(plan) and protected_lineage. Current v3 runs that review first and skips recheck for initially legacy plans. A successful authorize can add plan_review, or register protection for the current legacy task_refs in the existing project ledger, and handler can enter before post-effect review catches it. Trusted callback does not imply no mutation. This is a deterministic order regression distinct from unavoidable later external mutation.",
+    "requested_change": "Version and freeze a bounded legacy branch restoring callback-free policy/lineage freshness after authorization. Reject a legacy-to-protected policy transition before handler without invoking an arbitrary verifier; if still legacy, invoke existing check_plan_review legacy path at the originally resolved root with existing explicit allow_legacy. Keep protected full-plan closure and final current ordering. Do not upgrade all legacy input binding requirements, add durable authority state, or claim this changed candidate was approved by the earlier hash. Preserve legacy no-root compatibility explicitly where applicable.",
+    "acceptance_check": "Review exact changed candidate, root handling and explicit finite budget amendment before execution; targeted no-entry/real-marker checks should cover final-authorize policy introduction and protection registration alongside existing protected cases and healthy legacy control. No test is authorized or executed by this correction itself."
+  },
+  "review_method": {
+    "reviewer": "/root/engine_binding_plan_2131",
+    "trigger": "Parent concrete new source-path objection before execution",
+    "tests_executed": false,
+    "source_mutated": false,
+    "original_review_mutated": false,
+    "runtime_review_or_budget_migration": false
+  },
+  "constraints": {
+    "deadline": "2026-10-31T14:00:00Z",
+    "old_failures_feedback_consumption_preserved": true,
+    "no_automatic_retry_or_refund": true,
+    "no_new_candidate_approval": true
+  }
+}

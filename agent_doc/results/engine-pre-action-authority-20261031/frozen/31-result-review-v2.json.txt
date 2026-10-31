@@ -1,0 +1,1662 @@
+{
+  "schema_version": "manual-independent-result-review/v1",
+  "project_root": "/workspace/scratch/95d615402a52/agent-run-2205",
+  "task": "SYSTEM-99",
+  "scope": "ENGINE-PRE-ACTION-AUTHORITY-01",
+  "decision": "revise",
+  "summary": "Frozen raw baseline/fixed/independent observations are valid finite data, but v2 has a blocking callback-order regression: authorization may alter reviewed plan/task or bound files after final pre-action review and before handler. Withdraw earlier usable-with-scope code acceptance; do not publish v2 as a safe repair.",
+  "input": {
+    "path": ".agent-runs/engine-authority-2102/result-inputs.json",
+    "sha256": "10778fca75e80cc9ceb538a2951181274d8751c807d86f034edd573e0f85deac"
+  },
+  "selected_plan": {
+    "path": ".agent-runs/engine-authority-2102/plan-v2.json",
+    "sha256": "078541ead240b14a8b5a1f5f24de3d67062e72eecd516050b82b5ed8d978ce86"
+  },
+  "verifier": {
+    "actor": "/root/engine_authority_result_2118",
+    "source": "actual delegated fresh review context via host collaboration",
+    "independent": true,
+    "run_id": "engine-authority-result-2118",
+    "method": "Read frozen v1/v2 plans and both complete reviews, exact source/test diff and relevant Engine/Context/fixture/process paths; read all baseline8 and fixed100 and independent100 raw method rows and eight probes each; independently invoke guarded capture exactly once and observe actual outer process exit; rehash all32 refs before and after. This manual record is not an authenticated repository ReviewSession/runtime receipt."
+  },
+  "checks": {
+    "implementation": {
+      "verdict": "fail",
+      "reason": "Installed source/test exactly equal selected v2 bytes. Initial claim _authorized remains inside selection; early postclaim current remains; existing second _authorized moves from before pre-action review to after it, then final current, then handler. _authorized requires literal True and catches normal Exception as False. False/exception after review therefore yields blocked before handler. Persisted blocked adapter_result is not auto-reset like permission nodes, so denied-next-wake assertions prove no replay at attempt1. No schema/cache/refund/lease extension or assertion weakening. Callback order intentionally changes; v1 three-call design was superseded and unexecuted. Initial denied claim cannot reach the postclaim pre-action review, although earlier ordinary plan reads still occur. Blocking new finding: Engine._authorized passes mutable original plan/task to trusted callback. In v2, a successful second authorize can change those objects or previously bound TASK/adopted-advice/evidence files after the latest pre-action _review_plan. Only Context.current follows it, checking cancellation/token/status/lease and not plan or current_inputs. Handler may therefore perform an effect before post-action _review_plan rejects the mutation. The original source placed this authorization before pre-action _review_plan and caught this deterministic mutation before entry. Trusted does not imply pure, and this regression is distinct from unavoidable external atomic fencing.",
+      "evidence": [
+        {
+          "path": "agent_runtime/core.py",
+          "sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8"
+        },
+        {
+          "path": "tests/test_engine_pre_action_claim.py",
+          "sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5"
+        },
+        {
+          "path": "tests/test_plan_review.py",
+          "sha256": "1296f4fb1783659b561657e3895735d1bafc218a475369a5fae86e3b91e4dda8"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/source-before.py",
+          "sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/source-candidate-v2.py",
+          "sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/tests-before.py",
+          "sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/tests-candidate-v2.py",
+          "sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5"
+        }
+      ]
+    },
+    "reference_boundary": {
+      "verdict": "inconclusive",
+      "reason": "Independent oracle is observable handler-entry current, host grant/error state and real marker bytes, rather than same implementation branch. Baseline current=true while policy=false and marker actually written establishes distinct authority failure despite valid claim/review. Fixed and independent refuse both post-review False and normal Exception; six original expiry/cancel/token/authorization-expiry/healthy/initial-denial cases remain pass. Exact equality at lease expiry uses > clock. Test mutations wait for persisted doing and callbacks perform only SQLite observation inside claim transaction. Shared trusted tmp root resolved before first write. Existing100 cases do not exercise mutation of reviewed plan/task or bound files inside the final authorization callback. Pre-existing advice/evidence/unknown-field checks mutate before check_plan_review, and post-action revocation mutates in handler; neither rules out this newly shifted window. Thus the new two policy cases pass while preservation of reviewed-input freshness is not established.",
+      "evidence": [
+        {
+          "path": "tests/test_engine_pre_action_claim.py",
+          "sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/baseline.stdout",
+          "sha256": "b7fb76932316d2a20363f0a61a271ca96db20d5448347f1332736b3ded5ac9f3"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/baseline.stderr",
+          "sha256": "992b4259a1149425c5b9d52cae225146c4a635cd34a57dd584cfff767d0e57ac"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/fixed.stdout",
+          "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/fixed.stderr",
+          "sha256": "82b41f4cdcf77d219273a9e14327a7a454b82b6797cf304c42ba7bc2aa3e7cc1"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/independent.stdout",
+          "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/independent.stderr",
+          "sha256": "a418491b5856596a4a8464697e1e067679bcb11a5355f510e33140490062980e"
+        }
+      ]
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "All32 frozen references matched before and after independent execution; result-inputs SHA matches parent assignment. Plan68 prefix equals current stable detail bytes before Progress, and entire prior Progress suffix remains byte-identical. Exactly8 unique probes per phase, no duplicate/missing modes. Baseline actual8 rows=6pass2newFAIL0errors0skip; fixed and independent actual100 unique method rows=99pass1 original real-tmux opt-in skip0errors0fail, new8 allpass0skip. Both real process methods ok. Captured raw output hashes agree with metadata. Independent stdout is byte-identical to fixed stdout; stderr differs only naturally as complete run output, not reused metadata.",
+      "evidence": [
+        {
+          "path": ".agent-runs/engine-authority-2102/result-inputs.json",
+          "sha256": "10778fca75e80cc9ceb538a2951181274d8751c807d86f034edd573e0f85deac"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/baseline.json",
+          "sha256": "86944f5da76283c41df4f0dd4508b0b3c2b22fc33015f707230172e8ccbd449a"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/fixed.json",
+          "sha256": "daf4c70d1d46baa78998840e9006bafa11b7de20632ae4320089c8672182d1f6"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/independent.json",
+          "sha256": "682d8e88e1f8f4a247cac5e8f9b89605abfe865bfb7402b577ab2f3079ed3fb7"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/plan68-prefix-v2.txt",
+          "sha256": "afd38d467968d37a3e77858122519719f49fd09493181d5c97d4c7f30c3af5e7"
+        },
+        {
+          "path": "agent_doc/task/task_details/SYSTEM-99.md",
+          "sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5"
+        }
+      ]
+    },
+    "numerical_sanity": {
+      "verdict": "pass",
+      "reason": "These are integer counts/boolean state/byte oracles, not floating-point estimates. Raw rows sum exactly to8 or100 denominators. Healthy observed policy calls2 both baseline and repaired phases, denied initial calls1/attempt0; new authority cases calls2/attempt1, blocked and empty entries/no marker after repair. Marker hex decodes to exact handler entered only when entry is observed. No averages, NaN/Inf, unsupported tolerances or hidden failing samples. The passed assertions after initial probe cover no next-wake replay, not an invented second printed observation.",
+      "evidence": [
+        {
+          "path": "tests/test_engine_pre_action_claim.py",
+          "sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/baseline.stdout",
+          "sha256": "b7fb76932316d2a20363f0a61a271ca96db20d5448347f1332736b3ded5ac9f3"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/fixed.stdout",
+          "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/independent.stdout",
+          "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/independent.stderr",
+          "sha256": "a418491b5856596a4a8464697e1e067679bcb11a5355f510e33140490062980e"
+        }
+      ]
+    },
+    "measurement_validity": {
+      "verdict": "pass",
+      "reason": "Claim is finite CPU reliability under synthetic policy/clock with real SQLite/file/process I/O. Same frozen8 case inputs, exact candidate and standard unittest command provide controlled before/after behavior. Healthy callback count2 is an actual observed count control, not speed/latency/token/provider-cost evidence. No performance or fee conclusion is accepted; wall times are diagnostic only. Real-tmux skip is explicitly excluded from completed host coverage, while two actual process methods are ok.",
+      "evidence": [
+        {
+          "path": ".agent-runs/engine-authority-2102/plan-v2.json",
+          "sha256": "078541ead240b14a8b5a1f5f24de3d67062e72eecd516050b82b5ed8d978ce86"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/capture.py",
+          "sha256": "5589f4cddee4bd9d0aa3d5dc5b593d06e1a80b7b1bef0bd7f3ff8cf59e5e6281"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/baseline.json",
+          "sha256": "86944f5da76283c41df4f0dd4508b0b3c2b22fc33015f707230172e8ccbd449a"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/fixed.json",
+          "sha256": "daf4c70d1d46baa78998840e9006bafa11b7de20632ae4320089c8672182d1f6"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/independent.json",
+          "sha256": "682d8e88e1f8f4a247cac5e8f9b89605abfe865bfb7402b577ab2f3079ed3fb7"
+        },
+        {
+          "path": "tests/test_task_runtime.py",
+          "sha256": "0d0f5146833530360e7f75317176ae43f960dbf7e3aa77f8923ab74098639c18"
+        },
+        {
+          "path": "tests/test_managed_supervisor.py",
+          "sha256": "bb5ac997ef838357eaef8e8efe53c948a6bcc8efd3545e4b9cf2b536c798e520"
+        }
+      ]
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "Reviewer invoked exactly once python -B .agent-runs/engine-authority-2102/capture.py independent. Guarded parent launches standard -B -m unittest for exact six modules,180s child bound,zero automatic retries. Tool observed real outer session72167 complete exit0/chunk2115e5; child metadata exit0 and raw100 rows/99pass1knownskip agree. New8 pass0skip with8 unique probes; both multiprocess claim-exclusion and killed-worker persisted-lease recovery are ok. No additional test or auto retry was run by reviewer.32refs unchanged afterward.",
+      "evidence": [
+        {
+          "path": ".agent-runs/engine-authority-2102/capture.py",
+          "sha256": "5589f4cddee4bd9d0aa3d5dc5b593d06e1a80b7b1bef0bd7f3ff8cf59e5e6281"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/independent.json",
+          "sha256": "682d8e88e1f8f4a247cac5e8f9b89605abfe865bfb7402b577ab2f3079ed3fb7"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/independent.stdout",
+          "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/independent.stderr",
+          "sha256": "a418491b5856596a4a8464697e1e067679bcb11a5355f510e33140490062980e"
+        }
+      ]
+    }
+  },
+  "observations": {
+    "baseline": {
+      "executed": 8,
+      "pass": 6,
+      "fail": 2,
+      "skip": 0,
+      "error": 0,
+      "unique_probes": 8,
+      "probes": [
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [
+            true
+          ],
+          "entry_authorized": [
+            false
+          ],
+          "marker_hex": "68616e646c657220656e7465726564",
+          "mode": "authority-revoked",
+          "mutation": [
+            "authority-revoked"
+          ],
+          "status": "done"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "authorization-expiry",
+          "mutation": [
+            "authorization-expiry"
+          ],
+          "status": "active"
+        },
+        {
+          "attempts": 0,
+          "authorization_calls": 1,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "denied",
+          "mutation": [],
+          "status": "blocked"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [
+            true
+          ],
+          "entry_authorized": [
+            true
+          ],
+          "marker_hex": "68616e646c657220656e7465726564",
+          "mode": "healthy",
+          "mutation": [],
+          "status": "done"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [
+            true
+          ],
+          "entry_authorized": [
+            false
+          ],
+          "marker_hex": "68616e646c657220656e7465726564",
+          "mode": "authority-error",
+          "mutation": [
+            "authority-error"
+          ],
+          "status": "done"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "cancel",
+          "mutation": [
+            "cancel"
+          ],
+          "status": "cancelled"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "expiry",
+          "mutation": [
+            "expiry"
+          ],
+          "status": "active"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "token",
+          "mutation": [
+            "token"
+          ],
+          "status": "active"
+        }
+      ],
+      "child_exit": 1
+    },
+    "fixed": {
+      "executed": 100,
+      "pass": 99,
+      "fail": 0,
+      "skip": 1,
+      "error": 0,
+      "unique_probes": 8,
+      "probes": [
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "authority-revoked",
+          "mutation": [
+            "authority-revoked"
+          ],
+          "status": "blocked"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "authorization-expiry",
+          "mutation": [
+            "authorization-expiry"
+          ],
+          "status": "active"
+        },
+        {
+          "attempts": 0,
+          "authorization_calls": 1,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "denied",
+          "mutation": [],
+          "status": "blocked"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [
+            true
+          ],
+          "entry_authorized": [
+            true
+          ],
+          "marker_hex": "68616e646c657220656e7465726564",
+          "mode": "healthy",
+          "mutation": [],
+          "status": "done"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "authority-error",
+          "mutation": [
+            "authority-error"
+          ],
+          "status": "blocked"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "cancel",
+          "mutation": [
+            "cancel"
+          ],
+          "status": "cancelled"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "expiry",
+          "mutation": [
+            "expiry"
+          ],
+          "status": "active"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "token",
+          "mutation": [
+            "token"
+          ],
+          "status": "active"
+        }
+      ],
+      "child_exit": 0
+    },
+    "independent": {
+      "executed": 100,
+      "pass": 99,
+      "fail": 0,
+      "skip": 1,
+      "error": 0,
+      "unique_probes": 8,
+      "probes": [
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "authority-revoked",
+          "mutation": [
+            "authority-revoked"
+          ],
+          "status": "blocked"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "authorization-expiry",
+          "mutation": [
+            "authorization-expiry"
+          ],
+          "status": "active"
+        },
+        {
+          "attempts": 0,
+          "authorization_calls": 1,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "denied",
+          "mutation": [],
+          "status": "blocked"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [
+            true
+          ],
+          "entry_authorized": [
+            true
+          ],
+          "marker_hex": "68616e646c657220656e7465726564",
+          "mode": "healthy",
+          "mutation": [],
+          "status": "done"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "authority-error",
+          "mutation": [
+            "authority-error"
+          ],
+          "status": "blocked"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "cancel",
+          "mutation": [
+            "cancel"
+          ],
+          "status": "cancelled"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "expiry",
+          "mutation": [
+            "expiry"
+          ],
+          "status": "active"
+        },
+        {
+          "attempts": 1,
+          "authorization_calls": 2,
+          "entered_current": [],
+          "entry_authorized": [],
+          "marker_hex": null,
+          "mode": "token",
+          "mutation": [
+            "token"
+          ],
+          "status": "active"
+        }
+      ],
+      "child_exit": 0
+    }
+  },
+  "actual_outer_exit": {
+    "independent": {
+      "exit": 0,
+      "session_id": 72167,
+      "completion_chunk": "2115e5",
+      "tool": "exec_command then write_stdin"
+    },
+    "baseline": {
+      "exit": 1,
+      "chunk": "197a2d",
+      "provenance": "parent supplied actual observation, raw independently inspected"
+    },
+    "fixed": {
+      "exit": 0,
+      "chunk": "594313",
+      "provenance": "parent supplied actual observation, raw independently inspected"
+    }
+  },
+  "artifact_hashes": [
+    {
+      "path": "agent_runtime/core.py",
+      "sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8",
+      "before_sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8",
+      "after_sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8",
+      "status": "match"
+    },
+    {
+      "path": "tests/test_engine_pre_action_claim.py",
+      "sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5",
+      "before_sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5",
+      "after_sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5",
+      "status": "match"
+    },
+    {
+      "path": "tests/test_plan_review.py",
+      "sha256": "1296f4fb1783659b561657e3895735d1bafc218a475369a5fae86e3b91e4dda8",
+      "before_sha256": "1296f4fb1783659b561657e3895735d1bafc218a475369a5fae86e3b91e4dda8",
+      "after_sha256": "1296f4fb1783659b561657e3895735d1bafc218a475369a5fae86e3b91e4dda8",
+      "status": "match"
+    },
+    {
+      "path": "tests/test_task_runtime.py",
+      "sha256": "0d0f5146833530360e7f75317176ae43f960dbf7e3aa77f8923ab74098639c18",
+      "before_sha256": "0d0f5146833530360e7f75317176ae43f960dbf7e3aa77f8923ab74098639c18",
+      "after_sha256": "0d0f5146833530360e7f75317176ae43f960dbf7e3aa77f8923ab74098639c18",
+      "status": "match"
+    },
+    {
+      "path": "tests/test_crossfeature_runtime.py",
+      "sha256": "ff262d4818190157aaf98f5dc482351aa811a6a196ec55216190d7f2e6531e8d",
+      "before_sha256": "ff262d4818190157aaf98f5dc482351aa811a6a196ec55216190d7f2e6531e8d",
+      "after_sha256": "ff262d4818190157aaf98f5dc482351aa811a6a196ec55216190d7f2e6531e8d",
+      "status": "match"
+    },
+    {
+      "path": "tests/test_plan_review_independent.py",
+      "sha256": "552a83934c4ce2bb3337a7724c24eb0d979672244cdd9f9a618e899eef366395",
+      "before_sha256": "552a83934c4ce2bb3337a7724c24eb0d979672244cdd9f9a618e899eef366395",
+      "after_sha256": "552a83934c4ce2bb3337a7724c24eb0d979672244cdd9f9a618e899eef366395",
+      "status": "match"
+    },
+    {
+      "path": "tests/test_managed_supervisor.py",
+      "sha256": "bb5ac997ef838357eaef8e8efe53c948a6bcc8efd3545e4b9cf2b536c798e520",
+      "before_sha256": "bb5ac997ef838357eaef8e8efe53c948a6bcc8efd3545e4b9cf2b536c798e520",
+      "after_sha256": "bb5ac997ef838357eaef8e8efe53c948a6bcc8efd3545e4b9cf2b536c798e520",
+      "status": "match"
+    },
+    {
+      "path": ".github/workflows/portable-install.yml",
+      "sha256": "d78b26b9858d3ae647e529e24081a3a111fb37b47ca9af8f91280a4dc705c8d7",
+      "before_sha256": "d78b26b9858d3ae647e529e24081a3a111fb37b47ca9af8f91280a4dc705c8d7",
+      "after_sha256": "d78b26b9858d3ae647e529e24081a3a111fb37b47ca9af8f91280a4dc705c8d7",
+      "status": "match"
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+      "before_sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+      "after_sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+      "status": "match"
+    },
+    {
+      "path": "agent_doc/task/task_details/SYSTEM-99.md",
+      "sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5",
+      "before_sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5",
+      "after_sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5",
+      "status": "match"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+      "before_sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+      "after_sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+      "status": "match"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/plan.json",
+      "sha256": "c5401627443680533ab8c86b32630bc8045854babdf64b5ceb1cae779567c543",
+      "before_sha256": "c5401627443680533ab8c86b32630bc8045854babdf64b5ceb1cae779567c543",
+      "after_sha256": "c5401627443680533ab8c86b32630bc8045854babdf64b5ceb1cae779567c543",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/plan-v2.json",
+      "sha256": "078541ead240b14a8b5a1f5f24de3d67062e72eecd516050b82b5ed8d978ce86",
+      "before_sha256": "078541ead240b14a8b5a1f5f24de3d67062e72eecd516050b82b5ed8d978ce86",
+      "after_sha256": "078541ead240b14a8b5a1f5f24de3d67062e72eecd516050b82b5ed8d978ce86",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/plan-review.json",
+      "sha256": "ab4f04b382f9a71dd500b79487519c5889dfba8c28261f81315ce9c84bd57884",
+      "before_sha256": "ab4f04b382f9a71dd500b79487519c5889dfba8c28261f81315ce9c84bd57884",
+      "after_sha256": "ab4f04b382f9a71dd500b79487519c5889dfba8c28261f81315ce9c84bd57884",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/plan-review-v2.json",
+      "sha256": "9754b8d3a0e815fdc4c08763c835ef504dc4e5688927a31b7788d65d32b2a1f6",
+      "before_sha256": "9754b8d3a0e815fdc4c08763c835ef504dc4e5688927a31b7788d65d32b2a1f6",
+      "after_sha256": "9754b8d3a0e815fdc4c08763c835ef504dc4e5688927a31b7788d65d32b2a1f6",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/source-before.py",
+      "sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351",
+      "before_sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351",
+      "after_sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/source-candidate-v2.py",
+      "sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8",
+      "before_sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8",
+      "after_sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/tests-before.py",
+      "sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4",
+      "before_sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4",
+      "after_sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/tests-candidate-v2.py",
+      "sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5",
+      "before_sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5",
+      "after_sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/plan67-prefix.txt",
+      "sha256": "91cabdd817e6e2119fd916a203f4e8fe5de15a3b274c7b42f46b877508d7cc62",
+      "before_sha256": "91cabdd817e6e2119fd916a203f4e8fe5de15a3b274c7b42f46b877508d7cc62",
+      "after_sha256": "91cabdd817e6e2119fd916a203f4e8fe5de15a3b274c7b42f46b877508d7cc62",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/plan68-prefix-v2.txt",
+      "sha256": "afd38d467968d37a3e77858122519719f49fd09493181d5c97d4c7f30c3af5e7",
+      "before_sha256": "afd38d467968d37a3e77858122519719f49fd09493181d5c97d4c7f30c3af5e7",
+      "after_sha256": "afd38d467968d37a3e77858122519719f49fd09493181d5c97d4c7f30c3af5e7",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/capture.py",
+      "sha256": "5589f4cddee4bd9d0aa3d5dc5b593d06e1a80b7b1bef0bd7f3ff8cf59e5e6281",
+      "before_sha256": "5589f4cddee4bd9d0aa3d5dc5b593d06e1a80b7b1bef0bd7f3ff8cf59e5e6281",
+      "after_sha256": "5589f4cddee4bd9d0aa3d5dc5b593d06e1a80b7b1bef0bd7f3ff8cf59e5e6281",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/baseline.json",
+      "sha256": "86944f5da76283c41df4f0dd4508b0b3c2b22fc33015f707230172e8ccbd449a",
+      "before_sha256": "86944f5da76283c41df4f0dd4508b0b3c2b22fc33015f707230172e8ccbd449a",
+      "after_sha256": "86944f5da76283c41df4f0dd4508b0b3c2b22fc33015f707230172e8ccbd449a",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/baseline.stdout",
+      "sha256": "b7fb76932316d2a20363f0a61a271ca96db20d5448347f1332736b3ded5ac9f3",
+      "before_sha256": "b7fb76932316d2a20363f0a61a271ca96db20d5448347f1332736b3ded5ac9f3",
+      "after_sha256": "b7fb76932316d2a20363f0a61a271ca96db20d5448347f1332736b3ded5ac9f3",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/baseline.stderr",
+      "sha256": "992b4259a1149425c5b9d52cae225146c4a635cd34a57dd584cfff767d0e57ac",
+      "before_sha256": "992b4259a1149425c5b9d52cae225146c4a635cd34a57dd584cfff767d0e57ac",
+      "after_sha256": "992b4259a1149425c5b9d52cae225146c4a635cd34a57dd584cfff767d0e57ac",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/baseline-observation.json",
+      "sha256": "edd7cfd7256da25b400878ba7607a44c8146e2b7d261ae9516acdba8c8b12856",
+      "before_sha256": "edd7cfd7256da25b400878ba7607a44c8146e2b7d261ae9516acdba8c8b12856",
+      "after_sha256": "edd7cfd7256da25b400878ba7607a44c8146e2b7d261ae9516acdba8c8b12856",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/fixed.json",
+      "sha256": "daf4c70d1d46baa78998840e9006bafa11b7de20632ae4320089c8672182d1f6",
+      "before_sha256": "daf4c70d1d46baa78998840e9006bafa11b7de20632ae4320089c8672182d1f6",
+      "after_sha256": "daf4c70d1d46baa78998840e9006bafa11b7de20632ae4320089c8672182d1f6",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/fixed.stdout",
+      "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3",
+      "before_sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3",
+      "after_sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/fixed.stderr",
+      "sha256": "82b41f4cdcf77d219273a9e14327a7a454b82b6797cf304c42ba7bc2aa3e7cc1",
+      "before_sha256": "82b41f4cdcf77d219273a9e14327a7a454b82b6797cf304c42ba7bc2aa3e7cc1",
+      "after_sha256": "82b41f4cdcf77d219273a9e14327a7a454b82b6797cf304c42ba7bc2aa3e7cc1",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/fixed-observation.json",
+      "sha256": "fef79ccdcd1cb767d700dc960ca8f79fef51153c46644a8e65f037464d40f680",
+      "before_sha256": "fef79ccdcd1cb767d700dc960ca8f79fef51153c46644a8e65f037464d40f680",
+      "after_sha256": "fef79ccdcd1cb767d700dc960ca8f79fef51153c46644a8e65f037464d40f680",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/task-before-progress.md",
+      "sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5",
+      "before_sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5",
+      "after_sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5",
+      "status": "match"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/independent.json",
+      "sha256": "682d8e88e1f8f4a247cac5e8f9b89605abfe865bfb7402b577ab2f3079ed3fb7"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/independent.stdout",
+      "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3"
+    },
+    {
+      "path": ".agent-runs/engine-authority-2102/independent.stderr",
+      "sha256": "a418491b5856596a4a8464697e1e067679bcb11a5355f510e33140490062980e"
+    },
+    {
+      "path": "agent_runtime/plan_review.py",
+      "sha256": "3376c026e526ca7175739104ac1f3cd4167cdc27968a7b9ed5f884db6d6adcb7"
+    }
+  ],
+  "findings": [
+    {
+      "blocking": true,
+      "target": "agent_runtime/core.py Engine.tick postclaim pre-action sequence at _review_plan -> _authorized -> context.current -> handler.run",
+      "feedback": "Moving _authorized after final pre-action _review_plan moves a mutable trusted callback outside the existing reviewed-input freshness gate. _authorized passes original plan and task. Returning True after changing task/plan or bound files permits handler entry; post-action review is too late to prevent effects. Original source caught the mutation in the following pre-action review. This is a concrete source-level regression inference, not an executed new case or an atomic external-sink objection.",
+      "requested_change": "Version the plan/candidate and restore pre-handler freshness after authorization without an unbounded callback loop. A candidate approach is to retain fresh authenticated approval material and run a callback-free validation of exact plan/receipt binding plus current_inputs after authorize and before final current. Bind any such helper design to exact source and negative cases, rather than assume a second arbitrary verifier callback closes all callback races. Preserve normal policy denial/error handling and frozen old evidence.",
+      "acceptance_check": "Within newly explicit authorized budgets/deadline, preserve current raw100 evidence and create targeted old/v2 negative observations for final-authorize mutation of action/unknown adapter field and bound TASK/adopted-advice/evidence; verify no handler/marker entry with repair, and retain post-review False/Exception cases, final-current expiry/cancel/token controls and callback-count semantics. Independent review/revalidation required. No extra test is authorized or run by this reviewer."
+    }
+  ],
+  "limitations": [
+    "V2 is not accepted for publication: deterministic callback-order freshness regression remains unresolved despite existing100 cases passing. Raw empirical data retain their limited observed meaning only.",
+    "Usable only for frozen bounded synthetic host policy/clock plus real local SQLite/file/process cases; finite tests do not guarantee bug freedom.",
+    "No atomic external sink admission/fence, no authority freshness after last policy result or during passive current I/O, no callback timeout/preemption or guarantee against later revocation.",
+    "Moving policy check changes callback order and may allow a pre-action plan read after write authority became false; API already separates plan verification from action authority. Healthy two-call count preserves count only, not timing or callback-observed ordering semantics.",
+    "Native five-platform jobs each8 target tests0skip/probes and whole-job state require later actual publication/readback; none claimed passed here.",
+    "No authenticated ReviewSession migration, installed host adapter, tmux/server deployment, model quality, provider usage or fee conclusion.",
+    "Old Plan67 failures/REVISE/exhausted budgets/deadline and11-semaphore cleanup unknown remain unchanged historical evidence; this acceptance neither refunds nor recertifies them.",
+    "Prior lexical search385scanned/partial/26errors/8unchecked hits is not exhaustive absence proof or empirical acceptance. SYSTEM-99 remains open."
+  ],
+  "resources": {
+    "deadline": "2026-10-31T14:00:00Z",
+    "manual_result_review_consumption": "1/2; same review corrected after new evidence, not a new empirical invocation",
+    "manual_independent_suite_consumption": "1/1",
+    "automatic_retries": 0,
+    "source_or_task_or_guide_writes": false,
+    "only_reviewer_write": "Initial result-review.json plus parent-authorized same-review static correction result-review-v2.json; overwritten initial bytes restored exactly and duplicate archived as result-review-before-regression.json",
+    "runner_generated": [
+      ".agent-runs/engine-authority-2102/independent.json",
+      ".agent-runs/engine-authority-2102/independent.stdout",
+      ".agent-runs/engine-authority-2102/independent.stderr"
+    ]
+  },
+  "read_scope": "Complete selected test/capture, v1/v2 plans and dual reviews; relevant full changed Engine path, Context/_authorized, fixture approval and process assertion paths; complete all raw test outputs. Unchanged adjacent modules and large historical TASK/Progress reviewed selectively and hashes checked, not claimed exhaustive line-by-line historical review. After initial review, additionally read check_plan_review/current_inputs/plan_sha256 and pre-existing mutation/post-action tests to verify newly raised blocking callback-order regression.",
+  "acceptance_status": "blocked-for-publication",
+  "superseded_review": {
+    "sha256": "29e2b33e03c655c32c0f6ec5b84ca160240a04064b6212702527e6612cbd21f7",
+    "record": {
+      "schema_version": "manual-independent-result-review/v1",
+      "project_root": "/workspace/scratch/95d615402a52/agent-run-2205",
+      "task": "SYSTEM-99",
+      "scope": "ENGINE-PRE-ACTION-AUTHORITY-01",
+      "decision": "usable-with-scope",
+      "summary": "Exact v2 closes the tested post-review action-authority window. Negative baseline and fixed/independent raw observations match frozen oracles. Native platform and whole-system acceptance remain pending.",
+      "input": {
+        "path": ".agent-runs/engine-authority-2102/result-inputs.json",
+        "sha256": "10778fca75e80cc9ceb538a2951181274d8751c807d86f034edd573e0f85deac"
+      },
+      "selected_plan": {
+        "path": ".agent-runs/engine-authority-2102/plan-v2.json",
+        "sha256": "078541ead240b14a8b5a1f5f24de3d67062e72eecd516050b82b5ed8d978ce86"
+      },
+      "verifier": {
+        "actor": "/root/engine_authority_result_2118",
+        "source": "actual delegated fresh review context via host collaboration",
+        "independent": true,
+        "run_id": "engine-authority-result-2118",
+        "method": "Read frozen v1/v2 plans and both complete reviews, exact source/test diff and relevant Engine/Context/fixture/process paths; read all baseline8 and fixed100 and independent100 raw method rows and eight probes each; independently invoke guarded capture exactly once and observe actual outer process exit; rehash all32 refs before and after. This manual record is not an authenticated repository ReviewSession/runtime receipt."
+      },
+      "checks": {
+        "implementation": {
+          "verdict": "pass",
+          "reason": "Installed source/test exactly equal selected v2 bytes. Initial claim _authorized remains inside selection; early postclaim current remains; existing second _authorized moves from before pre-action review to after it, then final current, then handler. _authorized requires literal True and catches normal Exception as False. False/exception after review therefore yields blocked before handler. Persisted blocked adapter_result is not auto-reset like permission nodes, so denied-next-wake assertions prove no replay at attempt1. No schema/cache/refund/lease extension or assertion weakening. Callback order intentionally changes; v1 three-call design was superseded and unexecuted. Initial denied claim cannot reach the postclaim pre-action review, although earlier ordinary plan reads still occur.",
+          "evidence": [
+            {
+              "path": "agent_runtime/core.py",
+              "sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8"
+            },
+            {
+              "path": "tests/test_engine_pre_action_claim.py",
+              "sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5"
+            },
+            {
+              "path": "tests/test_plan_review.py",
+              "sha256": "1296f4fb1783659b561657e3895735d1bafc218a475369a5fae86e3b91e4dda8"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/source-before.py",
+              "sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/source-candidate-v2.py",
+              "sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/tests-before.py",
+              "sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/tests-candidate-v2.py",
+              "sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5"
+            }
+          ]
+        },
+        "reference_boundary": {
+          "verdict": "pass",
+          "reason": "Independent oracle is observable handler-entry current, host grant/error state and real marker bytes, rather than same implementation branch. Baseline current=true while policy=false and marker actually written establishes distinct authority failure despite valid claim/review. Fixed and independent refuse both post-review False and normal Exception; six original expiry/cancel/token/authorization-expiry/healthy/initial-denial cases remain pass. Exact equality at lease expiry uses > clock. Test mutations wait for persisted doing and callbacks perform only SQLite observation inside claim transaction. Shared trusted tmp root resolved before first write.",
+          "evidence": [
+            {
+              "path": "tests/test_engine_pre_action_claim.py",
+              "sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/baseline.stdout",
+              "sha256": "b7fb76932316d2a20363f0a61a271ca96db20d5448347f1332736b3ded5ac9f3"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/baseline.stderr",
+              "sha256": "992b4259a1149425c5b9d52cae225146c4a635cd34a57dd584cfff767d0e57ac"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/fixed.stdout",
+              "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/fixed.stderr",
+              "sha256": "82b41f4cdcf77d219273a9e14327a7a454b82b6797cf304c42ba7bc2aa3e7cc1"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/independent.stdout",
+              "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/independent.stderr",
+              "sha256": "a418491b5856596a4a8464697e1e067679bcb11a5355f510e33140490062980e"
+            }
+          ]
+        },
+        "data_integrity": {
+          "verdict": "pass",
+          "reason": "All32 frozen references matched before and after independent execution; result-inputs SHA matches parent assignment. Plan68 prefix equals current stable detail bytes before Progress, and entire prior Progress suffix remains byte-identical. Exactly8 unique probes per phase, no duplicate/missing modes. Baseline actual8 rows=6pass2newFAIL0errors0skip; fixed and independent actual100 unique method rows=99pass1 original real-tmux opt-in skip0errors0fail, new8 allpass0skip. Both real process methods ok. Captured raw output hashes agree with metadata. Independent stdout is byte-identical to fixed stdout; stderr differs only naturally as complete run output, not reused metadata.",
+          "evidence": [
+            {
+              "path": ".agent-runs/engine-authority-2102/result-inputs.json",
+              "sha256": "10778fca75e80cc9ceb538a2951181274d8751c807d86f034edd573e0f85deac"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/baseline.json",
+              "sha256": "86944f5da76283c41df4f0dd4508b0b3c2b22fc33015f707230172e8ccbd449a"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/fixed.json",
+              "sha256": "daf4c70d1d46baa78998840e9006bafa11b7de20632ae4320089c8672182d1f6"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/independent.json",
+              "sha256": "682d8e88e1f8f4a247cac5e8f9b89605abfe865bfb7402b577ab2f3079ed3fb7"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/plan68-prefix-v2.txt",
+              "sha256": "afd38d467968d37a3e77858122519719f49fd09493181d5c97d4c7f30c3af5e7"
+            },
+            {
+              "path": "agent_doc/task/task_details/SYSTEM-99.md",
+              "sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5"
+            }
+          ]
+        },
+        "numerical_sanity": {
+          "verdict": "pass",
+          "reason": "These are integer counts/boolean state/byte oracles, not floating-point estimates. Raw rows sum exactly to8 or100 denominators. Healthy observed policy calls2 both baseline and repaired phases, denied initial calls1/attempt0; new authority cases calls2/attempt1, blocked and empty entries/no marker after repair. Marker hex decodes to exact handler entered only when entry is observed. No averages, NaN/Inf, unsupported tolerances or hidden failing samples. The passed assertions after initial probe cover no next-wake replay, not an invented second printed observation.",
+          "evidence": [
+            {
+              "path": "tests/test_engine_pre_action_claim.py",
+              "sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/baseline.stdout",
+              "sha256": "b7fb76932316d2a20363f0a61a271ca96db20d5448347f1332736b3ded5ac9f3"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/fixed.stdout",
+              "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/independent.stdout",
+              "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/independent.stderr",
+              "sha256": "a418491b5856596a4a8464697e1e067679bcb11a5355f510e33140490062980e"
+            }
+          ]
+        },
+        "measurement_validity": {
+          "verdict": "pass",
+          "reason": "Claim is finite CPU reliability under synthetic policy/clock with real SQLite/file/process I/O. Same frozen8 case inputs, exact candidate and standard unittest command provide controlled before/after behavior. Healthy callback count2 is an actual observed count control, not speed/latency/token/provider-cost evidence. No performance or fee conclusion is accepted; wall times are diagnostic only. Real-tmux skip is explicitly excluded from completed host coverage, while two actual process methods are ok.",
+          "evidence": [
+            {
+              "path": ".agent-runs/engine-authority-2102/plan-v2.json",
+              "sha256": "078541ead240b14a8b5a1f5f24de3d67062e72eecd516050b82b5ed8d978ce86"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/capture.py",
+              "sha256": "5589f4cddee4bd9d0aa3d5dc5b593d06e1a80b7b1bef0bd7f3ff8cf59e5e6281"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/baseline.json",
+              "sha256": "86944f5da76283c41df4f0dd4508b0b3c2b22fc33015f707230172e8ccbd449a"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/fixed.json",
+              "sha256": "daf4c70d1d46baa78998840e9006bafa11b7de20632ae4320089c8672182d1f6"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/independent.json",
+              "sha256": "682d8e88e1f8f4a247cac5e8f9b89605abfe865bfb7402b577ab2f3079ed3fb7"
+            },
+            {
+              "path": "tests/test_task_runtime.py",
+              "sha256": "0d0f5146833530360e7f75317176ae43f960dbf7e3aa77f8923ab74098639c18"
+            },
+            {
+              "path": "tests/test_managed_supervisor.py",
+              "sha256": "bb5ac997ef838357eaef8e8efe53c948a6bcc8efd3545e4b9cf2b536c798e520"
+            }
+          ]
+        },
+        "reproducibility": {
+          "verdict": "pass",
+          "reason": "Reviewer invoked exactly once python -B .agent-runs/engine-authority-2102/capture.py independent. Guarded parent launches standard -B -m unittest for exact six modules,180s child bound,zero automatic retries. Tool observed real outer session72167 complete exit0/chunk2115e5; child metadata exit0 and raw100 rows/99pass1knownskip agree. New8 pass0skip with8 unique probes; both multiprocess claim-exclusion and killed-worker persisted-lease recovery are ok. No additional test or auto retry was run by reviewer.32refs unchanged afterward.",
+          "evidence": [
+            {
+              "path": ".agent-runs/engine-authority-2102/capture.py",
+              "sha256": "5589f4cddee4bd9d0aa3d5dc5b593d06e1a80b7b1bef0bd7f3ff8cf59e5e6281"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/independent.json",
+              "sha256": "682d8e88e1f8f4a247cac5e8f9b89605abfe865bfb7402b577ab2f3079ed3fb7"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/independent.stdout",
+              "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3"
+            },
+            {
+              "path": ".agent-runs/engine-authority-2102/independent.stderr",
+              "sha256": "a418491b5856596a4a8464697e1e067679bcb11a5355f510e33140490062980e"
+            }
+          ]
+        }
+      },
+      "observations": {
+        "baseline": {
+          "executed": 8,
+          "pass": 6,
+          "fail": 2,
+          "skip": 0,
+          "error": 0,
+          "unique_probes": 8,
+          "probes": [
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [
+                true
+              ],
+              "entry_authorized": [
+                false
+              ],
+              "marker_hex": "68616e646c657220656e7465726564",
+              "mode": "authority-revoked",
+              "mutation": [
+                "authority-revoked"
+              ],
+              "status": "done"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "authorization-expiry",
+              "mutation": [
+                "authorization-expiry"
+              ],
+              "status": "active"
+            },
+            {
+              "attempts": 0,
+              "authorization_calls": 1,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "denied",
+              "mutation": [],
+              "status": "blocked"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [
+                true
+              ],
+              "entry_authorized": [
+                true
+              ],
+              "marker_hex": "68616e646c657220656e7465726564",
+              "mode": "healthy",
+              "mutation": [],
+              "status": "done"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [
+                true
+              ],
+              "entry_authorized": [
+                false
+              ],
+              "marker_hex": "68616e646c657220656e7465726564",
+              "mode": "authority-error",
+              "mutation": [
+                "authority-error"
+              ],
+              "status": "done"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "cancel",
+              "mutation": [
+                "cancel"
+              ],
+              "status": "cancelled"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "expiry",
+              "mutation": [
+                "expiry"
+              ],
+              "status": "active"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "token",
+              "mutation": [
+                "token"
+              ],
+              "status": "active"
+            }
+          ],
+          "child_exit": 1
+        },
+        "fixed": {
+          "executed": 100,
+          "pass": 99,
+          "fail": 0,
+          "skip": 1,
+          "error": 0,
+          "unique_probes": 8,
+          "probes": [
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "authority-revoked",
+              "mutation": [
+                "authority-revoked"
+              ],
+              "status": "blocked"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "authorization-expiry",
+              "mutation": [
+                "authorization-expiry"
+              ],
+              "status": "active"
+            },
+            {
+              "attempts": 0,
+              "authorization_calls": 1,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "denied",
+              "mutation": [],
+              "status": "blocked"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [
+                true
+              ],
+              "entry_authorized": [
+                true
+              ],
+              "marker_hex": "68616e646c657220656e7465726564",
+              "mode": "healthy",
+              "mutation": [],
+              "status": "done"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "authority-error",
+              "mutation": [
+                "authority-error"
+              ],
+              "status": "blocked"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "cancel",
+              "mutation": [
+                "cancel"
+              ],
+              "status": "cancelled"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "expiry",
+              "mutation": [
+                "expiry"
+              ],
+              "status": "active"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "token",
+              "mutation": [
+                "token"
+              ],
+              "status": "active"
+            }
+          ],
+          "child_exit": 0
+        },
+        "independent": {
+          "executed": 100,
+          "pass": 99,
+          "fail": 0,
+          "skip": 1,
+          "error": 0,
+          "unique_probes": 8,
+          "probes": [
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "authority-revoked",
+              "mutation": [
+                "authority-revoked"
+              ],
+              "status": "blocked"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "authorization-expiry",
+              "mutation": [
+                "authorization-expiry"
+              ],
+              "status": "active"
+            },
+            {
+              "attempts": 0,
+              "authorization_calls": 1,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "denied",
+              "mutation": [],
+              "status": "blocked"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [
+                true
+              ],
+              "entry_authorized": [
+                true
+              ],
+              "marker_hex": "68616e646c657220656e7465726564",
+              "mode": "healthy",
+              "mutation": [],
+              "status": "done"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "authority-error",
+              "mutation": [
+                "authority-error"
+              ],
+              "status": "blocked"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "cancel",
+              "mutation": [
+                "cancel"
+              ],
+              "status": "cancelled"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "expiry",
+              "mutation": [
+                "expiry"
+              ],
+              "status": "active"
+            },
+            {
+              "attempts": 1,
+              "authorization_calls": 2,
+              "entered_current": [],
+              "entry_authorized": [],
+              "marker_hex": null,
+              "mode": "token",
+              "mutation": [
+                "token"
+              ],
+              "status": "active"
+            }
+          ],
+          "child_exit": 0
+        }
+      },
+      "actual_outer_exit": {
+        "independent": {
+          "exit": 0,
+          "session_id": 72167,
+          "completion_chunk": "2115e5",
+          "tool": "exec_command then write_stdin"
+        },
+        "baseline": {
+          "exit": 1,
+          "chunk": "197a2d",
+          "provenance": "parent supplied actual observation, raw independently inspected"
+        },
+        "fixed": {
+          "exit": 0,
+          "chunk": "594313",
+          "provenance": "parent supplied actual observation, raw independently inspected"
+        }
+      },
+      "artifact_hashes": [
+        {
+          "path": "agent_runtime/core.py",
+          "sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8",
+          "before_sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8",
+          "after_sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8",
+          "status": "match"
+        },
+        {
+          "path": "tests/test_engine_pre_action_claim.py",
+          "sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5",
+          "before_sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5",
+          "after_sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5",
+          "status": "match"
+        },
+        {
+          "path": "tests/test_plan_review.py",
+          "sha256": "1296f4fb1783659b561657e3895735d1bafc218a475369a5fae86e3b91e4dda8",
+          "before_sha256": "1296f4fb1783659b561657e3895735d1bafc218a475369a5fae86e3b91e4dda8",
+          "after_sha256": "1296f4fb1783659b561657e3895735d1bafc218a475369a5fae86e3b91e4dda8",
+          "status": "match"
+        },
+        {
+          "path": "tests/test_task_runtime.py",
+          "sha256": "0d0f5146833530360e7f75317176ae43f960dbf7e3aa77f8923ab74098639c18",
+          "before_sha256": "0d0f5146833530360e7f75317176ae43f960dbf7e3aa77f8923ab74098639c18",
+          "after_sha256": "0d0f5146833530360e7f75317176ae43f960dbf7e3aa77f8923ab74098639c18",
+          "status": "match"
+        },
+        {
+          "path": "tests/test_crossfeature_runtime.py",
+          "sha256": "ff262d4818190157aaf98f5dc482351aa811a6a196ec55216190d7f2e6531e8d",
+          "before_sha256": "ff262d4818190157aaf98f5dc482351aa811a6a196ec55216190d7f2e6531e8d",
+          "after_sha256": "ff262d4818190157aaf98f5dc482351aa811a6a196ec55216190d7f2e6531e8d",
+          "status": "match"
+        },
+        {
+          "path": "tests/test_plan_review_independent.py",
+          "sha256": "552a83934c4ce2bb3337a7724c24eb0d979672244cdd9f9a618e899eef366395",
+          "before_sha256": "552a83934c4ce2bb3337a7724c24eb0d979672244cdd9f9a618e899eef366395",
+          "after_sha256": "552a83934c4ce2bb3337a7724c24eb0d979672244cdd9f9a618e899eef366395",
+          "status": "match"
+        },
+        {
+          "path": "tests/test_managed_supervisor.py",
+          "sha256": "bb5ac997ef838357eaef8e8efe53c948a6bcc8efd3545e4b9cf2b536c798e520",
+          "before_sha256": "bb5ac997ef838357eaef8e8efe53c948a6bcc8efd3545e4b9cf2b536c798e520",
+          "after_sha256": "bb5ac997ef838357eaef8e8efe53c948a6bcc8efd3545e4b9cf2b536c798e520",
+          "status": "match"
+        },
+        {
+          "path": ".github/workflows/portable-install.yml",
+          "sha256": "d78b26b9858d3ae647e529e24081a3a111fb37b47ca9af8f91280a4dc705c8d7",
+          "before_sha256": "d78b26b9858d3ae647e529e24081a3a111fb37b47ca9af8f91280a4dc705c8d7",
+          "after_sha256": "d78b26b9858d3ae647e529e24081a3a111fb37b47ca9af8f91280a4dc705c8d7",
+          "status": "match"
+        },
+        {
+          "path": "agent_doc/task/TASK.md",
+          "sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+          "before_sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+          "after_sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+          "status": "match"
+        },
+        {
+          "path": "agent_doc/task/task_details/SYSTEM-99.md",
+          "sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5",
+          "before_sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5",
+          "after_sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5",
+          "status": "match"
+        },
+        {
+          "path": "AGENTS.md",
+          "sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+          "before_sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+          "after_sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+          "status": "match"
+        },
+        {
+          "path": "agent_doc/guide/GUIDE.md",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/plan.json",
+          "sha256": "c5401627443680533ab8c86b32630bc8045854babdf64b5ceb1cae779567c543",
+          "before_sha256": "c5401627443680533ab8c86b32630bc8045854babdf64b5ceb1cae779567c543",
+          "after_sha256": "c5401627443680533ab8c86b32630bc8045854babdf64b5ceb1cae779567c543",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/plan-v2.json",
+          "sha256": "078541ead240b14a8b5a1f5f24de3d67062e72eecd516050b82b5ed8d978ce86",
+          "before_sha256": "078541ead240b14a8b5a1f5f24de3d67062e72eecd516050b82b5ed8d978ce86",
+          "after_sha256": "078541ead240b14a8b5a1f5f24de3d67062e72eecd516050b82b5ed8d978ce86",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/plan-review.json",
+          "sha256": "ab4f04b382f9a71dd500b79487519c5889dfba8c28261f81315ce9c84bd57884",
+          "before_sha256": "ab4f04b382f9a71dd500b79487519c5889dfba8c28261f81315ce9c84bd57884",
+          "after_sha256": "ab4f04b382f9a71dd500b79487519c5889dfba8c28261f81315ce9c84bd57884",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/plan-review-v2.json",
+          "sha256": "9754b8d3a0e815fdc4c08763c835ef504dc4e5688927a31b7788d65d32b2a1f6",
+          "before_sha256": "9754b8d3a0e815fdc4c08763c835ef504dc4e5688927a31b7788d65d32b2a1f6",
+          "after_sha256": "9754b8d3a0e815fdc4c08763c835ef504dc4e5688927a31b7788d65d32b2a1f6",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/source-before.py",
+          "sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351",
+          "before_sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351",
+          "after_sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/source-candidate-v2.py",
+          "sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8",
+          "before_sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8",
+          "after_sha256": "e60216f8509fd8b01995e06f042e0aa7c635325ded53fefd90c6db0cca9d08e8",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/tests-before.py",
+          "sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4",
+          "before_sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4",
+          "after_sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/tests-candidate-v2.py",
+          "sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5",
+          "before_sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5",
+          "after_sha256": "75bacdfc8f7663b05d38b1f4f29dd6967afdbde816571d72d1dc71b1ad12b8b5",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/plan67-prefix.txt",
+          "sha256": "91cabdd817e6e2119fd916a203f4e8fe5de15a3b274c7b42f46b877508d7cc62",
+          "before_sha256": "91cabdd817e6e2119fd916a203f4e8fe5de15a3b274c7b42f46b877508d7cc62",
+          "after_sha256": "91cabdd817e6e2119fd916a203f4e8fe5de15a3b274c7b42f46b877508d7cc62",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/plan68-prefix-v2.txt",
+          "sha256": "afd38d467968d37a3e77858122519719f49fd09493181d5c97d4c7f30c3af5e7",
+          "before_sha256": "afd38d467968d37a3e77858122519719f49fd09493181d5c97d4c7f30c3af5e7",
+          "after_sha256": "afd38d467968d37a3e77858122519719f49fd09493181d5c97d4c7f30c3af5e7",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/capture.py",
+          "sha256": "5589f4cddee4bd9d0aa3d5dc5b593d06e1a80b7b1bef0bd7f3ff8cf59e5e6281",
+          "before_sha256": "5589f4cddee4bd9d0aa3d5dc5b593d06e1a80b7b1bef0bd7f3ff8cf59e5e6281",
+          "after_sha256": "5589f4cddee4bd9d0aa3d5dc5b593d06e1a80b7b1bef0bd7f3ff8cf59e5e6281",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/baseline.json",
+          "sha256": "86944f5da76283c41df4f0dd4508b0b3c2b22fc33015f707230172e8ccbd449a",
+          "before_sha256": "86944f5da76283c41df4f0dd4508b0b3c2b22fc33015f707230172e8ccbd449a",
+          "after_sha256": "86944f5da76283c41df4f0dd4508b0b3c2b22fc33015f707230172e8ccbd449a",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/baseline.stdout",
+          "sha256": "b7fb76932316d2a20363f0a61a271ca96db20d5448347f1332736b3ded5ac9f3",
+          "before_sha256": "b7fb76932316d2a20363f0a61a271ca96db20d5448347f1332736b3ded5ac9f3",
+          "after_sha256": "b7fb76932316d2a20363f0a61a271ca96db20d5448347f1332736b3ded5ac9f3",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/baseline.stderr",
+          "sha256": "992b4259a1149425c5b9d52cae225146c4a635cd34a57dd584cfff767d0e57ac",
+          "before_sha256": "992b4259a1149425c5b9d52cae225146c4a635cd34a57dd584cfff767d0e57ac",
+          "after_sha256": "992b4259a1149425c5b9d52cae225146c4a635cd34a57dd584cfff767d0e57ac",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/baseline-observation.json",
+          "sha256": "edd7cfd7256da25b400878ba7607a44c8146e2b7d261ae9516acdba8c8b12856",
+          "before_sha256": "edd7cfd7256da25b400878ba7607a44c8146e2b7d261ae9516acdba8c8b12856",
+          "after_sha256": "edd7cfd7256da25b400878ba7607a44c8146e2b7d261ae9516acdba8c8b12856",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/fixed.json",
+          "sha256": "daf4c70d1d46baa78998840e9006bafa11b7de20632ae4320089c8672182d1f6",
+          "before_sha256": "daf4c70d1d46baa78998840e9006bafa11b7de20632ae4320089c8672182d1f6",
+          "after_sha256": "daf4c70d1d46baa78998840e9006bafa11b7de20632ae4320089c8672182d1f6",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/fixed.stdout",
+          "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3",
+          "before_sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3",
+          "after_sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/fixed.stderr",
+          "sha256": "82b41f4cdcf77d219273a9e14327a7a454b82b6797cf304c42ba7bc2aa3e7cc1",
+          "before_sha256": "82b41f4cdcf77d219273a9e14327a7a454b82b6797cf304c42ba7bc2aa3e7cc1",
+          "after_sha256": "82b41f4cdcf77d219273a9e14327a7a454b82b6797cf304c42ba7bc2aa3e7cc1",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/fixed-observation.json",
+          "sha256": "fef79ccdcd1cb767d700dc960ca8f79fef51153c46644a8e65f037464d40f680",
+          "before_sha256": "fef79ccdcd1cb767d700dc960ca8f79fef51153c46644a8e65f037464d40f680",
+          "after_sha256": "fef79ccdcd1cb767d700dc960ca8f79fef51153c46644a8e65f037464d40f680",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/task-before-progress.md",
+          "sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5",
+          "before_sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5",
+          "after_sha256": "ad69a280f1593026c9c3def394cd1db79df56a4ba256ec1714f179a4ce8921f5",
+          "status": "match"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/independent.json",
+          "sha256": "682d8e88e1f8f4a247cac5e8f9b89605abfe865bfb7402b577ab2f3079ed3fb7"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/independent.stdout",
+          "sha256": "811bdb625abbc6c40d88c9cbe9a60a582bd0538c22b93dea42edcb3fcc0c0db3"
+        },
+        {
+          "path": ".agent-runs/engine-authority-2102/independent.stderr",
+          "sha256": "a418491b5856596a4a8464697e1e067679bcb11a5355f510e33140490062980e"
+        }
+      ],
+      "findings": [],
+      "limitations": [
+        "Usable only for frozen bounded synthetic host policy/clock plus real local SQLite/file/process cases; finite tests do not guarantee bug freedom.",
+        "No atomic external sink admission/fence, no authority freshness after last policy result or during passive current I/O, no callback timeout/preemption or guarantee against later revocation.",
+        "Moving policy check changes callback order and may allow a pre-action plan read after write authority became false; API already separates plan verification from action authority. Healthy two-call count preserves count only, not timing or callback-observed ordering semantics.",
+        "Native five-platform jobs each8 target tests0skip/probes and whole-job state require later actual publication/readback; none claimed passed here.",
+        "No authenticated ReviewSession migration, installed host adapter, tmux/server deployment, model quality, provider usage or fee conclusion.",
+        "Old Plan67 failures/REVISE/exhausted budgets/deadline and11-semaphore cleanup unknown remain unchanged historical evidence; this acceptance neither refunds nor recertifies them.",
+        "Prior lexical search385scanned/partial/26errors/8unchecked hits is not exhaustive absence proof or empirical acceptance. SYSTEM-99 remains open."
+      ],
+      "resources": {
+        "deadline": "2026-10-31T14:00:00Z",
+        "manual_result_review_consumption": "1/2",
+        "manual_independent_suite_consumption": "1/1",
+        "automatic_retries": 0,
+        "source_or_task_or_guide_writes": false,
+        "only_reviewer_write": ".agent-runs/engine-authority-2102/result-review.json",
+        "runner_generated": [
+          ".agent-runs/engine-authority-2102/independent.json",
+          ".agent-runs/engine-authority-2102/independent.stdout",
+          ".agent-runs/engine-authority-2102/independent.stderr"
+        ]
+      },
+      "read_scope": "Complete selected test/capture, v1/v2 plans and dual reviews; relevant full changed Engine path, Context/_authorized, fixture approval and process assertion paths; complete all raw test outputs. Unchanged adjacent modules and large historical TASK/Progress reviewed selectively and hashes checked, not claimed exhaustive line-by-line historical review."
+    },
+    "reason": "Parent supplied a previously missed concrete source-level regression; independently verified in core and check_plan_review. Prior acceptance is withdrawn, not erased. No additional suite was run.",
+    "preserved_original_paths": [
+      ".agent-runs/engine-authority-2102/result-review.json",
+      ".agent-runs/engine-authority-2102/result-review-before-regression.json"
+    ]
+  },
+  "correction": {
+    "previous_decision": "usable-with-scope",
+    "current_decision": "revise",
+    "basis": "Independent static review in response to parent concrete source-path objection",
+    "additional_tests_executed": false,
+    "raw_results_preserved": true,
+    "scope": "Result remains valid evidence for exact observed cases; broader safe-repair/publication acceptance withdrawn. Native five-platform gate stays pending."
+  }
+}

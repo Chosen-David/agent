@@ -1,0 +1,127 @@
+"""Real Engine/SQLite boundary checks with synthetic host policy and clocks."""
+import json
+import sqlite3
+import unittest
+
+from agent_runtime.core import ArtifactHandler, Engine, Store
+from tests import test_plan_review as review_fixtures
+
+
+class PreActionClaimTests(unittest.TestCase):
+    def boundary(self, mode):
+        fixture = review_fixtures.PlanReviewTests()
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        fixture.root = fixture.root.resolve()
+        fixture.approve()
+        store = Store(fixture.root / 'claim.sqlite')
+        store.create(fixture.plan, project_root=fixture.root)
+        entered, invalidated = [], []
+        marker = fixture.root / 'handler-started.txt'
+
+        class Handler(ArtifactHandler):
+            def run(self, task, context):
+                entered.append(context.current())
+                marker.write_bytes(b'handler entered')
+                return super().run(task, context)
+
+        handler = Handler(fixture.root)
+
+        def mutate(where):
+            applicable = ((where == 'review' and mode in ('expiry', 'cancel', 'token'))
+                          or (where == 'authorize' and mode == 'authorization-expiry'))
+            if invalidated or not applicable:
+                return
+            # Callbacks may run inside Engine's write transaction: observe only.
+            db = sqlite3.connect(store.path)
+            try:
+                state = json.loads(db.execute("SELECT state FROM chains WHERE id='r1'").fetchone()[0])
+            finally:
+                db.close()
+            if state['tasks']['T1']['status'] != 'doing':
+                return
+            if where == 'review' and mode in ('expiry', 'cancel', 'token'):
+                invalidated.append(mode)
+                if mode == 'expiry':
+                    fixture.now[0] += 5
+                elif mode == 'cancel':
+                    store.cancel('r1', 'synthetic cancellation during live review', now=fixture.now[0])
+                else:
+                    with store.transaction() as db:
+                        _, state = store.load(db, 'r1')
+                        state['tasks']['T1']['token'] = 'different-owner-token'
+                        store.save(db, 'r1', state)
+            elif where == 'authorize' and mode == 'authorization-expiry':
+                invalidated.append(mode)
+                fixture.now[0] += 5
+
+        def verify(*args):
+            result = fixture.session.verify(*args)
+            mutate('review')
+            return result
+
+        def authorize(*args):
+            mutate('authorize')
+            return mode != 'denied'
+
+        engine = Engine(store, {'verify_artifacts': handler}, authorize=authorize,
+                        project_root=fixture.root, plan_review_verifier=verify,
+                        clock=lambda: fixture.now[0], lease_seconds=5)
+        state = engine.tick('r1', 'first-wake')
+        print('ENGINE_CLAIM_PROBE ' + json.dumps({
+            'mode': mode, 'entered_current': entered,
+            'marker_hex': marker.read_bytes().hex() if marker.exists() else None,
+            'status': state['status'], 'attempts': state['tasks']['T1']['attempts'],
+            'mutation': invalidated}, sort_keys=True))
+        if mode == 'healthy':
+            self.assertEqual(entered, [True])
+            self.assertEqual(marker.read_bytes(), b'handler entered')
+            self.assertEqual(state['status'], 'done')
+        else:
+            if mode != 'denied':
+                self.assertEqual(invalidated, [mode])
+            self.assertEqual(entered, [], 'handler must not start with a stale claim')
+            self.assertFalse(marker.exists(), 'stale claim wrote an external marker')
+            self.assertNotEqual(state['status'], 'done')
+        if mode == 'cancel':
+            self.assertEqual(state['status'], 'cancelled')
+        elif mode == 'token':
+            self.assertEqual(state['tasks']['T1']['token'], 'different-owner-token')
+        elif mode == 'denied':
+            self.assertEqual(state['tasks']['T1']['attempts'], 0)
+        elif mode in ('expiry', 'authorization-expiry'):
+            self.assertEqual(state['tasks']['T1']['attempts'], 1)
+            self.assertEqual(state['tasks']['T1']['status'], 'doing')
+            fixture.now[0] += 1
+            restarted = Engine(Store(store.path), {'verify_artifacts': handler},
+                               authorize=authorize, project_root=fixture.root,
+                               plan_review_verifier=verify, clock=lambda: fixture.now[0], lease_seconds=5)
+            self.assertEqual(restarted.tick('r1', 'first-wake')['tasks']['T1']['attempts'], 1)
+            self.assertEqual(entered, [])
+            recovered = restarted.tick('r1', 'new-wake')
+            self.assertEqual(entered, [True])
+            self.assertEqual(recovered['status'], 'done')
+            self.assertEqual(recovered['tasks']['T1']['attempts'], 2)
+            self.assertEqual(marker.read_bytes(), b'handler entered')
+
+    def test_review_exact_expiry(self):
+        self.boundary('expiry')
+
+    def test_review_cancellation(self):
+        self.boundary('cancel')
+
+    def test_review_owner_token_change(self):
+        self.boundary('token')
+
+    def test_authorization_exact_expiry(self):
+        self.boundary('authorization-expiry')
+
+    def test_healthy_review_enters_once(self):
+        self.boundary('healthy')
+
+    def test_denied_authorization_never_claims(self):
+        self.boundary('denied')
+
+
+if __name__ == '__main__':
+    unittest.main()

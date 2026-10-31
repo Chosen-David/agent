@@ -191,6 +191,26 @@ def current_inputs(root, plan, *, publication_task_refs=None):
         _bound(root, {'path': path, 'sha256': digest})
 
 
+def _capture_input_recheck(plan, root):
+    """Bind inputs after live approval without granting approval itself."""
+    bound_root = _root(plan, root)
+    protected = policy(plan) is not None
+    expected = sha(plan) if protected else None
+
+    def recheck():
+        try:
+            if protected:
+                _need(sha(plan) == expected, 'reviewed plan/receipt changed during authorization')
+                current_inputs(bound_root, plan)
+            else:
+                _need(policy(plan) is None, 'legacy plan became protected during authorization')
+                check_plan_review(plan, bound_root, allow_legacy=True)
+        except (ValueError, OSError, KeyError, TypeError, RecursionError) as exc:
+            raise PlanReviewError('reviewed inputs changed during authorization: ' + str(exc)) from exc
+
+    return recheck
+
+
 def _review(value):
     _need(isinstance(value, dict) and set(value) == {'full_review', 'verdict'},
           'complete full_review and compact verdict required')

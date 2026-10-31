@@ -1,0 +1,44 @@
+import hashlib
+import json
+from pathlib import Path
+import platform
+import subprocess
+import sys
+
+
+def main():
+    directory = Path(__file__).resolve().parent
+    root = directory.parents[1]
+    phase = sys.argv[1]
+    assert phase in ('baseline', 'fixed', 'fixed2', 'independent')
+    modules = ['tests.test_engine_pre_action_claim']
+    if phase != 'baseline':
+        modules += ['tests.test_task_runtime', 'tests.test_crossfeature_runtime',
+                    'tests.test_plan_review', 'tests.test_plan_review_independent',
+                    'tests.test_managed_supervisor']
+    command = [sys.executable, '-B', '-m', 'unittest', *modules, '-v']
+    paths = ['agent_runtime/core.py', 'tests/test_engine_pre_action_claim.py',
+             'tests/test_plan_review.py', '.github/workflows/portable-install.yml']
+    before = {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in paths}
+    try:
+        run = subprocess.run(command, cwd=root, capture_output=True, timeout=180)
+        stdout, stderr, code = run.stdout, run.stderr, run.returncode
+    except subprocess.TimeoutExpired as exc:
+        stdout, stderr, code = exc.stdout or b'', exc.stderr or b'', 124
+    for suffix, data in [('stdout', stdout), ('stderr', stderr)]:
+        (directory / (phase + '.' + suffix)).write_bytes(data)
+    after = {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in paths}
+    metadata = {'phase': phase, 'command': command, 'cwd': str(root), 'child_exit': code,
+                'python': sys.version, 'platform': platform.platform(),
+                'source_before': before, 'source_after': after, 'unchanged': before == after,
+                'timeout_seconds': 180, 'automatic_retries': 0,
+                'outputs': [{'path': str((directory / (phase + '.' + s)).relative_to(root)),
+                             'sha256': hashlib.sha256(b).hexdigest()}
+                            for s, b in [('stdout', stdout), ('stderr', stderr)]]}
+    (directory / (phase + '.json')).write_bytes((json.dumps(metadata, indent=2) + '\n').encode())
+    print(json.dumps(metadata))
+    raise SystemExit(code)
+
+
+if __name__ == '__main__':
+    main()
