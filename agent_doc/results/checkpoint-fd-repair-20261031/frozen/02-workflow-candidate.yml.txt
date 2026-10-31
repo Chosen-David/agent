@@ -1,0 +1,111 @@
+name: Portable installation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  install:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python: ['3.10', '3.12']
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    steps:
+      # Pinned official v6 revisions; no credential persistence or result uploads.
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        env:
+          # Windows Git otherwise checks tracked reference aliases out as text.
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.symlinks
+          GIT_CONFIG_VALUE_0: 'true'
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -B -m unittest discover -s tests -p test_setup_portable.py -v
+      - run: python -B -m unittest discover -s tests -p test_setup_limits.py -v
+      - run: python -B -m unittest discover -s tests -p test_setup_publication.py -v
+      - run: python -B -m unittest discover -s tests -p test_setup_manifest.py -v
+      - run: python -B -m unittest discover -s tests -p test_setup_legacy_text.py -v
+      - run: python -B -m unittest discover -s tests -p test_codex_instruction_read.py -v
+      - run: python -B -m unittest discover -s tests -p test_uninstall_text.py -v
+      - run: python -B -m unittest discover -s tests -p test_setup_text.py -v
+      - run: python -B -m unittest discover -s tests -p test_role_process.py -v
+      - run: python -B -m unittest discover -s tests -p test_install_profiles.py -v
+      - run: python -B -m unittest discover -s tests -p test_memory_output.py -v
+      - run: python -B -m unittest discover -s tests -p test_memory_sibling_counts.py -v
+      - run: python -B -m unittest discover -s tests -p test_documents.py -v
+      - run: python -B -m unittest discover -s tests -p test_context_cli_output.py -v
+      - run: python -B -m unittest discover -s tests -p test_task_context.py -v
+      - run: python -B -m unittest discover -s tests -p test_task_fence.py -v
+      - run: python -B -m unittest discover -s tests -p test_migrate_fence.py -v
+      - run: python -B -m unittest discover -s tests -p test_advice_context.py -v
+      - run: python -B -m unittest discover -s tests -p test_advice_fence.py -v
+      - run: python -B -m unittest discover -s tests -p test_prompt_context.py -v
+      - run: python -B -m unittest discover -s tests -p test_usage_shapes.py -v
+      - run: python -B -m unittest discover -s tests -p test_intake.py -v
+      - run: python -B -m unittest discover -s tests -p test_inventory_scan_errors.py -v
+      - run: python -B -m unittest discover -s tests -p test_context_cli_wire.py -v
+      - run: python -B -m unittest discover -s tests -p test_result_output.py -v
+      - run: python -B -m unittest discover -s tests -p test_validation_context.py -v
+      - run: python -B -m unittest discover -s tests -p test_communication_output.py -v
+      - run: python -B -m unittest discover -s tests -p test_result_dispatch_freshness.py -v
+      - run: python -B -m unittest discover -s tests -p test_local_path_guards.py -v
+      - run: python -B -m unittest discover -s tests -p 'test_knowledge_ingest*.py' -v
+      - run: python -B -m unittest discover -s tests -p test_knowledge_read_boundary.py -v
+      - run: python -B -m unittest discover -s tests -p test_knowledge_index.py -v
+      - run: python -B -m unittest discover -s tests -p test_checkpoint_json_fd.py -v
+      - run: python -B -m unittest tests.test_claim_graph_residual tests.test_handoff_basis tests.test_communication -v
+      - run: python -B scripts/sync_plugin_references.py --check
+
+  ingest-macos:
+    runs-on: macos-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: '3.12'
+      - run: python -B -m unittest discover -s tests -p test_usage_shapes.py -v
+      - run: python -B -m unittest discover -s tests -p test_intake.py -v
+      - run: python -B -m unittest discover -s tests -p test_inventory_scan_errors.py -v
+      - run: python -B -m unittest discover -s tests -p test_setup_publication.py -v
+        env:
+          TMPDIR: ${{ runner.temp }}
+      - run: python -B -m unittest discover -s tests -p test_setup_manifest.py -v
+        env:
+          TMPDIR: ${{ runner.temp }}
+      - run: python -B -m unittest discover -s tests -p test_setup_legacy_text.py -v
+        env:
+          TMPDIR: ${{ runner.temp }}
+      - run: python -B -m unittest discover -s tests -p test_codex_instruction_read.py -v
+        env:
+          TMPDIR: ${{ runner.temp }}
+      - run: python -B -m unittest discover -s tests -p test_uninstall_text.py -v
+        env:
+          TMPDIR: ${{ runner.temp }}
+      - run: python -B -m unittest discover -s tests -p test_setup_text.py -v
+        env:
+          TMPDIR: ${{ runner.temp }}
+      - run: python -B -m unittest discover -s tests -p 'test_knowledge_ingest*.py' -v
+        env:
+          TMPDIR: ${{ runner.temp }}
+      - run: python -B -m unittest discover -s tests -p test_knowledge_read_boundary.py -v
+        env:
+          TMPDIR: ${{ runner.temp }}
+      - run: python -B -m unittest discover -s tests -p test_knowledge_index.py -v
+        env:
+          TMPDIR: ${{ runner.temp }}
+      - run: python -B -m unittest discover -s tests -p test_checkpoint_json_fd.py -v
+      - run: python -B -m unittest tests.test_claim_graph_residual tests.test_handoff_basis tests.test_communication -v
+      - run: python -B scripts/sync_plugin_references.py --check

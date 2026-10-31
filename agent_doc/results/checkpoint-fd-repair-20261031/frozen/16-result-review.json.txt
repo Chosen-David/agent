@@ -1,0 +1,788 @@
+{
+  "schema_version": "independent-manual-result-review/v1",
+  "task": "SYSTEM-99",
+  "requirement": "CHECKPOINT-FD-FIX-01",
+  "decision": "usable-with-scope",
+  "reviewed_at_utc": "2026-10-31T10:06:55.139838+00:00",
+  "reviewer": {
+    "actor": "checkpoint_fd_result_1808",
+    "kind": "fresh independent manual host reviewer",
+    "method": "independent source/reference/raw-data audit plus one actual48-method rerun",
+    "authenticated_review_session": false,
+    "runtime_migration": false
+  },
+  "scope": "Exact checkpoint FD ownership repair and48 local Linux regression methods, deterministic constructor EIO/Unicode success/NaN serialization behavior only. Portable candidate statically checked; five native jobs not yet accepted.",
+  "result_inputs": {
+    "path": ".agent-runs/checkpoint-fd-continuation-1801/result-inputs.json",
+    "sha256": "a387ce60f76bf9761f82abed13fca263ed83920f685f0d34f68387ceccd2e512"
+  },
+  "plan": {
+    "path": ".agent-runs/checkpoint-fd-continuation-1801/plan.json",
+    "sha256": "d8a543f6eefc45279c346aa2a6f8e60e22aa7b345e5390f88fbffc15ea900c39"
+  },
+  "plan_review": {
+    "path": ".agent-runs/checkpoint-fd-continuation-1801/plan-review.json",
+    "sha256": "7f5ff8820da84609b40de83c482656d02aa7030060b302597afaa1b9b41ee171",
+    "decision": "approve"
+  },
+  "checks": {
+    "implementation": {
+      "verdict": "pass",
+      "reason": "Full source-before/candidate diff changes atomic_json only: borrowing fdopen(closefd=False), inner finally os.close(fd), plus ownership comment. Constructor/enter/serialize/write/flush/fsync/context-exit paths reach creator close; stream does not own raw descriptor, so no intentional double-close. Guard before creation and before replace, ensure_ascii=False/indent2/allow_nan=False, UTF8/default newline, flush/fsync, replace and outer temp removal remain. Close/unlink failure and hostile reuse remain exclusions. Executed source/test/workflow bytes equal private candidates; Plan66 stable prefix is exact.",
+      "evidence": [
+        {
+          "path": "agent_runtime/task_manifest.py",
+          "sha256": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+          "bytes": 32047,
+          "matches": true
+        },
+        {
+          "path": "tests/test_checkpoint_json_fd.py",
+          "sha256": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+          "bytes": 4979,
+          "matches": true
+        },
+        {
+          "path": ".github/workflows/portable-install.yml",
+          "sha256": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+          "bytes": 5853,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/source-before.py",
+          "sha256": "69c4fe53bf09b101bdffda7e5a3d9a8b3a71ba40ddc25174402c2b7260979425",
+          "bytes": 31881,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/source-candidate.py",
+          "sha256": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+          "bytes": 32047,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/tests-candidate.py",
+          "sha256": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+          "bytes": 4979,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/workflow-candidate.yml",
+          "sha256": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+          "bytes": 5853,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/plan66-prefix.txt",
+          "sha256": "6f7bad1e99253159bc19ff9a4a93137f625f3464637d2ee407341f8cd6dd0153",
+          "bytes": 47013,
+          "matches": true
+        }
+      ]
+    },
+    "reference_boundary": {
+      "verdict": "pass",
+      "reason": "Independent kernel fstat oracle accepts only EBADF as closed and propagates other OSError. It observes real tracked mkstemp descriptors before cleanup and retry, rather than deriving success from production close calls. Constructor fault is the same OSError identity. Existing and absent targets preserve state/old bytes and remove temp; de-injected retry checks complete physical UTF8 bytes and sole directory entry. Unicode success and NaN serialization controls pass. Test equals historical v2 proposed bytes exactly, uses os.linesep without skip, preserving Windows default text newline semantics.",
+      "evidence": [
+        {
+          "path": "tests/test_checkpoint_json_fd.py",
+          "sha256": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+          "bytes": 4979,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/tests-candidate.py",
+          "sha256": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+          "bytes": 4979,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/baseline.stdout",
+          "sha256": "1f5e16520855a6565b1e5acc93f41e735d7fdbc3989dc0d27db04929659e95b3",
+          "bytes": 249,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/baseline.stderr",
+          "sha256": "3ada43ceaf4573b1072293a7aa48da8466820aace538ff1a15ceafcaff584f56",
+          "bytes": 2670,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.stdout",
+          "sha256": "8267b9e181adb1c437170f2b392d5f90677d5a88b9bc57facba2df6bf90eb927",
+          "bytes": 247
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.stderr",
+          "sha256": "3dc7db10d939536316238a66a0df674e226d4ee63a5eb4de2ca644d85b92488f",
+          "bytes": 8246
+        }
+      ]
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "All19 result refs match; all18 plan refs match preapplication base Git for tracked inputs and frozen private bytes for private inputs. Source-before69c4fe equals old diagnosed target: this is an explicit current-integration confirmation of the same defect, not a changed-function/new-defect finding. Complete separate producer baseline/fixed stdout/stderr inspected; concatenated logs exactly match their streams. Baseline3 has exactly two nested FD assertions in one constructor method, controls pass, 0 errors/skips; producer48 has48 ok and two true constructor records. No baseline retry. Root outer exits1/0 are attributed to root observed provenance, not reviewer observation.",
+      "evidence": [
+        {
+          "path": "agent_runtime/task_manifest.py",
+          "sha256": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+          "bytes": 32047,
+          "matches": true
+        },
+        {
+          "path": "tests/test_checkpoint_json_fd.py",
+          "sha256": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+          "bytes": 4979,
+          "matches": true
+        },
+        {
+          "path": ".github/workflows/portable-install.yml",
+          "sha256": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+          "bytes": 5853,
+          "matches": true
+        },
+        {
+          "path": "agent_doc/task/task_details/SYSTEM-99.md",
+          "sha256": "10e93b02e1a89468dd1bdc7aa958056d3bf0454e93973a08a0dd1c5dd627f64a",
+          "bytes": 180299,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/plan.json",
+          "sha256": "d8a543f6eefc45279c346aa2a6f8e60e22aa7b345e5390f88fbffc15ea900c39",
+          "bytes": 5947,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/plan-review.json",
+          "sha256": "7f5ff8820da84609b40de83c482656d02aa7030060b302597afaa1b9b41ee171",
+          "bytes": 16594,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/source-before.py",
+          "sha256": "69c4fe53bf09b101bdffda7e5a3d9a8b3a71ba40ddc25174402c2b7260979425",
+          "bytes": 31881,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/source-candidate.py",
+          "sha256": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+          "bytes": 32047,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/tests-candidate.py",
+          "sha256": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+          "bytes": 4979,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/workflow-candidate.yml",
+          "sha256": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+          "bytes": 5853,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/plan66-prefix.txt",
+          "sha256": "6f7bad1e99253159bc19ff9a4a93137f625f3464637d2ee407341f8cd6dd0153",
+          "bytes": 47013,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/baseline.json",
+          "sha256": "210cf0ddbbd7a8f1dd16d7f0c6a715b26c109361b37bbb57179ba7e4b736861d",
+          "bytes": 775,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/baseline.stdout",
+          "sha256": "1f5e16520855a6565b1e5acc93f41e735d7fdbc3989dc0d27db04929659e95b3",
+          "bytes": 249,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/baseline.stderr",
+          "sha256": "3ada43ceaf4573b1072293a7aa48da8466820aace538ff1a15ceafcaff584f56",
+          "bytes": 2670,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/baseline.log",
+          "sha256": "d7397243a136853d8b2e4912f35d1c8d459ddee5824596973f2b599ba5b1cd48",
+          "bytes": 2919,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/fixed.json",
+          "sha256": "7815ce5d8fa08997464c028e8095dbc7f736e1f742fdc213bc42322844384625",
+          "bytes": 1115,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/fixed.stdout",
+          "sha256": "8267b9e181adb1c437170f2b392d5f90677d5a88b9bc57facba2df6bf90eb927",
+          "bytes": 247,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/fixed.stderr",
+          "sha256": "6281cc68e9be971302e1ff0ed670a33e42463a43ca9ab4da757f73a26653a14c",
+          "bytes": 8246,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/fixed.log",
+          "sha256": "0cf550b0fe0272377f851181e7e68fb06f2c0dab83d0a3da78aca2f32bfe6404",
+          "bytes": 8493,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.stdout",
+          "sha256": "8267b9e181adb1c437170f2b392d5f90677d5a88b9bc57facba2df6bf90eb927",
+          "bytes": 247
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.stderr",
+          "sha256": "3dc7db10d939536316238a66a0df674e226d4ee63a5eb4de2ca644d85b92488f",
+          "bytes": 8246
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.log",
+          "sha256": "75169f39e515e99e19eb895725f24ede4aad7331d84c36589bd030619d7c1f3d",
+          "bytes": 8493
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.json",
+          "sha256": "2671b13900e7347f2de3f3979aa247d27032afbe17c8b7d21c52ee3cb75237ba",
+          "bytes": 5745
+        },
+        {
+          "path": "tests/test_task_manifest.py",
+          "sha256": "bacb568e0a7f37ca9591ebfb94fa79ae5862ebf7f0db24b9fff2e314d443ca2f",
+          "bytes": 32406,
+          "matches_plan": true,
+          "timing": "postrun worktree verification; plan-review bound bytes and preapplication base verification also match"
+        },
+        {
+          "path": "tests/test_crash_restart.py",
+          "sha256": "9038e2fee06f9179ddf60500a4aeac65398ac1be093eb578f703d917ea00361f",
+          "bytes": 1804,
+          "matches_plan": true,
+          "timing": "postrun worktree verification; plan-review bound bytes and preapplication base verification also match"
+        }
+      ]
+    },
+    "numerical_sanity": {
+      "verdict": "pass",
+      "reason": "Applicable discrete counts and invariants verified: static3+42+3=48; baseline3 methods/2 failed subassertions/one defect, producer48 and independent48 each0 failure/error/skip. Unicode complete bytes, parsed object equality and NaN rejection are explicit assertions; no floating error tolerance, accuracy denominator or statistical estimate applies. Test duration is metadata and is not a speed claim.",
+      "evidence": [
+        {
+          "path": "tests/test_checkpoint_json_fd.py",
+          "sha256": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+          "bytes": 4979,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/baseline.stderr",
+          "sha256": "3ada43ceaf4573b1072293a7aa48da8466820aace538ff1a15ceafcaff584f56",
+          "bytes": 2670,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/fixed.stderr",
+          "sha256": "6281cc68e9be971302e1ff0ed670a33e42463a43ca9ab4da757f73a26653a14c",
+          "bytes": 8246,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.stderr",
+          "sha256": "3dc7db10d939536316238a66a0df674e226d4ee63a5eb4de2ca644d85b92488f",
+          "bytes": 8246
+        }
+      ]
+    },
+    "measurement_validity": {
+      "verdict": "pass",
+      "reason": "Claims are deterministic fault-path correctness and local regressions only. Baseline explicitly injects constructor-entry EIO; no natural exception frequency or actual FD-exhaustion measurement is inferred. Elapsed unittest times1.412s producer and1.582s independent identify runs only, not benchmark or comparison. Native portable CI is pending: two new discovery steps instantiate on four Ubuntu/Windows matrix jobs and macOS3.12, each new module has3 methods; POSIX/fcntl48 is not added on Windows. All five actual jobs/steps must be observed before portable acceptance.",
+      "evidence": [
+        {
+          "path": ".github/workflows/portable-install.yml",
+          "sha256": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+          "bytes": 5853,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/baseline.json",
+          "sha256": "210cf0ddbbd7a8f1dd16d7f0c6a715b26c109361b37bbb57179ba7e4b736861d",
+          "bytes": 775,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/fixed.json",
+          "sha256": "7815ce5d8fa08997464c028e8095dbc7f736e1f742fdc213bc42322844384625",
+          "bytes": 1115,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/fixed.stderr",
+          "sha256": "6281cc68e9be971302e1ff0ed670a33e42463a43ca9ab4da757f73a26653a14c",
+          "bytes": 8246,
+          "matches": true
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.stderr",
+          "sha256": "3dc7db10d939536316238a66a0df674e226d4ee63a5eb4de2ca644d85b92488f",
+          "bytes": 8246
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.json",
+          "sha256": "2671b13900e7347f2de3f3979aa247d27032afbe17c8b7d21c52ee3cb75237ba",
+          "bytes": 5745
+        }
+      ]
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "Reviewer independently executed exact frozen48 command once with timeout180, no retries, CPython3.12.14/Linux6.18.57 x86_64/glibc2.39; child exit0 and outer exec exit0 actually observed. Full raw stdout/stderr retained;48 tests OK in1.582s, no skip/failure/error. Both constructor states show fd_closed_before_retry=true/temp_removed=true/retry_complete=true. All19 input hashes equal before/after. Started/ended before10:35Z deadline. Native5jobs remain required separate evidence.",
+      "evidence": [
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.stdout",
+          "sha256": "8267b9e181adb1c437170f2b392d5f90677d5a88b9bc57facba2df6bf90eb927",
+          "bytes": 247
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.stderr",
+          "sha256": "3dc7db10d939536316238a66a0df674e226d4ee63a5eb4de2ca644d85b92488f",
+          "bytes": 8246
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.log",
+          "sha256": "75169f39e515e99e19eb895725f24ede4aad7331d84c36589bd030619d7c1f3d",
+          "bytes": 8493
+        },
+        {
+          "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.json",
+          "sha256": "2671b13900e7347f2de3f3979aa247d27032afbe17c8b7d21c52ee3cb75237ba",
+          "bytes": 5745
+        },
+        {
+          "path": "tests/test_task_manifest.py",
+          "sha256": "bacb568e0a7f37ca9591ebfb94fa79ae5862ebf7f0db24b9fff2e314d443ca2f",
+          "bytes": 32406,
+          "matches_plan": true,
+          "timing": "postrun worktree verification; plan-review bound bytes and preapplication base verification also match"
+        },
+        {
+          "path": "tests/test_crash_restart.py",
+          "sha256": "9038e2fee06f9179ddf60500a4aeac65398ac1be093eb578f703d917ea00361f",
+          "bytes": 1804,
+          "matches_plan": true,
+          "timing": "postrun worktree verification; plan-review bound bytes and preapplication base verification also match"
+        }
+      ]
+    }
+  },
+  "verified_result_refs": [
+    {
+      "path": "agent_runtime/task_manifest.py",
+      "sha256": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+      "bytes": 32047,
+      "matches": true
+    },
+    {
+      "path": "tests/test_checkpoint_json_fd.py",
+      "sha256": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+      "bytes": 4979,
+      "matches": true
+    },
+    {
+      "path": ".github/workflows/portable-install.yml",
+      "sha256": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+      "bytes": 5853,
+      "matches": true
+    },
+    {
+      "path": "agent_doc/task/task_details/SYSTEM-99.md",
+      "sha256": "10e93b02e1a89468dd1bdc7aa958056d3bf0454e93973a08a0dd1c5dd627f64a",
+      "bytes": 180299,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/plan.json",
+      "sha256": "d8a543f6eefc45279c346aa2a6f8e60e22aa7b345e5390f88fbffc15ea900c39",
+      "bytes": 5947,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/plan-review.json",
+      "sha256": "7f5ff8820da84609b40de83c482656d02aa7030060b302597afaa1b9b41ee171",
+      "bytes": 16594,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/source-before.py",
+      "sha256": "69c4fe53bf09b101bdffda7e5a3d9a8b3a71ba40ddc25174402c2b7260979425",
+      "bytes": 31881,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/source-candidate.py",
+      "sha256": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+      "bytes": 32047,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/tests-candidate.py",
+      "sha256": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+      "bytes": 4979,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/workflow-candidate.yml",
+      "sha256": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+      "bytes": 5853,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/plan66-prefix.txt",
+      "sha256": "6f7bad1e99253159bc19ff9a4a93137f625f3464637d2ee407341f8cd6dd0153",
+      "bytes": 47013,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/baseline.json",
+      "sha256": "210cf0ddbbd7a8f1dd16d7f0c6a715b26c109361b37bbb57179ba7e4b736861d",
+      "bytes": 775,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/baseline.stdout",
+      "sha256": "1f5e16520855a6565b1e5acc93f41e735d7fdbc3989dc0d27db04929659e95b3",
+      "bytes": 249,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/baseline.stderr",
+      "sha256": "3ada43ceaf4573b1072293a7aa48da8466820aace538ff1a15ceafcaff584f56",
+      "bytes": 2670,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/baseline.log",
+      "sha256": "d7397243a136853d8b2e4912f35d1c8d459ddee5824596973f2b599ba5b1cd48",
+      "bytes": 2919,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/fixed.json",
+      "sha256": "7815ce5d8fa08997464c028e8095dbc7f736e1f742fdc213bc42322844384625",
+      "bytes": 1115,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/fixed.stdout",
+      "sha256": "8267b9e181adb1c437170f2b392d5f90677d5a88b9bc57facba2df6bf90eb927",
+      "bytes": 247,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/fixed.stderr",
+      "sha256": "6281cc68e9be971302e1ff0ed670a33e42463a43ca9ab4da757f73a26653a14c",
+      "bytes": 8246,
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/fixed.log",
+      "sha256": "0cf550b0fe0272377f851181e7e68fb06f2c0dab83d0a3da78aca2f32bfe6404",
+      "bytes": 8493,
+      "matches": true
+    }
+  ],
+  "verified_preapplication_plan_refs": [
+    {
+      "path": "agent_runtime/task_manifest.py",
+      "sha256": "69c4fe53bf09b101bdffda7e5a3d9a8b3a71ba40ddc25174402c2b7260979425",
+      "observed_sha256": "69c4fe53bf09b101bdffda7e5a3d9a8b3a71ba40ddc25174402c2b7260979425",
+      "origin": "base-git",
+      "matches": true
+    },
+    {
+      "path": ".github/workflows/portable-install.yml",
+      "sha256": "64d7e3b758744f226795fdcbfd5f72b0c5c03e00572d8f3418bdd891fe83903e",
+      "observed_sha256": "64d7e3b758744f226795fdcbfd5f72b0c5c03e00572d8f3418bdd891fe83903e",
+      "origin": "base-git",
+      "matches": true
+    },
+    {
+      "path": "tests/test_task_manifest.py",
+      "sha256": "bacb568e0a7f37ca9591ebfb94fa79ae5862ebf7f0db24b9fff2e314d443ca2f",
+      "observed_sha256": "bacb568e0a7f37ca9591ebfb94fa79ae5862ebf7f0db24b9fff2e314d443ca2f",
+      "origin": "base-git",
+      "matches": true
+    },
+    {
+      "path": "tests/test_crash_restart.py",
+      "sha256": "9038e2fee06f9179ddf60500a4aeac65398ac1be093eb578f703d917ea00361f",
+      "observed_sha256": "9038e2fee06f9179ddf60500a4aeac65398ac1be093eb578f703d917ea00361f",
+      "origin": "base-git",
+      "matches": true
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+      "observed_sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+      "origin": "base-git",
+      "matches": true
+    },
+    {
+      "path": "agent_doc/task/task_details/SYSTEM-99.md",
+      "sha256": "45a1506a313eceefe8cc8e8c6d64c5621b865e0ac12a83c6d472eb286c7a37d1",
+      "observed_sha256": "45a1506a313eceefe8cc8e8c6d64c5621b865e0ac12a83c6d472eb286c7a37d1",
+      "origin": "base-git",
+      "matches": true
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "origin": "base-git",
+      "matches": true
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261",
+      "observed_sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261",
+      "origin": "base-git",
+      "matches": true
+    },
+    {
+      "path": "agent_doc/results/checkpoint-fd-20261030/report.md",
+      "sha256": "40e1bae151f9d3054dd81b26f69a99e5ae5ea315341f4288fd9a15ee99ba5fab",
+      "observed_sha256": "40e1bae151f9d3054dd81b26f69a99e5ae5ea315341f4288fd9a15ee99ba5fab",
+      "origin": "base-git",
+      "matches": true
+    },
+    {
+      "path": "agent_doc/results/checkpoint-fd-20261030/repair-plan-review.md",
+      "sha256": "c2a450b62cb4df58a96431a66f6ff494c0423a3121f1818dd0db8ebe4c102a97",
+      "observed_sha256": "c2a450b62cb4df58a96431a66f6ff494c0423a3121f1818dd0db8ebe4c102a97",
+      "origin": "base-git",
+      "matches": true
+    },
+    {
+      "path": "agent_doc/results/checkpoint-fd-20261030/repair-proposal-v2.json",
+      "sha256": "56d6b1ef61677fd8d1ce269375013d5595c605e463bdaa6c1edb2151b74015c2",
+      "observed_sha256": "56d6b1ef61677fd8d1ce269375013d5595c605e463bdaa6c1edb2151b74015c2",
+      "origin": "base-git",
+      "matches": true
+    },
+    {
+      "path": "agent_doc/results/checkpoint-fd-20261030/repair-tests-v2-proposed.txt",
+      "sha256": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+      "observed_sha256": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+      "origin": "base-git",
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/prior-search.json",
+      "sha256": "0fcfe3062629f390da7aaf3d2f4eb1f80fa597d562c1c7dfe95e3abe7c13a48d",
+      "observed_sha256": "0fcfe3062629f390da7aaf3d2f4eb1f80fa597d562c1c7dfe95e3abe7c13a48d",
+      "origin": "private-worktree",
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/source-before.py",
+      "sha256": "69c4fe53bf09b101bdffda7e5a3d9a8b3a71ba40ddc25174402c2b7260979425",
+      "observed_sha256": "69c4fe53bf09b101bdffda7e5a3d9a8b3a71ba40ddc25174402c2b7260979425",
+      "origin": "private-worktree",
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/source-candidate.py",
+      "sha256": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+      "observed_sha256": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+      "origin": "private-worktree",
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/tests-candidate.py",
+      "sha256": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+      "observed_sha256": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+      "origin": "private-worktree",
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/workflow-candidate.yml",
+      "sha256": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+      "observed_sha256": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+      "origin": "private-worktree",
+      "matches": true
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/plan66-prefix.txt",
+      "sha256": "6f7bad1e99253159bc19ff9a4a93137f625f3464637d2ee407341f8cd6dd0153",
+      "observed_sha256": "6f7bad1e99253159bc19ff9a4a93137f625f3464637d2ee407341f8cd6dd0153",
+      "origin": "private-worktree",
+      "matches": true
+    }
+  ],
+  "independent_artifact_hashes": [
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.stdout",
+      "sha256": "8267b9e181adb1c437170f2b392d5f90677d5a88b9bc57facba2df6bf90eb927",
+      "bytes": 247
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.stderr",
+      "sha256": "3dc7db10d939536316238a66a0df674e226d4ee63a5eb4de2ca644d85b92488f",
+      "bytes": 8246
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.log",
+      "sha256": "75169f39e515e99e19eb895725f24ede4aad7331d84c36589bd030619d7c1f3d",
+      "bytes": 8493
+    },
+    {
+      "path": ".agent-runs/checkpoint-fd-continuation-1801/independent.json",
+      "sha256": "2671b13900e7347f2de3f3979aa247d27032afbe17c8b7d21c52ee3cb75237ba",
+      "bytes": 5745
+    }
+  ],
+  "method_counts": {
+    "tests/test_checkpoint_json_fd.py": 3,
+    "tests/test_task_manifest.py": 42,
+    "tests/test_crash_restart.py": 3
+  },
+  "independent_actual_execution": {
+    "argv": [
+      "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+      "-B",
+      "-m",
+      "unittest",
+      "tests.test_checkpoint_json_fd",
+      "tests.test_task_manifest",
+      "tests.test_crash_restart",
+      "-v"
+    ],
+    "cwd": "/workspace/scratch/95d615402a52/agent-run-2205",
+    "started": "2026-10-31T10:05:53.909739+00:00",
+    "ended": "2026-10-31T10:05:55.672501+00:00",
+    "wall_seconds": 1.7636897550110007,
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+    "exit": 0,
+    "timeout": false,
+    "timeout_seconds": 180,
+    "hashes_before": {
+      "agent_runtime/task_manifest.py": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+      "tests/test_checkpoint_json_fd.py": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+      ".github/workflows/portable-install.yml": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+      "agent_doc/task/task_details/SYSTEM-99.md": "10e93b02e1a89468dd1bdc7aa958056d3bf0454e93973a08a0dd1c5dd627f64a",
+      ".agent-runs/checkpoint-fd-continuation-1801/plan.json": "d8a543f6eefc45279c346aa2a6f8e60e22aa7b345e5390f88fbffc15ea900c39",
+      ".agent-runs/checkpoint-fd-continuation-1801/plan-review.json": "7f5ff8820da84609b40de83c482656d02aa7030060b302597afaa1b9b41ee171",
+      ".agent-runs/checkpoint-fd-continuation-1801/source-before.py": "69c4fe53bf09b101bdffda7e5a3d9a8b3a71ba40ddc25174402c2b7260979425",
+      ".agent-runs/checkpoint-fd-continuation-1801/source-candidate.py": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+      ".agent-runs/checkpoint-fd-continuation-1801/tests-candidate.py": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+      ".agent-runs/checkpoint-fd-continuation-1801/workflow-candidate.yml": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+      ".agent-runs/checkpoint-fd-continuation-1801/plan66-prefix.txt": "6f7bad1e99253159bc19ff9a4a93137f625f3464637d2ee407341f8cd6dd0153",
+      ".agent-runs/checkpoint-fd-continuation-1801/baseline.json": "210cf0ddbbd7a8f1dd16d7f0c6a715b26c109361b37bbb57179ba7e4b736861d",
+      ".agent-runs/checkpoint-fd-continuation-1801/baseline.stdout": "1f5e16520855a6565b1e5acc93f41e735d7fdbc3989dc0d27db04929659e95b3",
+      ".agent-runs/checkpoint-fd-continuation-1801/baseline.stderr": "3ada43ceaf4573b1072293a7aa48da8466820aace538ff1a15ceafcaff584f56",
+      ".agent-runs/checkpoint-fd-continuation-1801/baseline.log": "d7397243a136853d8b2e4912f35d1c8d459ddee5824596973f2b599ba5b1cd48",
+      ".agent-runs/checkpoint-fd-continuation-1801/fixed.json": "7815ce5d8fa08997464c028e8095dbc7f736e1f742fdc213bc42322844384625",
+      ".agent-runs/checkpoint-fd-continuation-1801/fixed.stdout": "8267b9e181adb1c437170f2b392d5f90677d5a88b9bc57facba2df6bf90eb927",
+      ".agent-runs/checkpoint-fd-continuation-1801/fixed.stderr": "6281cc68e9be971302e1ff0ed670a33e42463a43ca9ab4da757f73a26653a14c",
+      ".agent-runs/checkpoint-fd-continuation-1801/fixed.log": "0cf550b0fe0272377f851181e7e68fb06f2c0dab83d0a3da78aca2f32bfe6404"
+    },
+    "hashes_after": {
+      "agent_runtime/task_manifest.py": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+      "tests/test_checkpoint_json_fd.py": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+      ".github/workflows/portable-install.yml": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+      "agent_doc/task/task_details/SYSTEM-99.md": "10e93b02e1a89468dd1bdc7aa958056d3bf0454e93973a08a0dd1c5dd627f64a",
+      ".agent-runs/checkpoint-fd-continuation-1801/plan.json": "d8a543f6eefc45279c346aa2a6f8e60e22aa7b345e5390f88fbffc15ea900c39",
+      ".agent-runs/checkpoint-fd-continuation-1801/plan-review.json": "7f5ff8820da84609b40de83c482656d02aa7030060b302597afaa1b9b41ee171",
+      ".agent-runs/checkpoint-fd-continuation-1801/source-before.py": "69c4fe53bf09b101bdffda7e5a3d9a8b3a71ba40ddc25174402c2b7260979425",
+      ".agent-runs/checkpoint-fd-continuation-1801/source-candidate.py": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+      ".agent-runs/checkpoint-fd-continuation-1801/tests-candidate.py": "563746afe5d542301c025f3716919c8b1deb953eb77144110dd03464ad8979a5",
+      ".agent-runs/checkpoint-fd-continuation-1801/workflow-candidate.yml": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+      ".agent-runs/checkpoint-fd-continuation-1801/plan66-prefix.txt": "6f7bad1e99253159bc19ff9a4a93137f625f3464637d2ee407341f8cd6dd0153",
+      ".agent-runs/checkpoint-fd-continuation-1801/baseline.json": "210cf0ddbbd7a8f1dd16d7f0c6a715b26c109361b37bbb57179ba7e4b736861d",
+      ".agent-runs/checkpoint-fd-continuation-1801/baseline.stdout": "1f5e16520855a6565b1e5acc93f41e735d7fdbc3989dc0d27db04929659e95b3",
+      ".agent-runs/checkpoint-fd-continuation-1801/baseline.stderr": "3ada43ceaf4573b1072293a7aa48da8466820aace538ff1a15ceafcaff584f56",
+      ".agent-runs/checkpoint-fd-continuation-1801/baseline.log": "d7397243a136853d8b2e4912f35d1c8d459ddee5824596973f2b599ba5b1cd48",
+      ".agent-runs/checkpoint-fd-continuation-1801/fixed.json": "7815ce5d8fa08997464c028e8095dbc7f736e1f742fdc213bc42322844384625",
+      ".agent-runs/checkpoint-fd-continuation-1801/fixed.stdout": "8267b9e181adb1c437170f2b392d5f90677d5a88b9bc57facba2df6bf90eb927",
+      ".agent-runs/checkpoint-fd-continuation-1801/fixed.stderr": "6281cc68e9be971302e1ff0ed670a33e42463a43ca9ab4da757f73a26653a14c",
+      ".agent-runs/checkpoint-fd-continuation-1801/fixed.log": "0cf550b0fe0272377f851181e7e68fb06f2c0dab83d0a3da78aca2f32bfe6404"
+    },
+    "inputs_unchanged": true,
+    "log_order": "independent.log full stdout then full stderr; separate streams retained",
+    "execution_count": 1,
+    "retries": 0,
+    "outer_exec_observed_exit": 0,
+    "outer_exec_observation_chunk": "9afc27",
+    "tests": 48,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "unittest_seconds": 1.582
+  },
+  "root_execution_provenance": {
+    "baseline_outer_exit": 1,
+    "fixed_outer_exit": 0,
+    "fixed_session": 68882,
+    "baseline_count": 3,
+    "baseline_failures": 2,
+    "fixed_count": 48,
+    "fixed_skips": 0,
+    "attribution": "Root observed its own outer exits; reviewer inspected full raw streams and metadata, did not observe those original tool returns."
+  },
+  "preserved_history": {
+    "old_manual_budgets_deadlines": "Original1/1 revise/exhausted budget and old deadlines retained; supplemental1review/1run independently reserved, not reset/refund/authenticated migration.",
+    "authorization": "Explicit supplemental authorized routine reversible repair under higher-priority developer persistence; manual assessment does not claim trusted ReviewSession.",
+    "old_revise": "Original Version57 revise/B1 and proposed unexecuted v2 remain historical records unchanged; supplemental current approved scope does not rewrite prior status."
+  },
+  "budget_consumption": {
+    "independent_result_review": 1,
+    "independent48_execution": 1,
+    "max_each": 1,
+    "remaining_each": 0,
+    "retries": 0,
+    "baseline_executions_by_reviewer": 0,
+    "timeout_seconds": 180,
+    "deadline": "2026-10-31T10:35:00Z"
+  },
+  "blocking_findings": [],
+  "remaining_requirements": [
+    "Read all5 fresh native jobs and exact new3-method steps, each3pass/0skip, before portable closure.",
+    "Ordinary authorized publication and remote readback remain main responsibility."
+  ],
+  "limitations": [
+    "No real failure rate/deployed FD exhaustion claim; deterministic constructor fault only",
+    "No close/unlink failure, hostile FD reuse/parent race, powerloss/global atomicity, real tmux/SSH, LLM/token/cost/performance claim",
+    "Historical registration is unknown; fresh manual host review is not runtime authentication; public prior search382/partial/26errors is not exhaustive",
+    "No speed/latency/throughput conclusion; unittest elapsed times are run metadata.",
+    "No actual FD exhaustion, natural failure rate, close/unlink fault or hostile FD reuse/parent race/powerloss/global atomicity guarantee.",
+    "Native Windows/macOS and all5jobs not observed by reviewer; pending, not passed.",
+    "No model quality, token/cost, host deployment, trusted runtime receipt or SYSTEM-99 completion claim.",
+    "Manual review and byte hashes are not authentication; original revise/exhausted budgets/deadlines remain unchanged."
+  ],
+  "additional_executed_test_sources": [
+    {
+      "path": "tests/test_task_manifest.py",
+      "sha256": "bacb568e0a7f37ca9591ebfb94fa79ae5862ebf7f0db24b9fff2e314d443ca2f",
+      "bytes": 32406,
+      "matches_plan": true,
+      "timing": "postrun worktree verification; plan-review bound bytes and preapplication base verification also match"
+    },
+    {
+      "path": "tests/test_crash_restart.py",
+      "sha256": "9038e2fee06f9179ddf60500a4aeac65398ac1be093eb578f703d917ea00361f",
+      "bytes": 1804,
+      "matches_plan": true,
+      "timing": "postrun worktree verification; plan-review bound bytes and preapplication base verification also match"
+    }
+  ]
+}

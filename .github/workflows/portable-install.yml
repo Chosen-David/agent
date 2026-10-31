@@ -62,6 +62,7 @@ jobs:
       - run: python -B -m unittest discover -s tests -p 'test_knowledge_ingest*.py' -v
       - run: python -B -m unittest discover -s tests -p test_knowledge_read_boundary.py -v
       - run: python -B -m unittest discover -s tests -p test_knowledge_index.py -v
+      - run: python -B -m unittest discover -s tests -p test_checkpoint_json_fd.py -v
       - run: python -B -m unittest tests.test_claim_graph_residual tests.test_handoff_basis tests.test_communication -v
       - run: python -B scripts/sync_plugin_references.py --check
 
@@ -105,5 +106,6 @@ jobs:
       - run: python -B -m unittest discover -s tests -p test_knowledge_index.py -v
         env:
           TMPDIR: ${{ runner.temp }}
+      - run: python -B -m unittest discover -s tests -p test_checkpoint_json_fd.py -v
       - run: python -B -m unittest tests.test_claim_graph_residual tests.test_handoff_basis tests.test_communication -v
       - run: python -B scripts/sync_plugin_references.py --check

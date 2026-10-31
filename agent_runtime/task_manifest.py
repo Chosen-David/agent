@@ -45,11 +45,15 @@ def atomic_json(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, name = tempfile.mkstemp(dir=path.parent, prefix=path.name + '.')
     try:
-        with os.fdopen(fd, 'w', encoding='utf-8') as stream:
-            json.dump(value, stream, ensure_ascii=False, indent=2, allow_nan=False)
-            stream.write('\n')
-            stream.flush()
-            os.fsync(stream.fileno())
+        # The stream borrows the descriptor, including during construction.
+        try:
+            with os.fdopen(fd, 'w', encoding='utf-8', closefd=False) as stream:
+                json.dump(value, stream, ensure_ascii=False, indent=2, allow_nan=False)
+                stream.write('\n')
+                stream.flush()
+                os.fsync(stream.fileno())
+        finally:
+            os.close(fd)
         guard_write_path(path)
         os.replace(name, path)
     finally:

@@ -1,0 +1,28 @@
+{"case": "construct", "existing": false, "fd_closed_before_retry": false, "temporary_removed": true, "retry_complete": true}
+{"case": "construct", "existing": true, "fd_closed_before_retry": false, "temporary_removed": true, "retry_complete": true}
+test_normal_unicode_checkpoint (tests.test_checkpoint_json_fd.CheckpointDescriptorDiagnosis.test_normal_unicode_checkpoint) ... ok
+test_serialization_failure_preserves_existing_and_closes_fd (tests.test_checkpoint_json_fd.CheckpointDescriptorDiagnosis.test_serialization_failure_preserves_existing_and_closes_fd) ... ok
+test_stream_construction_failure_preserves_state_and_releases_fd (tests.test_checkpoint_json_fd.CheckpointDescriptorDiagnosis.test_stream_construction_failure_preserves_state_and_releases_fd) ... 
+  test_stream_construction_failure_preserves_state_and_releases_fd (tests.test_checkpoint_json_fd.CheckpointDescriptorDiagnosis.test_stream_construction_failure_preserves_state_and_releases_fd) (check='raw descriptor closed', existing=False) ... FAIL
+  test_stream_construction_failure_preserves_state_and_releases_fd (tests.test_checkpoint_json_fd.CheckpointDescriptorDiagnosis.test_stream_construction_failure_preserves_state_and_releases_fd) (check='raw descriptor closed', existing=True) ... FAIL
+
+======================================================================
+FAIL: test_stream_construction_failure_preserves_state_and_releases_fd (tests.test_checkpoint_json_fd.CheckpointDescriptorDiagnosis.test_stream_construction_failure_preserves_state_and_releases_fd) (check='raw descriptor closed', existing=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_checkpoint_json_fd.py", line 83, in test_stream_construction_failure_preserves_state_and_releases_fd
+    self.assertTrue(is_closed, 'raw fd remains open after fdopen construction failure')
+AssertionError: False is not true : raw fd remains open after fdopen construction failure
+
+======================================================================
+FAIL: test_stream_construction_failure_preserves_state_and_releases_fd (tests.test_checkpoint_json_fd.CheckpointDescriptorDiagnosis.test_stream_construction_failure_preserves_state_and_releases_fd) (check='raw descriptor closed', existing=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_checkpoint_json_fd.py", line 83, in test_stream_construction_failure_preserves_state_and_releases_fd
+    self.assertTrue(is_closed, 'raw fd remains open after fdopen construction failure')
+AssertionError: False is not true : raw fd remains open after fdopen construction failure
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.013s
+
+FAILED (failures=2)
