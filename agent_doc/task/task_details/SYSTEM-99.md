@@ -823,3 +823,8 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 - 修复审核回调撤权后仍进入 handler：原 main 的两种真实入口/标记断言失败；现有第二次 authorize 移到审核后，再复用输入绑定检查，最后检查 current。protected 完整计划/回执与文件绑定固定原 root；legacy 恢复晚到 policy/lineage 检查并保留 adapter 输入兼容。
 - 本地与独立各 108 方法：107 通过、1 既有 real-tmux opt-in 跳过，新增入口模块 16 项全通过；实际多进程排他与终止恢复通过。撤回 v2 的五个先执行后拦截负结果、v3 legacy 静态异议及完整反馈均保留。[唯一证据索引](../../results/engine-pre-action-authority-20261031/record.json)。
 - Permission to Retry 与 CAVERT 的既读方法用于区分权限/租约、回执/实际使用及持续有效；本次新增正文精读计数 0，不重计旧论文。新增被动校验成本未测，不报速度、token、费用或任务质量收益。发布时原生 CI 待回读；不保证外部原子准入。SYSTEM-99 同批未决全链/真实宿主/上下文与质量范围继续开放，不计新完成轮次。
+
+
+### 2026-10-31 — RESULT-INDEX-AUTHORITY-01 v2 checkpoint
+
+刚发布的自定义证据索引误用了 ResultStore 的 `record.json`，真实 show/search 暴露 schema/identity mismatch。原字节现原样保存在 [evidence-index.json](../../results/engine-pre-action-authority-20261031/evidence-index.json)，复用 register_history 建立规范历史登记；unknown/null 验收与测量字段不冒充复用批准。修前 show 子进程 exit2、定向检索无命中；修后和独立三条真实 CLI 各 exit0、目标可发现，同条件200目录扫描错误12→11，仅移除本次错误，其余11与 partial 状态保留。59冻结证据及8源码绑定与修前和2bb Git对象一致，未重跑旧108测试或改运行时。完整原返修意见、负例、原始输出和独审见 [修正证据](../../results/engine-pre-action-authority-20261031/registry-repair/report.json)。旧私有 package.py 生成索引的做法不得重放为规范登记。原生新head CI 待发布后单独回读；同SYSTEM99未完成，正文新增计数0，未报性能/质量/全费用收益。

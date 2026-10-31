@@ -1,0 +1,70 @@
+import hashlib
+import json
+from pathlib import Path
+import subprocess
+import sys
+
+RUN = 'engine-pre-action-authority-20261031'
+QUERY = 'ReportingHandler action authority effect admission'
+
+
+def digest(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def main():
+    d = Path(__file__).resolve().parent
+    root = d.parents[1]
+    phase = sys.argv[1]
+    assert phase in ('baseline', 'fixed', 'independent')
+    package = root / 'agent_doc/results' / RUN
+    frozen = {str(p.relative_to(root)): digest(p) for p in (package / 'frozen').iterdir() if p.is_file()}
+    source_paths = ['agent_runtime/core.py', 'agent_runtime/plan_review.py', 'agent_runtime/task_manifest.py',
+                    'agent_runtime/result_store.py', 'scripts/result_store.py', 'agent_doc/guide/GUIDE.md',
+                    'AGENTS.md', 'agent_doc/task/TASK.md']
+    sources = {p: digest(root / p) for p in source_paths}
+    observations = []
+    args = [('show', ['show', RUN]), ('search', ['search', QUERY, '--limit', '5', '--max-scan', '200']),
+            ('target', ['search', RUN, '--limit', '5', '--max-scan', '200'])]
+    for name, tail in args:
+        command = [sys.executable, '-B', 'scripts/result_store.py', '--root', str(root), *tail]
+        p = subprocess.run(command, cwd=root, capture_output=True, timeout=60)
+        for suffix, data in [('stdout', p.stdout), ('stderr', p.stderr)]:
+            (d / f'registry-{phase}-{name}.{suffix}').write_bytes(data)
+        observations.append({'name': name, 'command': command, 'child_exit': p.returncode,
+                             'stdout_sha256': hashlib.sha256(p.stdout).hexdigest(),
+                             'stderr_sha256': hashlib.sha256(p.stderr).hexdigest(),
+                             'reply': json.loads(p.stdout)})
+    shown, search, target = observations
+    current_errors = [x for x in search['reply']['errors'] if x['run_id'] == RUN]
+    if phase == 'baseline':
+        checks = {'show_blocked': shown['child_exit'] == 2 and 'schema/identity mismatch' in shown['reply']['error'],
+                  'search_reports_collision': len(current_errors) == 1,
+                  'target_not_discoverable': all(x['run_id'] != RUN for x in target['reply']['results'])}
+    else:
+        record = shown['reply']['record']
+        baseline = json.loads((d / 'registry-baseline.json').read_bytes())
+        old_errors = [x for x in baseline['observations'][1]['reply']['errors'] if x['run_id'] != RUN]
+        checks = {'all_cli_exit_zero': all(x['child_exit'] == 0 for x in observations),
+                  'canonical_history_record': record['schema_version'] == 'project-result-record/v1' and record['run_id'] == RUN and record['origin'] == 'historical-external-reference',
+                  'registration_not_acceptance': record['validation_at_registration'] == {'status': 'unknown', 'proof': None} and record['contract'] is None and record['measured_at'] is None,
+                  'original_index_exact': digest(package / 'evidence-index.json') == baseline['original_record_sha256'],
+                  'search_collision_gone': not current_errors,
+                  'unrelated_errors_preserved': old_errors == search['reply']['errors'],
+                  'target_discoverable': any(x['run_id'] == RUN and x['stored_validation'] == 'unknown' and x['applicability'] == 'unchecked' for x in target['reply']['results'])}
+        for ref in record['historical_artifacts']:
+            checks['binding:' + ref['path']] = digest(root / ref['path']) == ref['sha256']
+    checks['source_unchanged'] = sources == {p: digest(root / p) for p in sources}
+    checks['frozen_unchanged'] = frozen == {str(p.relative_to(root)): digest(p) for p in (package / 'frozen').iterdir() if p.is_file()}
+    report = {'phase': phase, 'observations': observations, 'checks': checks, 'source_hashes': sources,
+              'frozen_hashes': frozen, 'original_record_sha256': digest(package / 'record.json') if phase == 'baseline' else None,
+              'metric_scope': 'Registry CLI correctness/error removal only; no performance/model/provider/token measurement',
+              'automatic_retries': 0}
+    (d / f'registry-{phase}.json').write_text(json.dumps(report, ensure_ascii=False, indent=2) + '\n')
+    print(json.dumps({'phase': phase, 'checks': checks, 'search_error_count': len(search['reply']['errors']),
+                      'scanned': search['reply']['scanned'], 'partial': search['reply']['partial']}, ensure_ascii=False))
+    raise SystemExit(0 if all(checks.values()) else 1)
+
+
+if __name__ == '__main__':
+    main()

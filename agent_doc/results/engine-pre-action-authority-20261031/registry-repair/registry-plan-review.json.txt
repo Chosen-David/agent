@@ -1,0 +1,32 @@
+{
+  "review_type": "independent-plan-static-review",
+  "task": "SYSTEM-99",
+  "decision": "revise",
+  "plan_sha256": "2eb9410060170f12680740bdc6c7a6b8ca464128184ae48d83b9745901fc85d0",
+  "base_main": "2bb689c446c4cfbc05aecbbe34a6b8b5d35bc05a",
+  "reference_checks": {"total": 16, "matched": 16, "mismatched": 0, "guide_bytes": 0, "current_frozen_files": 59, "git_worktree_clean_at_read": true},
+  "compact_verdict": {
+    "intent": {"status": "pass", "reason": "The concrete collision between a custom evidence index and ResultStore's canonical record schema warrants a narrow metadata repair within the existing reliability task. It does not require an architecture migration or reopen v4 implementation acceptance."},
+    "guide": {"status": "pass", "reason": "The pinned human guide is empty and read only. All allowed writes exclude guide. SYSTEM-99 remains open; only ordinary Progress append is proposed."},
+    "assumptions": {"status": "pass", "reason": "Static source confirms show requires schema_version and run_id, search exposes per-run show failures in errors while returning CLI exit0, and register_history creates an immutable canonical historical-external-reference record with unknown validation, contract null and measured_at null. Both producers are main guarded and parents[1] resolves the repository root."},
+    "prior_results": {"status": "pass", "reason": "Pinned dispatch diagnosis/fix reports are retained and treated as historical finite evidence, not acceptance for the registry repair. The reported discovery query is distinct from the not-yet-executed baseline; prior failures, withdrawn candidates, old budgets and deadlines remain untouched."},
+    "acceptance": {"status": "fail", "reason": "The frozen producer does not enforce source/frozen hash equality across baseline, mutation and fixed/independent phases; its preservation checks only compare each phase to itself."},
+    "risk": {"status": "pass", "reason": "Exact old bytes are renamed to evidence-index.json and bound through existing immutable registration; no runtime/schema edits or invented acceptance. Registration failure after rename must remain an incomplete retained state with no automatic retry. Static review does not certify future execution."},
+    "resources": {"status": "pass", "reason": "The distinct metadata scope explicitly limits plan, baseline, registration, fixed, independent and result reviews to one each, retries/source tests/manual CI reruns to zero, and deadline to14:35Z. Three fixed real CLI commands per phase are finite and raw stdout/stderr plus complete JSON are saved. No old budget reset is granted; automatic native CI and publication acceptance remain later separate checks."}
+  },
+  "full_review": {
+    "findings": [
+      {
+        "id": "R1",
+        "blocking": true,
+        "target": ".agent-runs/effect-boundary-2200/registry_capture.py:21-25,44-60",
+        "feedback": "sources and frozen are freshly sampled at the beginning of every phase. source_unchanged and frozen_unchanged then compare those samples only with the end of that same phase. Fixed/independent load baseline but never compare baseline.source_hashes or baseline.frozen_hashes. A file changed or deleted between baseline and fixed can therefore produce all true checks, contradicting the exact unchanged source and all59-frozen-file acceptance. Historical-artifact binding checks only cover the two registered references and do not close this gap.",
+        "requested_change": "Before any campaign, freeze the baseline original record SHA against the pinned c438852c285b5d3c281d70b420d36b7b07f8ea10fe3b7a7bced5141b14278714 and require59 frozen entries. In fixed/independent, compare the complete current source and frozen path/hash maps to the saved baseline maps, in addition to existing within-phase checks. Preserve exact membership so removed/added files fail. Bind the revised producer hash in a new immutable plan version and retain this original plan/feedback; do not silently replace the reviewed identity or claim this REVISE is approval.",
+        "acceptance_check": "Static review of the revised complete producer/plan must show fixed/independent explicitly require current maps == baseline maps and baseline frozen count59, with unchanged exactly-three CLI commands and no added campaign/retry. Later result review must inspect the actual saved baseline/fixed/independent maps and raw outputs before accepting preservation. This review executed no candidate or test."
+      }
+    ],
+    "producer_cli_semantics": "Baseline show returns2 with stdout blocked JSON for schema/identity mismatch. Search returns0 with errors in full JSON; fixed canonical record should be discoverable while stored_validation remains unknown and applicability unchecked. Target run-ID query is predeclared for both phases. Other errors are deterministic by sorted directory enumeration; complete errors must be retained rather than hidden. Current fixed checks enforce origin/schema/run identity and nonacceptance fields. Full raw streams are saved before JSON parsing; reports are saved after normal checks. Exceptions/timeouts remain failures, never retry opportunities.",
+    "proof_retention_and_scope": "The old file is an invalid custom index at the reserved name, not a valid immutable registered record. Retaining exact bytes under evidence-index.json while creating a canonical record through the existing API is a bounded correction to newly published metadata. The published independent v4 review remains a historical reference, not trusted registry acceptance. The59 underlying frozen files, all negative/withdrawn evidence and existing Progress must remain unchanged. No v4 tests, old budgets, source implementation or guide changes are authorized by this review.",
+    "execution_limits": "No repository module imported or executed, no test/CLI campaign/mutation run, no Git edit, TASK edit or guide write. Read-only source/document inspection and standard-library JSON/hash inspection only. This response is a static plan verdict, not runtime ReviewSession authentication, tool authorization, result acceptance or publication approval. Native CI for a later ordinary published exact head must be read separately with no manual rerun."
+  }
+}
