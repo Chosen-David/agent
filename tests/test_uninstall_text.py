@@ -69,7 +69,7 @@ class UninstallTextTests(unittest.TestCase):
         self.assertEqual(self.snapshot(), before)
 
     def test_valid_local_edits_and_unowned_data_survive_uninstall(self):
-        self.late.write_text('locally edited agent\n', encoding='utf-8')
+        self.late.write_bytes(b'locally edited agent\n')
         note = self.project / 'notes.txt'
         note.write_bytes(b'keep user data\r\n')
         result = setup.uninstall(self.project)
@@ -88,7 +88,7 @@ class UninstallTextTests(unittest.TestCase):
             if relative == self.relative:
                 reads.append(text)
                 if len(reads) == 1:
-                    self.late.write_text('new concurrent edit\n', encoding='utf-8')
+                    self.late.write_bytes(b'new concurrent edit\n')
             return text
 
         with patch.object(setup, '_installed_text', side_effect=changed_after_read):

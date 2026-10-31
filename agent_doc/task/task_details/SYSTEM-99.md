@@ -784,3 +784,6 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 
 
 - 2026-10-31续接：完成Jev-LiteMAS2610.21411v2主文1–6/全子节/References、Appendix A/B.1–B.2/C.1–C.3/D、五表/三图注/Eq1–15/Algorithm1全部71993字符阅读，一次独立全文静态复核accept、10hash全匹配、0必须返修。[完整读记/原反馈/精确连续范围](../../results/jev-litemas-reading-20261031/report.md)保留生成LLM与全部模型费用区别、漏放不进复审、GPT5 MATH延迟回退/异构API质量下降/文字-表格差异；元数据/产品网页parent-only边界明确，无源码/策略/端点/mandatory gate变更或性能结论。普通逐文件发布回读后同批66→67，仅新本篇；DiscernMem同批已读命中后不重复抵数或独审。1/max2原06:40:38.708190Z内使用，无额外审或旧额度重置；手工独审非trusted runtime，历史登记unknown。主控跨通信/任务租约/交接basis/dispatch/scheduler相关函数静态审查未确认新生产缺陷，不称全链无bug；根CLAUDE复用AGENTS不另造权威。CAVERT2610.08101v1仅前27000/121716字符，剩余RQ2/RQ3/参考文献/附录与独审未完整，检查点0credit。b18 CI三POSIX成功/两Windows失败仅摘要不新归因；旧全部失败/缺原件/耗尽gate、Plan64/唯一TASK/人类guide保持。SYSTEM99真实宿主/完整输入/终局质量/全角色费用/并发恢复仍open，非整轮完成。
+
+
+- 用户本次明确指出CI持续错误、要求不只读论文而实际改进库：按此CI修复要求处理旧冻结候选，不重写旧预算/失败。28d5最新Windows3.12完整原日志确认两LF/CRLF夹具错误，只将两write_text改显式write_bytes，原断言/生产/工作流全保留；本机与独立各11方法一次通过，新原生CI另核。[修复及完整复核](../../results/ci-newline-user-fix-20261031/report.md)。后续以可证伪实现与同条件质量/实际上下文/全角色成本验收优先，单纯读记增长不算成果；论文67/CAVERT partial、旧其它耗尽scope/未决/guide/唯一TASK保持，非整轮完成。
