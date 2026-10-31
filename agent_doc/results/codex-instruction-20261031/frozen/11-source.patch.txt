@@ -1,0 +1,66 @@
+--- scripts/setup_codex.py
++++ scripts/setup_codex.py
+@@ -20,11 +20,12 @@
+ import zipfile
+ 
+ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+-from agent_runtime.external_json import ExternalJSONError, load_json
++from agent_runtime.external_json import ExternalJSONError, load_json, regular_bytes
+ 
+ BEGIN = b'<!-- chosen-agent:begin -->'
+ END = b'<!-- chosen-agent:end -->'
+ INSTALLATION_STATE_LIMIT = 1024 * 1024
++INSTRUCTION_LIMIT = 16 * 1024 * 1024
+ 
+ 
+ 
+@@ -214,6 +215,18 @@
+         previous = current[start:finish]
+         return current[:start] + block + current[finish:], previous
+     return current + (b'\n\n' if current else b'') + block + b'\n', None
++
++
++def instruction_bytes(path):
++    """Bound global instruction snapshots while preserving their exact bytes."""
++    if path.is_symlink():
++        raise ValueError('Linked global AGENTS.md requires manual review')
++    try:
++        return regular_bytes(path, max_bytes=INSTRUCTION_LIMIT)
++    except ExternalJSONError as exc:
++        if isinstance(exc.__cause__, FileNotFoundError):
++            return b''
++        raise ValueError('Global AGENTS.md bounded regular-file read failed: ' + str(exc)) from exc
+ 
+ 
+ def synchronize(repo, destination, state, codex_home, *, adopt=False, check=False):
+@@ -258,9 +271,11 @@
+         raise ValueError('Linked global AGENTS.md requires manual review')
+     if instruction_path.exists() and not instruction_path.is_file():
+         raise ValueError('Global AGENTS.md is not a regular file; preserved for review')
+-    current = instruction_path.read_bytes() if instruction_path.exists() else b''
++    current = instruction_bytes(instruction_path)
+     block = template.replace(b'{{REPOSITORY}}', repo.as_posix().encode('utf-8')).strip()
+     instructions, old_block = merge_instructions(current, block)
++    if len(instructions) > INSTRUCTION_LIMIT:
++        raise ValueError('Merged global AGENTS.md exceeds instruction byte bound; preserved')
+     if prior and (old_block is None or digest(old_block) != prior['instruction_block_sha256']):
+         raise ValueError('Managed global instructions were edited; preserved')
+     if not prior and old_block is not None:
+@@ -278,7 +293,7 @@
+     lock.mkdir()  # No stale-lock deletion or concurrent installer.
+     try:
+         # Recheck ownership under lock. All preflight checks above were read-only.
+-        if installed_files(destination, roles) != actual or (instruction_path.read_bytes() if instruction_path.exists() else b'') != current:
++        if installed_files(destination, roles) != actual or (instruction_bytes(instruction_path)) != current:
+             raise ValueError('Installation changed during preflight; no files replaced')
+         check_file_layout(destination, files)
+         changed = {p: data for p, data in files.items() if actual.get(p) != wanted[p]}
+@@ -304,7 +319,7 @@
+             owned_path(destination, relative).unlink()  # Only unchanged, manifest-owned files.
+         if current != instructions:
+             atomic(instruction_path, instructions)
+-        if installed_files(destination, roles) != wanted or instruction_path.read_bytes() != instructions:
++        if installed_files(destination, roles) != wanted or instruction_bytes(instruction_path) != instructions:
+             raise ValueError('Post-write verification failed; inspect pending.json and backups')
+         atomic(manifest_path, json.dumps(new, ensure_ascii=False, indent=2).encode('utf-8'))
+         (state/'pending.json').unlink()

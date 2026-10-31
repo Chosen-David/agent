@@ -1,0 +1,70 @@
+test_exact_limit_existing_instructions_remain_valid (tests.test_codex_instruction_read.CodexInstructionReadTests.test_exact_limit_existing_instructions_remain_valid) ... ok
+test_fifo_replacement_after_type_check_is_nonblocking (tests.test_codex_instruction_read.CodexInstructionReadTests.test_fifo_replacement_after_type_check_is_nonblocking) ... FAIL
+test_fifo_replacement_before_locked_recheck_is_nonblocking (tests.test_codex_instruction_read.CodexInstructionReadTests.test_fifo_replacement_before_locked_recheck_is_nonblocking) ... FAIL
+test_merged_instructions_limit_checked_before_writes (tests.test_codex_instruction_read.CodexInstructionReadTests.test_merged_instructions_limit_checked_before_writes) ... FAIL
+test_missing_and_binary_crlf_preferences_preserved (tests.test_codex_instruction_read.CodexInstructionReadTests.test_missing_and_binary_crlf_preferences_preserved) ... ok
+test_oversize_global_instructions_cli_rejected_without_changes (tests.test_codex_instruction_read.CodexInstructionReadTests.test_oversize_global_instructions_cli_rejected_without_changes) ... 
+  test_oversize_global_instructions_cli_rejected_without_changes (tests.test_codex_instruction_read.CodexInstructionReadTests.test_oversize_global_instructions_cli_rejected_without_changes) (check=False) ... FAIL
+  test_oversize_global_instructions_cli_rejected_without_changes (tests.test_codex_instruction_read.CodexInstructionReadTests.test_oversize_global_instructions_cli_rejected_without_changes) (check=True) ... FAIL
+test_symlink_replacement_after_type_check_is_rejected (tests.test_codex_instruction_read.CodexInstructionReadTests.test_symlink_replacement_after_type_check_is_rejected) ... FAIL
+
+======================================================================
+FAIL: test_fifo_replacement_after_type_check_is_nonblocking (tests.test_codex_instruction_read.CodexInstructionReadTests.test_fifo_replacement_after_type_check_is_nonblocking)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_codex_instruction_read.py", line 141, in test_fifo_replacement_after_type_check_is_nonblocking
+    self.assert_fifo_race_rejected('preflight')
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_codex_instruction_read.py", line 127, in assert_fifo_race_rejected
+    self.fail('global instruction FIFO replacement blocked synchronization')
+AssertionError: global instruction FIFO replacement blocked synchronization
+
+======================================================================
+FAIL: test_fifo_replacement_before_locked_recheck_is_nonblocking (tests.test_codex_instruction_read.CodexInstructionReadTests.test_fifo_replacement_before_locked_recheck_is_nonblocking)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_codex_instruction_read.py", line 145, in test_fifo_replacement_before_locked_recheck_is_nonblocking
+    self.assert_fifo_race_rejected('locked-recheck')
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_codex_instruction_read.py", line 127, in assert_fifo_race_rejected
+    self.fail('global instruction FIFO replacement blocked synchronization')
+AssertionError: global instruction FIFO replacement blocked synchronization
+
+======================================================================
+FAIL: test_merged_instructions_limit_checked_before_writes (tests.test_codex_instruction_read.CodexInstructionReadTests.test_merged_instructions_limit_checked_before_writes)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_codex_instruction_read.py", line 86, in test_merged_instructions_limit_checked_before_writes
+    with self.assertRaisesRegex(ValueError, 'bound'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_oversize_global_instructions_cli_rejected_without_changes (tests.test_codex_instruction_read.CodexInstructionReadTests.test_oversize_global_instructions_cli_rejected_without_changes) (check=False)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_codex_instruction_read.py", line 74, in test_oversize_global_instructions_cli_rejected_without_changes
+    self.assertEqual(result.returncode, 1, result.stdout)
+AssertionError: 0 != 1 : {"status": "configured", "revision": "8e4b0ea46a423fab34263387e78865efeefd7992", "skills": 2, "files": 3, "updated_files": 3, "model_probe": "not_run", "scheduler": "not_started"}
+
+
+======================================================================
+FAIL: test_oversize_global_instructions_cli_rejected_without_changes (tests.test_codex_instruction_read.CodexInstructionReadTests.test_oversize_global_instructions_cli_rejected_without_changes) (check=True)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_codex_instruction_read.py", line 74, in test_oversize_global_instructions_cli_rejected_without_changes
+    self.assertEqual(result.returncode, 1, result.stdout)
+AssertionError: 0 != 1 : {"status": "configured", "revision": "8e4b0ea46a423fab34263387e78865efeefd7992", "skills": 2, "files": 3, "model_probe": "not_run", "scheduler": "not_started"}
+
+
+======================================================================
+FAIL: test_symlink_replacement_after_type_check_is_rejected (tests.test_codex_instruction_read.CodexInstructionReadTests.test_symlink_replacement_after_type_check_is_rejected)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_codex_instruction_read.py", line 167, in test_symlink_replacement_after_type_check_is_rejected
+    with self.assertRaisesRegex(ValueError, 'Linked'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 7 tests in 7.161s
+
+FAILED (failures=6)

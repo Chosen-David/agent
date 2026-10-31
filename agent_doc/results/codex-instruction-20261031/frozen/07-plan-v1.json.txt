@@ -1,0 +1,106 @@
+{
+  "task": "SYSTEM-99",
+  "scope": "CODEX-INSTRUCTION-READ-01",
+  "status": "pending independent plan review; do not apply/run before approval",
+  "base": "a7ec474d644f7d6af6abea8c73e8b19725bbea7a",
+  "intent": "bound actual Codex installer global AGENTS read at each existing read point and prevent producing self-overlimit output; preserve exact bytes/ownership/guards",
+  "guide": "entire guide human-only; currentempty GUIDE unchanged; no guide/index edit",
+  "assumptions": [
+    "scripts/setup_codex.py has unbounded instruction_path.read_bytes at initial, locked recheck and postwrite points",
+    "static directory/FIFO already blocked; race within is_file guard and before locked recheck not covered",
+    "installed_files byte reads, arbitrary parent races, OS ACL, whole sync transaction and actual model loading excluded; no security guarantee"
+  ],
+  "prior_results": {
+    "path": ".agent-runs/codex-instruction-prior-1157.json",
+    "sha256": "c3cba02eaccd6766e0d08f9cb4b1602558584b3dc36e9411a6073c92f0b75411",
+    "scanned": 372,
+    "partial": true,
+    "errors": 25,
+    "hits": 5,
+    "rejected": "top oldcodexpullsync2dd302d covers different code/contract; other lexical hits unrelated; no empirical reuse"
+  },
+  "method": {
+    "candidate": {
+      "path": ".agent-runs/codex-instruction-1210/setup_codex-candidate.py",
+      "sha256": "4e8e1de4ca6ac54bed576f9a3b48ee41927842c6d3f6d930c61bc0f5237894d1"
+    },
+    "patch": {
+      "path": ".agent-runs/codex-instruction-1210/source.patch",
+      "sha256": "7df5e919a23b72303b230fb3ee42e6c1e63374c87f4a31348a4a43b3fd12eb4b"
+    },
+    "test": {
+      "path": ".agent-runs/codex-instruction-1210/test_codex_instruction_read.py",
+      "sha256": "b19ce01f0d739277d8215bd6180b51331640e70dcda166df13bfd08e9fd06f89"
+    },
+    "reuse": "regular_bytes helper unchanged; only global instruction wrappers; raw bytes no UTF8/newline normalization; exact16MiB total/merged limit",
+    "normal_compatibility": "missing file still b-empty, owned block/hash/localpreferences intact, check read-only, no models/daemon; earlier configuredexactceiling accepted",
+    "new_limit": "previously arbitrary-size globalfile now rejected; no truncation/removal. reject mergedoverlimit before state/backup/skill writes",
+    "workflow": "insert new module step before old Windows failure in install matrix and macos, no old step edits"
+  },
+  "dag": [
+    {
+      "id": "plan",
+      "owner": "fresh independent plan reviewer",
+      "requires": []
+    },
+    {
+      "id": "baseline",
+      "requires": [
+        "plan approve"
+      ],
+      "action": "copy frozen seven-method test to tests/test_codex_instruction_read.py; run once on old source; preserve full failures and child timeouts/reaping"
+    },
+    {
+      "id": "fix",
+      "requires": [
+        "baseline"
+      ],
+      "action": "apply exact candidate source/one new CI step perjob; run same new methods plus tests.test_codex_setup,tests.test_codex_source_aliases,tests.test_install_recovery once"
+    },
+    {
+      "id": "independent",
+      "requires": [
+        "fix"
+      ],
+      "action": "fresh independent reviewer run same combined suite once; inspect actual code/raw data/acceptance"
+    },
+    {
+      "id": "publish",
+      "requires": [
+        "independent usable-with-scope"
+      ],
+      "action": "append Plan64onlyafterapproval and sourceapply; fetch latestmain, normal push ownedpaths, byte readback; original CI per scope at most2 candidate commits only actualnewscope failures mayjustify2nd"
+    }
+  ],
+  "acceptance": [
+    "retain repair-beforefailure or samecondition baseline; five expected discriminator methods reject instead of oversizeaccept or FIFO hang/symlinkaccept, two compatibility controls",
+    "same fixed and independent combined methods all pass; skips platformexplicit; full logs/no partialsuccess",
+    "CLI actualoversize blocked/no traces; no managedfile/manifest/pending/backups writes on staticinput failures, race lockedrecheck may createempty state directory only",
+    "mergedmax bound beforewrites; exactlimit alreadyconfigured roundtrip rawbytes controls",
+    "allactual CInewsteps evaluated separately from frozen oldWindows suitefailure",
+    "no speed/token/taskquality claim"
+  ],
+  "allowed_writes": [
+    "scripts/setup_codex.py",
+    "tests/test_codex_instruction_read.py",
+    ".github/workflows/portable-install.yml",
+    "agent_doc/task/task_details/SYSTEM-99.md",
+    "agent_doc/results/codex-instruction-20261031/*",
+    ".agent-runs/codex-instruction-1210/*"
+  ],
+  "risk": "new16MiBglobal ceiling; extra bounded read uses existing helper; no importedhelper/sourceFDfix or reset of oldscope; byte snapshots do not provide wholetransaction",
+  "resources": {
+    "deadline": "2026-10-31T04:56:16.419636+00:00",
+    "plan_reviews_max": 2,
+    "baseline_runs_max": 1,
+    "fixed_runs_max": 1,
+    "independent_runs_max": 1,
+    "source_ci_commits_max": 2,
+    "child_fifo_join_seconds": 3,
+    "child_owned_terminate_join_seconds": 3,
+    "cli_timeout_seconds": 8,
+    "retry": "none missing/unknown; plan2onlyrequiredrevision after completedfeedback withinoriginalscope; sourceCI2onlyactualscopefailure",
+    "all_role_usage_cost": "unknown"
+  },
+  "old_gates": "all prior Windows/FD/CLI/backend/StageI/ALIAS/legacy/etc consumed/expired scopes unchanged. New Codex instruction read is disjoint from setup.py and JSON state; not a renamed old scope."
+}

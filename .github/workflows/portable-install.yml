@@ -35,6 +35,7 @@ jobs:
       - run: python -B -m unittest discover -s tests -p test_setup_publication.py -v
       - run: python -B -m unittest discover -s tests -p test_setup_manifest.py -v
       - run: python -B -m unittest discover -s tests -p test_setup_legacy_text.py -v
+      - run: python -B -m unittest discover -s tests -p test_codex_instruction_read.py -v
       - run: python -B -m unittest discover -s tests -p test_uninstall_text.py -v
       - run: python -B -m unittest discover -s tests -p test_setup_text.py -v
       - run: python -B -m unittest discover -s tests -p test_role_process.py -v
@@ -83,6 +84,9 @@ jobs:
         env:
           TMPDIR: ${{ runner.temp }}
       - run: python -B -m unittest discover -s tests -p test_setup_legacy_text.py -v
+        env:
+          TMPDIR: ${{ runner.temp }}
+      - run: python -B -m unittest discover -s tests -p test_codex_instruction_read.py -v
         env:
           TMPDIR: ${{ runner.temp }}
       - run: python -B -m unittest discover -s tests -p test_uninstall_text.py -v

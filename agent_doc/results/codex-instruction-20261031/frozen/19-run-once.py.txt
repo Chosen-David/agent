@@ -1,0 +1,23 @@
+from pathlib import Path
+import subprocess,sys,json,datetime,hashlib,time,platform,os
+p=Path(__file__).resolve().parent
+phase=sys.argv[1]
+assert phase in ('baseline','fixed')
+out=p/(phase+'.json')
+with out.open('x') as f:json.dump({'status':'reserved-before-execution','phase':phase},f)
+modules=['tests.test_codex_instruction_read']
+if phase=='fixed':modules+=['tests.test_codex_setup','tests.test_codex_source_aliases','tests.test_install_recovery']
+command=[sys.executable,'-B','-m','unittest',*modules,'-v']
+meta={'phase':phase,'command':command,'started_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'python':sys.version,'platform':platform.platform(),'source_sha256':hashlib.sha256(Path('scripts/setup_codex.py').read_bytes()).hexdigest(),'test_sha256':hashlib.sha256(Path('tests/test_codex_instruction_read.py').read_bytes()).hexdigest()}
+start=time.monotonic()
+try:
+ r=subprocess.run(command,capture_output=True,timeout=120,env={**os.environ,'PYTHONDONTWRITEBYTECODE':'1'})
+ stdout,stderr=r.stdout,r.stderr;meta.update(exit_code=r.returncode,status='executed')
+except subprocess.TimeoutExpired as e:
+ stdout,stderr=e.stdout or b'',e.stderr or b'';meta.update(exit_code=None,status='timeout-no-rerun')
+(p/(phase+'.stdout')).write_bytes(stdout);(p/(phase+'.stderr')).write_bytes(stderr)
+meta['elapsed_seconds']=time.monotonic()-start
+meta['finished_at']=datetime.datetime.now(datetime.timezone.utc).isoformat()
+meta['logs']=[{'path':str(p/(phase+'.'+k)),'sha256':hashlib.sha256(b).hexdigest()} for k,b in [('stdout',stdout),('stderr',stderr)]]
+out.write_text(json.dumps(meta,indent=2)+'\n')
+print(json.dumps(meta));print(stderr.decode('utf-8',errors='replace')[-2400:]);sys.exit(r.returncode if meta['status']=='executed' else 124)

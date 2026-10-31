@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 63
+Version: 64
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -211,6 +211,8 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 阶段SETUP-UNINSTALL-TEXT-PREFLIGHT-01：在删除任何受管文件前预读全部现存普通受管文本，使静态较后UTF8/16MiB/读取错误不造成先删后拒绝；保留删除时重新读取/指纹判断，不以预检快照误删后续用户编辑。沿用非普通内容与合法编辑保留、元数据和链接守卫，不改共享helper、schema或guide；非整个卸载事务/所有并发和I/O故障回滚。独立方案通过后一次修前反例、一次修后必要回归及一次独立代码/数据复核，固定完整失败与有限原生CI范围后普通发布；旧SETUP-TEXT/JSON等有限门禁仍冻结，不重跑其旧runner或增加额度。无性能/真实宿主/模型质量/全费用结论，SYSTEM99保持未完成。
 
 阶段SETUP-LEGACY-TEXT-01（Version63）：仅将安装器project_document_layout对根旧TASK.md的文本读取复用既有_installed_text，使canonical已存在时的旧指针读取受16MiB普通FD/UTF8/非阻塞/链接拒绝边界保护；原缺canonical必须显式迁移、双活跃清单拒绝、通用换行与旧指针原字节保留。不是项目迁移/任务语义/共享helper重构或整个安装并发事务。独审冻结七方法真实临时CLI/API类型替换反例与相邻setup/manifest/text回归，保留修前失败后实施；baseline/fixed/independent各一次，命令120秒、FIFO子进程3秒、共享1800秒，方案最多2次、原生源码CI提交最多2次（第二次只可修本新scope原生失败，不修旧Windows测试）。完整独立代码/数据复核后普通发布，原生新增步骤须分别核对；旧Windows失败及所有耗尽gate不得重跑/改名重置。仅局部拒绝/兼容验收，无性能/真实会话/全质量/费用或整轮完成主张；58篇历史正文不变。
+
+阶段 CODEX-INSTRUCTION-READ-01（Version64）：按独立批准的冻结方案，仅将scripts/setup_codex.py三处全局AGENTS.md读取复用regular_bytes，保留原字节、缺文件/受管区块/本地偏好/静态类型与指南守卫。新16MiB上限同时约束读取和合并输出，输出超限在状态/备份/技能写入前拒绝，不截断；支持已配置总长恰上限。先保留七方法修前失败，再同固定方法及三个相邻模块修后/独立各一次；CLI超限、is_file内FIFO/链接替换、锁前FIFO替换和rawbytes/边界控制分开，不称任意Windows链接竞争、父路径/全同步事务或真实会话加载。方案最多2次审核、baseline/fixed/independent各1、源码CI最多2提交且第二次只因本新scope真实失败；原deadline2026-10-31T04:56:16.419636Z，全部旧scope失败/预算不变，性能/模型质量/全费用未测不报收益。
 
 ## Progress
 
@@ -767,3 +769,5 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 - 2026-10-31续接：MemSteer2610.39276v1主文1–5/伦理/可复现/LLM说明、全部参考文献、附录A.1–A.5/B.1–B.5/C、九表/两公式及定义/五图图注精读完成，一次独立全文静态复核accept无必须返修；[完整读记/原反馈](../../results/memsteer-reading-20261031/report.md)保留Official评价重叠/生成val不清、20次选择、引用覆盖非必要性、heldout退化、预算/成本和全流程换judge限制。普通精确发布回读后历史同批60→61，只一篇，不新开轮或重复partial计数；2610.39790原独审缺失/过期仍0credit、旧六原件缺失不补造。采用后续存储/检索/交付/解释诊断评价方向，暂缓自动架构/生成代码/服务迁移。主控另读状态导航/上下文闭包/源码视图片段未确认新生产缺陷，非论文独审范围；无生产/test/workflow修改、模型实证或性能结论。c24文档CI三POSIX成功/两Windows失败，Plan63/唯一TASK/guide及所有旧失败/额度边界保持。独审1次原期限内，全角色费用unknown；SYSTEM99实际宿主/全输入/终局质量/全费用/并发恢复/整体卸载仍open，非整轮完成。
 
 - 2026-10-31续接：完成2610.38521v1全部主文I–VIII/致谢/29参考文献/五图图注及补充NVIDIA博客，首审revise两项事实精度，保留原稿/完整反馈后v2复审accept；[记录](../../results/memory-security-reading-20261031/report.md)保留313/推算306差异未解释、提及文件非披露攻击判断、识别非安全验收。另完成Stratum2610.36153v1主文I–VIII/子节/唯一表/图注/两公式/31引用，一次独立全文静态复核accept；[记录](../../results/stratum-reading-20261031/report.md)区分合成检索与四工具原型、同题根因命名与真实修复、writer与reader成本、未验证语义淘汰和累积局限。普通精确发布回读后同批61→63，仅新两篇，不新开轮/重算历史/用博客抵数；原三旧包六原件缺失及2610.39790独审缺失/过期0credit保留。采用后续验收问题、暂缓新防御服务/记忆池/MCP和重大迁移；主控有限advice/guide来源静态核对另列，未确认新生产缺陷，无生产/test/workflow更改、模型/benchmark或性能结论。独审实际3次(安全2/max2、Stratum1/max2)均原期限内，完整原反馈公开，全角色费用unknown。437cd CI三POSIX成功/两Windows失败，仅汇总不新推原因；Plan63/唯一TASK/人类guide及全部旧失败/耗尽边界不变。SYSTEM99实际宿主加载/全输入/终局质量/全费用/并发恢复/整体卸载仍open，本次是阶段证据，不算整轮完成。
+
+- 2026-10-31 CODEX-INSTRUCTION-READ-01续接：独立方案approve后Plan63→64，三处Codex全局AGENTS读取复用既有regular_bytes，新16MiB输入/合并输出上限且输出超限先拒绝，原rawbytes/受管所有权/guide守卫保留。[原失败/完整独审/机械纠正](../../results/codex-instruction-20261031/report.md)：七方法修前五判别方法六失败断言/两兼容控制通过，修后与独立同47各全通过。原独审revise仅CI插入误移旧macOS TMPDIR，保留无效YAML/反馈，按原审显式允许的精确hash/旧steps对象等价机械关闭R1，非重审/重跑/改判；真实五job新step另核。不称整个同步事务/任意Windows链接竞争或速度收益；源码CI本scope最多2且第二次只实际本scope失败，baseline/fixed/ind各1已用，原deadline04:56:16.419636Z。唯一TASK/人类guide及旧Windows/FD/backend/StageI等所有失败/耗尽gate不变。同次完成CASE2610.38800v1全文I–VIII/20引用/Eq1/TableI/图注及固定作者README/metrics，一次独立全文静态复核accept；[记录](../../results/case-reading-20261031/report.md)保留同规则人工oracle、lineage无效消融、无agent结果和字符估token，未采纳新schema/图/重大迁移。普通逐字节发布回读后同批63→64仅新一篇，旧缺原件/未完成0credit不重认证；CASE与此安装修复无算法因果关系。实际独立宿主AI调用3次(方案/代码结果/论文各1)、全费用unknown；SYSTEM99真实加载/全输入/终局质量/全费用/并发恢复/整体卸载仍open，不算整轮完成。
