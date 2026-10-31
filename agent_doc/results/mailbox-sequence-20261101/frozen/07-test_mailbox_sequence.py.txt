@@ -1,0 +1,92 @@
+"""Public Mailbox sequence identity and real CLI lifecycle regression."""
+import json
+from pathlib import Path
+import subprocess
+import sys
+import unittest
+from tests.test_communication import CommunicationTests as _Fixture
+
+ROOT = Path(__file__).resolve().parents[2] if '.agent-runs' in str(Path(__file__)) else Path(__file__).resolve().parents[1]
+
+class MailboxSequenceTests(unittest.TestCase):
+    save = _Fixture.save
+    def setUp(self):
+        _Fixture.setUp(self)
+        self.seq = self.box.publish(self.event)['seq']
+        self.digest = self.box.inbox_index('writer')['items'][0]['body_sha256']
+        for name, value in [('plan.json', self.plan), ('request.json', self.request),
+                            ('receipt.json', {'status': 'consumed', 'reason': 'verified fixture'})]:
+            (self.root/name).write_text(json.dumps(value), encoding='utf-8')
+
+    def snapshot(self):
+        with self.box.connect() as db:
+            return {table: [list(row) for row in db.execute('SELECT * FROM '+table+' ORDER BY 1,2')]
+                    for table in ['communication_events','communication_deliveries','communication_basis','communication_usage_v1']}
+
+    def cli(self, *args):
+        command = [sys.executable, '-B', '-m', 'agent_runtime.communication', '--db', str(self.db),
+                   '--root', str(self.root), '--plan', str(self.root/'plan.json'), *map(str,args)]
+        result = subprocess.run(command, cwd=ROOT, capture_output=True, timeout=15)
+        print(json.dumps({'args': list(map(str,args)), 'returncode': result.returncode,
+                          'stdout': result.stdout.decode('utf-8'), 'stderr': result.stderr.decode('utf-8')}, ensure_ascii=True))
+        return result
+
+    def test_public_sequence_rejects_type_aliases_without_binding(self):
+        for value in [True, False, 1.0, '1', None, 0, -1, 2**63, -(2**63)-1]:
+            for name, call in [('read', lambda: self.box.read_pending('writer', value, self.digest)),
+                               ('consume', lambda: self.box.consume_handoff('writer', value, self.request)),
+                               ('context', lambda: self.box.prepare_context('writer', value, self.request)),
+                               ('ack', lambda: self.box.acknowledge('writer', value, {'status':'consumed','reason':'fixture'}))]:
+                before = self.snapshot()
+                with self.subTest(value=value, entry=name):
+                    with self.assertRaises(ValueError): call()
+                    self.assertEqual(self.snapshot(), before)
+
+    def test_valid_maximum_is_missing_delivery_not_overflow(self):
+        value = 2**63-1
+        for call in [lambda: self.box.read_pending('writer',value,self.digest),
+                     lambda: self.box.consume_handoff('writer',value,self.request),
+                     lambda: self.box.acknowledge('writer',value,{'status':'consumed','reason':'fixture'})]:
+            with self.assertRaisesRegex(ValueError, 'missing|not found'): call()
+        self.assertEqual(self.box.inbox('writer',after_seq=value), [])
+        with self.assertRaises(ValueError): self.box.inbox('writer',after_seq=2**63)
+
+    def test_cli_overflow_is_structured_rejection_without_ledger_effect(self):
+        value = 2**63
+        for args in [('read-pending','writer',value,'--body-sha256',self.digest),
+                     ('consume','writer',value,'--request',self.root/'request.json'),
+                     ('context','writer',value,'--request',self.root/'request.json'),
+                     ('ack','writer',value,self.root/'receipt.json')]:
+            before = self.snapshot()
+            with self.subTest(entry=args[0]):
+                result = self.cli(*args)
+                self.assertEqual(result.returncode,1)
+                self.assertEqual(result.stderr,b'')
+                self.assertEqual(set(json.loads(result.stdout)),{'error'})
+                self.assertEqual(self.snapshot(),before)
+
+    def test_real_cli_index_read_consume_context_ack_and_reopen(self):
+        def invoke(*args):
+            result = self.cli(*args)
+            self.assertEqual(result.returncode,0)
+            self.assertEqual(result.stderr,b'')
+            return json.loads(result.stdout)
+        index = invoke('inbox-index','writer')
+        item = index['items'][0]
+        self.assertFalse(index['has_more'])
+        self.assertEqual(item['seq'],self.seq)
+        delivery = invoke('read-pending','writer',self.seq,'--body-sha256',item['body_sha256'])
+        self.assertEqual(delivery['event'],self.event)
+        consumed = invoke('consume','writer',self.seq,'--request',self.root/'request.json')
+        self.assertEqual(consumed,self.record)
+        context = invoke('context','writer',self.seq,'--request',self.root/'request.json')
+        self.assertEqual(json.loads(context['payload'])['artifacts'],self.record['artifacts'])
+        self.assertEqual(invoke('ack','writer',self.seq,self.root/'receipt.json'),{'acknowledged':True})
+        from agent_runtime.communication import Mailbox
+        reopened = Mailbox(self.db,self.plan,self.root)
+        self.assertEqual(reopened.inbox('writer'),[])
+        self.assertEqual(len(reopened.inbox('reviewer')),1)
+        with self.assertRaisesRegex(ValueError,'already handled'):
+            reopened.read_pending('writer',self.seq,self.digest)
+
+if __name__=='__main__': unittest.main(verbosity=2)

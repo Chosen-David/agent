@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 70
+Version: 71
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -229,6 +229,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段ENGINE-AUTHORITY-BINDINGS（Version69，取代未发布v2）：v2经100有限case后独审撤回，因授权回调后缺已审输入新鲜度复查；完整旧意见/字节/数据保留。本补充仅用本次live审核后栈内完整plan含receipt指纹与原projectroot，authorize后复用current_inputs重验绑定，不再调用verifier，最后current门禁；不以指纹授信，不持久化cache。显式对比原675与未发布v2在task/receipt/TASK/审核证据/采纳advice变更时的实际handler写入；v3须同时保留权限False/异常拒绝与健康两授权调用、新全部边界、独立结果和原生验收。无外部原子fence、超时抢占、later-revocation保证、ledger迁移/退款/旧scope重演；同SYSTEM99未完成。
 
 阶段MANAGED-CHILD-ADMISSION（Version70，同SYSTEM99）：真实load_backend/ManagedEngine包装器内检索撤权仍进入实际子handler的4方法负例（3pass/1fail）已独审，原字节保留。修复仅由Engine为真实Context安装宿主私有effect准备回调：再次live审核并对实际dispatched_task向同一registered handler授权，栈内一次性检查完整plan/receipt/实际任务绑定，ReportingHandler完成结果/记忆/知识/文档绑定读后最后核真实claim，再进入子handler。保留旧外层门禁、六位置Context/direct wrapper兼容与legacy prior_result_search派生字段；不新建ledger/持久授权cache/工具权限/共享聊天池或改guide。健康包装路径授权2→3、非包装仍2；额外I/O/授权/认证成本未测不报性能收益。新版固定验收含实际Managed Unix路径与跨平台Engine路径、保护输入及结果/legacy/到期/缓存控制，独立同条件回归与原生平台后普通main发布。无外部provider原子fence/任意后续撤权保证或部署声明，同批次完整宿主/上下文/任务质量仍未完成。
+
+阶段MAILBOX-SEQUENCE（Version71，同SYSTEM99）：保持消息序号的精确整数身份；inbox游标允许0，read-pending/consume/context/ACK只接受1..2**63-1的普通int，拒绝bool/float/string及越界，不依赖SQLite转换或把OverflowError当sqlite3.Error。复用单一私有谓词，不改路由/schema/ACK语义、记忆与证据校验或目录。先独审固定4方法与真实CLI全链控制，保留修前类型别名/溢出负例；只在确认缺陷后应用精确候选，修后及独立定向回归各一次，五组原生CI新增4方法另核。方案2次、baseline/fixed/independent各1、结果独审2次、源码CI1、无自动重试，原deadline2026-10-31T18:40Z；tmux旧双REVISE及全部其它耗尽scope不重置。本阶段仅消息身份及错误处理可靠性，无性能/token/模型质量/全费用收益，同批真实宿主等未决保持。
 
 ## Progress
 
@@ -835,3 +837,8 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 ### 2026-10-31 — MANAGED-CHILD-ADMISSION-01 checkpoint
 
 实际 load_backend → ManagedEngine → ReportingHandler 查询期间撤权后，旧入口仍在 current=true/permitted=false 时写入子任务标记；修前4方法3pass/1预期断言失败。现由 Engine 给实际 claim 安装可选的一次性准备入口，wrapper 的实时结果/复用回调后重新核对审核、实际任务与原handler授权，保留既有被动绑定读取，最后重验完整输入/回执/root和真实租约再进入实际子任务。legacy派生查询、旧直接Context兼容及终态reconciliation不变。修后与独立各199方法：198pass、1原real-tmux选测skip；新增16全pass，含真实生产者→独立算术gate→消费者、缓存后撤权、服务异常、task/plan/result变化与末次读取期间过期。[完整原失败、精确方案/完整双审与原始输出](../../results/managed-child-admission-20261031/report.json)保留有限合成host/clock与真实本地I/O范围，规范register_history仅unknown登记不冒充runtime验收。wrapped健康授权2→3次，新增成本未测，不报效率/费用收益；外部原子围栏、真实宿主/模型质量/上下文/全费用等仍open。原生CI待发布后回读（Unix16，Windows12portable+4明确managed Unix跳过），不手动重跑。AID-Guard2608.21159v1正文I–IX及附录A–F已实际续读完并保存方法/实验/消融/局限/代码关系，待阅读记录去重验收，新增正式精读计数仍0；本次仅应用作用入口校验思路，不称移植论文完整协议。Plan69→70、旧全部Progress字节/唯一TASK/人类guide保持，同一SYSTEM99未结案。
+
+
+### 2026-11-01 — MAILBOX-SEQUENCE-01 checkpoint
+
+消息消费/context曾接受True/1.0/字符串1为序号1，超出SQLite整数范围在read/consume/context/ACK真实CLI抛未捕获OverflowError；修前4方法的10失败/6错误子案例及2健康控制保留。原地复用严格普通int/有界序号谓词，保留0游标、最大合法整数、路由/证据/ACK语义。新增4方法修后通过；初次整体回归53加载/51pass/2旧fixture导入错误仍记failed，不隐去。剩余一次独立验收显式补tests导入路径，同argv但环境不同，全结果及限定见[完整证据](../../results/mailbox-sequence-20261101/report.json)；不冒称同环境完整双通过。手工六域独审非trusted runtime；原生五job新增4方法发布后另核。Plan70→71，旧稳定正文/全部Progress/唯一TASK/guide保持；方案2/2、baseline/fixed/independent各1及旧tmux双REVISE/其它耗尽scope均保留。无新论文计数、速度/token/模型质量/全费用收益，同SYSTEM99仍未完成。

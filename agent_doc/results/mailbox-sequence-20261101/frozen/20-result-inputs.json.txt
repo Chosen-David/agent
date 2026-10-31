@@ -1,0 +1,123 @@
+{
+  "task": "SYSTEM-99",
+  "refs": [
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/plan-v1.json",
+      "sha256": "ddd15a507c4bbde84b7c35d1ac9955fb8e651ee4ab25a8b01c92fc09a22524d4"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/plan-v2.json",
+      "sha256": "45c65947f232cab08f10f5198e93ceb92951e5035e52e4cc2b8670e9c0b8ade0"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/plan-review-v1.json",
+      "sha256": "4a38066ba1956375fa749400b49ca1e26502b447541edcdc0576886ef7d15d4b"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/plan-review-v2.json",
+      "sha256": "340fb191bb9967b03ecd8a8b492e66066d0d4cb3c432154818622193e5f312bb"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/execution-reconciliation-v1.json",
+      "sha256": "aae799236b11df8d719c685b0a887d7b48f4623121cf8a5ad6b778498779e9bd"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/communication-baseline.py",
+      "sha256": "6ba4e5b12e92e3fb70c7ad21a105d9fc33b6083e47ecf3eb957a0eea5e6afd59"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/communication-candidate.py",
+      "sha256": "6979a0dfa13d01d114758e9c745a2daf8e7d58dd1ee1f73c0ab4814cfe72c940"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/test_mailbox_sequence-v2.py",
+      "sha256": "6e421332d19eb89fceeefd36887cde952255be52c2bbccfd540786c30059fcfc"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/SYSTEM-99-baseline.md",
+      "sha256": "269578e3e8b3ae7cab975c7b6299fee263711c0307147a443fb91e8692bcf639"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/SYSTEM-99-v71.md",
+      "sha256": "2ecdd3bd434cfc831b1190ef14ca52d5d892a9ba1cc903c5d88a4fe682e2cc2a"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/baseline.stdout",
+      "sha256": "2b2dfe60a6dce45de24cafd805f01bc0fa87e310712eb968a8b14d1bd51e8100"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/baseline.stderr",
+      "sha256": "440d4ef921dfd0ef5456a77b9caae7df78e403e1b2d313007d85b009e20e1b86"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/fixed.stdout",
+      "sha256": "0144714642859ab3bf96c54a22845d96b9b6461b6b6f59ace5e0fb20e7575521"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/fixed.stderr",
+      "sha256": "c026d083ae0a061afe679c5387b50c479f2f5e5bd3a40355c5513fcd522a5091"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/baseline-dependencies.json",
+      "sha256": "63d8db350f43c8ce57763458837e8d9f3b135b239094a1903e5b8d140229f80f"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/prior-search.json",
+      "sha256": "1eb6ea7024bba7563867d81c0db6231c9c0da57e9efbcfeb414f527e18e65c52"
+    },
+    {
+      "path": "agent_runtime/communication.py",
+      "sha256": "6979a0dfa13d01d114758e9c745a2daf8e7d58dd1ee1f73c0ab4814cfe72c940"
+    },
+    {
+      "path": "tests/test_mailbox_sequence.py",
+      "sha256": "6e421332d19eb89fceeefd36887cde952255be52c2bbccfd540786c30059fcfc"
+    },
+    {
+      "path": ".github/workflows/portable-install.yml",
+      "sha256": "13f9befb99c9edc64af4beb93018778566d5ea048bc2cd643eb36b74a642860c"
+    },
+    {
+      "path": "agent_doc/task/task_details/SYSTEM-99.md",
+      "sha256": "2ecdd3bd434cfc831b1190ef14ca52d5d892a9ba1cc903c5d88a4fe682e2cc2a"
+    }
+  ],
+  "independent_command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "tests.test_mailbox_sequence",
+    "tests.test_communication",
+    "tests.test_communication_output",
+    "tests.test_communication_snapshot",
+    "tests.test_communication_batch",
+    "tests.test_handoff_basis",
+    "tests.test_handoff_encoding",
+    "-v"
+  ],
+  "independent_environment_delta": {
+    "PYTHONPATH": "/workspace/scratch/95d615402a52/agent-run-2205/tests:/workspace/scratch/95d615402a52/agent-run-2205"
+  },
+  "output_namespace": ".agent-runs/mailbox-sequence-0206",
+  "allowed_outputs": [
+    "independent.stdout",
+    "independent.stderr",
+    "independent-execution.json",
+    "result-review.json"
+  ],
+  "limit": {
+    "independent_campaigns": 1,
+    "source_edits": 0,
+    "retries": 0
+  },
+  "deadline": "2026-10-31T18:40:00Z",
+  "acceptance": [
+    "six domains from result_validation_workflow",
+    "all raw failures retained",
+    "exact approved source/test and CI insertion; Plan71 prior text/Progress preservation",
+    "independent same argv explicitly corrected environment passes every required method, no source change",
+    "no claim identical producer environment or full producer pass",
+    "review qualifies finite local/API/CLI scope only; native remains pending"
+  ]
+}

@@ -30,6 +30,10 @@ def nonblank(value):
     return isinstance(value, str) and bool(value.strip())
 
 
+def _valid_sequence(value, *, minimum=1):
+    return type(value) is int and minimum <= value <= 2**63 - 1
+
+
 def check_plan(plan):
     if not isinstance(plan, dict) or type(plan.get('schema_version')) is not int or plan['schema_version'] != 1:
         raise ValueError('unsupported communication plan')
@@ -277,7 +281,7 @@ class Mailbox:
         after_seq is navigation within this run/recipient/task, never an ACK.
         Pages are separate snapshots; poll again for newly appended corrections.
         """
-        if type(after_seq) is not int or not 0 <= after_seq <= 2**63-1:
+        if not _valid_sequence(after_seq, minimum=0):
             raise ValueError('after_seq must be a nonnegative SQLite sequence')
         if type(limit) is not int or not 1 <= limit <= 100:
             raise ValueError('limit must be 1..100')
@@ -336,7 +340,7 @@ class Mailbox:
 
     def read_pending(self, recipient, seq, body_sha256):
         """Retrieve one version-bound currently pending routed delivery."""
-        if (type(seq) is not int or seq <= 0 or type(body_sha256) is not str
+        if (not _valid_sequence(seq) or type(body_sha256) is not str
                 or re.fullmatch('[0-9a-f]{64}', body_sha256) is None):
             raise ValueError('positive seq and exact body SHA256 required')
         if recipient not in {r['recipient'] for r in self.plan['routes']}:
@@ -355,8 +359,8 @@ class Mailbox:
 
     def acknowledge(self, recipient, seq, receipt):
         # Receipt records handling, never task completion or scientific validity.
-        if type(seq) is not int or seq <= 0:
-            raise ValueError('receipt needs a positive sequence')
+        if not _valid_sequence(seq):
+            raise ValueError('receipt needs a positive SQLite sequence')
         body = validate_receipt(self.plan, receipt)
         with self.connect() as db:
             db.execute('BEGIN IMMEDIATE')
@@ -384,6 +388,8 @@ class Mailbox:
         Returns data without ACK: the host must separately read/verify semantics,
         perform an idempotent action, then acknowledge. A failed check stays pending.
         """
+        if not _valid_sequence(seq):
+            raise ValueError('positive SQLite sequence required')
         validate_consumer_request(request)
         with self.connect() as db:
             row = db.execute('''SELECT e.body FROM communication_events e

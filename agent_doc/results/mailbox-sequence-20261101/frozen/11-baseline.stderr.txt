@@ -1,0 +1,207 @@
+test_cli_overflow_is_structured_rejection_without_ledger_effect (tests.test_mailbox_sequence.MailboxSequenceTests.test_cli_overflow_is_structured_rejection_without_ledger_effect) ... 
+  test_cli_overflow_is_structured_rejection_without_ledger_effect (tests.test_mailbox_sequence.MailboxSequenceTests.test_cli_overflow_is_structured_rejection_without_ledger_effect) (entry='read-pending') ... FAIL
+  test_cli_overflow_is_structured_rejection_without_ledger_effect (tests.test_mailbox_sequence.MailboxSequenceTests.test_cli_overflow_is_structured_rejection_without_ledger_effect) (entry='consume') ... FAIL
+  test_cli_overflow_is_structured_rejection_without_ledger_effect (tests.test_mailbox_sequence.MailboxSequenceTests.test_cli_overflow_is_structured_rejection_without_ledger_effect) (entry='context') ... FAIL
+  test_cli_overflow_is_structured_rejection_without_ledger_effect (tests.test_mailbox_sequence.MailboxSequenceTests.test_cli_overflow_is_structured_rejection_without_ledger_effect) (entry='ack') ... FAIL
+test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) ... 
+  test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=True, entry='consume') ... FAIL
+  test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=True, entry='context') ... FAIL
+  test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=1.0, entry='consume') ... FAIL
+  test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=1.0, entry='context') ... FAIL
+  test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value='1', entry='consume') ... FAIL
+  test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value='1', entry='context') ... FAIL
+  test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=9223372036854775808, entry='read') ... ERROR
+  test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=9223372036854775808, entry='consume') ... ERROR
+  test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=9223372036854775808, entry='context') ... ERROR
+  test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=9223372036854775808, entry='ack') ... ERROR
+  test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=-9223372036854775809, entry='consume') ... ERROR
+  test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=-9223372036854775809, entry='context') ... ERROR
+test_real_cli_index_read_consume_context_ack_and_reopen (tests.test_mailbox_sequence.MailboxSequenceTests.test_real_cli_index_read_consume_context_ack_and_reopen) ... ok
+test_valid_maximum_is_missing_delivery_not_overflow (tests.test_mailbox_sequence.MailboxSequenceTests.test_valid_maximum_is_missing_delivery_not_overflow) ... ok
+
+======================================================================
+ERROR: test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=9223372036854775808, entry='read')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 42, in test_public_sequence_rejects_type_aliases_without_binding
+    with self.assertRaises(ValueError): call()
+                                        ^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 36, in <lambda>
+    for name, call in [('read', lambda: self.box.read_pending('writer', value, self.digest)),
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/agent_runtime/communication.py", line 345, in read_pending
+    row = db.execute('''SELECT e.body FROM communication_events e
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to SQLite INTEGER
+
+======================================================================
+ERROR: test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=9223372036854775808, entry='consume')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 42, in test_public_sequence_rejects_type_aliases_without_binding
+    with self.assertRaises(ValueError): call()
+                                        ^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 37, in <lambda>
+    ('consume', lambda: self.box.consume_handoff('writer', value, self.request)),
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/agent_runtime/communication.py", line 389, in consume_handoff
+    row = db.execute('''SELECT e.body FROM communication_events e
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to SQLite INTEGER
+
+======================================================================
+ERROR: test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=9223372036854775808, entry='context')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 42, in test_public_sequence_rejects_type_aliases_without_binding
+    with self.assertRaises(ValueError): call()
+                                        ^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 38, in <lambda>
+    ('context', lambda: self.box.prepare_context('writer', value, self.request)),
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/agent_runtime/communication.py", line 459, in prepare_context
+    record = self.consume_handoff(recipient, seq, request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/agent_runtime/communication.py", line 389, in consume_handoff
+    row = db.execute('''SELECT e.body FROM communication_events e
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to SQLite INTEGER
+
+======================================================================
+ERROR: test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=9223372036854775808, entry='ack')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 42, in test_public_sequence_rejects_type_aliases_without_binding
+    with self.assertRaises(ValueError): call()
+                                        ^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 39, in <lambda>
+    ('ack', lambda: self.box.acknowledge('writer', value, {'status':'consumed','reason':'fixture'}))]:
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/agent_runtime/communication.py", line 363, in acknowledge
+    row = db.execute('''SELECT d.receipt FROM communication_deliveries d
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to SQLite INTEGER
+
+======================================================================
+ERROR: test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=-9223372036854775809, entry='consume')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 42, in test_public_sequence_rejects_type_aliases_without_binding
+    with self.assertRaises(ValueError): call()
+                                        ^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 37, in <lambda>
+    ('consume', lambda: self.box.consume_handoff('writer', value, self.request)),
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/agent_runtime/communication.py", line 389, in consume_handoff
+    row = db.execute('''SELECT e.body FROM communication_events e
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to SQLite INTEGER
+
+======================================================================
+ERROR: test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=-9223372036854775809, entry='context')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 42, in test_public_sequence_rejects_type_aliases_without_binding
+    with self.assertRaises(ValueError): call()
+                                        ^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 38, in <lambda>
+    ('context', lambda: self.box.prepare_context('writer', value, self.request)),
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/agent_runtime/communication.py", line 459, in prepare_context
+    record = self.consume_handoff(recipient, seq, request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/scratch/95d615402a52/agent-run-2205/agent_runtime/communication.py", line 389, in consume_handoff
+    row = db.execute('''SELECT e.body FROM communication_events e
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OverflowError: Python int too large to convert to SQLite INTEGER
+
+======================================================================
+FAIL: test_cli_overflow_is_structured_rejection_without_ledger_effect (tests.test_mailbox_sequence.MailboxSequenceTests.test_cli_overflow_is_structured_rejection_without_ledger_effect) (entry='read-pending')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 64, in test_cli_overflow_is_structured_rejection_without_ledger_effect
+    self.assertEqual(result.stderr,b'')
+AssertionError: b'Traceback (most recent call last):\n  Fil[843 chars]ER\n' != b''
+
+======================================================================
+FAIL: test_cli_overflow_is_structured_rejection_without_ledger_effect (tests.test_mailbox_sequence.MailboxSequenceTests.test_cli_overflow_is_structured_rejection_without_ledger_effect) (entry='consume')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 64, in test_cli_overflow_is_structured_rejection_without_ledger_effect
+    self.assertEqual(result.stderr,b'')
+AssertionError: b'Traceback (most recent call last):\n  Fil[834 chars]ER\n' != b''
+
+======================================================================
+FAIL: test_cli_overflow_is_structured_rejection_without_ledger_effect (tests.test_mailbox_sequence.MailboxSequenceTests.test_cli_overflow_is_structured_rejection_without_ledger_effect) (entry='context')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 64, in test_cli_overflow_is_structured_rejection_without_ledger_effect
+    self.assertEqual(result.stderr,b'')
+AssertionError: b'Traceback (most recent call last):\n  Fil[1072 chars]ER\n' != b''
+
+======================================================================
+FAIL: test_cli_overflow_is_structured_rejection_without_ledger_effect (tests.test_mailbox_sequence.MailboxSequenceTests.test_cli_overflow_is_structured_rejection_without_ledger_effect) (entry='ack')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 64, in test_cli_overflow_is_structured_rejection_without_ledger_effect
+    self.assertEqual(result.stderr,b'')
+AssertionError: b'Traceback (most recent call last):\n  Fil[853 chars]ER\n' != b''
+
+======================================================================
+FAIL: test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=True, entry='consume')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 42, in test_public_sequence_rejects_type_aliases_without_binding
+    with self.assertRaises(ValueError): call()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=True, entry='context')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 42, in test_public_sequence_rejects_type_aliases_without_binding
+    with self.assertRaises(ValueError): call()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=1.0, entry='consume')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 42, in test_public_sequence_rejects_type_aliases_without_binding
+    with self.assertRaises(ValueError): call()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value=1.0, entry='context')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 42, in test_public_sequence_rejects_type_aliases_without_binding
+    with self.assertRaises(ValueError): call()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value='1', entry='consume')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 42, in test_public_sequence_rejects_type_aliases_without_binding
+    with self.assertRaises(ValueError): call()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_public_sequence_rejects_type_aliases_without_binding (tests.test_mailbox_sequence.MailboxSequenceTests.test_public_sequence_rejects_type_aliases_without_binding) (value='1', entry='context')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/tests/test_mailbox_sequence.py", line 42, in test_public_sequence_rejects_type_aliases_without_binding
+    with self.assertRaises(ValueError): call()
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.508s
+
+FAILED (failures=10, errors=6)

@@ -1,0 +1,143 @@
+{
+  "task": "SYSTEM-99",
+  "scope": "MAILBOX-SEQUENCE-01",
+  "baseline": "8ba660c469e056cdcaacd040c9818e49710c327d",
+  "intent": "Preserve exact mailbox delivery identity and structured errors across index/read/consume/context/ACK; one system-batch checkpoint, no new optimization round",
+  "authorization": "Current user ongoing reliability/communication and normal main-push instructions; existing AGENTS independent checks. Human guide remains untouched.",
+  "hypothesis": "consume lacks strict seq type/range; other seq APIs lack upper range. SQLite coercion may accept bool/float/string as existing seq and overrange may escape CLI as OverflowError. Unconfirmed until baseline.",
+  "allowed_writes": [
+    ".agent-runs/mailbox-sequence-0206/**",
+    "agent_runtime/communication.py",
+    "tests/test_mailbox_sequence.py",
+    ".github/workflows/portable-install.yml",
+    "agent_doc/task/task_details/SYSTEM-99.md exact frozen Version71 stable append plus Progress append",
+    "agent_doc/results/mailbox-sequence-20261101/**"
+  ],
+  "guide_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "refs": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed"
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f"
+    },
+    {
+      "path": "agent_doc/task/task_details/SYSTEM-99.md",
+      "sha256": "269578e3e8b3ae7cab975c7b6299fee263711c0307147a443fb91e8692bcf639"
+    },
+    {
+      "path": "agent_runtime/communication.py",
+      "sha256": "6ba4e5b12e92e3fb70c7ad21a105d9fc33b6083e47ecf3eb957a0eea5e6afd59"
+    },
+    {
+      "path": "agent_runtime/handoff_basis.py",
+      "sha256": "c129837580869e150ea82cb43a514f2ea47f9edadf44f0441e158e9f9356694c"
+    },
+    {
+      "path": "tests/test_communication.py",
+      "sha256": "232f4bad46429e8408c902ff486bb8023fde7b0715f9b233cb3a522b1293f442"
+    },
+    {
+      "path": ".github/workflows/portable-install.yml",
+      "sha256": "19516c3d5f83e57b87cbe4f97628f1ba5375fbf7cbd89ffeecba5ab0d0582935"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/communication-candidate.py",
+      "sha256": "6979a0dfa13d01d114758e9c745a2daf8e7d58dd1ee1f73c0ab4814cfe72c940"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/test_mailbox_sequence-v2.py",
+      "sha256": "6e421332d19eb89fceeefd36887cde952255be52c2bbccfd540786c30059fcfc"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/prior-search.json",
+      "sha256": "1eb6ea7024bba7563867d81c0db6231c9c0da57e9efbcfeb414f527e18e65c52"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/SYSTEM-99-v71.md",
+      "sha256": "2ecdd3bd434cfc831b1190ef14ca52d5d892a9ba1cc903c5d88a4fe682e2cc2a"
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    },
+    {
+      "path": ".agent-runs/mailbox-sequence-0206/plan-review-v1.json",
+      "sha256": "4a38066ba1956375fa749400b49ca1e26502b447541edcdc0576886ef7d15d4b"
+    }
+  ],
+  "method": "After independent plan approval copy frozen v2 4-method test candidate (fixture module import avoids imported TestCase discovery), apply exact SYSTEM-99-v71.md preserving original Progress and old stable text except version, preserve baseline once at old production; repair only if type-alias/overflow defects observed. Apply exact frozen candidate; add test step immediately after test_communication_output on both matrix install jobs and macOS new explicit step. Run selected regression once; independent new-context source/raw review plus same regression once; no worker/model/backend installs.",
+  "regression_command": [
+    "python",
+    "-B",
+    "-m",
+    "unittest",
+    "tests.test_mailbox_sequence",
+    "tests.test_communication",
+    "tests.test_communication_output",
+    "tests.test_communication_snapshot",
+    "tests.test_communication_batch",
+    "tests.test_handoff_basis",
+    "tests.test_handoff_encoding",
+    "-v"
+  ],
+  "acceptance": [
+    "Baseline preserves failure diagnostics; healthy real CLI index/read/consume/context/ACK/reopen control must pass",
+    "Fixed all invalid seqs raise ValueError; no coerced consumer binding/ACK and all four tables unchanged for rejected calls",
+    "All CLI overflow calls exit1 with only JSON error on stdout and empty stderr; no ledger effects",
+    "Valid maximal SQLite int reaches missing-delivery path; zero cursor remains valid",
+    "Healthy real CLI lifecycle and unaffected subscriber retained; no field/routing/cache/authority/freshness schema changes",
+    "Independent source/data review before publication; native CI actual readback separately; unknown stays unknown"
+  ],
+  "limits": {
+    "plan_reviews": 2,
+    "baseline_campaigns": 1,
+    "fixed_campaigns": 1,
+    "independent_campaigns": 1,
+    "result_reviews": 2,
+    "source_ci_candidates": 1,
+    "automatic_retry": 0,
+    "model_calls": 0,
+    "tmux_setup_or_tests": 0
+  },
+  "deadline": "2026-10-31T18:40:00Z",
+  "publication": "Normal non-force push only own validated files, fetch/reconcile immediately before and read remote exact head/files. Evidence custom report.json, valid record.json via existing register_history; retain source/baseline/raw/full feedback. Do not claim speed/token/model quality.",
+  "separate_stopped_scope": "tmux-integration-0108 two REVISE/olddeadline/limits unchanged, no reopening",
+  "dag": [
+    "baseline_and_conditional_fixed",
+    "independent_verify_code_and_raw",
+    "publish_and_native_readback"
+  ],
+  "manual_host_review": true,
+  "trusted_runtime_receipt": false,
+  "version": 2,
+  "previous_plan": "plan-v1.json",
+  "guide_manifest": [
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261"
+    }
+  ],
+  "guide_source_note": "GUIDE.md empty; README explicitly AI-created one-time directory explanation, read-only not human requirement authority.",
+  "previous_review": {
+    "path": ".agent-runs/mailbox-sequence-0206/plan-review-v1.json",
+    "sha256": "4a38066ba1956375fa749400b49ca1e26502b447541edcdc0576886ef7d15d4b",
+    "decision": "REVISE",
+    "full_feedback_read": true
+  },
+  "reconciliation": {
+    "P1": "exact frozenVersion71 stable paragraph, oldProgress unchanged",
+    "P2": "module import no TestCase alias; four methods unchanged",
+    "P3": "entire guide manifest, emptyGUIDE/AI-createdreadonlyREADME origin distinguished"
+  }
+}
