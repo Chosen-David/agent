@@ -17,6 +17,7 @@ from pathlib import Path
 import sqlite3
 import stat
 import time
+import weakref
 from typing import Callable, Protocol
 import uuid
 
@@ -247,6 +248,8 @@ class Context:
     token: str
     idempotency_key: str
     clock: Callable
+    # Engine-owned per-call preparation; never plan data or a reusable grant.
+    _effect_guard: Callable | None = None
 
     def current(self):
         snap = self.store.snapshot(self.run_id)['state']
@@ -288,6 +291,41 @@ class Engine:
             return check_plan_review(plan, self.project_root, self.plan_review_verifier, allow_legacy=self.allow_legacy)
         except (ValueError, OSError, KeyError) as exc:
             raise PlanReviewError(str(exc)) from exc
+
+    def _prepare_effect(self, plan, task, handler, context, dispatched_task):
+        from .plan_review import PlanReviewError, _capture_input_recheck, sha
+        if context is None or not context.current():
+            return None
+        self._review_plan(plan)
+        try:
+            expected, actual = dict(task), dict(dispatched_task)
+            if plan.get('plan_review') is None:
+                expected.pop('prior_result_search', None)
+                actual.pop('prior_result_search', None)
+            if sha(expected) != sha(actual):
+                raise PlanReviewError('child input differs from the admitted task')
+            task_hash = sha(dispatched_task)
+            recheck = _capture_input_recheck(plan, self.project_root)
+        except (ValueError, TypeError, KeyError, OSError, RecursionError) as exc:
+            raise PlanReviewError('child effect input binding failed: ' + str(exc)) from exc
+        if not self._authorized(plan, dispatched_task, handler):
+            return None
+        used = False
+
+        def ready():
+            nonlocal used
+            if used:
+                return False
+            used = True
+            try:
+                if sha(dispatched_task) != task_hash:
+                    raise PlanReviewError('child input changed during effect authorization')
+                recheck()
+            except (ValueError, TypeError, KeyError, OSError, RecursionError) as exc:
+                raise PlanReviewError('child effect input binding failed: ' + str(exc)) from exc
+            return context.current()
+
+        return ready
 
     def _check_done(self, plan, state):
         if state['status'] == 'cancelled':
@@ -500,6 +538,9 @@ class Engine:
         if claim:
             from .plan_review import PlanReviewError
             task, handler, context = claim
+            context_ref = weakref.ref(context)
+            context._effect_guard = lambda actual: self._prepare_effect(
+                plan, task, handler, context_ref(), actual)
             executed, review_blocked, outcome, effect_observation = False, False, None, None
             try:
                 if not context.current():

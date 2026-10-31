@@ -1,0 +1,333 @@
+{
+  "review_type": "independent source/raw result review; no rerun",
+  "task": "SYSTEM-99",
+  "scope": "MANAGED-CHILD-ADMISSION-01 initial diagnosis",
+  "project_root": "/workspace/scratch/95d615402a52/agent-run-2205",
+  "reviewer_actor": "/root/inner_admission_diagnostic_result_2315",
+  "result_input_sha256": "26d0340a518e2f091f6704e6d3bc3cf888010e151adc0aa28c2a8ae305c932c0",
+  "plan_sha256": "abac8f5c0fbf223046d40d38dfec9759e87d5eb58b70e3b3e47f54a9d55e9a31",
+  "plan_review_sha256": "608a7b6febb556f958e4bf4f7a7a5b008e6a593f47ad0593898cebe0150af61e",
+  "decision": "usable-with-scope",
+  "blocking_findings": [],
+  "full_review": "Accept the exact initial negative diagnosis as usable-with-scope. The real managed backend path admits the actual registered child after the synchronous prior-result lookup revokes its host grant, while actual claim current remains true. Exact child bytes and observations establish the effect before the assertion, rather than merely wrapper entry or a report label. Three control methods pass and the sole intended revoked-child assertion fails. This diagnoses a bounded in-wrapper permission-freshness gap and preserves the negative; it is not production repair acceptance, an atomic provider fence, four independent defects, or a model-quality result. All 24 byte bindings match before/after. Existing v4 outer-admission and Version44 result-input work remain valid within their original limits; no old suite was rerun or old evidence upgraded. Parent must read this complete feedback before a separately versioned production/API proposal. Initial diagnostic approval grants no repair/publication authority.",
+  "checks": {
+    "implementation": {
+      "verdict": "pass",
+      "reason": "Read the executed frozen diagnose.py, real backend loader, ManagedEngine.tick/publish, Engine claim/current/authority path, ReportingHandler.run and real Context.current/Store.cancel. The trusted adapter child is the actual wrapped handler: host authorize receives wrapper.handler; all recorded identities are true. Engine performs two authority calls before ReportingHandler. Its real lookup executes original search unchanged, then toggles grant or calls Store.cancel. The Engine claim transaction has ended before lookup; lookup cancellation is a real separate SQLite transaction. Wrapper current gates claim freshness but never rechecks host permission before self.handler.run. Actual child observes current true/grant false and writes exact marker in revoked case. This is an in-wrapper synchronous freshness gap, not a wrapper-status-only inference.",
+      "evidence": [
+        ".agent-runs/inner-admission-2303/diagnose.py",
+        "agent_runtime/task_supervisor.py",
+        "agent_runtime/core.py",
+        "agent_runtime/task_manifest.py",
+        "tests/test_plan_review.py",
+        ".agent-runs/inner-admission-2303/diagnostic.stdout"
+      ]
+    },
+    "reference_boundary": {
+      "verdict": "pass",
+      "reason": "Independent control oracle is actual child entry plus filesystem marker bytes, with host grant observed directly in child. Healthy: one entry current/permitted true and exact marker. Initial denial: no lookup, no entry/marker, one policy call, blocked, attempts zero. Lookup cancellation: real Store.cancel, lookup once, no entry/marker, cancelled status, attempts one. Lookup revocation: lookup once then grant false, one actual child entry current true/permitted false, exact marker, two correct child identity policy calls. Negative assertion is intentional and isolated, not four bugs.",
+      "evidence": [
+        ".agent-runs/inner-admission-2303/diagnose.py",
+        ".agent-runs/inner-admission-2303/diagnostic.stdout",
+        ".agent-runs/inner-admission-2303/diagnostic.stderr"
+      ]
+    },
+    "data_integrity": {
+      "verdict": "pass",
+      "reason": "All 24 frozen input refs match actual bytes before and after this review; result input hash matches dispatch. Parent before/after five source bindings match each other and current files; raw hashes match parent and result input refs. Four unique mode probes correspond one-for-one to four named stderr methods; child summary 4 methods/1 failure/0 error/0 skip agrees. Raw stderr has only lookup-authority-revoked assertion failure with current true/permitted false. Parent child exit one and host-observed outer exit one/completion69e7b1 are retained separately. Exact marker hex decodes to actual child entry. No omitted negative, replay, retry, budget reset or changed source was used.",
+      "evidence": [
+        ".agent-runs/inner-admission-2303/diagnostic-result-inputs.json",
+        ".agent-runs/inner-admission-2303/diagnostic-parent.json",
+        ".agent-runs/inner-admission-2303/diagnostic-child.json",
+        ".agent-runs/inner-admission-2303/diagnostic.stdout",
+        ".agent-runs/inner-admission-2303/diagnostic.stderr"
+      ]
+    },
+    "numerical_sanity": {
+      "verdict": "pass",
+      "reason": "Counts are finite nonnegative integers with denominator four: three passing methods, one intended failed assertion, zero errors/skips. Policy-call counts healthy/revoked/cancelled two, denied one agree with source. Healthy/revoked attempts zero are valid pending-observation refunds under existing wait_policy, not failed dispatch preconditions; only initial denial requires zero attempts in the frozen plan. Active/pending states never count as completion. No statistical, timing, speed, cost or model-quality result is accepted; stderr duration is incidental.",
+      "evidence": [
+        "agent_runtime/core.py",
+        ".agent-runs/inner-admission-2303/diagnostic-plan.json",
+        ".agent-runs/inner-admission-2303/diagnostic.stdout",
+        ".agent-runs/inner-admission-2303/diagnostic.stderr",
+        ".agent-runs/inner-admission-2303/diagnostic-child.json"
+      ]
+    },
+    "measurement_validity": {
+      "verdict": "pass",
+      "reason": "The measured property is deterministic temporal admission, not performance. All modes use fresh isolated temporary project/Store/child/plan, synthetic fixed clock100 and 5-second lease. Original lookup returns unchanged result before controlled mutation; no mutation of plan/input/result/memory is used. Printed progress evidence follows actual ManagedEngine publish and assertions of run_id r1 and all_reportable false in every mode. The revoked assertion stops after probe printing; its raw active status/nonreportable evidence remains visible. The result supports only the finite synchronous host-grant case and cancellation/denial controls.",
+      "evidence": [
+        ".agent-runs/inner-admission-2303/diagnose.py",
+        "tests/test_plan_review.py",
+        "agent_runtime/task_supervisor.py",
+        ".agent-runs/inner-admission-2303/diagnostic.stdout"
+      ]
+    },
+    "reproducibility": {
+      "verdict": "pass",
+      "reason": "Static cross-check only, as expressly frozen in the approved initial diagnosis: no independent execution/rerun is authorized. Parent preserves exact interpreter -B command and source-before/after hashes; guarded __main__ executes one four-method suite and exits one on the expected assertion. Source imports/signatures, fixture root resolution and temporary setup, adapter child identity, original-lookup patch, SQLite cancellation and pending result path align with read actual source and raw trace. The host dispatch supplies outer completion identity, which this source/raw review does not independently reauthenticate. Environment version/temporary DB/progress file and marker files were not archived in the 24 refs; raw observations plus executed assertions support finite diagnosis, not a fully replayable environment or general runtime certification.",
+      "evidence": [
+        ".agent-runs/inner-admission-2303/diagnostic-parent.json",
+        ".agent-runs/inner-admission-2303/diagnose.py",
+        "tests/test_plan_review.py",
+        ".agent-runs/inner-admission-2303/diagnostic-plan-review.json",
+        ".agent-runs/inner-admission-2303/diagnostic.stdout"
+      ]
+    }
+  },
+  "observations": {
+    "methods": 4,
+    "passes": 3,
+    "assertion_failures": 1,
+    "errors": 0,
+    "skipped": 0,
+    "outer_exit_host_observed": 1,
+    "child_exit": 1,
+    "completion_chunk_host_observed": "69e7b1",
+    "marker_hex": "61637475616c206368696c6420656e747279",
+    "probes": [
+      {
+        "attempts": 0,
+        "entries": [
+          {
+            "current": true,
+            "permitted": true
+          }
+        ],
+        "events": [
+          "lookup"
+        ],
+        "identities": [
+          true,
+          true
+        ],
+        "marker_hex": "61637475616c206368696c6420656e747279",
+        "mode": "healthy",
+        "policy_calls": 2,
+        "published_all_reportable": false,
+        "published_progress_exists": true,
+        "status": "active"
+      },
+      {
+        "attempts": 0,
+        "entries": [],
+        "events": [],
+        "identities": [
+          true
+        ],
+        "marker_hex": null,
+        "mode": "denied",
+        "policy_calls": 1,
+        "published_all_reportable": false,
+        "published_progress_exists": true,
+        "status": "blocked"
+      },
+      {
+        "attempts": 0,
+        "entries": [
+          {
+            "current": true,
+            "permitted": false
+          }
+        ],
+        "events": [
+          "lookup"
+        ],
+        "identities": [
+          true,
+          true
+        ],
+        "marker_hex": "61637475616c206368696c6420656e747279",
+        "mode": "revoked",
+        "policy_calls": 2,
+        "published_all_reportable": false,
+        "published_progress_exists": true,
+        "status": "active"
+      },
+      {
+        "attempts": 1,
+        "entries": [],
+        "events": [
+          "lookup"
+        ],
+        "identities": [
+          true,
+          true
+        ],
+        "marker_hex": null,
+        "mode": "cancelled",
+        "policy_calls": 2,
+        "published_all_reportable": false,
+        "published_progress_exists": true,
+        "status": "cancelled"
+      }
+    ]
+  },
+  "refs_verified": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": "agent_doc/task/task_details/SYSTEM-99.md",
+      "sha256": "b190274265d132d749d18163ee916373c92325dbc593bd84d575cd170bceb76b",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": "agent_runtime/core.py",
+      "sha256": "28597fd1d295fb9ba49277b210c9539961832c1642bc8f5533c7f23358a6d5f7",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": "agent_runtime/task_manifest.py",
+      "sha256": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": "agent_runtime/task_supervisor.py",
+      "sha256": "22bcbf87292c80e5b7c58a5c368719f941b271b287d7b341ddc45c4609e37df2",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": "agent_runtime/plan_review.py",
+      "sha256": "5cdc5cdaf74f1b15d86f7920fd699455f324a81da6b1c05c9624fdbb0e885e54",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": "tests/test_plan_review.py",
+      "sha256": "1296f4fb1783659b561657e3895735d1bafc218a475369a5fae86e3b91e4dda8",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": "tests/test_managed_supervisor.py",
+      "sha256": "bb5ac997ef838357eaef8e8efe53c948a6bcc8efd3545e4b9cf2b536c798e520",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": "agent_doc/results/result-dispatch-fix-20261027/report.md",
+      "sha256": "38749fc4a54198629aecd9b772cd5e5a5c4d7c12db8715aac49bc56f87a9857e",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": "agent_doc/results/result-dispatch-diagnosis-20261027/report.md",
+      "sha256": "95312cdae3dd2792c83580cc25a57c001940e7748b810fddb8e91f4517944e80",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": ".agent-runs/effect-boundary-2200/checkpoint.json",
+      "sha256": "0ced26da22c67196053b8012f0049e74f5738155a6371c1d0435059fcf6a4962",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": ".agent-runs/inner-admission-2303/diagnose.py",
+      "sha256": "c759ba79fc89b24e07f23900542e335996520f2f6c99420268b6c6ff81617990",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": ".agent-runs/inner-admission-2303/prior-search.stdout",
+      "sha256": "8e5c74b1f320e944e6b1a47977d1210f8355755d5aaac2b30d616190493c23d3",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": ".agent-runs/inner-admission-2303/prior-search.stderr",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": ".agent-runs/inner-admission-2303/prior-search-meta.json",
+      "sha256": "c6428c341a8ae4765dd34983a1e13ec9187f47a51811dc2fd0eebb3203f42fcd",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": ".agent-runs/inner-admission-2303/paper-source.json",
+      "sha256": "5b9ab95f31d92f73c461f6f008a92b0f010c0944396435dae3f1e6da844be894",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": ".agent-runs/inner-admission-2303/diagnostic-plan.json",
+      "sha256": "abac8f5c0fbf223046d40d38dfec9759e87d5eb58b70e3b3e47f54a9d55e9a31",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": ".agent-runs/inner-admission-2303/diagnostic-plan-review.json",
+      "sha256": "608a7b6febb556f958e4bf4f7a7a5b008e6a593f47ad0593898cebe0150af61e",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": ".agent-runs/inner-admission-2303/diagnostic-parent.json",
+      "sha256": "ebdc09244fbce2349720ac089f6919b8ab4f2aae14c18b69da550daf0bd3bb10",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": ".agent-runs/inner-admission-2303/diagnostic-child.json",
+      "sha256": "f6707e5872b9c28b44222b925fe0e13ad509a66b7c7890f32430518e9da69550",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": ".agent-runs/inner-admission-2303/diagnostic.stdout",
+      "sha256": "8ce133f8bddd70ce19d95faf6c9cc1fb5dd3e5f1e14ccb49405a02162f529669",
+      "verified_before": true,
+      "verified_after": true
+    },
+    {
+      "path": ".agent-runs/inner-admission-2303/diagnostic.stderr",
+      "sha256": "75bcb2af5f2eeb7daac593ecf80c88f36bfccdd2120b05e0d64b3387698106ce",
+      "verified_before": true,
+      "verified_after": true
+    }
+  ],
+  "prior_evidence_disposition": {
+    "v4": "Retain only original finite outer Engine admission scope; no rerun or blanket inner-child coverage.",
+    "Version44": "Retain passive-I/O, unbound verifier-policy, cross-store snapshot and external atomic-action exclusions. Fresh host-grant diagnosis does not erase those stated limits.",
+    "result_search": "Frozen real query scanned200/partial true/11 errors/two lexical unknown unchecked hits. Discovery is not empirical reuse approval; no registry audit or rerun.",
+    "paper": "AIDGuard2608.21159v1 downloaded91379 body characters; only first15000 plus older partial H3/D2 read per host checkpoint. Full-body credit zero, no author safety/performance claim."
+  },
+  "limitations": [
+    "One finite synchronous synthetic-host/clock campaign on real ManagedEngine/backend/ReportingHandler/SQLite; no tmux/SSH/live model/provider deployment.",
+    "No independent runtime rerun; static cross-check is the frozen allowed review method. Temporary raw DB/progress/marker files are not retained; observations and assertions are preserved in frozen stdout/source.",
+    "Host invocation/completion and outer exit are supplied dispatch observations, not cryptographic authentication from this feedback JSON; this is not an authenticated runtime ReviewSession receipt or experiment-validation provider.",
+    "No provider fence, arbitrary callback ordering/race freedom, hostile same-permission process safety, comprehensive binding mutation coverage, performance/cost/token/quality or whole-SYSTEM99 completion acceptance.",
+    "Paper full-body credit remains zero. Older accepted results/failed candidates/budgets stay unchanged."
+  ],
+  "authorization": {
+    "production_repair": false,
+    "publication": false,
+    "new_diagnostic_or_suite_reruns": false,
+    "budgets_retained": "diagnostic1/1; result-review1/1; no refund/reset/replay; deadline2026-10-31T15:35:00Z"
+  },
+  "review_completed_utc": "2026-10-31T15:14:50.087763+00:00"
+}

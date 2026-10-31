@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 69
+Version: 70
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -227,6 +227,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 
 
 阶段ENGINE-AUTHORITY-BINDINGS（Version69，取代未发布v2）：v2经100有限case后独审撤回，因授权回调后缺已审输入新鲜度复查；完整旧意见/字节/数据保留。本补充仅用本次live审核后栈内完整plan含receipt指纹与原projectroot，authorize后复用current_inputs重验绑定，不再调用verifier，最后current门禁；不以指纹授信，不持久化cache。显式对比原675与未发布v2在task/receipt/TASK/审核证据/采纳advice变更时的实际handler写入；v3须同时保留权限False/异常拒绝与健康两授权调用、新全部边界、独立结果和原生验收。无外部原子fence、超时抢占、later-revocation保证、ledger迁移/退款/旧scope重演；同SYSTEM99未完成。
+
+阶段MANAGED-CHILD-ADMISSION（Version70，同SYSTEM99）：真实load_backend/ManagedEngine包装器内检索撤权仍进入实际子handler的4方法负例（3pass/1fail）已独审，原字节保留。修复仅由Engine为真实Context安装宿主私有effect准备回调：再次live审核并对实际dispatched_task向同一registered handler授权，栈内一次性检查完整plan/receipt/实际任务绑定，ReportingHandler完成结果/记忆/知识/文档绑定读后最后核真实claim，再进入子handler。保留旧外层门禁、六位置Context/direct wrapper兼容与legacy prior_result_search派生字段；不新建ledger/持久授权cache/工具权限/共享聊天池或改guide。健康包装路径授权2→3、非包装仍2；额外I/O/授权/认证成本未测不报性能收益。新版固定验收含实际Managed Unix路径与跨平台Engine路径、保护输入及结果/legacy/到期/缓存控制，独立同条件回归与原生平台后普通main发布。无外部provider原子fence/任意后续撤权保证或部署声明，同批次完整宿主/上下文/任务质量仍未完成。
 
 ## Progress
 
@@ -828,3 +830,8 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 ### 2026-10-31 — RESULT-INDEX-AUTHORITY-01 v2 checkpoint
 
 刚发布的自定义证据索引误用了 ResultStore 的 `record.json`，真实 show/search 暴露 schema/identity mismatch。原字节现原样保存在 [evidence-index.json](../../results/engine-pre-action-authority-20261031/evidence-index.json)，复用 register_history 建立规范历史登记；unknown/null 验收与测量字段不冒充复用批准。修前 show 子进程 exit2、定向检索无命中；修后和独立三条真实 CLI 各 exit0、目标可发现，同条件200目录扫描错误12→11，仅移除本次错误，其余11与 partial 状态保留。59冻结证据及8源码绑定与修前和2bb Git对象一致，未重跑旧108测试或改运行时。完整原返修意见、负例、原始输出和独审见 [修正证据](../../results/engine-pre-action-authority-20261031/registry-repair/report.json)。旧私有 package.py 生成索引的做法不得重放为规范登记。原生新head CI 待发布后单独回读；同SYSTEM99未完成，正文新增计数0，未报性能/质量/全费用收益。
+
+
+### 2026-10-31 — MANAGED-CHILD-ADMISSION-01 checkpoint
+
+实际 load_backend → ManagedEngine → ReportingHandler 查询期间撤权后，旧入口仍在 current=true/permitted=false 时写入子任务标记；修前4方法3pass/1预期断言失败。现由 Engine 给实际 claim 安装可选的一次性准备入口，wrapper 的实时结果/复用回调后重新核对审核、实际任务与原handler授权，保留既有被动绑定读取，最后重验完整输入/回执/root和真实租约再进入实际子任务。legacy派生查询、旧直接Context兼容及终态reconciliation不变。修后与独立各199方法：198pass、1原real-tmux选测skip；新增16全pass，含真实生产者→独立算术gate→消费者、缓存后撤权、服务异常、task/plan/result变化与末次读取期间过期。[完整原失败、精确方案/完整双审与原始输出](../../results/managed-child-admission-20261031/report.json)保留有限合成host/clock与真实本地I/O范围，规范register_history仅unknown登记不冒充runtime验收。wrapped健康授权2→3次，新增成本未测，不报效率/费用收益；外部原子围栏、真实宿主/模型质量/上下文/全费用等仍open。原生CI待发布后回读（Unix16，Windows12portable+4明确managed Unix跳过），不手动重跑。AID-Guard2608.21159v1正文I–IX及附录A–F已实际续读完并保存方法/实验/消融/局限/代码关系，待阅读记录去重验收，新增正式精读计数仍0；本次仅应用作用入口校验思路，不称移植论文完整协议。Plan69→70、旧全部Progress字节/唯一TASK/人类guide保持，同一SYSTEM99未结案。

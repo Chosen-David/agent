@@ -436,6 +436,14 @@ class ReportingHandler:
             return Outcome('blocked', f'pre-dispatch result reconciliation required: {exc}')
         if context is not None and hasattr(context, 'current') and not context.current():
             return Outcome('blocked', 'claim no longer current after prior-result lookup')
+        prepare_effect = getattr(context, '_effect_guard', None)
+        effect_ready = None
+        if prepare_effect is not None:
+            if not callable(prepare_effect):
+                return Outcome('blocked', 'invalid host effect preparation')
+            effect_ready = prepare_effect(dispatched_task)
+            if not callable(effect_ready):
+                return Outcome('blocked', 'effect authority revoked before child dispatch')
         try:
             for proof in result_proofs:
                 _check_validated_bindings(self.root, proof)
@@ -445,6 +453,8 @@ class ReportingHandler:
             check_task_documents(self.root, dispatched_task)
         except (OSError, ValueError) as exc:
             return Outcome('blocked', f'pre-dispatch document/memory/knowledge/result reconciliation required: {exc}')
+        if effect_ready is not None and not effect_ready():
+            return Outcome('blocked', 'claim no longer current before child dispatch')
         outcome = self.handler.run(dispatched_task, context)
         try:
             check_task_results(self.root, task, self.result_verifier)

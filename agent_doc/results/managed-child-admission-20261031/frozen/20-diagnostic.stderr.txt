@@ -1,0 +1,26 @@
+test_healthy_child (__main__.ManagedChildAdmission.test_healthy_child) ... ok
+test_initial_denial (__main__.ManagedChildAdmission.test_initial_denial) ... ok
+test_lookup_authority_revoked (__main__.ManagedChildAdmission.test_lookup_authority_revoked) ... FAIL
+test_lookup_cancellation (__main__.ManagedChildAdmission.test_lookup_cancellation) ... ok
+
+======================================================================
+FAIL: test_lookup_authority_revoked (__main__.ManagedChildAdmission.test_lookup_authority_revoked)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/inner-admission-2303/diagnose.py", line 115, in test_lookup_authority_revoked
+    self.boundary('revoked')
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/inner-admission-2303/diagnose.py", line 94, in boundary
+    self.assertEqual(child.entries, [], 'actual child must not enter after authority/claim invalidation')
+AssertionError: Lists differ: [{'current': True, 'permitted': False}] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+{'current': True, 'permitted': False}
+
+- [{'current': True, 'permitted': False}]
++ [] : actual child must not enter after authority/claim invalidation
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.495s
+
+FAILED (failures=1)

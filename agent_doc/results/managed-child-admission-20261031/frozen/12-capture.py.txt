@@ -1,0 +1,46 @@
+import hashlib
+import json
+import os
+from pathlib import Path
+import platform
+import subprocess
+import sys
+
+
+def main():
+    d = Path(__file__).resolve().parent
+    root = d.parents[1]
+    phase = sys.argv[1]
+    assert phase in ('fixed', 'independent')
+    modules = ['test_managed_child_authority', 'test_engine_pre_action_claim', 'test_task_runtime',
+               'test_crossfeature_runtime', 'test_plan_review', 'test_plan_review_independent',
+               'test_managed_supervisor', 'test_dispatch_freshness', 'test_result_dispatch_freshness',
+               'test_result_validation', 'test_result_reuse_acceptance']
+    command = [sys.executable, '-B', '-m', 'unittest', *modules, '-v']
+    env = dict(os.environ)
+    env['PYTHONPATH'] = os.pathsep.join([str(root / 'tests'), str(root)])
+    paths = ['agent_runtime/core.py', 'agent_runtime/task_manifest.py', 'agent_runtime/task_supervisor.py',
+             'agent_runtime/plan_review.py', 'tests/test_managed_child_authority.py',
+             'tests/test_engine_pre_action_claim.py', '.github/workflows/portable-install.yml']
+    before = {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in paths}
+    try:
+        p = subprocess.run(command, cwd=root, capture_output=True, timeout=240, env=env)
+        stdout, stderr, code = p.stdout, p.stderr, p.returncode
+    except subprocess.TimeoutExpired as exc:
+        stdout, stderr, code = exc.stdout or b'', exc.stderr or b'', 124
+    for suffix, data in [('stdout', stdout), ('stderr', stderr)]:
+        (d / (phase + '.' + suffix)).write_bytes(data)
+    after = {p: hashlib.sha256((root / p).read_bytes()).hexdigest() for p in paths}
+    meta = {'phase': phase, 'command': command, 'pythonpath': env['PYTHONPATH'],
+            'child_exit': code, 'timeout_seconds': 240, 'automatic_retries': 0,
+            'python': sys.version, 'platform': platform.platform(),
+            'source_before': before, 'source_after': after, 'unchanged': before == after,
+            'raw': [{'path': str((d / (phase + '.' + s)).relative_to(root)),
+                     'sha256': hashlib.sha256(b).hexdigest()} for s, b in [('stdout', stdout), ('stderr', stderr)]]}
+    (d / (phase + '.json')).write_text(json.dumps(meta, indent=2)+'\n')
+    print(json.dumps(meta))
+    raise SystemExit(code)
+
+
+if __name__ == '__main__':
+    main()
