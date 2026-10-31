@@ -29,18 +29,45 @@ def bootstrap():
     return module
 
 
-def role_definition(project, role, policy):
-    if role not in policy['roles']:
+def role_definition(project, role, policy, *, installer=None):
+    installer = installer if installer is not None else bootstrap()
+    manifest = installer.validate_installation_manifest(load_json(
+        installer.checked_target(project, '.claude/agent-workflows/installation.json')))
+    inventory = validate_inventory(manifest.get('model_inventory', EMPTY_INVENTORY))
+    files, links = installer.expected_files(inventory)
+    expected_policy = json.loads(files['.claude/agent-workflows/model-policy.json'])
+    if json.dumps(policy, sort_keys=True) != json.dumps(expected_policy, sort_keys=True):
+        raise ValueError('installed role policy changed after setup check')
+    if role not in expected_policy['roles']:
         raise ValueError('unknown role')
+
+    def managed_text(relative):
+        text = installer._installed_text(project, relative)
+        if text != files[relative]:
+            raise ValueError('installed role definition changed after setup check')
+        return text
+
     if role in ('planner-main', 'review-main'):
-        text = (project / '.claude/agent-workflows' / (role.replace('-', '_') + '.md')).read_text(encoding='utf-8')
+        text = managed_text('.claude/agent-workflows/' + role.replace('-', '_') + '.md')
     else:
-        text = (project / '.claude/agents' / ('agent-' + role + '.md')).read_text(encoding='utf-8')
+        text = managed_text('.claude/agents/agent-' + role + '.md')
         text = text.split('---', 2)[2].strip()
-        skill = project / '.claude/skills' / role / 'SKILL.md'
-        text += '\n\nSkill source (resolve its references relative to this directory): ' + str(skill) + '\n' + skill.read_text(encoding='utf-8')
-    # Never load the installed agent's pinned model when falling back. The
-    # invocation-local definition overrides any project-level agent setting.
+        relative = '.claude/skills/' + role
+        skill_root = installer.checked_skill_link(project, relative)
+        source = Path(links[relative])
+        expected_skill = installer._installed_text(source, 'SKILL.md')
+        if relative in manifest.get('skill_copies', {}):
+            skill_text = installer._installed_text(project, relative + '/SKILL.md')
+            if skill_text != expected_skill:
+                raise ValueError('installed Skill changed after setup check')
+        else:
+            if not skill_root.is_symlink() or skill_root.resolve() != source:
+                raise ValueError('installed Skill link changed after setup check')
+            # Use the accepted source snapshot, not a second read through the alias.
+            skill_text = expected_skill
+        skill = skill_root / 'SKILL.md'
+        text += '\n\nSkill source (resolve its references relative to this directory): ' + str(skill) + '\n' + skill_text
+    # The host default must override any installed pinned-model setting.
     return {'description': 'Run the assigned ' + role + ' task', 'prompt': text, 'model': 'inherit'}
 
 
@@ -147,7 +174,7 @@ def main():
         policy = load_json(directory / 'model-policy.json')
         inventory = validate_inventory(load_json(args.inventory) if args.inventory else
                                        load_json(directory / 'installation.json').get('model_inventory', EMPTY_INVENTORY))
-        definition = role_definition(project, args.role, policy)
+        definition = role_definition(project, args.role, policy, installer=installer)
         command = [str(Path(args.adapter).resolve()), *args.adapter_arg] if args.adapter else None
         request = {'schema_version': 1, 'project_root': str(project), 'role': args.role,
                    'definition': definition, 'prompt': prompt}

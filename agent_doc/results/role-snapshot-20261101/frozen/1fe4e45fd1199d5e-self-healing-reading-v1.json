@@ -1,0 +1,180 @@
+{
+  "task": "SYSTEM-99",
+  "paper_id": "arXiv:2606.01416v1",
+  "title": "Self-Healing Agentic Orchestrators for Reliable Tool-Augmented Large Language Model Systems",
+  "authors": [
+    "Rahul Suresh Babu",
+    "Adarsh Agrawal"
+  ],
+  "source": {
+    "path": ".agent-runs/role-load-0308/self-healing-source.json",
+    "sha256": "e424af807ba9cc57fca99c1a1af0a787a28572ad65606bcbd31d68e75ee53654"
+  },
+  "body": [
+    {
+      "path": ".agent-runs/role-load-0308/self-healing-v1.pdf",
+      "sha256": "76db09ea8e5e0ffcdbcb7e886ba19bf6ad0c8fdc3d294a4aa4cbc71fdda758e5"
+    },
+    {
+      "path": ".agent-runs/role-load-0308/self-healing-v1.txt",
+      "sha256": "5662758c8e83501f335a4a9a800d881ee890a46eae85a798630d20ea71a5cc8b"
+    }
+  ],
+  "version_scope": "31May2026 PDF watermark; exact v1, latest version not established. Official HTML and abs access disabled; PDF original accessible.",
+  "reading": {
+    "coverage": [
+      {
+        "start": 0,
+        "end": 14000,
+        "actual_display_chunk": "d8093d"
+      },
+      {
+        "start": 14000,
+        "end": 28000,
+        "actual_display_chunk": "d9ca29"
+      },
+      {
+        "start": 28000,
+        "end": 42000,
+        "actual_display_chunk": "95b0b8"
+      },
+      {
+        "start": 42000,
+        "end": 56000,
+        "actual_display_chunk": "6990b5"
+      },
+      {
+        "start": 56000,
+        "end": 64000,
+        "actual_display_chunk": "70a294"
+      },
+      {
+        "start": 64000,
+        "end": 73000,
+        "actual_display_chunk": "b0d658"
+      },
+      {
+        "start": 73000,
+        "end": 82000,
+        "actual_display_chunk": "93ff2d"
+      },
+      {
+        "start": 82000,
+        "end": 91000,
+        "actual_display_chunk": "315281"
+      },
+      {
+        "start": 91000,
+        "end": 102192,
+        "actual_display_chunk": "6143f2"
+      }
+    ],
+    "sections": "Abstract; §§1–11 including §§2.1–2.3,3.1–3.4,4.1–4.3,5.1–5.4,6.1–6.9,7.1–7.8,8.1–8.4,9.1–9.5; Algorithm1; Tables1–14; acknowledgments/funding/conflicts/artifact notice/references1–11. No appendices in this33-page PDF.",
+    "visual_inspection": [
+      {
+        "path": ".agent-runs/role-load-0308/self-healing-architecture-p7.png",
+        "sha256": "66bf9402b3d3860125131c3be1714ece18643372547977e9be6b88c412c5f5a2"
+      },
+      {
+        "path": ".agent-runs/role-load-0308/self-healing-algorithm-p30.png",
+        "sha256": "d75905c46219687a101e6c1dce96dc7fb29a3f7b6c5a0ba34a4c0030dd32192b"
+      }
+    ],
+    "not_claimed": "No all-page visual audit, artifact execution or provider result replication. Truncated56000..70000 display excluded; reread in smaller complete intervals."
+  },
+  "method": [
+    "§§3–5/Figure1/Algorithm1 separate execution data plane from monitor/detector/inferred failure classifier/budgeted recovery/verifier/trace. Signal, injected event and inferred cause are distinct.",
+    "Table3 maps timeout/unavailability to bounded retry/substitution/replan, schema/partial output to repair, stale context to refresh, contradiction to cross-check, loop to stop/degrade/escalate. Recovery feasibility remains bounded by authorization/tool semantics.",
+    "§5/Algorithm1 lines28–32 verify recovered state and debit recovery cost even when unsuccessful. Lines11–15 verify apparent final success; rejected verification becomes failure signal. Lines36–42 distinguish verified result, safe degraded response, escalation/termination.",
+    "Eq4/10 budgets attempts,latency,cost,depth and retry/replan/substitution/escalation dimensions. Eq9 weighted model/tool/verifier/recovery costs is formal; controlled Eq13 Ntool+Nmodel+Nverify is a call-count proxy, not actual tokens/dollars/production latency."
+  ],
+  "experiments": {
+    "§6_Table4": "100 synthetic tasks,5categories×20; deterministic local tools; runtime λ0,.1,.2,.3 primary and .4,.5 stress. Seven runtime/output/context fault types. Main9000 executions; ablation9000; matched budget7200; semantic7200. Repeated deterministic seeds are not independent production workload samples.",
+    "§7.1_Tables5_6": "Authors report overall selfheal98.8%,retry94.5%,simulated ReAct94.1%,fullreplan93.8%,static70.1%. Primary selfheal99.6%,stress97.3%. Cost3.25 vs3.63 ReAct/fullreplan; retry2.24/static1.61 cheaper. No local reproduction.",
+    "§7.2_Table7": "Conditioned on actual injected fault, selfheal100%stale/contradiction but only79.3%timeout/75.3%unavailability. Controlled template saturation not general guarantee.",
+    "§7.3_Table8": "Nonzero faults full99.3%,no classifier95.7%,no targeted recovery95.7%,relaxed budget100%; no verifier99.3% with cost2.30 vs3.30; no observability99.3% with zero traceevents. Therefore do not claim every verifier/trace adds direct task success.",
+    "§7.4_Table9": "Matched budgets1,2,3,5; at1 selfheal94.0%,retry85.3%,fullreplan88.2%; at5 100/99.2/99.3. Budget1 costselfheal3.13,retry2.15,replan3.45. Targeting may help but claimed identical schedule pairing has unresolved method-dependent seed text.",
+    "§7.5_Table10": "Semantic wrong-but-plausible output: verifying selfheal100%success/0%silent; nonverifying silent13.2–17.6%. No-verifier selfheal82.4%success, worse than retry85.4%. Verifier may be useful for this fault class, not universal elimination.",
+    "§7.6_Tables11_12": "Compact live-model claim: main15×3×2=90,all3methods100%success; verifier ablation15×2×2=60,96.7→100%success,20→46.7%detection,16.7→46.7%recovery. Supplemental10×3×3×2=180 all100%success, so final quality saturates and cannot distinguish budget efficiency here.",
+    "§7.7_Table13": "Three representative traces timeout/stale/semantic; useful qualitative diagnosis, not population incidence or statistically independent validation."
+  },
+  "limitations": [
+    "§§9.1–9.5/Table14: author-created synthetic goals/faults can align with rule policy; controlled family baselines not optimized production agents; task criteria/verifier simplify user quality, safety and ambiguity.",
+    "No production API/natural incident/real user traffic or full deployment cost validation. Local deterministic tools remain in model-in-loop. Actual tokens, long prompts, judge/verifier and human overhead require separate measurement.",
+    "§6.3 explicitly includes method in deterministic fault-seed inputs while §§6.9/8.3/9.2 claim identical paired schedules. Textual ambiguity not resolved by body; controlled notebook download rejected as too large by connector. No proved causal bias claim.",
+    "Main model-in-loop paper body lacks exact immutable model/provider version and execution manifest needed for independent reproduction. Artifact model notebook default gpt-5.4-mini is configurable and defaults FORCE_MOCK_MODEL=true/no key=>mock; saved config output empty. Do not certify published results were mock or live from that alone.",
+    "Artifact selected code finalize_row accepts judge outcome ambiguous when rule_success holds; judge JSON missing outcome defaults ambiguous, and malformed JSON can fall back to mock_judge. This is more permissive than repo independent usable-with-scope gate. No claim every published row used fallback.",
+    "Read-only tool retry tolerances do not authorize replaying purchases/messages/writes or bypassing existing cancellation, budgets, human guide, evidence and authorization fences."
+  ],
+  "artifact_inspection": {
+    "repository": "https://github.com/R-Suresh/self-healing-agentic-orchestrator",
+    "commit": "c5d426f116dbdefc6e042bc0aeaef7272035ccd2",
+    "retrieved": [
+      {
+        "path": ".agent-runs/role-load-0308/artifact-REPRODUCIBILITY.md",
+        "sha256": "9aca23e4a4372a964b8c8088a77fd2495afe3b63f716487a486ccbb2e217bac0"
+      },
+      {
+        "path": ".agent-runs/role-load-0308/artifact-model-main.ipynb",
+        "sha256": "270bf810fa8c886df5615085ed9128cf16292942b377e1c996ddf1c2add104ae"
+      }
+    ],
+    "git_blobs": {
+      "REPRODUCIBILITY.md": "9b6fd70aa83757a094169d6c942fb3a545bc48b9",
+      "model_in_the_loop_main_experiment.ipynb": "e33c0506c9d3f8cf8459e3d4581fc6f757256bae"
+    },
+    "actual_selected_code_read": "model notebook cells4 configuration,12 choose_fault_type,16 judge_answer,17 finalize_row; complete REPRODUCIBILITY.md. Other large/truncated code display not counted as full notebook read. No notebook execution.",
+    "controlled_notebook": "GitHub connector raw fetch rejected size/unsupported; no body/source inspection credited for controlled notebook."
+  },
+  "repository_application": [
+    {
+      "decision": "adapt as candidate, not implemented",
+      "target": "scripts/run_role.py role_definition; setup.py _installed_text/checked_target/checked_skill_link; agent_runtime.external_json.regular_bytes",
+      "reason": "Apply class-specific handling of changed/unreadable installed instructions before backend: bounded nonblocking read, use same accepted snapshot, compare selected instruction content to accepted expected source, preserve legal Skill directory link. Generic retries cannot repair ownership/authorization drift. Source inspection confirms plain read_text after check; late-load diagnostic remains failed mandatory cleanup and cannot supply full accepted repair baseline."
+    },
+    {
+      "decision": "retain existing mechanism",
+      "target": "result validation and role-load failed checkpoint",
+      "reason": "Final-state verification must inspect actual effect, e.g. path lifecycle, not exit0. Keep original cleanup contradiction, no automatic result promotion or budget refund. Need separate explicitly bounded reconciliation before dependent tests/repair."
+    },
+    {
+      "decision": "reject",
+      "target": "new global orchestrator, shared chat pool, automatic retry/escalation policy, wholesale comment removal",
+      "reason": "Existing task ownership, MemoryLedger, context/engine/review authorization already provide control plane. Paper does not demonstrate benefit/correctness for a replacement or instruction-minification policy."
+    },
+    {
+      "decision": "defer",
+      "target": "real role-loading/model task quality/total usage and cost",
+      "reason": "Need authenticated supported backend/full role coverage and matched workloads; synthetic percentages/call proxies cannot close this project acceptance gap."
+    }
+  ],
+  "code_refs": [
+    {
+      "path": "scripts/run_role.py",
+      "sha256": "8ebe9c973e776633e1d71d1bb0003890ea76ecfcb0e78617625de19916da02d5"
+    },
+    {
+      "path": "setup.py",
+      "sha256": "74b4ac0ee969a816f8dda7432172ad9838ccfdec59eb711eb06c163125f29e54"
+    },
+    {
+      "path": "agent_runtime/external_json.py",
+      "sha256": "f154b63e6852b3fec6285e2dae9c749d2a8a34943746fac22c61cd9658fce849"
+    },
+    {
+      "path": "agent_runtime/model_routing.py",
+      "sha256": "3991cb7f29af3ea7aacff188a7247f68427735e3c396d592755492a75b7a6908"
+    }
+  ],
+  "status": "full-body reading complete, independent record verification pending; no source repair/performance or global ten-paper completion claim",
+  "review_allocation": {
+    "scope": "static reading record only; separate from stopped ROLE-LOAD-DIAG-01",
+    "reviews": 1,
+    "producer_or_independent_campaigns": 0,
+    "source_edits": 0,
+    "publications": 0,
+    "provider_calls": 0,
+    "deadline_utc": "2026-10-31T20:20:00Z",
+    "runtime_receipt": false
+  }
+}

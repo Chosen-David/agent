@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 71
+Version: 72
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -231,6 +231,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段MANAGED-CHILD-ADMISSION（Version70，同SYSTEM99）：真实load_backend/ManagedEngine包装器内检索撤权仍进入实际子handler的4方法负例（3pass/1fail）已独审，原字节保留。修复仅由Engine为真实Context安装宿主私有effect准备回调：再次live审核并对实际dispatched_task向同一registered handler授权，栈内一次性检查完整plan/receipt/实际任务绑定，ReportingHandler完成结果/记忆/知识/文档绑定读后最后核真实claim，再进入子handler。保留旧外层门禁、六位置Context/direct wrapper兼容与legacy prior_result_search派生字段；不新建ledger/持久授权cache/工具权限/共享聊天池或改guide。健康包装路径授权2→3、非包装仍2；额外I/O/授权/认证成本未测不报性能收益。新版固定验收含实际Managed Unix路径与跨平台Engine路径、保护输入及结果/legacy/到期/缓存控制，独立同条件回归与原生平台后普通main发布。无外部provider原子fence/任意后续撤权保证或部署声明，同批次完整宿主/上下文/任务质量仍未完成。
 
 阶段MAILBOX-SEQUENCE（Version71，同SYSTEM99）：保持消息序号的精确整数身份；inbox游标允许0，read-pending/consume/context/ACK只接受1..2**63-1的普通int，拒绝bool/float/string及越界，不依赖SQLite转换或把OverflowError当sqlite3.Error。复用单一私有谓词，不改路由/schema/ACK语义、记忆与证据校验或目录。先独审固定4方法与真实CLI全链控制，保留修前类型别名/溢出负例；只在确认缺陷后应用精确候选，修后及独立定向回归各一次，五组原生CI新增4方法另核。方案2次、baseline/fixed/independent各1、结果独审2次、源码CI1、无自动重试，原deadline2026-10-31T18:40Z；tmux旧双REVISE及全部其它耗尽scope不重置。本阶段仅消息身份及错误处理可靠性，无性能/token/模型质量/全费用收益，同批真实宿主等未决保持。
+
+阶段AL（ROLE-DEFINITION-SNAPSHOT，Version72）：承接失败现场保留/排除核对，仅修run_role检查后重新打开所选正文的缺口。复用安装器有界普通文件读取、expected_files和合法Skill目录链接检查；比较并使用同一正文快照，在后端发现前拒绝变更/异常，保留inherit、路由、请求预算、无重试及Unicode/换行。源checkout受信任；不宣称全文件系统事务、按需引用树冻结或真实模型加载已验。新路径真实安装→check后定向替换→native/adapter Python夹具；修前负例、合法copy/link、文本/链接/FIFO零后端调用及清理读回均须保留，独立验收后才发布。旧ROLE-LOAD-DIAG-01清理失败/未知原因及预算不改判；本阶段另有明确有界修复验证分配，不用旧失败当通过基线。同批2606.01416v1完整正文记录已独立核对，恢复按失败类型处理的思路用于正文校验，而不增加自动重试。真实宿主、多角色质量/完整usage与费用仍open。
 
 ## Progress
 
@@ -842,3 +844,9 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 ### 2026-11-01 — MAILBOX-SEQUENCE-01 checkpoint
 
 消息消费/context曾接受True/1.0/字符串1为序号1，超出SQLite整数范围在read/consume/context/ACK真实CLI抛未捕获OverflowError；修前4方法的10失败/6错误子案例及2健康控制保留。原地复用严格普通int/有界序号谓词，保留0游标、最大合法整数、路由/证据/ACK语义。新增4方法修后通过；初次整体回归53加载/51pass/2旧fixture导入错误仍记failed，不隐去。剩余一次独立验收显式补tests导入路径，同argv但环境不同，全结果及限定见[完整证据](../../results/mailbox-sequence-20261101/report.json)；不冒称同环境完整双通过。手工六域独审非trusted runtime；原生五job新增4方法发布后另核。Plan70→71，旧稳定正文/全部Progress/唯一TASK/guide保持；方案2/2、baseline/fixed/independent各1及旧tmux双REVISE/其它耗尽scope均保留。无新论文计数、速度/token/模型质量/全费用收益，同SYSTEM99仍未完成。
+
+### 2026-11-01 — ROLE-SNAPSHOT-STRUCTURED-RECOVERY-01 checkpoint
+
+安装检查后重开角色/Skill文本曾使替换内容到达后端或FIFO阻塞；现复用有界普通UTF-8读取，与可信生成文本比对并使用同一字符串，再进入后端发现。真实安装→初次check→定向变更→实际CLI的16场景，修前4方法14普通失败子场景（10次sentinel准入、4次FIFO超时），修后与独立各4方法/16场景及37回归全pass、零错误/跳过；两健康路径保留inherit、Unicode/CRLF和native/adapter行为。48次场景清理读回均absent。完整结构化TestResult/报告、原始输出、方案与六域独审见[唯一证据索引](../../results/role-snapshot-20261101/evidence-index.json)，[范围和未决](../../results/role-snapshot-20261101/report.json)。
+
+0308清理矛盾和0420截断输出仍failed、原因未知、旧预算/期限不重置；本次为显式结构化恢复分配，手工独审非trusted runtime。Self-Healing 2606.01416v1既读方法用于验证实际作用与失败有界恢复，本次新精读计数0。Plan71→72、旧全部Progress/唯一TASK/人类guide保留，无agent_doc迁移。原生新head CI发布后另核；Windows FIFO/无权限符号链接可明确skip。未测真实模型任务质量、token、费用、速度；可信源码假设、非文件系统事务/父路径竞态围栏、真实宿主/上下文与旧tmux等缺口仍open，同SYSTEM99不计完成轮次。
