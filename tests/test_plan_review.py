@@ -15,7 +15,7 @@ class PlanReviewTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
-        self.root = Path(self.tmp.name)
+        self.root = Path(self.tmp.name).resolve()
         (self.root / 'TASK.md').write_text('- [ ] [T1] Verify output\n')
         self.plan = prepare(self.root, 'r1', 'manual', 'synthetic test instruction', lineage_id='logical-T1')
         task = self.plan['tasks'][0]

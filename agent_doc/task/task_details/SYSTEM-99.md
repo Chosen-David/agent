@@ -807,3 +807,6 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 
 
 - ENGINE-PRE-ACTION-CLAIM-01限域修复：回调可能在早期current检查后使租约到期、取消或换token；Engine进入handler前新增真实current检查，不改原ReportingHandler v44/最终stale结果/attempt与恢复。修前六方法四stale断言失败且真实marker已写，两个控制通过；修后与独立各98执行/97pass/1原real-tmux选测skip，新六及两process均通过。[完整源、六probe、原双方案/结果异议与全部原始输出](../../results/engine-pre-action-claim-20261031/report.md)保留首次私有runner无main保护造成的spawn重入污染及11semaphore清理未知；主控显式常规修复reconciliation后用既定candidate第2/末次，原REVISE不改判为approve，无认证runtime账本迁移/退款。plan2/2、baseline1/1、candidate2/2、independent1/1、result2/2、native1待核，deadline13:00Z不变；Plan66→67，唯一TASK/guide不动，无新论文抵数/模型性能费用/全链结案，SYSTEM99同批仍open。
+
+
+- Engine原生夹具补修：d469的mac新六case在共享setUp首次atomic_json前路径规范化过晚，原6error完整日志保留，主控另取Windows3.12同栈6error原日志。只将共享trusted TemporaryDirectory根初始化加.resolve()，42断言/15测试名/其余AST、生产守卫与Engine/新六case/工作流全不变；本机与独立各21全pass0skip。[完整一行候选、原日志、补充方案/独审与原始21输出](../../results/engine-claim-fixture-20261031/report.md)限定alias因果为源码推断不伪造未打印路径。显式补充plan1/local1/ind1/result1/newCI1待核、13:00Z原期限，保留Engine旧预算/REVISE/首次污染及11semaphore清理未知；Plan67稳定区/唯一TASK/人类guide不变，无新论文计数/速度模型费用结论，同批仍open。
