@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 64
+Version: 65
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -213,6 +213,9 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 阶段SETUP-LEGACY-TEXT-01（Version63）：仅将安装器project_document_layout对根旧TASK.md的文本读取复用既有_installed_text，使canonical已存在时的旧指针读取受16MiB普通FD/UTF8/非阻塞/链接拒绝边界保护；原缺canonical必须显式迁移、双活跃清单拒绝、通用换行与旧指针原字节保留。不是项目迁移/任务语义/共享helper重构或整个安装并发事务。独审冻结七方法真实临时CLI/API类型替换反例与相邻setup/manifest/text回归，保留修前失败后实施；baseline/fixed/independent各一次，命令120秒、FIFO子进程3秒、共享1800秒，方案最多2次、原生源码CI提交最多2次（第二次只可修本新scope原生失败，不修旧Windows测试）。完整独立代码/数据复核后普通发布，原生新增步骤须分别核对；旧Windows失败及所有耗尽gate不得重跑/改名重置。仅局部拒绝/兼容验收，无性能/真实会话/全质量/费用或整轮完成主张；58篇历史正文不变。
 
 阶段 CODEX-INSTRUCTION-READ-01（Version64）：按独立批准的冻结方案，仅将scripts/setup_codex.py三处全局AGENTS.md读取复用regular_bytes，保留原字节、缺文件/受管区块/本地偏好/静态类型与指南守卫。新16MiB上限同时约束读取和合并输出，输出超限在状态/备份/技能写入前拒绝，不截断；支持已配置总长恰上限。先保留七方法修前失败，再同固定方法及三个相邻模块修后/独立各一次；CLI超限、is_file内FIFO/链接替换、锁前FIFO替换和rawbytes/边界控制分开，不称任意Windows链接竞争、父路径/全同步事务或真实会话加载。方案最多2次审核、baseline/fixed/independent各1、源码CI最多2提交且第二次只因本新scope真实失败；原deadline2026-10-31T04:56:16.419636Z，全部旧scope失败/预算不变，性能/模型质量/全费用未测不报收益。
+
+
+DENSE-HANDOFF-01：在原稀疏准入之外，仅对dependency references不超过65536的普通深密集残图复用现有fast-success拓扑路径；全字段/错误fallback/custom对象/上下文/MemoryLedger/所有权门禁保留。完整Mailbox publish→context→ACK离线同条件对照、内存代价、更正拒绝与独立复核；synthetic消费者非真实LLM终局质量，不称整轮完成。
 
 ## Progress
 
@@ -787,3 +790,6 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 
 
 - 用户本次明确指出CI持续错误、要求不只读论文而实际改进库：按此CI修复要求处理旧冻结候选，不重写旧预算/失败。28d5最新Windows3.12完整原日志确认两LF/CRLF夹具错误，只将两write_text改显式write_bytes，原断言/生产/工作流全保留；本机与独立各11方法一次通过，新原生CI另核。[修复及完整复核](../../results/ci-newline-user-fix-20261031/report.md)。后续以可证伪实现与同条件质量/实际上下文/全角色成本验收优先，单纯读记增长不算成果；论文67/CAVERT partial、旧其它耗尽scope/未决/guide/唯一TASK保持，非整轮完成。
+
+
+- DENSE-HANDOFF-01按读过的完整路径资源核算/操作分工思路实现有界密集残图准入，Plan64→65三版独审后精确采用，未换算法/独审/目录权威。完整Mailbox publish→prepare_context→ACK合成路径，主测dense128/192下降60.34/75.70%，独立96.764→37.041ms、275.991→61.921ms（61.72/77.56%）；控制≤15%退化、单flow Pythonpeak差≤2MiB，两者均满足固定门槛。[完整源/方案/三审/原数据/六域独审](../../results/dense-handoff-20261031/report.md)保留负结果、共享CPU、条件函数切换和峰值/临时fixture未全保存限制。同fixture完整payload相同；跨fixturecreated_at/hash不同不混同。两者各41方法/31差分，新增六late-dense错误保留原诊断；更正拒绝和ACK存在/pending安全不冒称完整receipt字节/全传播。独立usable-with-scope，手工非trusted runtime；native五job新增41-method步骤另核。plan3/3、producer1/3、independent1/3已用，原08:01:10.510799Z不变；旧scope不重置。无模型/终局质量/token/全角色费用收益，论文67/CAVERT partial不增，SYSTEM99实际宿主/全输入/终局质量/全费用/并发恢复仍open，非整轮完成。

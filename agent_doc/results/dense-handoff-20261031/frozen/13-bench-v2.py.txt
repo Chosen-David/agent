@@ -1,0 +1,83 @@
+import argparse, contextlib, hashlib, importlib.util, json, math, os, platform, statistics, sys, tempfile, time, tracemalloc
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[2]
+sys.path.insert(0,str(ROOT))
+from agent_runtime.communication import Mailbox
+from agent_runtime.project_memory import MemoryLedger
+import agent_runtime.handoff_basis as hb
+
+def load(name,path):
+ spec=importlib.util.spec_from_file_location('agent_runtime.'+name,path);m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
+
+def claims(n,dense):
+ return [dict(id=f'c{i}',status='supported',knowledge_ids=[],memory_ids=[],artifact_ids=['proof'],depends_on=([f'c{j}' for j in range(i)] if dense else ([f'c{i-1}'] if i else [])),assumptions=[]) for i in range(n)]
+
+class Fixture:
+ def __init__(self,root,n,dense):
+  self.root=root;root.mkdir();raw=b'{"verified_fixture":true}\n';(root/'proof.json').write_bytes(raw)
+  ref=dict(id='proof',path='proof.json',sha256=hashlib.sha256(raw).hexdigest())
+  self.ledger=MemoryLedger(root,create=True);self.ledger.add('m1','observation','fixture','synthetic:benchmark',evidence='verified')
+  record=dict(schema_version=1,run_id='bench',role='producer',input_version='v1',status='completed',limitations=[],artifacts=[ref],checks=[dict(criterion='fixture',status='pass',artifact_ids=['proof'])],tasks=[dict(task_id='T1',status='done',evidence=['proof'])],memory_refs=['m1'],evidence_claims=claims(n,dense))
+  data=json.dumps(record).encode();(root/'handoff.json').write_bytes(data)
+  self.event=dict(event_id='E0',run_id='bench',input_version='v1',sender='producer',task_id='T1',kind='artifact',summary='bounded fixture',action='consume',refs=[dict(id='handoff',path='handoff.json',sha256=hashlib.sha256(data).hexdigest())])
+  self.request=dict(schema_version=1,input_version='v1',tasks=[dict(task_id='T1')],memory_refs=['m1'],memory_required=True)
+  self.box=Mailbox(root/'mail.sqlite',dict(schema_version=1,run_id='bench',input_version='v1',max_events=1000,routes=[dict(sender='producer',recipient='consumer',task_id='T1',kind='artifact')]),root)
+  self.counter=0;self.expected=None;self.record=record
+ def flow(self):
+  self.counter+=1;event=dict(self.event,event_id='E'+str(self.counter));t=time.perf_counter_ns();seq=self.box.publish(event)['seq'];result=self.box.prepare_context('consumer',seq,self.request,max_chars=200000);self.box.acknowledge('consumer',seq,dict(status='consumed',reason='fixture read; not semantic acceptance'));elapsed=time.perf_counter_ns()-t
+  payload=result['payload'];decoded=json.loads(payload)
+  if decoded['evidence_claims']!=self.record['evidence_claims']:raise AssertionError('claim loss')
+  if self.expected is None:self.expected=payload
+  if payload!=self.expected:raise AssertionError('payload changed')
+  return elapsed
+ def stale(self):
+  old_seq=self.counter;self.counter+=1
+  pending=self.box.publish(dict(self.event,event_id='E'+str(self.counter)))['seq']
+  self.ledger.correct('m1','m2','corrected fixture','synthetic:correction','test')
+  for seq in [old_seq,pending]:
+   try:self.box.prepare_context('consumer',seq,self.request,max_chars=200000)
+   except ValueError:pass
+   else:raise AssertionError('stale memory accepted')
+  if [x['seq'] for x in self.box.status() if x['receipt'] is None]!=[pending]:raise AssertionError('receipt changed')
+  if [x['seq'] for x in self.box.inbox('consumer')]!=[pending]:raise AssertionError('pending correction delivery lost')
+
+def main():
+ ap=argparse.ArgumentParser();ap.add_argument('--out',required=True);args=ap.parse_args();base=load('_dense_baseline',Path(__file__).with_name('baseline.py'));new=load('_dense_candidate',Path(__file__).with_name('candidate.py'));original=hb.claim_graph
+ result={'python':sys.version,'platform':platform.platform(),'pid':os.getpid(),'hashseed':os.environ.get('PYTHONHASHSEED'),'scope':'synthetic offline public Mailbox.publish->prepare_context->ack API path including artifact/hash/schema/memory/SQL/payload checks, no LLM/real task quality/token claim','samples':{}}
+ try:
+  with tempfile.TemporaryDirectory(prefix='dense handoff ') as d:
+   for name,n,dense in [('dense128',128,True),('dense192',192,True),('chain512',512,False),('small8',8,False),('empty',0,False)]:
+    f=Fixture(Path(d)/name,n,dense);samples={'baseline':[],'candidate':[]};peaks={}
+    for _ in range(2):
+     for key,m in [('baseline',base),('candidate',new)]:hb.claim_graph=m.claim_graph;f.flow()
+    for i in range(21):
+     for key,m in ([('baseline',base),('candidate',new)] if i%2==0 else [('candidate',new),('baseline',base)]):hb.claim_graph=m.claim_graph;samples[key].append(f.flow())
+    for key,m in [('baseline',base),('candidate',new)]:
+     hb.claim_graph=m.claim_graph;tracemalloc.start();f.flow();_,peaks[key]=tracemalloc.get_traced_memory();tracemalloc.stop()
+    hb.claim_graph=new.claim_graph;f.stale()
+    med={k:statistics.median(v) for k,v in samples.items()};reduction=1-med['candidate']/med['baseline'];result['samples'][name]={'n':n,'dense':dense,'raw_ns':samples,'median_ns':med,'relative_reduction':reduction,'peak_python_bytes':peaks,'payload_chars':len(f.expected),'payload_sha256':hashlib.sha256(f.expected.encode()).hexdigest(),'completed_flows':f.counter-1,'pending_deliveries_after_correction':1,'stale_rejected':True,'all_receipts_retained':True}
+   # Differential failures retain legacy message and never mutate records.
+   from copy import deepcopy
+   comparisons=0
+   for n in [0,3,64,96,192,370]:
+    for mode in ['valid','unknown','unsupported','cycle','late_unsupported','late_cycle']:
+     if not n and mode!='valid':continue
+     record={'artifacts':[{'id':'proof'}],'evidence_claims':claims(n,True)}
+     if mode=='unknown':record['evidence_claims'][-1]['depends_on'].append('missing')
+     if mode=='unsupported':record['evidence_claims'][0]['status']='candidate'
+     if mode=='cycle':record['evidence_claims'][0]['depends_on']=[f'c{n-1}']
+     if mode=='late_unsupported':record['evidence_claims'][max(0,n//2)]['status']='candidate'
+     if mode=='late_cycle':record['evidence_claims'][max(0,n//2)]['depends_on'].append(f'c{n-1}')
+     before=deepcopy(record);outcomes=[]
+     for m in [base,new]:
+      try:outcomes.append(('ok',m.claim_graph(record)))
+      except ValueError as e:outcomes.append(('error',str(e)))
+     if outcomes[0]!=outcomes[1] or record!=before:raise AssertionError((n,mode,'differential'))
+     comparisons+=1
+   result['differential_cases']=comparisons
+  result['acceptance']={'dense_each_ge20pct':all(result['samples'][k]['relative_reduction']>=.20 for k in ['dense128','dense192']),'controls_each_no_more15pct_regression':all(result['samples'][k]['relative_reduction']>=-.15 for k in ['chain512','small8','empty']),'extra_peak_each_le2MiB':all(s['peak_python_bytes']['candidate']-s['peak_python_bytes']['baseline']<=2*1024*1024 for s in result['samples'].values())}
+  result['accepted']=all(result['acceptance'].values())
+ finally:hb.claim_graph=original
+ Path(args.out).write_text(json.dumps(result,indent=2)+'\n')
+ print(json.dumps({'accepted':result['accepted'],'reductions':{k:round(v['relative_reduction'],4) for k,v in result['samples'].items()},'acceptance':result['acceptance']}))
+if __name__=='__main__':main()

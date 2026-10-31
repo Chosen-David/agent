@@ -40,6 +40,31 @@ class ClaimResidualTests(unittest.TestCase):
                 claim_graph(record)
             self.assertEqual(record, before)
 
+    def test_dense_residual_late_faults_keep_legacy_diagnostic(self):
+        for n in (96, 192):
+            for fault in ('unknown', 'unsupported', 'cycle'):
+                record = chain(n)
+                for i, claim in enumerate(record['evidence_claims']):
+                    claim['depends_on'] = [f'c{j}' for j in range(i)]
+                if fault == 'unknown':
+                    record['evidence_claims'][-1]['depends_on'].append('missing')
+                elif fault == 'unsupported':
+                    record['evidence_claims'][n // 2]['status'] = 'candidate'
+                else:
+                    record['evidence_claims'][n // 2]['depends_on'].append(f'c{n-1}')
+                before = deepcopy(record)
+                def rejected():
+                    try:
+                        claim_graph(record)
+                    except ValueError as exc:
+                        return type(exc), str(exc)
+                    self.fail('invalid dense graph accepted')
+                with self.subTest(n=n, fault=fault):
+                    with patch('agent_runtime.handoff_basis._valid_claim_residual', return_value=False):
+                        expected = rejected()
+                    self.assertEqual(rejected(), expected)
+                    self.assertEqual(record, before)
+
     def test_custom_objects_retain_legacy_observable_operations(self):
         events = []
         class TracedString(str):

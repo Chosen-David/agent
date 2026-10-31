@@ -58,7 +58,8 @@ def _valid_claim_residual(graph, pending):
                and all(type(parent) is str for parent in claim['depends_on'])
                for cid, claim in graph.items()):
         return False
-    if sum(len(graph[cid]['depends_on']) for cid in pending) > 4 * len(pending):
+    # The extra dense path bounds adjacency to 65,536 dependency references.
+    if sum(len(graph[cid]['depends_on']) for cid in pending) > max(4 * len(pending), 65536):
         return False
     degree = {}
     children = {cid: [] for cid in pending}
@@ -125,7 +126,7 @@ def claim_graph(record):
     rounds = 0
     while pending:
         # Two legacy waves finish shallow graphs without adjacency allocation.
-        # Only a sufficiently large, sparse residual justifies the extra space.
+        # Bounded dense residuals also avoid repeated scans; larger ones keep legacy allocation.
         if rounds == 2 and len(pending) >= 64 and _valid_claim_residual(graph, pending):
             break
         ready = {cid for cid in pending if not (set(graph[cid]['depends_on']) & pending)}
