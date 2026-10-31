@@ -1,0 +1,245 @@
+{
+  "review_type": "manual fresh delegated context supplemental static plan review; not authenticated ReviewSession",
+  "project_root": "/workspace/scratch/95d615402a52/agent-run-2205",
+  "task": "SYSTEM-99",
+  "scope": "ENGINE-PRE-ACTION-CLAIM-01",
+  "plan_review_cycle": 1,
+  "max_cycles": 2,
+  "plan_sha256": "0bb194f1724e6842cb5727e1c5583d61de122555836a3c42d8e975aa7540c1ee",
+  "reviewed_at_utc": "2026-10-31T12:08:21.107165+00:00",
+  "tests_or_experiments_executed": false,
+  "allowed_write": ".agent-runs/engine-claim-2004/plan-review.json",
+  "full_review": "REVISE. The narrow Engine production design is sound for the claimed callback-to-entry window, but the exact frozen tests are not executable with the promised baseline oracle because their observer recursively acquires SQLite write locks (B1).\n\nStatic execution review: initial top-level review may observe todo safely because no Engine transaction is open. tick then opens Store.transaction, inserts event and runs _check_done. _check_done reauthenticates the protected plan, so wrapped verify -> mutate -> snapshot enters a second BEGIN IMMEDIATE while the first transaction owns the write reservation. Thus the failure can occur before claim selection in all six modes. If that were bypassed, claim-time _authorized -> authorize -> mutate has the same locking flaw. OperationalError is not among _review_plan caught classes. No current empirical result is asserted.\n\nIntended six-case oracle after observer repair: expiry/cancel/token mutate only the postclaim review; authorization-expiry mutates only the postclaim authorization call after the early current check. Old production would call Handler.run in these four cases, where entered captures False and marker is written, producing four assertion failures. Healthy should enter once with True and reach done; denied should never claim and attempts must remain0. Exact equality now105 with lease_until105 is expired because Context.current uses >. The candidate adds its real current gate after both callbacks and before executed=True, so all four stale cases should stay out of handler. These are predictions requiring the one approved baseline and candidate runs, not measurements.\n\nTwo expiry paths and restart: each initial claim costs1 and remains doing when final persistence sees expired lease, using unchanged stale_result_rejected branch. Reopen Store on same path, advance clock to106, replay first-wake returns the recorded event state without another claim/action and attempts remains1. Fresh new-wake permits idempotent lease recovery using the same original plan/key and should claim once more, finish done and attempts2. The test retains invalidated across restart to model a single callback invalidation. entered==[True] after fresh wake plus marker absence before recovery proves the bounded entry/no-replay behavior. Marker existence/content after recovery could be asserted explicitly as a minor strengthening, but is not an additional blocker because Handler.run always writes the marker before normal return. Cancellation/token variants appropriately preserve cancelled status/foreign token. These do not certify non-idempotent external side effects, arbitrary process crash recovery or atomic external fencing.\n\nPortability: source uses standard Python3.10-compatible APIs already present in production; proposed tests use portable tempfile/Path/sqlite primitives, no Unix-only signal/FIFO/symlink or sleeps. root.resolve normalizes macOS temp-root symlinks before protected-plan use. Binary marker bytes avoid newline differences. workflow diff adds only discovery to existing Ubuntu/Windows x3.10/3.12 matrix and mac3.12, five target steps total. Existing earlier job failure can prevent new target execution: report actual target step and whole-job status separately; do not rerun or repair old exhausted Windows scopes under this budget. A read-only SELECT repair should use a cross-platform path connection without hand-built file URI, and explicitly close it before any cancellation/token writer.\n\nScope and evidence boundaries: allowed production paths are only core.py/new test/workflow plus owned SYSTEM-99 detail/results; guide and TASK are untouched. Existing ReportingHandler v44 code/old raw failures remain immutable. Plan66->67 diff is version plus one appended stable phase; it does not relabel old unresolved work. The 383-result search is partial with26 errors and eight unrelated lexical candidates, not proof no prior result exists; old v44 report is used for source-scoped distinction only. The manual reviewer context here is not a cryptographically authenticated runtime ReviewSession. No invocation/model identity, usage, deployment, cost, tmux service, native CI outcome, test pass or new reading credit is fabricated. Approval, when earned on revised exact refs, would remain conditional on normal tool authority and independent results, never a runtime receipt or reset of old budget.\n\nOnly blocking finding is B1. Concrete runner should pin commands and record watchdog/timeouts, full raw outputs, exits and exact source/config hashes. This review ran no tests/experiments and wrote only its assigned feedback file. All seven domains are explicitly checked in verdict.checks, with assumptions/acceptance failing until B1 is fixed and reviewed. All22 refs match, but hash matching is integrity evidence only, not a claim to have semantically reread every unrelated line in the large historical files.\n\nBaseline observability requirement for the revised test freeze: emit one deterministic ENGINE_CLAIM_PROBE JSON record per scenario before the first assertion, including mode, entered_current, marker_hex (or explicit absence), state status, attempts, and mutation. Four stale assertions intentionally abort each scenario before later assertions; retaining this preassertion probe makes the actual old-core file marker effect and claim state reviewable from raw baseline stdout, not inferred only from source. Preserve healthy/denied probes as controls, do not suppress or overwrite failure streams. Avoid time/path noise or extra tests. Root proposes a 98-method relevant invocation; the revised plan must pin the exact module command and discovery-derived method count, and report actual executed count/known skips rather than trust arithmetic. This reviewer has not executed discovery or tests.",
+  "verdict": {
+    "decision": "revise",
+    "summary": "Production gate is appropriately scoped; frozen tests have a nested BEGIN IMMEDIATE lock bug that invalidates the required baseline. Repair/refreeze observer before execution.",
+    "checks": {
+      "intent": {
+        "status": "pass",
+        "reason": "Engine callbacks after the early Context check can invalidate lease/token/cancellation before a direct handler enters. The additional gate targets this concrete core gap without claiming to replace Version44 ReportingHandler result-proof validation or complete SYSTEM-99. Current authorization is the delegated bounded reliability-repair scope; no new external action authority is inferred."
+      },
+      "guide": {
+        "status": "pass",
+        "reason": "Read AGENTS.md, project_document_workflow, dual_main_workflow and actual guide inventory. GUIDE.md is empty; README explicitly describes AI-created directory instructions, not human project requirements. No fabricated human authorship. Allowed paths exclude entire guide directory and unique TASK. Plan67 preserves prior stable content and adds only scoped phase/version. Manual review is supplemental, not an authenticated ReviewSession receipt or lineage migration."
+      },
+      "assumptions": {
+        "status": "fail",
+        "reason": "Frozen test callback assumes Store.snapshot is a read-only nonlocking observer. It actually opens BEGIN IMMEDIATE. Engine invokes plan review and authorization inside its already-open write transaction, so the nested connection blocks and raises sqlite3.OperationalError rather than reaching the intended stale-claim window. See blocking B1."
+      },
+      "prior_results": {
+        "status": "pass",
+        "reason": "All 22 pinned refs hash-match. prior-search actually records 383 scanned, partial=true, 26 errors and 8 lexical unchecked-applicability hits; no absence or accepted empirical reuse is justified. Read old Version44 plan/report and current ReportingHandler gate: its old 15-failure/138-pass evidence is historical, not this Engine acceptance. CAVERT reading/audit is provenance/design inspiration only; no author data reproduction or new reading count is claimed."
+      },
+      "acceptance": {
+        "status": "fail",
+        "reason": "Six method definitions and unittest discovery are structurally valid, but current callback observer makes the required 4 assertion-failures/0 errors/2 controls impossible. Before first claim, _check_done calls verifier inside Store.transaction; mutate attempts another BEGIN IMMEDIATE. Exact tests must be fixed and refrozen before baseline budget is spent. The conceptual two expiry-restart and marker checks are otherwise appropriate within their stated scope."
+      },
+      "risk": {
+        "status": "pass",
+        "reason": "Production diff retains early current/authorization short-circuit, pre-action review, final review/evidence verification and unchanged stale-result persistence. Gate uses real Context.current rather than trusting the host callback. It does not extend leases/refund attempts/replay old events/create a cache/schema or fence an arbitrary external effect. Exceptions retain existing handler retry policy. Read-only observer repair must remain test-only; no production Store/transaction policy change is authorized."
+      },
+      "resources": {
+        "status": "pass",
+        "reason": "Plan bounds plan reviews2 (this is1), baseline1, candidate2, independent1, result reviews2, source CI1 and automated retries0, with deadline13:00Z; preserves old scopes/budgets. CPU temp files/SQLite/controlled clock only, no paid backend. The deadlock is a test-design blocker, not permission to run additional diagnosis. Recommend explicit per-command watchdogs and raw timeout/exit retention in concrete runner; deadline and counters must not be reset."
+      }
+    },
+    "findings": [
+      {
+        "id": "B1",
+        "blocking": true,
+        "target": ".agent-runs/engine-claim-2004/tests-candidate.py: boundary.mutate; Engine.tick -> _check_done/_authorized; Store.snapshot/transaction",
+        "feedback": "Every mode reaches nested SQLite write-lock acquisition before the intended live claim. Store.transaction opens sqlite3.connect(timeout=30,isolation_level=None) then BEGIN IMMEDIATE. tick holds that transaction while _check_done calls _review_plan; the wrapped verify calls mutate, which unconditionally calls store.snapshot whenever invalidated is empty, and snapshot opens another BEGIN IMMEDIATE. The same problem also exists in authorize during claim selection. The first path is not caught as a PlanReviewError because sqlite3.OperationalError is outside the wrapper catch list, so this is an execution error, not the required stale handler assertion failure. Even healthy and denied controls are affected. This conclusion is static source analysis; no test or reproduction was executed. Root independently raised the same concern during review; I verified the call chain against frozen sources rather than treating that message as proof.",
+        "requested_change": "Keep core candidate unchanged. Replace only test callback observation with a short-lived native sqlite3 SELECT of chains.state and json.loads on a separate read connection; do not call Store.snapshot, Store.transaction, Context.current or another writer merely to observe status from a callback. Close that connection explicitly (sqlite connection context manager alone does not close). Prefer filter by where/mode before DB access. In preclaim callbacks committed state must remain todo, so no mutation; cancellation/token writes must only occur when observed state is doing at the intended postclaim callback after outer claim transaction has exited. Keep invalidated one-shot guard so recovery callbacks cannot invalidate a second claim. Freeze revised tests and revised plan refs/hash as version2 and consume only remaining plan review; preserve this failed proposal/feedback; do not run old frozen baseline or silently weaken expected results. Add deterministic preassertion ENGINE_CLAIM_PROBE JSON for each of6 scenarios (mode, entered_current, marker_hex/absence, status, attempts, mutation), retaining actual old-core external marker observation even when the first assertion aborts.",
+        "acceptance_check": "Second static plan review traces read observer under active write transactions and demonstrates no nested write transaction. Then, only after approval, one baseline against unchanged core must run exactly6 methods:4 named stale-entry assertion failures,0 errors,healthy/denied controls pass. Any lock/error/timeout/other assertion stops without implementation. Candidate and independently observed suites must pass6 methods0skip, plus named existing regressions with any known intentional skips reported. Preserve exact argv, cwd, interpreter/environment, raw stdout/stderr, inner/outer exits and before/after hashes. Read five actual native target steps separately; never count a skipped/unreached step as success. Preserve6 distinct preassertion probes; stale4 must show entered_current=[false] plus marker bytes under old core, healthy one current=true marker, denied empty/no marker. Candidate stale4 must show no entry/no marker. Probe records are evidence, not pass labels."
+      }
+    ]
+  },
+  "hash_checks": [
+    {
+      "path": "agent_runtime/core.py",
+      "expected_sha256": "a567a48f765aa0e14f5f60c63a601f3ecdf57f9d2b09157bbde9b4660dae8712",
+      "actual_sha256": "a567a48f765aa0e14f5f60c63a601f3ecdf57f9d2b09157bbde9b4660dae8712",
+      "bytes": 33009,
+      "match": true
+    },
+    {
+      "path": "agent_runtime/task_manifest.py",
+      "expected_sha256": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+      "actual_sha256": "ce93c5130ed13c99e32a86241c288658910d852641e2a2cc5b301544aef5bc50",
+      "bytes": 32047,
+      "match": true
+    },
+    {
+      "path": "tests/test_task_runtime.py",
+      "expected_sha256": "0d0f5146833530360e7f75317176ae43f960dbf7e3aa77f8923ab74098639c18",
+      "actual_sha256": "0d0f5146833530360e7f75317176ae43f960dbf7e3aa77f8923ab74098639c18",
+      "bytes": 32537,
+      "match": true
+    },
+    {
+      "path": "tests/test_crossfeature_runtime.py",
+      "expected_sha256": "ff262d4818190157aaf98f5dc482351aa811a6a196ec55216190d7f2e6531e8d",
+      "actual_sha256": "ff262d4818190157aaf98f5dc482351aa811a6a196ec55216190d7f2e6531e8d",
+      "bytes": 4998,
+      "match": true
+    },
+    {
+      "path": "tests/test_plan_review.py",
+      "expected_sha256": "accb79ba3da4db584a2eb4a54c39ffce22ac3472b02df83bdfb285566146a0aa",
+      "actual_sha256": "accb79ba3da4db584a2eb4a54c39ffce22ac3472b02df83bdfb285566146a0aa",
+      "bytes": 12510,
+      "match": true
+    },
+    {
+      "path": "tests/test_plan_review_independent.py",
+      "expected_sha256": "552a83934c4ce2bb3337a7724c24eb0d979672244cdd9f9a618e899eef366395",
+      "actual_sha256": "552a83934c4ce2bb3337a7724c24eb0d979672244cdd9f9a618e899eef366395",
+      "bytes": 30590,
+      "match": true
+    },
+    {
+      "path": "tests/test_managed_supervisor.py",
+      "expected_sha256": "bb5ac997ef838357eaef8e8efe53c948a6bcc8efd3545e4b9cf2b536c798e520",
+      "actual_sha256": "bb5ac997ef838357eaef8e8efe53c948a6bcc8efd3545e4b9cf2b536c798e520",
+      "bytes": 14493,
+      "match": true
+    },
+    {
+      "path": ".github/workflows/portable-install.yml",
+      "expected_sha256": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+      "actual_sha256": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+      "bytes": 5853,
+      "match": true
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "expected_sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+      "actual_sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+      "bytes": 69666,
+      "match": true
+    },
+    {
+      "path": "agent_doc/task/task_details/SYSTEM-99.md",
+      "expected_sha256": "43af58340546e2d2a286d5b6fb3b385f876f25d307a509324f540578952c30ac",
+      "actual_sha256": "43af58340546e2d2a286d5b6fb3b385f876f25d307a509324f540578952c30ac",
+      "bytes": 181194,
+      "match": true
+    },
+    {
+      "path": "agent_doc/results/result-dispatch-fix-20261027/report.md",
+      "expected_sha256": "38749fc4a54198629aecd9b772cd5e5a5c4d7c12db8715aac49bc56f87a9857e",
+      "actual_sha256": "38749fc4a54198629aecd9b772cd5e5a5c4d7c12db8715aac49bc56f87a9857e",
+      "bytes": 3112,
+      "match": true
+    },
+    {
+      "path": "agent_doc/results/result-dispatch-fix-20261027/plan-v3.md",
+      "expected_sha256": "4f9eb54978fdc408d48ba02dfa9e494e66777f56d6f4735b96df9cf0a61847cc",
+      "actual_sha256": "4f9eb54978fdc408d48ba02dfa9e494e66777f56d6f4735b96df9cf0a61847cc",
+      "bytes": 4148,
+      "match": true
+    },
+    {
+      "path": ".agent-runs/cavert-reading-1412/reading-v3.md",
+      "expected_sha256": "139c39e0cdbc877b4684290b35d740eacd685c272895110cb90971dfe82c039a",
+      "actual_sha256": "139c39e0cdbc877b4684290b35d740eacd685c272895110cb90971dfe82c039a",
+      "bytes": 9418,
+      "match": true
+    },
+    {
+      "path": ".agent-runs/cavert-reading-1412/fullbody-review.json",
+      "expected_sha256": "5c85d52a27055eb8a66c29b18c54b04fd690a025c871f21523e31569b1edf371",
+      "actual_sha256": "5c85d52a27055eb8a66c29b18c54b04fd690a025c871f21523e31569b1edf371",
+      "bytes": 13615,
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/prior-search.json",
+      "expected_sha256": "bb45341d5948281f575d52aa2484f26a29b61f7a8ee315476137f57bde21ada1",
+      "actual_sha256": "bb45341d5948281f575d52aa2484f26a29b61f7a8ee315476137f57bde21ada1",
+      "bytes": 11263,
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/source-before.py",
+      "expected_sha256": "a567a48f765aa0e14f5f60c63a601f3ecdf57f9d2b09157bbde9b4660dae8712",
+      "actual_sha256": "a567a48f765aa0e14f5f60c63a601f3ecdf57f9d2b09157bbde9b4660dae8712",
+      "bytes": 33009,
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/source-candidate.py",
+      "expected_sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351",
+      "actual_sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351",
+      "bytes": 33289,
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/tests-candidate.py",
+      "expected_sha256": "362ccda05523da4c7ff337304a2261b2ca6096bfd76ce19591ebe7ba607ce04c",
+      "actual_sha256": "362ccda05523da4c7ff337304a2261b2ca6096bfd76ce19591ebe7ba607ce04c",
+      "bytes": 4634,
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/workflow-before.yml",
+      "expected_sha256": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+      "actual_sha256": "b82968ffe3e9eecf0826250a05a376c95173778385aae6f606fd02759c3817ff",
+      "bytes": 5853,
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/workflow-candidate.yml",
+      "expected_sha256": "d78b26b9858d3ae647e529e24081a3a111fb37b47ca9af8f91280a4dc705c8d7",
+      "actual_sha256": "d78b26b9858d3ae647e529e24081a3a111fb37b47ca9af8f91280a4dc705c8d7",
+      "bytes": 6035,
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/plan66-prefix.txt",
+      "expected_sha256": "6f7bad1e99253159bc19ff9a4a93137f625f3464637d2ee407341f8cd6dd0153",
+      "actual_sha256": "6f7bad1e99253159bc19ff9a4a93137f625f3464637d2ee407341f8cd6dd0153",
+      "bytes": 47013,
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/plan67-prefix.txt",
+      "expected_sha256": "91cabdd817e6e2119fd916a203f4e8fe5de15a3b274c7b42f46b877508d7cc62",
+      "actual_sha256": "91cabdd817e6e2119fd916a203f4e8fe5de15a3b274c7b42f46b877508d7cc62",
+      "bytes": 47704,
+      "match": true
+    }
+  ],
+  "additional_read_refs": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed",
+      "bytes": 14108
+    },
+    {
+      "path": "workflows/dual_main_workflow.md",
+      "sha256": "639f19cf9de42d65935b3a42b8e9f6e8aa6e4a2145254ad59202642974eb9644",
+      "bytes": 10782
+    },
+    {
+      "path": "workflows/project_document_workflow.md",
+      "sha256": "6ee07eca5091187b27e02056c3ae83f66183cfc07dc4c7af5c80742ffacdaaf4",
+      "bytes": 19618
+    },
+    {
+      "path": "agent_doc/guide/GUIDE.md",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "agent_doc/guide/README.md",
+      "sha256": "f46de2e87b166493d3ab700959f0e9185dc5afdbbe60ec38c3c68077034af261",
+      "bytes": 1804
+    }
+  ],
+  "limitations": [
+    "Static plan/code review only; no live host/model identity or authentication receipt established.",
+    "No tests, experiments, CI or old gates executed.",
+    "Large historical test/detail refs hash-verified; relevant fixture/control-flow/plan sections were read, not every unrelated historical line."
+  ]
+}

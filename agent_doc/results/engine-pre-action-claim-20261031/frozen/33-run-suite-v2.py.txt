@@ -1,0 +1,68 @@
+import hashlib
+import importlib.util
+import json
+import os
+from pathlib import Path
+import platform
+import subprocess
+import sys
+import time
+import unittest
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[1]
+sys.path.insert(0, str(ROOT))
+def main():
+    phase = sys.argv[1]
+    assert phase in ('fixed2', 'independent')
+
+    if '--child' in sys.argv:
+        spec = importlib.util.spec_from_file_location('pre_action_candidate', HERE / 'tests-v2.py')
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        suite = unittest.TestSuite([unittest.defaultTestLoader.loadTestsFromModule(module)])
+        if phase != 'baseline':
+            for name in ('tests.test_task_runtime', 'tests.test_crossfeature_runtime',
+                         'tests.test_plan_review', 'tests.test_plan_review_independent',
+                         'tests.test_managed_supervisor'):
+                suite.addTests(unittest.defaultTestLoader.loadTestsFromName(name))
+        result = unittest.TextTestRunner(verbosity=2).run(suite)
+        data = {'tests': result.testsRun, 'failures': len(result.failures),
+                'errors': len(result.errors), 'skipped': len(result.skipped),
+                'failed_ids': [str(t) for t, _ in result.failures],
+                'error_ids': [str(t) for t, _ in result.errors]}
+        (HERE / (phase + '-child.json')).write_bytes((json.dumps(data, indent=2) + '\n').encode())
+        raise SystemExit(0 if result.wasSuccessful() else 1)
+
+    command = [sys.executable, '-B', str(Path(__file__).resolve()), phase, '--child']
+    paths = ['agent_runtime/core.py', 'agent_runtime/task_manifest.py', 'tests/test_plan_review.py',
+             'tests/test_engine_pre_action_claim.py', '.github/workflows/portable-install.yml',
+             str((HERE / 'tests-v2.py').relative_to(ROOT)),
+             str((HERE / 'run-suite-v2.py').relative_to(ROOT))]
+    before = {p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in paths if (ROOT / p).exists()}
+    started = time.time()
+    try:
+        run = subprocess.run(command, cwd=ROOT, capture_output=True, timeout=180)
+        stdout, stderr, code = run.stdout, run.stderr, run.returncode
+    except subprocess.TimeoutExpired as exc:
+        stdout, stderr, code = exc.stdout or b'', exc.stderr or b'', 124
+    for suffix, data in (('.stdout', stdout), ('.stderr', stderr), ('.log', stdout + stderr)):
+        (HERE / (phase + suffix)).write_bytes(data)
+    after = {p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest() for p in before}
+    meta = {'phase': phase, 'command': command, 'python': sys.version, 'platform': platform.platform(),
+            'started_epoch': started, 'elapsed_seconds': time.time() - started, 'child_exit': code,
+            'source_before': before, 'source_after': after, 'unchanged': before == after,
+            'no_retry': True, 'cwd': str(ROOT)}
+    child = HERE / (phase + '-child.json')
+    if child.exists():
+        meta['unittest'] = json.loads(child.read_bytes())
+    for suffix in ('.stdout', '.stderr', '.log'):
+        p = HERE / (phase + suffix)
+        meta[suffix] = {'path': str(p.relative_to(ROOT)), 'sha256': hashlib.sha256(p.read_bytes()).hexdigest()}
+    (HERE / (phase + '.json')).write_bytes((json.dumps(meta, indent=2) + '\n').encode())
+    print(json.dumps(meta))
+    raise SystemExit(code)
+
+
+if __name__ == '__main__':
+    main()

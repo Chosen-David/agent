@@ -1,0 +1,345 @@
+{
+  "schema_version": "manual-result-review/v1",
+  "task": "SYSTEM-99",
+  "scope": "ENGINE-PRE-ACTION-CLAIM-01",
+  "review_cycle": 1,
+  "result_review_max": 2,
+  "reviewer": {
+    "actor": "/root/engine_claim_result_2016",
+    "source": "actual delegated fresh context, manual supplemental review",
+    "independent_of_producer": true,
+    "runtime_authenticated_receipt": false,
+    "tests_executed_this_turn": false
+  },
+  "input": {
+    "path": ".agent-runs/engine-claim-2004/result-inputs-v1.json",
+    "sha256": "ec88ad0c946a1f3e7165133276741fe9f47ad950a4eeb5e4f5496ace19d8beeb"
+  },
+  "decision": "REVISE",
+  "result_status": "invalid-for-global-passing-acceptance",
+  "allow_candidate_second_execution": false,
+  "summary": "Baseline is the expected bounded negative. Existing fixed regression is failing and contaminated by spawn reentry. Main-guard repair is technically appropriate but changes the explicitly frozen execution artifact/command. The governing dual-main protocol requires versioned review of changed executable evidence; original plan-review budget2/2 is exhausted. This result review cannot silently become an extra plan approval. Do not execute fixed2 or independent under this feedback.",
+  "full_review": [
+    "Read original plan v2, both full plan-review responses, baseline raw streams and metadata, fixed raw streams and metadata, exact runner versions, new tests, production diff, relevant runtime process targets, and governing project workflows. All21 result-input refs match current bytes. Stable Plan67 prefix is retained; installed production/test/workflow match their approved candidates; TASK hash is unchanged. No source/test/workflow/guide/TASK modification or test invocation performed by this reviewer.",
+    "Baseline actual6 methods4 named stale-entry assertion failures0errors0skip, healthy/denied controls pass. Six unique probes show stale4 entered_current=[false] and real marker bytes 68616e646c657220656e7465726564, healthy current=true/done/marker and denied noentry/nomarker/attempt0. Source-before hash is bound in before/after metadata. Baseline supports the scoped original defect; it must not rerun.",
+    "Candidate new6 initially pass and probes show stale4 noentry/nomarker, but full fixed is not accepted: final outer metadata records98 methods2 failures0errors1 known realtmux skip, childexit1; caller-reported outerexit1 is available only as root supplied observation, not independently observed by this reviewer. Raw fixed stdout has18 probes rather than6, stderr includes4 nested ERROR lines and an interleaved nested FAIL in addition to final failures, and220 ok markers. Thus final summary is not a complete classification of all descendant activity. Preserve the whole raw failed run; do not describe this as only2 benign failures or a passing98.",
+    "Specific failure mechanism: both process tests explicitly use get_context(spawn). Their Process target process_tick is importable from tests.test_task_runtime, but spawn first reconstructs the launching main script as __mp_main__. Old run-suite.py executes phase parsing and --child suite at top level, so every worker reruns the suite before its intended target can signal entered. Parent waits entered.wait(5) then fails. Repeated new6 and nested process ERROR markers establish this reentry, though there is no captured traceback for those nested ERROR markers and no basis to invent their exact exception. A nested planreview FAIL is also retained as contamination, not discarded.",
+    "New run-suite-v2.py moves phase parsing, child suite construction/execution and outer capture to main(); only imports, HERE/ROOT assignments and sys.path insertion remain at import. if __name__ == __main__ invokes it only for a real script. During spawn __mp_main__ reconstruction it will not run tests, write phase files or exit, allowing target import/execution. AST comparison of old top-level body versus main body finds only phase allowlist baseline/fixed/independent -> fixed2/independent and runner selfhash path replacement, plus indentation/guard. Six-test loader and five regression modules,180s timeout and no retry are retained. Static correctness does not prove the next result will pass or clean leaked resources.",
+    "Blocking protocol issue B1: plan-v2 refs explicitly freeze run-suite.py SHA302b23ca84f6c0e6f9820448d224706f7d9cdee5a114d78b72e569cff2f6b9ae and execution_entry points fixed/independent at that file. v2 runner SHA591703751956ac7551858a1e2890ab67a6e235de307106a69a99e507b55134b8 and fixed2 command are actual changed execution inputs. dual_main_workflow section bounded revisions item6 requires new version review when stable Plan, explicit evidence, acceptance or adapter fields change; item3 prohibits increasing exhausted cycles without explicit re-orchestration. result_validation_workflow permits repairs within existing authorization/budget with versioned result/task chain, but states no exception to the frozen-plan rule. A main-guard fix is a small harness repair rather than new algorithm/authority, yet that fact alone does not authorize overriding the exact freeze. Therefore this review records the negative and technical repair assessment but does not approve a third hidden plan cycle or replacement dispatch.",
+    "Available resource counters remain baseline1/1,candidate1/2,independent0/1,plan2/2,resultreviews1/2,sourceCI0/1. No refund, hidden retry or additional test occurred. Clock tool observed2026-10-31 12:15:05UTC, before original13:00Z; wallclock availability does not resolve review-budget conflict. If trusted current user/host explicitly reconciles harness replacement under this freeze policy, retain exact versioned refs and original limits; no automatic permission is inferred here. Otherwise leave candidate pending/blocked. Independent run and final usable-with-scope acceptance are not reached.",
+    "resource_tracker warned of11 leaked semaphore objects at shutdown. Actual namespace-wide cleanup was not observed. Do not claim clean/no residuals, deploy/install backends, enable realtmux opt-in, skip either process test, alter acceptance, rerun baseline or publish. Native five-platform target steps, full job outcomes and live host authentication remain unverified."
+  ],
+  "checks": {
+    "implementation": {
+      "verdict": "inconclusive",
+      "reason": "Production final real Context.current gate is narrowly correct by source inspection; six new cases pass in initial parent stream. Full candidate acceptance and corrected runner execution remain blocked. No atomic external effect fence is claimed.",
+      "evidence": [
+        {
+          "path": "agent_runtime/core.py",
+          "sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351"
+        },
+        {
+          "path": ".agent-runs/engine-claim-2004/source-before.py",
+          "sha256": "a567a48f765aa0e14f5f60c63a601f3ecdf57f9d2b09157bbde9b4660dae8712"
+        },
+        {
+          "path": ".agent-runs/engine-claim-2004/tests-v2.py",
+          "sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4"
+        },
+        {
+          "path": ".agent-runs/engine-claim-2004/run-suite-v2.py",
+          "sha256": "591703751956ac7551858a1e2890ab67a6e235de307106a69a99e507b55134b8"
+        }
+      ]
+    },
+    "reference_boundary": {
+      "verdict": "pass",
+      "reason": "Old-core baseline matches exact4 stale-entry assertion failures and2 controls, six probes; candidate initial new6 show no stale entry. Expiry105==lease105 and restart106, cancellation, foreign token, denied and healthy paths are source checked. Scope is synthetic policy/clock plus real SQLite/marker fixtures.",
+      "evidence": [
+        {
+          "path": ".agent-runs/engine-claim-2004/baseline.stdout",
+          "sha256": "bd4bce854d69d4ca05e20e02fed934f02df0d8d49ff615b05da8971f791c8271"
+        },
+        {
+          "path": ".agent-runs/engine-claim-2004/baseline.stderr",
+          "sha256": "75b539f099be8b5c344abe85110dbcbf5ee18cda932093c6b502a834a243dd91"
+        },
+        {
+          "path": ".agent-runs/engine-claim-2004/tests-v2.py",
+          "sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4"
+        }
+      ]
+    },
+    "data_integrity": {
+      "verdict": "fail",
+      "reason": "fixed raw has18 probes, nested ERROR/FAIL activity and two final process failures. Existing fixed cannot support global acceptance. Input refs hash-match but integrity hashes do not cure contaminated execution.",
+      "evidence": [
+        {
+          "path": ".agent-runs/engine-claim-2004/fixed.stdout",
+          "sha256": "9aa3395d31c7b8ff2b04b34205fb06adbec911c2254b8f6b0d25c097e6c710c0"
+        },
+        {
+          "path": ".agent-runs/engine-claim-2004/fixed.stderr",
+          "sha256": "44ac57cdcb1c64845e9ff152f17438c28d6929eae8b643a1566bf2f0af0791e3"
+        },
+        {
+          "path": ".agent-runs/engine-claim-2004/fixed.json",
+          "sha256": "d4721cd6ea7580cda58c80a4b6eb397a7e75b19a405edac4070f4cbf5e82a081"
+        }
+      ]
+    },
+    "numerical_sanity": {
+      "verdict": "pass",
+      "reason": "Finite integer case counts and controlled time/attempt invariants are consistent with baseline raw; final summary98/2/0/1 is faithfully preserved but does not count descendant nested activity as accepted tests. No numerical performance/accuracy benefit inferred.",
+      "evidence": [
+        {
+          "path": ".agent-runs/engine-claim-2004/baseline.json",
+          "sha256": "811450182ce19fde79677ecf87b1240d29a0982a9944da3d3814cdea6d344ba9"
+        },
+        {
+          "path": ".agent-runs/engine-claim-2004/baseline.stdout",
+          "sha256": "bd4bce854d69d4ca05e20e02fed934f02df0d8d49ff615b05da8971f791c8271"
+        },
+        {
+          "path": ".agent-runs/engine-claim-2004/fixed.json",
+          "sha256": "d4721cd6ea7580cda58c80a4b6eb397a7e75b19a405edac4070f4cbf5e82a081"
+        },
+        {
+          "path": ".agent-runs/engine-claim-2004/fixed.stderr",
+          "sha256": "44ac57cdcb1c64845e9ff152f17438c28d6929eae8b643a1566bf2f0af0791e3"
+        }
+      ]
+    },
+    "measurement_validity": {
+      "verdict": "fail",
+      "reason": "Boolean contract regression is the measured claim, not performance. Spawn main reentry prevents two actual worker targets reaching entered within5s and contaminates equivalent protocol; elapsed43.019s is observation only, not a benchmark.",
+      "evidence": [
+        {
+          "path": "tests/test_task_runtime.py",
+          "sha256": "0d0f5146833530360e7f75317176ae43f960dbf7e3aa77f8923ab74098639c18"
+        },
+        {
+          "path": ".agent-runs/engine-claim-2004/run-suite.py",
+          "sha256": "302b23ca84f6c0e6f9820448d224706f7d9cdee5a114d78b72e569cff2f6b9ae"
+        },
+        {
+          "path": ".agent-runs/engine-claim-2004/fixed.stderr",
+          "sha256": "44ac57cdcb1c64845e9ff152f17438c28d6929eae8b643a1566bf2f0af0791e3"
+        }
+      ]
+    },
+    "reproducibility": {
+      "verdict": "inconclusive",
+      "reason": "No independent suite run this turn per assignment; single independent slot remains unused. Corrected execution is statically plausible but blocked by frozen execution input conflict, so not N/A or pass.",
+      "evidence": [
+        {
+          "path": ".agent-runs/engine-claim-2004/plan-v2.json",
+          "sha256": "759daa3b3290f6112597ba329d308a027bced6a775a72c890551d7400e3923bb"
+        },
+        {
+          "path": ".agent-runs/engine-claim-2004/run-suite-v2.py",
+          "sha256": "591703751956ac7551858a1e2890ab67a6e235de307106a69a99e507b55134b8"
+        },
+        {
+          "path": "workflows/dual_main_workflow.md",
+          "sha256": "639f19cf9de42d65935b3a42b8e9f6e8aa6e4a2145254ad59202642974eb9644"
+        }
+      ]
+    }
+  },
+  "blocking_findings": [
+    {
+      "id": "B1",
+      "target": "plan-v2.json execution_entry/refs versus run-suite-v2.py; workflows/dual_main_workflow.md bounded revisions items3,6",
+      "feedback": "Exact executable harness/command changed after frozen approval; original plan reviews exhausted. Result reviewer cannot grant hidden replacement plan approval.",
+      "requested_change": "Keep raw negative evidence and candidate pending. Require explicit trusted re-orchestration/reconciliation of the harness replacement and exhausted plan-review boundary before dependent execution; do not increment/refund budgets implicitly.",
+      "acceptance_check": "A concrete authorized versioned reconciliation must name old/new runner hashes and commands, preserve98 methods including both process tests, preserve original baseline/candidate/independent/CI bounds and deadline, and supply whichever independent plan authorization the project protocol requires."
+    }
+  ],
+  "limits": [
+    "Manual delegated supplemental review is not authenticated runtime ReviewSession proof.",
+    "No tests executed and only assigned result-review-v1.json written.",
+    "No namespace-wide cleanup verified;11 semaphore warning retained.",
+    "No native CI, external host, live tmux, backend deployment, universal bug-free or SYSTEM-99 completion claim."
+  ],
+  "artifact_hashes": [
+    {
+      "path": ".agent-runs/engine-claim-2004/plan-v2.json",
+      "sha256": "759daa3b3290f6112597ba329d308a027bced6a775a72c890551d7400e3923bb",
+      "actual_sha256": "759daa3b3290f6112597ba329d308a027bced6a775a72c890551d7400e3923bb",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/plan-review.json",
+      "sha256": "f0bdab895ed9c34ab5c98d710e26bb1196c4d6a68d93151052e49d064867749e",
+      "actual_sha256": "f0bdab895ed9c34ab5c98d710e26bb1196c4d6a68d93151052e49d064867749e",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/plan-review-v2.json",
+      "sha256": "2ffa66111bc247701616d8c0cf56443791e05d57e750c5be55531d216d00691e",
+      "actual_sha256": "2ffa66111bc247701616d8c0cf56443791e05d57e750c5be55531d216d00691e",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/source-before.py",
+      "sha256": "a567a48f765aa0e14f5f60c63a601f3ecdf57f9d2b09157bbde9b4660dae8712",
+      "actual_sha256": "a567a48f765aa0e14f5f60c63a601f3ecdf57f9d2b09157bbde9b4660dae8712",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/source-candidate.py",
+      "sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351",
+      "actual_sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/tests-v2.py",
+      "sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4",
+      "actual_sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/run-suite.py",
+      "sha256": "302b23ca84f6c0e6f9820448d224706f7d9cdee5a114d78b72e569cff2f6b9ae",
+      "actual_sha256": "302b23ca84f6c0e6f9820448d224706f7d9cdee5a114d78b72e569cff2f6b9ae",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/run-suite-v2.py",
+      "sha256": "591703751956ac7551858a1e2890ab67a6e235de307106a69a99e507b55134b8",
+      "actual_sha256": "591703751956ac7551858a1e2890ab67a6e235de307106a69a99e507b55134b8",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/baseline.json",
+      "sha256": "811450182ce19fde79677ecf87b1240d29a0982a9944da3d3814cdea6d344ba9",
+      "actual_sha256": "811450182ce19fde79677ecf87b1240d29a0982a9944da3d3814cdea6d344ba9",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/baseline.stdout",
+      "sha256": "bd4bce854d69d4ca05e20e02fed934f02df0d8d49ff615b05da8971f791c8271",
+      "actual_sha256": "bd4bce854d69d4ca05e20e02fed934f02df0d8d49ff615b05da8971f791c8271",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/baseline.stderr",
+      "sha256": "75b539f099be8b5c344abe85110dbcbf5ee18cda932093c6b502a834a243dd91",
+      "actual_sha256": "75b539f099be8b5c344abe85110dbcbf5ee18cda932093c6b502a834a243dd91",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/baseline-observation.json",
+      "sha256": "10e5fd1d2a944e63ea17cf67fdda20ff65d8a97b9791620a2b1c26e978247833",
+      "actual_sha256": "10e5fd1d2a944e63ea17cf67fdda20ff65d8a97b9791620a2b1c26e978247833",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/fixed.json",
+      "sha256": "d4721cd6ea7580cda58c80a4b6eb397a7e75b19a405edac4070f4cbf5e82a081",
+      "actual_sha256": "d4721cd6ea7580cda58c80a4b6eb397a7e75b19a405edac4070f4cbf5e82a081",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/fixed.stdout",
+      "sha256": "9aa3395d31c7b8ff2b04b34205fb06adbec911c2254b8f6b0d25c097e6c710c0",
+      "actual_sha256": "9aa3395d31c7b8ff2b04b34205fb06adbec911c2254b8f6b0d25c097e6c710c0",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/fixed.stderr",
+      "sha256": "44ac57cdcb1c64845e9ff152f17438c28d6929eae8b643a1566bf2f0af0791e3",
+      "actual_sha256": "44ac57cdcb1c64845e9ff152f17438c28d6929eae8b643a1566bf2f0af0791e3",
+      "match": true
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/fixed-child.json",
+      "sha256": "124681ffc581361cdf77f80c00cf0c34b526094a264e2efc31bb87f370002946",
+      "actual_sha256": "124681ffc581361cdf77f80c00cf0c34b526094a264e2efc31bb87f370002946",
+      "match": true
+    },
+    {
+      "path": "agent_runtime/core.py",
+      "sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351",
+      "actual_sha256": "7e2e00677ed8f58e2483bd015971e09607079fbfaef3373689afc5d8a9057351",
+      "match": true
+    },
+    {
+      "path": "tests/test_engine_pre_action_claim.py",
+      "sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4",
+      "actual_sha256": "319c41c6a31621119bcbea99f7a3baec9fe7c1a6fb6f0531b715a198e6d64cb4",
+      "match": true
+    },
+    {
+      "path": ".github/workflows/portable-install.yml",
+      "sha256": "d78b26b9858d3ae647e529e24081a3a111fb37b47ca9af8f91280a4dc705c8d7",
+      "actual_sha256": "d78b26b9858d3ae647e529e24081a3a111fb37b47ca9af8f91280a4dc705c8d7",
+      "match": true
+    },
+    {
+      "path": "agent_doc/task/task_details/SYSTEM-99.md",
+      "sha256": "94d8b2c7cc88ee12c5cfc27a5f0a176488d492f1b948e7e21f1ac0045829ddd4",
+      "actual_sha256": "94d8b2c7cc88ee12c5cfc27a5f0a176488d492f1b948e7e21f1ac0045829ddd4",
+      "match": true
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+      "actual_sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f",
+      "match": true
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed"
+    },
+    {
+      "path": "workflows/result_validation_workflow.md",
+      "sha256": "349cebab1a78baa63b5c7d422f239c2d802f9f77a1ad180ceb4871ebea372888"
+    },
+    {
+      "path": "workflows/dual_main_workflow.md",
+      "sha256": "639f19cf9de42d65935b3a42b8e9f6e8aa6e4a2145254ad59202642974eb9644"
+    },
+    {
+      "path": "workflows/project_document_workflow.md",
+      "sha256": "6ee07eca5091187b27e02056c3ae83f66183cfc07dc4c7af5c80742ffacdaaf4"
+    },
+    {
+      "path": "tests/test_task_runtime.py",
+      "sha256": "0d0f5146833530360e7f75317176ae43f960dbf7e3aa77f8923ab74098639c18"
+    },
+    {
+      "path": "tests/test_crossfeature_runtime.py",
+      "sha256": "ff262d4818190157aaf98f5dc482351aa811a6a196ec55216190d7f2e6531e8d"
+    },
+    {
+      "path": "tests/test_plan_review.py",
+      "sha256": "accb79ba3da4db584a2eb4a54c39ffce22ac3472b02df83bdfb285566146a0aa"
+    },
+    {
+      "path": "tests/test_plan_review_independent.py",
+      "sha256": "552a83934c4ce2bb3337a7724c24eb0d979672244cdd9f9a618e899eef366395"
+    },
+    {
+      "path": "tests/test_managed_supervisor.py",
+      "sha256": "bb5ac997ef838357eaef8e8efe53c948a6bcc8efd3545e4b9cf2b536c798e520"
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/plan67-prefix.txt",
+      "sha256": "91cabdd817e6e2119fd916a203f4e8fe5de15a3b274c7b42f46b877508d7cc62"
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/baseline-child.json",
+      "sha256": "b35c2a6e970a9dfb4c86bb113d60c836bfd6dc560c8bcc2c3147f9a24584c709"
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/baseline.log",
+      "sha256": "0f6928f336e84690293e566f0c49f8f4803264f7437e5e0e622f11c7e4a895f8"
+    },
+    {
+      "path": ".agent-runs/engine-claim-2004/fixed.log",
+      "sha256": "e8cd59a470a691f7878e27d3a1ef4d39e0bd443e9039d92671196870098f272e"
+    }
+  ]
+}

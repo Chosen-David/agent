@@ -506,13 +506,17 @@ class Engine:
                     outcome = Outcome('blocked', 'authorization revoked or claim no longer current')
                 else:
                     self._review_plan(plan)
-                    executed = True
-                    outcome = handler.run(task, context)
-                    self._review_plan(plan)
-                    if outcome.status == 'complete' and not (outcome.evidence and handler.verify(task, outcome.evidence)):
-                        outcome = Outcome('failed', 'completion evidence rejected by verifier')
-                    if outcome.status not in ('complete', 'pending', 'retry', 'blocked', 'failed'):
-                        outcome = Outcome('failed', 'invalid adapter outcome')
+                    # Host policy/review callbacks may outlive the checked claim.
+                    if not context.current():
+                        outcome = Outcome('blocked', 'claim no longer current after plan review')
+                    else:
+                        executed = True
+                        outcome = handler.run(task, context)
+                        self._review_plan(plan)
+                        if outcome.status == 'complete' and not (outcome.evidence and handler.verify(task, outcome.evidence)):
+                            outcome = Outcome('failed', 'completion evidence rejected by verifier')
+                        if outcome.status not in ('complete', 'pending', 'retry', 'blocked', 'failed'):
+                            outcome = Outcome('failed', 'invalid adapter outcome')
             except PlanReviewError as exc:
                 review_blocked = True
                 if executed:

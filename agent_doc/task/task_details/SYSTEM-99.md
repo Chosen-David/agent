@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 66
+Version: 67
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -218,6 +218,9 @@ SONAME物化、完整配置读回、宿主utmp未知边界和可恢复卸载状�
 DENSE-HANDOFF-01：在原稀疏准入之外，仅对dependency references不超过65536的普通深密集残图复用现有fast-success拓扑路径；全字段/错误fallback/custom对象/上下文/MemoryLedger/所有权门禁保留。完整Mailbox publish→context→ACK离线同条件对照、内存代价、更正拒绝与独立复核；synthetic消费者非真实LLM终局质量，不称整轮完成。
 
 CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有原FD，fdopen以closefd=False借用，inner finally覆盖构造失败并在guard/replace前关闭；JSON/UTF8/平台换行/fsync/临时清理与人类guide守卫不变。复用旧v2平台换行oracle及全部旧诊断/返修意见；当前源码3方法baseline一次、修后与独立48方法各一次、原生五job新增3方法，手工补充审核而非受认证ReviewSession迁移。旧耗尽记录不修改；此为既有用户授权的可靠性修复，无性能/完整宿主/全事务结论，同一SYSTEM99仍open。
+
+
+阶段ENGINE-PRE-ACTION-CLAIM（Version67）：按既有持续优化授权，保留ReportingHandler Version44及全部旧失败；仅在Engine执行前的授权/计划审核回调之后再次检查真实Context当前租约、取消、token与doing状态，失效则不进入handler；不延租、不退款、不重放、不改最终stale结果处理或对外动作原子性。六固定CPU场景使用真实保护计划/审核认证夹具和SQLite，验证late review的到期/取消/token变更、late authorization到期、健康及拒权；修前保存失败，独审后修复，修后与独立定向回归并核原生五job。仅范围内可靠性，不称性能/模型/全链验收。
 
 ## Progress
 
@@ -801,3 +804,6 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 
 
 - CHECKPOINT-FD补充续修完成本机验收：保留旧revise/平台oracle v2/旧预算与deadline，在当前相同69c4源码+新集成确认3方法同两FD关闭断言失败；按精确补充批准应用closefd=False借用与创建者inner finally，Plan65→66。修后/独立各48项exit0、0skip/error；真实fstat先于本方清理/重试确认关闭，原JSON/字节/target/temp/异常身份/重试断言保留。[完整旧来源映射、补充双审与原始三组输出](../../results/checkpoint-fd-repair-20261031/report.md)仅限确定构造注入，原生5job新3方法另核；不称耗尽/自然发生率、任意close/unlink或竞态/断电/全事务、性能/模型质量/费用通过。补充plan/baseline/fixed/resultreview/indrun/sourceCI各1、retry0、10:35Z截止，非受认证ReviewSession迁移；唯一TASK/guide/其它旧未决保持，同一SYSTEM99未完成。
+
+
+- ENGINE-PRE-ACTION-CLAIM-01限域修复：回调可能在早期current检查后使租约到期、取消或换token；Engine进入handler前新增真实current检查，不改原ReportingHandler v44/最终stale结果/attempt与恢复。修前六方法四stale断言失败且真实marker已写，两个控制通过；修后与独立各98执行/97pass/1原real-tmux选测skip，新六及两process均通过。[完整源、六probe、原双方案/结果异议与全部原始输出](../../results/engine-pre-action-claim-20261031/report.md)保留首次私有runner无main保护造成的spawn重入污染及11semaphore清理未知；主控显式常规修复reconciliation后用既定candidate第2/末次，原REVISE不改判为approve，无认证runtime账本迁移/退款。plan2/2、baseline1/1、candidate2/2、independent1/1、result2/2、native1待核，deadline13:00Z不变；Plan66→67，唯一TASK/guide不动，无新论文抵数/模型性能费用/全链结案，SYSTEM99同批仍open。

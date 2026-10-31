@@ -1,0 +1,45 @@
+# CAVERT 正文精读记录（待独立核对）
+
+- 精确版本：arXiv:2610.08101v1，2026-10-06，Beyond Corrected Memory: Execution Consistency in Multi-Agent Systems。官方 https://arxiv.org/html/2610.08101v1 于2026-10-31再次打开，版本/题名一致。
+- 固定原件：paper.html SHA256 e533eae83d979dc41f5cb0a021a6b972af8ad80ca5e0fbcd52bdc070b00fa541；paper.txt SHA256 d75844f0d823e5a897a7c47986533d00aad19a1d6aa6126b41347eda36b80877，121716 Unicode字符。公式提取含LaTeX/可视文本重复，以语义式核对，不把重复当多个公式。图仅正文图注，未逐图视觉审读，作者代码/原数据未复现。
+- 本批先前实际读[0,9000)、[9000,18000)、[18000,27000)；本次续读[27000,40500)、[40500,54000)、[54000,67500)、[67500,81000)、[81000,94500)、[94500,108000)、[108000,121716)。连续覆盖全文，不把先前partial重复抵数。此前checkpoint/checkpoint-v2原字节保留。正文读完但本记录尚未独立核对，完成篇数暂不增加。
+
+## 实际章节与方法
+
+主文1引言/2相关工作/3契约与证据（3.1/3.2）/4 CAVERT（4.1–4.3）/5实验（5.1–5.3）/6结论，Reproducibility/Ethics/AI Use/全部References；附录A.1.1–A.1.4、A.2、A.3.1–A.3.3、A.4/A.4.1、A.5/A.6；B.1–B.3；C.1/C.2；D.1–D.4；E.1–E.5。正文Table1–2、A1–A28、Figure1–7/A1图注、Eq1–5及无编号可见公式、三段提取prompt摘录和四事件JSON例子均覆盖。
+
+研究对象是任务义务是否得到履行，不是记忆字面一致、单纯任务成功或更强的数据库一致性。十二机制分为状态使用、交接语义、终态一致三类。记录包含事件/可靠先后/类型化因果/可见性/退休替代/公共契约/采集完整性/观察horizon；semantic key带entity/attribute/scope。相邻事件或同一说话者不自动生成因果边。ACL空缺不视为全局可见；global frontier与agent-visible frontier区分，未被接收方看到的退休不自动从其视图消失。
+
+有限trace监测使用candidate C、obligation O、window W、discharge D和N/V/U三值判定。候选缺失/明确无义务/已有效履行可早短路N；未知不能当不存在；active_due+闭合window+无/不合格履行才V；否则U。N是该机制在契约下无违例，不是外部动作授权。trace只要一个V就是V；无V但存在可能影响结论的U则保留U。Kleene conjunction中false支配unknown，不能反推未采集事件没有发生。
+
+有效discharge必须同key/scope、授权执行者、激活后/截止前、因果连接且效果持续到判定点。preserve/update/resolve/qualify/authorized_defer各有可观察要求。撤销可使先前repair失效。O=discharged,D=admissible的N短路不要求完整global W，但仍需局部持续性证据；独立提供active_due+admissible则必须W闭合，不能交换两种输入制造宽松判定。ACK/批评/再次搜索/写更正标记都不是实际下游吸收的证据。
+
+两LLM阶段的实际实现含证据索引、candidate定位和finding-conditioned整页审查，可能多页多call。第一阶段保留失败/弱/异议/partial证据；candidate并非最终判定。引用由原事件ID回填文字并检查存在/顺序/对应关系。not_supported_on_page仅该页未找到，只有运行时页数/覆盖事件/截止点/无正向discharge与采集条件共同成立才认证negative；扫描全部提供文本不等于未记录channel也完整。最终规则不再调用LLM，但引用合法性不证明语义/义务/窗口解释正确。四事件例子是指定fixture，不是采样实验：completed_page_count改0或source quote缺失都使结果U。
+
+## 实验、消融和负结果
+
+RQ1信息移除/恢复：450收集pairs，398为相反N/V；38同标签、14含U不进入collision分母。full-normalized-view仍4/398碰撞，删除后328/398，恢复分离321/328。full不是完整底层execution。每factor/benchmark30pairs；5因素为receipt、action dependency、actor authorization、historical-version eligibility、repair validity at deadline。确定性judge在相同保留输入上无法同时恢复相反标签，是表示保真必要性，不是模型架构性能证明。E1两annotators κ=.842/第三方裁决，30开发pairs排除。
+
+自然日志独立360（TraceElephant/AFTraj/MATM各120，另30校准排除）：43V/288N/29U。47 primary机制关联来自43V（四trace双机制）；unsupported assumption29/43、evidence escalation8/43。12机制中多项primary V=0；不能写所有机制均在自然日志验证，也不能推部署普遍发生率。另25次final-evidence secondary表现不等于primary计数。
+
+B.3 Oracle probe432traces/144task clusters：structural baseline58.3%/180errors；CAVERT83.3%/72errors；reference semantics+rules97.9%/9errors。前两种同时改extraction与adjudication，不是单因素提取消融。CAVERT FP117→9，但violation recall仍64.7%；Oracle净减少63/72错误，余9为N→U、V FP/FN均0。Oracle不可部署，不能据此称自动判断近乎完美。
+
+E2另930预注册contract queries/360executions，macroF1 .751，Generic .466、AgentRx+resolver .591、Rules .629、Contract LLM .660；generic judge violation recall更高。E3跨3bench×4executor×60=720（不同panel），CAVERT87.1%/.835，Contract80.6%/.748，Rules78.9%/.738。诊断模型Qwen3.5-Flash/DeepSeek-V4-Flash与被诊断执行模型分开；每call4096输出上限不是整条诊断预算/实际用量。
+
+另180traces×5views：Recode A改ID/JSON key次序无CAVERT变化；Recode B保持语义但仅146/180预测不变，18正确→错误/16错误→正确，净准确率−1.1pp不能掩盖个体翻转。Missing L1去delivery/receipts，L2再去退休/动作确认并标channel/causal/deadline不完整；这些view重新按剩余证据标reference，不能与RQ1固定gold混用。L2 CAVERT119/180正确，25/76 U被判N、18/52 V判N、18/52 N判V；不是信息不足时必定abstain。D.3部分区间依赖记录的30-cluster partition且stratified benchmark，不泛化无限未知分布。
+
+D.4相同$0.012/execution诊断总额度（含失败/retry），720所有实例留分母；无效响应/耗尽是diagnostic failure而非语义U。CAVERT627/720 vs iterative Contract-review602/720，Δacc3.47pp [1.39,5.56]，ΔmacroF1 .049 [.021,.076]。全流程mean calls1.81 vs2.65，固定token价格mean$ .0017 vs .0031、P95 .0026 vs .0042。不是无成本规则baseline优势，也不是当前产品价格。本地不据此报模型总费用收益。
+
+RQ3/Core E4共720 matched fault blocks，每bench180、两executor配置各90；相同动作/output/timeout上限。AppWorld官方success122/180 vs Rules89/180；LongCLI75/180 vs51/180。MARBLE连续score、CoffeeBench30-action窗口payout/500截断，四种normalized endpoint等权不是合并成功率。CAVERT-Gate vs MemTX均值+8.75pp [6.39,11.11]为完整系统对比。E5 suffix probes与E4共享step0，不能把6480/720/576追加成独立总任务数；固定长度prompt/gate相互作用+9.1pp [4.8,13.4]是诊断×控制增益，不证明单独某一机制。
+
+正常480 uninjected matched blocks：CAVERT−Native−.7pp [−2.1,+.7]，预声明非劣margin−2.5pp下aggregate成立；MARBLE下界恰等margin，不是逐benchmark均成立。MemTX mature/unmatured都没通过该非劣界。15/50k、30/100k、50/200k同时改变action和token ceilings，只是联合预算敏感性。
+
+附加cohorts/端点不混并：480 AppWorld recovery flags316而official successes260；LongCLI240为99F2P+P2P/4regressions；EntCollab24 groups gate19 vs prompt13，exact McNemar p=.2101，不能称显著；PAST90episodes/5families的state access和authority同时变化，非纯memory消融。750 permitted-action falseblocks是独立历史51block cohort，非720/480任务分母。长程单独cohort CAVERT tokens14950 vs12000(+24.6%)、23.5s vs18.5(+5s)；AppWorld/LongCLI cache-discount账单$ .042 vsNative .030、MemTX .044，token多寡不单独决定费用。门禁仅precommit，已提交外部效应补偿不在范围。
+
+## 与本库的具体关系及取舍
+
+先复用Mailbox已有定向delivery/immutable receipt、communication_basis、MemoryLedger immutable revision/descendant stale、required refs与consumer gate，不新增共享聊天池/authority cache/LLM网关。准备上下文、记录ACK、任务完成、科学验收四者应分别验收；当前代码ACK注释已明确只记录handling。不能把允许ACK历史投递误报为新的任务完成漏洞。
+
+后续可证伪的验收问题（尚未执行/不授予旧分支预算）：更正写入后、消费前/消费后/ACK前/最终commit前的不同窗口，定向接收方是否收到/是否使用/原效应是否仍持续；read-only活跃视图/分页/缓存视图必须保留scope、known status、has_more和依赖，更正/异议省略不能变成全局无问题。应在已有端到端链中插入可控事件窗口，比较full与task packet的实际输入token、任务质量、漏更正/错肯定率、全角色费用；无真实backend时只保留未验收项。
+
+本次密集拓扑性能改动已依据其他已读论文实施并独立测量；CAVERT不是其算法来源，不追认因果关系。这里采用验收设计准则，defer自动引入CAVERT多call判断/新schema/迁移；还没有由本篇导致的生产改动、作者实验复现、模型质量或成本收益。

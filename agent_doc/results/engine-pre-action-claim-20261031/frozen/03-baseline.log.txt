@@ -1,0 +1,85 @@
+ENGINE_CLAIM_PROBE {"attempts": 1, "entered_current": [false], "marker_hex": "68616e646c657220656e7465726564", "mode": "authorization-expiry", "mutation": ["authorization-expiry"], "status": "active"}
+ENGINE_CLAIM_PROBE {"attempts": 0, "entered_current": [], "marker_hex": null, "mode": "denied", "mutation": [], "status": "blocked"}
+ENGINE_CLAIM_PROBE {"attempts": 1, "entered_current": [true], "marker_hex": "68616e646c657220656e7465726564", "mode": "healthy", "mutation": [], "status": "done"}
+ENGINE_CLAIM_PROBE {"attempts": 1, "entered_current": [false], "marker_hex": "68616e646c657220656e7465726564", "mode": "cancel", "mutation": ["cancel"], "status": "cancelled"}
+ENGINE_CLAIM_PROBE {"attempts": 1, "entered_current": [false], "marker_hex": "68616e646c657220656e7465726564", "mode": "expiry", "mutation": ["expiry"], "status": "active"}
+ENGINE_CLAIM_PROBE {"attempts": 1, "entered_current": [false], "marker_hex": "68616e646c657220656e7465726564", "mode": "token", "mutation": ["token"], "status": "active"}
+test_authorization_exact_expiry (pre_action_candidate.PreActionClaimTests.test_authorization_exact_expiry) ... FAIL
+test_denied_authorization_never_claims (pre_action_candidate.PreActionClaimTests.test_denied_authorization_never_claims) ... ok
+test_healthy_review_enters_once (pre_action_candidate.PreActionClaimTests.test_healthy_review_enters_once) ... ok
+test_review_cancellation (pre_action_candidate.PreActionClaimTests.test_review_cancellation) ... FAIL
+test_review_exact_expiry (pre_action_candidate.PreActionClaimTests.test_review_exact_expiry) ... FAIL
+test_review_owner_token_change (pre_action_candidate.PreActionClaimTests.test_review_owner_token_change) ... FAIL
+
+======================================================================
+FAIL: test_authorization_exact_expiry (pre_action_candidate.PreActionClaimTests.test_authorization_exact_expiry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/engine-claim-2004/tests-v2.py", line 117, in test_authorization_exact_expiry
+    self.boundary('authorization-expiry')
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/engine-claim-2004/tests-v2.py", line 83, in boundary
+    self.assertEqual(entered, [], 'handler must not start with a stale claim')
+AssertionError: Lists differ: [False] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+False
+
+- [False]
++ [] : handler must not start with a stale claim
+
+======================================================================
+FAIL: test_review_cancellation (pre_action_candidate.PreActionClaimTests.test_review_cancellation)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/engine-claim-2004/tests-v2.py", line 111, in test_review_cancellation
+    self.boundary('cancel')
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/engine-claim-2004/tests-v2.py", line 83, in boundary
+    self.assertEqual(entered, [], 'handler must not start with a stale claim')
+AssertionError: Lists differ: [False] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+False
+
+- [False]
++ [] : handler must not start with a stale claim
+
+======================================================================
+FAIL: test_review_exact_expiry (pre_action_candidate.PreActionClaimTests.test_review_exact_expiry)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/engine-claim-2004/tests-v2.py", line 108, in test_review_exact_expiry
+    self.boundary('expiry')
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/engine-claim-2004/tests-v2.py", line 83, in boundary
+    self.assertEqual(entered, [], 'handler must not start with a stale claim')
+AssertionError: Lists differ: [False] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+False
+
+- [False]
++ [] : handler must not start with a stale claim
+
+======================================================================
+FAIL: test_review_owner_token_change (pre_action_candidate.PreActionClaimTests.test_review_owner_token_change)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/engine-claim-2004/tests-v2.py", line 114, in test_review_owner_token_change
+    self.boundary('token')
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/engine-claim-2004/tests-v2.py", line 83, in boundary
+    self.assertEqual(entered, [], 'handler must not start with a stale claim')
+AssertionError: Lists differ: [False] != []
+
+First list contains 1 additional elements.
+First extra element 0:
+False
+
+- [False]
++ [] : handler must not start with a stale claim
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.600s
+
+FAILED (failures=4)
