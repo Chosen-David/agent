@@ -8,7 +8,7 @@ from unittest.mock import patch
 
 from agent_runtime.handoff_basis import basis_context, check_handoff_basis, make_token_counter
 from agent_runtime.knowledge import KnowledgeStore
-import test_handoff_basis as basis_fixture
+from tests import test_handoff_basis as basis_fixture
 
 
 class SelectiveContextTests(unittest.TestCase):

@@ -18,8 +18,7 @@ from unittest.mock import patch
 from agent_runtime import result_store as reuse
 from agent_runtime import result_validation as gate
 from agent_runtime import project_docs as docs
-sys.path.insert(0,str(Path(docs.__file__).resolve().parents[1]/'tests'))
-import test_result_gate_acceptance as gate_fixture
+from tests import test_result_gate_acceptance as gate_fixture
 
 
 class PriorResultReuseAcceptanceTests(unittest.TestCase):

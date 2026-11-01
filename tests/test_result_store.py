@@ -18,7 +18,7 @@ from agent_runtime.result_store import (ResultStore, ResultStoreError, ReuseResu
     check_task_reuse, register_task_result, result_context)
 from agent_runtime.core import ArtifactHandler
 from agent_runtime.task_manifest import ReportingHandler, atomic_json
-from test_result_validation import make_fixture, independent_verify
+from tests.test_result_validation import make_fixture, independent_verify
 
 
 class ResultStoreTests(unittest.TestCase):

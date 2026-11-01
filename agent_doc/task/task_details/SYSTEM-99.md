@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 91
+Version: 92
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -265,6 +265,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 MEMORY-HYDRATION（Version90）：实际Mailbox publish→prepare_context在知识正文加载期间接收更正后，仍可输出早期已检查的无依赖记忆。冻结单方法修前失败。仅在原basis_context记忆组装处，对所有已选择根复用现有单事务_context_closure，不再仅在存在deps时调用；自定义兼容路径经原公共check再读根后继续逐层依赖。保留已知上下文提示检查、候选/异议/必要引用、独立门禁、身份及ACK分离，不新增记忆池、来源或重放。兼容check/walk可观察到一次新增根复核（签名与后续逐层调用保持），原精确顺序测试据此明确增加一项，不删除断言。验收真实Mailbox的相关更正拒绝、强制兼容拒绝、不相关更正健康控制、全部ACK为空、既有完整依赖/自定义回调及全库/原生CI；五平台contracts原第二组追加现有6方法闭包模块，原命令与5分钟限额保留。新读TellOnce2606.13174v2的检查与交付区分用于验收设计；不移植并行后台学习、未知结果放行、规则库或平台hook，不以本文实验等同本库收益。这是读取检查点修复，不声称跨知识/记忆库原子快照或阻止返回之后的更正；token_counter/任意宿主回调及其他更晚并发时序仍需单列核验。无性能/模型质量/总费用主张，旧独立合同及耗尽预算不重置，SYSTEM99继续open。
 
 阶段 MEMORY-HYDRATION 计数回调续接（Version91）：9b6c9476原生十job已全成功后继续原同批未决，不按提交计新轮。实际Mailbox计数钩子中更正记忆或修改知识正文，原接口仍返回旧依据（3方法2失败/1不相关健康对照）；仅在成功计数并核对预算后重用check_handoff_basis。随后同回调修改产物/manifest的两子例仍未拒绝（中间候选handoff_basis blob16b3f65a7002f57c7d4b7d2b86b773714a7730d0），因此Mailbox在有外部counter时再调用原consume_handoff完整核对交付/manifest/消费者绑定。无counter路径不加这层检查；新增复核不调用counter、不产生第二ACK/事件/派发，不重放修复或修改绑定。保持standalone basis API只含产物引用的既有范围；真实Mailbox负责实际文件门禁。增加正文原样/communication_basis唯一行/仍无ACK健康断言，复测JSON/表格/自动格式、预算/知识快照及全库/原生CI。不声称跨库原子快照、返回以后更正或可变自定义检查器本身已被约束，重复I/O成本未测，旧独立合同和全部限额不变。复用本次已新读TellOnce v2的执行阶段/交付检查方法，不再计第二篇；不采用并行学习、规则库或未知等于通过。
+
+阶段 TEST-ENTRY-ISOLATION（Version92，同SYSTEM99）：质量评测续查确认12个共享fixture消费者中11个在新进程按tests.test_*导入失败，另1个依赖全局sys.path改写；此前PYTHONPATH workaround只解决调用，并未使模块独立。仅将现有测试fixture导入统一为tests包限定、添加普通包标记、去掉该已确认路径注入，不动生产runtime/断言/数据/独立合同。固定12个无PYTHONPATH新进程导入及精确路径变化回归（仅保留语义验收fixture原有CLI的scripts/root引导，拒绝tests目录注入），保留修前原失败，验证限定模块调用与discover两入口和完整回归；新增回归纳入五平台contracts原第一组，原限额/命令保持。新读2610.18522v1区分selection/load/success用于评测边界审查，不称测试导入就是模型加载或移植新路由器；实际Skill召回/质量/token/费用仍待宿主，全批十篇与旧独立合同保持open。
 
 ## Progress
 
@@ -969,3 +971,9 @@ PACKAGE-CLOSURE 原生run41274726189：两Ubuntu全job成功；macOS旧夹具未
 MEMORY-HYDRATION继续同批：9b6c9476原生run41296752210十job全成功，五组各159方法0skip；同目录ci.json SHA256 `da0e8958eb318e433515e512cdc1be07b92da21583f7aaa2d6f4245702555ec3`。随后计数阶段3方法修前2失败/1健康；先补basis复核后，实际交付产物/manifest两个子例仍失败，保留负结果及中间source blob16b3f65a7002f57c7d4b7d2b86b773714a7730d0，未把部分修复当完成。现basis与Mailbox分别重用已有依据/完整交付消费检查，仅counter路径追加，正常payload原样、消费者绑定仍单行、全部ACK为空，不重放/撤销计数回调已发生的作用。72相关方法通过；最终完整2091方法0失败/错误、15既有skip，原生同命令163全过0skip。证据 `/tmp/agent-system99/memory-hydration-1800/counter-evidence.json` SHA256 `aa11eaf12402ca28f5a3772cd7e8a2f9b7fbf2e9e5fbc479e095e21f2a0f21eb`。两次测试调用问题（首次两个不存在模块，后次缺tests路径供旧fixture导入）仅记录调用错误，非产品缺陷；冗余正向/调用错误原日志哈希和原因保留后清理，真实拒绝失败/最终输出保留。
 
 计数测试使用返回0的synthetic时序钩子，不作真实token测量；实际token/上下文质量/总费用和额外I/O成本未验。复用本次29页TellOnce v2阅读，不为本次跨模块续接再计第二篇。新head原生CI/普通发布另核，主agent自检不冒独立；返回以后更正、跨库原子性、可变trusted校验回调及既有SYSTEM99宿主/独立合同仍open，十篇与整轮验收未完成。guide/唯一索引保持，旧证据/预算未重置，无新results包。
+
+### 2026-11-01 — TEST-ENTRY-ISOLATION 同批续接
+
+4f5a078c原生run41298723341十job全成功，五组各163方法0skip；原证据 `/tmp/agent-system99/memory-hydration-1800/counter-ci.json` SHA256 `2cd71a72ce0db3a4830de04fe193e1a310175cd09e61daae06554ede91a8e63c`。本次12个共享fixture消费者新进程核查11导入失败/1全局路径注入；新冻结1方法12子例均失败，不是12个生产bug。仅限定tests包导入、补包标记并删除该tests路径注入；首轮167方法暴露一个函数内遗漏导入及过严新路径oracle，保留原诊断，明确允许语义fixture已有scripts/root CLI引导而不改生产脚本。最终限定入口167方法、完整discover2092方法（15既有skip）、原生CI同命令110+54、reader3及引用同步均通过。新隔离方法进入五平台CI，发布/新head原生回读另核。必要失败与最终结果 `/tmp/agent-system99/skill-routing-1856/evidence.json` SHA256 `26f2d8929a1c1f4d58324b551834b514a0cdbf80a79969436ea7ef8cf4746b90`；冗余同原因日志和阅读渲染已清，guide/唯一索引/旧合同不改。
+
+新读2610.18522v1全22页，§§1–7/局限及A–N、Tables1–31、Algorithms1–3；实际区分选择/加载/任务成功、82与86任务分母、单次与三次mask、候选/实际召回、固定选择漏项和预计算embedding/不同API时段延迟，详细记录reading.json哈希见索引。二手博客将ID错配Cortex已按原文纠正。没有新路由器/第二agent或模型调用，本次新增正文1不重计旧篇；测试入口可靠性不冒充真实Skill召回、模型质量/token/全费用或整轮完成，同SYSTEM99未决保持open。

@@ -4,7 +4,7 @@ import tempfile
 import unittest
 
 from agent_runtime.core import Engine, Outcome, Store
-from test_single_main import plan
+from tests.test_single_main import plan
 
 
 class SerialRecoveryTests(unittest.TestCase):

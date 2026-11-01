@@ -5,7 +5,7 @@ from unittest.mock import patch
 from agent_runtime import handoff_basis
 from agent_runtime.handoff_encoding import decode_basis_payload
 from agent_runtime.knowledge import KnowledgeStore
-import test_handoff_basis as fixture
+from tests import test_handoff_basis as fixture
 
 
 class KnowledgeHydrationTests(unittest.TestCase):

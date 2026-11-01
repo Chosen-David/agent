@@ -6,7 +6,7 @@ import subprocess
 import sys
 import unittest
 
-import test_handoff_basis as fixture
+from tests import test_handoff_basis as fixture
 from agent_runtime.handoff_basis import basis_context
 from agent_runtime.handoff_encoding import (BASIS_TABLE_FORMAT, COLUMNS, MEMORY_COLUMNS,
     encode_basis_tables, decode_basis_payload)

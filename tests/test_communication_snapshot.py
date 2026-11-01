@@ -7,7 +7,7 @@ from unittest.mock import patch
 
 from agent_runtime import communication, external_json
 from scripts.validate_handoff import _load_json
-import test_communication as fixtures
+from tests import test_communication as fixtures
 
 
 class ManifestSnapshotTests(unittest.TestCase):

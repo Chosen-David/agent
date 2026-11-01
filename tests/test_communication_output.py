@@ -8,7 +8,7 @@ import sys
 import unittest
 
 from agent_runtime.communication import canonical
-import test_communication as fixture
+from tests import test_communication as fixture
 
 
 class CommunicationOutputTests(unittest.TestCase):

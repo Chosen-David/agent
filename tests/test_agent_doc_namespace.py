@@ -10,7 +10,7 @@ import unittest
 from agent_runtime import plan_review, project_docs, result_store, result_validation
 from agent_runtime.legacy_result_paths import legacy_read_binding
 from agent_runtime.task_manifest import prepare, validate_contract
-from test_result_validation import make_fixture, independent_verify, dag
+from tests.test_result_validation import make_fixture, independent_verify, dag
 
 
 class AgentDocumentNamespaceTests(unittest.TestCase):

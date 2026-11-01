@@ -14,7 +14,7 @@ from unittest.mock import patch
 
 from agent_runtime.contamination import Contamination, assert_not_revoked
 from agent_runtime.result_validation import inspect_result, check_task_results
-from test_result_validation import make_fixture, independent_verify
+from tests.test_result_validation import make_fixture, independent_verify
 
 
 class ContaminationTests(unittest.TestCase):
@@ -250,7 +250,7 @@ class ContaminationTests(unittest.TestCase):
 
     def test_result_store_excludes_revoked_candidates_and_refuses_cached_reuse(self):
         from agent_runtime.result_store import ResultStore, ReuseResultHandler
-        from test_result_store import ResultStoreTests
+        from tests.test_result_store import ResultStoreTests
         fixture = ResultStoreTests()
         fixture.setUp()
         self.addCleanup(fixture.doCleanups)

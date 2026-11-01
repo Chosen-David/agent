@@ -8,7 +8,7 @@ import sys
 import tempfile
 import unittest
 
-import test_paper_delivery as fixture_module
+from tests import test_paper_delivery as fixture_module
 from semantic_acceptance import canonical_record_sha256
 
 

@@ -10,7 +10,7 @@ from agent_runtime import task_manifest
 from agent_runtime.core import Context, Outcome, Store
 from agent_runtime.contamination import _run
 from agent_runtime.result_store import ResultStore, result_context
-from test_result_validation import dag, independent_verify, make_fixture, ref
+from tests.test_result_validation import dag, independent_verify, make_fixture, ref
 
 class ResultDispatchFreshnessTests(unittest.TestCase):
     def setUp(self):
