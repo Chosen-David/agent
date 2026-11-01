@@ -883,3 +883,9 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 - 按用户新要求，中间文件集中 `/tmp/agent-system99/single-main-plan-0208/`，清单 `evidence-index.json` SHA256 `171e45504e12b2700141c4e2b51367fe7b0b088d72356c4d5d11ba0a48d5d639`；含原始v1/v2/v3、修前失败和完整日志。方案v3在同目录 `plan-v3.md`；没有新增 agent_doc/results 中间包，历史原件不动。guide/TASK索引原字节不变，发布后新源码CI与普通回读另核。
 
 - 追加正常审核连接生命周期检查：修前1个冻结断言失败（事务退出后仍可查询），修后统一事务+关闭作用域、14协议方法包含在124相关方法全过；旧提交/回滚与身份/限额门禁保留，不归因/proc或重开旧FD57探针。最终临时清单 `/tmp/agent-system99/single-main-plan-0208/evidence-index-final.json` SHA256 `645c2f5aa5678d37e85ba8c9b46d69e03789cbc5ca26430d3fcdd6e680fd661b`；无新results中间包，后续只从最新main继续同一串行链。
+
+### 2026-11-01 — SERIAL-RECOVERY 串行续接
+
+- 续接 Plan80 的旧状态恢复缺口：旧账本没有 active_step 时，pending/退款等待/过期租约可让 cursor 先派发另一 Skill。现于租约转换前恢复唯一未决步骤；多个旧未决步骤阻止新派发并报告 host convergence，不猜 owner、不取消外部作业、不重置预算。明确终态与取消保持，未知作用仍须原授权/验证 reconciliation。多个旧 pending 的收敛仍需宿主核对，不提供自动重放或外部停机承诺。
+- 冻结六方法修前5失败/1健康控制、修后六通过；补强后10个恢复方法连同安装/并发/实际 SQLite/旧审核等共108方法全通过。第一版错误fresh控制和后续Path(str)测试fixture错误均保留，不能算产品缺陷。全部中间件位于 `/tmp/agent-system99/serial-recovery-0305/`，`evidence.json` SHA256 `fc58393f103381fb9574a876696aac4d488b034948619b7b984af3c33525bf90`；本地主 agent 自检，独立AI调用0，原生新head CI/普通发布回读另核。无新增results包或guide写入。
+- 新论文正文精读0，十篇要求未由本次满足；不报性能/模型质量/token/费用收益。既有全库83失败/错误、/proc诊断、真实宿主/安装链路与论文验收继续open；同SYSTEM99未完成轮次。

@@ -392,7 +392,7 @@ class Engine:
     def _summary(self, plan, state):
         if state['status'] == 'cancelled':
             return
-        if state.get('plan_review_error'):
+        if state.get('plan_review_error') or state.get('serial_recovery_error'):
             state['status'] = 'blocked'
             return
         nodes = state['tasks']
@@ -475,6 +475,28 @@ class Engine:
                                {'event_id': event_id, 'invalidated': sorted(invalidated)})
                 return state
             self._check_done(plan, state)
+            active = state.get('active_step')
+            if active and state['tasks'][active]['status'] == 'done':
+                state.pop('active_step', None)
+            # Older ledgers have no active_step. Recover from outstanding work,
+            # before lease expiry changes doing into todo/ambiguous; never infer
+            # ownership from the fairness cursor or reset observation budgets.
+            if not state.get('active_step'):
+                outstanding = [key for key, node in state['tasks'].items()
+                               if node['status'] == 'doing'
+                               or (node['status'] == 'todo' and
+                                   (node.get('attempts', 0) > 0 or 'pending_since' in node))
+                               or (node['status'] == 'blocked' and
+                                   (node.get('requires_reconciliation') or
+                                    node.get('reason_kind') in ('ambiguous', 'wait_budget') or
+                                    (node.get('attempts', 0) > 0 and
+                                     node.get('reason_kind') in ('permission', 'adapter'))))]
+                state.pop('serial_recovery_error', None)
+                if len(outstanding) == 1:
+                    state['active_step'] = outstanding[0]
+                elif outstanding:
+                    state['serial_recovery_error'] = (
+                        'multiple outstanding steps; host convergence required: ' + ', '.join(sorted(outstanding)))
             for task in plan['tasks']:
                 node = state['tasks'][task['task_id']]
                 handler = self.handlers.get(task['action'])
@@ -497,10 +519,8 @@ class Engine:
             cursor = state.get('claim_cursor', 0) % len(tasks)
             # Keep one step across pending polls/restarts; never overlap live claims.
             active = state.get('active_step')
-            if active and state['tasks'][active]['status'] == 'done':
-                state.pop('active_step', None)
-                active = None
-            doing = any(node['status'] == 'doing' for node in state['tasks'].values())
+            doing = (bool(state.get('serial_recovery_error')) or
+                     any(node['status'] == 'doing' for node in state['tasks'].values()))
             for offset in range(len(tasks)):
                 index = (cursor + offset) % len(tasks)
                 task = tasks[index]
