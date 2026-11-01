@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 73
+Version: 74
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -235,6 +235,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段AL（ROLE-DEFINITION-SNAPSHOT，Version72）：承接失败现场保留/排除核对，仅修run_role检查后重新打开所选正文的缺口。复用安装器有界普通文件读取、expected_files和合法Skill目录链接检查；比较并使用同一正文快照，在后端发现前拒绝变更/异常，保留inherit、路由、请求预算、无重试及Unicode/换行。源checkout受信任；不宣称全文件系统事务、按需引用树冻结或真实模型加载已验。新路径真实安装→check后定向替换→native/adapter Python夹具；修前负例、合法copy/link、文本/链接/FIFO零后端调用及清理读回均须保留，独立验收后才发布。旧ROLE-LOAD-DIAG-01清理失败/未知原因及预算不改判；本阶段另有明确有界修复验证分配，不用旧失败当通过基线。同批2606.01416v1完整正文记录已独立核对，恢复按失败类型处理的思路用于正文校验，而不增加自动重试。真实宿主、多角色质量/完整usage与费用仍open。
 
 阶段COMPLETE-BASIS-LATE-CALLBACK（Version73，同SYSTEM99）：仅补完成复验最后一组独立结果/复用回调后的当前记忆与知识重查，保留所有原有门禁、handler与证据身份，不自动重放、更正或新建记忆层。固定真实算术verifier回调期间的根/祖先更正和知识变更三拒绝，以及未变/无关更正两兼容控制，确认修前失败后才应用精确候选；修后与独立同五方法和相邻回归各一次，五原生矩阵新增五方法另核。方案最多2次、baseline/fixed/independent各1、结果审查2次、源码CI1、无重试，2026-11-01T01:00Z截止；旧全部耗尽范围不重置。仅限完成证据更正传播可靠性，额外校验成本未测，真实模型质量/token/全费用、外部原子围栏和系统级未决仍open。2609.38866v1本次续读全文/附录后的“可检索不等于正确使用、复杂更正须独立验收”用于检查设计，不声称移植内部注意力干预或论文性能。
+
+阶段COMPLETE-PROOF-CLOSURE（Version74，同SYSTEM99）：完成报告与复验在所有独立结果/复用回调后，复用既有被动绑定校验关闭已捕获的接受证据；不新增verifier调用、授权或重放，原raw producer pending保留而不授信。冻结报告内后续结果、完成复验后续结果与复用回调更正前项review evidence三拒绝，及未变/无关更正控制；修前确认后才应用精确候选，修后和独立同五新方法及相邻回归各一次，五原生job新增各五方法另核。方案最多2次、baseline/fixed/independent各1、结果审核2次、源码CI1、无自动retry/provider/tmux；2026-11-01T02:00Z截止，与旧耗尽scope不互相重置。仅接受证据绑定闭包可靠性；raw pending与报告文件自身并发变化、全宿主/模型质量/费用/性能仍非完成保证，SYSTEM99继续open。
 
 ## Progress
 
@@ -856,3 +858,7 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 ### 2026-11-01 — COMPLETE-BASIS-LATE-CALLBACK-01 checkpoint
 
 独立结果回调在前置记忆/知识检查后更正依据，旧完成复验仍返回True；修前三种根/祖先/知识更正均预期断言失败，两健康控制通过。现只在最后结果/复用回调后重查记忆与知识，保留旧门禁和历史。修后与独立同78方法各全pass、零错误/跳过；五新方法验证实际SQLite更正、知识内容变更、未变/无关更正、固定回调次数及报告/产物原字节。[原失败、精确候选、完整双审与原始回归](../../results/completion-basis-20261101/report.json)保留首次方案revise和范围限制，手工独审非trusted runtime。Plan72→73、唯一TASK/人类guide及全部旧Progress保留；原生五job新增各五方法发布后另核，不以旧CI替代。2609.38866v1本次已续读全文1–9/A–F及全部表图注，精确ID/章节/方法/消融/局限、独审及指标标签更正保留于同证据包；不重认证全局十篇。仅应用更正传播验收启示，未移植注意力机制；额外I/O成本、真实模型任务质量/全部tokens费用和其它回调顺序仍未测/未结案。旧tmux拒绝及耗尽额度不重开，同SYSTEM99不是完成轮次。
+
+### 2026-11-01 — COMPLETE-PROOF-CLOSURE-01 checkpoint
+
+同一SYS99继续关闭完成验收的证据绑定缺口：后续结果/reuse回调改写前项review evidence后，原result_report仍产出旧proof，完成复验仍接受；修前五方法三普通预期失败/两健康控制。现两个完成入口复用既有被动结果/复用绑定检查，保持原live verifier和记忆/知识门禁，raw producer仍pending不授信；不新增callback、重放、schema或记忆池。修后与独立同88方法各全pass、零error/skip，报告2/完成6callback和原报告/产物bytes保留。[完整基线、两版方案/首次regex返修、结果独审与原输出](../../results/completion-proof-20261101/report.json)为有限正确性检查点，手工独审非runtime回执；原生五job新增各五方法待精确head回读。Plan73→74/旧全部Progress/唯一TASK/人类guide保留；额外I/O未测，不报性能/质量/全费用。既读2609.38866v1 F.4的依赖缓存/迟到完成不刷新捕获输入启示用于本次验收设计，新增精读计数0；不移植注意力干预或重认证十篇。当前包保留前029原生日志与独审历史副本，非本次新数据或再次复用批准。报告自身/其它副作用并发、真实tmux/backend/模型质量/全角色费用等SYSTEM99未决继续open，旧耗尽scope不重置，不计完成轮次。

@@ -320,6 +320,15 @@ def validate_contract(plan, root, *, check_adopted_advice=True, required_task_re
     return [item for item in items if item['id'] in ids]
 
 
+def _check_completion_bindings(root, task, results, reused):
+    """Close captured accepted proofs after callbacks; raw producers stay pending."""
+    for proof in results:
+        if proof.get('status') == 'pending' and task.get('experiment_result') is not None:
+            continue
+        _check_validated_bindings(root, proof)
+    _check_reuse_bindings(root, task, reused)
+
+
 def result_report(root, task, result_verifier=None):
     check_task_documents(root, task)
     check_task_memory(root, task)
@@ -350,6 +359,7 @@ def result_report(root, task, result_verifier=None):
             raise ValueError('each datum needs kind and description; distinguish measured/synthetic/N/A')
     result_proofs = check_task_results(root, task, result_verifier, report=value)
     reuse_proofs = check_task_reuse(root, task, result_verifier)
+    _check_completion_bindings(root, task, result_proofs, reuse_proofs)
     check_task_documents(root, task)
     check_task_memory(root, task)
     check_task_knowledge(root, task)
@@ -484,6 +494,8 @@ class ReportingHandler:
             check_task_knowledge(self.root, task)
             check_task_results(self.root, task, self.result_verifier)
             check_task_reuse(self.root, task, self.result_verifier)
+            _check_completion_bindings(self.root, task, proof.get('result_validation', []),
+                                       proof.get('prior_result_reuse', []))
             # Verifier callbacks may correct the basis after the earlier reads.
             check_task_memory(self.root, task)
             check_task_knowledge(self.root, task)
