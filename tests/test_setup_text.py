@@ -126,7 +126,7 @@ class SetupTextTests(unittest.TestCase):
 
     @unittest.skipUnless(hasattr(os, 'mkfifo'), 'FIFO requires POSIX')
     def test_model_refresh_fifo_is_refused_before_any_write(self):
-        path = self.project / '.claude/agents/agent-research-write.md'
+        path = self.project / '.claude/agent-workflows/model-routing.json'
         self.assertTrue(path.is_file())
         path.unlink()
         os.mkfifo(path)

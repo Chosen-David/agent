@@ -145,4 +145,6 @@ python /absolute/agent/scripts/project_docs.py --root /absolute/ProjectA migrate
 
 ## 独立主控计划审核
 
+当前执行方式以[单主 Agent / 多 Skill](single_main_workflow.md)为准。以下为历史保护计划兼容约束，不要求创建第二 agent；旧独立回执不能由主 agent 自检替代。
+
 受管复杂任务执行 `workflows/dual_main_workflow.md`（独立 Skill 使用同目录 `dual_main_workflow.md`）：planner-main 维护方案与唯一 TASK，review-main 由可信宿主独立新上下文审查 intent/guide/assumptions/prior_results/acceptance/risk/resources。新 prepare 默认保护，完整实际 DAG 与指南/采纳建议/证据版本绑定；approve 后仍需工具授权和独立结果验收。无可信回执不派发，revise/reject 版本化返修；Progress 追加不失效。缺宿主接口如实 blocked；旧计划仅宿主明确 legacy-unprotected 兼容，不宣称已全部升级。

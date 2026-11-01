@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 74
+Version: 77
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -237,6 +237,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段COMPLETE-BASIS-LATE-CALLBACK（Version73，同SYSTEM99）：仅补完成复验最后一组独立结果/复用回调后的当前记忆与知识重查，保留所有原有门禁、handler与证据身份，不自动重放、更正或新建记忆层。固定真实算术verifier回调期间的根/祖先更正和知识变更三拒绝，以及未变/无关更正两兼容控制，确认修前失败后才应用精确候选；修后与独立同五方法和相邻回归各一次，五原生矩阵新增五方法另核。方案最多2次、baseline/fixed/independent各1、结果审查2次、源码CI1、无重试，2026-11-01T01:00Z截止；旧全部耗尽范围不重置。仅限完成证据更正传播可靠性，额外校验成本未测，真实模型质量/token/全费用、外部原子围栏和系统级未决仍open。2609.38866v1本次续读全文/附录后的“可检索不等于正确使用、复杂更正须独立验收”用于检查设计，不声称移植内部注意力干预或论文性能。
 
 阶段COMPLETE-PROOF-CLOSURE（Version74，同SYSTEM99）：完成报告与复验在所有独立结果/复用回调后，复用既有被动绑定校验关闭已捕获的接受证据；不新增verifier调用、授权或重放，原raw producer pending保留而不授信。冻结报告内后续结果、完成复验后续结果与复用回调更正前项review evidence三拒绝，及未变/无关更正控制；修前确认后才应用精确候选，修后和独立同五新方法及相邻回归各一次，五原生job新增各五方法另核。方案最多2次、baseline/fixed/independent各1、结果审核2次、源码CI1、无自动retry/provider/tmux；2026-11-01T02:00Z截止，与旧耗尽scope不互相重置。仅接受证据绑定闭包可靠性；raw pending与报告文件自身并发变化、全宿主/模型质量/费用/性能仍非完成保证，SYSTEM99继续open。
+
+阶段 SINGLE-MAIN（Version77，用户当前明确授权）：按 [迁移 v1](../../advice/SYSTEM-99-single-main-v2.md) 将默认执行改为单主 agent/多 Skill/一次一步。主 agent 唯一写作者，不再调用独立 AI；复核 Skill 是自检，旧独立合同和历史证据不降级。入口/安装/加载/SQLite 单活动步骤与恢复逐项验证，保留修前失败及兼容缺口，agent_doc 不迁目录。用户追加明确授权仅本次补充 agent_doc/guide/GUIDE.md 的禁止多 agent/单主多 Skill 规则；guide 其余及后续写入边界不扩大，旧指南绑定不追溯改写。旧 SYSTEM99 未决、耗尽范围及论文记录保持，阶段提交不算整轮完成。
 
 ## Progress
 
@@ -862,3 +864,8 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 ### 2026-11-01 — COMPLETE-PROOF-CLOSURE-01 checkpoint
 
 同一SYS99继续关闭完成验收的证据绑定缺口：后续结果/reuse回调改写前项review evidence后，原result_report仍产出旧proof，完成复验仍接受；修前五方法三普通预期失败/两健康控制。现两个完成入口复用既有被动结果/复用绑定检查，保持原live verifier和记忆/知识门禁，raw producer仍pending不授信；不新增callback、重放、schema或记忆池。修后与独立同88方法各全pass、零error/skip，报告2/完成6callback和原报告/产物bytes保留。[完整基线、两版方案/首次regex返修、结果独审与原输出](../../results/completion-proof-20261101/report.json)为有限正确性检查点，手工独审非runtime回执；原生五job新增各五方法待精确head回读。Plan73→74/旧全部Progress/唯一TASK/人类guide保留；额外I/O未测，不报性能/质量/全费用。既读2609.38866v1 F.4的依赖缓存/迟到完成不刷新捕获输入启示用于本次验收设计，新增精读计数0；不移植注意力干预或重认证十篇。当前包保留前029原生日志与独审历史副本，非本次新数据或再次复用批准。报告自身/其它副作用并发、真实tmux/backend/模型质量/全角色费用等SYSTEM99未决继续open，旧耗尽scope不重置，不计完成轮次。
+
+### 2026-11-01 — SINGLE-MAIN 用户授权架构迁移检查点
+
+- 当前用户改为单主 agent、多 Skill、一次一步串行开发，并明确要求 GUIDE.md 禁用多 agent 并行。Plan77/v2 记录窄范围指南授权和后续全部迭代遵循最新 main/原任务链；其余 guide 保护和旧独立合同不降级。现有持续优化配置已同步并读回，未创建新任务。
+- [原失败、代码验收与未决](../../results/single-main-20261101/report.md)：冻结 v2 同 7 方法修前6失败/1控制通过、修后7通过；176集成和最终入口补充20通过。只本地主 agent 自检，独立AI调用0，不伪造独立批准。全库2049方法82失败/2错误/15跳过，83既有同标题已隔离父版本确认，另/proc读取None待诊断；不称全库通过。新源码CI和普通推送回读另核，前提交五CI成功不抵新版本；新论文正文0、质量/性能/token/费用未知，SYSTEM99仍open。

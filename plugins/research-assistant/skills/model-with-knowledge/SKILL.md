@@ -3,6 +3,9 @@ name: model-with-knowledge
 description: 按问题结构检索数学/物理、AI Infra、AI算法与跨物种神经科学研究，以及固定版本数据结构/算法实现。用于建模、采样分布校正、算法成本条件、实验前决策、仿生AI假设筛选与代码复用；核对来源、前提与迁移限制，不以文献替代必做验证。
 ---
 
+先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+
+
 # 知识建模与推导
 
 AI Infra/AI 算法实验决策或数据结构/算法实现复用时，按需读 [工程知识复用](references/engineering_reuse.md)，不强套数学推导流程。检索实验卡必须核对原始设置、负结果与版本；代码卡读取固定 commit/API/许可证。`decision` 可比较已知条件，仍需人工复核；显式复现、正确性和新环境性能验收不能用文献替代。
@@ -49,4 +52,4 @@ python scripts/knowledge.py --root assets/knowledge related math.topk-margin
 
 规划实验/测量或复用实证结论前按 [既有结果检索与复用](references/result_reuse_workflow.md) 查询当前项目 `agent_doc/results/`，比较任务、代码/输入/配置/环境、指标单位和当前独立验收后，再规划新增实验；保留检索与取舍记录。新数据存 `agent_doc/results/<run_id>/`，旧文件可按真实路径/哈希索引。复用不跳过独立代码/数据门禁、用户明确复现或新主张验收。
 
-受管复杂项目的主控边界见 [双主 AI 计划审核](references/dual_main_workflow.md)：按已审核的准确任务/证据版本执行；新方案返回 planner-main 并由独立 review-main 复审，专业角色不能自批、越权或替代独立结果验收。简单独立任务保持原流程。
+历史保护计划的兼容边界见 [旧双主控协议](references/dual_main_workflow.md)。不启动第二主控，不追溯改写已有批准；缺独立证据的旧合同保留 blocked/pending，再按当前用户要求版本化协调。

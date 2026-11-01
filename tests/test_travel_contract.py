@@ -259,8 +259,9 @@ class TravelDocumentationContractChecks(unittest.TestCase):
             legacy = plugin / LEGACY.relative_to(PLUGIN)
             visited, edges = check_materialized_navigation(plugin, [skill, legacy])
             self.assertTrue({plugin / CONTRACT.relative_to(PLUGIN),
-                             plugin / WORKFLOW.relative_to(PLUGIN)} <= visited)
-            self.assertEqual((len(visited), len(edges)), (14, 23))
+                             plugin / WORKFLOW.relative_to(PLUGIN),
+                             skill.parent / 'references/single_main_workflow.md'} <= visited)
+            self.assertEqual((len(visited), len(edges)), (15, 26))
 
     def test_top_level_navigation_resolves(self):
         for href in markdown_links(TOP_LEVEL.read_text()):

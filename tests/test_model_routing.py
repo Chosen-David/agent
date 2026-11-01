@@ -78,22 +78,23 @@ class InstallationRoutingTests(unittest.TestCase):
 
     def test_snapshot_persists_without_discovery_and_can_be_reset(self):
         setup.install(self.project, model_inventory=inventory())
-        agent = self.project / '.claude/agents/agent-research-write.md'
-        self.assertIn('model: "claude-opus-5-5"', agent.read_text())
-        before = agent.read_bytes()
+        snapshot = self.project / '.claude/agent-workflows/model-routing.json'
+        before = snapshot.read_bytes()
+        self.assertEqual(list(self.project.glob('.claude/agents/agent-*.md')), [])
         setup.install(self.project)
-        self.assertEqual(before, agent.read_bytes())
+        self.assertEqual(before, snapshot.read_bytes())
         with patch('subprocess.run', side_effect=AssertionError('offline check must not call host')):
             self.assertEqual(setup.check(self.project)['status'], 'configured')
         setup.install(self.project, model_inventory=EMPTY_INVENTORY)
-        self.assertIn('model: "inherit"', agent.read_text())
+        self.assertNotEqual(snapshot.read_bytes(), before)
+        self.assertEqual(setup.check(self.project)['subagents'], 0)
         setup.uninstall(self.project)
-        self.assertFalse(agent.exists())
+        self.assertFalse(snapshot.exists())
 
     def test_external_preference_never_becomes_unroutable_native_model(self):
         setup.install(self.project, model_inventory=inventory('glm', 'adapter'))
         agent = self.project / '.claude/agents/agent-research-implement-optimize.md'
-        self.assertIn('model: "inherit"', agent.read_text())
+        self.assertFalse(agent.exists())
         route = setup.check(self.project)['model_routing']['routes']['research-implement-optimize']
         self.assertEqual(route['skipped'][0]['reason'], 'adapter_missing')
 
@@ -135,14 +136,9 @@ class InstallationRoutingTests(unittest.TestCase):
         cli = self.executable('fake-claude', 'import json,sys,os\nprint(json.dumps({"argv":sys.argv[1:],"stdin":sys.stdin.read(),"cwd":os.getcwd()}))\n')
         for role in ('research-write', 'planner-main', 'review-main'):
             result = self.run_role(role, '--inventory', str(empty), '--claude', cli)
-            self.assertEqual(result.returncode, 0, result.stderr)
-            output = json.loads(result.stdout)
-            self.assertNotIn('--model', output['argv'])
-            definition = json.loads(output['argv'][output['argv'].index('--agents') + 1])
-            self.assertEqual(definition['routed-' + role]['model'], 'inherit')
-            self.assertTrue(definition['routed-' + role]['prompt'])
-            self.assertEqual(output['cwd'], str(self.project))
-            self.assertEqual(output['stdin'], 'TASK CONTENT')
+            self.assertEqual(result.returncode, 2, result.stderr)
+            self.assertIn('Single-main', result.stderr)
+            self.assertEqual(result.stdout, '')
 
     def test_cli_adapter_protocol_and_no_retry_after_side_effect(self):
         setup.install(self.project)
@@ -153,11 +149,8 @@ class InstallationRoutingTests(unittest.TestCase):
             'else:\n pathlib.Path("effect").write_text(json.dumps(r))\n sys.exit(7)\n')
         cli = self.executable('must-not-run', 'raise AssertionError("unexpected native retry")\n')
         result = self.run_role('research-implement-optimize', '--adapter', adapter, '--claude', cli)
-        self.assertEqual(result.returncode, 7, result.stderr)
-        request = json.loads((self.project / 'effect').read_text())
-        self.assertEqual(request['route']['provider'], 'zai')
-        self.assertEqual(request['route']['model'], 'glm-5.3')
-        self.assertEqual(request['prompt'], 'TASK CONTENT')
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertFalse((self.project / 'effect').exists())
 
     def test_bad_adapter_inventory_defaults_and_dry_run_never_executes(self):
         setup.install(self.project, model_inventory=inventory())
@@ -167,8 +160,8 @@ class InstallationRoutingTests(unittest.TestCase):
         self.assertFalse((self.project / 'called').exists())
         cli = self.executable('default-cli', 'import json,sys\nprint(json.dumps(sys.argv[1:]))\n')
         result = self.run_role('research-write', '--adapter', adapter, '--claude', cli)
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertNotIn('--model', json.loads(result.stdout))
+        self.assertEqual(result.returncode, 2, result.stderr)
+        self.assertFalse((self.project / 'called').exists())
         self.assertNotIn('SECRET', result.stderr + result.stdout)
 
 

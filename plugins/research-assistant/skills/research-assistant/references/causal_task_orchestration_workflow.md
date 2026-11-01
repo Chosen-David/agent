@@ -2,6 +2,8 @@
 
 # 因果任务拆分与资源感知编排
 
+> 历史协议/兼容资料。当前按[单主 Agent / 多 Skill](single_main_workflow.md)执行；下文多 agent/双主控/并行示例不再是默认执行指令。保留旧保护、证据和恢复边界，不授权启动第二 agent。
+
 主 AI 为减少交付等待，主动识别同一任务链内部可独立执行的工作，不默认一条链只推进一个任务。先读取当前项目指南、TASK 与已有结果，按 [双主审核](dual_main_workflow.md) 冻结计划；执行与验收沿用 [任务监督](task_supervision_workflow.md) 和 [结果验证](result_validation_workflow.md)。简单任务无需为并行增加流程。
 
 ## 先判断依赖，再选择粒度

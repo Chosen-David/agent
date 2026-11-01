@@ -3,6 +3,9 @@ name: research-figures
 description: "兼容论文作图入口：按证据与表达目的路由到论文数据可视化或流程架构图；负责全篇图规划、混合多面板整合和知识解释方调用的网页教学图。单一数据图或示意图优先专业技能。"
 ---
 
+先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+
+
 # 论文作图协调
 
 先读 [本角色工作流](references/workflow.md) 与 [共享契约和美学 QA](references/figure_shared.md)。按任务只读相关章节，完整 Prompt 位于工作流末尾。
@@ -40,6 +43,6 @@ description: "兼容论文作图入口：按证据与表达目的路由到论文
 
 规划实验/测量或复用实证结论前按 [既有结果检索与复用](references/result_reuse_workflow.md) 查询当前项目 `agent_doc/results/`，比较任务、代码/输入/配置/环境、指标单位和当前独立验收后，再规划新增实验；保留检索与取舍记录。新数据存 `agent_doc/results/<run_id>/`，旧文件可按真实路径/哈希索引。复用不跳过独立代码/数据门禁、用户明确复现或新主张验收。
 
-受管复杂项目的主控边界见 [双主 AI 计划审核](references/dual_main_workflow.md)：按已审核的准确任务/证据版本执行；新方案返回 planner-main 并由独立 review-main 复审，专业角色不能自批、越权或替代独立结果验收。简单独立任务保持原流程。
+历史保护计划的兼容边界见 [旧双主控协议](references/dual_main_workflow.md)。不启动第二主控，不追溯改写已有批准；缺独立证据的旧合同保留 blocked/pending，再按当前用户要求版本化协调。
 
 实验取证、贡献叙述或论文图表修订时，读取 [全面取证与贡献导向写作](references/paper_exemplar_learning.md) 的 §9（evidence-to-contribution）：用覆盖矩阵和已有 claim ledger 组织可信贡献，关键退化在相关主结果旁披露，次要限制集中讨论；只加载该节不强制重启全稿范文学习。它是角色执行规范，不代表已自动运行或通过行为评测。

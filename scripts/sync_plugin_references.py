@@ -180,6 +180,10 @@ for source_path in sorted((ROOT / 'knowledge').rglob('*')):
         RAW_COPY_SOURCES.add(source)
 
 # Independent main-plan review is separate from every specialist's acceptance.
+MAPPINGS['workflows/single_main_workflow.md'] = [
+    (Path(role['skill']).parent / 'references/single_main_workflow.md').as_posix()
+    for role in json.loads((ROOT / 'config/role_registry.json').read_text())['roles']
+]
 MAPPINGS['workflows/dual_main_workflow.md'] = [
     (Path(role['skill']).parent / 'references/dual_main_workflow.md').as_posix()
     for role in json.loads((ROOT / 'config/role_registry.json').read_text())['roles']

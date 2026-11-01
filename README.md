@@ -4,7 +4,7 @@
 
 # Agent Workflows
 
-**让通用 AI 按需协作，把目标推进为可核验的交付。**
+**一个主 Agent，按需加载 Skill，沿任务链逐步交付。**
 
 科研 · 代码与 Kernel · 论文学习 · 旅行规划
 
@@ -14,7 +14,7 @@
 
 ---
 
-把专业能力接入你正在工作的项目：主 AI 保持通用身份，按目标选择技能，围绕代码、数据、图表与文稿组织协作。简单问题直接处理；复杂任务才使用计划审核、任务 DAG、版本化交接与独立验收。
+把专业能力接入你正在工作的项目：主 AI 保持通用身份，按目标选择技能，围绕代码、数据、图表与文稿顺序推进。简单问题直接处理；复杂任务沿唯一任务链一次执行一步，不启动多个 agent。专业复核是主 agent 的下一步骤；已有独立验收合同仍需真实外部证据。
 
 仓库提供 **16 个角色技能、2 个插件包、可复制工作流，以及可选的本地运行时**。模型、工具、认证和运行资源由实际宿主提供；安装工作流本身不会启动模型或后台服务。
 
@@ -22,7 +22,7 @@
 
 | 按需组合 | 交付可追溯 | 项目各自独立 |
 | :--- | :--- | :--- |
-| 一个通用主 AI，按任务加载专业角色；无需每次启动整套科研流程。 | 从输入、实现到最终产物保留版本与证据；结果经过独立检查再消费。 | Project A 的指南、任务与结果留在 Project A，接入多个项目也不混用上下文。 |
+| 一个通用主 AI，按当前步骤加载专业 Skill；无需每次启动整套科研流程。 | 从输入、实现到最终产物保留版本与证据；结果经过独立检查再消费。 | Project A 的指南、任务与结果留在 Project A，接入多个项目也不混用上下文。 |
 
 ## 快速开始
 
@@ -160,7 +160,7 @@ python scripts/setup_codex.py --check
 | 机制 | 解决的问题 | 实现与边界 |
 | :--- | :--- | :--- |
 | **计划审核与任务 DAG** | 遗漏要求、错误依赖、重复派发 | [双主 AI](workflows/dual_main_workflow.md) · [任务监督](workflows/task_supervision_workflow.md) |
-| **资源感知并发** | 可并行任务被串行化、汇总缺分片 | [因果拆分与完整汇总](workflows/causal_task_orchestration_workflow.md)；仅使用实际已授权资源 |
+| **串行任务链** | 重叠执行、等待时越过当前步骤 | [单主 Agent / 多 Skill](workflows/single_main_workflow.md)；完成并核验当前步骤后再推进 |
 | **定向证据交接** | 旧消息、版本漂移、返修无法闭环 | [通信工作流](workflows/agent_communication_workflow.md)；本地收件箱是 opt-in，不是独立模型调度器 |
 | **独立结果验收** | 产出文件就被当作成功、旧 pass 被复用 | [结果校验](workflows/result_validation_workflow.md) · [检索与复用](workflows/result_reuse_workflow.md) |
 | **知识与项目记忆** | 前提失效、纠错后旧结论继续传播 | [知识接入](workflows/knowledge_access_workflow.md) · [项目记忆](workflows/project_memory_workflow.md) |

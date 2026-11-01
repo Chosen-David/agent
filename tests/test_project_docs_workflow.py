@@ -254,7 +254,7 @@ class DocumentSetupTests(unittest.TestCase):
             setup.uninstall(self.target)
         self.assertEqual(list(guide.iterdir()), [])
         self.assertEqual(manifest.read_bytes(), before)
-        self.assertTrue((self.target / '.claude/agents/agent-research-assistant.md').is_file())
+        self.assertTrue((self.target / '.claude/agent-workflows/single_main_workflow.md').is_file())
         self.assertEqual(setup.check(self.target)['status'], 'needs_setup')
 
     def test_claude_install_target_cannot_be_inside_a_guide_tree(self):

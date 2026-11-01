@@ -1,6 +1,6 @@
 # Claude Code 快速接入
 
-仓库是主 AI 的工作流与技能层。安装接入按需调度入口、全部角色 Skills 和 Claude 子 Agent。简单任务直接处理，复杂任务才加载完整编排。适用于 **Claude Code**；后台监督是可选配置。
+仓库是主 AI 的工作流与技能层。安装接入一个主 AI 入口与全部专业 Skills，不创建 Claude 子 Agent。简单任务直接处理，复杂任务才加载完整编排。适用于 **Claude Code**；后台监督是可选配置。
 
 ## 两步开始
 
@@ -12,7 +12,7 @@ python3 agent/setup.py --target /absolute/path/to/your-project
 
 默认使用轻量检出，包含两种安装器的全部依赖与应用，不带本库历史任务/实验结果和大型开发资料。维护本库自身或运行完整测试前，请在 agent 目录运行 `git sparse-checkout disable` 恢复完整工作树。
 
-仓库的 Skills 随 clone 一起下载。脚本读取角色注册表，当前配置 16 个 Skills 和 16 个 `agent-*` 子 Agent，不需要逐个找文件。Python 3.10+，无 pip 依赖。Windows 原生环境默认复制技能，无需管理员或符号链接权限，命令中的 `python3` 可换成 `python`。Linux/WSL 默认链接技能，也可传 `--copy-skills`。已有链接保持链接；已有复制安装继续按复制方式更新。tmux 监督需要 Linux/WSL/server，仅后台任务才用。
+仓库的 Skills 随 clone 一起下载。脚本读取角色注册表，当前配置 16 个 Skills、0 个 `agent-*` 子 Agent，不需要逐个找文件。Python 3.10+，无 pip 依赖。Windows 原生环境默认复制技能，无需管理员或符号链接权限，命令中的 `python3` 可换成 `python`。Linux/WSL 默认链接技能，也可传 `--copy-skills`。已有链接保持链接；已有复制安装继续按复制方式更新。tmux 监督需要 Linux/WSL/server，仅后台任务才用。
 
 如果直接在本仓库工作：
 
@@ -22,7 +22,7 @@ python3 setup.py --target .
 claude
 ```
 
-如果接入其他项目，在安装后进入**目标项目**启动 `claude`。已有 Claude 会话应重新启动后检查 `/memory` 和 `/agents`；这些宿主读回才表明 Claude 实际加载了规则/角色。安装脚本只检查文件连通与环境，不自动调用模型或验证登录。
+如果接入其他项目，在安装后进入**目标项目**启动 `claude`。已有 Claude 会话应重新启动后检查 `/memory` 和 Skill 来源；这些宿主读回才表明 Claude 实际加载了规则/角色。安装脚本只检查文件连通与环境，不自动调用模型或验证登录。
 
 ## 安装了什么
 
@@ -34,18 +34,24 @@ claude
 | 项目 `CLAUDE.md` 中的受管块 | 简短按需入口，保留已有内容；不自动导入整篇编排说明 |
 | `.claude/agent-workflows/orchestrator.md` | 完整编排副本，复杂任务按需读取 |
 | `.claude/skills/<角色>/` | Windows 为内容校验的副本；Linux/WSL 默认链接，包含完整 references/scripts/assets |
-| `.claude/agents/agent-<角色>.md` | Claude 可调度子 Agent，预加载对应 Skill，返回任务 ID、数据和证据 |
+| `.claude/agent-workflows/single_main_workflow.md` | 一个主 agent，一次一步，按需读取当前 Skill；不安装子 agent 包装 |
 | `.claude/agent-workflows/installation.json` | 记录仓库位置、版本、受管文件哈希和安装清单 |
 
 主 AI 保持通用身份，不因接入科研技能把旅行/编程等任务全部转成论文流程。项目现有规则和宿主权限继续适用。安装不会修改全局 Claude 配置、全局默认模型、permissionMode、API key，不会替换同名用户 Skill，也不会自动开始不存在的任务。
 
 Git 仓库本身的 `CLAUDE.md` 可在 clone 后被 Claude 发现，引导完成 setup；正式角色接入仍需运行脚本。不要同时给同一项目安装这套本地 Skill 和同名 marketplace 插件以免名称冲突。已有 marketplace 用户可继续原方式使用，但需要主 AI 调度入口时优先选择此完整项目接入流程。
 
-## 按角色选择模型
+## 顺序加载能力
 
-普通安装保持默认模型。可选 `--model-inventory /private/host-models.json` 为当前宿主已支持的型号生成角色配置；缺模型/能力则继承默认。Opus用于规划和审阅、GLM用于代码、Kimi用于长文/视觉阅读、DeepSeek用于推导/整理，完整18角色映射及依据见 [角色模型配置](docs/role_models.md)。这是可调整初值，不是本项目实测排名。
+按 [单主 Agent / 多 Skill](workflows/single_main_workflow.md) 运行。主 agent 自己做规划、实现、测试和复核，每步更新原任务后再进入下一步。读取 Skill 可用：
 
-安装保存目录和路由快照；`--check`离线检查，更新时不传目录则保留上次选择。跨厂商通过 `scripts/run_role.py --adapter /trusted/agent-model-adapter` 的显式宿主接口；本库不附带厂商凭据或在线Agent后端。适配器/模型不可用时回退宿主默认，任务已启动后不自动换模型重跑。只有原生Claude入口消费安装的model字段；Codex/marketplace纯Skill安装不修改模型。
+```bash
+python agent/scripts/load_skill.py --project /absolute/path/to/your-project --skill research-implement-optimize
+```
+
+该命令只输出已核验的 Skill 来源和正文，不启动模型。旧 `run_role.py` 仅保留 `--dry-run` 路由诊断，实际执行明确拒绝。旧 model-policy/model-routing 快照仅供兼容诊断，不切换当前主 agent 的模型。
+
+升级时只清除安装清单中指纹未变的旧 agent 包装和双主控入口；本地修改在任何写入前报冲突，自建 agent 不动。安装成功不证明宿主已卸载当前会话缓存的角色；新会话核对实际入口。同一主 agent 复核不是独立验收，旧独立合同缺证据仍 pending。
 
 ## 旧项目迁移与人类指南
 
@@ -63,7 +69,7 @@ python3 agent/setup.py --target /absolute/path/to/your-project
 
 ## 第一个任务
 
-在目标项目启动 Claude，检查 `/memory` 和 `/agents` 后，直接描述想完成的工作。例如：
+在目标项目启动 Claude，检查 `/memory` 和 Skill 来源 后，直接描述想完成的工作。例如：
 
 > 找出项目的启动入口，给出最短运行步骤；若发现一个阻碍运行的问题，修复并做必要验证。只加载相关技能。
 

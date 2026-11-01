@@ -64,11 +64,14 @@ class WaitingContracts(unittest.TestCase):
         self.handler.outcome = Outcome('complete', evidence=['checked'])
         self.assertEqual(self.tick()['status'], 'done')
 
-    def test_ready_independent_task_gets_second_turn(self):
+    def test_ready_step_waits_until_current_pending_step_finishes(self):
         self.store.create(plan(task(attempts=20), task('quick')))
         self.tick()
+        self.assertEqual(self.tick()['tasks']['quick']['status'], 'todo')
+        self.handler.outcome = Outcome('complete', evidence=['checked'])
+        self.tick()
         self.assertEqual(self.tick()['tasks']['quick']['status'], 'done')
-        self.assertEqual([t for t, _ in self.handler.calls], ['slow', 'quick'])
+        self.assertEqual([t for t, _ in self.handler.calls], ['slow', 'slow', 'slow', 'quick'])
 
     def test_poll_budget_blocks_without_failing_or_marking_done(self):
         t = task(); t['wait_policy']['max_polls'] = 2
@@ -104,10 +107,10 @@ class WaitingContracts(unittest.TestCase):
         self.store = Store(self.path)
         self.tick()
         self.tick()
-        self.assertEqual([t for t, _ in self.handler.calls], ['slow', 'quick', 'slow'])
+        self.assertEqual([t for t, _ in self.handler.calls], ['slow', 'slow', 'slow'])
         self.assertEqual(self.handler.calls[0][1], self.handler.calls[2][1])
         node = self.store.snapshot('waiting')['state']['tasks']['slow']
-        self.assertEqual((node['attempts'], node['pending_polls']), (0, 2))
+        self.assertEqual((node['attempts'], node['pending_polls']), (0, 3))
 
     def test_retries_after_pending_still_exhaust_attempts(self):
         self.store.create(plan(task()))

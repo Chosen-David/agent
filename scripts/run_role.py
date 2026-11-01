@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Dispatch an installed role once, using host inventory or the host default.
+"""Deprecated role runner: offline routing diagnostics only.
 
-An optional trusted executable accepts JSON on stdin: operation=inventory is
-read-only; operation=run owns the authenticated agent/tool loop. No shell eval.
+Use scripts/load_skill.py to read a Skill in the current main agent. Historical
+host helper functions remain import-compatible; this CLI never launches them.
 """
 from __future__ import annotations
 
@@ -144,6 +144,9 @@ def main():
     parser.add_argument('--max-input-tokens', type=int, help='Optional complete local request token cap; requires --tokenizer')
     parser.add_argument('--tokenizer', help='Explicit optional tiktoken encoding; never inferred from model name')
     args = parser.parse_args()
+    if not args.dry_run:
+        print('Single-main execution: load the Skill with scripts/load_skill.py in the current agent. No role launched.', file=sys.stderr)
+        return 2
     if args.inventory and args.adapter:
         parser.error('choose --inventory or --adapter')
     if args.adapter_arg and not args.adapter:
@@ -156,52 +159,17 @@ def main():
     if not 1 <= args.timeout <= 86400:
         parser.error('--timeout must be between 1 and 86400')
     try:
-        prompt = None
-        counter = None
-        if not args.dry_run:
-            prompt = sys.stdin.read(1024 * 1024 + 1)
-            if not prompt.strip() or len(prompt.encode('utf-8')) > 1024 * 1024:
-                raise RoleInputError('provide a nonempty UTF-8 task on stdin, at most 1 MiB')
-            if args.tokenizer:
-                from agent_runtime.handoff_basis import make_token_counter
-                counter = make_token_counter(args.tokenizer)
         project = Path(args.project).resolve()
         installer = bootstrap()
-        status = installer.check(project)
-        if status['errors']:
+        if installer.check(project)['errors']:
             raise ValueError('installation needs setup; run setup.py --check')
         directory = project / '.claude/agent-workflows'
         policy = load_json(directory / 'model-policy.json')
         inventory = validate_inventory(load_json(args.inventory) if args.inventory else
                                        load_json(directory / 'installation.json').get('model_inventory', EMPTY_INVENTORY))
-        definition = role_definition(project, args.role, policy, installer=installer)
-        command = [str(Path(args.adapter).resolve()), *args.adapter_arg] if args.adapter else None
-        request = {'schema_version': 1, 'project_root': str(project), 'role': args.role,
-                   'definition': definition, 'prompt': prompt}
-        if not args.dry_run:
-            check_request(request, args.max_request_bytes, max_tokens=args.max_input_tokens, counter=counter)
-        if command and not args.dry_run:
-            try:
-                inventory = adapter_inventory(command, project)
-            except (OSError, ValueError, subprocess.TimeoutExpired):
-                inventory = EMPTY_INVENTORY
-                print('Model inventory unavailable; using host default before task launch.', file=sys.stderr)
-        route = resolve(policy, args.role, inventory,
-                        adapter_available=command is not None and not args.dry_run, requires=args.require)
-        if args.dry_run:
-            print((render_context(route, compact=True) if args.compact else json.dumps(route, ensure_ascii=False, indent=2)))
-            return 0
-        print((render_context({'selected_route': route}, compact=True) if args.compact else json.dumps({'selected_route': route}, ensure_ascii=False)), file=sys.stderr)
-        def bounded(handler):
-            def invoke(value):
-                check_request(value, args.max_request_bytes, max_tokens=args.max_input_tokens, counter=counter)
-                return handler(value)
-            return invoke
-        _, code = dispatch(policy, args.role, inventory, request,
-                           native=bounded(lambda r: native_run([args.claude, *args.claude_arg], r, args.timeout)),
-                           adapter=bounded(lambda r: adapter_run(command, r, args.timeout)) if command else None,
-                           requires=args.require)
-        return code
+        route = resolve(policy, args.role, inventory, adapter_available=False, requires=args.require)
+        print(render_context(route, compact=True) if args.compact else json.dumps(route, ensure_ascii=False, indent=2))
+        return 0
     except RoleInputError as exc:
         print(f'Role input rejected: {exc}. No task launched.', file=sys.stderr)
         return 2

@@ -402,7 +402,7 @@ class PortableSetup(unittest.TestCase):
 
     def test_simple_entry_loads_orchestration_only_on_demand(self):
         self.assertNotIn('@.claude/agent-workflows/orchestrator.md', setup.block())
-        self.assertIn('`.claude/agent-workflows/orchestrator.md`', setup.block())
+        self.assertIn('`.claude/agent-workflows/single_main_workflow.md`', setup.block())
         self.assertIn('简单、目标明确的任务直接完成', setup.block())
 
 

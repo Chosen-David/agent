@@ -36,7 +36,7 @@ class SetupTests(unittest.TestCase):
         result = setup.install(self.target)
         self.assertEqual(result['status'], 'configured')
         self.assertEqual(result['skills'], len(setup.catalog()))
-        self.assertEqual(result['subagents'], len(setup.catalog()))
+        self.assertEqual(result['subagents'], 0)
         manifest = json.loads((self.target / '.claude/agent-workflows/installation.json').read_text())
         self.assertEqual(manifest['project_root'], str(self.target.resolve()))
         self.assertEqual(manifest['repository'], str(ROOT))
@@ -52,8 +52,7 @@ class SetupTests(unittest.TestCase):
                 self.assertEqual(skill.resolve(), source)
             self.assertEqual((skill / 'SKILL.md').read_bytes(), (source / 'SKILL.md').read_bytes())
             agent = self.target / '.claude/agents' / ('agent-' + role['id'] + '.md')
-            self.assertIn('  - ' + role['id'], agent.read_text())
-            self.assertNotIn('bypassPermissions', agent.read_text())
+            self.assertFalse(agent.exists())
 
     def test_repeat_install_is_idempotent(self):
         setup.install(self.target)
@@ -128,7 +127,7 @@ class SetupTests(unittest.TestCase):
         path = self.target / 'CLAUDE.md'
         path.write_text(path.read_text().replace(setup.END, '', 1))
         manifest = self.target / '.claude/agent-workflows/installation.json'
-        agent = self.target / '.claude/agents/agent-research-assistant.md'
+        agent = self.target / '.claude/agent-workflows/single_main_workflow.md'
         skill = self.target / '.claude/skills/research-assistant'
 
         with self.assertRaisesRegex(ValueError, 'malformed'):
@@ -162,7 +161,7 @@ class SetupTests(unittest.TestCase):
 
     def test_locally_edited_generated_agent_is_preserved(self):
         setup.install(self.target)
-        path = self.target / '.claude/agents/agent-research-assistant.md'
+        path = self.target / '.claude/agent-workflows/single_main_workflow.md'
         path.write_text('my customized agent')
         with self.assertRaisesRegex(ValueError, 'locally edited'): setup.install(self.target)
         self.assertEqual(path.read_text(), 'my customized agent')
@@ -170,10 +169,10 @@ class SetupTests(unittest.TestCase):
     def test_uninstall_removes_only_owned_unmodified_files(self):
         (self.target / 'CLAUDE.md').write_text('Original project rules\n')
         setup.install(self.target)
-        agent = self.target / '.claude/agents/agent-research-assistant.md'
+        agent = self.target / '.claude/agent-workflows/single_main_workflow.md'
         agent.write_text('keep local edits')
         result = setup.uninstall(self.target)
-        self.assertIn('.claude/agents/agent-research-assistant.md', result['preserved_local_edits'])
+        self.assertIn('.claude/agent-workflows/single_main_workflow.md', result['preserved_local_edits'])
         self.assertEqual(agent.read_text(), 'keep local edits')
         self.assertIn('Original project rules', (self.target / 'CLAUDE.md').read_text())
         self.assertNotIn(setup.BEGIN, (self.target / 'CLAUDE.md').read_text())

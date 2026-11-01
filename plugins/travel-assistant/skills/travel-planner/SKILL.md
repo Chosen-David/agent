@@ -3,6 +3,9 @@ name: travel-planner
 description: "根据日期、目的地、酒店或集合点、预算与指定活动规划旅行，核查天气、营业和交通，维护行程并按需输出Word等文档。用于旅游、约会、运动出游、住宿区域建议和行中改计划；单点查询直接回答，不擅自预订或付款。"
 ---
 
+先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+
+
 # 旅游规划
 
 复杂多日旅行默认采用 JourneyPilot 风格的合同化执行：`RequestContract → ResearchQueryPlan → typed candidates → Admission → Intent Evaluation → Ranking → Selection → Itinerary → Intent Fidelity Gate → DeliveryBundle`。不要让研究 Worker 直接自由生成最终行程。这些是本地编排记录与行为规范，不是 JourneyPilot API schema 或已部署服务。
@@ -34,4 +37,4 @@ description: "根据日期、目的地、酒店或集合点、预算与指定活
 
 规划实验/测量或复用实证结论前按 [既有结果检索与复用](references/result_reuse_workflow.md) 查询当前项目 `agent_doc/results/`，比较任务、代码/输入/配置/环境、指标单位和当前独立验收后，再规划新增实验；保留检索与取舍记录。新数据存 `agent_doc/results/<run_id>/`，旧文件可按真实路径/哈希索引。复用不跳过独立代码/数据门禁、用户明确复现或新主张验收。
 
-受管复杂项目的主控边界见 [双主 AI 计划审核](references/dual_main_workflow.md)：按已审核的准确任务/证据版本执行；新方案返回 planner-main 并由独立 review-main 复审，专业角色不能自批、越权或替代独立结果验收。简单独立任务保持原流程。
+历史保护计划的兼容边界见 [旧双主控协议](references/dual_main_workflow.md)。不启动第二主控，不追溯改写已有批准；缺独立证据的旧合同保留 blocked/pending，再按当前用户要求版本化协调。

@@ -124,7 +124,7 @@ class InstallRecoveryTests(unittest.TestCase):
         self.assertEqual(setup.install(self.root)['errors'], [])
         result = setup.uninstall(self.root)
         self.assertEqual(result['preserved_local_edits'], [])
-        self.assertFalse((self.root / '.claude/agents/agent-research-write.md').exists())
+        self.assertFalse((self.root / '.claude/agent-workflows/model-routing.json').exists())
         self.assertEqual(sentinel.read_bytes(), before)
 
     def test_doctor_preserves_nonmodel_local_edits(self):
@@ -145,7 +145,7 @@ class InstallRecoveryTests(unittest.TestCase):
         original = snapshot(self.root)
         for relative in ('.claude/agent-workflows/model-policy.json',
                          '.claude/agent-workflows/model-routing.json',
-                         '.claude/agents/agent-research-write.md'):
+                         '.claude/agent-workflows/model-policy.json'):
             path = self.root / relative
             saved = path.read_bytes()
             path.write_bytes(b'user-edited model file\n')
@@ -212,9 +212,9 @@ class InstallRecoveryTests(unittest.TestCase):
                 if kind == 'mapping':
                     data['files'] = []
                 elif kind == 'fingerprint':
-                    data['files']['.claude/agents/agent-research-write.md'] = 123
+                    data['files']['.claude/agent-workflows/model-routing.json'] = 123
                 else:
-                    del data['files']['.claude/agents/agent-research-write.md']
+                    del data['files']['.claude/agent-workflows/model-routing.json']
                 path.write_text(json.dumps(data), encoding='utf-8')
                 before = snapshot(self.root)
                 with patch.object(setup, '_auto_discover_inventory', return_value=inventory()):
@@ -224,12 +224,12 @@ class InstallRecoveryTests(unittest.TestCase):
 
     def test_doctor_restores_missing_file_only_with_ownership(self):
         self.install_empty()
-        path = self.root / '.claude/agents/agent-research-write.md'
+        path = self.root / '.claude/agent-workflows/model-routing.json'
         path.unlink()
         with patch.object(setup, '_auto_discover_inventory', return_value=inventory()):
             report = setup.doctor(self.root)
         self.assertEqual(report['errors'], [])
-        self.assertIn('model: "claude-opus-5-5"', path.read_text(encoding='utf-8'))
+        self.assertEqual(json.loads(path.read_text(encoding='utf-8'))['routes']['research-write']['model'], 'claude-opus-5-5')
         self.assertEqual(setup.install(self.root)['errors'], [])
 
     def test_doctor_rejects_invalid_discovered_inventory_before_writes(self):

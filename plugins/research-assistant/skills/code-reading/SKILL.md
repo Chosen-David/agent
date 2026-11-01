@@ -3,6 +3,9 @@ name: code-reading
 description: "只读理解代码库、追踪真实调用链与数据流，核查报告机制和默认/可选配置；以 commit、函数、行号交付证据。适用于代码解释与实现前核查，不自动修改目标。用户授权的审查轮次按升级路径执行：先查回信，再审最新本地代码找 bug（有则写 advice），无 bug 时探测数据结构/算法/AI 算法的 CPU/GPU 性能优化点，本地实测确认真实改进才写 advice，都没有则零输出不提交。"
 ---
 
+先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+
+
 # 代码阅读
 
 读取 [阅读流程](references/workflow.md) 与 [执行与验收](references/execution.md)。已有定位足够时只追相关切片；可独立调用，也可供实现、科研与伴读任务复用。不复制实现优化角色，不要求外部后端或子 Agent。
@@ -21,4 +24,4 @@ description: "只读理解代码库、追踪真实调用链与数据流，核查
 
 规划实验/测量或复用实证结论前按 [既有结果检索与复用](references/result_reuse_workflow.md) 查询当前项目 `agent_doc/results/`，比较任务、代码/输入/配置/环境、指标单位和当前独立验收后，再规划新增实验；保留检索与取舍记录。新数据存 `agent_doc/results/<run_id>/`，旧文件可按真实路径/哈希索引。复用不跳过独立代码/数据门禁、用户明确复现或新主张验收。
 
-受管复杂项目的主控边界见 [双主 AI 计划审核](references/dual_main_workflow.md)：按已审核的准确任务/证据版本执行；新方案返回 planner-main 并由独立 review-main 复审，专业角色不能自批、越权或替代独立结果验收。简单独立任务保持原流程。
+历史保护计划的兼容边界见 [旧双主控协议](references/dual_main_workflow.md)。不启动第二主控，不追溯改写已有批准；缺独立证据的旧合同保留 blocked/pending，再按当前用户要求版本化协调。

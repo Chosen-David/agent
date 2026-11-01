@@ -1,5 +1,7 @@
 # Repository agent guidance
 
+Execution policy: [single main / multiple Skills](workflows/single_main_workflow.md). One main agent performs one task-chain step at a time, loading existing Skills on demand. Do not spawn/delegate subagents or activate planner-main/review-main. This current user decision supersedes historical parallel-role instructions; preserve permission, guide, evidence and independent-validation boundaries. A review Skill invoked by the same main agent is self-check only.
+
 For code comments, technical prose and instruction-file maintenance, use [concise engineering](workflows/concise_engineering.md) on demand. Keep one authoritative rule source; preserve behavioral contracts, evidence and human-only guide boundaries. Paper-driven Agent optimization requires fresh body-reading records per execution; old reading counts do not satisfy a new batch.
 
 The execution / proposal-and-wait / verify-or-ask gate is embedded in the orchestrator prompt (canonical source: `prompts/decision_review.md`; injected via `@` import). Follow it; do not silently replace the user's goal or implement a material alternative before alignment except the explicitly bounded supervisor-continuation case in that protocol. Decision-boundary examples are in `prompts/decision_examples.md` (read on demand when training the gate). This is a project-scoped instruction, subject to higher-priority host instructions and user authorization.
@@ -57,11 +59,11 @@ For each empirical experiment/measurement round that produces data, follow `work
 
 ## 独立主控计划审核
 
-受管复杂任务执行 `workflows/dual_main_workflow.md`（独立 Skill 使用同目录 `dual_main_workflow.md`）：planner-main 维护方案与唯一 TASK，review-main 由可信宿主独立新上下文审查 intent/guide/assumptions/prior_results/acceptance/risk/resources。新 prepare 默认保护，完整实际 DAG 与指南/采纳建议/证据版本绑定；approve 后仍需工具授权和独立结果验收。无可信回执不派发，revise/reject 版本化返修；Progress 追加不失效。缺宿主接口如实 blocked；旧计划仅宿主明确 legacy-unprotected 兼容，不宣称已全部升级。
+当前执行遵循单主 Agent 契约；`workflows/dual_main_workflow.md` 仅保留旧保护计划的审核/恢复协议。不要启动第二主控，也不把同一主 agent 的复核 Skill 当独立回执。旧保护计划缺可信回执仍 blocked，按用户新要求版本化协调，不删保护字段或追溯改写批准。Progress 追加不失效。
 
 ## Causal task decomposition
 
-When planning or revising a task chain, follow [causal task orchestration](workflows/causal_task_orchestration_workflow.md): split independent predecessor work, admit ready children against actual authorized capacity, pipeline verified subsets, and join complete required evidence before global conclusions. Preserve causal dependencies, per-result verification, stable identities and single-writer ownership; workflow publication does not deploy GPU scheduling.
+When planning or revising a task chain, preserve causal dependencies, per-result verification, stable identities and single-writer ownership. Follow the single-main workflow for serial admission; historical [causal task orchestration](workflows/causal_task_orchestration_workflow.md) decomposition examples do not authorize parallel agents. Join all required evidence before global conclusions.
 
 ## Confirmed experiment contamination
 

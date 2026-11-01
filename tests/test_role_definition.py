@@ -1,17 +1,16 @@
-"""Installed role text must stay validated through actual native/adapter dispatch."""
-import hashlib
+"""Revalidate Skill text after setup check; no model/role process is involved.
+
+The previous native/adapter launch tests are retained in Git at 2fd48652.
+The new entry reads the same bounded regular UTF-8 source for the current main.
+"""
 import importlib.util
-import json
 import os
 from pathlib import Path
-import subprocess
-import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
-ROOT = next(p for p in Path(__file__).resolve().parents if (p / 'scripts/run_role.py').is_file())
-TASK = '保留约束𐀀\n原始行尾\r\n'
-SENTINEL = 'ROLE_LATE_TEXT_0500'
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def module(name, path):
@@ -21,150 +20,98 @@ def module(name, path):
     return value
 
 
-def fake_host():
-    raw = sys.stdin.buffer.read()
-    calls = Path('host-calls')
-    if '--agents' in sys.argv:
-        definition = next(iter(json.loads(sys.argv[sys.argv.index('--agents') + 1]).values()))
-        task = raw.decode('utf-8')
-        operation = 'native'
-    else:
-        request = json.loads(raw)
-        operation = request['operation']
-        if operation == 'inventory':
-            with calls.open('ab') as stream: stream.write(b'inventory\n')
-            policy = json.loads((ROOT / 'config/role_model_policy.json').read_text(encoding='utf-8'))
-            print(json.dumps({'schema_version': 1, 'models': [{**policy['models']['opus'],
-                             'available': True, 'transport': 'adapter', 'capabilities': ['tools', 'vision']}]}))
-            return
-        definition, task = request['definition'], request['prompt']
-    with calls.open('ab') as stream: stream.write((operation + '\n').encode())
-    row = {'task': task, 'model': definition['model'],
-           'sentinel': SENTINEL in definition['prompt'],
-           'definition_sha256': hashlib.sha256(definition['prompt'].encode()).hexdigest()}
-    Path('host-marker.json').write_text(json.dumps(row), encoding='utf-8')
-    print(json.dumps(row))
+loader = module('single_skill_loader', ROOT / 'scripts/load_skill.py')
 
 
-def run_child(project, role, kind, transport):
-    runner = module('role_snapshot_runner', ROOT / 'scripts/run_role.py')
-    installer = runner.bootstrap()
-    original = installer.check
-
-    def check(target):
-        status = original(target)
-        (project / 'stage.json').write_text(json.dumps(status), encoding='utf-8')
-        if status['errors']:
-            return status
-        if role in ('planner-main', 'review-main'):
-            relative = '.claude/agent-workflows/' + role.replace('-', '_') + '.md'
-        elif kind.startswith('skill-'):
-            relative = '.claude/skills/research-write/SKILL.md'
-        else:
-            relative = '.claude/agents/agent-research-write.md'
-        path = project / relative
-        text = SENTINEL if role in ('planner-main', 'review-main') or kind.startswith('skill-') else '---\nname: fixture\n---\n' + SENTINEL
-        if kind in ('text', 'skill-text'):
-            path.write_text(text, encoding='utf-8')
-        elif kind == 'link':
-            outside = project / 'changed-definition.md'
-            outside.write_text(text, encoding='utf-8')
-            path.unlink()
-            path.symlink_to(outside)
-        elif kind in ('fifo', 'skill-fifo'):
-            path.unlink()
-            os.mkfifo(path)
-        return status
-
-    installer.check = check
-    runner.bootstrap = lambda: installer
-    argv = ['run_role.py', '--project', str(project), '--role', role]
-    prefix = '--adapter' if transport == 'adapter' else '--claude'
-    argv += [prefix, sys.executable, prefix + '-arg', str(Path(__file__).resolve()), prefix + '-arg=--fixture-host']
-    sys.argv = argv
-    raise SystemExit(runner.main())
-
-
-class RoleDefinitionTests(unittest.TestCase):
-    def check_case(self, name, role, kind, transport='native', copy=True):
-        temp = tempfile.TemporaryDirectory(prefix='role-snapshot-')
-        project = Path(temp.name).resolve()
-        row = {'case': name, 'transport': transport, 'project': str(project)}
-        result = None
-        try:
-            if kind == 'link' or not copy:
-                probe = project / 'link-probe'
-                try:
-                    probe.symlink_to(project, target_is_directory=True)
-                    probe.unlink()
-                except OSError as exc:
-                    self.skipTest('host lacks symlink privileges: ' + str(exc))
-            installer = module('snapshot_setup', ROOT / 'setup.py')
-            installer.install(project, copy_skills=copy, model_inventory=installer.EMPTY_INVENTORY)
-            argv = [sys.executable, '-B', str(Path(__file__).resolve()), '--fixture-child', str(project), role, kind, transport]
-            try:
-                result = subprocess.run(argv, input=TASK.encode(), capture_output=True, cwd=ROOT, timeout=15)
-                row.update(returncode=result.returncode, timed_out=False,
-                           stdout=result.stdout.decode('utf-8'), stderr=result.stderr.decode('utf-8'))
-            except subprocess.TimeoutExpired as exc:
-                row.update(returncode=None, timed_out=True,
-                           stdout=(exc.stdout or b'').decode('utf-8'), stderr=(exc.stderr or b'').decode('utf-8'))
-            stage = json.loads((project / 'stage.json').read_text(encoding='utf-8'))
-            row['stage'] = {'status': stage['status'], 'errors': stage['errors']}
-            row['calls'] = (project / 'host-calls').read_text().splitlines() if (project / 'host-calls').exists() else []
-            row['marker'] = json.loads((project / 'host-marker.json').read_text(encoding='utf-8')) if (project / 'host-marker.json').exists() else None
-            self.assertEqual(row['stage'], {'status': 'configured', 'errors': []})
-            self.assertFalse(row['timed_out'], row)
-            if kind == 'none':
-                self.assertEqual(result.returncode, 0, row)
-                self.assertEqual(row['marker']['task'], TASK)
-                self.assertEqual(row['marker']['model'], 'inherit')
-                self.assertFalse(row['marker']['sentinel'])
-                self.assertEqual(row['calls'], ['inventory', 'run'] if transport == 'adapter' else ['native'])
-                if transport == 'adapter':
-                    self.assertIn('\"transport\": \"adapter\"', row['stderr'])
-            else:
-                self.assertEqual(result.returncode, 2, row)
-                self.assertEqual(row['calls'], [], row)
-                self.assertIsNone(row['marker'], row)
-        finally:
-            # Do not infer cleanup from the context manager's return value.
-            temp.cleanup()
-            row['cleanup_absent'] = not os.path.lexists(project)
-            evidence = os.environ.get('ROLE_SNAPSHOT_EVIDENCE')
-            if evidence:
-                with (Path(evidence) / (name + '-' + transport + '.json')).open('x', encoding='utf-8') as stream:
-                    json.dump(row, stream, ensure_ascii=False, indent=2)
-            self.assertTrue(row['cleanup_absent'], row)
+class SkillDefinitionTests(unittest.TestCase):
+    def fixture(self, copy=True):
+        temp = tempfile.TemporaryDirectory(prefix='skill 中文 boundary ')
+        self.addCleanup(temp.cleanup)
+        root = Path(temp.name).resolve()
+        installer = loader.bootstrap()
+        installer.install(root, copy_skills=copy)
+        return root, installer
 
     def test_healthy_copy_and_declared_link(self):
-        for copy, transport in [(True, 'native'), (False, 'adapter')]:
-            with self.subTest(copy=copy, transport=transport):
-                self.check_case('healthy-copy' if copy else 'healthy-link', 'research-write', 'none', transport, copy)
+        for copy in (True, False):
+            with self.subTest(copy=copy):
+                root, installer = self.fixture(copy)
+                with patch.object(loader, 'bootstrap', return_value=installer):
+                    result = loader.load_skill(root, 'research-write')
+                self.assertFalse(result['launched'])
+                self.assertEqual(result['execution_mode'], 'single-main')
+                self.assertIn('单主 Agent', result['content'])
 
-    def test_changed_text_never_discovers_or_launches_backend(self):
-        for role, kind in [('planner-main', 'text'), ('review-main', 'text'), ('research-write', 'text'), ('research-write', 'skill-text')]:
-            for transport in ('native', 'adapter'):
-                with self.subTest(role=role, kind=kind, transport=transport):
-                    self.check_case(role + '-' + kind, role, kind, transport)
+    def late_change(self, change):
+        root, installer = self.fixture()
+        original = installer.check
+        path = root / '.claude/skills/research-write/SKILL.md'
+        def check(target):
+            result = original(target)
+            self.assertEqual(result['errors'], [])
+            change(path)
+            return result
+        with patch.object(installer, 'check', side_effect=check), patch.object(loader, 'bootstrap', return_value=installer):
+            with self.assertRaises((OSError, ValueError)):
+                loader.load_skill(root, 'research-write')
 
-    def test_redirected_agent_never_discovers_or_launches_backend(self):
-        for transport in ('native', 'adapter'):
-            with self.subTest(transport=transport):
-                self.check_case('agent-link', 'research-write', 'link', transport)
+    def test_changed_text_after_check_is_not_returned(self):
+        self.late_change(lambda path: path.write_text('changed Skill', encoding='utf-8'))
+
+    def test_installed_orchestrator_policy_link_resolves_in_project(self):
+        root, _ = self.fixture()
+        entry = root / '.claude/agent-workflows/orchestrator.md'
+        self.assertIn('](single_main_workflow.md)', entry.read_text(encoding='utf-8'))
+        policy = entry.parent / 'single_main_workflow.md'
+        self.assertIn('不要 spawn/delegate', policy.read_text(encoding='utf-8'))
+
+    def test_invalid_utf8_after_check_is_refused(self):
+        self.late_change(lambda path: path.write_bytes(b'\xff'))
+
+    def test_oversized_text_after_check_is_refused(self):
+        self.late_change(lambda path: path.write_bytes(b'x' * (16 * 1024 * 1024 + 1)))
+
+    @unittest.skipUnless(hasattr(os, 'symlink'), 'symlink unavailable')
+    def test_redirected_skill_after_check_is_refused(self):
+        def redirect(path):
+            outside = path.parent.parent / 'different.md'
+            outside.write_bytes(path.read_bytes())
+            path.unlink()
+            try:
+                path.symlink_to(outside)
+            except OSError as exc:
+                self.skipTest('symlink creation unavailable: ' + str(exc))
+        self.late_change(redirect)
 
     @unittest.skipUnless(hasattr(os, 'mkfifo'), 'FIFO requires POSIX')
-    def test_fifo_is_rejected_without_blocking_or_backend_calls(self):
-        for kind in ('fifo', 'skill-fifo'):
-            for transport in ('native', 'adapter'):
-                with self.subTest(kind=kind, transport=transport):
-                    self.check_case('agent-' + kind, 'research-write', kind, transport)
+    def test_fifo_after_check_is_refused_without_blocking(self):
+        def fifo(path):
+            path.unlink()
+            os.mkfifo(path)
+        self.late_change(fifo)
+
+    def test_unknown_skill_does_not_fall_back_to_an_agent(self):
+        root, installer = self.fixture()
+        with patch.object(loader, 'bootstrap', return_value=installer):
+            for name in ('planner-main', 'review-main', '../research-write'):
+                with self.subTest(name=name), self.assertRaisesRegex(ValueError, 'unknown Skill'):
+                    loader.load_skill(root, name)
+
+    @unittest.skipIf(os.name == 'nt', 'declared Unix Skill link path')
+    def test_changed_skill_root_link_after_check_is_refused(self):
+        root, installer = self.fixture(copy=False)
+        original = installer.check
+        path = root / '.claude/skills/research-write'
+        def check(target):
+            result = original(target)
+            self.assertEqual(result['errors'], [])
+            path.unlink()
+            path.symlink_to(root / '.claude/skills/research-review', target_is_directory=True)
+            return result
+        with patch.object(installer, 'check', side_effect=check), patch.object(loader, 'bootstrap', return_value=installer):
+            with self.assertRaisesRegex(ValueError, 'link changed'):
+                loader.load_skill(root, 'research-write')
 
 
 if __name__ == '__main__':
-    if len(sys.argv) > 1 and sys.argv[1] == '--fixture-host':
-        fake_host()
-    elif len(sys.argv) > 1 and sys.argv[1] == '--fixture-child':
-        run_child(Path(sys.argv[2]), *sys.argv[3:6])
-    else:
-        unittest.main()
+    unittest.main()

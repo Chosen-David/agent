@@ -1,0 +1,76 @@
+test_actual_skill_loader_has_no_backend (tests.test_single_main.SingleMainTests.test_actual_skill_loader_has_no_backend) ... FAIL
+test_install_skills_without_subagent_entries (tests.test_single_main.SingleMainTests.test_install_skills_without_subagent_entries) ... FAIL
+test_obsolete_manifest_cannot_redirect_cleanup_into_guide (tests.test_single_main.SingleMainTests.test_obsolete_manifest_cannot_redirect_cleanup_into_guide) ... FAIL
+test_pending_step_survives_restart_before_next_skill (tests.test_single_main.SingleMainTests.test_pending_step_survives_restart_before_next_skill) ... FAIL
+test_simultaneous_ticks_cannot_enter_second_step (tests.test_single_main.SingleMainTests.test_simultaneous_ticks_cannot_enter_second_step) ... FAIL
+test_upgrade_rejects_edited_owned_agent_before_writes (tests.test_single_main.SingleMainTests.test_upgrade_rejects_edited_owned_agent_before_writes) ... ok
+test_upgrade_removes_only_unchanged_owned_agent (tests.test_single_main.SingleMainTests.test_upgrade_removes_only_unchanged_owned_agent) ... FAIL
+
+======================================================================
+FAIL: test_actual_skill_loader_has_no_backend (tests.test_single_main.SingleMainTests.test_actual_skill_loader_has_no_backend)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/single-main-1120/parent-tree/tests/test_single_main.py", line 154, in test_actual_skill_loader_has_no_backend
+    self.assertEqual(run.returncode, 0, run.stderr.decode())
+AssertionError: 2 != 0 : /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python: can't open file '/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/single-main-1120/parent-tree/scripts/load_skill.py': [Errno 2] No such file or directory
+
+
+======================================================================
+FAIL: test_install_skills_without_subagent_entries (tests.test_single_main.SingleMainTests.test_install_skills_without_subagent_entries)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/single-main-1120/parent-tree/tests/test_single_main.py", line 38, in test_install_skills_without_subagent_entries
+    self.assertEqual(result['subagents'], 0)
+AssertionError: 16 != 0
+
+======================================================================
+FAIL: test_obsolete_manifest_cannot_redirect_cleanup_into_guide (tests.test_single_main.SingleMainTests.test_obsolete_manifest_cannot_redirect_cleanup_into_guide)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/single-main-1120/parent-tree/tests/test_single_main.py", line 80, in test_obsolete_manifest_cannot_redirect_cleanup_into_guide
+    with self.assertRaisesRegex(ValueError, 'unknown obsolete'):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: ValueError not raised
+
+======================================================================
+FAIL: test_pending_step_survives_restart_before_next_skill (tests.test_single_main.SingleMainTests.test_pending_step_survives_restart_before_next_skill)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/single-main-1120/parent-tree/tests/test_single_main.py", line 142, in test_pending_step_survives_restart_before_next_skill
+    self.assertEqual(calls, ['A'])
+AssertionError: Lists differ: ['A', 'B'] != ['A']
+
+First list contains 1 additional elements.
+First extra element 1:
+'B'
+
+- ['A', 'B']
++ ['A']
+
+======================================================================
+FAIL: test_simultaneous_ticks_cannot_enter_second_step (tests.test_single_main.SingleMainTests.test_simultaneous_ticks_cannot_enter_second_step)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/single-main-1120/parent-tree/tests/test_single_main.py", line 118, in test_simultaneous_ticks_cannot_enter_second_step
+    self.assertEqual(calls, ['A'])
+AssertionError: Lists differ: ['A', 'B'] != ['A']
+
+First list contains 1 additional elements.
+First extra element 1:
+'B'
+
+- ['A', 'B']
++ ['A']
+
+======================================================================
+FAIL: test_upgrade_removes_only_unchanged_owned_agent (tests.test_single_main.SingleMainTests.test_upgrade_removes_only_unchanged_owned_agent)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/workspace/scratch/95d615402a52/agent-run-2205/.agent-runs/single-main-1120/parent-tree/tests/test_single_main.py", line 60, in test_upgrade_removes_only_unchanged_owned_agent
+    self.assertFalse(old.exists())
+AssertionError: True is not false
+
+----------------------------------------------------------------------
+Ran 7 tests in 0.240s
+
+FAILED (failures=6)

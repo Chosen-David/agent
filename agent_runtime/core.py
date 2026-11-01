@@ -495,10 +495,18 @@ class Engine:
             self._summary(plan, state)
             tasks = plan['tasks']
             cursor = state.get('claim_cursor', 0) % len(tasks)
+            # Keep one step across pending polls/restarts; never overlap live claims.
+            active = state.get('active_step')
+            if active and state['tasks'][active]['status'] == 'done':
+                state.pop('active_step', None)
+                active = None
+            doing = any(node['status'] == 'doing' for node in state['tasks'].values())
             for offset in range(len(tasks)):
                 index = (cursor + offset) % len(tasks)
                 task = tasks[index]
                 node = state['tasks'][task['task_id']]
+                if doing or (active is not None and task['task_id'] != active):
+                    continue
                 if node['status'] != 'todo':
                     continue
                 if not all(state['tasks'][d]['status'] == 'done' for d in task.get('depends_on', [])):
@@ -518,6 +526,7 @@ class Engine:
                     node.update(status='blocked', reason_kind='permission', reason='host authorization required')
                     continue
                 token = uuid.uuid4().hex
+                state['active_step'] = task['task_id']
                 node.update(status='doing', attempts=node['attempts'] + 1, token=token,
                             lease_until=now + self.lease_seconds, reason=None, reason_kind=None,
                             dispatches=node.get('dispatches', 0) + 1)
@@ -604,6 +613,8 @@ class Engine:
                         node.update(requires_reconciliation=True, effect_observation=effect_observation)
                     node.update(status=status, token=None, reason=outcome.reason,
                                 evidence=outcome.evidence or [], reason_kind=reason_kind)
+                    if status in ('done', 'failed', 'blocked') and not node.get('requires_reconciliation') and reason_kind != 'wait_budget':
+                        state.pop('active_step', None)
                     if status == 'done':
                         node['diagnosis_required'] = False
                     state['idle_ticks'] = state['idle_ticks'] + 1 if status == 'todo' else 0
