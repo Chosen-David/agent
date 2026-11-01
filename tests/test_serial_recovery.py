@@ -233,6 +233,105 @@ class SerialRecoveryTests(unittest.TestCase):
         self.assertEqual(calls, ['A', 'A', 'B'])
         self.assertEqual(store.snapshot('serial')['state']['tasks']['A']['status'], 'failed')
 
+    def test_blocked_pending_observation_retains_job_until_verified_reconciliation(self):
+        for phase in ('adapter_blocked', 'permission_after_review', 'review_after_claim'):
+          for idempotent in (True, False):
+            with self.subTest(phase=phase, idempotent=idempotent):
+                store = Store(Path(self.store.path).with_name(f'{phase}-{idempotent}.sqlite'))
+                spec = plan()
+                spec['tasks'][0]['wait_policy'] = {
+                    'max_polls': 10, 'max_seconds': 600, 'diagnose_after_seconds': 300}
+                store.create(spec)
+                job = Path(store.path).with_suffix('.job')
+                calls, keys = [], []
+                allowed = [True]
+
+                class Handler:
+                    def run(self, task, context):
+                        calls.append(task['task_id'])
+                        keys.append(context.idempotency_key)
+                        if task['task_id'] == 'B':
+                            return Outcome('complete', evidence=['verified'])
+                        if not job.exists():
+                            job.write_text('running')
+                            return Outcome('pending', 'job still running', ['job:owned'])
+                        return Outcome('blocked', 'observation access denied', ['observer:denied'])
+                    def verify(self, task, evidence):
+                        return (evidence == ['verified'] and
+                                (task['task_id'] == 'B' or job.read_text() == 'completed'))
+
+                handler = Handler()
+                handler.idempotent = idempotent
+                def engine():
+                    return Engine(Store(store.path), {'step': handler},
+                                  authorize=lambda *_: allowed[0], allow_legacy=True,
+                                  clock=lambda: self.now)
+
+                engine().tick('serial', 'pending')
+                self.now += 1
+                observer = engine()
+                if phase == 'permission_after_review':
+                    checks = []
+                    def authorize(*_):
+                        checks.append(True)
+                        return len(checks) == 1  # Claim allowed, action authorization revoked.
+                    observer.authorize = authorize
+                elif phase == 'review_after_claim':
+                    from agent_runtime.plan_review import PlanReviewError
+                    claimed = [False]
+                    def authorize(*_):
+                        claimed[0] = True
+                        return True
+                    def review(_plan):
+                        if claimed[0]:
+                            raise PlanReviewError('review revoked after claim')
+                    observer.authorize = authorize
+                    observer._review_plan = review
+                observer.tick('serial', 'blocked-observation')
+                if phase == 'permission_after_review':
+                    self.assertEqual(len(checks), 2)
+                allowed[0] = True
+                self.now += 1
+                state = engine().tick('serial', 'restart')
+                expected = ['A', 'A'] if phase == 'adapter_blocked' else ['A']
+                self.assertEqual(calls, expected)
+                self.assertEqual(state.get('active_step'), 'A')
+                node = state['tasks']['A']
+                reason = 'plan_review_after_effect' if phase == 'review_after_claim' else 'ambiguous'
+                self.assertEqual((node['status'], node['reason_kind']), ('blocked', reason))
+                self.assertTrue(node['requires_reconciliation'])
+                self.assertEqual(node['effect_observation']['status'], 'pending')
+                self.assertEqual(node['effect_observation']['evidence'], ['job:owned'])
+                self.assertEqual((node['attempts'], node['pending_polls']), (1, 1))
+                self.assertEqual(len(set(keys)), 1)
+                self.assertEqual(job.read_text(), 'running')
+                with self.assertRaises(ValueError):
+                    engine().reconcile('serial', 'A', ['verified'], 'job not finished')
+                job.write_text('completed')
+                allowed[0] = False
+                with self.assertRaises(ValueError):
+                    engine().reconcile('serial', 'A', ['verified'], 'no authorization')
+                allowed[0] = True
+                engine().reconcile('serial', 'A', ['verified'], 'host verified actual completion')
+                engine().tick('serial', 'next')
+                self.assertEqual(calls, expected + ['B'])
+
+    def test_old_blocked_refunded_pending_restores_ownership(self):
+        for kind in ('permission', 'adapter', 'adapter_result'):
+            with self.subTest(kind=kind):
+                self.calls.clear()
+                self.store = Store(Path(self.store.path).with_name(kind + '-blocked.sqlite'))
+                self.store.create(plan())
+                self.seed({'A': {'status': 'blocked', 'attempts': 0,
+                                 'pending_since': 1, 'pending_polls': 2,
+                                 'next_at': 5, 'reason_kind': kind, 'evidence': ['job:owned']}})
+                state = self.tick('restore')
+                self.assertEqual(self.calls, [])
+                self.assertEqual(state.get('active_step'), 'A')
+                node = state['tasks']['A']
+                self.assertEqual((node['attempts'], node['pending_polls'], node['pending_since']), (0, 2, 1))
+                self.assertEqual(node['evidence'], ['job:owned'])
+
     def test_multiple_old_pending_steps_block_without_guess_or_budget_reset(self):
         spec = plan()
         spec['tasks'].append(dict(spec['tasks'][0], task_id='C'))

@@ -157,8 +157,9 @@ def _outstanding_steps(state):
                 (node.get('attempts', 0) > 0 or 'pending_since' in node))
             or (node['status'] == 'blocked' and
                 (node.get('reason_kind') in ('ambiguous', 'wait_budget')
-                 or (node.get('attempts', 0) > 0 and
-                     node.get('reason_kind') in ('permission', 'adapter'))
+                 or (node.get('reason_kind') in ('permission', 'adapter') and
+                     (node.get('attempts', 0) > 0 or 'pending_since' in node))
+                 or (node.get('reason_kind') == 'adapter_result' and 'pending_since' in node)
                  or (node.get('requires_reconciliation') and
                      (node.get('reason_kind') not in ('terminal_evidence', 'plan_review_after_effect')
                       or node.get('effect_observation', {}).get('status') in ('unknown', 'pending', 'retry')))))]
@@ -632,7 +633,11 @@ class Engine:
                 if (node.get('token') == context.token and node['status'] == 'doing'
                         and node['lease_until'] > self.clock() and state['status'] != 'cancelled'):
                     status = {'complete': 'done', 'pending': 'todo', 'retry': 'todo'}.get(outcome.status, outcome.status)
-                    reason_kind = ('plan_review_after_effect' if executed else 'plan_review') if review_blocked else 'adapter_result'
+                    if status == 'blocked' and 'pending_since' in node and effect_observation is None:
+                        # Observation refusal cannot settle a job accepted on an earlier poll.
+                        effect_observation = {'status': 'pending', 'reason': node.get('reason'),
+                                              'evidence': deepcopy(node.get('evidence', []))}
+                    reason_kind = ('plan_review_after_effect' if executed or effect_observation is not None else 'plan_review') if review_blocked else 'adapter_result'
                     if effect_observation is not None and not review_blocked:
                         reason_kind = 'ambiguous'
                     if outcome.status == 'pending' and task.get('wait_policy') is not None:

@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 99
+Version: 100
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -281,6 +281,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 PROC-NAMESPACE-ADMISSION（Version98，同SYSTEM99）：继续Version97已证实的部署缺口，不停在解析修复。仅在worker取得现有普通锁后、Store/后端加载前要求/proc/self链接PID等于本进程PID；status在读数字PID身份前核同一前提，不可读/畸形/不同均拒绝live，不翻译PID、不挂载、不绕过锁或放宽预算。先保存错命名空间和不可读情况下后端仍被触达、fresh heartbeat误报live的固定失败；匹配环境健康对照与旧锁/取消/最终交付契约保持。真实worker夹具在本地已知能力缺失时明确skip并记录新增缺口；Linux CI显式要求该前提，缺失即fail，运行实际worker/取消/最终交付模块不允许将skip当部署通过。复用本次2610.39124v1已读全文的审计/部署前提，不重复新增阅读计数；同主自检、旧独立合同及真实tmux/SSH/模型任务质量成本继续open。
 
 阶段 PROC-NAMESPACE-ADMISSION补充（Version99，取代Version98仅数字相等判据）：自检合成相同数字的嵌套PID反例确认旧候选仍接受；改读/proc/self/status的NStgid，要求恰一个字段行且仅一个PID值等于os.getpid，缺失/畸形/重复/多层即拒绝（Linux4.1+，不读取其它用户namespace链接）。保留Version98原失败与候选摘要/源码blob；初候选完整回归通过不构成该缺口验收。真实worker夹具用同一内核字段检查所需能力，Linux CI严格缺失即fail；原锁/取消/最终交付断言及无后端先验不变。当前前提仍依赖可信procfs及检查后的挂载稳定，不声称跨宿主原子围栏。
+
+阶段 PENDING-BLOCKED-OBSERVATION（Version100，同SYSTEM99）：继续已列未决的pending权限撤销/blocked归属，先冻结真实running文件、等待计数退款、领取后复核撤权/handler blocked和旧active缺失恢复反例。仅对结构化pending_since已存在的blocked观察，复用effect_observation保存前次pending依据并标既有ambiguous/requires_reconciliation保留当前步骤；旧blocked permission/adapter退款0或adapter_result带pending标记须恢复归属，不据reason文本重标历史结果。明确failed终止、已验证complete、尚无pending的明确blocked、授权前置拒绝与既有预算/取消/审核/租约不放宽。修前固定失败，相关/全库/真实独立观察进程与新headCI验证后普通发布；同主自检不当独审。新精读2610.15991v1全文11页/§§1–8、附录A–D与全部图表，采用回执/执行/效果分开验收，不移植多角色、云网关/新账本或论文比例。真实模型/成本与旧独立合同/十篇及整轮保持open。
 
 ## Progress
 
@@ -1039,3 +1041,12 @@ e5bd09dd原生run41326310547十job全成功，Ubuntu两组原身份三方法0ski
 冻结最终八类元数据条件的同一两方法，固定原worker/status Git函数：修前17子断言失败、修后0失败/错误/skip（含累计callback次数断言，非17个测试）；匹配健康控制保留。实际隔离_worker CLI因真实命名空间不符exit1，后端标记未创建、任务快照未变、无live，夹具回收。完整2100方法0失败/错误、51条skip，其中36条为已确认宿主能力缺失，不能计通过；原15环境skip不变。定向37方法同缺口36skip，Reader3/同步/空白通过。严格模式在当前宿主原身份方法实际fail1而非skip，LinuxCI扩大至worker/取消/交付/恢复回执32方法，缺能力即fail；新head原生结果发布后另回读。原失败、候选否定与精简最终证据 `/tmp/agent-system99/proc-namespace-0035/evidence.json` SHA256 `170007f5025a0b9e144d8b1b7fa69757a01d889d9b70b8a6064268977551eb43`；仅自有tmp夹具回收，无新results包，guide/唯一索引未改。
 
 复用此次2610.39124v1全文阅读与官方proc_pid_status(5) NStgid语义，不重复计另一篇。门禁依赖可信procfs及检查后挂载稳定；start独立adapter预检不是由worker门禁围栏，真实tmux/SSH/模型后端与旧独立合同仍未验。新读取成本未测，不报提速/全成本或质量收益。同一SYSTEM99继续开放，旧预算不重置，十篇及整轮不结案。
+
+
+### 2026-11-02 — PENDING-BLOCKED-OBSERVATION 同批续接
+
+02eb1394原生run41328916442十job全成功，两Ubuntu严格worker/取消/交付/回执各32方法0skip，五组serial各15/contract各164方法0skip；证据 `/tmp/agent-system99/proc-namespace-0035/ci.json` SHA256 `197623f336dc823fe52cb6e851ea64e6a8896b46012710cf18371ef6989e530b`。fetch/锁/干净工作区与同批未决核对后，确认已pending作业在观察blocked、领取后撤权/审核拒绝及旧退款0记录恢复时失去归属。固定两方法九子案例：原core Git源码9失败/0错误，修后串行17方法全部通过；初版权限钩子落错边界、审核钩子嵌套SQLite造成2锁错误均记测试问题，哈希/原因/无效输出尾部保留后原地清理，不当产品失败或混合成功。
+
+现在仅按结构化pending_since识别已接纳作业；blocked观察复用effect_observation保留先前持久观察，ambiguous/requires_reconciliation保留active_step；旧permission/adapter退款0及adapter_result带pending标记恢复归属，不依据reason文本重标历史。明确failed、未pending的blocked、原权限/审核/预算/取消不放宽；单句流程与单镜像同步。真实有界worker/独立OS观察进程四臂：修前B在实际作业仍running时执行，修后拒绝live期间结算，实际exit0后新进程授权/核验reconcile才执行B，job未重启，尝试1/观察1/起点和键不变；全部自有进程/夹具回收。完整2102方法0失败/错误、51既有环境skip（含36已明确namespace能力缺口），Reader3/引用同步/空白通过。必要原始失败、正文记录与复现索引 `/tmp/agent-system99/pending-authority-0110/evidence.json` SHA256 `317f4d25a410431c5660d6a6910a5d72808141c92d3b00ac76c383fa5349cc3d`；旧78方法冗余正向日志已提炼hash后清理，新head17方法/原生十job发布后回读另存ci.json。
+
+新读2610.15991v1全文11页/§§1–8与附录A–D、命题/全部图表文本：区分C0–C5、冻结效果集合与自适应调用，记录112/225拓扑条件比例、v1/v2证书差别、检测审计非独立数据、4/60真实任务成功和50%成本/30%工作负载负结果；作者artifact未取不冒复现。只应用观察拒绝不等于已停止的边界，不移植多角色/云网关/新账本。新正文1不算十篇；同主自检非独审，历史观察结算后再失效的归属边界待继续审查，真实宿主/模型任务质量/全成本与旧独立合同仍open。guide/唯一索引不改，预算不重置，无新results包，同SYSTEM99不结轮。
