@@ -9,6 +9,7 @@ from pathlib import Path, PurePosixPath
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from agent_runtime.committed_aliases import CommittedAliases
 from agent_runtime.external_json import load_json, regular_bytes, strict_json
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -131,18 +132,23 @@ def prepare_run(repo, revision, out, tasks=None, rubric=None, fixture_root=None,
         prepared.append((case, inputs))
     if set(criteria) != seen:
         raise ValueError('criteria must match exact expected cases')
-    snapshot = {}
+    entries = {}
     for entry in git(repo, 'ls-tree', '-rz', sha).split(b'\0'):
-        if not entry:
-            continue
-        info, raw_name = entry.split(b'\t', 1)
-        name = raw_name.decode()
+        if entry:
+            info, raw_name = entry.split(b'\t', 1)
+            entries[raw_name.decode('utf-8')] = info.decode('ascii').split()
+    aliases = CommittedAliases(entries, lambda oid: git(repo, 'cat-file', 'blob', oid))
+    snapshot = {}
+    for name, (mode, _, _) in entries.items():
         parts = safe_relative(name).parts
         if (parts[0] not in SNAPSHOT_ROOTS and name not in SNAPSHOT_DEPENDENCIES) or any(p in ('tests', 'evals', '__pycache__') for p in parts) or parts[-1] == 'rubric.json':
             continue
-        if info.split()[0] not in (b'100644', b'100755'):
-            raise ValueError('snapshot cannot contain symlinks or submodules')
-        snapshot[name] = blob(name)
+        if mode in ('100644', '100755'):
+            snapshot[name] = blob(name)
+        elif mode == '120000' and len(parts) >= 5 and parts[0] == 'plugins' and parts[2] == 'skills':
+            snapshot[name] = aliases.resolve(name)
+        else:
+            raise ValueError('snapshot cannot contain symlinks or submodules outside shared skill file aliases')
     if any(case['skill'] not in snapshot for case, _ in prepared):
         raise ValueError('skill absent from pinned snapshot')
     adapter = adapter or {'name': 'host', 'model': 'unspecified'}

@@ -4,9 +4,9 @@ import tempfile
 import unittest
 
 try:
-    from .markdown_links import local_markdown_links, package_markdown_targets
+    from .markdown_links import installed_skill, local_markdown_links, package_markdown_targets
 except ImportError:
-    from markdown_links import local_markdown_links, package_markdown_targets
+    from markdown_links import installed_skill, local_markdown_links, package_markdown_targets
 
 
 class MarkdownLiteralTests(unittest.TestCase):
@@ -60,6 +60,26 @@ class MarkdownLiteralTests(unittest.TestCase):
 
 
 class PackageClosureControls(unittest.TestCase):
+    def test_installed_alias_keeps_bytes_but_not_package_escape(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            source = root / 'skill'
+            source.mkdir()
+            shared = root / 'shared.md'
+            shared.write_bytes(b'[child](child.md)\r\n')
+            (source / 'workflow.md').symlink_to(shared)
+            (source / 'child.md').write_text('child')
+            (source / 'SKILL.md').write_text('[workflow](workflow.md)')
+            with installed_skill(source) as package:
+                workflow = package / 'workflow.md'
+                self.assertFalse(workflow.is_symlink())
+                self.assertEqual(workflow.read_bytes(), shared.read_bytes())
+                self.assertEqual(list(package_markdown_targets(workflow, package)),
+                                 [package / 'child.md'])
+                workflow.write_text('[escape](../shared.md)')
+                with self.assertRaisesRegex(ValueError, 'leaves package'):
+                    list(package_markdown_targets(workflow, package))
+
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory(prefix='markdown-closure-')
         self.addCleanup(self.temporary.cleanup)

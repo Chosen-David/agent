@@ -14,6 +14,12 @@ import unittest
 from urllib.parse import unquote, urlsplit
 
 
+try:
+    from .markdown_links import installed_skill
+except ImportError:
+    from markdown_links import installed_skill
+
+
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / 'plugins/research-assistant/skills'
 FIXTURE_PATH = ROOT / 'tests/fixtures/figure_tasks.json'
@@ -118,16 +124,16 @@ class FigurePackageContractChecks(unittest.TestCase):
                     self.assertTrue(resolved.is_relative_to(ROOT))
                     self.assertTrue(resolved.is_file(), str(resolved))
         for skill, snapshots in PACKAGES.items():
-            package = SKILLS / skill
-            sources = [package / 'SKILL.md']
-            sources += [package / 'references' / name for name in snapshots]
-            for source in sources:
-                for target in local_links(read(source)):
-                    with self.subTest(source=str(source.relative_to(ROOT)), target=target):
-                        resolved = (source.parent / target).resolve()
-                        self.assertTrue(resolved.is_relative_to(package),
-                                        'Standalone skills cannot depend on sibling/repo files.')
-                        self.assertTrue(resolved.is_file(), str(resolved))
+            with installed_skill(SKILLS / skill) as package:
+                sources = [package / 'SKILL.md']
+                sources += [package / 'references' / name for name in snapshots]
+                for source in sources:
+                    for target in local_links(read(source)):
+                        with self.subTest(source=skill + '/' + str(source.relative_to(package)), target=target):
+                            resolved = (source.parent / target).resolve()
+                            self.assertTrue(resolved.is_relative_to(package),
+                                            'Standalone skills cannot depend on sibling/repo files.')
+                            self.assertTrue(resolved.is_file(), str(resolved))
 
     def test_skill_entries_and_agent_metadata_are_wired(self):
         installed = {path.parent.name for path in SKILLS.glob('*/SKILL.md')}

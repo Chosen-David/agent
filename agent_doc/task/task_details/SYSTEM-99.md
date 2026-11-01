@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 81
+Version: 83
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -245,6 +245,10 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 用户追加：本库迭代的中间文件统一维护在 `/tmp/agent-system99/<run_id>/`，不再写入 agent_doc/results；唯一 TASK 仅留必要结论、状态与路径/哈希，历史原件不回写或删除。当前进行中的输出先完成再搬移，原始字节核对；不据此移动受管权威账本或放宽项目写入守卫。
 
 阶段 IN-PLACE（Version81，2026-11-01用户明确要求）：以 workflows/concise_engineering.md 为单一原地迭代/收尾规范；默认当前分支和原路径，独立feat分支须明确授权，task完成须清理无用中间文件并提炼有效结果，确认污染数据撤销后删除。有效负结果、必要证据及受管账本/认证/恢复契约保留；不据此批删历史或改guide。同步现有入口和Skill镜像，沿原唯一TASK推进。
+
+阶段 PACKAGE-CLOSURE（Version82）：继续同批已知源码别名/分发闭包缺口，仅将三组包导航测试改为先调用现有 setup.copy_skill 得到普通文件副本，再对真实副本执行原完整本地链接与递归闭包断言；保留规范源码字节检查和缺失/越界负控，新增共享文件别名安装后解析及越界目标拒绝控制。不改生产安装器、共享源码布局、评测快照守卫或guide，不删除旧失败。以现存2075方法日志冻结修前82个包断言失败/错误，再定向运行三模块与链接/安装生命周期回归，最后完整测试确认剩余真实缺口。当前主agent自检不充独立验收，不追溯重置旧合同预算；评测入口仍单列未决，实际模型质量/上下文/全费用及十篇正文验收继续open。原Version81稳定输入可由ad1883c1397680b97c319c182b72b17c3596c6ea回读；此变更不追溯批准旧运行。
+
+阶段 EVAL-ALIASES（Version83）：PACKAGE-CLOSURE完整2076方法已明确仅剩开发评测prepare拒绝共享源码文件别名；先冻结定向正/负控。将Codex既有固定Git tree/blob文件别名解析抽为一个共同实现，评测仅对plugins/<plugin>/skills/下别名复用，写出普通文件，不读取工作区替换字节。原直接shared-references文件、agent_runtime直接Python和research-assistant/shared-scripts直接Python命名空间及32层/循环/目录/gitlink/绝对/反斜线/缺失拒绝保持；模板等非Skill入口不放行，评测tests/evals隔离保持。原脚本API与来源dirty校验保留。保存修前失败，复测真实CLI prepare→快照内依赖执行、安装/别名/评测门禁及全库；五组CI加入包闭包与评测入口检查。只同主自检，旧独立合同不降级、不重置预算，无模型/费用/效率结论。
 
 ## Progress
 
@@ -907,3 +911,11 @@ RECOVERY-FENCES 原生回读：cca63ad4 的两组Ubuntu通过；macOS同一未�
 RECOVERY-FENCES 继续核验：a436d02b 的macOS和两组Ubuntu全job通过；Windows3.12已过前两模块，在终态测试自身未关闭SQLite连接的临时目录清理处WinError32。原失败块已加入 ci-failures.json 的 windows_cleanup（run41272193756/job124747068193）。仅用现有 Store.transaction() 取代测试裸连接并删除无用import，不吞清理异常/不跳过；53相关方法通过，fixture-cleanup.log SHA256 `a474a6cea001322565b7a6c2c122ca51ea9d7f581c4c6ca0aaa976dbfe55b6f3`。此前53方法原日志仍与已发布SHA一致，恢复过程见publication.json；最终五job待新head实际读回。
 
 同一恢复验收继续：三组CPU恢复检查前移到两类job的Python准备后，保留全部后续安装/加载/通信检查，避免本次平台错误到流水线后段才反馈；未测总CI提速，不报效率收益。
+
+### 2026-11-01 — PACKAGE-CLOSURE / EVAL-ALIASES 串行续接
+
+ad1883c1恢复修复的原生run41272816979五job全部成功，每组实际22恢复方法全过0skip，完整回读在同目录ci.json；不当新版本验收。随后以安装器真实复制副本检验源码共享别名的包闭包，保留规范源码字节与越界断言，完整2076方法仅剩评测prepare的1失败/15既有skip；原80子断言+2错误不是82个产品bugs。
+
+评测prepare现复用从Codex原地抽出的固定Git文件别名解析，保持原白名单/循环/深度/dirty/模板和评测隔离；只允许Skill源别名，输出普通文件，不读脏工作区。冻结3方法修前1正向prepare错误/2负控通过；修后真实prepare→快照依赖执行、实际轻量检出安装4通过，最终全库2079方法0失败/错误、15既有skip，新增CI同命令104通过。抽取主体AST同原实现；同主自检不充独立审核。新五组CI加入包闭包/评测入口，发布后实际回读待核。证据 `/tmp/agent-system99/recovery-fences/package-evidence.json` SHA256 `c64b007a3c4c529eca55d9167d7a24ac2c7b8163205d04afe1d09e7ae8bc62c2`；冗余正向日志和阅读渲染已清，仅留必要原失败/最终输出/来源。无guide或唯一索引写入。
+
+正文续读SPEM arXiv2610.26995v1：实际9页PDF，正文1–7/公式1–14/图1–3/表1–3及参考文献8–9；补充A–D未随附，未读。方法/消融/局限/本库关系见同目录reading.json SHA256 `4f0c3397c3be1b1a0dddcc50149fe788a71ee854f4392a9fe78cc43b4466a1e7`；仅提出精简结果须保留依赖闭包的后续假设，未归因为此前恢复修复，未新增GNN/记忆池。ReCoF同版本查重命中旧记录不加计。本次新正文1篇不冒充十篇达标，论文验收、真实宿主/模型质量/上下文和全费用及旧独立合同继续open；本地全绿不代表SYSTEM99整轮完成或项目无bug。

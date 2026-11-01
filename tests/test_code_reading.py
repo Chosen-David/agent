@@ -7,9 +7,9 @@ import tempfile
 import unittest
 
 try:
-    from .markdown_links import package_markdown_targets
+    from .markdown_links import installed_skill, package_markdown_targets
 except ImportError:  # unittest discover -s tests imports top-level test modules.
-    from markdown_links import package_markdown_targets
+    from markdown_links import installed_skill, package_markdown_targets
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILL = ROOT / 'plugins/research-assistant/skills/code-reading'
@@ -107,9 +107,9 @@ class SourceEvidenceTests(unittest.TestCase):
 
 class DistributionTests(unittest.TestCase):
     def test_standalone_links_and_routes(self):
-        for path in [SKILL / 'SKILL.md', *SKILL.glob('references/*.md')]:
-            # Check rendered navigation, not project-relative fenced examples.
-            list(package_markdown_targets(path, SKILL))
+        with installed_skill(SKILL) as package:
+            for path in [package / 'SKILL.md', *package.glob('references/*.md')]:
+                list(package_markdown_targets(path, package))
         for file in ['README.md', 'prompts/orchestrator.md', 'prompts/research_orchestrator.md',
                      'plugins/research-assistant/skills/research-assistant/SKILL.md']:
             self.assertIn('code-reading', (ROOT / file).read_text())

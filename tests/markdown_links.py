@@ -4,8 +4,11 @@ This intentionally handles the inline-link syntax used by package contracts,
 not all of CommonMark. Fenced blocks and backtick spans are examples, not package
 navigation. Prose quotes and blockquotes still contain live links and are checked.
 """
+from contextlib import contextmanager
+import importlib.util
 from pathlib import Path
 import re
+import tempfile
 from urllib.parse import unquote, urlsplit
 
 _FENCE = re.compile(r'^ {0,3}(`{3,}|~{3,})(.*)$')
@@ -99,3 +102,16 @@ def package_markdown_targets(source, package):
         if not resolved.is_file():
             raise ValueError(f'Markdown link file missing: {source}: {target}')
         yield resolved
+
+
+@contextmanager
+def installed_skill(source):
+    """Check distribution closure after the real installer's alias materialization."""
+    spec = importlib.util.spec_from_file_location(
+        'package_bootstrap', Path(__file__).resolve().parents[1] / 'setup.py')
+    installer = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(installer)
+    with tempfile.TemporaryDirectory(prefix='skill-closure-') as directory:
+        package = Path(directory).resolve() / Path(source).name
+        installer.copy_skill(source, package)
+        yield package

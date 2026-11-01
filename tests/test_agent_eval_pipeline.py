@@ -48,6 +48,56 @@ class PipelineTests(unittest.TestCase):
         path.write_text(json.dumps(data))
         return path
 
+    def test_snapshot_materializes_only_committed_skill_alias_bytes(self):
+        self.put('shared-references/workflow.md', '')
+        expected = 'committed 中文\r\n'.encode('utf-8')
+        (self.repo / 'shared-references/workflow.md').write_bytes(expected)
+        alias = self.repo / 'plugins/demo/skills/one/references/workflow.md'
+        alias.parent.mkdir(parents=True)
+        alias.symlink_to('../../../../../shared-references/workflow.md')
+        self.git('add', '.')
+        self.git('commit', '-qm', 'shared alias')
+        revision = self.git('rev-parse', 'HEAD').strip()
+        expected = subprocess.check_output(['git', '-C', str(self.repo), 'show',
+                                            revision + ':shared-references/workflow.md'])
+        self.put('shared-references/workflow.md', 'dirty bytes must not leak')
+        output = self.base / 'alias-run'
+        pipeline.prepare_run(self.repo, revision, output)
+        copied = output / 'snapshot' / alias.relative_to(self.repo)
+        self.assertFalse(copied.is_symlink())
+        self.assertEqual(copied.read_bytes(), expected)
+        self.assertFalse((output / 'snapshot/evals').exists())
+        self.assertEqual(pipeline.verify_run(output)[1], [])
+
+    def test_snapshot_alias_rejects_unsafe_and_evaluation_targets_before_writing(self):
+        alias = self.repo / 'plugins/demo/skills/one/references/workflow.md'
+        alias.parent.mkdir(parents=True)
+        for index, target in enumerate(('/etc/passwd', '../../../../../evals/fixtures/input.txt',
+                                         '../../../../../shared-references/missing.md',
+                                         '..\\..\\secret.md')):
+            with self.subTest(target=target):
+                if alias.is_symlink():
+                    alias.unlink()
+                alias.symlink_to(target)
+                self.git('add', '.')
+                self.git('commit', '-qm', 'unsafe alias')
+                output = self.base / ('unsafe-' + str(index))
+                with self.assertRaises(ValueError):
+                    pipeline.prepare_run(self.repo, 'HEAD', output)
+                self.assertFalse(output.exists())
+
+    def test_snapshot_non_skill_alias_remains_forbidden(self):
+        self.put('shared-references/template.md', 'not a trusted template')
+        alias = self.repo / 'templates/policy.md'
+        alias.parent.mkdir()
+        alias.symlink_to('../shared-references/template.md')
+        self.git('add', '.')
+        self.git('commit', '-qm', 'template alias')
+        output = self.base / 'template-run'
+        with self.assertRaises(ValueError):
+            pipeline.prepare_run(self.repo, 'HEAD', output)
+        self.assertFalse(output.exists())
+
     def start(self, cid='a', attempt=1, adapter='host', event=None):
         receipt = {'event_id': event or f'start-{cid}-{attempt}', 'kind': 'start', 'actor': 'worker',
                    'adapter': adapter, 'case_id': cid, 'attempt': attempt}

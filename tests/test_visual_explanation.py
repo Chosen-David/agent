@@ -11,9 +11,9 @@ import tempfile
 import unittest
 
 try:
-    from .markdown_links import package_markdown_targets
+    from .markdown_links import installed_skill, package_markdown_targets
 except ImportError:  # unittest discover -s tests imports top-level test modules.
-    from markdown_links import package_markdown_targets
+    from markdown_links import installed_skill, package_markdown_targets
 
 ROOT = Path(__file__).resolve().parents[1]
 SKILLS = ROOT / 'plugins/research-assistant/skills'
@@ -50,22 +50,22 @@ class VisualTeachingPackageTests(unittest.TestCase):
 
     def test_entry_and_shared_workflow_links_stay_inside_each_skill(self):
         for role in ROLES:
-            package = SKILLS / role
-            # Follow actual local references, not token/heading matches. A skill
-            # distributed alone must not need this checkout or a sibling skill.
-            todo = [package / 'SKILL.md']
-            visited = set()
-            while todo:
-                path = todo.pop()
-                if path in visited:
-                    continue
-                visited.add(path)
-                self.assertTrue(path.is_file(), str(path))
-                for resolved in package_markdown_targets(path, package):
-                    if resolved.suffix == '.md':
-                        todo.append(resolved)
-            self.assertIn(package / 'references/visual_explanation_workflow.md', visited)
-            self.assertIn(package / 'references/output_ladder_workflow.md', visited)
+            with installed_skill(SKILLS / role) as package:
+                # Follow actual local references, not token/heading matches. A skill
+                # distributed alone must not need this checkout or a sibling skill.
+                todo = [package / 'SKILL.md']
+                visited = set()
+                while todo:
+                    path = todo.pop()
+                    if path in visited:
+                        continue
+                    visited.add(path)
+                    self.assertTrue(path.is_file(), str(path))
+                    for resolved in package_markdown_targets(path, package):
+                        if resolved.suffix == '.md':
+                            todo.append(resolved)
+                self.assertIn(package / 'references/visual_explanation_workflow.md', visited)
+                self.assertIn(package / 'references/output_ladder_workflow.md', visited)
 
 
 class VisualTeachingExistingHandoffTests(unittest.TestCase):
