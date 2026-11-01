@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 83
+Version: 84
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -249,6 +249,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 PACKAGE-CLOSURE（Version82）：继续同批已知源码别名/分发闭包缺口，仅将三组包导航测试改为先调用现有 setup.copy_skill 得到普通文件副本，再对真实副本执行原完整本地链接与递归闭包断言；保留规范源码字节检查和缺失/越界负控，新增共享文件别名安装后解析及越界目标拒绝控制。不改生产安装器、共享源码布局、评测快照守卫或guide，不删除旧失败。以现存2075方法日志冻结修前82个包断言失败/错误，再定向运行三模块与链接/安装生命周期回归，最后完整测试确认剩余真实缺口。当前主agent自检不充独立验收，不追溯重置旧合同预算；评测入口仍单列未决，实际模型质量/上下文/全费用及十篇正文验收继续open。原Version81稳定输入可由ad1883c1397680b97c319c182b72b17c3596c6ea回读；此变更不追溯批准旧运行。
 
 阶段 EVAL-ALIASES（Version83）：PACKAGE-CLOSURE完整2076方法已明确仅剩开发评测prepare拒绝共享源码文件别名；先冻结定向正/负控。将Codex既有固定Git tree/blob文件别名解析抽为一个共同实现，评测仅对plugins/<plugin>/skills/下别名复用，写出普通文件，不读取工作区替换字节。原直接shared-references文件、agent_runtime直接Python和research-assistant/shared-scripts直接Python命名空间及32层/循环/目录/gitlink/绝对/反斜线/缺失拒绝保持；模板等非Skill入口不放行，评测tests/evals隔离保持。原脚本API与来源dirty校验保留。保存修前失败，复测真实CLI prepare→快照内依赖执行、安装/别名/评测门禁及全库；五组CI加入包闭包与评测入口检查。只同主自检，旧独立合同不降级、不重置预算，无模型/费用/效率结论。
+
+阶段 CI-BUDGET（Version84）：续接4d992002的原生Windows3.10末段取消；将新增104方法包/评测组及原通信三模块组从install/mac两类job原位移入一个覆盖相同五个平台版本组合的contracts矩阵，保持所有测试命令的逐平台多重集、checkout/setup精确版本、Windows源码链接设置和原有安装/恢复/同步检查。两类job继续原10/5分钟限额，新contracts上限5分钟；无AI并行，不改生产SQLite持久性、测试数据/skip或扩大旧独立合同预算。先保存原生失败与时长，核对逐平台命令相等及实际模块回归，再普通发布并读回十job；仅测CI完成/墙钟与runner耗时，不当模型质量或执行引擎性能收益。旧/tmp未随环境恢复，既有Git记录/哈希仍保留，不伪造原文件存在；本次正文新增0，十篇/真实任务质量成本及既有独立合同仍open。
 
 ## Progress
 
@@ -921,3 +923,9 @@ ad1883c1恢复修复的原生run41272816979五job全部成功，每组实际22�
 正文续读SPEM arXiv2610.26995v1：实际9页PDF，正文1–7/公式1–14/图1–3/表1–3及参考文献8–9；补充A–D未随附，未读。方法/消融/局限/本库关系见同目录reading.json SHA256 `4f0c3397c3be1b1a0dddcc50149fe788a71ee854f4392a9fe78cc43b4466a1e7`；仅提出精简结果须保留依赖闭包的后续假设，未归因为此前恢复修复，未新增GNN/记忆池。ReCoF同版本查重命中旧记录不加计。本次新正文1篇不冒充十篇达标，论文验收、真实宿主/模型质量/上下文和全费用及旧独立合同继续open；本地全绿不代表SYSTEM99整轮完成或项目无bug。
 
 PACKAGE-CLOSURE 原生run41274726189：两Ubuntu全job成功；macOS旧夹具未resolve的/var与/private/var比较失败，两Windows另有短/长路径差异、两处测试默认编码异常及旧prepare_agent_eval.py默认编码读取任务JSON失败。三平台原失败块保留于同目录package-ci.json，不能用本机2079通过代替。仅规范化夹具临时根、为中文仓库文本/旧评测JSON显式UTF-8；原legacy实际入口测试禁用UTF-8模式，在本机ASCII locale保留修前1失败（locale-before.log SHA256 `e66897157b5ae9e11b0dfe0a85101e61150c0d91aa9c9a37f9bf9f97638bf414`），修后包含在104方法全过（portable-package-check.log SHA256 `5afd69352e9782694648e1aa17922105c464e177b19d7239b2f28baaf5798d49`）。不改全局locale、生产路径守卫或skip；前一8e3b8e11完整2079/15skip不冒充此补修head的完整重跑，新五组CI待发布后实际回读。仍同Plan83/同批，非新完成轮次。
+
+### 2026-11-01 — CI-BUDGET 串行续接
+
+恢复环境的旧工作区d2be90ee干净，持有原锁后快进至main4d992002；guide SHA256仍f943aa65ca55b858d9128fb92c3a9df5146e3f5fc406c4db646a45e5e85ba396。旧/tmp未恢复，不冒称其证据仍在；本次从GitHub重取原始run41275070896，四job成功、Windows3.10约604秒末组通信取消。仅将两组既有检查移至同五平台contracts矩阵，保留全部逐平台命令、原10/5分钟限额及原安装/恢复/同步；新增contracts限5分钟，不改生产SQLite/数据/skip，不是多AI开发。
+
+实际相关145方法全过0skip，矩阵展开四个平台各47命令、mac27命令的多重集与旧配置完全一致；自检非独立审核。原失败/时长与本地原始输出索引 `/tmp/agent-system99/ci-budget-1404/record.json` SHA256 `2dbcf97d0a1b43af979be3b8d29d55f5a39bd8ca6923edf7212098143efcb487`；新head十job实际结果发布后另存同目录ci.json并回读。未测模型质量/总费用，不报统计提速；本次新正文0篇，旧SPEM阅读不重计，十篇/真实任务质量和成本及旧独立合同仍open。同SYSTEM99非完成轮次，唯一索引/guide未改。

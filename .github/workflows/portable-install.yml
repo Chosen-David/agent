@@ -33,7 +33,6 @@ jobs:
       - run: python -B -m unittest discover -s tests -p test_serial_recovery.py -v
       - run: python -B -m unittest discover -s tests -p test_completed_review_recovery.py -v
       - run: python -B -m unittest discover -s tests -p test_terminal_revalidation.py -v
-      - run: python -B -m unittest tests.test_markdown_links tests.test_code_reading tests.test_visual_explanation tests.test_figure_contract tests.test_agent_eval_pipeline tests.test_codex_source_aliases tests.test_development_eval_boundary -v
       - run: python -B -m unittest discover -s tests -p test_setup_portable.py -v
       - run: python -B -m unittest discover -s tests -p test_setup_limits.py -v
       - run: python -B -m unittest discover -s tests -p test_setup_publication.py -v
@@ -75,8 +74,33 @@ jobs:
       - run: python -B -m unittest discover -s tests -p test_engine_pre_action_claim.py -v
       - run: python -B -m unittest discover -s tests -p test_managed_child_authority.py -v
       - run: python -B -m unittest discover -s tests -p test_checkpoint_json_fd.py -v
-      - run: python -B -m unittest tests.test_claim_graph_residual tests.test_handoff_basis tests.test_communication -v
       - run: python -B scripts/sync_plugin_references.py --check
+
+  contracts:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {os: ubuntu-latest, python: '3.10'}
+          - {os: ubuntu-latest, python: '3.12'}
+          - {os: windows-latest, python: '3.10'}
+          - {os: windows-latest, python: '3.12'}
+          - {os: macos-latest, python: '3.12'}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        env:
+          GIT_CONFIG_COUNT: '1'
+          GIT_CONFIG_KEY_0: core.symlinks
+          GIT_CONFIG_VALUE_0: 'true'
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -B -m unittest tests.test_markdown_links tests.test_code_reading tests.test_visual_explanation tests.test_figure_contract tests.test_agent_eval_pipeline tests.test_codex_source_aliases tests.test_development_eval_boundary -v
+      - run: python -B -m unittest tests.test_claim_graph_residual tests.test_handoff_basis tests.test_communication -v
 
   ingest-macos:
     runs-on: macos-latest
@@ -91,7 +115,6 @@ jobs:
       - run: python -B -m unittest discover -s tests -p test_serial_recovery.py -v
       - run: python -B -m unittest discover -s tests -p test_completed_review_recovery.py -v
       - run: python -B -m unittest discover -s tests -p test_terminal_revalidation.py -v
-      - run: python -B -m unittest tests.test_markdown_links tests.test_code_reading tests.test_visual_explanation tests.test_figure_contract tests.test_agent_eval_pipeline tests.test_codex_source_aliases tests.test_development_eval_boundary -v
       - run: python -B -m unittest discover -s tests -p test_usage_shapes.py -v
       - run: python -B -m unittest discover -s tests -p test_intake.py -v
       - run: python -B -m unittest discover -s tests -p test_mailbox_sequence.py -v
@@ -131,5 +154,4 @@ jobs:
       - run: python -B -m unittest discover -s tests -p test_engine_pre_action_claim.py -v
       - run: python -B -m unittest discover -s tests -p test_managed_child_authority.py -v
       - run: python -B -m unittest discover -s tests -p test_checkpoint_json_fd.py -v
-      - run: python -B -m unittest tests.test_claim_graph_residual tests.test_handoff_basis tests.test_communication -v
       - run: python -B scripts/sync_plugin_references.py --check
