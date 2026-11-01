@@ -12,6 +12,7 @@ from run_role import bootstrap
 
 
 def load_skill(project, name):
+    """Return the installed body and its UTF-8 content hash, not a dependency hash."""
     installer = bootstrap()
     project = installer.installation_root(project)
     status = installer.check(project)
@@ -36,7 +37,8 @@ def load_skill(project, name):
         content = expected
     return {'schema_version': 1, 'execution_mode': 'single-main', 'launched': False,
             'project_root': str(project), 'skill': name,
-            'source': str(path / 'SKILL.md'), 'content': content}
+            'source': str(path / 'SKILL.md'), 'content': content,
+            'content_sha256': installer.sha(content)}
 
 
 def main():

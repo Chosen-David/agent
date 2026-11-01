@@ -1,5 +1,6 @@
 """Single-main installation and durable step ownership, without model calls."""
 import importlib.util
+import hashlib
 import json
 from pathlib import Path
 import subprocess
@@ -147,14 +148,21 @@ class SingleMainTests(unittest.TestCase):
         self.assertEqual(calls, ['A', 'A', 'B'])
 
     def test_actual_skill_loader_has_no_backend(self):
-        setup.install(self.root)
-        run = subprocess.run([sys.executable, str(ROOT / 'scripts/load_skill.py'),
-                              '--project', str(self.root), '--skill', 'research-write'],
-                             capture_output=True, timeout=30)
-        self.assertEqual(run.returncode, 0, run.stderr.decode())
-        result = json.loads(run.stdout)
-        self.assertEqual(result['execution_mode'], 'single-main')
-        self.assertFalse(result['launched'])
-        self.assertIn('research-write', result['skill'])
-        self.assertIn('SKILL.md', result['source'])
-        self.assertIn('论文', result['content'])
+        for copy in (False, True):
+            with self.subTest(copy=copy):
+                project = self.root / ('copy' if copy else 'link')
+                project.mkdir()
+                setup.install(project, copy_skills=copy)
+                run = subprocess.run([sys.executable, str(ROOT / 'scripts/load_skill.py'),
+                                      '--project', str(project), '--skill', 'research-write'],
+                                     capture_output=True, timeout=30)
+                self.assertEqual(run.returncode, 0, run.stderr.decode())
+                result = json.loads(run.stdout)
+                self.assertEqual(result['execution_mode'], 'single-main')
+                self.assertFalse(result['launched'])
+                self.assertIn('research-write', result['skill'])
+                self.assertIn('SKILL.md', result['source'])
+                self.assertIn('论文', result['content'])
+                expected = (ROOT / 'plugins/research-assistant/skills/research-write/SKILL.md').read_text(encoding='utf-8')
+                self.assertEqual(result['content'], expected)
+                self.assertEqual(result.get('content_sha256'), hashlib.sha256(expected.encode('utf-8')).hexdigest())

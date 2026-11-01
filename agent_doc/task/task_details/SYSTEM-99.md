@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 88
+Version: 89
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -259,6 +259,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 EVAL-WRITE-BOUNDARY 准入复核（Version87）：Version86候选完整2084方法0失败/15既有skip，但复核docs/agent_eval_pipeline.md的调用顺序发现，authorize_dispatch返回后宿主可执行，然后才record-start。不能把这个授权入口当作普通历史查看；保留一次精确源hash/单方法修前未拒绝的失败，仅给此准入补同一guard_write_path。report保持只读可用，原材料审核/身份独立要求不改。随后复测现有评测/守卫与真实本地serve；Unix原生CI加入既有有界serve单方法，不扩8秒服务或5秒收敛限额，不称Windows进程终止测试已验证；所有平台继续完整评测保护检查。
 
 阶段 EVAL-WRITE-BOUNDARY 原生路径续接（Version88）：9ef5524b的macOS与Windows原生完整快照准备在新增守卫处误拒controlled write outside project；Ubuntu通过。临时根别名的词法路径与既有assert_ai_writable规范根不一致，写出templates/TASK.md后才触发项目识别。保留原生失败及Linux显式别名根的同条件修前失败；仅在prepare_run原始路径guard之后规范out，子路径继续逐项guard，不改通用守卫或放行guide/逃逸链接。现有完整快照正向方法改用显式外层别名，仍执行快照依赖；既有guide重定向/嵌套/越界负控全部保留。主agent自检、原生新head另核，旧独立合同与预算不变。
+
+阶段 SKILL-CONTENT-PROVENANCE（Version89）：沿既有单主加载入口补充实际返回正文的content_sha256，复用installer.sha并保留全部安装/来源/链接/副本检查。依据新读2606.23127v1 AppendixB的trace绑定活动Skill版本方法，不移植其多agent、自更新、分支候选和未评估adapter；只为现有宿主/TASK提供可引用正文指纹，不新建账本或权限。固定真实安装→CLI→正文/规范源对照，修前缺字段失败；补验证链接与复制两模式、原不启动模型断言及安装/旧独立审核回归。字段是返回UTF8正文哈希（既有读取统一换行），不是物理文件字节/依赖闭包/模型调用证明或独立回执。原生CI与普通发布回读另核；不报任务质量/token/费用/性能收益，旧保护合同和预算仍pending。
 
 ## Progress
 
@@ -947,3 +949,9 @@ PACKAGE-CLOSURE 原生run41274726189：两Ubuntu全job成功；macOS旧夹具未
 本次新正文0，既读FSM/SPEM不重计；十篇/实际宿主模型质量/上下文与费用/旧独立证据仍open，同SYSTEM99不结轮。guide/唯一索引字节未改，无新results中间包或额外TASK。
 
 原生路径续接：9ef5524b十job已结束，7成功/3完整快照准备失败；各原始日志已保存。显式别名根冻结方法修前1失败，规范输出根后完整2084方法0失败/错误、15既有skip，CI同命令150全过0skip。仅入口两行与原正向夹具变化，既有守卫/guide拒绝不改；证据 `/tmp/agent-system99/entry-write-1505/path-evidence.json` SHA256 `794d767c4f2856d919d5a4c498479f1775eac1dc4e323f1ec70e11400e90b416`。冗余独立复现脚本/正向输出已清，保留冻结负控与最终回归。普通发布及新head原生CI待核；正文新增0、旧独立合同与整轮未决不变。
+
+### 2026-11-01 — SKILL-CONTENT-PROVENANCE 串行续接
+
+95ab5a97原生run41286645312十job全成功，五组各150评测/通信方法0skip、三POSIX有界serve各1通过；精确head日志 `/tmp/agent-system99/entry-write-1505/path-ci.json` SHA256 `57747e18f8824d4a061631f94e05fe29aa2f4d15f7aaaf62c5abe27806425fbb`。上次新读2608.14036v1实际28页正文/附录记录 `/tmp/agent-system99/skill-body-1600/reading.json` SHA256 `a95275300b7f3b342e5d7e7c09da6f68d81b20f38e91cb5699227f3384eca0ea`，本次不重计。
+
+本次新读2606.23127v1全18页，覆盖§§1–5/局限、AppendixA–L、公式/完整实验及消融；新记录包含M1/M2表标题矛盾、跨角色退化、n1/n5预算混杂、token负结果及无全actor成本的限制。仅采用实际Skill正文版本绑定，返回content_sha256，不新增竞争来源或自动改写。真实CLI指纹检查修前1失败；增强链接/复制两模式后，安装/单主/旧保护审核40方法全过0skip。证据 `/tmp/agent-system99/procedural-body-1700/evidence.json` SHA256 `3f3f31b2b7836c838ccb790c238ebe1890f08fddaf480d3b8d818b66bd17bd12`；阅读记录哈希见该索引。删除冗余正向输出及自身测试缩进编辑错误日志（哈希/原因保留，非产品失败），保留原始缺字段失败与最终回归。无新results包、guide/唯一索引改动、子agent或独立验收声明；普通发布/新head原生CI待核。新正文1不等于十篇验收，真实宿主质量/上下文/费用与既有独立合同仍open，同SYSTEM99不结轮。
