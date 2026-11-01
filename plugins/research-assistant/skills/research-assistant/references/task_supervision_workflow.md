@@ -97,6 +97,7 @@ python -m agent_runtime.task_supervisor start \
 - `start` 总是在独立 tmux server socket `agent-supervisors` 的自有 `agent-<hash>` 会话中 detached 启动 guard/worker，即使调用者已经在 tmux。独立会话避免主 AI pane 退出带走监督。路径按参数安全引用；重复启动相同配置复用会话，同一 state-dir 的启动锁与 worker 锁避免重复创建 Agent。
 - guard 将 stdout/stderr 追加到 `supervisor.log`；worker 意外非零退出后每 5 秒重启，同盘 DB/计划、幂等键、已完成证据和定时 due 保留。非幂等动作结果不明仍阻塞核实，不因重启盲重放。正常取消/全部完成返回 0，guard 退出后仅自有 session 自动消失。
 - 使用已有 SQLite 定时器及受 min/max 限制的自适应 due，不创建额外 cron。专用 worker 只 drain 自有 run_id。主 AI 根据实际 ETA、风险、等待状态调整下一版本策略，并维护所有远端 job/Agent ID 和取消方式。
+- worker 要求 `/proc/self/status` 的 `NStgid` 恰有一个 PID 值且等于 `os.getpid()`（Linux 4.1+）；多层、缺失、重复、不可读或畸形时，在后端加载前拒绝运行。status 同样拒绝声明 live，不自动翻译 PID 或重挂载 procfs。此项是 worker 准入与状态读取检查，不是后端/挂载的全生命周期原子围栏；`start` 的独立后端预检仍须按宿主权限核验。
 - `receipt.json` 记录实际 run_id/session/monitor 及读取到的 live；成功声明要求 tmux pane 存活、匹配 worker 心跳和 monitor 读回。状态不是未来可用性承诺。不要用 `$TMUX` 存在或磁盘文件存在代替活性核查。
 - SSH 客户端断开不会终止 detached 会话；服务器重启/断电、tmux server 或 guard 被杀仍会停止。主 AI/管理员重连后运行相同 `start` 恢复，不删 DB/重置尝试次数。若要求开机自动恢复，需要另行配置宿主开机服务；本配置没有安装 systemd/cron。OS logout 清理策略、磁盘空间和模型服务可用性也应由主 AI 检查。
 - `failed` 或任务索引/固定详情计划/指南/已采纳建议变化时 worker 保留，maintain 回调持续以受限间隔提交/查询主 AI 的诊断/恢复工作；耗尽尝试的动作不再盲跑。缺 maintain 后端会在进度中显示 `maintenance_available=false`，只能监测而不能自动修复。没有后端时不得许诺所有工作自动完成。

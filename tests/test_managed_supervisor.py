@@ -42,6 +42,65 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ProcessIdentityTests(unittest.TestCase):
+    def fixture(self):
+        value = WorkerTests()
+        value.setUp()
+        self.addCleanup(value.doCleanups)
+        return value
+
+    def proc_view(self, value):
+        from unittest.mock import mock_open
+        original = open
+        def open_status(path, *args, **kwargs):
+            if os.fspath(path) == '/proc/self/status':
+                if isinstance(value, Exception):
+                    raise value
+                return mock_open(read_data=value)(path, *args, **kwargs)
+            return original(path, *args, **kwargs)
+        return patch('builtins.open', side_effect=open_status)
+
+    def invalid_proc_views(self):
+        pid = str(os.getpid()).encode()
+        return (b'NStgid:\t999999999\n', b'NStgid:\tnot-a-pid\n', FileNotFoundError(),
+                b'NStgid:\t999999999\t' + pid + b'\n',
+                b'NStgid:\t' + pid + b'\t' + pid + b'\n', b'Name:\tpython\n',
+                b'NStgid:\n', (b'NStgid:\t' + pid + b'\n') * 2)
+
+    def test_worker_rejects_unverifiable_pid_namespace_before_backend(self):
+        from agent_runtime.task_supervisor import worker
+        from unittest.mock import Mock
+        value = self.fixture()
+        backend = Mock(side_effect=RuntimeError('backend reached'))
+        for namespace in self.invalid_proc_views():
+            with self.subTest(namespace=namespace), self.proc_view(namespace), \
+                 patch.dict(os.environ, {'TMUX': 'explicit-test-marker'}), \
+                 patch('agent_runtime.task_supervisor.load_backend', backend):
+                with self.assertRaisesRegex(RuntimeError, 'PID namespace'):
+                    worker(value.config)
+                backend.assert_not_called()
+        with self.proc_view(b'NStgid:\t' + str(os.getpid()).encode() + b'\n'), \
+             patch.dict(os.environ, {'TMUX': 'explicit-test-marker'}), \
+             patch('agent_runtime.task_supervisor.load_backend', backend):
+            with self.assertRaisesRegex(RuntimeError, 'backend reached'):
+                worker(value.config)
+        self.assertEqual(backend.call_count, 1)
+
+    def test_status_rejects_foreign_proc_view_before_numeric_pid_lookup(self):
+        value = self.fixture()
+        atomic_json(value.state_dir / 'live.json', {
+            'run_id': value.plan['run_id'], 'session': 'fixture', 'pid': os.getpid(),
+            'heartbeat_at': time.time(), 'service_id': 's', 'starttime': '123'})
+        for namespace in self.invalid_proc_views():
+            with self.subTest(namespace=namespace), self.proc_view(namespace), \
+                 patch('agent_runtime.task_supervisor.tmux', return_value=subprocess.CompletedProcess([], 0, '0\n', '')), \
+                 patch('agent_runtime.task_supervisor.read_process_starttime', return_value='123') as read_identity:
+                self.assertFalse(status(value.config)['live'])
+                read_identity.assert_not_called()
+        with self.proc_view(b'NStgid:\t' + str(os.getpid()).encode() + b'\n'), \
+             patch('agent_runtime.task_supervisor.tmux', return_value=subprocess.CompletedProcess([], 0, '0\n', '')), \
+             patch('agent_runtime.task_supervisor.read_process_starttime', return_value='123'):
+            self.assertTrue(status(value.config)['live'])
+
     @unittest.skipUnless(sys.platform == 'linux', 'requires Linux procfs and PR_SET_NAME')
     def test_starttime_survives_arbitrary_process_name_bytes(self):
         body = r'''
@@ -124,7 +183,22 @@ class WorkerTests(unittest.TestCase):
             child.stdout.close()
             child.stderr.close()
 
+    def require_process_namespace(self):
+        try:
+            rows = [line.split()[1:] for line in Path('/proc/self/status').read_bytes().splitlines()
+                    if line.startswith(b'NStgid:')]
+            matched = rows == [[str(os.getpid()).encode()]]
+        except (OSError, ValueError):
+            matched = False
+        if not matched:
+            reason = 'worker integration requires matching /proc and process PID namespaces'
+            if os.environ.get('AGENT_REQUIRE_NATIVE_PROC') == '1':
+                self.fail(reason)
+            self.skipTest(reason)
+
     def launch(self, command='_worker', marker=True):
+        if marker:
+            self.require_process_namespace()
         env = dict(os.environ)
         if marker: env['TMUX'] = 'explicit-unit-test-fixture'
         else: env.pop('TMUX', None)
@@ -152,6 +226,7 @@ class WorkerTests(unittest.TestCase):
                     self.assertFalse(status(self.config)['live'])
 
     def test_status_verifies_worker_process_identity_against_pid_reuse(self):
+        self.require_process_namespace()
         from agent_runtime.task_supervisor import read_process_starttime
         starttime = read_process_starttime(os.getpid())
         self.assertIsNotNone(starttime)

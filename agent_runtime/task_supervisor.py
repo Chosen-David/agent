@@ -105,6 +105,16 @@ def read_process_starttime(pid):
     return fields[19].decode('ascii')
 
 
+def _proc_pid_namespace_matches():
+    # NStgid lists PIDs from the procfs mount's namespace through nested ones.
+    try:
+        with open('/proc/self/status', 'rb') as handle:
+            rows = [line.split()[1:] for line in handle if line.startswith(b'NStgid:')]
+        return rows == [[str(os.getpid()).encode('ascii')]]
+    except (OSError, ValueError):
+        return False
+
+
 def validate_live_snapshot(live):
     """Validate the worker-owned heartbeat before status code uses its fields."""
     if (not isinstance(live, dict)
@@ -216,6 +226,8 @@ def worker(config):
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
             return 0
+        if not _proc_pid_namespace_matches():
+            raise RuntimeError('managed supervisor requires /proc in its PID namespace')
         store = Store(state_dir / 'state.sqlite')
         scheduler = LocalScheduler(store)
         handlers, authorize, maintain, result_verifier, plan_review_verifier = load_backend(config, store)
@@ -330,7 +342,8 @@ def status(config):
             load_json(state_dir / 'live.json', max_bytes=CONFIG_INPUT_LIMIT))
     except (OSError, ValueError):
         pass
-    alive = (pane.returncode == 0 and '0' in pane.stdout.splitlines()
+    alive = (_proc_pid_namespace_matches()
+             and pane.returncode == 0 and '0' in pane.stdout.splitlines()
              and live.get('run_id') == config['run_id']
              and live.get('session') == config['session']
              and 0 <= time.time() - live.get('heartbeat_at', 0) < 10

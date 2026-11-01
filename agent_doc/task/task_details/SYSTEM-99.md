@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 97
+Version: 99
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -277,6 +277,10 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 PENDING-ATTEMPT-EXHAUSTION（Version96，同SYSTEM99）：核对新wait_policy已记录pending作业后，retry/轮询异常或领取租约过期耗尽max_attempts仍会failed并释放active_step，须用实际running文件/SQLite恢复反例确认。只把此已知pending的新等待契约预算耗尽收紧为既有blocked/wait_budget/diagnosis_required，尝试/观察计数、job身份、幂等键及预算不增加/重置；仅已有授权且验证真实结束的reconcile解除。无wait_policy旧计划和明确handler.failed结果保持；当前新等待测试的failed预期须显式更新为blocked且原计数断言保留，不删旧失败。同步既有等待契约一句说明及单个生成镜像；新增serial_recovery参数化验收复用五平台原生CI已有入口，不新增CI命令/作业。新读LIMBO2609.29095v1完整23页/§§1–8及附录A–C，区分观察与真实作用/延迟提交，不引入新账本或重试策略、模型调用、未知结果授信和外部权限。定向/全库/真实独立进程恢复与新head原生CI后发布；同主自检非独审，旧预算/合同、十篇和全链质量/费用继续open。
 
 阶段 PROC-STARTTIME（Version97，同SYSTEM99）：延续前次完整测试的自身/proc身份未明失败，先冻结实际子进程PR_SET_NAME及/proc/self原始字段，分开已证实的ASCII解码缺陷与本环境PID命名空间不一致；不据此追溯断言原偶发失败根因。仅将已有starttime读取改为二进制分隔comm、对字段22核验十进制并返回原字符串；保留IO/缺字段拒绝、不转换ticks、不翻译PID或放宽身份比较。实际四类进程名（ASCII、空格/右括号、Unicode、非UTF8字节）及畸形/缺失控制先修前后修后，现有PID复用状态拒绝断言保留；Linux原生CI显式运行新类和原状态方法，不以局部解析替代worker/tmux部署验收。新读2610.39124v1全文26页/§§1–7与A–F，采用审计/部署前提必须匹配的验证边界，不移植概率证书、降低独立门槛或减少测试。命名空间守卫/真实宿主部署仍待版本化核验，同主自检非独审，旧合同/预算、十篇/实际模型质量与全成本继续open。
+
+阶段 PROC-NAMESPACE-ADMISSION（Version98，同SYSTEM99）：继续Version97已证实的部署缺口，不停在解析修复。仅在worker取得现有普通锁后、Store/后端加载前要求/proc/self链接PID等于本进程PID；status在读数字PID身份前核同一前提，不可读/畸形/不同均拒绝live，不翻译PID、不挂载、不绕过锁或放宽预算。先保存错命名空间和不可读情况下后端仍被触达、fresh heartbeat误报live的固定失败；匹配环境健康对照与旧锁/取消/最终交付契约保持。真实worker夹具在本地已知能力缺失时明确skip并记录新增缺口；Linux CI显式要求该前提，缺失即fail，运行实际worker/取消/最终交付模块不允许将skip当部署通过。复用本次2610.39124v1已读全文的审计/部署前提，不重复新增阅读计数；同主自检、旧独立合同及真实tmux/SSH/模型任务质量成本继续open。
+
+阶段 PROC-NAMESPACE-ADMISSION补充（Version99，取代Version98仅数字相等判据）：自检合成相同数字的嵌套PID反例确认旧候选仍接受；改读/proc/self/status的NStgid，要求恰一个字段行且仅一个PID值等于os.getpid，缺失/畸形/重复/多层即拒绝（Linux4.1+，不读取其它用户namespace链接）。保留Version98原失败与候选摘要/源码blob；初候选完整回归通过不构成该缺口验收。真实worker夹具用同一内核字段检查所需能力，Linux CI严格缺失即fail；原锁/取消/最终交付断言及无后端先验不变。当前前提仍依赖可信procfs及检查后的挂载稳定，不声称跨宿主原子围栏。
 
 ## Progress
 
@@ -1026,3 +1030,12 @@ cf835b28原生run41310066832十job全部成功，五平台contracts各110+54方�
 本环境os.getpid与/proc/self/stat显示的PID不同，旧读法可能命中另一同号宿主进程或不存在；这是单列部署阻塞，不做自动PID转换/挂载，不把解析修复称为命名空间问题已解决。前次偶发None缺当时PID/errno，不能追溯断言根因。原始失败、必要复现探针、全文阅读与最终验证 `/tmp/agent-system99/proc-starttime-0002/evidence.json` SHA256 `308347bb4f2d76a47beb0707af0ae1a539ea9889e39d20dd98331bab512cd0a3`；重复正向基线已按哈希提炼清理，自有子进程/夹具均已回收，无新results包或guide/唯一索引改动。
 
 新读arXiv2610.39124v1全文26页/§§1–7及A–F，记录历史条件重析、精确/数值/计算证书区别、非对称最坏点、实际预算单位/前缀常数、相位/交叉区间与有限预算局限，作者按需supplement未获取不冒复现。只采用审计与部署状态前提需要分开核验的边界，不移植风险概率证书或减验收/预算。新增正文1不等于十篇；同主自检不冒独审，命名空间守卫/真实tmux与宿主、pending权限撤销/明确blocked归属、实际模型质量/上下文/全费用与既有独立合同仍open，同SYSTEM99未完成。
+
+
+### 2026-11-02 — PROC-NAMESPACE-ADMISSION 同批继续
+
+e5bd09dd原生run41326310547十job全成功，Ubuntu两组原身份三方法0skip，五组serial各15/contract各164方法0skip；必要原始CI段 `/tmp/agent-system99/proc-starttime-0002/ci.json` SHA256 `c6703b03f5de02ea04b738faf8606fabcde305dbae9f9a7aa77a2136cc16646f`。续核发现错命名空间仍可触达worker后端、status接受fresh heartbeat；原两方法7失败保留。初候选只比自身PID数字，自检相同数字的嵌套PID反例仍接受；初候选全库pass仅保留摘要/hash/blob，不当验收。Version99改用内核NStgid单行/单PID门禁：worker取得原锁后、Store/后端前拒绝缺失/多层/重复/畸形/不可读；status先拒绝数字PID查询，不做翻译/挂载。重复锁/取消/最终交付保护不改，权威流程单句与单镜像同步。
+
+冻结最终八类元数据条件的同一两方法，固定原worker/status Git函数：修前17子断言失败、修后0失败/错误/skip（含累计callback次数断言，非17个测试）；匹配健康控制保留。实际隔离_worker CLI因真实命名空间不符exit1，后端标记未创建、任务快照未变、无live，夹具回收。完整2100方法0失败/错误、51条skip，其中36条为已确认宿主能力缺失，不能计通过；原15环境skip不变。定向37方法同缺口36skip，Reader3/同步/空白通过。严格模式在当前宿主原身份方法实际fail1而非skip，LinuxCI扩大至worker/取消/交付/恢复回执32方法，缺能力即fail；新head原生结果发布后另回读。原失败、候选否定与精简最终证据 `/tmp/agent-system99/proc-namespace-0035/evidence.json` SHA256 `170007f5025a0b9e144d8b1b7fa69757a01d889d9b70b8a6064268977551eb43`；仅自有tmp夹具回收，无新results包，guide/唯一索引未改。
+
+复用此次2610.39124v1全文阅读与官方proc_pid_status(5) NStgid语义，不重复计另一篇。门禁依赖可信procfs及检查后挂载稳定；start独立adapter预检不是由worker门禁围栏，真实tmux/SSH/模型后端与旧独立合同仍未验。新读取成本未测，不报提速/全成本或质量收益。同一SYSTEM99继续开放，旧预算不重置，十篇及整轮不结案。
