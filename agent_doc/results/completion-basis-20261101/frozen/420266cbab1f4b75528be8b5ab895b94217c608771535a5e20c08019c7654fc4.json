@@ -1,0 +1,173 @@
+{
+  "task": "SYSTEM-99",
+  "batch_complete": false,
+  "paper": {
+    "id": "2609.38866",
+    "version": "v1",
+    "title": "When Context Changes: Understanding Update Failures in LLMs",
+    "authors": [
+      "Junyu Guo",
+      "Yuchen Fang",
+      "Shangding Gu",
+      "Costas Spanos",
+      "James Demmel",
+      "Javad Lavaei"
+    ],
+    "date": "2026-09-30",
+    "primary_pdf": "https://arxiv.org/pdf/2609.38866v1",
+    "version_history": "Official abs/HTML access failed; exact local PDF watermark/version/title read, not claimed latest"
+  },
+  "kind": "full-body reading candidate; source study, not an experiment or reproduction",
+  "coverage": {
+    "body_complete": true,
+    "characters": 192667,
+    "read_union": [
+      [
+        0,
+        192667
+      ]
+    ],
+    "sections": "Main 1–9, reproducibility, all references, A.1–A.8, B.1–B.10, C.1–C.2, D.1–D.6, E.1–E.4, F.1–F.5; Tables 1–22 and Figures 1–11 captions/excerpts",
+    "text_tool_chunks": [
+      "424144",
+      "93e5cf",
+      "d121bc",
+      "ce01d9",
+      "1e527f",
+      "74bf34",
+      "d72110",
+      "48604a",
+      "a5815e",
+      "a379c9"
+    ],
+    "excluded_attempt": "146000:170000 truncated without visible content, not counted; reread 146000:158000,158000:174000,174000:192667",
+    "original_pdf_pages_visually_read": [
+      1,
+      4,
+      5,
+      6,
+      14,
+      29,
+      30,
+      40
+    ],
+    "visual_scope": "Selected original pages only, not a 44-page layout audit. Eq8 absolute value bars verified on p14.",
+    "formal_credit": "One unique complete-body candidate; independent review pending. No global ten-paper certification."
+  },
+  "historical_partial_checkpoint": {
+    "path": ".agent-runs/context-update-reading-0715/checkpoint.json",
+    "sha256": "bb76234ccaa7880f24a24fda9c926906736a4697e1497e1047185cd0e55787d3"
+  },
+  "notes": [
+    {
+      "section": "Main 1–4; B.1–B.4; D.1–D.2",
+      "method": "Separate current, old same-variable, other-variable and other answers. Core1200 controlled preferences,180 multi-field ledgers,24 constraint scenarios,40 operational histories; generated groundtruth before answers.",
+      "evidence_and_ablation": "Original near-old factorial changes wording/count/position; raw labels use current-before-old gold-anywhere matcher and can accept mixed outputs. BABILong old-state only1.4% baseline errors; EntityTracking25.9%; RULER cross-chain99.5% is not old-state. ICF freeform69.3% vs MC70.9% accuracy, old-share errors82.1% vs29.4%.",
+      "limitations": "Constructed prevalence not deployment prevalence.577/783 ICF labels model-judged;40human calibration36agree and only13humanfailures; label-conditional bootstrap excludes annotation uncertainty.",
+      "repository_relation": "Do not classify every task failure as stale memory. Distinguish missing basis, wrong entity, obsolete value, parser failure and response availability in future quality acceptance."
+    },
+    {
+      "section": "4.2–4.4; B.5–B.8; C.1–C.2",
+      "method": "Fivefold dialogue-split linear probes, standardized training folds;21candidate values. Late component replacement on120paired Qwen successes/failures, seeded matched renaming preserves values/positions.",
+      "evidence_and_ablation": "Current-value probe probabilities on old answers .848Qwen/.822Llama vs shuffled .032–.064; heldout classification91.2/89.7%. Length-adjusted failure drops7.5/7.3 percentage points, correcting old partial note loose ~7%. Qwen late hidden gap recovery78.1% vs early-middle−.5%; old-key49.2% vs current-key−21.3%. Qwen failed-correct old attention share+19.4pp CI17.9–21.0; Llama+1.2pp CI−.5–2.8.",
+      "limitations": "Probe probabilities are not answer accuracy or causal use. n600/360 replacement counts reuse120pairs. Head-output quantity is projection proxy. Observed attention current-share13pp difference is not an intervention.",
+      "repository_relation": "Valid dependency retrieval cannot certify the model uses current facts. Existing gates remain necessary, model answer quality needs its own real backend evaluation."
+    },
+    {
+      "section": "4.4–4.5; B.7–B.10",
+      "method": "Pythia648prompts,142balanced failures/successes,96matched pairs;43head-discovery/53heldout pairs. Known-answer hidden-state steering compared with equal-norm random.",
+      "evidence_and_ablation": "Targeted old-head removal corrects38.4% heldout old errors vs8.7% layer-matched random; earlier resubstitution estimate6.4pp higher excluded. L8H2 key patch .86QKgap/.75answergap vsrandom .04/.06. Final-layer known-answer steering alpha.4 current-answer gains are35.5/70.5pp (B.7). The distinct middle-layer original-error-category persistence reduction beyond random is−1.1/+1.8pp (Table8); final-layer reduction on that persistence metric is39.5/69.5pp. Identity+recency linear predictor43.0/39.6% vs identity-only79.2/67.4: negative result.",
+      "limitations": "Steering knows correct value, not generic repair. Alpha0 hook matches local no-hook but original API category persisted only643/665Qwen and622/722Llama. Random head controls do not prove unique circuit. Pythia late developing failures: current-key patch92.8% immediate vs8.7% after later turns, query77%vs6%, identity0; larger reliable controls too few failures.",
+      "repository_relation": "Do not copy a head intervention or confidence heuristic into this host. Require stale-answer-specific tests and preserve negative results instead of broad mechanism claims."
+    },
+    {
+      "section": "5; A.1–A.8; original p14",
+      "method": "One-layer faithful-copy surrogate with fixed content keys, distinct values and RoPE positional score. Pairwise log odds=(score_current−score_old)/T. Eq8 B(delta)=(2/T)sum_b w_b*abs(sin(delta*theta_b/2)).",
+      "evidence_and_ablation": "Holding existing scores fixed, adding a finite old candidate strictly reduces current/all-old odds. Unrelated candidates leave pairwise odds unchanged. Free energy=max/logsumexp bounded by max and max+Tlog(group size); fixed score-margin with growing old-count drives conditional current probability down.",
+      "limitations": "Not a full multi-layer LLM theorem. Single-band translation reversal needs nonconstant angle; multiband zero Cesaro mean rules out uniformly positive margin across all placements, not universal finite-context reversal. Delta can grow with count. Human memory analogy conceptual.",
+      "repository_relation": "Supports explicit current-state representation and limits on accumulated obsolete advice; does not authorize deleting history, approximate dependency closure or mechanically compressing text."
+    },
+    {
+      "section": "6; E.1–E.4; Tables2,12,13; original p29–30",
+      "method": "Grammar-specific parser identifies latest explicit user update; assistant mentions and still-thinking/compare-options reminders excluded. Parser could answer directly. Selected query heads at final prompt position receive ±beta before softmax; adaptive beta=min(8,max(0,(m−delta)/2)).",
+      "evidence_and_ablation": "240calibration/960test; adaptive120discovery120validation; vocab/templates not heldout. Chosen head count1–32 and margins.5/1/2/4 retain≥95% originally correct. Qwen3B16.46→95.21 vsreminder99.27; Llama3.2 27.71→93.12 vs68.85; Llama3.1 41.71→88.63 vs65.38; Mistral5.42→81.35 vs98.44; Gemma47.08→91.88 vs82.81. FixedQwen14B40.52→41.67 vs98.54reminder.",
+      "limitations": "Table2 dialogue-weighted;Table12 210equally-weighted groups and group bootstraps excluding head selection uncertainty. Table13 random ranges across64headsets/16position sets are not paired CIs; fixed7/14B random heads not run. Eight-token greedy eager H100, not our host/backend. Earlier global steering/fixed attenuation negative; Qwen1.5B within random range. No universal win.",
+      "repository_relation": "No repository attention patch or new memory pool. Adapt source semantics and fresh-current-state acceptance only; current parsing/basis gates are separate from model improvement."
+    },
+    {
+      "section": "F.1; Tables14–15",
+      "method": "Wording ablations on1200sources×5variants; equal-mention matched placement600pairs fixes other messages/counts/values and current update position. Exact reused API prompts counted once.",
+      "evidence_and_ablation": "14400valid condition rows across two models but10800distinct requests. Qwen near historical accuracy74→375/600,neutral374,query-only44,both235; GPT478→591,query532,both596. Matched Qwen old89→220/600 far→near, +21.8pp CI18–25.8; accuracy353→280 (66incorrect→correct,139reverse). GPT590→579 correct,0old each; Wilson upper0/600=.64%.",
+      "limitations": "Primary full design includes balanced screen items, not heldout replication. Whole-answer new matcher is not rescore of original gold-anywhere data. Provider subsets descriptive not randomized. GPT errors another variable.",
+      "repository_relation": "Latest mention is not latest intent. Context variants must preserve explicit correction semantics and count all cases; no claim that shorter active views always improve quality."
+    },
+    {
+      "section": "F.2; Table16",
+      "method": "Disjoint150 overwrite/control pairs k2/4/8,16 vs512token direct and concise-reasoning512, parser frozen after separate10pair smoke. Separate36 fresh operational identifiers across6domains×5loads.",
+      "evidence_and_ablation": "Direct Qwen87/150 at16tokens,86/150 at512; concise111/150, +16.7pp CI9.3–24 vs equal-budget direct. Strict own-line format would score63 vs111 (same final integer), sensitivity archived. At k256 Qwen concise0current32old/36;GPT4o4current32old;GPT5/Gemini36current0old;DeepSeek34current2old.14Qwen rate-limit retries one additional attempt under frozen recovery, no answer retry.",
+      "limitations": "Reasoning/output caps differ across model families; word-count matching not token equality. Truncation/provider/format separate. Capability saturations and old errors vary by model/load.",
+      "repository_relation": "Bigger output budget or generic retry is not evidence of recovery. Preserve actual final-field semantics, failure categories, all attempts and all-actor usage in future agent evaluation."
+    },
+    {
+      "section": "D.3; F.3; Table17",
+      "method": "180ledgers6domains×3operations(scalar/partial/full)×2loads×5; four template/generated×near/far paired variants, explicit obsolete mention.50model-blind semantic checks, not human validation.",
+      "evidence_and_ablation": "2160complete responses; generated Qwen old39→50/180 +6.1pp CI1.1–11.1; template+7.2. Partial14→20/full11→19/scalar14→11. Llama7→5 no positive effect; GPT4o720/720 correct. Qwen/GPT equal reported input tokens within every placement pair.",
+      "limitations": "Model family and update operation change effect; provider-matched Llama76pairs still no increase. Matcher sensitivities kept separately. No universal stale-binding effect.",
+      "repository_relation": "Task packages must distinguish partial-field corrections from complete replacement; retain unmentioned fields and dependencies rather than collapse to latest text."
+    },
+    {
+      "section": "D.4; F.4; Tables18–20",
+      "method": "24independent scenarios, procurement12/scheduling12, six separate dev; local overrides survive later defaults, named withdrawals remove all fields of named directive, unmentioned fields persist. Fullhistory vs resolved target state vs repeated-note word-count padding; unique optimum independent interpreters/enumeration.",
+      "evidence_and_ablation": "288conditions/model but only24independent cases, cluster bootstrap. Fullhistory GPT92/96,Gemini95,DeepSeek92,Sonnet88 optimal; all interpretable history answers optimal. Gemini historical-optimum match appears in no-history padded control. Small dependency-tool6cases and credit-negotiation3cases exploratory mostly correct.",
+      "limitations": "Repeated-note padding creates failures/truncations, not valid natural-interference estimate; actual tokens differ. Historical optimum match alone cannot prove old-state use. Family/presentation covary. Exploratory pilots not confirmatory deployment quality.",
+      "repository_relation": "Keep dissent/withdrawal scope and authoritative IDs. Define end-to-end decision validity separately from matching a previous answer, and avoid padded byte/word controls masquerading as actual-token comparison."
+    },
+    {
+      "section": "D.5–D.6; F.5; Tables21–22; Figures8–11",
+      "method": "40fresh2048operation histories,16slots, committed production atomic2–4slot cycles; aborted/sandbox ignored. Forward/inverse/rendered-log parser verify labels. Separate40deferred1024line cohort, pending executes on current contents at resolution, not original scheduling time.",
+      "evidence_and_ablation": "Sol9/40 vs snapshot40/40, all semantic completed. Opus18/40 incl9truncations;18/31completed58.1% CI40.8–73.6. Deferred prespecified17prefix12/17 vs linearized16/17 vs snapshot17/17, discordant5vs1 McNemar p=.22. Remaining23 unrequested. Sonnet pilot0/4 completed, notsemantic failure.",
+      "limitations": "No executable tools/external memory/harness. Snapshot supplies final state, not length/computation matched. Sol input max51836tokens;Opus67181–67359,completed output35631–103140 median43778. Pilotcheckpoint/irrelevant-mask each4/4 are reused diagnostics.40case relevance study only8compact+10masked returned before credits exhausted,62unavailable; no completed recovery estimate. Code/data promised after review, not inspected/reproduced.",
+      "repository_relation": "Dependent task histories motivate current validated read-only views plus full provenance; scheduling intent must not be confused with execution commit, and cached late completion must not refresh captured inputs. Existing task/MemoryLedger authority retained. Real model full-chain/cost acceptance remains blocked."
+    }
+  ],
+  "repository_action": {
+    "actual_source_review": [
+      "agent_runtime/project_memory.py:175–365",
+      "agent_runtime/handoff_basis.py:1–407",
+      "tests/test_memory_context_closure.py full",
+      "tests/test_handoff_knowledge_snapshot.py full"
+    ],
+    "observation": "Built-in context hydrates declared ancestor closure; selected claims preserve rejected/candidate claims plus ancestors. Memory correction invalidates descendants. Root-only no-dependency hydration reuses check_handoff_basis snapshot, while dependency path opens a later read transaction; investigating snapshot contract, not yet a confirmed defect. Existing knowledge test explicitly allows an acquired snapshot to precede later disk mutation.",
+    "not_implemented": "No speculative production patch, second task index, migration, deletion or attention intervention. Paper evidence informs next coherent context/quality acceptance, not library performance claims.",
+    "open": "Finish independent reading review and clarify end-to-end snapshot/consumer contracts before any new reproducer or code change; current real backend and tmux integration gaps unchanged."
+  },
+  "artifacts": [
+    {
+      "path": ".agent-runs/context-update-reading-0715/paper-v1.pdf",
+      "sha256": "4b38efd24b5e72198e727f2376e4bea687ab6cef91c0a48c759eda074eaa59ad",
+      "bytes": 1406841
+    },
+    {
+      "path": ".agent-runs/context-update-reading-0715/paper-v1.txt",
+      "sha256": "8f02c6ca0fabbb77f9a87e7782327fc1ac67d366550d5b451ac709aae5eb856a",
+      "bytes": 193687
+    },
+    {
+      "path": ".agent-runs/context-update-reading-0715/pdftotext.stderr",
+      "sha256": "c1c4c0db0bf33072ba8ccc8b67b320a8369660c37bde409bf7ac14a16160ddf4",
+      "bytes": 66
+    }
+  ],
+  "created_at": "2026-11-01T00:11:18.892310+00:00",
+  "revision": {
+    "of": {
+      "path": ".agent-runs/context-update-reading-0715/reading-complete-v1.json",
+      "sha256": "383252dfb8e589eb34a80f5fb9525b4fa9a55b79795bd719202a9a56c699df3e"
+    },
+    "review": {
+      "path": ".agent-runs/context-update-reading-0715/reading-review-v1.json",
+      "sha256": "2661cd8b0513c089858870f9bff2d6c2521ab5f685c58901b00a0e333cc786f2"
+    },
+    "change": "R1 metric-label clarification only; parent mechanical closure, not independent rereview of v2 bytes"
+  }
+}

@@ -1,0 +1,104 @@
+{
+  "task": "SYSTEM-99",
+  "batch_complete": false,
+  "paper": {
+    "id": "2609.38866",
+    "version": "v1",
+    "title": "When Context Changes: Understanding Update Failures in LLMs",
+    "authors": [
+      "Junyu Guo",
+      "Yuchen Fang",
+      "Shangding Gu",
+      "Costas Spanos",
+      "James Demmel",
+      "Javad Lavaei"
+    ],
+    "date": "2026-09-30",
+    "primary_pdf": "https://arxiv.org/pdf/2609.38866v1",
+    "version_history": "Official abs/HTML access failed; exact local PDF watermark/version/title read, not claimed latest"
+  },
+  "coverage": {
+    "body_complete": false,
+    "source_total_text_characters": 192667,
+    "actual_read_ranges": [
+      [
+        0,
+        21000
+      ],
+      [
+        21000,
+        44000
+      ],
+      [
+        44000,
+        51000
+      ]
+    ],
+    "actual_read_union_characters": 51000,
+    "chunks": [
+      "424144",
+      "93e5cf",
+      "d121bc"
+    ],
+    "sections_read": [
+      "1 Introduction",
+      "2 Stale-Binding Phenomenon",
+      "3 CICM /3.1",
+      "4.1–4.5 Mechanism Analysis",
+      "5 one-layer theoretical explanation",
+      "6 test-time selection intervention",
+      "7 Related Work",
+      "8 Limitations",
+      "9 Conclusion",
+      "Reproducibility statement",
+      "References partial only"
+    ],
+    "not_read": "Rest of references and full Appendices A onward; no original44page visual audit, equations/figures only extracted text/captions. Not a complete-body reading credit.",
+    "formal_new_credit": 0
+  },
+  "method_notes": [
+    "Updated state can remain decodable while old same-variable value is answered; distinguish current/old/other-variable/other, availability and final action quality. This is model-level selection beyond valid MemoryLedger dependency gates.",
+    "CICM core1200preference dialogues,180pilot ledgers/sixdomains,24constraint decision scenarios and40primary2048operation histories over16slots. Deferred effects require later confirmations. Groundtruth generated beforeevaluation and checked by spans/replay/enumeration; full construction/scoring appendices unread.",
+    "Original near remention may sound like a new update, and count/wording/position covary. Matched messages+counts explicit-historical placement test gives Qwen old-value14.8→36.7; GPT4o nooldvalues. Do not treat original factorial as pure recency causality.",
+    "Fivefold dialogue-split standardized-hidden-state linearprobes predict21candidatevalues; old-answer cases assigned current-valueprobability .848Qwen/.822Llama vs shuffled .032–.064. Probe probabilities are not agent answer accuracy or proof of causal use. Rough7% length-adjusted probe drop on failures remains.",
+    "Attention old-share=Aold/(Aold+Acurrent), summed old candidates; matchedconflict/control and length-adjusted failed/correct contrast different. Qwen failed-correct late shift19.4pp. Componentreplacement score-gap recovery and head-removal errorcorrection use distinct denominators.",
+    "Pythia targetedheadremoval38.4%heldoutold-errors corrected vs8.7randomlayer-matched; targetedkeyinputs recover75%gap vs6%random. Qwen late-state78.1vs earlymiddle-.5gap recovery; oldkeys49.2vscurrentkeys-21.3. Appendix protocols not yetread; not reproduced.",
+    "Theory is one-layer copying approximation; holdingexistingattention scores fixed, extra old-value exponentials lowercurrent/alloldratio. This conditional monotonicity is not general learnedmulti-layer failure theorem. RoPE formula derivation AppendixA unread; no attention kernel or TwoLevel changes in this task.",
+    "Routing uses rule parser that already knows current/oldvalues from predefined variables/patterns, labels for calibration and internal modelaccess. ±beta attention-logit intervention at final prompt position, fixedoradaptivebias and headselection fixedbeforetest. Reminder baseline gets sameparsed correctvalue. Not end-to-end solution to extracting unknown arbitrary userintent."
+  ],
+  "reported_main_results": {
+    "Table2": "Adaptive Qwen3B16.46→95.21accuracy vs99.27reminder; Llama3.2-3B27.71→93.12 vs68.85reminder; Llama3.1-8B41.71→88.63 vs65.38; Mistral7B5.42→81.35 vs98.44; Gemma9B47.08→91.88 vs82.81. Initiallycorrectpreservation98.08–100, conditionaloninitiallycorrect. FixedQwen7B37.60→68.85 vs88.02reminder; fixedQwen14B40.52→41.67 vs98.54. Thus neither routing nor larger-modelfixedconfig universally wins. Ratios/correctedold-errorcounts retainedinmainTable2; raw/appendixverification pending.",
+    "operational_logs": "Authors report GPT5.6Sol9/40 correct, Opus4.818/40 (18/31completed,9outputcap), pairedsnapshots40/40 each. Deferred17exploratoryprefix12/17vs16/17control. Model/provideridentity, fullprompts/budgets/denominators/saturation AppendixF.5 unread; no reproduction or inference of currentavailablehostmodel.",
+    "other_negative_controls": "Qwen larger directanswerbudget alone unchanged; concise reasoning helpsuntilhigherupdate load. Multiple-choice ICF roughly69vs71accuracy but old-valuefractionoffailures82.1vs29.4: answerformat masks mechanism. Pilotdecision reasoning models88–95/96optimal remaining invalid/provider/truncated, do not conflate all failures with stalebinding."
+  },
+  "limitations": [
+    "Constructed dialogues/logs do not estimate deployed prevalence.",
+    "Internal probes/interventions only open models; known-answer final-state steering is diagnostic, not independent error locator.",
+    "Routing requires model internals, labeled calibration and structured parser; closedhost plugin installation does not supply these.",
+    "No author-code release inspected: main reproducibility statement promises code/data after review. No experiment/provider run or library model-quality/token/cost/speed gain.",
+    "Fullappendix/theory/protocol review pending; figures not yet visually checked."
+  ],
+  "repository_relation": {
+    "adopt_as_future_acceptance": "Separate stale-answer reuse from missing-context and another-variable errors; record responseavailability/outputcap, compare actual complete-history vs active verified taskview on same tasks and allactor costs only with authorized usable backend. Do not replace main task truth or claim MemoryLedger validation proves model picks current fact.",
+    "defer": "No attention intervention, secondmemorypool, modelrouting change or document pruning. Existing source/dependency/status gates retained; policy on latest explicit update differs from latest mention. Currentbackend/modelquality gaps stillopen."
+  },
+  "checkpoint_next": "Continue text at character51000 without recounting currentmain as anotherpaper; finish references/AppendicesA+ and verify figures/formulas/protocols before completecredit. Any scientific use needs exactsource/version/applicability plus independent checks; currentpartialnotes are not accepted measurement.",
+  "artifacts": [
+    {
+      "path": ".agent-runs/context-update-reading-0715/paper-v1.pdf",
+      "sha256": "4b38efd24b5e72198e727f2376e4bea687ab6cef91c0a48c759eda074eaa59ad",
+      "bytes": 1406841
+    },
+    {
+      "path": ".agent-runs/context-update-reading-0715/paper-v1.txt",
+      "sha256": "8f02c6ca0fabbb77f9a87e7782327fc1ac67d366550d5b451ac709aae5eb856a",
+      "bytes": 193687
+    },
+    {
+      "path": ".agent-runs/context-update-reading-0715/pdftotext.stderr",
+      "sha256": "c1c4c0db0bf33072ba8ccc8b67b320a8369660c37bde409bf7ac14a16160ddf4",
+      "bytes": 66
+    }
+  ],
+  "created_at": "2026-10-31T23:17:00.756356+00:00"
+}

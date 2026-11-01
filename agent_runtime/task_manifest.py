@@ -484,6 +484,9 @@ class ReportingHandler:
             check_task_knowledge(self.root, task)
             check_task_results(self.root, task, self.result_verifier)
             check_task_reuse(self.root, task, self.result_verifier)
+            # Verifier callbacks may correct the basis after the earlier reads.
+            check_task_memory(self.root, task)
+            check_task_knowledge(self.root, task)
             check_task_documents(self.root, task)
             return accepted
         except (OSError, ValueError):

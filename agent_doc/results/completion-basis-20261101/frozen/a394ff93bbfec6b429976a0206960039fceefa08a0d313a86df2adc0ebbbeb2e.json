@@ -1,0 +1,110 @@
+{
+  "task": "SYSTEM-99",
+  "scope": "COMPLETE-BASIS-LATE-CALLBACK-01; one still-open batch, candidate diagnostic and bounded correctness repair",
+  "baseline": "d2be90ee712c4f2f70729b75ca0bcd37b40671ee",
+  "authority": "Current user continued improvements/main publication, guide read-only; actual manual independent plan/result review not authenticated runtime ReviewSession",
+  "prior_search": {
+    "query": "reporting verify memory correction callback",
+    "tool_chunk": "5dc485",
+    "scanned": 200,
+    "partial": true,
+    "errors": 11,
+    "decision": "Reject returned unrelated corpus/lyapunov records as evidence of completion freshness; partial search not absence proof. Existing correction_chain covers corrections before completion, not after last verifier callback."
+  },
+  "method": "First run exact frozen5methods against baseline. Only apply exact candidate if root/ancestor/knowledge expected failures reproduce and both controls pass. Add same test to tests. Re-run same5 and adjacent modules; independently inspect and run same set once. No new schema, pool, retry, authorization, handler invocation or migration. Additional memory/knowledge passive reads after callbacks, preserving all original checks.",
+  "acceptance": "Before: three stale cases must fail assertions and two controls pass; after: all five pass. Callback count3, child verification1, mutation1, immutable report/artifact retained, stale ledger actually rejected. Adjacent task_manifest/result_validation/correction_chain/memory and knowledge checks must pass; existing skips explicit. Independent review must inspect real code, source, fixture callbacks and all raw outputs.",
+  "resources": {
+    "plan_reviews": 2,
+    "baseline_runs": 1,
+    "fixed_runs": 1,
+    "independent_runs": 1,
+    "result_reviews": 2,
+    "command_timeout_seconds": 120,
+    "deadline_utc": "2026-11-01T01:00:00Z",
+    "provider_calls": 0,
+    "tmux": 0,
+    "retries": 0,
+    "publication": "One ordinary source commit only after scoped review; fetch/reconcile/readback and exact-head CI. No reopening older spent scopes."
+  },
+  "allowed_writes": [
+    "agent_runtime/task_manifest.py",
+    "tests/test_completion_basis_freshness.py",
+    "agent_doc/task/task_details/SYSTEM-99.md",
+    "agent_doc/results/completion-basis-20261101/",
+    ".agent-runs/completion-basis-0818/"
+  ],
+  "limits": [
+    "No walltime/token/quality benefit measured; only stale completion acceptance correctness. Additional validation has unmeasured overhead.",
+    "No arbitrary concurrent writer atomicity; callbacks trusted host code. Does not authenticate live backend or full project quality.",
+    "Runtime engine/tmux unavailable scope unchanged; ordinary local tests not a real deployment."
+  ],
+  "bindings": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "97f35fc8fb91097a34380c12a9581936f8a78c6f9c10a05183c84511645738ed"
+    },
+    {
+      "path": "agent_doc/task/TASK.md",
+      "sha256": "cac11b59a920f4dc1dd398568ba6b2d0d0593ae5ac25d59858c53a2b739c706f"
+    },
+    {
+      "path": "agent_doc/task/task_details/SYSTEM-99.md",
+      "sha256": "252c4ed93c38d95343135d75bd6c0adc90de9a7e9e3be84ebf4b5056484c2d58"
+    },
+    {
+      "path": "agent_runtime/task_manifest.py",
+      "sha256": "0e4fad7bfa0f776d7c443a2a05d52c844f7880a00bcecfd8b67fd5e271399279"
+    },
+    {
+      "path": "agent_runtime/project_memory.py",
+      "sha256": "1f0fe4edc8abf2371972817083c2c12cc33dbb07640ed57dffc2d8a744b35e41"
+    },
+    {
+      "path": "agent_runtime/knowledge.py",
+      "sha256": "eb17aab6668435d6dea09b4010cc2410fbd66844e60fcfb1bef4d4817971eb01"
+    },
+    {
+      "path": "tests/test_result_validation.py",
+      "sha256": "d4689b3bd11f18603cb34f1f6cff939de58e472483c8f987afb038f11ec9c77a"
+    },
+    {
+      "path": "tests/test_handoff_basis.py",
+      "sha256": "09e7b287e4b860d52186767ce2c3b734633882e549526fc74d667ddadcb79c84"
+    },
+    {
+      "path": ".agent-runs/completion-basis-0818/test_completion_basis_freshness.py",
+      "sha256": "7f30fd660f8c5154992e7356dd338c6001b9aedc0fd486415beb7b05ca1ec7b0"
+    },
+    {
+      "path": ".agent-runs/completion-basis-0818/task_manifest.candidate.py",
+      "sha256": "a2396ff22a567cf0dc2e2aeff066fcf51ebf1e4ac075def1d9a205adaa27bce4"
+    }
+  ],
+  "created_at": "2026-11-01T00:15:02.105323+00:00",
+  "commands": {
+    "baseline": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      ".agent-runs/completion-basis-0818",
+      "-p",
+      "test_completion_basis_freshness.py",
+      "-v"
+    ],
+    "fixed_and_independent": [
+      "python",
+      "-m",
+      "unittest",
+      "tests.test_completion_basis_freshness",
+      "tests.test_task_manifest",
+      "tests.test_result_validation",
+      "tests.test_correction_chain",
+      "tests.test_memory_context_closure",
+      "tests.test_handoff_knowledge_snapshot",
+      "-v"
+    ],
+    "environment": "PYTHONPATH=repo-root:repo-root/tests; cwd=repo-root. Exact commands120s each; one fixed and one independently repeated combined invocation. Baseline one invocation."
+  }
+}

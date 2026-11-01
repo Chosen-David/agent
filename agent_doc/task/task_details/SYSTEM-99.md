@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 72
+Version: 73
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -233,6 +233,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段MAILBOX-SEQUENCE（Version71，同SYSTEM99）：保持消息序号的精确整数身份；inbox游标允许0，read-pending/consume/context/ACK只接受1..2**63-1的普通int，拒绝bool/float/string及越界，不依赖SQLite转换或把OverflowError当sqlite3.Error。复用单一私有谓词，不改路由/schema/ACK语义、记忆与证据校验或目录。先独审固定4方法与真实CLI全链控制，保留修前类型别名/溢出负例；只在确认缺陷后应用精确候选，修后及独立定向回归各一次，五组原生CI新增4方法另核。方案2次、baseline/fixed/independent各1、结果独审2次、源码CI1、无自动重试，原deadline2026-10-31T18:40Z；tmux旧双REVISE及全部其它耗尽scope不重置。本阶段仅消息身份及错误处理可靠性，无性能/token/模型质量/全费用收益，同批真实宿主等未决保持。
 
 阶段AL（ROLE-DEFINITION-SNAPSHOT，Version72）：承接失败现场保留/排除核对，仅修run_role检查后重新打开所选正文的缺口。复用安装器有界普通文件读取、expected_files和合法Skill目录链接检查；比较并使用同一正文快照，在后端发现前拒绝变更/异常，保留inherit、路由、请求预算、无重试及Unicode/换行。源checkout受信任；不宣称全文件系统事务、按需引用树冻结或真实模型加载已验。新路径真实安装→check后定向替换→native/adapter Python夹具；修前负例、合法copy/link、文本/链接/FIFO零后端调用及清理读回均须保留，独立验收后才发布。旧ROLE-LOAD-DIAG-01清理失败/未知原因及预算不改判；本阶段另有明确有界修复验证分配，不用旧失败当通过基线。同批2606.01416v1完整正文记录已独立核对，恢复按失败类型处理的思路用于正文校验，而不增加自动重试。真实宿主、多角色质量/完整usage与费用仍open。
+
+阶段COMPLETE-BASIS-LATE-CALLBACK（Version73，同SYSTEM99）：仅补完成复验最后一组独立结果/复用回调后的当前记忆与知识重查，保留所有原有门禁、handler与证据身份，不自动重放、更正或新建记忆层。固定真实算术verifier回调期间的根/祖先更正和知识变更三拒绝，以及未变/无关更正两兼容控制，确认修前失败后才应用精确候选；修后与独立同五方法和相邻回归各一次，五原生矩阵新增五方法另核。方案最多2次、baseline/fixed/independent各1、结果审查2次、源码CI1、无重试，2026-11-01T01:00Z截止；旧全部耗尽范围不重置。仅限完成证据更正传播可靠性，额外校验成本未测，真实模型质量/token/全费用、外部原子围栏和系统级未决仍open。2609.38866v1本次续读全文/附录后的“可检索不等于正确使用、复杂更正须独立验收”用于检查设计，不声称移植内部注意力干预或论文性能。
 
 ## Progress
 
@@ -850,3 +852,7 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 安装检查后重开角色/Skill文本曾使替换内容到达后端或FIFO阻塞；现复用有界普通UTF-8读取，与可信生成文本比对并使用同一字符串，再进入后端发现。真实安装→初次check→定向变更→实际CLI的16场景，修前4方法14普通失败子场景（10次sentinel准入、4次FIFO超时），修后与独立各4方法/16场景及37回归全pass、零错误/跳过；两健康路径保留inherit、Unicode/CRLF和native/adapter行为。48次场景清理读回均absent。完整结构化TestResult/报告、原始输出、方案与六域独审见[唯一证据索引](../../results/role-snapshot-20261101/evidence-index.json)，[范围和未决](../../results/role-snapshot-20261101/report.json)。
 
 0308清理矛盾和0420截断输出仍failed、原因未知、旧预算/期限不重置；本次为显式结构化恢复分配，手工独审非trusted runtime。Self-Healing 2606.01416v1既读方法用于验证实际作用与失败有界恢复，本次新精读计数0。Plan71→72、旧全部Progress/唯一TASK/人类guide保留，无agent_doc迁移。原生新head CI发布后另核；Windows FIFO/无权限符号链接可明确skip。未测真实模型任务质量、token、费用、速度；可信源码假设、非文件系统事务/父路径竞态围栏、真实宿主/上下文与旧tmux等缺口仍open，同SYSTEM99不计完成轮次。
+
+### 2026-11-01 — COMPLETE-BASIS-LATE-CALLBACK-01 checkpoint
+
+独立结果回调在前置记忆/知识检查后更正依据，旧完成复验仍返回True；修前三种根/祖先/知识更正均预期断言失败，两健康控制通过。现只在最后结果/复用回调后重查记忆与知识，保留旧门禁和历史。修后与独立同78方法各全pass、零错误/跳过；五新方法验证实际SQLite更正、知识内容变更、未变/无关更正、固定回调次数及报告/产物原字节。[原失败、精确候选、完整双审与原始回归](../../results/completion-basis-20261101/report.json)保留首次方案revise和范围限制，手工独审非trusted runtime。Plan72→73、唯一TASK/人类guide及全部旧Progress保留；原生五job新增各五方法发布后另核，不以旧CI替代。2609.38866v1本次已续读全文1–9/A–F及全部表图注，精确ID/章节/方法/消融/局限、独审及指标标签更正保留于同证据包；不重认证全局十篇。仅应用更正传播验收启示，未移植注意力机制；额外I/O成本、真实模型任务质量/全部tokens费用和其它回调顺序仍未测/未结案。旧tmux拒绝及耗尽额度不重开，同SYSTEM99不是完成轮次。
