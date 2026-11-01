@@ -17,7 +17,7 @@ class PlanReviewTests(unittest.TestCase):
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name).resolve()
         (self.root / 'TASK.md').write_text('- [ ] [T1] Verify output\n')
-        self.plan = prepare(self.root, 'r1', 'manual', 'synthetic test instruction', lineage_id='logical-T1')
+        self.plan = prepare(self.root, 'r1', 'manual', 'synthetic test instruction', lineage_id='logical-T1', review_schema='main-plan-review/v1')
         task = self.plan['tasks'][0]
         task.update(action='verify_artifacts', done_when={'artifacts': [
             {'path': 'result.txt', 'sha256': hashlib.sha256(b'ok').hexdigest()}]})
@@ -198,7 +198,7 @@ class PlanReviewTests(unittest.TestCase):
     def test_trusted_publication_scope_never_authorizes_dispatch_or_other_requirements(self):
         from agent_runtime.plan_review import protected_lineage
         (self.root/'TASK.md').write_text('- [ ] [T1] Release current feature\n- [ ] [OLD] Preserve unrelated pending work\n')
-        plan = prepare(self.root, 'release', 'manual', 'explicit release scope', lineage_id='release-T1')
+        plan = prepare(self.root, 'release', 'manual', 'explicit release scope', lineage_id='release-T1', review_schema='main-plan-review/v1')
         plan['tasks'] = [t for t in plan['tasks'] if t['task_refs'] == ['T1']]
         # JSON cannot choose scope, and failed validation cannot reserve OLD/T1.
         plan['publication_task_refs'] = ['T1']

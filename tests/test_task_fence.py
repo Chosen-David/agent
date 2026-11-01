@@ -115,7 +115,7 @@ class TaskFenceTests(unittest.TestCase):
             self.assertEqual([t['task_id'] for t in draft['tasks']], ['KEEP', 'CORRECT', 'NEXT'])
             self.assertEqual(draft['task_source']['sha256'], sha)
             self.assertEqual(draft['project_documents'], snapshot)
-            self.assertEqual(draft['plan_review']['schema_version'], 'main-plan-review/v1')
+            self.assertEqual(draft['plan_review']['schema_version'], 'single-main-plan-review/v1')
             self.assertTrue(all(t['action'] == 'configure_host_action' for t in draft['tasks']))
             self.assertEqual(self.path.read_bytes(), raw)
         legacy = self.root / 'legacy'

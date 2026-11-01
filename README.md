@@ -38,7 +38,7 @@ git -C agent sparse-checkout set agent_runtime scripts config templates plugins 
 python3 agent/setup.py --target /absolute/path/to/ProjectA
 ```
 
-随后进入 **Project A** 启动 `claude`。安装会保留已有项目规则，接入全部角色技能和 Claude 子 Agent。检查安装：
+随后进入 **Project A** 启动 `claude`。安装会保留已有项目规则，接入全部专业 Skill，不生成子 agent。检查安装：
 
 ```bash
 python3 /absolute/path/to/agent/setup.py --target /absolute/path/to/ProjectA --check
@@ -159,7 +159,7 @@ python scripts/setup_codex.py --check
 
 | 机制 | 解决的问题 | 实现与边界 |
 | :--- | :--- | :--- |
-| **计划审核与任务 DAG** | 遗漏要求、错误依赖、重复派发 | [双主 AI](workflows/dual_main_workflow.md) · [任务监督](workflows/task_supervision_workflow.md) |
+| **计划审核与任务 DAG** | 遗漏要求、错误依赖、重复派发 | [单主任务链与自检](workflows/single_main_workflow.md) · [任务监督](workflows/task_supervision_workflow.md) |
 | **串行任务链** | 重叠执行、等待时越过当前步骤 | [单主 Agent / 多 Skill](workflows/single_main_workflow.md)；完成并核验当前步骤后再推进 |
 | **定向证据交接** | 旧消息、版本漂移、返修无法闭环 | [通信工作流](workflows/agent_communication_workflow.md)；本地收件箱是 opt-in，不是独立模型调度器 |
 | **独立结果验收** | 产出文件就被当作成功、旧 pass 被复用 | [结果校验](workflows/result_validation_workflow.md) · [检索与复用](workflows/result_reuse_workflow.md) |

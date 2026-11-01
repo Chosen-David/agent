@@ -261,7 +261,7 @@ class TravelDocumentationContractChecks(unittest.TestCase):
             self.assertTrue({plugin / CONTRACT.relative_to(PLUGIN),
                              plugin / WORKFLOW.relative_to(PLUGIN),
                              skill.parent / 'references/single_main_workflow.md'} <= visited)
-            self.assertEqual((len(visited), len(edges)), (15, 26))
+            self.assertEqual((len(visited), len(edges)), (15, 28))
 
     def test_top_level_navigation_resolves(self):
         for href in markdown_links(TOP_LEVEL.read_text()):

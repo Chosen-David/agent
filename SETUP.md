@@ -97,10 +97,10 @@ LaTeX源码可生成，TeX编译器未随库安装。
 ## 检查、更新和卸载
 
 ```bash
-# 检查已安装文件、主 AI 入口、全部 Skills/子 Agent，以及 claude/tmux 是否在 PATH
+# 检查已安装文件、主 AI 入口、全部 Skills，以及 claude/tmux 是否在 PATH
 python3 agent/setup.py --target /absolute/path/to/your-project --check
 
-# 仓库更新；先 pull，再重新同步主调度副本与子 Agent 入口
+# 仓库更新；先 pull，再重新同步主入口与 Skills
 cd agent
 git pull --ff-only
 python3 setup.py --target /absolute/path/to/your-project
@@ -139,6 +139,6 @@ API 用 `SkillCopyLimits` 和 `skill_limits=`。清单不能自动放宽调用�
 
 - [Skills 的项目目录与符号链接支持](https://code.claude.com/docs/en/skills)
 - [CLAUDE.md 与 @import](https://code.claude.com/docs/en/memory)
-- [子 Agent 与 skills 预加载](https://code.claude.com/docs/en/sub-agents)
+- [旧子 Agent 协议（仅兼容）](https://code.claude.com/docs/en/sub-agents)
 
 本仓库的文件安装、幂等性、冲突保护、卸载、agent_doc/task/TASK.md 证据闭环由自动化测试验证；Claude 实际模型是否遵循所有流程必须通过真实任务观察，不能由配置文件保证。见 [本轮验证与限制](docs/tmux_supervisor_validation.md)。

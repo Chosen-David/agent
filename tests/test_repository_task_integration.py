@@ -28,7 +28,7 @@ class RepositoryTaskIntegrationTests(unittest.TestCase):
             (ROOT / 'agent_doc/task/TASK.md').read_text(), canonical=True)}
         self.assertEqual({task['task_id'] for task in draft['tasks']}, ids)
         self.assertEqual(set(draft['project_documents']['task_details']), ids)
-        self.assertEqual(draft['plan_review']['schema_version'], 'main-plan-review/v1')
+        self.assertEqual(draft['plan_review']['schema_version'], 'single-main-plan-review/v1')
         self.assertTrue(all(task['action'] == 'configure_host_action' for task in draft['tasks']))
         self.assertEqual(draft['advice_assessments'], [])
         self.assertEqual(draft['guide_reviews'], [])

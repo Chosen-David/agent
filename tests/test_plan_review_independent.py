@@ -102,7 +102,7 @@ class IndependentPlanReviewTests(unittest.TestCase):
         self.session = self.make_session()
 
     def make_plan(self, run_id):
-        plan = prepare(self.root, run_id, 'manual', 'explicit synthetic local fixture')
+        plan = prepare(self.root, run_id, 'manual', 'explicit synthetic local fixture', review_schema='main-plan-review/v1')
         plan['tasks'][0].update(action='cpu', max_attempts=2, estimated_seconds=1,
                                 done_when={'exact_fixture': True}, allowed_writes=['output.txt'])
         return plan

@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 77
+Version: 80
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -238,7 +238,11 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 
 阶段COMPLETE-PROOF-CLOSURE（Version74，同SYSTEM99）：完成报告与复验在所有独立结果/复用回调后，复用既有被动绑定校验关闭已捕获的接受证据；不新增verifier调用、授权或重放，原raw producer pending保留而不授信。冻结报告内后续结果、完成复验后续结果与复用回调更正前项review evidence三拒绝，及未变/无关更正控制；修前确认后才应用精确候选，修后和独立同五新方法及相邻回归各一次，五原生job新增各五方法另核。方案最多2次、baseline/fixed/independent各1、结果审核2次、源码CI1、无自动retry/provider/tmux；2026-11-01T02:00Z截止，与旧耗尽scope不互相重置。仅接受证据绑定闭包可靠性；raw pending与报告文件自身并发变化、全宿主/模型质量/费用/性能仍非完成保证，SYSTEM99继续open。
 
-阶段 SINGLE-MAIN（Version77，用户当前明确授权）：按 [迁移 v1](../../advice/SYSTEM-99-single-main-v2.md) 将默认执行改为单主 agent/多 Skill/一次一步。主 agent 唯一写作者，不再调用独立 AI；复核 Skill 是自检，旧独立合同和历史证据不降级。入口/安装/加载/SQLite 单活动步骤与恢复逐项验证，保留修前失败及兼容缺口，agent_doc 不迁目录。用户追加明确授权仅本次补充 agent_doc/guide/GUIDE.md 的禁止多 agent/单主多 Skill 规则；guide 其余及后续写入边界不扩大，旧指南绑定不追溯改写。旧 SYSTEM99 未决、耗尽范围及论文记录保持，阶段提交不算整轮完成。
+阶段 SINGLE-MAIN（Version80，用户当前明确授权）：按 [迁移 v1](../../advice/SYSTEM-99-single-main-v2.md) 将默认执行改为单主 agent/多 Skill/一次一步。主 agent 唯一写作者，不再调用独立 AI；复核 Skill 是自检，旧独立合同和历史证据不降级。入口/安装/加载/SQLite 单活动步骤与恢复逐项验证，保留修前失败及兼容缺口，agent_doc 不迁目录。用户追加明确授权仅本次补充 agent_doc/guide/GUIDE.md 的禁止多 agent/单主多 Skill 规则；guide 其余及后续写入边界不扩大，旧指南绑定不追溯改写。旧 SYSTEM99 未决、耗尽范围及论文记录保持，阶段提交不算整轮完成。
+
+阶段 SINGLE-MAIN-PLAN（Version80）：按 `/tmp/agent-system99/single-main-plan-0208/plan-v3.md`（SHA256 `47bfcf1e770e8ce34942f223873972093994ae328dce91064b332fa680a41950`） 为新计划引入与旧独立协议分开的单主自检身份。复用 ReviewSession/完整输入绑定、真实宿主认证、每动作权限和限额；相同上下文仅在新协议可自检，报告 independent=false。SQLite 对 requirement/lineage 固定协议，旧行仍是旧独立模式，拒绝跨协议退保护/重置预算；已有独立发布及结果合同不降级。先保存修前失败，再固定 SQLite/CLI/真实产物/恢复及旧协议回归，不调用第二 AI，缺宿主仍 blocked。正常审核作用域还须同时结束事务并显式关闭连接；已保留一次修前连接仍可查询的失败，复用统一作用域而不改提交/回滚、原始账本或预算，不把它称为旧FD57宿主探针或/proc失败的归因。
+
+用户追加：本库迭代的中间文件统一维护在 `/tmp/agent-system99/<run_id>/`，不再写入 agent_doc/results；唯一 TASK 仅留必要结论、状态与路径/哈希，历史原件不回写或删除。当前进行中的输出先完成再搬移，原始字节核对；不据此移动受管权威账本或放宽项目写入守卫。
 
 ## Progress
 
@@ -869,3 +873,13 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 
 - 当前用户改为单主 agent、多 Skill、一次一步串行开发，并明确要求 GUIDE.md 禁用多 agent 并行。Plan77/v2 记录窄范围指南授权和后续全部迭代遵循最新 main/原任务链；其余 guide 保护和旧独立合同不降级。现有持续优化配置已同步并读回，未创建新任务。
 - [原失败、代码验收与未决](../../results/single-main-20261101/report.md)：冻结 v2 同 7 方法修前6失败/1控制通过、修后7通过；176集成和最终入口补充20通过。只本地主 agent 自检，独立AI调用0，不伪造独立批准。全库2049方法82失败/2错误/15跳过，83既有同标题已隔离父版本确认，另/proc读取None待诊断；不称全库通过。新源码CI和普通推送回读另核，前提交五CI成功不抵新版本；新论文正文0、质量/性能/token/费用未知，SYSTEM99仍open。
+
+- SINGLE-MAIN 1c6ec4e5 普通发布90路径回读一致、工作区原干净，原生CI 41263039002 五job全部成功；每平台单主7方法全过无skip，加载9方法POSIX全过/Windows7过2平台skip。当前顺序续接受管 prepare 默认独立主控冲突，不把前提交CI当新协议验收，guide/TASK索引原字节保持。
+
+### 2026-11-01 — SINGLE-MAIN-PLAN 串行续接
+
+- 新 `single-main-plan-review/v1` 默认及显式同主宿主能力接通；同上下文完整 CLI 自检→Engine→report 为 self-checked/independent=false，旧独立身份/发布及结果门禁不降级，SQLite requirement/lineage 协议与原限额不重置。未声明单主能力的旧后端在任何回调前拒绝；实际宿主仍需提供接口，不宣称已部署模型或 tmux。
+- 精确 v3 同13方法：修前3失败/7不支持新宿主参数的TypeError/3旧协议控制通过，修后13全过；不是10个独立bugs或性能收益。123相关集成和54实际安装/入口检查通过。全库诊断2063方法83失败/3错误/15跳过，新增的旧更正fixture/导航计数已定向修复，既有83失败/错误与/proc读取None继续未决，不报全库通过。独立AI调用0、新正文精读0，质量/token/费用未知，SYSTEM99不结轮。
+- 按用户新要求，中间文件集中 `/tmp/agent-system99/single-main-plan-0208/`，清单 `evidence-index.json` SHA256 `171e45504e12b2700141c4e2b51367fe7b0b088d72356c4d5d11ba0a48d5d639`；含原始v1/v2/v3、修前失败和完整日志。方案v3在同目录 `plan-v3.md`；没有新增 agent_doc/results 中间包，历史原件不动。guide/TASK索引原字节不变，发布后新源码CI与普通回读另核。
+
+- 追加正常审核连接生命周期检查：修前1个冻结断言失败（事务退出后仍可查询），修后统一事务+关闭作用域、14协议方法包含在124相关方法全过；旧提交/回滚与身份/限额门禁保留，不归因/proc或重开旧FD57探针。最终临时清单 `/tmp/agent-system99/single-main-plan-0208/evidence-index-final.json` SHA256 `645c2f5aa5678d37e85ba8c9b46d69e03789cbc5ca26430d3fcdd6e680fd661b`；无新results中间包，后续只从最新main继续同一串行链。

@@ -13,6 +13,8 @@
 
 ## 能力与运行入口
 
+维护本库时，草稿、临时日志、候选快照和上传缓存统一放在 `/tmp/agent-system99/<run_id>/`，不把中间文件写入 `agent_doc/results/`。唯一 TASK 只保留必要结论、状态及路径/哈希；历史原件保留。受管账本、租约和认证记录有自己的权威与恢复契约，不作为普通临时文件擅自迁移或据此放宽根目录守卫。
+
 能力来源是 `config/role_registry.json` 指向的现有 SKILL.md；role ID 保留作兼容的能力标识，不代表需启动角色模型。Claude 安装器仅安装 Skill 与主入口；旧指纹匹配的受管 agent 包装在升级时移除，用户修改或自建文件保留并提示冲突。Codex/marketplace 按需读取相同 Skill。
 
 完整 checkout 可用 `python scripts/load_skill.py --project ABSOLUTE_PROJECT_ROOT --skill research-implement-optimize` 返回已核验安装的当前 Skill 正文与来源，供现有主 agent 读取；命令不调用模型。旧 `scripts/run_role.py` 保留离线诊断，不再用于执行角色。
@@ -20,3 +22,7 @@
 运行时沿用已有 DAG/SQLite、依赖、授权、证据和恢复机制。每个 run 同时至多一个 doing，pending 步骤保留 active_step，重启不跳到下一 Skill；已存在多个活动作业必须先由主 agent 核对和收敛，不能仅靠升级代码宣称停止。此门禁不是跨数据库/跨项目的全机锁，也不能取消未接入的外部进程。
 
 历史双主控批准、独立验收记录与失败数据原样保留，旧保护计划不自动改写或降级。若历史计划必须独立 agent 才可执行，它保持 blocked，须按新要求版本化协调；安装器不追溯批准历史任务。
+
+新 `prepare` 草稿采用 `single-main-plan-review/v1`。受信宿主显式配置 `ReviewSession(..., single_main=True)`，回调在当前主 agent 内顺序完成检查；认证必须绑定同一 invocation/context、完整输入与响应，并返回 `fresh_context=false`、`single_main=true`。不要根据计划 JSON 自动把旧后端声明成支持单主模式；缺能力在任何规划/复核回调前 blocked，不尝试启动第二 AI。报告标记 `self-checked` / `independent=false`，执行仍须逐动作授权和真实结果验证。
+
+旧 `main-plan-review/v1` 的独立身份要求、已有 requirement/lineage 的协议、预算、发布与结果合同保持；旧 SQLite 行默认旧协议，不能借新 run ID 换成自检。单主执行回执不替代独立发布审核。安装纯 Skill 不安装受信宿主接口。

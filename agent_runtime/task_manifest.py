@@ -153,7 +153,10 @@ def _review_prior_candidates(task, search):
     if assessment['decision'] == 'reuse' and task['action'] != 'reuse_validated_result':
         raise ValueError('reuse decision requires explicit verified reuse action; do not rerun producer silently')
 
-def prepare(task_file, run_id, mode, authorization_reference, *, review_required=True, lineage_id=None):
+def prepare(task_file, run_id, mode, authorization_reference, *, review_required=True, lineage_id=None,
+            review_schema='single-main-plan-review/v1'):
+    if review_schema not in ('main-plan-review/v1', 'single-main-plan-review/v1'):
+        raise ValueError('unknown plan review schema')
     task_file = Path(task_file)
     root = task_file.resolve() if task_file.is_dir() else project_root_for_task(task_file)
     task_file = resolve_task_file(root)
@@ -167,7 +170,7 @@ def prepare(task_file, run_id, mode, authorization_reference, *, review_required
     result_store = ResultStore(root)
     return {
         'schema_version': 'task-dag/v1', 'run_id': run_id,
-        **({'plan_review': {'schema_version': 'main-plan-review/v1',
+        **({'plan_review': {'schema_version': review_schema,
                             'lineage_id': lineage_id or 'requirements:' + hashlib.sha256(
                                 ('\0'.join(sorted(item['id'] for item in items))).encode()).hexdigest(),
                             'evidence_refs': []}} if review_required else {}),

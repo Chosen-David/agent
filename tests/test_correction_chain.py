@@ -42,7 +42,8 @@ def main():
         calls = []
         host = CPUHost()
         now = lambda: 1000.0
-        plan = prepare(root, 'correction-chain', 'manual', 'CPU correction probe only')
+        plan = prepare(root, 'correction-chain', 'manual', 'CPU correction probe only',
+                       review_schema='main-plan-review/v1')
         template = plan['tasks'][0]
         tasks = []
         for tid, deps, refs in [('publish', [], ['decision-v1']),
@@ -171,7 +172,8 @@ def main():
         request_v2 = dict(case.request, input_version='v2', memory_refs=['decision-v2'])
         event_v2 = dict(event, event_id='E2', run_id='basis-v2', input_version='v2',
                         refs=[case.save('handoff-v2.json', record_v2, 'handoff')])
-        plan_v2 = prepare(root, 'correction-chain-v2', 'manual', 'CPU corrected intent replay')
+        plan_v2 = prepare(root, 'correction-chain-v2', 'manual', 'CPU corrected intent replay',
+                          review_schema='main-plan-review/v1')
         plan_v2['tasks'] = copy.deepcopy(tasks)
         for task in plan_v2['tasks']:
             tid = task['task_id']

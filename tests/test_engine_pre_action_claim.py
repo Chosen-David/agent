@@ -161,7 +161,8 @@ class AuthorizationBindingTests(unittest.TestCase):
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(b'Synthetic adopted advice.\n')
             old = fixture.plan['tasks'][0]
-            fixture.plan = prepare(root, 'r1', 'manual', 'synthetic test instruction', lineage_id='logical-T1')
+            fixture.plan = prepare(root, 'r1', 'manual', 'synthetic test instruction', lineage_id='logical-T1',
+                                   review_schema='main-plan-review/v1')
             fixture.plan['tasks'][0].update(action=old['action'], done_when=old['done_when'])
             docs.bind_advice(fixture.plan, [{'path': 'agent_doc/advice/late.md',
                 'sha256': hashlib.sha256(target.read_bytes()).hexdigest(), 'task_refs': ['T1'],

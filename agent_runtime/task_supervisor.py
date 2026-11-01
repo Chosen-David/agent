@@ -152,7 +152,7 @@ def submit_review(plan_path, project_root, state_dir, adapter, out):
     """Explicit host adapter submits one review, preserving revise/reject feedback.
 
     The adapter exposes build(root, store, run_id)['plan_review_session']; its
-    ReviewSession has independently authenticated planner/reviewer callbacks.
+    ReviewSession authenticates callbacks for its declared same-main/legacy mode.
     No callable, model identity or module path is obtained from plan JSON.
     """
     from .plan_review import ReviewSession
@@ -161,19 +161,22 @@ def submit_review(plan_path, project_root, state_dir, adapter, out):
     out = assert_ai_writable(root, out)
     plan = load_plan_input(plan_path, root)
     if not adapter:
-        raise ValueError('explicit trusted host adapter required for independent main review')
+        raise ValueError('explicit trusted host adapter required for plan review')
     spec = importlib.util.spec_from_file_location('agent_review_adapter', str(Path(adapter).resolve()))
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     backend = module.build(str(root), Store(state_dir / 'review-host.sqlite'), plan['run_id'])
     session = backend.get('plan_review_session')
     if not isinstance(session, ReviewSession) or session.root != root:
-        raise ValueError('host must supply plan_review_session with authentic separate invocations')
+        raise ValueError('host must supply an authenticated plan_review_session for its review mode')
     plan.pop('plan_review_receipt', None)
     receipt = session.submit(plan)
     plan['plan_review_receipt'] = receipt
     atomic_json(out, plan)
-    return {'status': receipt['review']['verdict']['decision'], 'plan': str(out),
+    single = receipt['schema_version'] == 'single-main-plan-review/v1'
+    decision = receipt['review']['verdict']['decision']
+    return {'status': 'self-checked' if single and decision == 'approve' else decision,
+            **({'independent': False} if single else {}), 'plan': str(out),
             'request_id': receipt['request']['request_id'], 'cycle': receipt['request']['cycle'],
             'full_review': receipt['review']['full_review'], 'verdict': receipt['review']['verdict'],
             'authority': 'plan review only; not tool authorization or data acceptance'}

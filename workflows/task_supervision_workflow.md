@@ -174,7 +174,7 @@ handler 沿用现有 `run(task, Context)/verify(task, evidence)` 契约，report
 
 ## 独立主控计划审核
 
-受管复杂任务执行 `workflows/dual_main_workflow.md`（独立 Skill 使用同目录 `dual_main_workflow.md`）：planner-main 维护方案与唯一 TASK，review-main 由可信宿主独立新上下文审查 intent/guide/assumptions/prior_results/acceptance/risk/resources。新 prepare 默认保护，完整实际 DAG 与指南/采纳建议/证据版本绑定；approve 后仍需工具授权和独立结果验收。无可信回执不派发，revise/reject 版本化返修；Progress 追加不失效。缺宿主接口如实 blocked；旧计划仅宿主明确 legacy-unprotected 兼容，不宣称已全部升级。
+新受管任务按 [单主 Agent / 多 Skill](single_main_workflow.md)执行。prepare 默认 `single-main-plan-review/v1`，受信宿主须显式提供同一主上下文的自检回调（ReviewSession 的 single_main=True）；报告 self-checked / independent=false，不启动第二主控。缺回调或同主身份认证仍 blocked。旧 `main-plan-review/v1` 的独立身份/发布合同、已有 requirement/lineage 协议和预算不自动转换；历史兼容见 [双主控协议](dual_main_workflow.md)，不能用 legacy-unprotected 退保护。原任务、指南、建议、输入/结果门禁及 Progress 边界保留。
 
 ## 因果前置任务的拆分与并发
 

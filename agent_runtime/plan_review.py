@@ -1,4 +1,4 @@
-"""Independent main-plan review at an explicit trusted host boundary.
+"""Host-authenticated single-main self-check and legacy independent plan review.
 
 The durable ledger is host-controlled application state, not a sandbox against its
 filesystem owner. No JSON selects code or supplies actor identity. Each submit
@@ -7,6 +7,7 @@ calls one reviewer; revisions are separate immutable DAGs, never hidden loops.
 from __future__ import annotations
 
 from copy import deepcopy
+from contextlib import closing, contextmanager
 import hashlib
 import json
 import math
@@ -20,6 +21,7 @@ import uuid
 from .project_docs import assert_ai_writable, guard_write_path
 
 SCHEMA = 'main-plan-review/v1'
+SINGLE_SCHEMA = 'single-main-plan-review/v1'
 CHECKS = ('intent', 'guide', 'assumptions', 'prior_results', 'acceptance', 'risk', 'resources')
 LIMIT = 1024 * 1024
 
@@ -63,7 +65,7 @@ def policy(plan):
     value = plan.get('plan_review')
     if value is None:
         return None
-    _need(isinstance(value, dict) and value.get('schema_version') == SCHEMA,
+    _need(isinstance(value, dict) and value.get('schema_version') in (SCHEMA, SINGLE_SCHEMA),
           'invalid main-plan review policy; cannot downgrade protected plans')
     _need(_text(value.get('lineage_id')) and isinstance(value.get('evidence_refs'), list),
           'review requires logical lineage_id and explicit evidence_refs')
@@ -96,6 +98,10 @@ def _db(root):
     db.execute('CREATE TABLE IF NOT EXISTS review_lineages (id TEXT PRIMARY KEY, project TEXT, refs TEXT, started REAL, max_cycles INTEGER, max_seconds REAL)')
     db.execute('CREATE TABLE IF NOT EXISTS review_requests (id TEXT PRIMARY KEY, lineage TEXT, cycle INTEGER, request TEXT, receipt TEXT, UNIQUE(lineage,cycle))')
     db.execute('CREATE TABLE IF NOT EXISTS review_protected (requirement TEXT PRIMARY KEY, lineage TEXT)')
+    # Existing reservations retain their independent protocol, even before review.
+    for table in ('review_lineages', 'review_protected'):
+        if 'policy_schema' not in {row['name'] for row in db.execute('PRAGMA table_info(' + table + ')')}:
+            db.execute("ALTER TABLE " + table + " ADD COLUMN policy_schema TEXT NOT NULL DEFAULT 'main-plan-review/v1'")
     columns = {row['name'] for row in db.execute('PRAGMA table_info(review_lineages)')}
     if 'purpose' not in columns:
         db.execute("ALTER TABLE review_lineages ADD COLUMN purpose TEXT NOT NULL DEFAULT 'execution'")
@@ -105,11 +111,18 @@ def _db(root):
     return db
 
 
+@contextmanager
+def _review_db(root):
+    # SQLite's transaction context commits/rolls back but does not close.
+    with closing(_db(root)) as db, db:
+        yield db
+
+
 def protected_lineage(plan, root=None):
     root = _root(plan, root)
     if root is None or not _ledger_path(root).exists():
         return None
-    with _db(root) as db:
+    with _review_db(root) as db:
         rows = db.execute('SELECT requirement,lineage FROM review_protected').fetchall()
     matches = {row['lineage'] for row in rows if row['requirement'] in _refs(plan)}
     _need(len(matches) <= 1, 'requirements cross protected lineages; host reconciliation required')
@@ -127,18 +140,21 @@ def register_protection(plan, root=None, *, publication_task_refs=None):
     # Validate all canonical documents and trusted coverage before reserving IDs.
     current_inputs(root, plan, publication_task_refs=publication_task_refs)
     _need(existing in (None, value['lineage_id']), 'protected lineage cannot change with run_id')
-    with _db(root) as db:
+    with _review_db(root) as db:
         db.execute('BEGIN IMMEDIATE')
         scope = _scope(publication_task_refs)
         line = db.execute('SELECT * FROM review_lineages WHERE id=?', (value['lineage_id'],)).fetchone()
-        _need(line is None or (line['purpose'] == ('publication' if scope is not None else 'execution') and
+        _need(line is None or (line['policy_schema'] == value['schema_version'] and
+              line['purpose'] == ('publication' if scope is not None else 'execution') and
               line['publication_scope'] == (canonical(scope).decode() if scope is not None else None)),
               'existing review lineage purpose/scope cannot change')
         for ref in _refs(plan):
-            row = db.execute('SELECT lineage FROM review_protected WHERE requirement=?', (ref,)).fetchone()
-            _need(row is None or row['lineage'] == value['lineage_id'], 'protected lineage mismatch')
+            row = db.execute('SELECT lineage,policy_schema FROM review_protected WHERE requirement=?', (ref,)).fetchone()
+            _need(row is None or (row['lineage'] == value['lineage_id'] and
+                  row['policy_schema'] == value['schema_version']), 'protected lineage/policy schema mismatch')
         for ref in _refs(plan):
-            db.execute('INSERT OR IGNORE INTO review_protected VALUES (?,?)', (ref, value['lineage_id']))
+            db.execute('INSERT OR IGNORE INTO review_protected (requirement,lineage,policy_schema) VALUES (?,?,?)',
+                       (ref, value['lineage_id'], value['schema_version']))
 
 
 def _bound(root, ref):
@@ -255,9 +271,15 @@ def _authenticate(callback, request, review, proof):
           'authenticated review does not bind exact nonce/plan/full response')
     planner, reviewer = _identity(observed.get('planner')), _identity(observed.get('reviewer'))
     _need(planner == request['planner'], 'authenticated planner identity mismatch')
-    _need(planner['invocation_id'] != reviewer['invocation_id'] and
-          planner['context_id'] != reviewer['context_id'] and observed.get('fresh_context') is True,
-          'planner self-approval or non-independent reviewer context')
+    _need(request.get('schema_version') in (SCHEMA, SINGLE_SCHEMA), 'unknown authenticated review schema')
+    if request['schema_version'] == SINGLE_SCHEMA:
+        _need(planner == reviewer and observed.get('fresh_context') is False and
+              observed.get('single_main') is True,
+              'single-main self-check requires the same authenticated main context')
+    else:
+        _need(planner['invocation_id'] != reviewer['invocation_id'] and
+              planner['context_id'] != reviewer['context_id'] and observed.get('fresh_context') is True,
+              'planner self-approval or non-independent reviewer context')
     _need(observed.get('budget_valid') is True, 'host review budget missing/exhausted; replan required')
     return observed
 
@@ -273,16 +295,27 @@ def check_plan_review(plan, root=None, verifier=None, *, allow_legacy=False,
         _need(allow_legacy is True, 'legacy-unprotected requires explicit trusted host opt-in')
         return {'status': 'legacy-unprotected', 'reason': 'historical DAG has no independent main review'}
     _need(root is not None, 'protected review requires current project root')
+    _need(value['schema_version'] != SINGLE_SCHEMA or purpose == 'execution',
+          'single-main self-check does not replace independent publication review')
     _need(existing == value['lineage_id'], 'protected lineage was not registered by trusted host')
+    with closing(_db(root)) as db:
+        line = db.execute('SELECT policy_schema FROM review_lineages WHERE id=?', (value['lineage_id'],)).fetchone()
+        _need(line is None or line['policy_schema'] == value['schema_version'], 'protected lineage policy schema mismatch')
+        bindings = db.execute('SELECT policy_schema FROM review_protected WHERE lineage=?',
+                              (value['lineage_id'],)).fetchall()
+        _need(all(row['policy_schema'] == value['schema_version'] for row in bindings),
+              'protected requirement policy schema mismatch')
     _need(purpose in ('execution', 'publication'), 'unknown trusted review purpose')
     scope = _scope(publication_task_refs)
     _need((purpose == 'publication') == (scope is not None), 'publication review requires exact trusted scope')
     current_inputs(root, plan, publication_task_refs=scope)
     receipt = plan.get('plan_review_receipt')
-    _need(isinstance(receipt, dict) and receipt.get('schema_version') == SCHEMA,
-          'independent main review receipt missing; dispatch blocked')
+    _need(isinstance(receipt, dict) and receipt.get('schema_version') == value['schema_version'],
+          ('single-main self-check' if value['schema_version'] == SINGLE_SCHEMA else 'independent main review')
+          + ' receipt missing; dispatch blocked')
     request = receipt.get('request')
-    _need(isinstance(request, dict) and request.get('plan_sha256') == plan_sha256(plan)
+    _need(isinstance(request, dict) and request.get('schema_version') == value['schema_version']
+          and request.get('plan_sha256') == plan_sha256(plan)
           and request.get('project') == project_identity(root) and request.get('run_id') == plan['run_id']
           and request.get('lineage_id') == value['lineage_id'], 'stale/cross-project/replayed main review')
     _need(request.get('purpose', 'execution') == purpose and
@@ -298,7 +331,9 @@ def check_plan_review(plan, root=None, verifier=None, *, allow_legacy=False,
     _authenticate(lambda *_: observed, request, receipt['review'], receipt.get('proof'))
     _need(verdict['decision'] == 'approve', 'main review requires ' + verdict['decision'] + '; versioned replan required')
     current_inputs(root, plan, publication_task_refs=scope)
-    return {'status': 'approved', 'plan_sha256': request['plan_sha256'], 'request_id': request['request_id'],
+    return {'status': 'self-checked' if value['schema_version'] == SINGLE_SCHEMA else 'approved',
+            **({'independent': False} if value['schema_version'] == SINGLE_SCHEMA else {}),
+            'plan_sha256': request['plan_sha256'], 'request_id': request['request_id'],
             'lineage_id': request['lineage_id'], 'cycle': request['cycle'],
             'review_sha256': sha(receipt['review']), 'purpose': purpose,
             'publication_task_refs': scope, 'verdict': deepcopy(verdict)}
@@ -325,10 +360,13 @@ class ReviewSession:
     fresh_context and budget_valid. Unknown hard cost/token budgets must block.
     """
     def __init__(self, root, lineage_id, *, planner_identity=None, reviewer=None,
-                 authenticate=None, max_cycles=3, max_seconds=900, clock=time.time, publication_task_refs=None):
+                 authenticate=None, max_cycles=3, max_seconds=900, clock=time.time, publication_task_refs=None,
+                 single_main=False):
         self.root, self.lineage_id = Path(root).resolve(), lineage_id
         self.planner_identity, self.reviewer, self.authenticate = planner_identity, reviewer, authenticate
         self.clock = clock
+        _need(type(single_main) is bool, 'single_main must be a trusted host boolean')
+        self.single_main = single_main
         self.publication_task_refs = _scope(publication_task_refs)
         self.purpose = 'publication' if self.publication_task_refs is not None else 'execution'
         _need(_text(lineage_id) and type(max_cycles) is int and 1 <= max_cycles <= 20
@@ -336,24 +374,32 @@ class ReviewSession:
               and 1 <= max_seconds <= 86400, 'bounded review cycle/time budgets required')
         self.max_cycles, self.max_seconds = max_cycles, max_seconds
 
+    def _check_host_mode(self, schema):
+        _need((schema == SINGLE_SCHEMA) == self.single_main,
+              'host review mode unavailable; configure an explicit same-main backend for single-main self-check')
+
     def submit(self, plan):
         value = policy(plan)
         _need(value is not None and value['lineage_id'] == self.lineage_id, 'session lineage mismatch')
+        self._check_host_mode(value['schema_version'])
+        _need(value['schema_version'] != SINGLE_SCHEMA or self.purpose == 'execution',
+              'single-main self-check does not replace independent publication review')
         _need(callable(self.planner_identity) and callable(self.reviewer) and callable(self.authenticate),
               'planner/reviewer/authentication host adapters unavailable; no review was run')
         current_inputs(self.root, plan, publication_task_refs=self.publication_task_refs)
         planner = _identity(self.planner_identity(deepcopy(plan)))
         now = self.clock()
-        with _db(self.root) as db:
+        with _review_db(self.root) as db:
             db.execute('BEGIN IMMEDIATE')
             line = db.execute('SELECT * FROM review_lineages WHERE id=?', (self.lineage_id,)).fetchone()
             if line is None:
-                db.execute('INSERT INTO review_lineages (id,project,refs,started,max_cycles,max_seconds,purpose,publication_scope) VALUES (?,?,?,?,?,?,?,?)',
+                db.execute('INSERT INTO review_lineages (id,project,refs,started,max_cycles,max_seconds,purpose,publication_scope,policy_schema) VALUES (?,?,?,?,?,?,?,?,?)',
                            (self.lineage_id, project_identity(self.root), canonical(_refs(plan)).decode(),
                             now, self.max_cycles, self.max_seconds, self.purpose,
-                            canonical(self.publication_task_refs).decode() if self.publication_task_refs is not None else None))
+                            canonical(self.publication_task_refs).decode() if self.publication_task_refs is not None else None,
+                            value['schema_version']))
                 line = db.execute('SELECT * FROM review_lineages WHERE id=?', (self.lineage_id,)).fetchone()
-            _need(line['project'] == project_identity(self.root) and
+            _need(line['project'] == project_identity(self.root) and line['policy_schema'] == value['schema_version'] and
                   line['max_cycles'] == self.max_cycles and line['max_seconds'] == self.max_seconds and
                   line['purpose'] == self.purpose and
                   line['publication_scope'] == (canonical(self.publication_task_refs).decode() if self.publication_task_refs is not None else None),
@@ -366,7 +412,7 @@ class ReviewSession:
             _need(len(rows) < line['max_cycles'] and 0 <= now - line['started'] < line['max_seconds'],
                   'review budget exhausted; stop for replan, never mark done')
             previous = [json.loads(row['receipt']) for row in rows]
-            request = {'schema_version': SCHEMA, 'request_id': uuid.uuid4().hex,
+            request = {'schema_version': value['schema_version'], 'request_id': uuid.uuid4().hex,
                        'project': project_identity(self.root), 'lineage_id': self.lineage_id,
                        'cycle': len(rows) + 1, 'run_id': plan['run_id'], 'plan_sha256': plan_sha256(plan),
                        'purpose': self.purpose, 'publication_task_refs': self.publication_task_refs,
@@ -374,11 +420,13 @@ class ReviewSession:
                        'previous_review_sha256': [sha(item['review']) for item in previous]}
             # Scope/budget/identity validation precedes atomic ownership reservation.
             for ref in _refs(plan):
-                owner = db.execute('SELECT lineage FROM review_protected WHERE requirement=?', (ref,)).fetchone()
-                _need(owner is None or owner['lineage'] == self.lineage_id,
-                      'protected lineage cannot change with run_id')
+                owner = db.execute('SELECT lineage,policy_schema FROM review_protected WHERE requirement=?', (ref,)).fetchone()
+                _need(owner is None or (owner['lineage'] == self.lineage_id and
+                      owner['policy_schema'] == value['schema_version']),
+                      'protected lineage/policy schema cannot change with run_id')
             for ref in _refs(plan):
-                db.execute('INSERT OR IGNORE INTO review_protected VALUES (?,?)', (ref, self.lineage_id))
+                db.execute('INSERT OR IGNORE INTO review_protected (requirement,lineage,policy_schema) VALUES (?,?,?)',
+                           (ref, self.lineage_id, value['schema_version']))
             db.execute('INSERT INTO review_requests VALUES (?,?,?,?,NULL)',
                        (request['request_id'], self.lineage_id, request['cycle'], canonical(request).decode()))
         result = self.reviewer(deepcopy(request), deepcopy(plan), deepcopy(previous))
@@ -391,12 +439,14 @@ class ReviewSession:
         The host must recover the original response/receipt before its deadline;
         an unavailable or expired response remains blocked, with history intact.
         """
-        with _db(self.root) as db:
+        with _review_db(self.root) as db:
             row = db.execute('SELECT * FROM review_requests WHERE id=?', (request_id,)).fetchone()
         _need(row is not None and row['lineage'] == self.lineage_id,
               'no matching review request to reconcile')
         request = json.loads(row['request'])
+        self._check_host_mode(request.get('schema_version'))
         _need(policy(plan) is not None and policy(plan)['lineage_id'] == self.lineage_id and
+              policy(plan)['schema_version'] == request['schema_version'] and
               request['plan_sha256'] == plan_sha256(plan) and request['run_id'] == plan['run_id'] and
               request['project'] == project_identity(self.root) and request.get('purpose', 'execution') == self.purpose and
               request.get('publication_task_refs') == self.publication_task_refs, 'recovered review plan/project/scope mismatch')
@@ -406,8 +456,8 @@ class ReviewSession:
         _authenticate(self.authenticate, request, review, proof)
         _need(self.clock() <= request['deadline'], 'review time budget exhausted; stop for replan')
         current_inputs(self.root, plan, publication_task_refs=self.publication_task_refs)
-        receipt = {'schema_version': SCHEMA, 'request': request, 'review': deepcopy(review), 'proof': deepcopy(proof)}
-        with _db(self.root) as db:
+        receipt = {'schema_version': request['schema_version'], 'request': request, 'review': deepcopy(review), 'proof': deepcopy(proof)}
+        with _review_db(self.root) as db:
             db.execute('BEGIN IMMEDIATE')
             current = db.execute('SELECT receipt FROM review_requests WHERE id=?', (request_id,)).fetchone()[0]
             _need(current is None or json.loads(current) == receipt, 'review response already frozen; cannot replace it')
@@ -416,18 +466,19 @@ class ReviewSession:
         return receipt
 
     def verify(self, root, request, review, proof):
+        self._check_host_mode(request.get('schema_version'))
         _need(Path(root).resolve() == self.root and request.get('lineage_id') == self.lineage_id and
               request.get('purpose', 'execution') == self.purpose and
               request.get('publication_task_refs') == self.publication_task_refs,
               'review session project/lineage mismatch')
-        with _db(self.root) as db:
+        with _review_db(self.root) as db:
             row = db.execute('SELECT * FROM review_requests WHERE id=?', (request.get('request_id'),)).fetchone()
             line = db.execute('SELECT * FROM review_lineages WHERE id=?', (self.lineage_id,)).fetchone()
-            _need(line is not None and line['purpose'] == self.purpose and
+            _need(line is not None and line['policy_schema'] == request.get('schema_version') and line['purpose'] == self.purpose and
                   line['publication_scope'] == (canonical(self.publication_task_refs).decode() if self.publication_task_refs is not None else None),
                   'trusted publication scope changed after restart')
             latest = db.execute('SELECT MAX(cycle) FROM review_requests WHERE lineage=?', (self.lineage_id,)).fetchone()[0]
-        expected = {'schema_version': SCHEMA, 'request': request, 'review': review, 'proof': proof}
+        expected = {'schema_version': request.get('schema_version'), 'request': request, 'review': review, 'proof': proof}
         _need(row is not None and row['receipt'] is not None and json.loads(row['receipt']) == expected
               and json.loads(row['request']) == request and row['cycle'] == latest,
               'receipt absent/replayed/superseded in authoritative review ledger')
