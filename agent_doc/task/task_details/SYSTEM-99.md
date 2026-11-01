@@ -903,3 +903,7 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 同Plan81，旧包别名/eval快照、真实宿主/模型质量、论文正文十篇及上下文成本继续未决；本次正文精读新增0，不报整轮完成。复核为同主自检，无第二AI或独立验收声明，guide与唯一索引未改。
 
 RECOVERY-FENCES 原生回读：cca63ad4 的两组Ubuntu通过；macOS同一未规范化临时根 `/var` 别名使5方法触发项目写入守卫；Windows两组因夹具顶层导入task_supervisor/fcntl而加载失败。原始失败命令块合并保留于同目录 ci-failures.json（run41271676037，mac job124745549775、Windows job124745549759），不是恢复逻辑新增八个bugs。现规范化夹具根 Path(temp.name).resolve()，将Unix专用导入移到实际managed测试方法；不改生产守卫、不跳过CPU恢复测试。恢复与旧独立审核53通过，fixture-check.log SHA256 `bb6129ce404036adaa096b9bf246fec38330d882f23c777e2204dfca72d3d3cb`；显式禁止fcntl的两模块导入控制通过，仅属本地控制，不冒称Windows实测。最终新head跨平台回读仍待验收。
+
+RECOVERY-FENCES 继续核验：a436d02b 的macOS和两组Ubuntu全job通过；Windows3.12已过前两模块，在终态测试自身未关闭SQLite连接的临时目录清理处WinError32。原失败块已加入 ci-failures.json 的 windows_cleanup（run41272193756/job124747068193）。仅用现有 Store.transaction() 取代测试裸连接并删除无用import，不吞清理异常/不跳过；53相关方法通过，fixture-cleanup.log SHA256 `a474a6cea001322565b7a6c2c122ca51ea9d7f581c4c6ca0aaa976dbfe55b6f3`。此前53方法原日志仍与已发布SHA一致，恢复过程见publication.json；最终五job待新head实际读回。
+
+同一恢复验收继续：三组CPU恢复检查前移到两类job的Python准备后，保留全部后续安装/加载/通信检查，避免本次平台错误到流水线后段才反馈；未测总CI提速，不报效率收益。

@@ -3,7 +3,6 @@ import copy
 import hashlib
 import json
 from pathlib import Path
-import sqlite3
 import subprocess
 import sys
 import unittest
@@ -110,7 +109,7 @@ class TerminalRevalidation(unittest.TestCase):
         after = handler.checks
         engine.tick('test-run', 'fresh')
         self.assertEqual(handler.checks, after)
-        with sqlite3.connect(self.db_path) as db:
+        with self.store.transaction() as db:
             self.assertEqual(db.execute('SELECT count(*) FROM events').fetchone()[0], 2)
         self.store.cancel('test-run', 'stop')
         engine.tick('test-run', 'cancelled')
