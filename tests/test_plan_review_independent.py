@@ -19,7 +19,6 @@ from agent_runtime.plan_review import (CHECKS, PlanReviewError, ReviewSession, p
                                        check_plan_review, plan_sha256, sha)
 from agent_runtime.task_manifest import (prepare, review as report_review, ReportingHandler, atomic_json)
 from agent_runtime.publication import PublicationError, PublicationLedger
-from agent_runtime.task_supervisor import start as managed_start
 
 
 class CPUHost:
@@ -93,7 +92,7 @@ class IndependentPlanReviewTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix='independent-main-review-')
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name)
+        self.root = Path(self.temp.name).resolve()
         (self.root / 'TASK.md').write_text('# Fixture\n\n## 2026-10-07\n\n- [ ] [R1] Produce checked fixture\n')
         docs.migrate(self.root, '2026-10-07')
         self.host = CPUHost()
@@ -337,6 +336,7 @@ class IndependentPlanReviewTests(unittest.TestCase):
         self.assertEqual(state['status'], 'done')
 
     def test_managed_start_fails_before_tmux_launch_without_real_review_adapter(self):
+        from agent_runtime.task_supervisor import start as managed_start
         plan_path = self.root / 'plan.json'
         atomic_json(plan_path, self.plan)
         with patch('agent_runtime.task_supervisor.shutil.which', return_value='/synthetic/tmux'):

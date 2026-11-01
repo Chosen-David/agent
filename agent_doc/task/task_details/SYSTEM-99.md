@@ -901,3 +901,5 @@ needs_restart等仍open。无新增阅读计数或新轮完成，发布及回读
 修复前一恢复改动引入的3项回归：区分未结束执行与已完成效果的重验围栏，显式核对后清除过期多步骤诊断；不移除 requires_reconciliation、依赖/身份/结果门禁，不自动重放未知作用。复用一个未决执行谓词，保留原地实现；新增未知作用控制。冻结原21方法修前3失败，最终全库2075方法仅剩81失败/2错误/15跳过；失败标题相比上次仅减少这3项，无新增。3个恢复模块共22全过，实际CI命令分别通过；新增两组既有恢复模块进入五组CI，原生新head结果发布后另核。全部必要证据在 `/tmp/agent-system99/recovery-fences/checks.json` SHA256 `e6ec60231fbb341dee8acca91fbb84de00c83eda0c7973230374d9d59ca95b11`；删除冗余修后中间日志，只留原失败、完整最终回归和实际CLI输出。
 
 同Plan81，旧包别名/eval快照、真实宿主/模型质量、论文正文十篇及上下文成本继续未决；本次正文精读新增0，不报整轮完成。复核为同主自检，无第二AI或独立验收声明，guide与唯一索引未改。
+
+RECOVERY-FENCES 原生回读：cca63ad4 的两组Ubuntu通过；macOS同一未规范化临时根 `/var` 别名使5方法触发项目写入守卫；Windows两组因夹具顶层导入task_supervisor/fcntl而加载失败。原始失败命令块合并保留于同目录 ci-failures.json（run41271676037，mac job124745549775、Windows job124745549759），不是恢复逻辑新增八个bugs。现规范化夹具根 Path(temp.name).resolve()，将Unix专用导入移到实际managed测试方法；不改生产守卫、不跳过CPU恢复测试。恢复与旧独立审核53通过，fixture-check.log SHA256 `bb6129ce404036adaa096b9bf246fec38330d882f23c777e2204dfca72d3d3cb`；显式禁止fcntl的两模块导入控制通过，仅属本地控制，不冒称Windows实测。最终新head跨平台回读仍待验收。
