@@ -290,6 +290,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 
 阶段 MEMORY-GOVERNED-CONTEXT（Version103，同SYSTEM99）：继续已有记忆更正/上下文成本未决，不另造任务或记忆层。先冻结真实Mailbox/context CLI的全量JSON、定向JSON、既有auto-lossless及当前上下文复用对照；按完整stdout和首轮加载计指定tokenizer，验证无损解码、完整祖先/候选/异议、消费前更正拒绝且不ACK。若支持实际输出收益，仅在现有通信流程补充可信宿主兼容decoder时的显式无损选项，原地修正记忆流程残留多Agent职责为单主按需Skill；scope仍是检索标签、不授予披露权限。默认格式/权限/编码协议/账本及guide不改，不把离线受控输入当raw-native模型任务质量。新读TimlMemBench DOI10.18653/2026.findings-emnlp.507正式PDF全文15页/§§1–9及附录A–F、Tables1–16，区分canonical-pool和raw-native、分项门禁与判分不确定性；十篇/独立合同/真实任务质量及全费用仍open。
 
+阶段 MARKDOWN-COUNT-FRESHNESS（Version104，同SYSTEM99）：续接单主按需加载的版本边界。固定Markdown目录与正文读取在外部counter期间源正文替换/删除后仍返回旧成功包的反例；保留无计数与同字节重写健康对照。仅在现有_budget计数类型/预算成功后，复用_bound对包中已捕获project_root/source以原1MiB界重核；不重新计数、不改正文/mandatory/页游标/返回schema，不引入摘要或新加载层。计数钩子返回1只是定时夹具、不当token测量。API、真实CLI/独立OS源修改进程、完整回归/CI验证后普通发布。同主自检非独审；新读ACL2026.realm-1.14正式PDF全文17页/§§1–6、Limitations及A–C，保留模型/宿主/语种差异、深层路由反例和未缓存费用上界，不迁移论文架构或冒称其验证可变文件新鲜度。旧独立合同、实际模型质量/全成本/十篇仍open。 CI覆盖补充：当前portable-install没有运行Markdown段落回归模块；新增该现有模块的显式跨五平台命令，保留所有既有检查。
+
 ## Progress
 
 - 2026-10-27 抽象持久化续读：实际精读2610.27406v1正文§§1–5及声明附录，区分临时指导、历史暴露、相关性标签与可授信知识；[记录](../../results/anti-persistence-reading-20261027/reading.md)保留held-out调用成本/日志排除/受控实验及统计边界。同批新正文15篇；保留MemoryLedger修订/更正传播、原Skill/历史与人类guide，不新增共享日志/自适应选择器。worker最终交付/真实宿主及全部调用质量成本缺口继续open；advice围栏解析静态差异尚未复现，不判无缺陷。仅文献/源码独审，无新测试、模型、性能或整轮完成主张，旧门禁不重试。
@@ -1085,3 +1087,14 @@ bfcca399原生run41337925048十job成功，五平台serial各20方法、两Ubunt
 必要阅读/指标/复现入口与实际安装对照汇总/tmp/agent-system99/memory-closure-0302/evidence.json SHA256 0a0103b41ecfe35231ba0608e5b91152984e1db24c376fdbe6688e9eec62c749。重复合成包正文/解码副本已提炼为准确stdout哈希/指标和保留项，冗余正向日志、图渲染及本次tokenizer依赖/下载缓存已清；所有临时夹具已回收。新head发布/CI另存同目录，guide/唯一索引未改。
 
 新精读TimlMemBench正式DOI10.18653/2026.findings-emnlp.507全文15页/§§1–9、Limitations/附录A–F/全部16表，图1实际渲染查看；官方repo447b195344a2feaf995176446379e60632831f94的README已读，未运行作者数据/模型。记录raw-native与canonical-pool分离、当前/禁用记忆及来源门禁、1821case与多指标重叠分母、两组90项人工审计/60–85.9%跨judge一致性、描述性费用和不做全库排名的局限；仅采用分项治理验收，不冒充raw-native任务质量。本次新正文1不等于十篇；同主自检非独审，既有独立合同、真实宿主/模型任务质量及全成本仍open，同SYSTEM99不结轮。
+
+
+### 2026-11-02 — MARKDOWN-COUNT-FRESHNESS 同批续接
+
+先fetch核对12b927d3/同批未决、干净状态和独占锁，原位固定目录/正文在外部计数期间替换、删除源文件及修改调用方source引用后的8个功能失败（9方法、0错误）。现仅在有效计数及预算通过后以包中已捕获root/source复用原SHA/1MiB界核验；计数仅一次，原文/mandatory/游标/schema不变，不按mtime拒绝同字节替换。真实CLI另起OS源修改进程，16组修前/修后×两入口×替换/删除/同字节替换/未改对照和8次新SHA恢复通过；定时钩子返回1不是token测量。只主张有界新鲜度改善，额外最多1MiB读取、非文件全生命周期锁，不报速度/模型质量/费用收益。
+
+完整2109方法0失败/错误，51环境skip与上次逐项相同；Reader3、同步/空白通过。相关21方法1可选tokenizer缺失skip；CI原未显式覆盖段落回归，现加入既有五平台安装矩阵，保留原检查。仅同主自检，Mailbox/basis已复核计数后来源；artifact对比按历史快照契约不扩张为实时文件守卫。必要失败、完整日志、复现入口及阅读记录汇总/tmp/agent-system99/markdown-freshness-0404/evidence.json SHA256 db54edfecb7840b716cf15cbffd1d4a7db049c87e02bdf77ea1c5c3ba70b7e7e；生成候选源码/源修改脚本、冗余诊断和正向日志已提炼清理，真实夹具/子进程已回收。新head普通发布/CI另存同目录publication.json/ci.json；GUIDE未改。
+
+新精读ACL2026.realm-1.14正式REALM2026全文17页/§§1–6、Limitations及A–C、全部表/图说明文本，精确PDF哈希与方法、消融、模型/语种/宿主反例均在reading.json。采用固定来源条件下验证按需读取，不新增分层路由/摘要/Skill；论文静态只读语料未验证本库可变文件新鲜度。新正文1不冒称十篇；旧独立合同/真实宿主、真实任务质量/总成本及同批验收仍open，不重置预算、不结轮。
+
+补录上次发布后负结果：实际安装工作流正文计入两步加载，指令增量cl100k+237/o200k+177；6个冷启动小包案例净增120–198token，不能以工具正文压缩宣称冷启动总收益。含前缀的两步全量对照仍少3702–4525token，仅为明确假设下文本编码计数，排除宿主封装/模型输出/计费。证据/tmp/agent-system99/memory-closure-0302/instruction_cost.json SHA256 4f6506f3fe7d9f6a5dcd68143968feb2723d226054c45a5e6e65f46f617ce9d2；已由上次publication.json绑定，无模型质量主张。

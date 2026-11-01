@@ -37,6 +37,8 @@ def _budget(value, max_chars, max_tokens=None, token_counter=None):
             raise ValueError('token counter must return a nonnegative integer')
         if count > max_tokens:
             raise ValueError('complete Markdown payload exceeds token budget')
+        # External counting can outlive the captured source.
+        _bound(Path(value['project_root']), value['source'], max_bytes=1024*1024)
     elif token_counter is not None:
         raise ValueError('token counter requires explicit token budget')
     return value

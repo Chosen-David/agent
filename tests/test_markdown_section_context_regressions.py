@@ -57,4 +57,74 @@ class MarkdownContext(unittest.TestCase):
         with self.assertRaises(ValueError):self.m.read_sections(self.root,self.ref,['s2'],mandatory=['missing'])
         with self.assertRaises(ValueError):self.m.read_sections(self.root,self.ref,['s2'],mandatory=['s1','s1'])
 
+    def test_counting_rejects_changed_or_missing_source(self):
+        for mode in ('outline','read'):
+            for change in ('replace','delete'):
+                with self.subTest(mode=mode,change=change):
+                    path=self.root/'doc.md';path.write_bytes(self.raw.encode())
+                    def counter(_text):
+                        if change=='delete':path.unlink()
+                        else:path.write_text('# Global\npolicy withdrawn\n## A\nchanged instruction\n',encoding='utf-8')
+                        return 1  # Timing hook, not measured token use.
+                    with self.assertRaises((ValueError,OSError)):
+                        if mode=='outline':self.m.outline(self.root,self.ref,max_tokens=10,token_counter=counter)
+                        else:self.m.read_sections(self.root,self.ref,['s2'],mandatory=['s1'],max_tokens=10,token_counter=counter)
+
+    def test_counting_keeps_captured_source_binding(self):
+        for mode in ('outline','read'):
+            with self.subTest(mode=mode):
+                (self.root/'doc.md').write_bytes(self.raw.encode())
+                ref=dict(self.ref)
+                other=b'# Global\nother instruction\n'
+                (self.root/'other.md').write_bytes(other)
+                def counter(_text):
+                    (self.root/'doc.md').write_bytes(b'# Changed\nnew source\n')
+                    ref.update(path='other.md',sha256=hashlib.sha256(other).hexdigest())
+                    return 1
+                with self.assertRaises(ValueError):
+                    if mode=='outline':self.m.outline(self.root,ref,max_tokens=10,token_counter=counter)
+                    else:self.m.read_sections(self.root,ref,['s2'],mandatory=['s1'],max_tokens=10,token_counter=counter)
+
+    def test_counting_preserves_unchanged_and_identically_replaced_source(self):
+        for mode in ('outline','read'):
+            for replace in (False,True):
+                with self.subTest(mode=mode,replace=replace):
+                    (self.root/'doc.md').write_bytes(self.raw.encode())
+                    calls=[]
+                    def view(**kwargs):
+                        return (self.m.outline(self.root,self.ref,**kwargs) if mode=='outline' else
+                                self.m.read_sections(self.root,self.ref,['s2'],mandatory=['s1'],**kwargs))
+                    expected=view()
+                    def counter(text):
+                        calls.append(text)
+                        if replace:
+                            temporary=self.root/'same.md';temporary.write_bytes(self.raw.encode())
+                            temporary.replace(self.root/'doc.md')
+                        return 1
+                    self.assertEqual(view(max_tokens=10,token_counter=counter),expected)
+                    self.assertEqual(len(calls),1)
+                    if mode=='read':
+                        self.assertEqual([s['node'] for s in expected['sections']],['intro','s1','s2'])
+                        self.assertIn('原文\u2028# literal',expected['sections'][-1]['text'])
+
+    def test_cli_counting_rejects_source_change_without_old_payload(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+        from unittest.mock import patch
+        for mode in ('outline','read'):
+            with self.subTest(mode=mode):
+                (self.root/'doc.md').write_bytes(self.raw.encode())
+                def counter(_text):
+                    (self.root/'doc.md').write_text('# Global\nchanged\n',encoding='utf-8')
+                    return 1
+                args=['--root',str(self.root),'--path','doc.md','--sha256',self.ref['sha256'],
+                      '--max-tokens','10','--tokenizer','fixture',mode]
+                if mode=='read':args+=['--section','s2','--mandatory','s1']
+                output=StringIO()
+                with patch('agent_runtime.handoff_basis.make_token_counter',return_value=counter),redirect_stdout(output):
+                    code=self.m.main(args)
+                self.assertEqual(code,2)
+                value=json.loads(output.getvalue());self.assertEqual(value['status'],'blocked')
+                self.assertNotIn('nodes',value);self.assertNotIn('sections',value)
+
 if __name__=='__main__':unittest.main()
