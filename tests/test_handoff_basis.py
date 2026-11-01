@@ -107,7 +107,48 @@ class BasisTests(unittest.TestCase):
         self.memory.add('unrelated', 'observation', 'Other topic', 'synthetic:fixture', evidence='verified')
         self.check_memory_hydration_correction('unrelated')
 
-    def check_memory_hydration_correction(self, target):
+    def test_context_rechecks_memory_after_token_count(self):
+        self.check_memory_hydration_correction('input-v1', stage='counter')
+
+    def test_context_keeps_memory_after_unrelated_token_count_correction(self):
+        self.memory.add('unrelated', 'observation', 'Other topic', 'synthetic:fixture', evidence='verified')
+        self.check_memory_hydration_correction('unrelated', stage='counter')
+
+    def test_context_rechecks_knowledge_after_token_count(self):
+        seq = self.send()
+        changed = []
+        def counter(text):
+            if not changed:
+                path = self.root / 'corpus/entries/math.topk-margin.md'
+                path.write_bytes(path.read_bytes() + b'\nChanged during counting\n')
+                changed.append(True)
+            return 0  # Synthetic timing hook, not measured token usage.
+        with self.assertRaises(ValueError):
+            self.box.prepare_context('writer', seq, self.request, token_counter=counter)
+        self.assertEqual(changed, [True])
+        self.assertTrue(all(row['receipt'] is None for row in self.box.status()))
+
+    def test_context_rechecks_delivery_bindings_after_token_count(self):
+        seq = self.send()
+        for name in ('result.json', 'handoff.json'):
+            with self.subTest(path=name):
+                path = self.root / name
+                before = path.read_bytes()
+                changed = []
+                def counter(text):
+                    if not changed:
+                        path.write_bytes(before + b'\nChanged during counting\n')
+                        changed.append(True)
+                    return 0  # Synthetic timing hook, not measured token usage.
+                try:
+                    with self.assertRaises(ValueError):
+                        self.box.prepare_context('writer', seq, self.request, token_counter=counter)
+                    self.assertEqual(changed, [True])
+                    self.assertTrue(all(row['receipt'] is None for row in self.box.status()))
+                finally:
+                    path.write_bytes(before)
+
+    def check_memory_hydration_correction(self, target, stage='knowledge'):
         from unittest.mock import patch
         self.record['memory_refs'] = ['input-v1']
         self.request['memory_refs'] = ['input-v1']
@@ -117,19 +158,26 @@ class BasisTests(unittest.TestCase):
         seq = self.send()
         original = KnowledgeStore.get
         corrected = []
-        def hydrate(corpus, *args, **kwargs):
-            value = original(corpus, *args, **kwargs)
+        def change():
             if not corrected:
                 self.memory.correct(target, target + '-corrected', 'Corrected margin',
-                                    'synthetic:user', 'new user input during hydration')
+                                    'synthetic:user', 'new user input during ' + stage)
                 corrected.append(True)
+        def hydrate(corpus, *args, **kwargs):
+            value = original(corpus, *args, **kwargs)
+            if stage == 'knowledge':
+                change()
             return value
+        def counter(text):
+            change()
+            return 0  # Synthetic timing hook, not measured token usage.
+        options = {'token_counter': counter} if stage == 'counter' else {}
         with patch.object(KnowledgeStore, 'get', hydrate):
             if target == 'input-v1':
                 with self.assertRaisesRegex(ValueError, 'superseded'):
-                    self.box.prepare_context('writer', seq, self.request)
+                    self.box.prepare_context('writer', seq, self.request, **options)
             else:
-                pack = self.box.prepare_context('writer', seq, self.request)
+                pack = self.box.prepare_context('writer', seq, self.request, **options)
                 entries = json.loads(pack['payload'])['memory_entries']
                 self.assertEqual([entry['id'] for entry in entries], ['input-v1'])
                 self.assertEqual(entries[0]['content'], 'Synthetic margin is 0.5')
@@ -230,6 +278,12 @@ class BasisTests(unittest.TestCase):
         self.assertLess(warm['usage']['chars'], full['usage']['chars'])
         self.assertIsNone(warm['usage']['tokens'])
         self.assertEqual(full['usage']['bytes'], len(full['payload'].encode()))
+        counted = self.box.prepare_context('writer', seq, self.request, max_chars=100000,
+                                           token_counter=lambda text: 0)
+        self.assertEqual(counted['payload'], full['payload'])
+        with self.box.connect() as db:
+            self.assertEqual(db.execute('SELECT count(*) FROM communication_basis WHERE seq=? AND recipient=?',
+                                        (seq, 'writer')).fetchone()[0], 1)
         self.assertEqual(self.box.inbox('writer')[0]['seq'], seq)  # no automatic ACK
 
     def test_cache_of_leaf_alone_does_not_omit_missing_memory_parent(self):

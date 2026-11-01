@@ -383,6 +383,8 @@ def basis_context(root, record, request, *, known_knowledge_refs=(), known_memor
         if tokens is None:tokens = token_counter(serialized)
         _require(type(tokens) is int and tokens >= 0, 'token_counter must return nonnegative integer')
         _require(max_tokens is None or tokens <= max_tokens, 'complete basis exceeds token budget')
+        # External counting may outlive the snapshots used to build the payload.
+        check_handoff_basis(root, record, request)
     return {'payload': serialized, 'usage': {'chars': len(serialized), 'bytes': len(serialized.encode()),
             'tokens': tokens, 'max_chars': max_chars, 'max_tokens': max_tokens,
             'tokenizer': getattr(token_counter, 'tokenizer_name', None),

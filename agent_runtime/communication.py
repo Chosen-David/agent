@@ -460,10 +460,14 @@ class Mailbox:
         return result
 
     def prepare_context(self, recipient, seq, request, **budget_and_cache):
-        """Validate delivery, then build a budgeted evidence payload for the host."""
+        """Build evidence without ACK; recheck delivery after external counting."""
         from .handoff_basis import basis_context
         record = self.consume_handoff(recipient, seq, request)
-        return basis_context(self.root, record, request, **budget_and_cache)
+        context = basis_context(self.root, record, request, **budget_and_cache)
+        if budget_and_cache.get('token_counter') is not None:
+            # Counting can outlive the delivery/manifest validation above.
+            self.consume_handoff(recipient, seq, request)
+        return context
 
     def usage(self):
         """Exact envelope bytes including fan-out; deliberately no token estimate."""

@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 90
+Version: 91
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -263,6 +263,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 SKILL-CONTENT-PROVENANCE（Version89）：沿既有单主加载入口补充实际返回正文的content_sha256，复用installer.sha并保留全部安装/来源/链接/副本检查。依据新读2606.23127v1 AppendixB的trace绑定活动Skill版本方法，不移植其多agent、自更新、分支候选和未评估adapter；只为现有宿主/TASK提供可引用正文指纹，不新建账本或权限。固定真实安装→CLI→正文/规范源对照，修前缺字段失败；补验证链接与复制两模式、原不启动模型断言及安装/旧独立审核回归。字段是返回UTF8正文哈希（既有读取统一换行），不是物理文件字节/依赖闭包/模型调用证明或独立回执。原生CI与普通发布回读另核；不报任务质量/token/费用/性能收益，旧保护合同和预算仍pending。
 
 阶段 MEMORY-HYDRATION（Version90）：实际Mailbox publish→prepare_context在知识正文加载期间接收更正后，仍可输出早期已检查的无依赖记忆。冻结单方法修前失败。仅在原basis_context记忆组装处，对所有已选择根复用现有单事务_context_closure，不再仅在存在deps时调用；自定义兼容路径经原公共check再读根后继续逐层依赖。保留已知上下文提示检查、候选/异议/必要引用、独立门禁、身份及ACK分离，不新增记忆池、来源或重放。兼容check/walk可观察到一次新增根复核（签名与后续逐层调用保持），原精确顺序测试据此明确增加一项，不删除断言。验收真实Mailbox的相关更正拒绝、强制兼容拒绝、不相关更正健康控制、全部ACK为空、既有完整依赖/自定义回调及全库/原生CI；五平台contracts原第二组追加现有6方法闭包模块，原命令与5分钟限额保留。新读TellOnce2606.13174v2的检查与交付区分用于验收设计；不移植并行后台学习、未知结果放行、规则库或平台hook，不以本文实验等同本库收益。这是读取检查点修复，不声称跨知识/记忆库原子快照或阻止返回之后的更正；token_counter/任意宿主回调及其他更晚并发时序仍需单列核验。无性能/模型质量/总费用主张，旧独立合同及耗尽预算不重置，SYSTEM99继续open。
+
+阶段 MEMORY-HYDRATION 计数回调续接（Version91）：9b6c9476原生十job已全成功后继续原同批未决，不按提交计新轮。实际Mailbox计数钩子中更正记忆或修改知识正文，原接口仍返回旧依据（3方法2失败/1不相关健康对照）；仅在成功计数并核对预算后重用check_handoff_basis。随后同回调修改产物/manifest的两子例仍未拒绝（中间候选handoff_basis blob16b3f65a7002f57c7d4b7d2b86b773714a7730d0），因此Mailbox在有外部counter时再调用原consume_handoff完整核对交付/manifest/消费者绑定。无counter路径不加这层检查；新增复核不调用counter、不产生第二ACK/事件/派发，不重放修复或修改绑定。保持standalone basis API只含产物引用的既有范围；真实Mailbox负责实际文件门禁。增加正文原样/communication_basis唯一行/仍无ACK健康断言，复测JSON/表格/自动格式、预算/知识快照及全库/原生CI。不声称跨库原子快照、返回以后更正或可变自定义检查器本身已被约束，重复I/O成本未测，旧独立合同和全部限额不变。复用本次已新读TellOnce v2的执行阶段/交付检查方法，不再计第二篇；不采用并行学习、规则库或未知等于通过。
 
 ## Progress
 
@@ -963,3 +965,7 @@ PACKAGE-CLOSURE 原生run41274726189：两Ubuntu全job成功；macOS旧夹具未
 前项3e5d0ea3原生run41291603452十job全成功，五平台单主加载各7方法0skip；精确日志 `/tmp/agent-system99/procedural-body-1700/ci.json` SHA256 `14a4fd179f81d6de9aaff6554ee17c5447af7f48c006e62135e5a64cf67889de`。本次实际Mailbox→知识加载回调写入更正→上下文的单方法修前未拒绝已替代叶记忆；原始失败保留。现所有选中根走既有事务闭包，兼容路径增加公共根复核，相关更正两路径拒绝、不相关更正保持正文，所有ACK仍None。首轮27方法两处旧调用次数断言失败，记录后明确改为新增根复核的精确顺序，非删除断言或改签名。最终完整2087方法0失败/错误、15既有skip，原生同命令159全过0skip（新增6闭包方法进入五平台CI）。证据 `/tmp/agent-system99/memory-hydration-1800/evidence.json` SHA256 `af3355ff59cae3179b14723f9d9d62e138478d18ce15625c9b67151ccba2463e`；清理65方法冗余正向日志与阅读渲染，原始失败/首次兼容诊断/最终输出保留。
 
 新读TellOnce arXiv2606.13174v2（2026-10-25）实际29页正文/附录，包含§§1–6、AppendixA–D、Tables1–14及诊断/消融/平台适配差异；记录同目录reading.json（哈希见证据索引）。Concord/DiscernMem/2610.08101命中旧读不计。只采用更正需要消费检查的思想，不引入后台多agent/规则库、自动更正版采用或unknown放行。原生新head/普通发布回读另核，同主自检不是独立验收；额外读取成本未测，不报性能/模型质量/token/总费用。返回之后更正、更晚token_counter或宿主回调、跨库原子性仍待核；十篇阅读及SYSTEM99真实宿主质量/费用/旧独立合同仍open，不重置预算或计完成轮次。guide与唯一索引未改，无新results包。
+
+MEMORY-HYDRATION继续同批：9b6c9476原生run41296752210十job全成功，五组各159方法0skip；同目录ci.json SHA256 `da0e8958eb318e433515e512cdc1be07b92da21583f7aaa2d6f4245702555ec3`。随后计数阶段3方法修前2失败/1健康；先补basis复核后，实际交付产物/manifest两个子例仍失败，保留负结果及中间source blob16b3f65a7002f57c7d4b7d2b86b773714a7730d0，未把部分修复当完成。现basis与Mailbox分别重用已有依据/完整交付消费检查，仅counter路径追加，正常payload原样、消费者绑定仍单行、全部ACK为空，不重放/撤销计数回调已发生的作用。72相关方法通过；最终完整2091方法0失败/错误、15既有skip，原生同命令163全过0skip。证据 `/tmp/agent-system99/memory-hydration-1800/counter-evidence.json` SHA256 `aa11eaf12402ca28f5a3772cd7e8a2f9b7fbf2e9e5fbc479e095e21f2a0f21eb`。两次测试调用问题（首次两个不存在模块，后次缺tests路径供旧fixture导入）仅记录调用错误，非产品缺陷；冗余正向/调用错误原日志哈希和原因保留后清理，真实拒绝失败/最终输出保留。
+
+计数测试使用返回0的synthetic时序钩子，不作真实token测量；实际token/上下文质量/总费用和额外I/O成本未验。复用本次29页TellOnce v2阅读，不为本次跨模块续接再计第二篇。新head原生CI/普通发布另核，主agent自检不冒独立；返回以后更正、跨库原子性、可变trusted校验回调及既有SYSTEM99宿主/独立合同仍open，十篇与整轮验收未完成。guide/唯一索引保持，旧证据/预算未重置，无新results包。
