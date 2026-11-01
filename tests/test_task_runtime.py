@@ -612,7 +612,9 @@ class RuntimeContracts(unittest.TestCase):
             self.assertTrue(start['readback']['live'])
             (root / 'proof.txt').write_bytes(b'accepted')
             deadline = time.monotonic() + 5
-            while self.state()['status'] != 'done' and time.monotonic() < deadline:
+            # The done state commits before the monitor-stop transaction.
+            while (self.state()['status'] != 'done' or
+                   scheduler.read(start['monitor_id'])['status'] != 'stopped') and time.monotonic() < deadline:
                 time.sleep(.05)
             self.assertEqual(self.state()['status'], 'done')
             self.assertEqual(scheduler.read(start['monitor_id'])['status'], 'stopped')

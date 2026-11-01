@@ -11,6 +11,7 @@ import sys
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from agent_runtime.committed_aliases import CommittedAliases
 from agent_runtime.external_json import load_json, regular_bytes, strict_json
+from agent_runtime.project_docs import guard_write_path
 
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT_ROOTS = {'plugins', 'prompts', 'workflows', 'templates', 'config', 'agent_runtime'}
@@ -46,6 +47,7 @@ def object_record(value):
 
 
 def write(path, value):
+    guard_write_path(path)
     with Path(path).open('xb') as stream:
         stream.write(encoded(value))
 
@@ -92,6 +94,7 @@ def prepare_run(repo, revision, out, tasks=None, rubric=None, fixture_root=None,
     if type(require_material_review) is not bool:
         raise ValueError('require_material_review must be boolean')
     repo, out = Path(repo), Path(out)
+    guard_write_path(out)
     sha = git(repo, 'rev-parse', '--verify', revision + '^{commit}').decode().strip()
     blob = lambda name: git(repo, 'show', sha + ':' + name)
     task_data = object_record(read(tasks) if tasks else json.loads(blob('evals/tasks.json')))
@@ -158,19 +161,20 @@ def prepare_run(repo, revision, out, tasks=None, rubric=None, fixture_root=None,
     adapter.setdefault('max_attempts', 3)
     if type(adapter['max_attempts']) is not int or not 1 <= adapter['max_attempts'] <= 10:
         raise ValueError('max_attempts must be an integer between 1 and 10')
+    guard_write_path(out)
     out.mkdir(parents=True, exist_ok=False)
     for name, data in snapshot.items():
-        target = out / 'snapshot' / name
+        target = guard_write_path(out / 'snapshot' / name)
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(data)
     case_records = {}
     for case, inputs in prepared:
-        directory = out / 'cases' / case['id']
+        directory = guard_write_path(out / 'cases' / case['id'])
         (directory / 'inputs').mkdir(parents=True)
         (directory / 'attempts').mkdir()
         (directory / 'task.txt').write_text(case['prompt'], encoding='utf-8')
         for name, data in inputs.items():
-            target = directory / 'inputs' / name
+            target = guard_write_path(directory / 'inputs' / name)
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(data)
         case_records[case['id']] = {'role': case['role'], 'skill': case['skill'],
@@ -316,7 +320,8 @@ def check_material_review(run, manifest, actor, trust):
 
 
 def authorize_dispatch(run, case_id, actor, *, material_review=None):
-    """Read-only host pre-spawn gate. Caller must invoke BEFORE spawning a worker."""
+    """Read-only host gate, required before executing work in this run."""
+    guard_write_path(run)
     run, manifest, _ = context(run, case_id)
     if not nonempty(actor):
         raise ValueError('worker actor required')
@@ -380,6 +385,7 @@ def validate_collection(collection, start, case_id):
 
 
 def record_start(run, case_id, actor, receipt_path, *, material_review=None):
+    guard_write_path(run)
     run, manifest, attempts = context(run, case_id)
     if not nonempty(actor):
         raise ValueError('worker actor required')
@@ -397,6 +403,7 @@ def record_start(run, case_id, actor, receipt_path, *, material_review=None):
     if receipt['event_id'] in event_ids(run):
         raise ValueError('duplicate host event')
     directory = attempts / f'{attempt:04d}'
+    guard_write_path(directory)
     directory.mkdir()
     (directory / 'outputs').mkdir()
     start = {'actor': actor, 'attempt': attempt, 'receipt': receipt,
@@ -417,6 +424,7 @@ def get_attempt(run, case_id, attempt):
 
 
 def collect(run, case_id, attempt, receipt_path, status=None):
+    guard_write_path(run)
     run, manifest, directory, start = get_attempt(run, case_id, attempt)
     if (directory / 'collection.json').exists():
         raise FileExistsError('collection record already exists')
@@ -469,6 +477,7 @@ def validate_grade(grade, criteria, case_id, attempt, worker, output_hashes):
 
 
 def grade_attempt(run, case_id, attempt, grade_path):
+    guard_write_path(run)
     run, manifest, directory, start = get_attempt(run, case_id, attempt)
     collection = validate_collection(read(directory / 'collection.json'), start, case_id)
     if collection['status'] != 'produced':

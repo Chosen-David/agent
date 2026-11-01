@@ -48,6 +48,53 @@ class PipelineTests(unittest.TestCase):
         path.write_text(json.dumps(data))
         return path
 
+    def test_write_helper_refuses_both_guide_namespaces(self):
+        for name in ('agent_doc', 'doc'):
+            with self.subTest(namespace=name):
+                target = self.base / name / 'guide' / 'receipt.json'
+                target.parent.mkdir(parents=True)
+                with self.assertRaisesRegex(ValueError, 'human-only'):
+                    pipeline.write(target, {'fixture': True})
+                self.assertFalse(target.exists())
+
+    def test_relocated_guide_run_does_not_create_attempt(self):
+        target = self.base / 'agent_doc/guide/restored-run'
+        target.parent.mkdir(parents=True)
+        self.run.rename(target)
+        self.run = target
+        before = pipeline.hashes(target)
+        with self.assertRaisesRegex(ValueError, 'human-only'):
+            self.start()
+        self.assertEqual(pipeline.hashes(target), before)
+        self.assertEqual(list((target / 'cases/a/attempts').iterdir()), [])
+        self.assertEqual(pipeline.report(target)['expected'], 2)
+        with self.assertRaisesRegex(ValueError, 'human-only'):
+            pipeline.authorize_dispatch(target, 'a', 'worker')
+
+    def test_nested_fixture_cannot_create_a_guide_directory(self):
+        name = 'agent_doc/guide/history.txt'
+        self.put('evals/fixtures/' + name, 'synthetic fixture')
+        self.tasks['cases'][0]['fixtures'] = [name]
+        self.put('evals/tasks.json', json.dumps(self.tasks))
+        self.git('add', '.')
+        self.git('commit', '-qm', 'nested fixture')
+        destination = self.base / 'nested-run'
+        with self.assertRaisesRegex(ValueError, 'human-only'):
+            pipeline.prepare_run(self.repo, 'HEAD', destination)
+        self.assertFalse((destination / 'cases/a/inputs/agent_doc/guide').exists())
+
+    def test_legacy_copy_cannot_create_a_nested_guide(self):
+        spec = importlib.util.spec_from_file_location('legacy_eval',
+            Path(pipeline.__file__).with_name('prepare_agent_eval.py'))
+        legacy = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(legacy)
+        legacy.ROOT = self.repo
+        self.put('plugins/demo/agent_doc/guide/README.md', 'synthetic fixture')
+        destination = self.base / 'legacy-nested'
+        with self.assertRaisesRegex(ValueError, 'human-only'):
+            legacy.prepare(self.tasks['cases'][0], destination)
+        self.assertFalse((destination / 'skill/agent_doc/guide').exists())
+
     def test_snapshot_materializes_only_committed_skill_alias_bytes(self):
         self.put('shared-references/workflow.md', '')
         expected = 'committed 中文\r\n'.encode('utf-8')

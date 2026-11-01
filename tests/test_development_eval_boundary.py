@@ -16,6 +16,26 @@ class DevelopmentBoundaryTests(unittest.TestCase):
         return subprocess.run([sys.executable, *map(str, args)], cwd=ROOT,
                               capture_output=True, text=True, **kwargs)
 
+    def test_preparers_refuse_guide_and_redirected_destinations(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp).resolve()
+            guide = root / 'agent_doc/guide'
+            guide.mkdir(parents=True)
+            alias = root / 'alias'
+            alias.symlink_to(guide, target_is_directory=True)
+            for label, parent in (('direct', guide), ('alias', alias)):
+                for script, args in (
+                    ('agent_eval_pipeline.py', ['prepare', '--revision', 'HEAD']),
+                    ('prepare_agent_eval.py', ['--case', 'research-write']),
+                ):
+                    with self.subTest(script=script, destination=label):
+                        dest = parent / (script + '-' + label)
+                        result = self.command(ROOT/'scripts'/script, *args,
+                                              '--dev-eval', '--out', dest)
+                        self.assertEqual(result.returncode, 2, result.stderr)
+                        self.assertIn('human-only', result.stderr)
+                        self.assertFalse(dest.exists())
+
     def test_preparation_requires_explicit_flag_before_writes(self):
         with tempfile.TemporaryDirectory() as tmp:
             dest = Path(tmp) / 'absent'

@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 84
+Version: 87
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -251,6 +251,12 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 EVAL-ALIASES（Version83）：PACKAGE-CLOSURE完整2076方法已明确仅剩开发评测prepare拒绝共享源码文件别名；先冻结定向正/负控。将Codex既有固定Git tree/blob文件别名解析抽为一个共同实现，评测仅对plugins/<plugin>/skills/下别名复用，写出普通文件，不读取工作区替换字节。原直接shared-references文件、agent_runtime直接Python和research-assistant/shared-scripts直接Python命名空间及32层/循环/目录/gitlink/绝对/反斜线/缺失拒绝保持；模板等非Skill入口不放行，评测tests/evals隔离保持。原脚本API与来源dirty校验保留。保存修前失败，复测真实CLI prepare→快照内依赖执行、安装/别名/评测门禁及全库；五组CI加入包闭包与评测入口检查。只同主自检，旧独立合同不降级、不重置预算，无模型/费用/效率结论。
 
 阶段 CI-BUDGET（Version84）：续接4d992002的原生Windows3.10末段取消；将新增104方法包/评测组及原通信三模块组从install/mac两类job原位移入一个覆盖相同五个平台版本组合的contracts矩阵，保持所有测试命令的逐平台多重集、checkout/setup精确版本、Windows源码链接设置和原有安装/恢复/同步检查。两类job继续原10/5分钟限额，新contracts上限5分钟；无AI并行，不改生产SQLite持久性、测试数据/skip或扩大旧独立合同预算。先保存原生失败与时长，核对逐平台命令相等及实际模块回归，再普通发布并读回十job；仅测CI完成/墙钟与runner耗时，不当模型质量或执行引擎性能收益。旧/tmp未随环境恢复，既有Git记录/哈希仍保留，不伪造原文件存在；本次正文新增0，十篇/真实任务质量成本及既有独立合同仍open。
+
+阶段 EVAL-WRITE-BOUNDARY（Version85）：真实评测准备CLI、公共JSON写入及恢复run的record-start未接入现有guide写入守卫，隔离夹具冻结3方法7个拒绝断言失败。仅复用project_docs.guard_write_path，两个prepare在创建前预检并在写入点重验，包括快照/输入及copytree将创建的子树；共用JSON写入检查当前目标，record-start先拒绝保护run再在mkdir前检查目录，collect/grade先核对写入run。report等历史只读查看不加写入拒绝；authorize_dispatch虽只读，但作为宿主执行前准入须拒绝保护run，保留评测隔离、收集/验证、身份、预算及正常输出；legacy CLI的准备/写入错误改为清晰exit2，正常成功及显式dev门禁不变，不声称所有旧异常退出码不变。不写真实guide、不新增ACL承诺或自动清理历史。验收直接/重定向CLI、两命名空间写入、恢复run无尝试目录、合法全生命周期/只读控制及相关安装与全库，再原生CI/普通发布回读。主agent自检非独立审核，旧合同预算不重置；论文和真实模型质量/费用未决仍open。
+
+阶段 EVAL-WRITE-BOUNDARY 验证续接（Version86）：第一次完整2084方法仅有bounded serve/arm监视器断言失败。保留full.log；生产Engine先提交done、下一事务再停止monitor。受控暂停真实SQLite提交后窗口实际读到done/active，释放并join后为done/stopped，convergence.log保留synthetic handler/clock范围。只让原有真实子进程测试在同一5秒截止内等待两个原断言同时收敛，保留8秒serve上限、最终stopped/产物hash/服务退出与不live断言；不改runtime、不删除停止要求、不冒充独立审核或重置任何旧预算。随后定向/全库再验证；首次错误test_project_docs模块名只属调用错误，不能算产品问题。
+
+阶段 EVAL-WRITE-BOUNDARY 准入复核（Version87）：Version86候选完整2084方法0失败/15既有skip，但复核docs/agent_eval_pipeline.md的调用顺序发现，authorize_dispatch返回后宿主可执行，然后才record-start。不能把这个授权入口当作普通历史查看；保留一次精确源hash/单方法修前未拒绝的失败，仅给此准入补同一guard_write_path。report保持只读可用，原材料审核/身份独立要求不改。随后复测现有评测/守卫与真实本地serve；Unix原生CI加入既有有界serve单方法，不扩8秒服务或5秒收敛限额，不称Windows进程终止测试已验证；所有平台继续完整评测保护检查。
 
 ## Progress
 
@@ -929,3 +935,11 @@ PACKAGE-CLOSURE 原生run41274726189：两Ubuntu全job成功；macOS旧夹具未
 恢复环境的旧工作区d2be90ee干净，持有原锁后快进至main4d992002；guide SHA256仍f943aa65ca55b858d9128fb92c3a9df5146e3f5fc406c4db646a45e5e85ba396。旧/tmp未恢复，不冒称其证据仍在；本次从GitHub重取原始run41275070896，四job成功、Windows3.10约604秒末组通信取消。仅将两组既有检查移至同五平台contracts矩阵，保留全部逐平台命令、原10/5分钟限额及原安装/恢复/同步；新增contracts限5分钟，不改生产SQLite/数据/skip，不是多AI开发。
 
 实际相关145方法全过0skip，矩阵展开四个平台各47命令、mac27命令的多重集与旧配置完全一致；自检非独立审核。原失败/时长与本地原始输出索引 `/tmp/agent-system99/ci-budget-1404/record.json` SHA256 `2dbcf97d0a1b43af979be3b8d29d55f5a39bd8ca6923edf7212098143efcb487`；新head十job实际结果发布后另存同目录ci.json并回读。未测模型质量/总费用，不报统计提速；本次新正文0篇，旧SPEM阅读不重计，十篇/真实任务质量和成本及旧独立合同仍open。同SYSTEM99非完成轮次，唯一索引/guide未改。
+
+### 2026-11-01 — EVAL-WRITE-BOUNDARY 串行续接
+
+真实评测prepare/公共JSON写入/恢复run未使用已有guide守卫；隔离夹具3方法修前7拒绝子断言失败。仅复用guard_write_path覆盖两CLI、快照/输入和legacy复制子树、记录与执行前准入；report历史查看保留。先前root-only候选漏嵌套路径、authorize虽只读却会准入的负结果均保留，不把record-start启动后拒绝当有效保护。legacy准备/写入错误现在exit2，正常输出/dev隔离/审核与独立身份规则不变；不称OS隔离或原子复制，嵌套拒绝可留普通部分输出。
+
+初轮完整2084方法在真实serve读回遇done/active；受控暂停证明两个事务之间确有窗口，释放/join后done/stopped。仅修测试在原5秒内等两个状态，保留8秒服务与全部最终断言；原runtime不改，UnixCI加入同一有界方法，Windows进程终止未验。最终完整2084方法0失败/错误、15既有skip；CI同命令150全过0skip。主agent自检，独立合同不降级；原失败、最终输出、被作废中间正向摘要和清理记录 `/tmp/agent-system99/entry-write-1505/evidence.json` SHA256 `cd3a6ee7a3909e46bfde07141845d6605943dd690f79feb49dd68300377552b2`。旧check模块名错误为调用问题，不算产品缺陷；删除冗余中间正向日志，仅保留必要失败与最终证据。新head原生十job发布后回读另存同目录ci.json。
+
+本次新正文0，既读FSM/SPEM不重计；十篇/实际宿主模型质量/上下文与费用/旧独立证据仍open，同SYSTEM99不结轮。guide/唯一索引字节未改，无新results中间包或额外TASK。
