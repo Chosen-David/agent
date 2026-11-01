@@ -41,6 +41,46 @@ class GuardCrashPolicyTests(unittest.TestCase):
 ROOT = Path(__file__).resolve().parents[1]
 
 
+class ProcessIdentityTests(unittest.TestCase):
+    @unittest.skipUnless(sys.platform == 'linux', 'requires Linux procfs and PR_SET_NAME')
+    def test_starttime_survives_arbitrary_process_name_bytes(self):
+        body = r'''
+import ctypes, json, os, sys
+from pathlib import Path
+from agent_runtime.task_supervisor import read_process_starttime
+name = bytes.fromhex(sys.argv[1])
+libc = ctypes.CDLL(None, use_errno=True)
+if libc.prctl(15, ctypes.c_char_p(name), 0, 0, 0) != 0:
+    raise OSError(ctypes.get_errno(), 'PR_SET_NAME')
+raw = Path('/proc/self/stat').read_bytes()
+# /proc can expose a parent namespace; query this process in that mount's view.
+pid = int(raw.split(b' ', 1)[0])
+expected = raw.rsplit(b')', 1)[1].split()[19].decode('ascii')
+print(json.dumps({'actual': read_process_starttime(pid), 'expected': expected,
+                  'name_hex': name.hex(), 'pid': pid, 'namespace_pid': os.getpid()}))
+'''
+        for name in (b'python', b'a) space', '测试) x'.encode(), b'n\xff) x'):
+            with self.subTest(name=name):
+                child = subprocess.run([sys.executable, '-B', '-c', body, name.hex()],
+                                       cwd=ROOT, capture_output=True, text=True, timeout=5)
+                self.assertEqual(child.returncode, 0, child.stderr)
+                result = json.loads(child.stdout)
+                self.assertEqual(result['actual'], result['expected'], result)
+
+    def test_starttime_rejects_missing_or_invalid_numeric_field(self):
+        from unittest.mock import mock_open
+        from agent_runtime.task_supervisor import read_process_starttime
+        prefix = b'123 (name) space) S ' + b'0 ' * 18
+        for raw in (b'123 (short) S 0', prefix + b'\xff', prefix + b'-1', prefix + b'123x'):
+            def open_stat(path, mode, **kwargs):
+                data = raw if 'b' in mode else raw.decode(kwargs.get('encoding', 'utf-8'))
+                return mock_open(read_data=data)(path, mode)
+            with self.subTest(raw=raw), patch('builtins.open', side_effect=open_stat):
+                self.assertIsNone(read_process_starttime(123))
+        with patch('builtins.open', side_effect=ProcessLookupError):
+            self.assertIsNone(read_process_starttime(123))
+
+
 def wait_for(predicate, seconds=8):
     deadline = time.monotonic() + seconds
     while time.monotonic() < deadline:

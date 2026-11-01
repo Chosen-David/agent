@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 96
+Version: 97
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -275,6 +275,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 SERIAL-UNKNOWN-EXCEPTION（Version95，同SYSTEM99）：沿单主执行/恢复审查发现不可幂等handler异常虽然blocked却被当成普通明确结果清active_step，可能越过作用不明步骤。先冻结真实文件写入→run异常/返回后verify异常/无效返回→SQLite重启反例，核原始失败，再原地复用已有ambiguous/requires_reconciliation/effect_observation门禁保留归属与证据；只有原有显式授权/验证reconcile才能解除。幂等retry预算、明确blocked/failed结果的无依赖分支、取消/租约/旧独立审核不改，不重放外部效果。现有serial_recovery原生CI模块覆盖新增方法，定向与完整回归及新head原生CI逐步验证。新读AgentRewind2608.14380v1完整19页/附录A–D，采用外部作用不能由上下文恢复证明的边界，不引入自动回滚、分支/第二账本或无界重试；同主自检非独审，性能/模型质量/全成本/十篇和旧合同仍open。
 
 阶段 PENDING-ATTEMPT-EXHAUSTION（Version96，同SYSTEM99）：核对新wait_policy已记录pending作业后，retry/轮询异常或领取租约过期耗尽max_attempts仍会failed并释放active_step，须用实际running文件/SQLite恢复反例确认。只把此已知pending的新等待契约预算耗尽收紧为既有blocked/wait_budget/diagnosis_required，尝试/观察计数、job身份、幂等键及预算不增加/重置；仅已有授权且验证真实结束的reconcile解除。无wait_policy旧计划和明确handler.failed结果保持；当前新等待测试的failed预期须显式更新为blocked且原计数断言保留，不删旧失败。同步既有等待契约一句说明及单个生成镜像；新增serial_recovery参数化验收复用五平台原生CI已有入口，不新增CI命令/作业。新读LIMBO2609.29095v1完整23页/§§1–8及附录A–C，区分观察与真实作用/延迟提交，不引入新账本或重试策略、模型调用、未知结果授信和外部权限。定向/全库/真实独立进程恢复与新head原生CI后发布；同主自检非独审，旧预算/合同、十篇和全链质量/费用继续open。
+
+阶段 PROC-STARTTIME（Version97，同SYSTEM99）：延续前次完整测试的自身/proc身份未明失败，先冻结实际子进程PR_SET_NAME及/proc/self原始字段，分开已证实的ASCII解码缺陷与本环境PID命名空间不一致；不据此追溯断言原偶发失败根因。仅将已有starttime读取改为二进制分隔comm、对字段22核验十进制并返回原字符串；保留IO/缺字段拒绝、不转换ticks、不翻译PID或放宽身份比较。实际四类进程名（ASCII、空格/右括号、Unicode、非UTF8字节）及畸形/缺失控制先修前后修后，现有PID复用状态拒绝断言保留；Linux原生CI显式运行新类和原状态方法，不以局部解析替代worker/tmux部署验收。新读2610.39124v1全文26页/§§1–7与A–F，采用审计/部署前提必须匹配的验证边界，不移植概率证书、降低独立门槛或减少测试。命名空间守卫/真实宿主部署仍待版本化核验，同主自检非独审，旧合同/预算、十篇/实际模型质量与全成本继续open。
 
 ## Progress
 
@@ -1015,3 +1017,12 @@ cf835b28原生run41310066832十job全部成功，五平台contracts各110+54方�
 76相关方法通过。首次完整2096方法有1项/proc自身starttime缺失失败（15既有skip）；独立进程诊断/该单方法通过但根因未确定，原失败保留。诊断全库runner初漏__main__保护造成spawn重入的4项无效失败，已提炼原因/哈希/摘录并删除无效全日志；补入口保护后的完整复核2096方法0失败/错误、15既有skip（不改变/proc函数返回值或用例判定）。Reader3/引用同步/空白检查通过。真实有界worker与独立观察进程四臂验证：修前越步或无法核验；修后worker仍live时拒绝settlement，实际exit0后经原授权/验证reconcile才执行B，job未重启/计数及键不变。源码固定Gitblob而非浮动HEAD，全部自有进程/临时夹具已回收。必要失败/正文记录/最终复现索引 `/tmp/agent-system99/pending-attempts-2255/evidence.json` SHA256 `4e12f75defd3b3b5f93b8f0b7a902d1e52fd9c965faac4290bb36f4d0eb9d17a`；新headCI/普通发布回读另存同目录。
 
 新读LIMBO arXiv2609.29095v1（2026-09-24）实际全23页/§§1–8/附录A–C/两命题、13表6图及原prompt，记录25930episode分层设计、可观察性/真实effect ledger、guard负收益、key稳定性/延迟界、模拟时间/真实成本区别、探索性统计与延迟中位数文本矛盾、公开代码未来时声明。只采用观察失败不等于作业结束的验收设计，不引入新账本/自动键/等待重试策略；新增正文1不抵十篇。原/proc偶发失败未解释、pending期间权限撤销/明确blocked返回归属仍待核对；真实宿主/模型任务质量/完整输入及全费用/旧独立证据继续open。同主自检非独审，无性能或整轮完成主张，guide/唯一索引不变，无新results中间包。
+
+
+### 2026-11-02 — PROC-STARTTIME 串行续接
+
+4c68fabf原生run41321388210十job全成功，五组serial各15/contract各164方法0skip；前项最终ci.json SHA256 `3cbcb6102ba6456d7002c902bf8b417a645e3ae39c4c8ee59b47e850069dd98f`，含无效重入runner遗留四个自有夹具清理。此次fetch/锁/干净状态核对后，真实子进程四种comm修前仅ASCII/右括号空格两种成功，Unicode/非UTF8两种返回None；另两种畸形字段被接受，固定两方法四失败子例保留。现二进制读取、只对字段22核验十进制并解码，原ticks字符串/PID复用拒绝断言不变。修后11相关方法全过；完整2098方法0失败/错误、15既有skip，Reader3/同步/空白检查通过。Linux原生CI增加同三方法，新head发布后回读另存ci.json。
+
+本环境os.getpid与/proc/self/stat显示的PID不同，旧读法可能命中另一同号宿主进程或不存在；这是单列部署阻塞，不做自动PID转换/挂载，不把解析修复称为命名空间问题已解决。前次偶发None缺当时PID/errno，不能追溯断言根因。原始失败、必要复现探针、全文阅读与最终验证 `/tmp/agent-system99/proc-starttime-0002/evidence.json` SHA256 `308347bb4f2d76a47beb0707af0ae1a539ea9889e39d20dd98331bab512cd0a3`；重复正向基线已按哈希提炼清理，自有子进程/夹具均已回收，无新results包或guide/唯一索引改动。
+
+新读arXiv2610.39124v1全文26页/§§1–7及A–F，记录历史条件重析、精确/数值/计算证书区别、非对称最坏点、实际预算单位/前缀常数、相位/交叉区间与有限预算局限，作者按需supplement未获取不冒复现。只采用审计与部署状态前提需要分开核验的边界，不移植风险概率证书或减验收/预算。新增正文1不等于十篇；同主自检不冒独审，命名空间守卫/真实tmux与宿主、pending权限撤销/明确blocked归属、实际模型质量/上下文/全费用与既有独立合同仍open，同SYSTEM99未完成。

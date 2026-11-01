@@ -31,6 +31,8 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python -B -m unittest discover -s tests -p test_serial_recovery.py -v
+      - if: runner.os == 'Linux'
+        run: python -B -m unittest tests.test_managed_supervisor.ProcessIdentityTests tests.test_managed_supervisor.WorkerTests.test_status_verifies_worker_process_identity_against_pid_reuse -v
       - run: python -B -m unittest discover -s tests -p test_completed_review_recovery.py -v
       - run: python -B -m unittest discover -s tests -p test_terminal_revalidation.py -v
       - run: python -B -m unittest tests.test_task_runtime.RuntimeContracts.test_bounded_real_subprocess_serve_arm_artifact_convergence -v

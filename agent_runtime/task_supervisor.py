@@ -94,16 +94,15 @@ def read_process_starttime(pid):
     and compare the same raw field, so clock resolution cannot skew the check.
     """
     try:
-        with open(f'/proc/{pid}/stat', 'r', encoding='ascii') as handle:
+        with open(f'/proc/{pid}/stat', 'rb') as handle:
             raw = handle.read()
     except (OSError, ValueError):
         return None
-    # comm (field 2) is parenthesised and may itself contain ')' or spaces; the
-    # text after the final ')' is fields 3.., so starttime (22) sits at index 19.
-    fields = raw.rsplit(')', 1)[-1].split()
-    if len(fields) < 20:
+    # comm may contain arbitrary bytes, ')' and spaces. Only field 22 is ASCII.
+    fields = raw.rsplit(b')', 1)[-1].split()
+    if len(fields) < 20 or not fields[19].isdigit():
         return None
-    return fields[19]
+    return fields[19].decode('ascii')
 
 
 def validate_live_snapshot(live):
