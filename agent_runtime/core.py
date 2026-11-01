@@ -401,6 +401,8 @@ class Engine:
             node.update(status='done', token=None, evidence=evidence, reason=reference, reason_kind='reconciled',
                         diagnosis_required=False, requires_reconciliation=False)
             self._check_done(plan, state)
+            if node['status'] == 'failed':
+                node.update(status='blocked', reason_kind='terminal_evidence', requires_reconciliation=True)
             if node['status'] == 'done':
                 if isinstance(node.get('effect_observation'), dict):
                     node['effect_observation']['reconciled'] = True

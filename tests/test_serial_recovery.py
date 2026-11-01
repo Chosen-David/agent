@@ -498,6 +498,68 @@ class SerialRecoveryTests(unittest.TestCase):
                 self.assertEqual(state['tasks']['A']['effect_observation'], raw)
                 self.assertNotEqual(state['tasks']['A']['status'], 'done')
 
+    def test_failed_final_reconciliation_can_recover_without_action_replay(self):
+        import copy
+        for observation in ('pending', 'unknown'):
+            for failure in ('false', 'exception'):
+                with self.subTest(observation=observation, failure=failure):
+                    self.now = 1
+                    store = Store(Path(self.store.path).with_name(f'recheck-{observation}-{failure}.sqlite'))
+                    spec = plan()
+                    spec['tasks'][0]['wait_policy'] = dict(max_polls=10, max_seconds=600,
+                                                          diagnose_after_seconds=300)
+                    store.create(spec)
+                    receipt = Path(store.path).with_suffix('.receipt')
+                    calls, invalidate = [], [True]
+                    class Handler:
+                        idempotent = observation == 'pending'
+                        def run(self, task, context):
+                            calls.append(task['task_id'])
+                            if task['task_id'] == 'B':
+                                return Outcome('complete', evidence=['checked'])
+                            if observation == 'unknown':
+                                raise OSError('job admitted, response lost')
+                            if calls.count('A') == 1:
+                                return Outcome('pending', evidence=['job:id'])
+                            return Outcome('blocked', reason='observer unavailable')
+                        def verify(self, task, evidence):
+                            if task['task_id'] == 'B':
+                                return evidence == ['checked']
+                            if not receipt.exists():
+                                if failure == 'exception':
+                                    raise OSError('receipt temporarily unavailable')
+                                return False
+                            if invalidate[0]:
+                                invalidate[0] = False
+                                receipt.unlink()
+                            return evidence == ['checked']
+                    handler = Handler()
+                    def engine():
+                        return Engine(Store(store.path), {'step': handler}, authorize=lambda *_: True,
+                                      allow_legacy=True, clock=lambda: self.now)
+                    engine().tick('serial', 'admit')
+                    self.now = 2
+                    if observation == 'pending':
+                        engine().tick('serial', 'observer-lost')
+                    before = copy.deepcopy(store.snapshot('serial')['state']['tasks']['A'])
+                    receipt.write_text('completed')
+                    attempted = engine().reconcile('serial', 'A', ['checked'], 'host submitted completion')
+                    expected = ['A', 'A'] if observation == 'pending' else ['A']
+                    self.assertNotEqual(attempted['tasks']['A']['status'], 'done')
+                    state = engine().tick('serial', 'fresh-observer')
+                    self.assertEqual(calls, expected)
+                    self.assertEqual(state['active_step'], 'A')
+                    self.assertEqual(state['tasks']['A']['effect_observation'], before['effect_observation'])
+                    receipt.write_text('completed')
+                    state = engine().reconcile('serial', 'A', ['checked'], 'host rechecked current receipt')
+                    self.assertEqual(state['tasks']['A']['status'], 'done')
+                    for key in ('attempts', 'pending_polls', 'pending_since'):
+                        self.assertEqual(state['tasks']['A'].get(key), before.get(key))
+                    self.assertEqual(state['tasks']['A']['effect_observation'],
+                                     dict(before['effect_observation'], reconciled=True))
+                    self.assertEqual(engine().tick('serial', 'next-step')['status'], 'done')
+                    self.assertEqual(calls, expected + ['B'])
+
     def test_cancelled_old_pending_chain_is_not_recovered_or_executed(self):
         self.seed({'A': {'attempts': 1, 'next_at': 5}})
         self.store.cancel('serial', 'user cancelled', now=1)

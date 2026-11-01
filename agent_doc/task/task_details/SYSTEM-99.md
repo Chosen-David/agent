@@ -286,6 +286,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 
 阶段 SETTLED-OBSERVATION（Version101，同SYSTEM99）：冻结已完成作业经授权reconcile后再审核失效的串行阻塞反例。仅在reconcile最终复核仍done后，在既有effect_observation追加严格布尔reconciled并释放该任务自己的active_step；保留原status/reason/evidence，历史缺标记继续保守。后续审核/终态证据失效仍blocked且需重新验收，但已结算历史不自动重开执行。未授权、证据拒绝或二次复核失败不得标记/释放；不修改取消、预算、其他owner或独立合同。先修前功能失败，再原位实现、负向控制、全链与CI核验。正文2609.21284v1实际39页已读，方法/实验/消融替代/局限与映射见/tmp/agent-system99/settled-observation-0157/reading.json；不引入论文根授权/新账本，不宣称十篇/整轮完成。
 
+阶段 RECONCILE-RECHECK（Version102，同SYSTEM99）：续接结算最终复核失败边界。先冻结pending/unknown两种已接纳作业、证据文件在第一次核验后失效（false/异常）四子例，检查重启后不能越步且证据恢复后仍可显式reconcile。仅将reconcile目标在_check_done后failed的状态映射为既有blocked/terminal_evidence/requires_reconciliation，保留历史观察/预算，不写成功标记、不释放owner、不重放；明确handler.failed及其他节点active终态语义不改。原失败、真实独立OS观察与全库/新headCI通过后普通发布。同主自检非独审；新正文2608.29381v1全文16页及附录A/B已读，采用跨状态与后续转移联合验收，不引入回滚/多agent或新账本。十篇/真实模型质量成本与旧独立合同仍open。
+
 ## Progress
 
 - 2026-10-27 抽象持久化续读：实际精读2610.27406v1正文§§1–5及声明附录，区分临时指导、历史暴露、相关性标签与可授信知识；[记录](../../results/anti-persistence-reading-20261027/reading.md)保留held-out调用成本/日志排除/受控实验及统计边界。同批新正文15篇；保留MemoryLedger修订/更正传播、原Skill/历史与人类guide，不新增共享日志/自适应选择器。worker最终交付/真实宿主及全部调用质量成本缺口继续open；advice围栏解析静态差异尚未复现，不判无缺陷。仅文献/源码独审，无新测试、模型、性能或整轮完成主张，旧门禁不重试。
@@ -1061,3 +1063,12 @@ e58c0cd7原生run41332305498十job全成功，五平台serial各17方法/contrac
 仅在授权reconcile最终复核仍done后，既有effect_observation追加reconciled=true并释放该任务自己的active_step；原观察字段/计数不变。后续审核失效继续blocked/requires_reconciliation，但已结算执行历史不重开；缺标记历史及未授权/证据拒绝/二次证据或审核失败保持保守。31相关方法、完整2104方法0失败/错误（51已知环境skip）、Reader3与引用同步/空白通过。四臂真实有界作业先确认exit0，再经独立OS观察进程结算/撤销审核/恢复：修前B不推进，修后B推进且A不重放，当前验收仍阻塞，原PID/观察/尝试与键保持。全部自有进程/夹具回收，冗余中间正向日志提炼后清理。原始失败/源码blob/复现脚本与最终证据索引/tmp/agent-system99/settled-observation-0157/evidence.json SHA256 bab2e5508035c8fdf8f152aef7425f3a06320727382cd93de5a4d01f2209da4c；新headCI/发布回读另存同目录。
 
 新精读2609.21284v1实际全文39页/§§1–11、附录A.1–A.5、全部图表文本及参考文献。采用§4.2已关闭历史不因新cut重新开放的局部生命周期边界；记录A1–A11假设、N/U/Q、精确token/ACK、17受控案例/44重哈希变异和证明局限，不把本地协议实验当云服务/模型质量或独立部署验证；未执行作者artifact、不引入根授权/新账本。新增正文1不等于十篇；同主自检非独审，真实宿主/模型质量/全成本与旧独立合同仍open，预算不重置、guide/唯一索引不改，同SYSTEM99不结轮。
+
+
+### 2026-11-02 — RECONCILE-RECHECK 同批续接
+
+33fc5950原生run41336098153十job全部成功；五平台serial各19方法、两Ubuntu严格worker各32方法、五组contract各164方法0skip，证据/tmp/agent-system99/settled-observation-0157/ci.json SHA256 cdcce3132f62ddefb3faa7d4b63be836ffb7ca3b27a4d714a3b1dd2d24409175。本次先fetch/锁/干净状态与同批未决核对，继续前次拒绝结算控制的后续恢复缺口：pending/unknown历史下，第一次证据核验后真实receipt文件消失，二次核验false/异常使目标failed而仍占有active_step，证据恢复后的合法reconcile四子例均原始ValueError。此前仅验即时未完成/未释放，不能据此声称后续可恢复。
+
+现在仅将reconcile目标在_check_done后的failed映射为既有blocked/terminal_evidence/requires_reconciliation，保留失败原因、观察与计数；成功标记/释放仍需最终done。明确handler.failed、取消、旧预算、其他节点active语义不改。38相关方法、完整2105方法0失败/错误（51已知环境skip）、Reader3/引用同步/空白通过。固定Git源码四臂真实有界worker先exit0，再由不同OS进程提交/失效/恢复receipt：修前两臂均不能恢复；修后两臂核验后完成A→B，失败阶段不越步、原job不重启、键/尝试/观察预算不变。全部自有进程/夹具已回收，当前仅保留必要原失败和最终日志/复现入口/tmp/agent-system99/reconcile-recheck-0230/evidence.json SHA256 3f1736f175ff957bc3562da1d4390a65804663df36afe24560ecdb2c6dea9d4e；新head发布/CI另存同目录。
+
+新读Safe to Resume arXiv2608.29381v1全文16页/§§I–IX、附录A/B、全部图表文本及参考文献，记录部分恢复边界、SF1–5、1735执行标签重叠分母、三次重放/随机检查点、作者人工标签及96工作流两种commit顺序反例；CrewAI任务完成/任务开始触发解释差异保留为歧义。只采用状态与后续转移共同验收，不采用多agent分析流水线/新回滚，不执行攻击或冒称作者artifact复现。新增正文1不等于十篇；同主自检非独审，无速度/真实模型质量/全成本收益主张，旧独立合同/真实宿主等仍open，guide/唯一索引未改、预算不重置，同SYSTEM99不结轮。
