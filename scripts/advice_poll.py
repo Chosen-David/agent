@@ -6,12 +6,14 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from agent_runtime.advice_poll import _root, _safe, encode, observe_advice, validate_snapshot
+from agent_runtime.advice_poll import MAX_SNAPSHOT_BYTES, _root, _safe, encode, observe_advice, validate_snapshot
+from agent_runtime.context_serialization import configure_utf8_output
 from agent_runtime.external_json import load_json
 from agent_runtime.project_docs import assert_ai_writable
 
 
 def main(argv=None):
+    configure_utf8_output()
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument('--root', required=True)
     p.add_argument('--baseline')
@@ -25,7 +27,7 @@ def main(argv=None):
         baseline = None
         if a.baseline:
             path = _safe(root, root / a.baseline)
-            baseline = load_json(path, max_bytes=1024 * 1024,
+            baseline = load_json(path, max_bytes=MAX_SNAPSHOT_BYTES,
                                  expected_sha256=a.baseline_sha256)
             validate_snapshot(root, baseline)
         navigation, snapshot = observe_advice(root, baseline)

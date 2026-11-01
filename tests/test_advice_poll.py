@@ -110,6 +110,52 @@ class AdvicePollTests(unittest.TestCase):
                                     hashlib.sha256(bad_raw).hexdigest()).returncode, 0)
         self.assertEqual((self.root / path).read_bytes(), raw); self.assertEqual(self.source.read_bytes(), original)
 
+    def test_cli_reloads_large_valid_historical_inventory(self):
+        _, baseline = observe_advice(self.root)
+        prefix = 'agent_doc/advice/' + ('d' * 240) + '/' + ('e' * 240) + '/'
+        baseline['files'] = {prefix + f'{i:04d}' + ('f' * 230) + '.md': '0' * 64
+                             for i in range(1400)}
+        raw = encode(baseline)
+        self.assertGreater(len(raw), 1024 * 1024)
+        path = self.root / '.agent-runs/baseline.json'; path.parent.mkdir()
+        path.write_bytes(raw)
+        script = Path(__file__).resolve().parents[1] / 'scripts/advice_poll.py'
+        result = subprocess.run([sys.executable, '-B', str(script), '--root', str(self.root),
+            '--baseline', '.agent-runs/baseline.json', '--baseline-sha256', hashlib.sha256(raw).hexdigest()],
+            capture_output=True, encoding='utf-8', timeout=15)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        events = json.loads(result.stdout)['events']
+        self.assertEqual(sum(e['kind'] == 'removed' for e in events), 1400)
+        self.assertEqual(sum(e['kind'] == 'added' for e in events), 1)
+
+    def test_cli_utf8_output_with_legacy_terminal_encoding(self):
+        (self.advice / '中文😀.md').write_bytes(b'new')
+        script = Path(__file__).resolve().parents[1] / 'scripts/advice_poll.py'
+        result = subprocess.run([sys.executable, '-B', str(script), '--root', str(self.root)],
+            capture_output=True, env=dict(os.environ, PYTHONIOENCODING='cp936'), timeout=15)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        view = json.loads(result.stdout.decode('utf-8'))
+        self.assertTrue(any(e['after']['path'].endswith('中文😀.md') for e in view['events']))
+
+    def test_snapshot_utf8_byte_bound_and_no_partial_cli_output(self):
+        from contextlib import redirect_stdout
+        from io import StringIO
+        from scripts.advice_poll import main
+        (self.advice / '中文.md').write_bytes(b'new')
+        _, snapshot = observe_advice(self.root)
+        size = len(encode(snapshot))
+        with patch('agent_runtime.advice_poll.MAX_SNAPSHOT_BYTES', size):
+            self.assertEqual(validate_snapshot(self.root, snapshot), snapshot)
+        with patch('agent_runtime.advice_poll.MAX_SNAPSHOT_BYTES', size - 1):
+            with self.assertRaisesRegex(ValueError, 'inventory.*byte bound'):
+                validate_snapshot(self.root, snapshot)
+            output = StringIO()
+            with redirect_stdout(output):
+                status = main(['--root', str(self.root), '--snapshot-out', '.agent-runs/refused.json'])
+            self.assertEqual(status, 1)
+            self.assertIn('error', json.loads(output.getvalue()))
+            self.assertFalse((self.root / '.agent-runs/refused.json').exists())
+
     @unittest.skipUnless(hasattr(os, 'mkfifo'), 'POSIX special-file checks')
     def test_cli_rejects_untrusted_baseline_before_snapshot_write(self):
         script = Path(__file__).resolve().parents[1] / 'scripts/advice_poll.py'

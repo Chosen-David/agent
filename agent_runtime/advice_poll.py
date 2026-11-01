@@ -12,6 +12,7 @@ PREFIX = 'agent_doc/advice/'
 MAX_FILES = 2000
 MAX_BYTES = 32 * 1024 * 1024
 MAX_DIRS = 2000
+MAX_SNAPSHOT_BYTES = 16 * 1024 * 1024
 
 
 def encode(value):
@@ -64,6 +65,8 @@ def validate_snapshot(root, value):
                 re.fullmatch('[0-9a-f]{64}', sha) is None):
             raise ValueError('ambiguous path or invalid source SHA256')
         seen.add(path.casefold())
+    if len(encode(value)) > MAX_SNAPSHOT_BYTES:
+        raise ValueError('advice inventory exceeds serialized byte bound')
     return value
 
 
