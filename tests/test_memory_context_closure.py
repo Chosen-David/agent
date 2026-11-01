@@ -56,7 +56,7 @@ class MemoryContextClosureTests(unittest.TestCase):
         with patch.object(MemoryLedger, 'check', checked):
             pack = basis_context(self.root, record, {}, max_chars=100000)
         self.assertEqual(len(json.loads(pack['payload'])['memory_entries']), 4)
-        self.assertEqual(seen, [['m003'], ['m002'], ['m001'], ['m000']])
+        self.assertEqual(seen, [['m003'], ['m003'], ['m002'], ['m001'], ['m000']])
 
     def test_custom_walk_keeps_legacy_signature(self):
         record = self.seed(4)
@@ -68,7 +68,7 @@ class MemoryContextClosureTests(unittest.TestCase):
         with patch.object(MemoryLedger, '_walk', staticmethod(walk)):
             pack = basis_context(self.root, record, {}, max_chars=100000)
         self.assertEqual(len(json.loads(pack['payload'])['memory_entries']), 4)
-        self.assertEqual(seen, [['m003'], ['m002'], ['m001'], ['m000']])
+        self.assertEqual(seen, [['m003'], ['m003'], ['m002'], ['m001'], ['m000']])
 
     def test_custom_row_factory_requests_legacy_path(self):
         import sqlite3

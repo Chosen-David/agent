@@ -95,6 +95,47 @@ class BasisTests(unittest.TestCase):
         self.assertEqual(len(restarted.inbox('review')), 1)
         self.assertTrue((self.root / 'result.json').exists())
 
+    def test_context_rechecks_leaf_memory_after_knowledge_hydration(self):
+        self.check_memory_hydration_correction('input-v1')
+
+    def test_legacy_context_rechecks_leaf_memory_after_knowledge_hydration(self):
+        from unittest.mock import patch
+        with patch.object(MemoryLedger, '_context_closure', return_value=None):
+            self.check_memory_hydration_correction('input-v1')
+
+    def test_context_keeps_leaf_memory_after_unrelated_correction(self):
+        self.memory.add('unrelated', 'observation', 'Other topic', 'synthetic:fixture', evidence='verified')
+        self.check_memory_hydration_correction('unrelated')
+
+    def check_memory_hydration_correction(self, target):
+        from unittest.mock import patch
+        self.record['memory_refs'] = ['input-v1']
+        self.request['memory_refs'] = ['input-v1']
+        for claim in self.record['evidence_claims']:
+            if claim['memory_ids']:
+                claim['memory_ids'] = ['input-v1']
+        seq = self.send()
+        original = KnowledgeStore.get
+        corrected = []
+        def hydrate(corpus, *args, **kwargs):
+            value = original(corpus, *args, **kwargs)
+            if not corrected:
+                self.memory.correct(target, target + '-corrected', 'Corrected margin',
+                                    'synthetic:user', 'new user input during hydration')
+                corrected.append(True)
+            return value
+        with patch.object(KnowledgeStore, 'get', hydrate):
+            if target == 'input-v1':
+                with self.assertRaisesRegex(ValueError, 'superseded'):
+                    self.box.prepare_context('writer', seq, self.request)
+            else:
+                pack = self.box.prepare_context('writer', seq, self.request)
+                entries = json.loads(pack['payload'])['memory_entries']
+                self.assertEqual([entry['id'] for entry in entries], ['input-v1'])
+                self.assertEqual(entries[0]['content'], 'Synthetic margin is 0.5')
+        self.assertEqual(corrected, [True])
+        self.assertTrue(all(row['receipt'] is None for row in self.box.status()))
+
     def test_knowledge_change_targets_only_using_claims_and_cache_does_not_bypass(self):
         seq = self.send(); self.box.consume_handoff('writer', seq, self.request)
         f = self.root / 'corpus/entries/math.topk-margin.md'; f.write_bytes(f.read_bytes() + b'\ncorrection\n')

@@ -352,10 +352,12 @@ def basis_context(root, record, request, *, known_knowledge_refs=(), known_memor
         # Built-in immutable-state closure is hydrated once in one read
         # transaction. Customized ledgers retain observable per-level checks.
         closure = (ledger._context_closure(sorted(memory_entries))
-                   if any(entry['deps'] for entry in memory_entries.values())
-                   and MemoryLedger is _BUILTIN_MEMORY_LEDGER else None)
+                   if memory_entries and MemoryLedger is _BUILTIN_MEMORY_LEDGER else None)
         if closure is not None:
             memory_entries = {entry['id']: entry for entry in closure}
+        elif memory_entries:
+            # Knowledge/cache hydration can outlive the earlier root check.
+            memory_entries = {entry['id']: entry for entry in ledger.check(sorted(memory_entries))}
         pending = (set() if closure is not None else
                    {dep for entry in memory_entries.values() for dep in entry['deps']})
         while pending:

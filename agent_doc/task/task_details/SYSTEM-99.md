@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 89
+Version: 90
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -261,6 +261,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 EVAL-WRITE-BOUNDARY 原生路径续接（Version88）：9ef5524b的macOS与Windows原生完整快照准备在新增守卫处误拒controlled write outside project；Ubuntu通过。临时根别名的词法路径与既有assert_ai_writable规范根不一致，写出templates/TASK.md后才触发项目识别。保留原生失败及Linux显式别名根的同条件修前失败；仅在prepare_run原始路径guard之后规范out，子路径继续逐项guard，不改通用守卫或放行guide/逃逸链接。现有完整快照正向方法改用显式外层别名，仍执行快照依赖；既有guide重定向/嵌套/越界负控全部保留。主agent自检、原生新head另核，旧独立合同与预算不变。
 
 阶段 SKILL-CONTENT-PROVENANCE（Version89）：沿既有单主加载入口补充实际返回正文的content_sha256，复用installer.sha并保留全部安装/来源/链接/副本检查。依据新读2606.23127v1 AppendixB的trace绑定活动Skill版本方法，不移植其多agent、自更新、分支候选和未评估adapter；只为现有宿主/TASK提供可引用正文指纹，不新建账本或权限。固定真实安装→CLI→正文/规范源对照，修前缺字段失败；补验证链接与复制两模式、原不启动模型断言及安装/旧独立审核回归。字段是返回UTF8正文哈希（既有读取统一换行），不是物理文件字节/依赖闭包/模型调用证明或独立回执。原生CI与普通发布回读另核；不报任务质量/token/费用/性能收益，旧保护合同和预算仍pending。
+
+阶段 MEMORY-HYDRATION（Version90）：实际Mailbox publish→prepare_context在知识正文加载期间接收更正后，仍可输出早期已检查的无依赖记忆。冻结单方法修前失败。仅在原basis_context记忆组装处，对所有已选择根复用现有单事务_context_closure，不再仅在存在deps时调用；自定义兼容路径经原公共check再读根后继续逐层依赖。保留已知上下文提示检查、候选/异议/必要引用、独立门禁、身份及ACK分离，不新增记忆池、来源或重放。兼容check/walk可观察到一次新增根复核（签名与后续逐层调用保持），原精确顺序测试据此明确增加一项，不删除断言。验收真实Mailbox的相关更正拒绝、强制兼容拒绝、不相关更正健康控制、全部ACK为空、既有完整依赖/自定义回调及全库/原生CI；五平台contracts原第二组追加现有6方法闭包模块，原命令与5分钟限额保留。新读TellOnce2606.13174v2的检查与交付区分用于验收设计；不移植并行后台学习、未知结果放行、规则库或平台hook，不以本文实验等同本库收益。这是读取检查点修复，不声称跨知识/记忆库原子快照或阻止返回之后的更正；token_counter/任意宿主回调及其他更晚并发时序仍需单列核验。无性能/模型质量/总费用主张，旧独立合同及耗尽预算不重置，SYSTEM99继续open。
 
 ## Progress
 
@@ -955,3 +957,9 @@ PACKAGE-CLOSURE 原生run41274726189：两Ubuntu全job成功；macOS旧夹具未
 95ab5a97原生run41286645312十job全成功，五组各150评测/通信方法0skip、三POSIX有界serve各1通过；精确head日志 `/tmp/agent-system99/entry-write-1505/path-ci.json` SHA256 `57747e18f8824d4a061631f94e05fe29aa2f4d15f7aaaf62c5abe27806425fbb`。上次新读2608.14036v1实际28页正文/附录记录 `/tmp/agent-system99/skill-body-1600/reading.json` SHA256 `a95275300b7f3b342e5d7e7c09da6f68d81b20f38e91cb5699227f3384eca0ea`，本次不重计。
 
 本次新读2606.23127v1全18页，覆盖§§1–5/局限、AppendixA–L、公式/完整实验及消融；新记录包含M1/M2表标题矛盾、跨角色退化、n1/n5预算混杂、token负结果及无全actor成本的限制。仅采用实际Skill正文版本绑定，返回content_sha256，不新增竞争来源或自动改写。真实CLI指纹检查修前1失败；增强链接/复制两模式后，安装/单主/旧保护审核40方法全过0skip。证据 `/tmp/agent-system99/procedural-body-1700/evidence.json` SHA256 `3f3f31b2b7836c838ccb790c238ebe1890f08fddaf480d3b8d818b66bd17bd12`；阅读记录哈希见该索引。删除冗余正向输出及自身测试缩进编辑错误日志（哈希/原因保留，非产品失败），保留原始缺字段失败与最终回归。无新results包、guide/唯一索引改动、子agent或独立验收声明；普通发布/新head原生CI待核。新正文1不等于十篇验收，真实宿主质量/上下文/费用与既有独立合同仍open，同SYSTEM99不结轮。
+
+### 2026-11-01 — MEMORY-HYDRATION 串行续接
+
+前项3e5d0ea3原生run41291603452十job全成功，五平台单主加载各7方法0skip；精确日志 `/tmp/agent-system99/procedural-body-1700/ci.json` SHA256 `14a4fd179f81d6de9aaff6554ee17c5447af7f48c006e62135e5a64cf67889de`。本次实际Mailbox→知识加载回调写入更正→上下文的单方法修前未拒绝已替代叶记忆；原始失败保留。现所有选中根走既有事务闭包，兼容路径增加公共根复核，相关更正两路径拒绝、不相关更正保持正文，所有ACK仍None。首轮27方法两处旧调用次数断言失败，记录后明确改为新增根复核的精确顺序，非删除断言或改签名。最终完整2087方法0失败/错误、15既有skip，原生同命令159全过0skip（新增6闭包方法进入五平台CI）。证据 `/tmp/agent-system99/memory-hydration-1800/evidence.json` SHA256 `af3355ff59cae3179b14723f9d9d62e138478d18ce15625c9b67151ccba2463e`；清理65方法冗余正向日志与阅读渲染，原始失败/首次兼容诊断/最终输出保留。
+
+新读TellOnce arXiv2606.13174v2（2026-10-25）实际29页正文/附录，包含§§1–6、AppendixA–D、Tables1–14及诊断/消融/平台适配差异；记录同目录reading.json（哈希见证据索引）。Concord/DiscernMem/2610.08101命中旧读不计。只采用更正需要消费检查的思想，不引入后台多agent/规则库、自动更正版采用或unknown放行。原生新head/普通发布回读另核，同主自检不是独立验收；额外读取成本未测，不报性能/模型质量/token/总费用。返回之后更正、更晚token_counter或宿主回调、跨库原子性仍待核；十篇阅读及SYSTEM99真实宿主质量/费用/旧独立合同仍open，不重置预算或计完成轮次。guide与唯一索引未改，无新results包。
