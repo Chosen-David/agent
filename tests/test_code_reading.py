@@ -112,8 +112,8 @@ class DistributionTests(unittest.TestCase):
                 list(package_markdown_targets(path, package))
         for file in ['README.md', 'prompts/orchestrator.md', 'prompts/research_orchestrator.md',
                      'plugins/research-assistant/skills/research-assistant/SKILL.md']:
-            self.assertIn('code-reading', (ROOT / file).read_text())
-        market = json.loads((ROOT / '.claude-plugin/marketplace.json').read_text())
+            self.assertIn('code-reading', (ROOT / file).read_text(encoding='utf-8'))
+        market = json.loads((ROOT / '.claude-plugin/marketplace.json').read_text(encoding='utf-8'))
         self.assertIn('./plugins/research-assistant/skills/code-reading', market['plugins'][0]['skills'])
         coordinator = ROOT / 'plugins/research-assistant/skills/research-assistant/references'
         self.assertTrue((coordinator / 'code_reading_workflow.md').is_file())

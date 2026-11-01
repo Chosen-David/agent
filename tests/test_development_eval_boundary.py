@@ -41,8 +41,9 @@ class DevelopmentBoundaryTests(unittest.TestCase):
     def test_legacy_explicit_development_case_prepares(self):
         with tempfile.TemporaryDirectory() as tmp:
             dest = Path(tmp) / 'legacy'
-            result = self.command(ROOT/'scripts/prepare_agent_eval.py', '--dev-eval',
-                                  '--case', 'research-write', '--out', dest)
+            env = dict(os.environ, LC_ALL='C', PYTHONCOERCECLOCALE='0', PYTHONUTF8='0')
+            result = self.command('-X', 'utf8=0', ROOT/'scripts/prepare_agent_eval.py', '--dev-eval',
+                                  '--case', 'research-write', '--out', dest, env=env)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertTrue((dest/'research-write/inputs/measurements.csv').is_file())
 

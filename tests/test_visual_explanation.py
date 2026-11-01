@@ -39,14 +39,14 @@ class VisualTeachingPackageTests(unittest.TestCase):
                     for r in ROLES}
         self.assertEqual(set(sync.MAPPINGS[source]), expected)
         for dest in expected:
-            self.assertEqual((ROOT / dest).read_text(), sync.render(source, dest))
+            self.assertEqual((ROOT / dest).read_text(encoding='utf-8'), sync.render(source, dest))
 
         ladder = 'workflows/output_ladder_workflow.md'
         ladder_expected = {f'plugins/research-assistant/skills/{r}/references/output_ladder_workflow.md'
                            for r in ROLES}
         self.assertEqual(set(sync.MAPPINGS[ladder]), ladder_expected)
         for dest in ladder_expected:
-            self.assertEqual((ROOT / dest).read_text(), sync.render(ladder, dest))
+            self.assertEqual((ROOT / dest).read_text(encoding='utf-8'), sync.render(ladder, dest))
 
     def test_entry_and_shared_workflow_links_stay_inside_each_skill(self):
         for role in ROLES:

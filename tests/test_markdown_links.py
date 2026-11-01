@@ -83,7 +83,7 @@ class PackageClosureControls(unittest.TestCase):
     def setUp(self):
         self.temporary = tempfile.TemporaryDirectory(prefix='markdown-closure-')
         self.addCleanup(self.temporary.cleanup)
-        self.root = Path(self.temporary.name)
+        self.root = Path(self.temporary.name).resolve()
         self.package = self.root / 'skill'
         self.package.mkdir()
         self.source = self.package / 'SKILL.md'

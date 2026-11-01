@@ -29,7 +29,7 @@ def main():
     args = parser.parse_args()
     if not args.dev_eval:
         parser.error('synthetic fixtures are development-only; pass --dev-eval explicitly')
-    cases = json.loads((ROOT / 'evals/tasks.json').read_text())['cases']
+    cases = json.loads((ROOT / 'evals/tasks.json').read_text(encoding='utf-8'))['cases']
     if args.case:
         missing = set(args.case) - {c['id'] for c in cases}
         if missing:
