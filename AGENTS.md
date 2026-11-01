@@ -4,7 +4,7 @@ Execution policy: [single main / multiple Skills](workflows/single_main_workflow
 
 For maintenance of this repository, keep drafts, temporary logs, candidate snapshots and upload caches together under `/tmp/agent-system99/<run_id>/`, never in `agent_doc/results/`. Keep only necessary progress, conclusions and artifact path/hash references in the existing TASK detail. Preserve historical evidence; this temporary-artifact rule does not migrate authoritative runtime ledgers or relax project write guards.
 
-For code comments, technical prose and instruction-file maintenance, use [concise engineering](workflows/concise_engineering.md) on demand. Keep one authoritative rule source; preserve behavioral contracts, evidence and human-only guide boundaries. Paper-driven Agent optimization requires fresh body-reading records per execution; old reading counts do not satisfy a new batch.
+For in-place iteration, task cleanup, branch authorization, contaminated-data disposal, code comments, technical prose and instruction-file maintenance, use [concise engineering](workflows/concise_engineering.md) on demand. Keep one authoritative rule source; preserve behavioral contracts, evidence and human-only guide boundaries. Paper-driven Agent optimization requires fresh body-reading records per execution; old reading counts do not satisfy a new batch.
 
 The execution / proposal-and-wait / verify-or-ask gate is embedded in the orchestrator prompt (canonical source: `prompts/decision_review.md`; injected via `@` import). Follow it; do not silently replace the user's goal or implement a material alternative before alignment except the explicitly bounded supervisor-continuation case in that protocol. Decision-boundary examples are in `prompts/decision_examples.md` (read on demand when training the gate). This is a project-scoped instruction, subject to higher-priority host instructions and user authorization.
 
@@ -69,7 +69,7 @@ When planning or revising a task chain, preserve causal dependencies, per-result
 
 ## Confirmed experiment contamination
 
-When the main AI confirms a defect affects an active experiment, immediately stop only the bound affected job, even near completion. Follow `workflows/experiment_execution_contract.md` contamination handling: revoke first, verify actual exit/fencing, recoverably quarantine active results and dependent references, validate the repair, then use fresh identities/caches within existing authorization. Suspicion is not confirmation; missing external job control must be reported honestly. `agent_runtime.contamination` is a trusted host API, not an installed scheduler.
+When the main AI confirms a defect affects an active experiment, immediately stop only the bound affected job, even near completion. Follow `workflows/experiment_execution_contract.md` contamination handling: revoke first, verify actual exit/fencing, invalidate affected references and dispose of confirmed contaminated data under the in-place/cleanup rules in `workflows/concise_engineering.md`, validate the repair, then use fresh identities/caches within existing authorization. The existing managed API still requires its recovery ledger and quarantine stage; do not bypass that contract or claim automatic purge. Suspicion is not confirmation; missing external job control must be reported honestly. `agent_runtime.contamination` is a trusted host API, not an installed scheduler.
 
 ## Reloading changed instructions
 
