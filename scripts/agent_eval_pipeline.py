@@ -95,6 +95,8 @@ def prepare_run(repo, revision, out, tasks=None, rubric=None, fixture_root=None,
         raise ValueError('require_material_review must be boolean')
     repo, out = Path(repo), Path(out)
     guard_write_path(out)
+    # Keep descendants canonical when the host's temporary root is an alias.
+    out = out.resolve()
     sha = git(repo, 'rev-parse', '--verify', revision + '^{commit}').decode().strip()
     blob = lambda name: git(repo, 'show', sha + ':' + name)
     task_data = object_record(read(tasks) if tasks else json.loads(blob('evals/tasks.json')))

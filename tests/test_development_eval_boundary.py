@@ -48,7 +48,12 @@ class DevelopmentBoundaryTests(unittest.TestCase):
 
     def test_developer_prepare_and_snapshot_dependency_execute(self):
         with tempfile.TemporaryDirectory() as tmp:
-            dest = Path(tmp) / 'run'
+            root = Path(tmp).resolve()
+            physical = root / 'physical'
+            physical.mkdir()
+            alias = root / 'alias'
+            alias.symlink_to(physical, target_is_directory=True)
+            dest = alias / 'run'
             result = self.command(ROOT/'scripts/agent_eval_pipeline.py', 'prepare', '--dev-eval',
                                   '--revision', 'HEAD', '--out', dest)
             self.assertEqual(result.returncode, 0, result.stderr)

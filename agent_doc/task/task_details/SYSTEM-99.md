@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 87
+Version: 88
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -257,6 +257,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 EVAL-WRITE-BOUNDARY 验证续接（Version86）：第一次完整2084方法仅有bounded serve/arm监视器断言失败。保留full.log；生产Engine先提交done、下一事务再停止monitor。受控暂停真实SQLite提交后窗口实际读到done/active，释放并join后为done/stopped，convergence.log保留synthetic handler/clock范围。只让原有真实子进程测试在同一5秒截止内等待两个原断言同时收敛，保留8秒serve上限、最终stopped/产物hash/服务退出与不live断言；不改runtime、不删除停止要求、不冒充独立审核或重置任何旧预算。随后定向/全库再验证；首次错误test_project_docs模块名只属调用错误，不能算产品问题。
 
 阶段 EVAL-WRITE-BOUNDARY 准入复核（Version87）：Version86候选完整2084方法0失败/15既有skip，但复核docs/agent_eval_pipeline.md的调用顺序发现，authorize_dispatch返回后宿主可执行，然后才record-start。不能把这个授权入口当作普通历史查看；保留一次精确源hash/单方法修前未拒绝的失败，仅给此准入补同一guard_write_path。report保持只读可用，原材料审核/身份独立要求不改。随后复测现有评测/守卫与真实本地serve；Unix原生CI加入既有有界serve单方法，不扩8秒服务或5秒收敛限额，不称Windows进程终止测试已验证；所有平台继续完整评测保护检查。
+
+阶段 EVAL-WRITE-BOUNDARY 原生路径续接（Version88）：9ef5524b的macOS与Windows原生完整快照准备在新增守卫处误拒controlled write outside project；Ubuntu通过。临时根别名的词法路径与既有assert_ai_writable规范根不一致，写出templates/TASK.md后才触发项目识别。保留原生失败及Linux显式别名根的同条件修前失败；仅在prepare_run原始路径guard之后规范out，子路径继续逐项guard，不改通用守卫或放行guide/逃逸链接。现有完整快照正向方法改用显式外层别名，仍执行快照依赖；既有guide重定向/嵌套/越界负控全部保留。主agent自检、原生新head另核，旧独立合同与预算不变。
 
 ## Progress
 
@@ -943,3 +945,5 @@ PACKAGE-CLOSURE 原生run41274726189：两Ubuntu全job成功；macOS旧夹具未
 初轮完整2084方法在真实serve读回遇done/active；受控暂停证明两个事务之间确有窗口，释放/join后done/stopped。仅修测试在原5秒内等两个状态，保留8秒服务与全部最终断言；原runtime不改，UnixCI加入同一有界方法，Windows进程终止未验。最终完整2084方法0失败/错误、15既有skip；CI同命令150全过0skip。主agent自检，独立合同不降级；原失败、最终输出、被作废中间正向摘要和清理记录 `/tmp/agent-system99/entry-write-1505/evidence.json` SHA256 `cd3a6ee7a3909e46bfde07141845d6605943dd690f79feb49dd68300377552b2`。旧check模块名错误为调用问题，不算产品缺陷；删除冗余中间正向日志，仅保留必要失败与最终证据。新head原生十job发布后回读另存同目录ci.json。
 
 本次新正文0，既读FSM/SPEM不重计；十篇/实际宿主模型质量/上下文与费用/旧独立证据仍open，同SYSTEM99不结轮。guide/唯一索引字节未改，无新results中间包或额外TASK。
+
+原生路径续接：9ef5524b十job已结束，7成功/3完整快照准备失败；各原始日志已保存。显式别名根冻结方法修前1失败，规范输出根后完整2084方法0失败/错误、15既有skip，CI同命令150全过0skip。仅入口两行与原正向夹具变化，既有守卫/guide拒绝不改；证据 `/tmp/agent-system99/entry-write-1505/path-evidence.json` SHA256 `794d767c4f2856d919d5a4c498479f1775eac1dc4e323f1ec70e11400e90b416`。冗余独立复现脚本/正向输出已清，保留冻结负控与最终回归。普通发布及新head原生CI待核；正文新增0、旧独立合同与整轮未决不变。
