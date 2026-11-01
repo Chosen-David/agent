@@ -162,7 +162,8 @@ def _outstanding_steps(state):
                  or (node.get('reason_kind') == 'adapter_result' and 'pending_since' in node)
                  or (node.get('requires_reconciliation') and
                      (node.get('reason_kind') not in ('terminal_evidence', 'plan_review_after_effect')
-                      or node.get('effect_observation', {}).get('status') in ('unknown', 'pending', 'retry')))))]
+                      or (node.get('effect_observation', {}).get('status') in ('unknown', 'pending', 'retry')
+                          and node.get('effect_observation', {}).get('reconciled') is not True)))))]
 
 
 class Store:
@@ -400,6 +401,11 @@ class Engine:
             node.update(status='done', token=None, evidence=evidence, reason=reference, reason_kind='reconciled',
                         diagnosis_required=False, requires_reconciliation=False)
             self._check_done(plan, state)
+            if node['status'] == 'done':
+                if isinstance(node.get('effect_observation'), dict):
+                    node['effect_observation']['reconciled'] = True
+                if state.get('active_step') == task_id:
+                    state.pop('active_step', None)
             self._summary(plan, state)
             self.store.save(db, run_id, state)
             if state['status'] == 'done':

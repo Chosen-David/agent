@@ -392,6 +392,112 @@ class SerialRecoveryTests(unittest.TestCase):
         self.assertTrue(state['tasks']['A']['requires_reconciliation'])
         self.assertEqual(self.calls, [])
 
+    def test_reconciled_history_does_not_reopen_execution_after_review_loss(self):
+        import copy
+        from agent_runtime.plan_review import PlanReviewError
+        for observation in ('pending', 'unknown'):
+            for extra_wake in (False, True):
+                with self.subTest(observation=observation, extra_wake=extra_wake):
+                    store = Store(Path(self.store.path).with_name(f'{observation}-{extra_wake}.sqlite'))
+                    self.now = 1
+                    fixture_plan = plan()
+                    fixture_plan['tasks'][0]['wait_policy'] = dict(max_polls=10, max_seconds=600, diagnose_after_seconds=300)
+                    store.create(fixture_plan)
+                    job = Path(store.path).with_suffix('.job')
+                    calls, review_valid = [], [True]
+
+                    class Handler:
+                        idempotent = observation == 'pending'
+                        def run(self, task, context):
+                            calls.append(task['task_id'])
+                            if task['task_id'] == 'B':
+                                return Outcome('complete', evidence=['verified'])
+                            job.write_text('running')
+                            if observation == 'unknown':
+                                raise OSError('response lost after job admission')
+                            if calls.count('A') == 1:
+                                return Outcome('pending', evidence=['job:id'])
+                            return Outcome('blocked', reason='observer unavailable')
+                        def verify(self, task, evidence):
+                            return (evidence == ['verified'] and
+                                    (task['task_id'] == 'B' or job.read_text() == 'completed'))
+
+                    handler = Handler()
+                    def engine():
+                        result = Engine(Store(store.path), {'step': handler},
+                                        authorize=lambda *_: True, allow_legacy=True,
+                                        clock=lambda: self.now)
+                        def review(_plan):
+                            if not review_valid[0]:
+                                raise PlanReviewError('review revoked')
+                        result._review_plan = review
+                        return result
+
+                    engine().tick('serial', 'admit')
+                    self.now += 1
+                    if observation == 'pending':
+                        engine().tick('serial', 'observation-lost')
+                    before = copy.deepcopy(store.snapshot('serial')['state']['tasks']['A'])
+                    job.write_text('completed')
+                    engine().reconcile('serial', 'A', ['verified'], 'host checked completed job')
+                    with store.transaction() as db:
+                        _, state = store.load(db, 'serial')
+                        state['tasks']['B']['next_at'] = 1000
+                        store.save(db, 'serial', state)
+                    if extra_wake:
+                        engine().tick('serial', 'clear-completed-owner')
+                    review_valid[0] = False
+                    engine().tick('serial', 'review-lost')
+                    review_valid[0] = True
+                    self.now = 1000
+                    state = engine().tick('serial', 'review-restored')
+                    self.assertEqual(calls, ['A', 'A', 'B'] if observation == 'pending' else ['A', 'B'])
+                    node = state['tasks']['A']
+                    self.assertEqual(node['status'], 'blocked')
+                    self.assertTrue(node['requires_reconciliation'])
+                    self.assertNotEqual(state['status'], 'done')
+                    self.assertEqual(job.read_text(), 'completed')
+                    self.assertEqual(node['effect_observation'],
+                                     dict(before['effect_observation'], reconciled=True))
+                    for key in ('attempts', 'pending_polls', 'pending_since'):
+                        self.assertEqual(node.get(key), before.get(key))
+
+    def test_rejected_reconciliation_does_not_settle_or_release_observation(self):
+        from agent_runtime.plan_review import PlanReviewError
+        for phase in ('permission', 'evidence', 'terminal_recheck', 'review_recheck'):
+            with self.subTest(phase=phase):
+                store = Store(Path(self.store.path).with_name(phase + '-settlement.sqlite'))
+                store.create(plan())
+                raw = dict(status='pending', evidence=['job:id'], reason='observer lost')
+                with store.transaction() as db:
+                    _, state = store.load(db, 'serial')
+                    state['active_step'] = 'A'
+                    state['tasks']['A'].update(status='blocked', reason_kind='ambiguous',
+                                               requires_reconciliation=True, effect_observation=raw)
+                    store.save(db, 'serial', state)
+                checks, reviews = [], []
+                class Handler:
+                    idempotent = False
+                    def verify(self, task, evidence):
+                        checks.append(True)
+                        return phase != 'evidence' and not (phase == 'terminal_recheck' and len(checks) > 1)
+                engine = Engine(store, {'step': Handler()}, authorize=lambda *_: phase != 'permission',
+                                allow_legacy=True, clock=lambda: self.now)
+                def review(_plan):
+                    reviews.append(True)
+                    if phase == 'review_recheck' and len(reviews) > 1:
+                        raise PlanReviewError('review lost during settlement')
+                engine._review_plan = review
+                if phase in ('permission', 'evidence'):
+                    with self.assertRaises(ValueError):
+                        engine.reconcile('serial', 'A', ['verified'], 'host attempted settlement')
+                else:
+                    engine.reconcile('serial', 'A', ['verified'], 'host attempted settlement')
+                state = store.snapshot('serial')['state']
+                self.assertEqual(state['active_step'], 'A')
+                self.assertEqual(state['tasks']['A']['effect_observation'], raw)
+                self.assertNotEqual(state['tasks']['A']['status'], 'done')
+
     def test_cancelled_old_pending_chain_is_not_recovered_or_executed(self):
         self.seed({'A': {'attempts': 1, 'next_at': 5}})
         self.store.cancel('serial', 'user cancelled', now=1)

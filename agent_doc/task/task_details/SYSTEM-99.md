@@ -284,6 +284,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 
 阶段 PENDING-BLOCKED-OBSERVATION（Version100，同SYSTEM99）：继续已列未决的pending权限撤销/blocked归属，先冻结真实running文件、等待计数退款、领取后复核撤权/handler blocked和旧active缺失恢复反例。仅对结构化pending_since已存在的blocked观察，复用effect_observation保存前次pending依据并标既有ambiguous/requires_reconciliation保留当前步骤；旧blocked permission/adapter退款0或adapter_result带pending标记须恢复归属，不据reason文本重标历史结果。明确failed终止、已验证complete、尚无pending的明确blocked、授权前置拒绝与既有预算/取消/审核/租约不放宽。修前固定失败，相关/全库/真实独立观察进程与新headCI验证后普通发布；同主自检不当独审。新精读2610.15991v1全文11页/§§1–8、附录A–D与全部图表，采用回执/执行/效果分开验收，不移植多角色、云网关/新账本或论文比例。真实模型/成本与旧独立合同/十篇及整轮保持open。
 
+阶段 SETTLED-OBSERVATION（Version101，同SYSTEM99）：冻结已完成作业经授权reconcile后再审核失效的串行阻塞反例。仅在reconcile最终复核仍done后，在既有effect_observation追加严格布尔reconciled并释放该任务自己的active_step；保留原status/reason/evidence，历史缺标记继续保守。后续审核/终态证据失效仍blocked且需重新验收，但已结算历史不自动重开执行。未授权、证据拒绝或二次复核失败不得标记/释放；不修改取消、预算、其他owner或独立合同。先修前功能失败，再原位实现、负向控制、全链与CI核验。正文2609.21284v1实际39页已读，方法/实验/消融替代/局限与映射见/tmp/agent-system99/settled-observation-0157/reading.json；不引入论文根授权/新账本，不宣称十篇/整轮完成。
+
 ## Progress
 
 - 2026-10-27 抽象持久化续读：实际精读2610.27406v1正文§§1–5及声明附录，区分临时指导、历史暴露、相关性标签与可授信知识；[记录](../../results/anti-persistence-reading-20261027/reading.md)保留held-out调用成本/日志排除/受控实验及统计边界。同批新正文15篇；保留MemoryLedger修订/更正传播、原Skill/历史与人类guide，不新增共享日志/自适应选择器。worker最终交付/真实宿主及全部调用质量成本缺口继续open；advice围栏解析静态差异尚未复现，不判无缺陷。仅文献/源码独审，无新测试、模型、性能或整轮完成主张，旧门禁不重试。
@@ -1050,3 +1052,12 @@ e5bd09dd原生run41326310547十job全成功，Ubuntu两组原身份三方法0ski
 现在仅按结构化pending_since识别已接纳作业；blocked观察复用effect_observation保留先前持久观察，ambiguous/requires_reconciliation保留active_step；旧permission/adapter退款0及adapter_result带pending标记恢复归属，不依据reason文本重标历史。明确failed、未pending的blocked、原权限/审核/预算/取消不放宽；单句流程与单镜像同步。真实有界worker/独立OS观察进程四臂：修前B在实际作业仍running时执行，修后拒绝live期间结算，实际exit0后新进程授权/核验reconcile才执行B，job未重启，尝试1/观察1/起点和键不变；全部自有进程/夹具回收。完整2102方法0失败/错误、51既有环境skip（含36已明确namespace能力缺口），Reader3/引用同步/空白通过。必要原始失败、正文记录与复现索引 `/tmp/agent-system99/pending-authority-0110/evidence.json` SHA256 `317f4d25a410431c5660d6a6910a5d72808141c92d3b00ac76c383fa5349cc3d`；旧78方法冗余正向日志已提炼hash后清理，新head17方法/原生十job发布后回读另存ci.json。
 
 新读2610.15991v1全文11页/§§1–8与附录A–D、命题/全部图表文本：区分C0–C5、冻结效果集合与自适应调用，记录112/225拓扑条件比例、v1/v2证书差别、检测审计非独立数据、4/60真实任务成功和50%成本/30%工作负载负结果；作者artifact未取不冒复现。只应用观察拒绝不等于已停止的边界，不移植多角色/云网关/新账本。新正文1不算十篇；同主自检非独审，历史观察结算后再失效的归属边界待继续审查，真实宿主/模型任务质量/全成本与旧独立合同仍open。guide/唯一索引不改，预算不重置，无新results包，同SYSTEM99不结轮。
+
+
+### 2026-11-02 — SETTLED-OBSERVATION 同批续接
+
+e58c0cd7原生run41332305498十job全成功，五平台serial各17方法/contract各164方法、两Ubuntu严格worker各32方法0skip；回读证据/tmp/agent-system99/pending-authority-0110/ci.json SHA256 aa419e6f7f53ada0291a3c0df8e1782d2f01477e667de99adb206c323fc6bbce。fetch/锁/同批未决核对后，固定pending/unknown历史、立即/额外唤醒后审核失效四子例，原core均功能失败/0错误；初稿wait字段及跨子例时钟错误已提炼哈希/原因后清理，不计产品失败。
+
+仅在授权reconcile最终复核仍done后，既有effect_observation追加reconciled=true并释放该任务自己的active_step；原观察字段/计数不变。后续审核失效继续blocked/requires_reconciliation，但已结算执行历史不重开；缺标记历史及未授权/证据拒绝/二次证据或审核失败保持保守。31相关方法、完整2104方法0失败/错误（51已知环境skip）、Reader3与引用同步/空白通过。四臂真实有界作业先确认exit0，再经独立OS观察进程结算/撤销审核/恢复：修前B不推进，修后B推进且A不重放，当前验收仍阻塞，原PID/观察/尝试与键保持。全部自有进程/夹具回收，冗余中间正向日志提炼后清理。原始失败/源码blob/复现脚本与最终证据索引/tmp/agent-system99/settled-observation-0157/evidence.json SHA256 bab2e5508035c8fdf8f152aef7425f3a06320727382cd93de5a4d01f2209da4c；新headCI/发布回读另存同目录。
+
+新精读2609.21284v1实际全文39页/§§1–11、附录A.1–A.5、全部图表文本及参考文献。采用§4.2已关闭历史不因新cut重新开放的局部生命周期边界；记录A1–A11假设、N/U/Q、精确token/ACK、17受控案例/44重哈希变异和证明局限，不把本地协议实验当云服务/模型质量或独立部署验证；未执行作者artifact、不引入根授权/新账本。新增正文1不等于十篇；同主自检非独审，真实宿主/模型质量/全成本与旧独立合同仍open，预算不重置、guide/唯一索引不改，同SYSTEM99不结轮。
