@@ -164,7 +164,7 @@ return {
 
 handler 沿用现有 `run(task, Context)/verify(task, evidence)` 契约，report_path 是输出契约之一。authorize 接收原始 handler，不因包装器失去身份检查。maintain 接收最新 progress 对象，只做**短时间 submit/poll**，持久记录主 AI 请求 ID，不能每次计时都新建同一请求或阻塞等待模型数分钟。主 AI 持续读取当前任务/数据/待办，修复动作接口、派发依赖就绪 Agent、核验任务报告并维护恢复任务；改变语义/验收或增加超出授权的资源仍走既有决策协议。
 
-真实长作业由后端独立运行并持久化 job ID，轮询间隔与 ETA 匹配。新计划显式配置 `wait_policy: {max_polls, max_seconds, diagnose_after_seconds}`：正常返回的 pending 计入观察预算、不消耗失败尝试；retry、异常和租约过期仍按 max_attempts 处理。时间从首次 pending 对应的领取时刻累计，不因重启或夹杂 retry 归零。观察次数或时间耗尽会 blocked，保留监督给 maintain 诊断，不自动重启、杀作业或记 done。没有 wait_policy 的旧计划保持 pending/retry 共用尝试预算；不能直接修改已绑定计划来延长预算，迁移需新版本并核实原 job 和证据。prepare 草稿附带120次/3600秒观察预算、300秒诊断阈值，主 AI 在启动前按具体任务与授权细化；这些是工程初值，不代表最优或新增资源授权。
+真实长作业由后端独立运行并持久化 job ID，轮询间隔与 ETA 匹配。新计划显式配置 `wait_policy: {max_polls, max_seconds, diagnose_after_seconds}`：正常返回的 pending 计入观察预算、不消耗失败尝试；retry、异常和租约过期仍按 max_attempts 处理。时间从首次 pending 对应的领取时刻累计，不因重启或夹杂 retry 归零。观察次数或时间耗尽会 blocked，保留监督给 maintain 诊断，不自动重启、杀作业或记 done。已记录 pending 后，失败尝试耗尽也保留当前步骤并 blocked；预算耗尽不证明作业已结束，须核验真实结果后按原授权/证据门禁 reconcile。没有 wait_policy 的旧计划保持 pending/retry 共用尝试预算；不能直接修改已绑定计划来延长预算，迁移需新版本并核实原 job 和证据。prepare 草稿附带120次/3600秒观察预算、300秒诊断阈值，主 AI 在启动前按具体任务与授权细化；这些是工程初值，不代表最优或新增资源授权。
 
 领取任务从持久化游标轮转，仍检查依赖、各节点 next_at、授权及租约；一项长期等待不会总占列表首位。progress 的每项节点附 task_refs 与 execution（attempts、dispatches、pending_polls、时间、策略、diagnosis_required）。诊断阈值仅提醒检查，不能据耗时认定卡死；旧记录缺计数时为 unknown，不补造历史。
 

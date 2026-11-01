@@ -118,7 +118,9 @@ class WaitingContracts(unittest.TestCase):
         self.handler.outcome = Outcome('retry', 'observed failure')
         self.assertEqual(self.tick()['tasks']['slow']['attempts'], 1)
         node = self.tick()['tasks']['slow']
-        self.assertEqual((node['status'], node['attempts']), ('failed', 2))
+        self.assertEqual((node['status'], node['attempts']), ('blocked', 2))
+        self.assertEqual(node['reason_kind'], 'wait_budget')
+        self.assertTrue(node['diagnosis_required'])
 
     def test_elapsed_time_requests_diagnosis_not_automatic_replacement(self):
         self.store.create(plan(task()))

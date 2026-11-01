@@ -144,6 +144,8 @@ def wait_limit(task, node, now):
         return 'pending observation budget exhausted; main AI diagnosis required'
     if now - node['pending_since'] >= policy['max_seconds']:
         return 'pending elapsed budget exhausted; main AI diagnosis required'
+    if node.get('attempts', 0) >= task['max_attempts']:
+        return 'pending failed-attempt budget exhausted; main AI diagnosis required'
     return None
 
 
@@ -513,6 +515,10 @@ class Engine:
                     if handler and handler.idempotent:
                         node.update(status='todo' if node['attempts'] < task['max_attempts'] else 'failed',
                                     token=None, next_at=now, reason='expired lease; retry uses original idempotency key')
+                        exhausted = wait_limit(task, node, now)
+                        if exhausted:
+                            node.update(status='blocked', reason_kind='wait_budget', reason=exhausted,
+                                        diagnosis_required=True)
                     else:
                         node.update(status='blocked', token=None, reason_kind='ambiguous',
                                     reason='expired lease: external side effect unknown; reconciliation required')
@@ -638,6 +644,7 @@ class Engine:
                         node['last_pending_at'] = self.clock()
                         node['diagnosis_required'] = (
                             self.clock() - node['pending_since'] >= task['wait_policy']['diagnose_after_seconds'])
+                    if status == 'todo':
                         exhausted = wait_limit(task, node, self.clock())
                         if exhausted:
                             status, reason_kind = 'blocked', 'wait_budget'

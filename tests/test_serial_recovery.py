@@ -150,6 +150,89 @@ class SerialRecoveryTests(unittest.TestCase):
                    allow_legacy=True, clock=lambda: self.now).tick('serial', event)
         self.assertEqual(calls, ['A', 'B'])
 
+    def test_pending_job_keeps_step_when_failure_attempts_are_exhausted(self):
+        for phase in ('retry', 'exception', 'expired_lease'):
+            with self.subTest(phase=phase):
+                store = Store(Path(self.store.path).with_name(phase + '.sqlite'))
+                spec = plan()
+                spec['tasks'][0].update(max_attempts=1, wait_policy={
+                    'max_polls': 100, 'max_seconds': 600, 'diagnose_after_seconds': 300})
+                store.create(spec)
+                job = Path(self.store.path).with_name(phase + '.job')
+                calls, keys = [], []
+                now = [1]
+
+                class Handler:
+                    idempotent = True
+                    def run(self, task, context):
+                        calls.append(task['task_id'])
+                        keys.append(context.idempotency_key)
+                        if task['task_id'] == 'B':
+                            return Outcome('complete', evidence=['verified'])
+                        if len(calls) == 1:
+                            job.write_text('running', encoding='utf-8')
+                            return Outcome('pending', 'existing job is still running')
+                        if phase == 'exception':
+                            raise TimeoutError('job status endpoint unavailable')
+                        if phase == 'expired_lease':
+                            raise KeyboardInterrupt('worker interrupted during observation')
+                        return Outcome('retry', 'job status unavailable; job outcome unknown')
+                    def verify(self, task, evidence):
+                        return (evidence == ['verified'] and
+                                (task['task_id'] == 'B' or job.read_text() == 'completed'))
+
+                def engine():
+                    return Engine(Store(store.path), {'step': Handler()}, authorize=lambda *_: True,
+                                  allow_legacy=True, clock=lambda: now[0], lease_seconds=1)
+
+                engine().tick('serial', 'pending')
+                now[0] = 2
+                if phase == 'expired_lease':
+                    with self.assertRaises(KeyboardInterrupt):
+                        engine().tick('serial', 'lost-observation')
+                else:
+                    engine().tick('serial', 'lost-observation')
+                now[0] = 3
+                state = engine().tick('serial', 'restart')
+                self.assertEqual(calls, ['A', 'A'])
+                self.assertEqual(state.get('active_step'), 'A')
+                node = state['tasks']['A']
+                self.assertEqual((node['status'], node['reason_kind']), ('blocked', 'wait_budget'))
+                self.assertEqual((node['attempts'], node['pending_polls'], node['pending_since']), (1, 1, 1))
+                self.assertTrue(node['diagnosis_required'])
+                self.assertEqual(keys[0], keys[1])
+                self.assertEqual(job.read_text(), 'running')
+                with self.assertRaises(ValueError):
+                    engine().reconcile('serial', 'A', ['verified'], 'status still unknown')
+                job.write_text('completed', encoding='utf-8')
+                engine().reconcile('serial', 'A', ['verified'], 'host observed actual completion')
+                self.assertEqual(engine().tick('serial', 'settled')['status'], 'done')
+                self.assertEqual(calls, ['A', 'A', 'B'])
+
+    def test_definite_job_failure_after_pending_releases_unrelated_step(self):
+        spec = plan()
+        spec['tasks'][0]['wait_policy'] = {
+            'max_polls': 10, 'max_seconds': 600, 'diagnose_after_seconds': 300}
+        store = Store(Path(self.store.path).with_name('definite-job-failure.sqlite'))
+        store.create(spec)
+        calls = []
+
+        class Handler:
+            idempotent = True
+            def run(self, task, context):
+                calls.append(task['task_id'])
+                if task['task_id'] == 'A':
+                    return Outcome('pending') if len(calls) == 1 else Outcome('failed', 'job ended in failure')
+                return Outcome('complete', evidence=['verified'])
+            def verify(self, task, evidence):
+                return evidence == ['verified']
+
+        for now in range(1, 5):
+            Engine(Store(store.path), {'step': Handler()}, authorize=lambda *_: True,
+                   allow_legacy=True, clock=lambda: now).tick('serial', str(now))
+        self.assertEqual(calls, ['A', 'A', 'B'])
+        self.assertEqual(store.snapshot('serial')['state']['tasks']['A']['status'], 'failed')
+
     def test_multiple_old_pending_steps_block_without_guess_or_budget_reset(self):
         spec = plan()
         spec['tasks'].append(dict(spec['tasks'][0], task_id='C'))

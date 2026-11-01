@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 95
+Version: 96
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -273,6 +273,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 SINGLE-MAIN-ENTRY-CONSISTENCY（Version94，同SYSTEM99）：核对实际安装入口发现通用主编排仍允许按需启动多Agent，通信参考开头仍引导新线程/分叉，与既有single_main_workflow冲突。仅原地改这些活跃指令及科研入口同一句知识获取指令为同一主agent按需加载Skill，并将旧新线程选项明确归为历史接口参考；旧路由/消息schema、独立合同、预算、权限和恢复门禁不变。保留修前精确行/hash，验证真实setup.install输出和生成Skill镜像、既有链接/安装/单主/通信回归，再核新head原生CI。全文新读2610.08722v1物理20页及AppendixA–G，采用负结果/分母与契约区分，不新增压缩触发器或把论文改门槛作为本库降级授权。该步只证明指令一致性，不证明LLM服从、实际任务质量、token/费用或独立复核；旧独立保护和十篇/全链验收继续open。
 
 阶段 SERIAL-UNKNOWN-EXCEPTION（Version95，同SYSTEM99）：沿单主执行/恢复审查发现不可幂等handler异常虽然blocked却被当成普通明确结果清active_step，可能越过作用不明步骤。先冻结真实文件写入→run异常/返回后verify异常/无效返回→SQLite重启反例，核原始失败，再原地复用已有ambiguous/requires_reconciliation/effect_observation门禁保留归属与证据；只有原有显式授权/验证reconcile才能解除。幂等retry预算、明确blocked/failed结果的无依赖分支、取消/租约/旧独立审核不改，不重放外部效果。现有serial_recovery原生CI模块覆盖新增方法，定向与完整回归及新head原生CI逐步验证。新读AgentRewind2608.14380v1完整19页/附录A–D，采用外部作用不能由上下文恢复证明的边界，不引入自动回滚、分支/第二账本或无界重试；同主自检非独审，性能/模型质量/全成本/十篇和旧合同仍open。
+
+阶段 PENDING-ATTEMPT-EXHAUSTION（Version96，同SYSTEM99）：核对新wait_policy已记录pending作业后，retry/轮询异常或领取租约过期耗尽max_attempts仍会failed并释放active_step，须用实际running文件/SQLite恢复反例确认。只把此已知pending的新等待契约预算耗尽收紧为既有blocked/wait_budget/diagnosis_required，尝试/观察计数、job身份、幂等键及预算不增加/重置；仅已有授权且验证真实结束的reconcile解除。无wait_policy旧计划和明确handler.failed结果保持；当前新等待测试的failed预期须显式更新为blocked且原计数断言保留，不删旧失败。同步既有等待契约一句说明及单个生成镜像；新增serial_recovery参数化验收复用五平台原生CI已有入口，不新增CI命令/作业。新读LIMBO2609.29095v1完整23页/§§1–8及附录A–C，区分观察与真实作用/延迟提交，不引入新账本或重试策略、模型调用、未知结果授信和外部权限。定向/全库/真实独立进程恢复与新head原生CI后发布；同主自检非独审，旧预算/合同、十篇和全链质量/费用继续open。
 
 ## Progress
 
@@ -1005,3 +1007,11 @@ cf835b28原生run41310066832十job全部成功，五平台contracts各110+54方�
 修后74相关方法通过；完整2094方法0失败/错误、15既有skip，Reader3及同步/空白检查通过。跨OS进程探针复现修前A→B越过；修后write/observe两进程只调用A，未授权/无效证据两次settlement拒绝，真实核验后第三进程执行B且A未重放、实际文件hash不变。必要原始失败、最终回归和可复现探针汇总 `/tmp/agent-system99/serial-exception-2157/evidence.json` SHA256 `214ef95f90b2f6d723740288aee886254dcad43f22b8485abb7a8243686bb6ed`，临时fixture已清，无新results中间包。原生新headCI/普通发布回读另存同目录，guide/唯一索引未改，同主自检不冒独审。
 
 新读AgentRewind arXiv2608.14380v1（2026-08-14）实际全文19页/附录A–D、Eq1–9/Tables1–15/Figures1–9；记录checkpoint/真实作用区别、82任务640criteria/最长前缀分母、50配对恢复、三组件消融、模型/工具提示混杂、无限预算/干预排除及root.git/外部作用不可恢复边界。只采用恢复不等于撤销作用的验收思路，不移植回滚/分支/累积记忆或无界重试。新增正文1，不重计PermissionToRetry/Sentry/执行编辑安全旧篇；未测速度/实际模型质量/全费用，十篇/真实宿主及旧独立合同继续open，同SYSTEM99不结轮。
+
+### 2026-11-01 — PENDING-ATTEMPT-EXHAUSTION 串行续接
+
+91f8dc3e原生run41315335969十job全成功，五平台serial_recovery各13方法/contract各164方法0skip，证据 `/tmp/agent-system99/serial-exception-2157/ci.json` SHA256 `305baf52593732f34d8669f5f19d5984394ca90fb4ba5ed86efbec025eae3349`。本次先fetch/锁/干净状态与同批未决核对。pending后retry/轮询异常修前释放A并执行B，过期租约耗尽则A留failed且不能reconcile；三个负例/一个明确失败健康对照已冻结。现在新wait_policy复用wait_limit判定失败尝试上限，结果返回与幂等租约恢复均blocked/wait_budget/diagnosis_required保留当前步骤；原attempts/polls/pending_since/key不重置。明确handler.failed与无wait_policy旧契约不变；原等待测试failed→blocked并保留尝试2的精确断言，权威流程与单镜像同步。
+
+76相关方法通过。首次完整2096方法有1项/proc自身starttime缺失失败（15既有skip）；独立进程诊断/该单方法通过但根因未确定，原失败保留。诊断全库runner初漏__main__保护造成spawn重入的4项无效失败，已提炼原因/哈希/摘录并删除无效全日志；补入口保护后的完整复核2096方法0失败/错误、15既有skip（不改变/proc函数返回值或用例判定）。Reader3/引用同步/空白检查通过。真实有界worker与独立观察进程四臂验证：修前越步或无法核验；修后worker仍live时拒绝settlement，实际exit0后经原授权/验证reconcile才执行B，job未重启/计数及键不变。源码固定Gitblob而非浮动HEAD，全部自有进程/临时夹具已回收。必要失败/正文记录/最终复现索引 `/tmp/agent-system99/pending-attempts-2255/evidence.json` SHA256 `4e12f75defd3b3b5f93b8f0b7a902d1e52fd9c965faac4290bb36f4d0eb9d17a`；新headCI/普通发布回读另存同目录。
+
+新读LIMBO arXiv2609.29095v1（2026-09-24）实际全23页/§§1–8/附录A–C/两命题、13表6图及原prompt，记录25930episode分层设计、可观察性/真实effect ledger、guard负收益、key稳定性/延迟界、模拟时间/真实成本区别、探索性统计与延迟中位数文本矛盾、公开代码未来时声明。只采用观察失败不等于作业结束的验收设计，不引入新账本/自动键/等待重试策略；新增正文1不抵十篇。原/proc偶发失败未解释、pending期间权限撤销/明确blocked返回归属仍待核对；真实宿主/模型任务质量/完整输入及全费用/旧独立证据继续open。同主自检非独审，无性能或整轮完成主张，guide/唯一索引不变，无新results中间包。
