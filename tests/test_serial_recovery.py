@@ -76,6 +76,80 @@ class SerialRecoveryTests(unittest.TestCase):
         self.tick('after-reconcile')
         self.assertEqual(self.calls, ['B'])
 
+    def test_nonidempotent_exception_keeps_unknown_effect_across_restart(self):
+        for phase in ('run', 'verify', 'invalid_outcome'):
+            with self.subTest(phase=phase):
+                store = Store(Path(self.store.path).with_name(phase + '.sqlite'))
+                store.create(plan())
+                effect = Path(self.store.path).with_name(phase + '.txt')
+                calls = []
+
+                class Handler:
+                    idempotent = False
+                    raised = False
+
+                    def run(self, task, context):
+                        calls.append(task['task_id'])
+                        if task['task_id'] == 'A':
+                            effect.write_text('external effect', encoding='utf-8')
+                            if phase == 'run':
+                                raise RuntimeError('effect happened; response lost')
+                            if phase == 'invalid_outcome':
+                                return None
+                        return Outcome('complete', evidence=['verified'])
+
+                    def verify(self, task, evidence):
+                        if task['task_id'] == 'A':
+                            if phase == 'verify' and not self.raised:
+                                self.raised = True
+                                raise OSError('verification unavailable')
+                            return evidence == ['verified'] and effect.read_text() == 'external effect'
+                        return evidence == ['verified']
+
+                handler = Handler()
+                def engine(authorized=True):
+                    return Engine(Store(store.path), {'step': handler},
+                                  authorize=lambda *_: authorized, allow_legacy=True,
+                                  clock=lambda: self.now)
+
+                first = engine().tick('serial', 'effect')
+                self.assertEqual(first['tasks']['A']['status'], 'blocked')
+                state = engine().tick('serial', 'restart')
+                self.assertEqual(calls, ['A'])
+                self.assertEqual(state.get('active_step'), 'A')
+                node = state['tasks']['A']
+                self.assertEqual(node['reason_kind'], 'ambiguous')
+                self.assertTrue(node['requires_reconciliation'])
+                self.assertEqual(node['attempts'], 1)
+                self.assertEqual(node['effect_observation']['status'],
+                                 'complete' if phase == 'verify' else 'unknown')
+                self.assertEqual(node['evidence'], ['verified'] if phase == 'verify' else [])
+                for authorized, evidence in ((False, ['verified']), (True, ['invalid'])):
+                    with self.assertRaises(ValueError):
+                        engine(authorized).reconcile('serial', 'A', evidence, 'host inspection')
+                self.assertEqual(calls, ['A'])
+                engine().reconcile('serial', 'A', ['verified'], 'host inspected actual file')
+                self.assertEqual(engine().tick('serial', 'settled')['status'], 'done')
+                self.assertEqual(calls, ['A', 'B'])
+                self.assertEqual(effect.read_text(), 'external effect')
+
+    def test_definite_blocked_result_allows_unrelated_next_step(self):
+        calls = []
+
+        class Handler:
+            idempotent = False
+            def run(self, task, context):
+                calls.append(task['task_id'])
+                return (Outcome('blocked', 'definite rejection; no pending effect')
+                        if task['task_id'] == 'A' else Outcome('complete', evidence=['verified']))
+            def verify(self, task, evidence):
+                return evidence == ['verified']
+
+        for event in ('rejected', 'unrelated'):
+            Engine(Store(self.store.path), {'step': Handler()}, authorize=lambda *_: True,
+                   allow_legacy=True, clock=lambda: self.now).tick('serial', event)
+        self.assertEqual(calls, ['A', 'B'])
+
     def test_multiple_old_pending_steps_block_without_guess_or_budget_reset(self):
         spec = plan()
         spec['tasks'].append(dict(spec['tasks'][0], task_id='C'))

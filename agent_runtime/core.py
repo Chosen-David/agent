@@ -612,8 +612,14 @@ class Engine:
                                   outcome.evidence if outcome is not None else [])
             except Exception as exc:
                 # Unknown side effects: only an explicitly idempotent adapter may retry.
+                if executed and not handler.idempotent:
+                    effect_observation = ({'status': outcome.status, 'reason': outcome.reason,
+                                           'evidence': deepcopy(outcome.evidence)}
+                                          if isinstance(outcome, Outcome) else
+                                          {'status': 'unknown', 'reason': 'no valid outcome returned', 'evidence': []})
                 outcome = Outcome('retry' if handler.idempotent else 'blocked',
-                                  f'adapter exception {type(exc).__name__}: {exc}')
+                                  f'adapter exception {type(exc).__name__}: {exc}',
+                                  effect_observation['evidence'] if effect_observation is not None else [])
             with self.store.transaction() as db:
                 plan, state = self.store.load(db, run_id)
                 node = state['tasks'][task['task_id']]
@@ -621,6 +627,8 @@ class Engine:
                         and node['lease_until'] > self.clock() and state['status'] != 'cancelled'):
                     status = {'complete': 'done', 'pending': 'todo', 'retry': 'todo'}.get(outcome.status, outcome.status)
                     reason_kind = ('plan_review_after_effect' if executed else 'plan_review') if review_blocked else 'adapter_result'
+                    if effect_observation is not None and not review_blocked:
+                        reason_kind = 'ambiguous'
                     if outcome.status == 'pending' and task.get('wait_policy') is not None:
                         # Only a successfully returned observation refunds this claim.
                         # Crashes, unknown side effects and retry outcomes still cost attempts.

@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 94
+Version: 95
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -271,6 +271,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 CLI-CONTEXT-COST-CHECK（Version93，同SYSTEM99）：在8b4a7d17既有CLI上只读诊断6组两编码/三声明状态，发现定向payload较短而pretty stdout可能更贵；另实测既有compact输出逐字段/值完全相同。仅在通信工作流权威源的两条context示例启用已有--compact，并补完整stdout与payload分母区别，经现有生成器同步一个Skill镜像；不改CLI默认值、runtime/schema、选择/更正/ACK门禁或Skill数量。诊断不是旧独立实验H/I重跑或验收，不重置其预算。验证实际publish→CLI全量/定向/compact→更正拒绝/无ACK，固定tiktoken0.12.0与原始输出；相关文档/入口回归、同步及新head原生CI。正文精读2608.20274v2的分步/粒度与成本负结果用于检查，不移植多角色、自动规则覆写/剪枝或embeddingutility授信；真实模型任务质量与全部费用及十篇仍open。
 
 阶段 SINGLE-MAIN-ENTRY-CONSISTENCY（Version94，同SYSTEM99）：核对实际安装入口发现通用主编排仍允许按需启动多Agent，通信参考开头仍引导新线程/分叉，与既有single_main_workflow冲突。仅原地改这些活跃指令及科研入口同一句知识获取指令为同一主agent按需加载Skill，并将旧新线程选项明确归为历史接口参考；旧路由/消息schema、独立合同、预算、权限和恢复门禁不变。保留修前精确行/hash，验证真实setup.install输出和生成Skill镜像、既有链接/安装/单主/通信回归，再核新head原生CI。全文新读2610.08722v1物理20页及AppendixA–G，采用负结果/分母与契约区分，不新增压缩触发器或把论文改门槛作为本库降级授权。该步只证明指令一致性，不证明LLM服从、实际任务质量、token/费用或独立复核；旧独立保护和十篇/全链验收继续open。
+
+阶段 SERIAL-UNKNOWN-EXCEPTION（Version95，同SYSTEM99）：沿单主执行/恢复审查发现不可幂等handler异常虽然blocked却被当成普通明确结果清active_step，可能越过作用不明步骤。先冻结真实文件写入→run异常/返回后verify异常/无效返回→SQLite重启反例，核原始失败，再原地复用已有ambiguous/requires_reconciliation/effect_observation门禁保留归属与证据；只有原有显式授权/验证reconcile才能解除。幂等retry预算、明确blocked/failed结果的无依赖分支、取消/租约/旧独立审核不改，不重放外部效果。现有serial_recovery原生CI模块覆盖新增方法，定向与完整回归及新head原生CI逐步验证。新读AgentRewind2608.14380v1完整19页/附录A–D，采用外部作用不能由上下文恢复证明的边界，不引入自动回滚、分支/第二账本或无界重试；同主自检非独审，性能/模型质量/全成本/十篇和旧合同仍open。
 
 ## Progress
 
@@ -995,3 +997,11 @@ MEMORY-HYDRATION继续同批：9b6c9476原生run41296752210十job全成功，五
 335fda31原生run41305231884十job全成功，精确日志 `/tmp/agent-system99/skill-transfer-1957/ci.json` SHA256 `1b7f4aaf054ff835feda296ee39c9fb2c403857fca6c6842de8e124e9b83a1c5`。本次先fetch/锁/干净状态核对；实际setup.install基线主入口三条旧派发/独立角色指令均存在，原地修正后均消除，安装前后subagents=0。科研入口同句知识指令同步；通信开头指向已有单主契约，两旧线程选项标为当前模式不执行。组织/消息及以下全部既有接口原字节（规范换行后）不变，不删除独立合同或生成新Skill。相关89方法、CI第一组110方法均全过0skip（两组有重叠，不称199独立用例）；实际安装输出、Skill引用可达、同步及空白检查通过。
 
 新读arXiv2610.08722v1（2026-10-06）实际全20页/§§1–5/AppendixA–G/Tables1–18，记录数据/复现版本、不同统计分母、消融/噪声、审计门槛修订和token/最终质量缺口。仅采用负结果与门禁区分；不因论文改审计要求就降低本库旧独立合同，不新增自动压缩。证据 `/tmp/agent-system99/context-boundary-2056/evidence.json` SHA256 `e5968ed2474cb4f1197b9e9446b5ece2155c946b48b2154c07bdaa8502a35931`（含精确reading/baseline/probe/log哈希）。仅同主自检，不是独审或模型遵从/性能验收；新正文1不等于十篇，宿主/实际质量/全角色成本/既有独立证据继续open，同SYSTEM99不结轮。guide/唯一索引不改，无新results中间包；普通发布、新head原生CI另存该目录。
+
+### 2026-11-01 — SERIAL-UNKNOWN-EXCEPTION 串行续接
+
+cf835b28原生run41310066832十job全部成功，五平台contracts各110+54方法0skip；回读 `/tmp/agent-system99/context-boundary-2056/ci.json` SHA256 `fcc8a7800f460a3e0b986a8944724fba29062e116ed21d583e7b4f2576e40540`。本次先fetch/锁/干净状态与同批未决核对。真实文件写入后，run异常、verify异常、无效返回三子例修前均在新Engine错误执行B；明确blocked健康对照通过。仅对已进入不可幂等handler后的普通异常，复用effect_observation保存已返回证据、ambiguous/requires_reconciliation保留active_step；幂等retry、明确结果、旧认证/租约/取消及reconcile授权/验证不变。不依据reason文本追溯重标历史adapter_result。
+
+修后74相关方法通过；完整2094方法0失败/错误、15既有skip，Reader3及同步/空白检查通过。跨OS进程探针复现修前A→B越过；修后write/observe两进程只调用A，未授权/无效证据两次settlement拒绝，真实核验后第三进程执行B且A未重放、实际文件hash不变。必要原始失败、最终回归和可复现探针汇总 `/tmp/agent-system99/serial-exception-2157/evidence.json` SHA256 `214ef95f90b2f6d723740288aee886254dcad43f22b8485abb7a8243686bb6ed`，临时fixture已清，无新results中间包。原生新headCI/普通发布回读另存同目录，guide/唯一索引未改，同主自检不冒独审。
+
+新读AgentRewind arXiv2608.14380v1（2026-08-14）实际全文19页/附录A–D、Eq1–9/Tables1–15/Figures1–9；记录checkpoint/真实作用区别、82任务640criteria/最长前缀分母、50配对恢复、三组件消融、模型/工具提示混杂、无限预算/干预排除及root.git/外部作用不可恢复边界。只采用恢复不等于撤销作用的验收思路，不移植回滚/分支/累积记忆或无界重试。新增正文1，不重计PermissionToRetry/Sentry/执行编辑安全旧篇；未测速度/实际模型质量/全费用，十篇/真实宿主及旧独立合同继续open，同SYSTEM99不结轮。
