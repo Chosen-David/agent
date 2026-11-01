@@ -2,11 +2,11 @@
 
 # 有目的的跨 Agent 通信
 
-用于确实需要多角色协作的任务。主 AI 管目标、路由、授权、预算和冲突；角色可沿批准的边直接交换证据。单角色能完成的工作不增加通信。知识库保存通用知识，项目记忆保存带来源的项目事实，收件箱保存待处理事件；三者不要相互替代。
+当前执行方式遵循[单主 Agent / 多 Skill](single_main_workflow.md)：同一主 agent 沿唯一任务链一次处理一步，角色 ID 仅作能力/兼容标识，不创建其他 agent 或新线程。以下接口用于核对已有消息与跨步骤证据；切换 Skill 是自检，不能替代既有独立验收。知识库保存通用知识，项目记忆保存带来源的项目事实，收件箱保存待处理事件；三者不要相互替代。
 
-固定子任务派发给 Codex 新线程时，完整 checkout 的可信宿主可显式采用 [技能目录范围](https://github.com/Chosen-David/agent/blob/main/docs/token_optimization/skill_scope.md)：用当前 PROJECT_ROOT 的真实 metadata/request 和已解析生效配置，经 WORKFLOW_ROOT/scripts/codex_skill_scope.py 只排除明确无关条目，机器配置直接传 thread/start，不重复塞进模型消息。必需角色、用户点名技能及其依赖、未知/未列出条目、项目/权限规则和实际需要的工具保留；范围不完整、不支持配置或任务变化时保留默认并重新判定。接口发现不一定等于实际目录，需验证真实输入只变声明的完整目录行、其他文本/工具一致及质量/总token，不把配置接受或安装当已节省。该选项不自动创建角色、修改全局配置或授权动作。
+历史新线程接口参考（当前单主模式不执行）：固定子任务派发给 Codex 新线程时，完整 checkout 的可信宿主可显式采用 [技能目录范围](https://github.com/Chosen-David/agent/blob/main/docs/token_optimization/skill_scope.md)：用当前 PROJECT_ROOT 的真实 metadata/request 和已解析生效配置，经 WORKFLOW_ROOT/scripts/codex_skill_scope.py 只排除明确无关条目，机器配置直接传 thread/start，不重复塞进模型消息。必需角色、用户点名技能及其依赖、未知/未列出条目、项目/权限规则和实际需要的工具保留；范围不完整、不支持配置或任务变化时保留默认并重新判定。接口发现不一定等于实际目录，需验证真实输入只变声明的完整目录行、其他文本/工具一致及质量/总token，不把配置接受或安装当已节省。该选项不自动创建角色、修改全局配置或授权动作。
 
-独立子任务可用 [完整上下文派发](https://github.com/Chosen-David/agent/blob/main/docs/token_optimization/dispatch_context.md)：宿主核实当前项目全部依赖及父生效设置后新建线程；未知或仍需历史时保留分叉。完整 SHA 正文只传一次，机器参数直接给宿主，不以空 turns 响应推断节省。
+历史上下文接口参考（当前单主模式不执行）：独立子任务可用 [完整上下文派发](https://github.com/Chosen-David/agent/blob/main/docs/token_optimization/dispatch_context.md)：宿主核实当前项目全部依赖及父生效设置后新建线程；未知或仍需历史时保留分叉。完整 SHA 正文只传一次，机器参数直接给宿主，不以空 turns 响应推断节省。
 
 ## 组织与消息
 

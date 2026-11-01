@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 93
+Version: 94
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -269,6 +269,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 TEST-ENTRY-ISOLATION（Version92，同SYSTEM99）：质量评测续查确认12个共享fixture消费者中11个在新进程按tests.test_*导入失败，另1个依赖全局sys.path改写；此前PYTHONPATH workaround只解决调用，并未使模块独立。仅将现有测试fixture导入统一为tests包限定、添加普通包标记、去掉该已确认路径注入，不动生产runtime/断言/数据/独立合同。固定12个无PYTHONPATH新进程导入及精确路径变化回归（仅保留语义验收fixture原有CLI的scripts/root引导，拒绝tests目录注入），保留修前原失败，验证限定模块调用与discover两入口和完整回归；新增回归纳入五平台contracts原第一组，原限额/命令保持。新读2610.18522v1区分selection/load/success用于评测边界审查，不称测试导入就是模型加载或移植新路由器；实际Skill召回/质量/token/费用仍待宿主，全批十篇与旧独立合同保持open。
 
 阶段 CLI-CONTEXT-COST-CHECK（Version93，同SYSTEM99）：在8b4a7d17既有CLI上只读诊断6组两编码/三声明状态，发现定向payload较短而pretty stdout可能更贵；另实测既有compact输出逐字段/值完全相同。仅在通信工作流权威源的两条context示例启用已有--compact，并补完整stdout与payload分母区别，经现有生成器同步一个Skill镜像；不改CLI默认值、runtime/schema、选择/更正/ACK门禁或Skill数量。诊断不是旧独立实验H/I重跑或验收，不重置其预算。验证实际publish→CLI全量/定向/compact→更正拒绝/无ACK，固定tiktoken0.12.0与原始输出；相关文档/入口回归、同步及新head原生CI。正文精读2608.20274v2的分步/粒度与成本负结果用于检查，不移植多角色、自动规则覆写/剪枝或embeddingutility授信；真实模型任务质量与全部费用及十篇仍open。
+
+阶段 SINGLE-MAIN-ENTRY-CONSISTENCY（Version94，同SYSTEM99）：核对实际安装入口发现通用主编排仍允许按需启动多Agent，通信参考开头仍引导新线程/分叉，与既有single_main_workflow冲突。仅原地改这些活跃指令及科研入口同一句知识获取指令为同一主agent按需加载Skill，并将旧新线程选项明确归为历史接口参考；旧路由/消息schema、独立合同、预算、权限和恢复门禁不变。保留修前精确行/hash，验证真实setup.install输出和生成Skill镜像、既有链接/安装/单主/通信回归，再核新head原生CI。全文新读2610.08722v1物理20页及AppendixA–G，采用负结果/分母与契约区分，不新增压缩触发器或把论文改门槛作为本库降级授权。该步只证明指令一致性，不证明LLM服从、实际任务质量、token/费用或独立复核；旧独立保护和十篇/全链验收继续open。
 
 ## Progress
 
@@ -987,3 +989,9 @@ MEMORY-HYDRATION继续同批：9b6c9476原生run41296752210十job全成功，五
 只把现有通信工作流两条示例改用--compact、补完整stdout口径和元数据负结果，现有生成器同步单个镜像，保留原换行以免全篇噪声；runtime/CLI默认值/选择/更正/授权保护未改。相关72方法无失败/错误、4既有文档环境skip，同步检查通过；未重跑全库，前head2092/15skip不冒充本次全库。必要原始输出、复现脚本和依赖下载hash索引 `/tmp/agent-system99/skill-transfer-1957/evidence.json` SHA256 `a87dadd1c7aa2bee60c24267069e11ec9a4f5430bf50b372430687e18b5fec34`。临时依赖/编码缓存、重复摘要日志和渲染已清，独立合同仍pending，本次自检不冒验收。
 
 新读2608.20274v2（2026-10-16）完整34页§§1–7/局限及A–F、全部28图/8表与原始prompt；记录分步1.2–2.2倍token负结果、连续评分与bootstrap口径、格式提示/记忆治理混杂、utility全任务描述前视和公开代码阈值/剪枝阶段差异，阅读哈希见索引。作者仓库精确8317798951716e9bd7c792728b8ca70830734f37的README/utility全文及run定向片段只读核查，未下载16GB原数据，未复现其模型试验。只新增正文1，不复计旧篇；不引入多主/新Skill池、自动覆写或utility授信。真实模型任务质量、全上下文/全调用成本、十篇正文及旧独立范围继续open，同SYSTEM99不结轮。
+
+### 2026-11-01 — SINGLE-MAIN-ENTRY-CONSISTENCY 串行续接
+
+335fda31原生run41305231884十job全成功，精确日志 `/tmp/agent-system99/skill-transfer-1957/ci.json` SHA256 `1b7f4aaf054ff835feda296ee39c9fb2c403857fca6c6842de8e124e9b83a1c5`。本次先fetch/锁/干净状态核对；实际setup.install基线主入口三条旧派发/独立角色指令均存在，原地修正后均消除，安装前后subagents=0。科研入口同句知识指令同步；通信开头指向已有单主契约，两旧线程选项标为当前模式不执行。组织/消息及以下全部既有接口原字节（规范换行后）不变，不删除独立合同或生成新Skill。相关89方法、CI第一组110方法均全过0skip（两组有重叠，不称199独立用例）；实际安装输出、Skill引用可达、同步及空白检查通过。
+
+新读arXiv2610.08722v1（2026-10-06）实际全20页/§§1–5/AppendixA–G/Tables1–18，记录数据/复现版本、不同统计分母、消融/噪声、审计门槛修订和token/最终质量缺口。仅采用负结果与门禁区分；不因论文改审计要求就降低本库旧独立合同，不新增自动压缩。证据 `/tmp/agent-system99/context-boundary-2056/evidence.json` SHA256 `e5968ed2474cb4f1197b9e9446b5ece2155c946b48b2154c07bdaa8502a35931`（含精确reading/baseline/probe/log哈希）。仅同主自检，不是独审或模型遵从/性能验收；新正文1不等于十篇，宿主/实际质量/全角色成本/既有独立证据继续open，同SYSTEM99不结轮。guide/唯一索引不改，无新results中间包；普通发布、新head原生CI另存该目录。

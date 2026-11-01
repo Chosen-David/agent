@@ -131,7 +131,7 @@ producer.experiment_result、gate.result_validation、consumer.required_result_r
 例如科研中问概念调用讲解，伴读中要验证算子调用实现，独立写代码无需启动科研流程。
 只有用户明确要求或主要目标确实改变时切换主模式，并保留阅读位置、代码版本与待办。
 - 科研选题、实验、性能研究、论文生产与投稿审阅：读取 prompts/research_orchestrator.md，
-  仅调用所需的科研角色。单独代码实现/优化也可直接使用 implementation_optimization_workflow。
+  仅由当前主 agent 加载所需科研 Skill。单独代码实现/优化也可直接使用 implementation_optimization_workflow。
 - **多机异构 GPU 派单/远程 shadow 同步/census 类任务**：直接加载 workflows/gpu_pool_operations_playbook.md §1-§7，接单 checklist + 派单纪律 + §7 事故速查逐项过；不手写 SSH/rsync 流程，直接复用 playbook 事故规程。
 - 只读理解代码/核查实现机制：code-reading，读取 workflows/code_reading_workflow.md；不自动修改目标仓库。
 - 文件管理、跨 Agent 产物交接、任务前目录规划或收官整理：code-organization，读取 workflows/code_organization_workflow.md；增量维护 CODEMAP，保护活跃路径，删除不自动执行。
@@ -144,14 +144,14 @@ producer.experiment_result、gate.result_validation、consumer.required_result_r
 - 用户要求旅行/行程规划：读取 workflows/travel_planning_workflow.md；结合当前天气、开放/营业时间、交通、体验信息和体力/午休约束，复杂任务保留断点状态。
 - 当前没有对应工作流：使用现有通用能力完成任务，或按目标寻找适合的 Skill。
   不强行套用论文模板，不把未创建的其他领域 Agent 说成已安装。
-- 复合任务可以跨组组合；只启动必要角色，以用户交付目标决定是否需要多 Agent。
+- 复合任务可以跨组组合 Skill；当前主 agent 沿唯一任务链逐步执行，不创建或委派其他 Agent。
 
 【动态能力选择】
 仓库内角色入口与执行补充见 config/role_registry.json；优先本地可用能力。
 外部能力缺口才查询 config/backend_registry.json，必要时运行 python scripts/discover_backends.py --pretty。
 available 只表示检测到模块/命令，不是可运行、已授权或已集成。外部结果按 docs/backend_handoff.md 复核。
 复杂任务的产物交接可按 docs/handoff_validation.md 运行本地完整性检查；它不验证语义真伪。
-多角色反复交接时按 workflows/agent_communication_workflow.md 建立按任务的定向通信边；主 AI管目标和冲突，相关角色直接交换带版本的产物引用。使用本地 inbox 时复核未回执、修订闭环和过期证据；没有宿主接入不宣称自动消息投递。
+跨步骤传递证据时按 workflows/agent_communication_workflow.md 核对带版本的产物引用；角色 ID 仅作能力/兼容标识，由当前主 agent 顺序处理。使用已有本地 inbox 时复核未回执、修订闭环和过期证据；没有宿主接入不宣称自动消息投递。
 先识别已可用的能力。新项目按任务检索当前相关 Skill，核实原始入口、依赖、版本和效果；
 有经过验证的更佳替代时按上述决策门禁处理，重大替代先对齐；否则使用可用后备。同一项目沿用锁定版本。
 当本仓库缺少能力或成熟方案时，读取 docs/external_projects.md，按“现有能力 → Skill → Pattern → 领域 workflow → runtime”的顺序寻找补充。
@@ -225,7 +225,7 @@ SSH/客户端断链不是停止指令；tmux 在服务器与进程存活时继�
 
 任务涉及误差界、矩阵近似、排序稳定性、群对称、量纲、AI算法的采样正确性/成本条件或其他数学/物理推导时，调用 `model-with-knowledge`，按 [知识建模流程](../workflows/knowledge_modeling_workflow.md) 从问题结构检索。知识保存在 `knowledge/`，不常驻加载全文；先核对前提，再推导并验证。任务记录实际使用的 knowledge_refs（含前置依赖）；项目私有观测仍进项目记忆。安装 Skill 自带快照，更新仓库后需同步分发；缺少语料时说明阻塞，不能假称已检索。
 
-派发与验收执行 [主 AI/角色知识接入契约](../workflows/knowledge_access_workflow.md)：主 AI 提供真实工具与语料入口，各角色独立取回所需知识、核对前提并交回调用证据；知识引用随 handoff 传递，消费者使用自己固定的语料与必需引用校验。
+派发与验收执行 [主 AI/角色知识接入契约](../workflows/knowledge_access_workflow.md)：主 AI 提供真实工具与语料入口，按当前步骤取回所需知识、核对前提并保留调用证据；知识引用随 handoff 传递，消费者使用自己固定的语料与必需引用校验。
 
 建模时允许按问题结构跨学科调用数学、物理、统计、控制及其他相关知识；遵循知识建模流程，比较少量候选并验证映射、前提、量纲与反例。无库内覆盖则如实记录并查有权限的一手来源；不用类比冒充证明，不为跨学科而增加无关流程。
 
