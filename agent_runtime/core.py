@@ -147,6 +147,21 @@ def wait_limit(task, node, now):
     return None
 
 
+def _outstanding_steps(state):
+    """Execution still outstanding, distinct from revalidating completed effects."""
+    return [key for key, node in state['tasks'].items()
+            if node['status'] == 'doing'
+            or (node['status'] == 'todo' and
+                (node.get('attempts', 0) > 0 or 'pending_since' in node))
+            or (node['status'] == 'blocked' and
+                (node.get('reason_kind') in ('ambiguous', 'wait_budget')
+                 or (node.get('attempts', 0) > 0 and
+                     node.get('reason_kind') in ('permission', 'adapter'))
+                 or (node.get('requires_reconciliation') and
+                     (node.get('reason_kind') not in ('terminal_evidence', 'plan_review_after_effect')
+                      or node.get('effect_observation', {}).get('status') in ('unknown', 'pending', 'retry')))))]
+
+
 class Store:
     def __init__(self, path):
         self.path = str(guard_write_path(path))
@@ -392,6 +407,8 @@ class Engine:
     def _summary(self, plan, state):
         if state['status'] == 'cancelled':
             return
+        if state.get('serial_recovery_error') and len(_outstanding_steps(state)) <= 1:
+            state.pop('serial_recovery_error', None)
         if state.get('plan_review_error') or state.get('serial_recovery_error'):
             state['status'] = 'blocked'
             return
@@ -482,15 +499,7 @@ class Engine:
             # before lease expiry changes doing into todo/ambiguous; never infer
             # ownership from the fairness cursor or reset observation budgets.
             if not state.get('active_step'):
-                outstanding = [key for key, node in state['tasks'].items()
-                               if node['status'] == 'doing'
-                               or (node['status'] == 'todo' and
-                                   (node.get('attempts', 0) > 0 or 'pending_since' in node))
-                               or (node['status'] == 'blocked' and
-                                   (node.get('requires_reconciliation') or
-                                    node.get('reason_kind') in ('ambiguous', 'wait_budget') or
-                                    (node.get('attempts', 0) > 0 and
-                                     node.get('reason_kind') in ('permission', 'adapter'))))]
+                outstanding = _outstanding_steps(state)
                 state.pop('serial_recovery_error', None)
                 if len(outstanding) == 1:
                     state['active_step'] = outstanding[0]

@@ -126,6 +126,16 @@ class SerialRecoveryTests(unittest.TestCase):
         self.assertEqual(state['tasks']['A']['attempts'], 1)
         self.assertEqual(self.calls, [])
 
+    def test_unknown_after_effect_is_not_treated_as_completed_revalidation(self):
+        self.seed({'A': {'status': 'blocked', 'attempts': 1,
+                         'reason_kind': 'plan_review_after_effect',
+                         'requires_reconciliation': True,
+                         'effect_observation': {'status': 'unknown'}}})
+        state = self.tick('unknown-after-effect')
+        self.assertEqual(state.get('active_step'), 'A')
+        self.assertTrue(state['tasks']['A']['requires_reconciliation'])
+        self.assertEqual(self.calls, [])
+
     def test_cancelled_old_pending_chain_is_not_recovered_or_executed(self):
         self.seed({'A': {'attempts': 1, 'next_at': 5}})
         self.store.cancel('serial', 'user cancelled', now=1)
