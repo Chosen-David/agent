@@ -288,6 +288,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 
 阶段 RECONCILE-RECHECK（Version102，同SYSTEM99）：续接结算最终复核失败边界。先冻结pending/unknown两种已接纳作业、证据文件在第一次核验后失效（false/异常）四子例，检查重启后不能越步且证据恢复后仍可显式reconcile。仅将reconcile目标在_check_done后failed的状态映射为既有blocked/terminal_evidence/requires_reconciliation，保留历史观察/预算，不写成功标记、不释放owner、不重放；明确handler.failed及其他节点active终态语义不改。原失败、真实独立OS观察与全库/新headCI通过后普通发布。同主自检非独审；新正文2608.29381v1全文16页及附录A/B已读，采用跨状态与后续转移联合验收，不引入回滚/多agent或新账本。十篇/真实模型质量成本与旧独立合同仍open。
 
+阶段 MEMORY-GOVERNED-CONTEXT（Version103，同SYSTEM99）：继续已有记忆更正/上下文成本未决，不另造任务或记忆层。先冻结真实Mailbox/context CLI的全量JSON、定向JSON、既有auto-lossless及当前上下文复用对照；按完整stdout和首轮加载计指定tokenizer，验证无损解码、完整祖先/候选/异议、消费前更正拒绝且不ACK。若支持实际输出收益，仅在现有通信流程补充可信宿主兼容decoder时的显式无损选项，原地修正记忆流程残留多Agent职责为单主按需Skill；scope仍是检索标签、不授予披露权限。默认格式/权限/编码协议/账本及guide不改，不把离线受控输入当raw-native模型任务质量。新读TimlMemBench DOI10.18653/2026.findings-emnlp.507正式PDF全文15页/§§1–9及附录A–F、Tables1–16，区分canonical-pool和raw-native、分项门禁与判分不确定性；十篇/独立合同/真实任务质量及全费用仍open。
+
 ## Progress
 
 - 2026-10-27 抽象持久化续读：实际精读2610.27406v1正文§§1–5及声明附录，区分临时指导、历史暴露、相关性标签与可授信知识；[记录](../../results/anti-persistence-reading-20261027/reading.md)保留held-out调用成本/日志排除/受控实验及统计边界。同批新正文15篇；保留MemoryLedger修订/更正传播、原Skill/历史与人类guide，不新增共享日志/自适应选择器。worker最终交付/真实宿主及全部调用质量成本缺口继续open；advice围栏解析静态差异尚未复现，不判无缺陷。仅文献/源码独审，无新测试、模型、性能或整轮完成主张，旧门禁不重试。
@@ -1072,3 +1074,14 @@ e58c0cd7原生run41332305498十job全成功，五平台serial各17方法/contrac
 现在仅将reconcile目标在_check_done后的failed映射为既有blocked/terminal_evidence/requires_reconciliation，保留失败原因、观察与计数；成功标记/释放仍需最终done。明确handler.failed、取消、旧预算、其他节点active语义不改。38相关方法、完整2105方法0失败/错误（51已知环境skip）、Reader3/引用同步/空白通过。固定Git源码四臂真实有界worker先exit0，再由不同OS进程提交/失效/恢复receipt：修前两臂均不能恢复；修后两臂核验后完成A→B，失败阶段不越步、原job不重启、键/尝试/观察预算不变。全部自有进程/夹具已回收，当前仅保留必要原失败和最终日志/复现入口/tmp/agent-system99/reconcile-recheck-0230/evidence.json SHA256 3f1736f175ff957bc3562da1d4390a65804663df36afe24560ecdb2c6dea9d4e；新head发布/CI另存同目录。
 
 新读Safe to Resume arXiv2608.29381v1全文16页/§§I–IX、附录A/B、全部图表文本及参考文献，记录部分恢复边界、SF1–5、1735执行标签重叠分母、三次重放/随机检查点、作者人工标签及96工作流两种commit顺序反例；CrewAI任务完成/任务开始触发解释差异保留为歧义。只采用状态与后续转移共同验收，不采用多agent分析流水线/新回滚，不执行攻击或冒称作者artifact复现。新增正文1不等于十篇；同主自检非独审，无速度/真实模型质量/全成本收益主张，旧独立合同/真实宿主等仍open，guide/唯一索引未改、预算不重置，同SYSTEM99不结轮。
+
+
+### 2026-11-02 — MEMORY-GOVERNED-CONTEXT 同批续接
+
+bfcca399原生run41337925048十job成功，五平台serial各20方法、两Ubuntu严格worker各32方法、五组contract各164方法0skip；回读/tmp/agent-system99/reconcile-recheck-0230/ci.json SHA256 2ba5d6eb42bdf9aeff2b7afd0f16d12e2c1d3860afecab0dadbe64be5ff067f8。本次先fetch/锁/干净状态与同批未决核对，转到记忆/上下文全链。真实链接和复制安装各确认三处旧多Agent职责残留；现以单一主agent按需Skill核对路径/科学有效性，复核仍自检。原唯一TASK更新依赖，既有历史归档保留，不另造TASK；明确scope仅为过滤标签，不授予披露权限。权威通信流程仅补消费者已接入可信decoder时显式使用既有auto-lossless/v1；不改默认JSON/runtime/协议/账本，三个生成镜像原位同步且保留换行。
+
+真实Mailbox.context CLI固定2/24无关记忆、EN/ZH、tiktoken0.12.0两编码共8组/32成功调用：定向auto比定向JSON的完整compact stdout少129–149token，解码全部字段/值相同，祖先、候选及异议保留；32更正后消费均拒绝、无ACK。保留负结果：小包选择元数据使单纯定向JSON反多2–9token。明确第一步工具正文在第二步保留的假设后，包含首次加载的两步工具正文累计编码计数少30.0–75.7%；系统/用户/工具封装、模型输出及收费不在此范围，不能当实际总费用或模型质量收益。最初复用同一事件切换请求被正确拒绝，已改为每请求新不可变事件；安装夹具初用错references/workflows路径也已纠正，均保留原因/哈希，不计产品失败。最终CLI重跑、安装两模式、61相关方法、完整2105方法0失败/错误（51已知环境skip）、Reader3/同步/空白通过。
+
+必要阅读/指标/复现入口与实际安装对照汇总/tmp/agent-system99/memory-closure-0302/evidence.json SHA256 0a0103b41ecfe35231ba0608e5b91152984e1db24c376fdbe6688e9eec62c749。重复合成包正文/解码副本已提炼为准确stdout哈希/指标和保留项，冗余正向日志、图渲染及本次tokenizer依赖/下载缓存已清；所有临时夹具已回收。新head发布/CI另存同目录，guide/唯一索引未改。
+
+新精读TimlMemBench正式DOI10.18653/2026.findings-emnlp.507全文15页/§§1–9、Limitations/附录A–F/全部16表，图1实际渲染查看；官方repo447b195344a2feaf995176446379e60632831f94的README已读，未运行作者数据/模型。记录raw-native与canonical-pool分离、当前/禁用记忆及来源门禁、1821case与多指标重叠分母、两组90项人工审计/60–85.9%跨judge一致性、描述性费用和不做全库排名的局限；仅采用分项治理验收，不冒充raw-native任务质量。本次新正文1不等于十篇；同主自检非独审，既有独立合同、真实宿主/模型任务质量及全成本仍open，同SYSTEM99不结轮。

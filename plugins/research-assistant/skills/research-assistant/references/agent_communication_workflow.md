@@ -128,6 +128,8 @@ API 可提供 `known_knowledge_refs`、`known_memory_ids`（CLI --known 指向�
 
 消费者可选 `context_claim_ids`：明确本次要检查的结论，完整保留其祖先、required_claim_ids、必需知识/记忆及全部 candidate/rejected 声明和对应依据。`context_artifact_ids` 可补充没有挂在所选结论上的必需产物。所有传入依据仍先核验；正文/前提不改写，选择不证明语义相关性。生产者不能控制选择。全量复核或依赖未声明完整时沿用默认全量入口；全部结论都需要时选择元数据会增加成本。CLI/API、主 AI 和消费者使用同一入口，不新增每结论 Skill。
 
+可信宿主已接入 `agent_runtime.handoff_encoding.decode_basis_payload` 时，消费者可在 REQUEST 中显式选择 `context_format: "auto-lossless/v1"`，由现有入口在完整 JSON 与两种无损表编码中按指定 tokenizer、字符及 token 硬限选取候选。解码后保留全部原始字段和值，依赖、更正和权限门禁照常执行；未适配的接收端沿用默认 JSON。比较完整 stdout 与首轮加载成本，不只比较内部 payload，也不把无损编码等同于模型理解或收费收益。
+
 `--encoding` 使用可选 tiktoken，缺包或未知编码报错；消费者 `context_tokenizer` 可固定编码，host 不得换编码绕过硬限。编码计数只证明该序列在指定编码下的 token 数，只有与实际模型编码匹配才代表其输入计数；不推断未知模型、不代表收费账单。可复核示例使用 tiktoken==0.12.0、cl100k_base/o200k_base，见 [同输入证据与成本测量](https://github.com/Chosen-David/agent/blob/main/docs/communication_efficiency/2026-10-07-selective/report.md)。本地已加载内容复用不是推理服务 KV-cache 命中证明。
 
 计划可增加 max_delivery_bytes：按收件人数累计 envelope UTF-8 字节，重复 event_id 不重复计费，超额拒绝整个投递，不部分广播。usage 提供 events/deliveries/envelope_bytes/delivery_bytes；这不是模型收费账单。不为了省 token 删除关键反例、前提或原始证据；先缩小问题/检索范围、复用当前上下文、批量独立读取和减少无关收件者，再考虑经独立实验的摘要。
