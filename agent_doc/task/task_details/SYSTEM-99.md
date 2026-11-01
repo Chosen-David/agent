@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 92
+Version: 93
 
 用户2026-10-20澄清：一次小时唤醒、小bug或提交不算一轮。批次持续到声明实际用途内无已知重大缺陷/架构冲突、必要验收齐备；不能保证绝对无bug。通用、科研、旅行、代码阅读、marketplace均保留；人类guide只读，不新增付费资源。
 
@@ -267,6 +267,8 @@ CHECKPOINT-FD补充续修：仅在现有atomic_json内由mkstemp创建者持有�
 阶段 MEMORY-HYDRATION 计数回调续接（Version91）：9b6c9476原生十job已全成功后继续原同批未决，不按提交计新轮。实际Mailbox计数钩子中更正记忆或修改知识正文，原接口仍返回旧依据（3方法2失败/1不相关健康对照）；仅在成功计数并核对预算后重用check_handoff_basis。随后同回调修改产物/manifest的两子例仍未拒绝（中间候选handoff_basis blob16b3f65a7002f57c7d4b7d2b86b773714a7730d0），因此Mailbox在有外部counter时再调用原consume_handoff完整核对交付/manifest/消费者绑定。无counter路径不加这层检查；新增复核不调用counter、不产生第二ACK/事件/派发，不重放修复或修改绑定。保持standalone basis API只含产物引用的既有范围；真实Mailbox负责实际文件门禁。增加正文原样/communication_basis唯一行/仍无ACK健康断言，复测JSON/表格/自动格式、预算/知识快照及全库/原生CI。不声称跨库原子快照、返回以后更正或可变自定义检查器本身已被约束，重复I/O成本未测，旧独立合同和全部限额不变。复用本次已新读TellOnce v2的执行阶段/交付检查方法，不再计第二篇；不采用并行学习、规则库或未知等于通过。
 
 阶段 TEST-ENTRY-ISOLATION（Version92，同SYSTEM99）：质量评测续查确认12个共享fixture消费者中11个在新进程按tests.test_*导入失败，另1个依赖全局sys.path改写；此前PYTHONPATH workaround只解决调用，并未使模块独立。仅将现有测试fixture导入统一为tests包限定、添加普通包标记、去掉该已确认路径注入，不动生产runtime/断言/数据/独立合同。固定12个无PYTHONPATH新进程导入及精确路径变化回归（仅保留语义验收fixture原有CLI的scripts/root引导，拒绝tests目录注入），保留修前原失败，验证限定模块调用与discover两入口和完整回归；新增回归纳入五平台contracts原第一组，原限额/命令保持。新读2610.18522v1区分selection/load/success用于评测边界审查，不称测试导入就是模型加载或移植新路由器；实际Skill召回/质量/token/费用仍待宿主，全批十篇与旧独立合同保持open。
+
+阶段 CLI-CONTEXT-COST-CHECK（Version93，同SYSTEM99）：在8b4a7d17既有CLI上只读诊断6组两编码/三声明状态，发现定向payload较短而pretty stdout可能更贵；另实测既有compact输出逐字段/值完全相同。仅在通信工作流权威源的两条context示例启用已有--compact，并补完整stdout与payload分母区别，经现有生成器同步一个Skill镜像；不改CLI默认值、runtime/schema、选择/更正/ACK门禁或Skill数量。诊断不是旧独立实验H/I重跑或验收，不重置其预算。验证实际publish→CLI全量/定向/compact→更正拒绝/无ACK，固定tiktoken0.12.0与原始输出；相关文档/入口回归、同步及新head原生CI。正文精读2608.20274v2的分步/粒度与成本负结果用于检查，不移植多角色、自动规则覆写/剪枝或embeddingutility授信；真实模型任务质量与全部费用及十篇仍open。
 
 ## Progress
 
@@ -977,3 +979,11 @@ MEMORY-HYDRATION继续同批：9b6c9476原生run41296752210十job全成功，五
 4f5a078c原生run41298723341十job全成功，五组各163方法0skip；原证据 `/tmp/agent-system99/memory-hydration-1800/counter-ci.json` SHA256 `2cd71a72ce0db3a4830de04fe193e1a310175cd09e61daae06554ede91a8e63c`。本次12个共享fixture消费者新进程核查11导入失败/1全局路径注入；新冻结1方法12子例均失败，不是12个生产bug。仅限定tests包导入、补包标记并删除该tests路径注入；首轮167方法暴露一个函数内遗漏导入及过严新路径oracle，保留原诊断，明确允许语义fixture已有scripts/root CLI引导而不改生产脚本。最终限定入口167方法、完整discover2092方法（15既有skip）、原生CI同命令110+54、reader3及引用同步均通过。新隔离方法进入五平台CI，发布/新head原生回读另核。必要失败与最终结果 `/tmp/agent-system99/skill-routing-1856/evidence.json` SHA256 `26f2d8929a1c1f4d58324b551834b514a0cdbf80a79969436ea7ef8cf4746b90`；冗余同原因日志和阅读渲染已清，guide/唯一索引/旧合同不改。
 
 新读2610.18522v1全22页，§§1–7/局限及A–N、Tables1–31、Algorithms1–3；实际区分选择/加载/任务成功、82与86任务分母、单次与三次mask、候选/实际召回、固定选择漏项和预计算embedding/不同API时段延迟，详细记录reading.json哈希见索引。二手博客将ID错配Cortex已按原文纠正。没有新路由器/第二agent或模型调用，本次新增正文1不重计旧篇；测试入口可靠性不冒充真实Skill召回、模型质量/token/全费用或整轮完成，同SYSTEM99未决保持open。
+
+### 2026-11-01 — CLI-CONTEXT-COST-CHECK 同批续接
+
+8b4a7d17原生run41300729730十job全成功，五平台各164方法0skip；原始日志 `/tmp/agent-system99/skill-routing-1856/ci.json` SHA256 `d1c8acfd2fe72c17d96dd2b2588f6dab1619de2a0e56d5430ecbea8825418ff5`。本次既有实际publish→CLI全量/定向→compact→记忆更正拒绝诊断，两编码×supported/candidate/rejected共6组；全部字段/值完全相同、依赖与候选/反对保留、12次更正后拒绝、ACK全空。固定tiktoken0.12.0，实际payload与完整stdout分开计数：候选/拒用时payload少31–32token，pretty stdout反增27–30；compact相对同scope pretty少35–66，o200k定向compact仍比全量compact多3，不称投影普遍节省。不同选中范围不当模型质量非退化，stdout也非provider完整输入或账单。
+
+只把现有通信工作流两条示例改用--compact、补完整stdout口径和元数据负结果，现有生成器同步单个镜像，保留原换行以免全篇噪声；runtime/CLI默认值/选择/更正/授权保护未改。相关72方法无失败/错误、4既有文档环境skip，同步检查通过；未重跑全库，前head2092/15skip不冒充本次全库。必要原始输出、复现脚本和依赖下载hash索引 `/tmp/agent-system99/skill-transfer-1957/evidence.json` SHA256 `a87dadd1c7aa2bee60c24267069e11ec9a4f5430bf50b372430687e18b5fec34`。临时依赖/编码缓存、重复摘要日志和渲染已清，独立合同仍pending，本次自检不冒验收。
+
+新读2608.20274v2（2026-10-16）完整34页§§1–7/局限及A–F、全部28图/8表与原始prompt；记录分步1.2–2.2倍token负结果、连续评分与bootstrap口径、格式提示/记忆治理混杂、utility全任务描述前视和公开代码阈值/剪枝阶段差异，阅读哈希见索引。作者仓库精确8317798951716e9bd7c792728b8ca70830734f37的README/utility全文及run定向片段只读核查，未下载16GB原数据，未复现其模型试验。只新增正文1，不复计旧篇；不引入多主/新Skill池、自动覆写或utility授信。真实模型任务质量、全上下文/全调用成本、十篇正文及旧独立范围继续open，同SYSTEM99不结轮。

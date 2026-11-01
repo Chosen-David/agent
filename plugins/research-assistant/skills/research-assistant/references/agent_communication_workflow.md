@@ -114,11 +114,13 @@ status 为 supported/rejected/candidate；前提 status 为 satisfied/unsatisfie
 可信 host 按 **inbox → prepare_context → 实际审查/幂等动作 → ACK** 执行，任务验收仍独立。`prepare_context` 先调用 consume 校验，返回 JSON 字符串 payload（引用、结论、必要知识及项目记忆的完整前置依赖；大产物仅保留路径/hash），超预算报错，不截断证明或悄悄放宽预算。CLI：
 
 ```bash
-python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . context writer 1 --request REQUEST.json --max-chars 20000
-python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . context writer 1 --request REQUEST.json --encoding o200k_base --max-tokens 6000
+python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . --compact context writer 1 --request REQUEST.json --max-chars 20000
+python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . --compact context writer 1 --request REQUEST.json --encoding o200k_base --max-tokens 6000
 python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . impact
 python -m agent_runtime.communication --db RUN.sqlite --plan PLAN.json --root . usage
 ```
+
+将 CLI JSON 直接交给模型时用 `--compact` 保留字段和值、去掉排版空白；按完整 stdout 计量，不能只比较 payload。定向选择的元数据可能抵消省下的正文。
 
 API 可提供 `known_knowledge_refs`、`known_memory_ids`（CLI --known 指向可信宿主维护的 JSON）。这些只指该消费者**当前模型上下文中仍实际保有**的内容，不是曾经检索过或磁盘缓存过；换模型/上下文压缩丢失内容则清空。省略重复正文仍保留全部引用/前提/产物信息，并重新检查引用/记忆状态。生产者不得自报消费者缓存。首轮加载成本也计入比较。
 
