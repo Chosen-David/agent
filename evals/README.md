@@ -2,6 +2,8 @@
 
 这不是关键词出现次数测试。当前目录有14个角色任务，覆盖注册表中的14个插件skills，输入为本仓库合成材料；评判代码、数据、报告、图片、HTML与状态记录。外部模型调用不由本仓库脚本伪造。
 
+当前执行先遵守[单主 Agent / 多 Skill 契约](../workflows/single_main_workflow.md)。下文独立执行器与评审描述保留旧评测合同，不授权启动第二个 AI；同主复核仅为自检，缺少真实独立回执的既有门禁继续 pending/blocked。
+
 ## 可审计的宿主驱动 Pipeline
 
 新入口为 [scripts/agent_eval_pipeline.py](../scripts/agent_eval_pipeline.py)，接口与证据边界见 [运行说明](../docs/agent_eval_pipeline.md)。它冻结指定Git版本与评分合同，接收真实宿主启动/完成回执，收集产物哈希并导入独立评分；`report --require-complete` 才是完整性门禁。Python脚本不会伪装调用宿主Agent，也不自动发布。

@@ -3,8 +3,14 @@
 This small standard-library runner freezes the actual repository skills and records
 model-task execution and independent review. It **does not call a model**, install
 an external runtime, guarantee model behavior, authenticate receipts, or publish
-commits. The host invokes its real worker/subagent facility and supplies observable
-execution receipts. Python tests of this runner are not model-task results.
+commits. The host supplies observable receipts for actual authorized execution.
+Python tests of this runner are not model-task results.
+
+Current execution follows the [single-main workflow](../workflows/single_main_workflow.md).
+The worker/reviewer examples below retain the recording contract; they do not
+authorize another AI. A review Skill used by the same main agent is self-check.
+Without an authorized independent receipt, existing grading and material-review
+gates remain pending or blocked; do not change actors, approvals or budgets to pass them.
 
 ## Boundary and provenance
 
@@ -22,6 +28,12 @@ The full catalog is the fixed denominator; missing cases cannot disappear from
 reports. Baseline and candidate comparisons must use identical task/rubric/input
 hashes and model/tool/budget configuration. One successful run does not establish
 improved success rate.
+
+For this repository's upgrade claim, evaluate the complete single-main/Skill system.
+Report task-level gains and regressions alongside aggregates; stable model rankings
+or code-test counts do not establish production acceptance. Use the existing
+[memory evaluation rules](../workflows/project_memory_workflow.md) for matched controls
+and complete call/cost accounting.
 
 The controller must retain the manifest outside worker write access or verify it
 against an external trusted copy. Start records bind its bytes to each attempt.
