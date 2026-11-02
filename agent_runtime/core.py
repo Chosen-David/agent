@@ -412,9 +412,7 @@ class Engine:
                 raise ValueError('reconciliation not authorized or not verified')
             node.update(status='done', token=None, evidence=evidence, reason=reference, reason_kind='reconciled',
                         diagnosis_required=False, requires_reconciliation=False)
-            self._check_done(plan, state)
-            if node['status'] == 'failed':
-                node.update(status='blocked', reason_kind='terminal_evidence', requires_reconciliation=True)
+            self._recheck_done(plan, state)
             if node['status'] == 'done':
                 if isinstance(node.get('effect_observation'), dict):
                     node['effect_observation']['reconciled'] = True
@@ -507,7 +505,7 @@ class Engine:
                 self.store.log(db, run_id, now, 'terminal_check',
                                {'event_id': event_id, 'invalidated': sorted(invalidated)})
                 return state
-            self._check_done(plan, state)
+            self._recheck_done(plan, state)
             active = state.get('active_step')
             if active and state['tasks'][active]['status'] == 'done':
                 state.pop('active_step', None)
@@ -684,7 +682,7 @@ class Engine:
                     state['idle_ticks'] = state['idle_ticks'] + 1 if status == 'todo' else 0
                     delay = interval(plan, state, status == 'done')
                     node['next_at'] = self.clock() + delay
-                    self._check_done(plan, state)
+                    self._recheck_done(plan, state)
                     self._summary(plan, state)
                     state['next_check_seconds'] = interval(plan, state, status == 'done')
                     self.store.save(db, run_id, state)

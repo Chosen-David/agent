@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 110
+Version: 111
 
 Status: in-progress / acceptance pending
 Owner: main
@@ -15,6 +15,8 @@ Owner: main
 同批未结轮，单主串行一次一步。下一步核对既有导航的约束覆盖并对齐上下文收敛方案；旧独立合同/预算保持，真实模型质量、总成本和十篇验收未完成。仅供导航，不替代完整Plan、guide、依赖或受管账本。
 
 ### 执行计划
+
+Version111续接：审查active链领取前、结果落账后及reconcile中其余历史完成重核验。先冻结真实文件/SQLite的三入口失败：历史已done失效落failed无法后续显式恢复，包含依赖闭包及其他已完成节点；再只复用_recheck_done替代三处直接调用，移除被统一逻辑覆盖的单目标重复映射。初次complete证据拒绝仍failed、旧failed/取消不改；合法独立步骤可继续，未知pending所有权及原键/次数/等待预算保持。固定未授权/错误证据/错序拒绝、恢复证据不自动授信、显式reconcile不重放和实际CLI/进程恢复；先观察当前作业结论再推进。前次ABB原生35x2及最终10job成功已回读，首次Win3.10约10分钟取消/本机三超时原件继续保留，不能以重跑掩盖稳定性缺口。新正文与实际采用范围另记，中间件`/tmp/agent-system99/active-revalidation-1100/`。仅同主自检，十篇/旧独立合同/真实模型质量费用及架构对齐继续open。
 
 Version110续接：固定managed supervisor历史完成证据在启动回读/最终交付失效后落failed、恢复证据仍不能reconcile的入口差异。先保留实际SQLite/文件/启动回读反例，再复用核心terminal tick已有的done→blocked/terminal_evidence/requires_reconciliation语义供宿主三处重核验；只处理本次检查前已done且本次失效的节点/依赖闭包，明确failed及旧failed账本不自动改写，不新建owner/预算/回执。拒绝未授权/错误证据、恢复后显式reconcile且动作不重放、取消及正常完成对照必须通过；严格原生worker在当前环境不足时保持缺口并核对Ubuntu原生CI，不绕过/proc守卫。同主自检非独审；已有CIR恢复/损害对照用于验收，新检索RiseHarness2610.27435v1正文阅读尚未完成，不计全文。中间件`/tmp/agent-system99/managed-terminal-1000/`，十篇/真实模型质量费用/旧独立合同及架构对齐继续open。
 
@@ -1157,3 +1159,8 @@ Version109后续语义审查（同批未结轮）：301887原生CI41367165582首
 Version110续接（未结轮）：核对d41a3ceb最新main/锁/干净状态与原未决后，真实启动回读确认产物、报告及依赖失效三组功能失败：历史done落failed，恢复原证据仍不能合法reconcile。现将core终态tick已有映射提取为_recheck_done，复用到managed启动及两处最终交付重核验；只把本次从done失效的节点/依赖闭包记blocked/terminal_evidence/requires_reconciliation。旧failed/明确失败、取消、权限、旧预算与证据不改。修后56定向通过；6组真实文件/SQLite、18个新Python进程对照中修前3组不可恢复，修后均须显式核对后完成，拒绝未授权/错误证据、依赖顺序和不重放保持。tmux仅模拟传输，不冒充原生worker或独审。
 
 全库2117/553.782秒首次0功能失败、3子进程超时、51既有skip逐项同前；保留首次失败日志，不写成全绿。原源码/3秒及10秒超时不变，仅三项复测6.599秒通过；超时根因未确证。Reader3、引用同步/空白通过，严格原生worker35项及新head CI待回读。新精读RiseHarness arXiv2610.27435v1全文38页/§§1–5、附录A–E/全部表公式和图注文本；保留行为检查not_run、目标集选OO与最终IR转移不同、累计机制非因果消融、历史基线漂移及全成本缺口，不复制fail-open或第二agent。必要证据`/tmp/agent-system99/managed-terminal-1000/evidence.json` SHA256 `b9ede33c7a7ec22d9510e61103ce5c266460f8f19f2283d169918ed10d53bcca`，新发布/CI另存同目录；夹具/进程及可再生材料已清理，无results新增。下一步审查active非终态链中其余_check_done历史失效路径；普通首次验收拒绝不自动改成未知作用。只有主agent自检，新正文1不冒称十篇/模型质量费用提升，旧独立合同及系统验收继续open。
+
+
+Version111续接（未结轮）：三个核心调用点统一复用_recheck_done，删除重复的单目标映射。active链领取前、结果落账后及reconcile期间，失效的历史done/已完成依赖闭包可显式恢复；普通首次拒绝/旧failed/取消、权限、键与预算保持。修前9方法4功能失败/0错误；修后70定向、82报告集成通过。18次新进程CLI/API对照确认恢复原字节不自动授信，合法reconcile后才派发消费者，无关步骤可继续，源步骤不重放且次数/证据不变。底层核验、重核验、权限、作用准备、审核与汇总AST不变。
+
+最终全库2120/403.020秒通过，51既有skip逐项同前；Reader3、同步/空白通过。首次定向/全库旧状态预期失败保留，报告用例补齐原字节恢复→仍blocked→合法reconcile→依赖继续，不删原不派发/次数断言。新精读ATR arXiv2609.08015v1全文6页及官方固定源码的相关定义，章节/方法/实验分母/局限与采用边界见reading.json；不部署新索引或转移微基准收益。必要证据`/tmp/agent-system99/active-revalidation-1100/evidence.json` SHA256 `9977659bb0e54d9933402fb2de017e2e9e7acf43b115f011c67b897673b68221`；夹具/进程及可再生材料已清理，无results新增。新head发布/CI另存同目录。下一步优先CI稳定性诊断（ABB最终10成功/原生35x2已回读，首次取消与本机超时仍保留），再推进实际宿主、通信/记忆/上下文和质量验收。仅同主自检，新正文1；十篇/系统验收、旧独立合同及架构对齐继续open。

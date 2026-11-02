@@ -168,5 +168,121 @@ class TerminalRevalidation(unittest.TestCase):
         self.assertEqual(current['tasks']['a']['attempts'], 1)
 
 
+    def artifact_task(self, name, deps=()):
+        root = Path(self.tmp.name)
+        (root / name).write_bytes(b'ok')
+        value = task(name, deps, action='verify_artifacts')
+        value['done_when'] = {'artifacts': [{'path': name, 'sha256': hashlib.sha256(b'ok').hexdigest()}]}
+        return value
+
+    def test_active_recheck_preserves_recovery_and_independent_progress(self):
+        root = Path(self.tmp.name)
+        self.store.create(plan(self.artifact_task('source'), task('consumer', ['source']), task('other')))
+        handler = SyntheticHandler()
+        def engine(authorized=True):
+            return Engine(Store(self.db_path), {'verify_artifacts': ArtifactHandler(root), 'synthetic': handler},
+                          authorize=lambda *_: authorized, clock=self.clock, allow_legacy=True)
+        before = engine().tick('test-run', 'source')['tasks']['source']
+        (root / 'source').write_bytes(b'changed')
+        state = engine().tick('test-run', 'next')
+        self.assertEqual(state['tasks']['source']['status'], 'blocked')
+        self.assertTrue(state['tasks']['source']['requires_reconciliation'])
+        self.assertEqual(state['tasks']['other']['status'], 'done')
+        self.assertEqual(state['tasks']['consumer']['attempts'], 0)
+        (root / 'source').write_bytes(b'ok')
+        state = engine().tick('test-run', 'restored')
+        self.assertEqual(state['tasks']['source']['status'], 'blocked')
+        for authorized, evidence in ((False, before['evidence']), (True, ['wrong'])):
+            with self.assertRaises(ValueError):
+                engine(authorized).reconcile('test-run', 'source', evidence, 'host check')
+        engine().reconcile('test-run', 'source', before['evidence'], 'host checked restored bytes')
+        state = engine().tick('test-run', 'consumer')
+        self.assertEqual(state['status'], 'done')
+        for key in ('attempts', 'dispatches', 'evidence'):
+            self.assertEqual(state['tasks']['source'][key], before[key])
+        self.assertEqual([key for key, _ in handler.calls], ['other', 'consumer'])
+
+    def test_post_action_recheck_retains_invalidated_history_and_completed_child(self):
+        root = Path(self.tmp.name)
+        for phase in ('run', 'verify'):
+            with self.subTest(phase=phase):
+                store = Store(root / (phase + '.sqlite'))
+                p = plan(self.artifact_task('source'), task('child', ['source']), task('other'))
+                p['run_id'] = phase
+                store.create(p)
+                class ChangedHistory(SyntheticHandler):
+                    changed = False
+                    def run(self, task, context):
+                        result = super().run(task, context)
+                        if task['task_id'] == 'child' and phase == 'run':
+                            (root / 'source').write_bytes(b'changed')
+                        return result
+                    def verify(self, task, evidence):
+                        if task['task_id'] == 'child' and phase == 'verify' and not self.changed:
+                            self.changed = True
+                            (root / 'source').write_bytes(b'changed')
+                        return super().verify(task, evidence)
+                handler = ChangedHistory()
+                def engine():
+                    return Engine(Store(store.path), {'verify_artifacts': ArtifactHandler(root), 'synthetic': handler},
+                                  authorize=lambda *_: True, clock=self.clock, allow_legacy=True)
+                source = engine().tick(phase, 'source')['tasks']['source']
+                state = engine().tick(phase, 'child')
+                history = copy.deepcopy(state['tasks'])
+                for key in ('source', 'child'):
+                    self.assertEqual(state['tasks'][key]['status'], 'blocked')
+                    self.assertTrue(state['tasks'][key]['requires_reconciliation'])
+                self.assertEqual(engine().tick(phase, 'child'), state)
+                (root / 'source').write_bytes(b'ok')
+                with self.assertRaises(ValueError):
+                    engine().reconcile(phase, 'child', history['child']['evidence'], 'out of order')
+                engine().reconcile(phase, 'source', source['evidence'], 'host checked source')
+                engine().reconcile(phase, 'child', history['child']['evidence'], 'host checked child basis')
+                state = engine().tick(phase, 'other')
+                self.assertEqual(state['status'], 'done')
+                self.assertEqual([key for key, _ in handler.calls], ['child', 'other'])
+                for key in ('source', 'child'):
+                    for field in ('attempts', 'dispatches', 'evidence'):
+                        self.assertEqual(state['tasks'][key][field], history[key][field])
+
+    def test_reconcile_rechecks_other_completed_nodes_without_stranding_them(self):
+        root = Path(self.tmp.name)
+        self.store.create(plan(self.artifact_task('a'), self.artifact_task('b')))
+        class ExternalChange(ArtifactHandler):
+            armed = False
+            def verify(self, task, evidence):
+                if self.armed and task['task_id'] == 'a':
+                    self.armed = False
+                    # A test-owned external writer changes another artifact at this boundary.
+                    child = subprocess.run([sys.executable, '-B', '-c',
+                        'from pathlib import Path; import sys; Path(sys.argv[1]).write_bytes(b"changed")',
+                        str(root / 'b')], capture_output=True, timeout=10)
+                    if child.returncode:
+                        raise AssertionError(child.stderr)
+                return super().verify(task, evidence)
+        handler = ExternalChange(root)
+        def engine():
+            return Engine(Store(self.db_path), {'verify_artifacts': handler}, authorize=lambda *_: True,
+                          clock=self.clock, allow_legacy=True)
+        engine().tick('test-run', 'a')
+        state = engine().tick('test-run', 'b')
+        before = copy.deepcopy(state['tasks'])
+        (root / 'a').write_bytes(b'changed')
+        engine().tick('test-run', 'invalidate-a')
+        (root / 'a').write_bytes(b'ok')
+        handler.armed = True
+        state = engine().reconcile('test-run', 'a', before['a']['evidence'], 'checked restored a')
+        self.assertEqual(state['tasks']['a']['status'], 'done')
+        self.assertEqual(state['tasks']['b']['status'], 'blocked')
+        self.assertTrue(state['tasks']['b']['requires_reconciliation'])
+        (root / 'b').write_bytes(b'ok')
+        self.assertEqual(engine().tick('test-run', 'restored-b')['status'], 'blocked')
+        state = engine().reconcile('test-run', 'b', before['b']['evidence'], 'checked restored b')
+        self.assertEqual(state['status'], 'done')
+        for key in ('a', 'b'):
+            for field in ('attempts', 'dispatches', 'evidence'):
+                self.assertEqual(state['tasks'][key][field], before[key][field])
+
+
 if __name__ == '__main__':
     unittest.main()

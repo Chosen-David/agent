@@ -150,13 +150,24 @@ class TaskManifestTests(unittest.TestCase):
 
     def test_mutated_report_invalidates_done_and_dependencies(self):
         self.proof('T1')
-        self.engine.tick('test', 'first')
+        before = self.engine.tick('test', 'first')['tasks']['T1']
         path = self.root / self.plan['tasks'][0]['report_path']
+        original = path.read_bytes()
         value = json.loads(path.read_text()); value['summary'] = 'changed'
         atomic_json(path, value)
         state = self.engine.tick('test', 'second')
-        self.assertEqual(state['tasks']['T1']['status'], 'failed')
+        self.assertEqual(state['tasks']['T1']['status'], 'blocked')
+        self.assertTrue(state['tasks']['T1']['requires_reconciliation'])
         self.assertEqual(state['tasks']['T2']['status'], 'blocked')
+        self.assertEqual(state['tasks']['T2']['attempts'], 0)
+        path.write_bytes(original)
+        self.assertEqual(self.engine.tick('test', 'restored')['tasks']['T1']['status'], 'blocked')
+        self.engine.reconcile('test', 'T1', before['evidence'], 'host checked original report')
+        self.proof('T2')
+        state = self.engine.tick('test', 'finish')
+        self.assertEqual(state['status'], 'done')
+        for field in ('attempts', 'dispatches', 'evidence'):
+            self.assertEqual(state['tasks']['T1'][field], before[field])
 
     def test_structural_report_does_not_replace_artifact_verification(self):
         (self.root / 'T1.txt').write_bytes(b'wrong bytes')
