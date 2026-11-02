@@ -616,7 +616,9 @@ class Engine:
                             if outcome.status == 'complete' and not (outcome.evidence and handler.verify(task, outcome.evidence)):
                                 outcome = Outcome('failed', 'completion evidence rejected by verifier')
                             if outcome.status not in ('complete', 'pending', 'retry', 'blocked', 'failed'):
-                                outcome = Outcome('failed', 'invalid adapter outcome')
+                                # Invalid responses provide no trustworthy effect observation.
+                                outcome = None
+                                raise ValueError('invalid adapter outcome')
             except PlanReviewError as exc:
                 review_blocked = True
                 if executed:

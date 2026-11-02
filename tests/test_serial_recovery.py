@@ -77,7 +77,7 @@ class SerialRecoveryTests(unittest.TestCase):
         self.assertEqual(self.calls, ['B'])
 
     def test_nonidempotent_exception_keeps_unknown_effect_across_restart(self):
-        for phase in ('run', 'verify', 'invalid_outcome'):
+        for phase in ('run', 'verify', 'invalid_outcome', 'invalid_status', 'nontext_status', 'mutated_status'):
             with self.subTest(phase=phase):
                 store = Store(Path(self.store.path).with_name(phase + '.sqlite'))
                 store.create(plan())
@@ -96,10 +96,17 @@ class SerialRecoveryTests(unittest.TestCase):
                                 raise RuntimeError('effect happened; response lost')
                             if phase == 'invalid_outcome':
                                 return None
-                        return Outcome('complete', evidence=['verified'])
+                            if phase in ('invalid_status', 'nontext_status'):
+                                return Outcome('pendingg' if phase == 'invalid_status' else [],
+                                               'untrusted terminal status', ['unverified'])
+                        self.response = Outcome('complete', evidence=['verified'])
+                        return self.response
 
                     def verify(self, task, evidence):
                         if task['task_id'] == 'A':
+                            if phase == 'mutated_status' and not self.raised:
+                                self.raised = True
+                                self.response.status = 'pendingg'
                             if phase == 'verify' and not self.raised:
                                 self.raised = True
                                 raise OSError('verification unavailable')
@@ -132,6 +139,51 @@ class SerialRecoveryTests(unittest.TestCase):
                 self.assertEqual(engine().tick('serial', 'settled')['status'], 'done')
                 self.assertEqual(calls, ['A', 'B'])
                 self.assertEqual(effect.read_text(), 'external effect')
+
+    def test_idempotent_invalid_status_retries_original_step_and_key(self):
+        calls = []
+        keys = []
+
+        class Handler:
+            idempotent = True
+            def run(self, task, context):
+                calls.append(task['task_id']); keys.append(context.idempotency_key)
+                return (Outcome('pendingg') if len(calls) == 1 else
+                        Outcome('complete', evidence=['verified']))
+            def verify(self, task, evidence):
+                return evidence == ['verified']
+
+        def engine():
+            return Engine(Store(self.store.path), {'step': Handler()}, authorize=lambda *_: True,
+                          allow_legacy=True, clock=lambda: self.now)
+        first = engine().tick('serial', 'invalid')
+        self.assertEqual(first['tasks']['A']['status'], 'todo')
+        self.assertEqual(first.get('active_step'), 'A')
+        self.now = 10
+        engine().tick('serial', 'retry')
+        engine().tick('serial', 'next')
+        self.assertEqual(calls, ['A', 'A', 'B'])
+        self.assertEqual(keys[0], keys[1])
+        self.assertEqual(engine().store.snapshot('serial')['state']['tasks']['A']['attempts'], 2)
+
+    def test_explicit_failed_outcome_remains_terminal_for_independent_step(self):
+        calls = []
+
+        class Handler:
+            idempotent = False
+            def run(self, task, context):
+                calls.append(task['task_id'])
+                return (Outcome('failed', 'host observed definite failure') if task['task_id'] == 'A'
+                        else Outcome('complete', evidence=['verified']))
+            def verify(self, task, evidence):
+                return evidence == ['verified']
+        for event in ('failed', 'independent'):
+            Engine(Store(self.store.path), {'step': Handler()}, authorize=lambda *_: True,
+                   allow_legacy=True, clock=lambda: self.now).tick('serial', event)
+        self.assertEqual(calls, ['A', 'B'])
+        state = self.store.snapshot('serial')['state']
+        self.assertEqual(state['tasks']['A']['status'], 'failed')
+        self.assertNotIn('effect_observation', state['tasks']['A'])
 
     def test_definite_blocked_result_allows_unrelated_next_step(self):
         calls = []
