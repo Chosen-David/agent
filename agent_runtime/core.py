@@ -382,6 +382,18 @@ class Engine:
                     node.update(status='failed', reason='completed result depends on invalid evidence')
                     changed = True
 
+    def _recheck_done(self, plan, state):
+        """Invalidate historical acceptance without losing explicit reconciliation."""
+        completed = {key for key, node in state['tasks'].items() if node['status'] == 'done'}
+        self._check_done(plan, state)
+        invalidated = []
+        for key in completed:
+            node = state['tasks'][key]
+            if node['status'] == 'failed':
+                node.update(status='blocked', reason_kind='terminal_evidence', requires_reconciliation=True)
+                invalidated.append(key)
+        return invalidated
+
     def reconcile(self, run_id, task_id, evidence, reference):
         """Explicit host reconciliation of an ambiguous effect; no blind replay."""
         if not reference or not evidence:
@@ -487,14 +499,7 @@ class Engine:
                 return state
             db.execute('INSERT INTO events VALUES (?,?,?)', (run_id, event_id, now))
             if state['status'] == 'done':
-                completed = {key for key, node in state['tasks'].items() if node['status'] == 'done'}
-                self._check_done(plan, state)
-                invalidated = []
-                for key in completed:
-                    node = state['tasks'][key]
-                    if node['status'] == 'failed':
-                        node.update(status='blocked', reason_kind='terminal_evidence', requires_reconciliation=True)
-                        invalidated.append(key)
+                invalidated = self._recheck_done(plan, state)
                 # A new observation can invalidate historical completion, but
                 # cannot replay effects or silently restore their acceptance.
                 self._summary(plan, state)

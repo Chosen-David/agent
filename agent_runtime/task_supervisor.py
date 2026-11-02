@@ -253,7 +253,7 @@ def worker(config):
                     # Fresh artifact verification after restart and before final delivery.
                     with store.transaction() as db:
                         plan, state = store.load(db, config['run_id'])
-                        engine._check_done(plan, state)
+                        engine._recheck_done(plan, state)
                         engine._summary(plan, state)
                         store.save(db, config['run_id'], state)
                     report = publish(config, store, result_verifier=result_verifier, plan_review_verifier=plan_review_verifier)
@@ -263,7 +263,7 @@ def worker(config):
                         # across the monitor-stop boundary.
                         with store.transaction() as db:
                             plan, state = store.load(db, config['run_id'])
-                            engine._check_done(plan, state)
+                            engine._recheck_done(plan, state)
                             engine._summary(plan, state)
                             store.save(db, config['run_id'], state)
                         monitor = store.snapshot(config['run_id'])['monitor']
@@ -370,7 +370,7 @@ def _terminal_receipt(config, store, engine):
     with store.transaction() as db:
         plan, state = store.load(db, config['run_id'])
         if state['status'] != 'cancelled':
-            engine._check_done(plan, state)
+            engine._recheck_done(plan, state)
             engine._summary(plan, state)
             store.save(db, config['run_id'], state)
     report = publish(config, store, result_verifier=engine.result_verifier,

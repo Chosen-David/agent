@@ -5,7 +5,7 @@ Date: 2026-10-20
 
 ## Plan
 
-Version: 109
+Version: 110
 
 Status: in-progress / acceptance pending
 Owner: main
@@ -15,6 +15,8 @@ Owner: main
 同批未结轮，单主串行一次一步。下一步核对既有导航的约束覆盖并对齐上下文收敛方案；旧独立合同/预算保持，真实模型质量、总成本和十篇验收未完成。仅供导航，不替代完整Plan、guide、依赖或受管账本。
 
 ### 执行计划
+
+Version110续接：固定managed supervisor历史完成证据在启动回读/最终交付失效后落failed、恢复证据仍不能reconcile的入口差异。先保留实际SQLite/文件/启动回读反例，再复用核心terminal tick已有的done→blocked/terminal_evidence/requires_reconciliation语义供宿主三处重核验；只处理本次检查前已done且本次失效的节点/依赖闭包，明确failed及旧failed账本不自动改写，不新建owner/预算/回执。拒绝未授权/错误证据、恢复后显式reconcile且动作不重放、取消及正常完成对照必须通过；严格原生worker在当前环境不足时保持缺口并核对Ubuntu原生CI，不绕过/proc守卫。同主自检非独审；已有CIR恢复/损害对照用于验收，新检索RiseHarness2610.27435v1正文阅读尚未完成，不计全文。中间件`/tmp/agent-system99/managed-terminal-1000/`，十篇/真实模型质量费用/旧独立合同及架构对齐继续open。
 
 Version109续接：先固定非幂等动作返回未知状态但产生实际外部作业的修前反例，验证重启/重复事件/独立下一任务不得越过，合法failed及幂等重试保持兼容。若复现，仅在现有Outcome接纳边界将无效返回作为未知作用异常、保留串行所有权并要求原授权/真实证据reconcile；不新建调度器/任务表、不扩大预算或降低验收。实际本机进程观察、定向/全库/CI回读后才发布；同主自检不冒充独审。中间件`/tmp/agent-system99/invalid-outcome-0804/`。十篇、真实模型质量/总成本、旧独立合同和架构收敛仍未完成。
 
@@ -1150,3 +1152,8 @@ Version109续接（未结轮）：非幂等动作已产生真实作业却返回�
 Version109后续语义审查（同批未结轮）：301887原生CI41367165582首次Win3.10取消，保留原日志后仅重跑该job一次，最终10/10成功；取消原因未确证，不报性能改善。证据见`/tmp/agent-system99/invalid-outcome-0804/ci.json`。本次先fetch/锁/干净状态与未决核对；实际CLI/SQLite及已退出同步子进程四组对照均通过：只读哈希错误按原预算失败、缺产物跨进程保留A直至真实产物到达、已结束动作的空/拒绝证据正常失败且独立B可继续。四项相关回归通过；首轮错用测试类名的2个加载错误另保留，不计产品失败。未确认支持契约内新缺陷，拒绝把全部合法失败一律改成未知作用围栏；没有生产改动或新全库/性能主张。真实异步宿主缺少终态回执的情况仍未验证，不以伪造complete返回推导核心缺陷。
 
 新精读arXiv:2610.00372v1全文15页/§§1–6、附录A/B及全部表、公式、图注文本；采用同条件恢复/不恢复及健康流程损害对照，不部署CIR。记录70.33→73.33为3个百分点、相对两异常基线差异区间跨零、65/67机制分母及单模型/受控观测局限。必要证据入口`/tmp/agent-system99/terminal-semantics-0900/evidence.json` SHA256 `27cdca4efe9bb1fb5f42c56f324a87a35dbdc86dbc75220fe06193a1f48cc9b3`；自有夹具/进程已回收，中间件不入results。下一步仍以真实宿主完成/回执契约核对为门槛；未知作用保护、旧预算/独立合同和上下文迁移待对齐不变。仅本主自检；新正文1不冒称十篇，真实模型质量/整体费用与系统验收继续pending。
+
+
+Version110续接（未结轮）：核对d41a3ceb最新main/锁/干净状态与原未决后，真实启动回读确认产物、报告及依赖失效三组功能失败：历史done落failed，恢复原证据仍不能合法reconcile。现将core终态tick已有映射提取为_recheck_done，复用到managed启动及两处最终交付重核验；只把本次从done失效的节点/依赖闭包记blocked/terminal_evidence/requires_reconciliation。旧failed/明确失败、取消、权限、旧预算与证据不改。修后56定向通过；6组真实文件/SQLite、18个新Python进程对照中修前3组不可恢复，修后均须显式核对后完成，拒绝未授权/错误证据、依赖顺序和不重放保持。tmux仅模拟传输，不冒充原生worker或独审。
+
+全库2117/553.782秒首次0功能失败、3子进程超时、51既有skip逐项同前；保留首次失败日志，不写成全绿。原源码/3秒及10秒超时不变，仅三项复测6.599秒通过；超时根因未确证。Reader3、引用同步/空白通过，严格原生worker35项及新head CI待回读。新精读RiseHarness arXiv2610.27435v1全文38页/§§1–5、附录A–E/全部表公式和图注文本；保留行为检查not_run、目标集选OO与最终IR转移不同、累计机制非因果消融、历史基线漂移及全成本缺口，不复制fail-open或第二agent。必要证据`/tmp/agent-system99/managed-terminal-1000/evidence.json` SHA256 `b9ede33c7a7ec22d9510e61103ce5c266460f8f19f2283d169918ed10d53bcca`，新发布/CI另存同目录；夹具/进程及可再生材料已清理，无results新增。下一步审查active非终态链中其余_check_done历史失效路径；普通首次验收拒绝不自动改成未知作用。只有主agent自检，新正文1不冒称十篇/模型质量费用提升，旧独立合同及系统验收继续open。

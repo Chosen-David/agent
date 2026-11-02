@@ -103,16 +103,18 @@ class WorkerFinalReportTests(unittest.TestCase):
                 before = value.store.snapshot(value.plan['run_id'])['state']['tasks']['T1']
                 report = self.assert_recovery(value, self.run_worker(value, change, recover=True), marker)
                 node = report['requirements'][0]['nodes'][0]
-                self.assertEqual(node['status'], 'failed')
+                self.assertEqual(node['status'], 'blocked')
                 self.assertTrue(node['reason'])
                 self.assert_terminal_evidence_preserved(value, {'T1': before})
 
     def assert_terminal_evidence_preserved(self, value, before):
         state = value.store.snapshot(value.plan['run_id'])['state']
-        self.assertEqual(state['status'], 'failed')
+        self.assertEqual(state['status'], 'blocked')
         for task_id, old in before.items():
             node = state['tasks'][task_id]
-            self.assertEqual(node['status'], 'failed')
+            self.assertEqual(node['status'], 'blocked')
+            self.assertEqual(node['reason_kind'], 'terminal_evidence')
+            self.assertTrue(node['requires_reconciliation'])
             for field in ('evidence', 'attempts', 'dispatches'):
                 self.assertEqual(node.get(field), old.get(field))
 
