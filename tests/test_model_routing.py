@@ -9,7 +9,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from agent_runtime.model_routing import EMPTY_INVENTORY, dispatch, resolve, validate_inventory
+from agent_runtime.model_routing import EMPTY_INVENTORY, dispatch, resolve, routing_report, validate_inventory
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('routing_setup', ROOT / 'setup.py')
@@ -68,6 +68,34 @@ class RoutingTests(unittest.TestCase):
             dispatch(POLICY, 'research-write', inventory('opus', 'adapter'), {},
                      native=lambda r: self.fail('fallback after dispatch'), adapter=fail)
         self.assertEqual(len(calls), 1)
+
+    def test_report_matches_individual_routes(self):
+        for data in (None, EMPTY_INVENTORY, inventory(), inventory(available=False),
+                     inventory('kimi', 'adapter'), inventory('kimi', capabilities=('tools',))):
+            with self.subTest(inventory=data):
+                self.assertEqual(routing_report(POLICY, data), {
+                    'schema_version': 1, 'live_model_tested': False,
+                    'routes': {role: resolve(POLICY, role, data) for role in POLICY['roles']}})
+        self.assertEqual(routing_report({**POLICY, 'roles': {}}, {'invalid': True})['routes'], {})
+
+    def test_report_revalidates_mutated_inputs_and_does_not_share_results(self):
+        policy = json.loads(json.dumps(POLICY))
+        data = inventory('kimi')
+        original = routing_report(policy, data)
+        self.assertFalse(original['routes']['research-read-pdf']['fallback'])
+        data['models'][0]['capabilities'].remove('vision')
+        self.assertTrue(routing_report(policy, data)['routes']['research-read-pdf']['fallback'])
+        self.assertFalse(original['routes']['research-read-pdf']['fallback'])
+        data['models'][0]['capabilities'].append('vision')
+        original['routes']['research-read-pdf']['requires'].clear()
+        self.assertIn('vision', routing_report(policy, data)['routes']['research-read-pdf']['requires'])
+        data['models'][0]['api_key'] = 'SECRET'
+        with self.assertRaises(ValueError):
+            routing_report(policy, data)
+        del data['models'][0]['api_key']
+        policy['roles']['research-read-pdf']['candidates'] = ['unknown']
+        with self.assertRaises(ValueError):
+            routing_report(policy, data)
 
 
 class InstallationRoutingTests(unittest.TestCase):

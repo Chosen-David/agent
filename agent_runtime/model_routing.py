@@ -70,6 +70,10 @@ def resolve(policy, role, inventory=None, *, adapter_available=False, requires=(
     inventory = validate_inventory(EMPTY_INVENTORY if inventory is None else inventory)
     requirement = sorted(set(policy['roles'][role]['requires']) | set(requires))
     entries = {(m['provider'], m['model']): m for m in inventory['models']}
+    return _resolve(policy, role, entries, requirement, adapter_available)
+
+
+def _resolve(policy, role, entries, requirement, adapter_available=False):
     skipped = []
     for candidate in policy['roles'][role]['candidates']:
         model = policy['models'][candidate]
@@ -93,8 +97,15 @@ def resolve(policy, role, inventory=None, *, adapter_available=False, requires=(
 
 
 def routing_report(policy, inventory=None):
+    roles = policy['roles']
+    # Reuse validation only within this report; later calls must see corrections.
+    if roles:
+        validate_policy(policy)
+        inventory = validate_inventory(EMPTY_INVENTORY if inventory is None else inventory)
+        entries = {(m['provider'], m['model']): m for m in inventory['models']}
     return {'schema_version': 1, 'live_model_tested': False,
-            'routes': {role: resolve(policy, role, inventory) for role in policy['roles']}}
+            'routes': {role: _resolve(policy, role, entries, sorted(set(roles[role]['requires'])))
+                       for role in roles}}
 
 
 def dispatch(policy, role, inventory, request, *, native, adapter=None, requires=()):
