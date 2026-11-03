@@ -514,7 +514,7 @@ def report(run):
                 'correct_to_wrong': 0, 'wrong_to_correct': 0, 'complete': False,
                 'integrity_errors': [str(exc)], 'cases': []}
     criteria = read(run / 'rubric.json')['criteria']
-    results = []
+    results, invalid_history = [], set()
     for cid in manifest['expected_cases']:
         attempts = []
         try:
@@ -525,12 +525,14 @@ def report(run):
         for directory in directories:
             result = {'attempt': directory.name, 'status': 'not_collected', 'passed': False,
                       'semantic_verdict': None}
+            collected = False
             try:
                 start = validate_start(run, manifest, directory, cid)
                 collection = validate_collection(read(directory / 'collection.json'), start, cid)
                 result['status'] = collection['status']
                 if hashes(directory / 'outputs') != collection['output_hashes']:
                     raise ValueError('outputs changed after collection')
+                collected = True
                 if collection['status'] == 'produced':
                     result['status'] = 'ungraded'
                     grade = read(directory / 'grade.json')
@@ -542,14 +544,18 @@ def report(run):
                         result['semantic_verdict'] = 'pass' if result['passed'] else 'fail'
             except failures as exc:
                 result['reason'] = str(exc)
+                if not collected:
+                    invalid_history.add(cid)
             attempts.append(result)
-        results.append({'case_id': cid, 'attempts': attempts, 'passed': bool(attempts) and attempts[-1]['passed'],
+        results.append({'case_id': cid, 'attempts': attempts,
+                        'passed': cid not in invalid_history and bool(attempts) and attempts[-1]['passed'],
                         'first_pass': bool(attempts) and attempts[0]['passed']})
     passed = sum(r['passed'] for r in results)
     # Compare the actual first and final attempts, never the best historical
-    # grade. Missing/blocked/ungradable work is not a semantic wrong answer.
+    # grade. Invalid execution history cannot support a quality transition;
+    # missing/blocked/ungradable work is not a semantic wrong answer.
     transitions = [(r['attempts'][0]['semantic_verdict'], r['attempts'][-1]['semantic_verdict'])
-                   for r in results if len(r['attempts']) >= 2] if not errors else []
+                   for r in results if r['case_id'] not in invalid_history and len(r['attempts']) >= 2] if not errors else []
     return {'revision': manifest['revision'], 'expected': len(results), 'passed': passed,
         'first_pass': sum(r['first_pass'] for r in results),
         'correct_to_wrong': transitions.count(('pass', 'fail')),

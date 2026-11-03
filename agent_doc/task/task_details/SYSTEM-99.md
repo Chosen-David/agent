@@ -1218,3 +1218,13 @@ Version113记忆/恢复研究续接（未结轮、待并入后续实质变更）
 
 
 Version113评测重试恢复续接（未结轮）：核对ffb7d63c最新main、唯一TASK和自有锁后，复现record_start只凭collection.json存在即允许重试的缺口：错case完成回执、内外status冲突、收集后输出变化、开始actor绑定损坏四项修前均未拒绝；合法blocked回执负控通过。现复用既有validate_start/validate_collection与输出哈希校验，在创建下一attempt前重验全部历史attempt，不要求先有grade、不重置预算或改变独立门禁；补旧attempt损坏及blocked无grade正控。78项pipeline/material-gate/development-boundary回归零跳过通过；一次误写不存在测试模块产生ImportError的原始日志保留，修正真实模块名后通过，不报全库或模型测试。修前失败、准确命令、源码/日志哈希、论文关联及限界统一在`/tmp/agent-system99/eval-retry-0900/evidence.json` SHA256 `353cc8ae3d50d31931bd6400bbb6819893affd0f0b44ab18a7eb4cb7a6970ea7`；本次仅复访Trial by Trace附录完整性原则，新增正文篇数0，不把现有校验的应用称新算法或真实任务质量/总费用收益。四文件阶段性提交含本主此前未提交的阅读检查点；旧独立合同/预算、真实宿主端到端质量与完整费用、十篇验收和架构对齐继续pending，本主自检非独审；发布/CI另回读，不计整轮完成。
+
+
+Version113研究/发布续接（未结轮、待并入后续实质变更）：最新main=169be4ea、干净状态和自有锁核对后，回读原生CI41557789032首次10/10作业成功；Ubuntu3.10/3.12两份contracts原始日志各119+54项、173开始/173结束配对，新增六项重试控制已执行；仅这两份raw逐项核对，不冒称全部十份原始日志或真实模型质量。发布原pending记录保留，补充回读`/tmp/agent-system99/eval-retry-0900/ci-final.json` SHA256 `e3dba34a5be300885862902cdbef9d16665c3732d849255fbee4e871db486f2e`。
+
+新精读KEEPER arXiv2610.41482v1全部13页/811行（§§1–5、Limitations、参考及A.1–A.3、6公式/5表，实际渲染3/8页图1–3）：保留教师强制表示不等于生成事实、共享LoRA不能归因记忆、六条件非全因子、单seed无区间、RP后续RL在ALFWorld退化、PP跨骨干正负不同、US近常量投影与扰动未判真、唯一事后BC轨迹不能估计错误率或方法纠错效果；遗漏不等于更正。方法/实验/消融、源码限界和本库关联统一`/tmp/agent-system99/keeper-1000/reading.json` SHA256 `e73e06be270cdf00e21cd51025a7ff7858cfb78766efe934264491e342db932f`。三方索引错误ID经官方原页纠正；已读Stratum排除，不重复计篇。仅定向核对MemoryLedger修订/祖先拒绝、basis_context已知ID与完整闭包及现有测试源码，未确认新缺陷、未运行新测试/模型，不添加训练目标、重复规则、记忆池或架构迁移；未建立作者关联KEEPER仓库，不声称源码复现。本次新增全文1，十篇/整轮验收、真实宿主质量/全费用、旧独立合同/预算和架构对齐继续open；同主自检非独审，中间件只在指定/tmp，研究检查点随下述报告修复阶段提交。
+
+
+Version113报告恢复续接（未结轮）：核对169be4ea最新main、自有锁与原未提交检查点，定向查上下文/预算入口未确认新缺陷；继续审查评测恢复发现report虽保留历史错误reason，仍可因最后一次通过而报complete=true，且损坏中间回执仍能计入wrong_to_correct。固定三项历史完成绑定损坏子场景及一项中间开始回执损坏场景，修前四失败；合法未评分历史正控通过。现只在聚合case通过与质量转移时排除未通过原有开始/收集/输出哈希校验的历史，保留单次结果、first_pass及合法未评分重试，不新增schema/改预算/绕过独立grade。81项pipeline/material-gate/development-boundary回归零跳过通过；修前原始失败、命令/源码/日志哈希和限界统一`/tmp/agent-system99/evomcp-1100/evidence.json` SHA256 `4fc6a3f897f9921aebd456173d4b1ca5b72fef10485a263bd0e7171dae5f3fb3`，本主自检非独审。
+
+新精读EvoMCP arXiv2610.41479v1全部29页/1513行（§§1–6、参考及A–E、3公式/9表/算法1，图文/提示完整，图3实际渲染第9页）：`/tmp/agent-system99/evomcp-1100/reading.json` SHA256 `01e6eb94297014cd864b0eac772090f817e92d80cdbb841ec621704fd97548e6`。固定官方2bbf030e仅README/overview图片，代码/提示/配置待发布，未冒称源码复现。保留同一基准反馈再评分、302题R2增65损34、通过judge仍错辅助总和、2,400单父有效样本条件与模型双序一致非人工真值、输出token降9%非全部成本、恢复分母为本轮全部任务及无重复seed区间；仅复用既有验收/增损/未知状态边界，不引入teacher/student并行、Skill池或自动改任务/重试。新增全文1，不抵十篇/整轮验收；真实宿主质量/全费用、旧独立合同/预算和架构对齐继续pending，阶段提交/发布/CI另核。

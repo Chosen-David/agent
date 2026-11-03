@@ -395,6 +395,69 @@ class PipelineTests(unittest.TestCase):
             self.start(attempt=3)
         self.assertEqual(pipeline.hashes(self.run), before)
 
+    def test_report_rejects_invalid_prior_completion_after_successful_retry(self):
+        first = self.start()
+        self.finish(first, status='infra_error', output=False)
+        second = self.start(attempt=2)
+        self.finish(second, attempt=2)
+        self.grade(second, attempt=2)
+        other = self.start('b')
+        self.finish(other, cid='b')
+        self.grade(other, cid='b')
+        self.assertTrue(pipeline.report(self.run)['complete'])
+        path = first / 'collection.json'
+        original = json.loads(path.read_text())
+        for mutation in ('case_id', 'status', 'output_hashes'):
+            with self.subTest(mutation=mutation):
+                damaged = json.loads(json.dumps(original))
+                if mutation == 'case_id':
+                    damaged['receipt']['case_id'] = 'b'
+                elif mutation == 'status':
+                    damaged['status'] = 'produced'
+                else:
+                    damaged['output_hashes'] = {'missing.txt': 'bad-hash'}
+                path.write_text(json.dumps(damaged))
+                result = pipeline.report(self.run)
+                self.assertFalse(result['complete'])
+                self.assertFalse(result['cases'][0]['passed'])
+                self.assertTrue(result['cases'][1]['passed'])
+                self.assertEqual(result['passed'], 1)
+                self.assertTrue(result['cases'][0]['attempts'][-1]['passed'])
+        path.write_text(json.dumps(original))
+        self.assertTrue(pipeline.report(self.run)['complete'])
+
+    def test_report_excludes_gain_with_invalid_middle_attempt(self):
+        first = self.start()
+        self.finish(first)
+        self.grade(first, checks=[
+            {'criterion': c, 'verdict': 'fail', 'evidence': ['incorrect result']}
+            for c in self.rubric['criteria']['a']])
+        middle = self.start(attempt=2)
+        self.finish(middle, attempt=2, status='infra_error', output=False)
+        last = self.start(attempt=3)
+        self.finish(last, attempt=3)
+        self.grade(last, attempt=3)
+        self.assertEqual(pipeline.report(self.run)['wrong_to_correct'], 1)
+        path = middle / 'start.json'
+        start = json.loads(path.read_text())
+        start['actor'] = 'different'
+        path.write_text(json.dumps(start))
+        result = pipeline.report(self.run)
+        self.assertFalse(result['cases'][0]['passed'])
+        self.assertEqual(result['wrong_to_correct'], 0)
+        self.assertIsNotNone(result['cases'][0]['attempts'][1].get('reason'))
+
+    def test_report_allows_valid_ungraded_prior_attempt(self):
+        first = self.start()
+        self.finish(first)
+        second = self.start(attempt=2)
+        self.finish(second, attempt=2)
+        self.grade(second, attempt=2)
+        result = pipeline.report(self.run)
+        self.assertTrue(result['cases'][0]['passed'])
+        self.assertEqual(result['first_pass'], 0)
+        self.assertEqual(result['wrong_to_correct'], 0)
+
     def test_blocked_completion_allows_retry_without_grade(self):
         directory = self.start()
         self.finish(directory, status='blocked', output=False)

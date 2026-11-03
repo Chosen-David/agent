@@ -211,6 +211,9 @@ After valid collection, the host may start a new numbered attempt within the fro
 fresh outputs directory. It must not rewrite the first attempt or reuse its
 outputs. Reports retain all attempts and expose both first-pass counts and latest
 attempt counts; success after recovery cannot inflate first-pass success.
+Invalid start/completion records or changed collected outputs in any prior attempt
+block that case’s aggregate pass and quality-transition counts. Individual attempt
+outcomes remain visible; a valid ungraded attempt alone does not invalidate history.
 Infrastructure errors, blocked tasks, ungradable checks and absent executions
 remain visible. An integrity failure requires a new prepared run, not editing
 hashes to resume. The controller should explicitly record the recovery reason.
