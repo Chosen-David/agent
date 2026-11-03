@@ -447,6 +447,57 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(result['wrong_to_correct'], 0)
         self.assertIsNotNone(result['cases'][0]['attempts'][1].get('reason'))
 
+    def test_report_rejects_missing_initial_attempt(self):
+        first = self.start()
+        self.finish(first, status='infra_error', output=False)
+        second = self.start(attempt=2)
+        self.finish(second, attempt=2)
+        self.grade(second, attempt=2)
+        other = self.start('b')
+        self.finish(other, cid='b')
+        self.grade(other, cid='b')
+        self.assertTrue(pipeline.report(self.run)['complete'])
+        archived = self.base / 'retained-first'
+        first.rename(archived)
+        result = pipeline.report(self.run)
+        archived.rename(first)
+        self.assertTrue(pipeline.report(self.run)['complete'])
+        self.assertTrue(result['cases'][0]['attempts'][-1]['passed'])
+        self.assertEqual((result['complete'], result['passed'], result['first_pass']),
+                         (False, 1, 1))
+
+    def test_report_rejects_missing_middle_attempt(self):
+        first = self.start()
+        self.finish(first)
+        self.grade(first, checks=[
+            {'criterion': c, 'verdict': 'fail', 'evidence': ['incorrect result']}
+            for c in self.rubric['criteria']['a']])
+        middle = self.start(attempt=2)
+        self.finish(middle, attempt=2, status='infra_error', output=False)
+        last = self.start(attempt=3)
+        self.finish(last, attempt=3)
+        self.grade(last, attempt=3)
+        self.assertEqual(pipeline.report(self.run)['wrong_to_correct'], 1)
+        archived = self.base / 'retained-middle'
+        middle.rename(archived)
+        result = pipeline.report(self.run)
+        archived.rename(middle)
+        self.assertEqual(pipeline.report(self.run)['wrong_to_correct'], 1)
+        self.assertTrue(result['cases'][0]['attempts'][-1]['passed'])
+        self.assertEqual((result['cases'][0]['passed'], result['wrong_to_correct']),
+                         (False, 0))
+
+    def test_retry_rejects_missing_initial_attempt_without_writes(self):
+        first = self.start()
+        self.finish(first, status='blocked', output=False)
+        second = self.start(attempt=2)
+        self.finish(second, attempt=2, status='infra_error', output=False)
+        first.rename(self.base / 'retained-first')
+        before = pipeline.hashes(self.run)
+        with self.assertRaisesRegex(ValueError, 'consecutive'):
+            self.start(attempt=2, event='fresh-host-event')
+        self.assertEqual(pipeline.hashes(self.run), before)
+
     def test_report_allows_valid_ungraded_prior_attempt(self):
         first = self.start()
         self.finish(first)

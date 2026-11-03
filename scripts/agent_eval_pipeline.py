@@ -358,6 +358,11 @@ def event_ids(run):
     return events
 
 
+def validate_attempt_sequence(directories):
+    if any(directory.name != f'{index:04d}' for index, directory in enumerate(directories, 1)):
+        raise ValueError('attempt history must be consecutive from 0001')
+
+
 def validate_start(run, manifest, directory, case_id):
     start = object_record(read(directory / 'start.json'))
     attempt = start.get('attempt')
@@ -394,6 +399,7 @@ def record_start(run, case_id, actor, receipt_path, *, material_review=None):
     authorization = (check_material_review(run, manifest, actor, material_review)
                      if manifest.get('require_material_review', False) else None)
     previous = sorted(attempts.iterdir())
+    validate_attempt_sequence(previous)
     if previous and not (previous[-1] / 'collection.json').exists():
         raise ValueError('active attempt already exists')
     # A completion file alone cannot establish that earlier work finished intact.
@@ -522,9 +528,17 @@ def report(run):
         except OSError as exc:
             errors.append(cid + ': ' + str(exc))
             directories = []
+        history_error = None
+        try:
+            validate_attempt_sequence(directories)
+        except ValueError as exc:
+            invalid_history.add(cid)
+            history_error = str(exc)
         for directory in directories:
             result = {'attempt': directory.name, 'status': 'not_collected', 'passed': False,
                       'semantic_verdict': None}
+            if history_error:
+                result['reason'] = history_error
             collected = False
             try:
                 start = validate_start(run, manifest, directory, cid)
@@ -549,7 +563,7 @@ def report(run):
             attempts.append(result)
         results.append({'case_id': cid, 'attempts': attempts,
                         'passed': cid not in invalid_history and bool(attempts) and attempts[-1]['passed'],
-                        'first_pass': bool(attempts) and attempts[0]['passed']})
+                        'first_pass': bool(attempts) and attempts[0]['attempt'] == '0001' and attempts[0]['passed']})
     passed = sum(r['passed'] for r in results)
     # Compare the actual first and final attempts, never the best historical
     # grade. Invalid execution history cannot support a quality transition;
