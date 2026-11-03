@@ -203,8 +203,11 @@ contradiction, heldout arithmetic, stale-binding and relocation controls.
 
 ## Recovery, reporting, and release
 
-An unfinished attempt blocks duplicate scheduling. After collection, the host may
-start a new numbered attempt within the frozen budget, with a new receipt and
+An unfinished attempt blocks duplicate scheduling. Before a retry, start and
+completion receipts and collected output hashes of all prior attempts are
+revalidated; an existing completion file alone is insufficient. Grades are not
+required for retry admission and independent grading gates remain unchanged.
+After valid collection, the host may start a new numbered attempt within the frozen budget, with a new receipt and
 fresh outputs directory. It must not rewrite the first attempt or reuse its
 outputs. Reports retain all attempts and expose both first-pass counts and latest
 attempt counts; success after recovery cannot inflate first-pass success.

@@ -396,6 +396,12 @@ def record_start(run, case_id, actor, receipt_path, *, material_review=None):
     previous = sorted(attempts.iterdir())
     if previous and not (previous[-1] / 'collection.json').exists():
         raise ValueError('active attempt already exists')
+    # A completion file alone cannot establish that earlier work finished intact.
+    for directory in previous:
+        start = validate_start(run, manifest, directory, case_id)
+        collection = validate_collection(read(directory / 'collection.json'), start, case_id)
+        if hashes(directory / 'outputs') != collection['output_hashes']:
+            raise ValueError('outputs changed after collection')
     attempt = len(previous) + 1
     if attempt > manifest['adapter']['max_attempts']:
         raise ValueError('attempt budget exhausted')

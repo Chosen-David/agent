@@ -336,6 +336,72 @@ class PipelineTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.start('b', event='one-event')
 
+    def test_retry_rejects_mismatched_completion_receipt_without_writes(self):
+        directory = self.start()
+        self.finish(directory)
+        path = directory / 'collection.json'
+        collection = json.loads(path.read_text())
+        collection['receipt']['case_id'] = 'b'
+        path.write_text(json.dumps(collection))
+        before = pipeline.hashes(self.run)
+        with self.assertRaisesRegex(ValueError, 'receipt does not match'):
+            self.start(attempt=2)
+        self.assertEqual(pipeline.hashes(self.run), before)
+
+    def test_retry_rejects_inconsistent_completion_status_without_writes(self):
+        directory = self.start()
+        self.finish(directory)
+        path = directory / 'collection.json'
+        collection = json.loads(path.read_text())
+        collection['status'] = 'blocked'
+        path.write_text(json.dumps(collection))
+        before = pipeline.hashes(self.run)
+        with self.assertRaisesRegex(ValueError, 'completion status mismatch'):
+            self.start(attempt=2)
+        self.assertEqual(pipeline.hashes(self.run), before)
+
+    def test_retry_rejects_changed_collected_outputs_without_writes(self):
+        directory = self.start()
+        self.finish(directory)
+        (directory / 'outputs/result.txt').write_text('changed after collection')
+        before = pipeline.hashes(self.run)
+        with self.assertRaisesRegex(ValueError, 'outputs changed after collection'):
+            self.start(attempt=2)
+        self.assertEqual(pipeline.hashes(self.run), before)
+
+    def test_retry_rechecks_start_binding_without_writes(self):
+        directory = self.start()
+        self.finish(directory)
+        path = directory / 'start.json'
+        start = json.loads(path.read_text())
+        start['actor'] = 'different'
+        path.write_text(json.dumps(start))
+        before = pipeline.hashes(self.run)
+        with self.assertRaisesRegex(ValueError, 'receipt actor mismatch'):
+            self.start(attempt=2)
+        self.assertEqual(pipeline.hashes(self.run), before)
+
+    def test_retry_rechecks_older_completion_not_only_latest(self):
+        first = self.start()
+        self.finish(first, status='infra_error', output=False)
+        second = self.start(attempt=2)
+        self.finish(second, attempt=2, status='infra_error', output=False)
+        path = first / 'collection.json'
+        collection = json.loads(path.read_text())
+        collection['receipt']['case_id'] = 'b'
+        path.write_text(json.dumps(collection))
+        before = pipeline.hashes(self.run)
+        with self.assertRaisesRegex(ValueError, 'receipt does not match'):
+            self.start(attempt=3)
+        self.assertEqual(pipeline.hashes(self.run), before)
+
+    def test_blocked_completion_allows_retry_without_grade(self):
+        directory = self.start()
+        self.finish(directory, status='blocked', output=False)
+        second = self.start(attempt=2)
+        self.assertEqual(second.name, '0002')
+        self.assertFalse((directory / 'grade.json').exists())
+
     def test_error_retry_keeps_history_and_first_pass(self):
         directory = self.start()
         self.finish(directory, status='infra_error', output=False)
