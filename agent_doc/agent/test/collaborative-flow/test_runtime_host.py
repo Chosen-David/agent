@@ -144,6 +144,10 @@ class RuntimeHostTests(unittest.TestCase):
             changed['request_id'] = 'replay'
             with self.assertRaises(ValueError):
                 host.authenticate(changed, row['review'], row['proof'])
+            before = host.ledger.read_bytes()
+            flow.cancel()
+            self.assertTrue(host.authenticate(row['request'], row['review'], row['proof'])['fresh_context'])
+            self.assertEqual(host.ledger.read_bytes(), before)
             path = host.base / (row['proof']['receipt_id'] + '.json')
             receipt = json.loads(path.read_text())
             receipt['receipt']['budget_valid'] = False
@@ -159,17 +163,19 @@ class RuntimeHostTests(unittest.TestCase):
             host, root, client, _ = self.host_fixture(directory)
             flow = Flow(root, 'HOST-01')
             flow.create('Scoped fixture', mode='dual-ai')
-            flow.state.update(phase='implementing', inflight={'method': 'implement'})
+            flow.state.update(phase='implementing')
             flow.save()
             client.proposals.append({'path': 'outside.py', 'before_sha256': '', 'content': 'bad'})
             with self.assertRaises(ValueError):
-                host.implement({'step': 'one'})
+                flow.call(host, 'implement', {'step': 'one'})
             self.assertEqual((root/'source.py').read_text(), 'old')
             self.assertFalse((root/'outside.py').exists())
             client.proposals.pop()
             client.proposals[0]['before_sha256'] = 'stale'
+            flow.state['phase'] = 'implementing'
+            flow.save()
             with self.assertRaisesRegex(ValueError, 'stale'):
-                host.implement({'step': 'one'})
+                flow.call(host, 'implement', {'step': 'one'})
             self.assertEqual((root/'source.py').read_text(), 'old')
 
     def test_host_applies_only_current_approved_file_and_retains_call_budget_on_restart(self):
@@ -179,9 +185,9 @@ class RuntimeHostTests(unittest.TestCase):
             host, root, client, _ = self.host_fixture(directory)
             flow = Flow(root, 'HOST-01')
             flow.create('Scoped fixture', mode='dual-ai')
-            flow.state.update(phase='implementing', inflight={'method': 'implement'})
+            flow.state.update(phase='implementing')
             flow.save()
-            host.implement({'step': 'one'})
+            flow.call(host, 'implement', {'step': 'one'})
             self.assertEqual((root/'source.py').read_text(), 'new')
             again = CodexHost(root, 'HOST-01', host.profile['profile_path'], workflow=host.workflow,
                 project=host.project, write_paths=['source.py'], client_factory=client)
@@ -406,6 +412,12 @@ class RuntimeHostTests(unittest.TestCase):
         packet = calls[-1]
         self.assertIn(marker, packet['context']['acceptance_logs']['answer']['content'])
         self.assertTrue(packet['context']['acceptance_logs']['answer']['bound_to_report'])
+        manifest = packet['context']['tested_source_manifest']
+        binding = manifest['file_bindings']['answer.txt']
+        self.assertTrue(binding['bound_to_report_after'])
+        self.assertEqual(binding['submitted_file_sha256'], binding['manifest_file_sha256'])
+        self.assertTrue(manifest['aggregate_binding']['matches'])
+        self.assertNotEqual(binding['submitted_file_sha256'], manifest['aggregate_binding']['report_project_manifest_sha256'])
         path = Path(case.flow.state['acceptance']['report']).with_name('answer.log')
         original = path.read_bytes()
         row = case.flow.state['reviews'][-1]
@@ -419,6 +431,22 @@ class RuntimeHostTests(unittest.TestCase):
             self.assertIn('_unavailable', host._context()['acceptance_logs'])
         path.write_bytes(original)
         self.assertIn(marker, host._context()['acceptance_logs']['answer']['content'])
+
+    def test_review_rejects_stale_submitted_bytes_before_model_call_even_when_report_aggregate_matches(self):
+        from unittest.mock import patch
+        from agent_runtime import codex_host
+        case,host,_,calls,_=self.rejected_tracked_docs_pipeline()
+        request=case.flow.state['reviews'][-1]['request'];original=codex_host.regular_bytes
+        before=host.ledger.read_bytes();count=len(calls)
+        def stale(root,relative):
+            data=original(root,relative)
+            return b'stale submitted bytes' if Path(root)==case.root and relative=='answer.txt' else data
+        with patch.object(codex_host,'regular_bytes',side_effect=stale):
+            with self.assertRaisesRegex(ValueError,'source is not bound'):
+                host.review(request)
+        self.assertEqual(host.ledger.read_bytes(),before)
+        self.assertEqual(len(calls),count)
+        self.assertEqual((case.root/'answer.txt').read_bytes(),b'42')
 
     def test_app_server_rejects_tools_approvals_writable_sandbox_stale_or_failed_turn(self):
         from agent_runtime.codex_host import AppServer, object_schema
@@ -459,10 +487,10 @@ class RuntimeHostTests(unittest.TestCase):
             host, root, client, _ = self.host_fixture(directory)
             flow = Flow(root, 'HOST-01')
             flow.create('Already satisfied scope', mode='dual-ai')
-            flow.state.update(phase='implementing', inflight={'method': 'implement'})
+            flow.state.update(phase='implementing')
             flow.save()
             client.proposals = []
-            result = host.implement({'step': 'one'})
+            result = flow.call(host, 'implement', {'step': 'one'})
             self.assertEqual(result['paths'], [])
             self.assertEqual((root/'source.py').read_bytes(), b'old')
 

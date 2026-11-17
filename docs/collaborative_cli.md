@@ -6,11 +6,11 @@
 
 先安装并登录支持 app-server 的官方 Codex CLI。本机验证版本为 0.169.0；旧版 0.114.0 无法读取当前 `service_tier=priority` 配置。可使用独立用户目录安装新版，避免改动现有全局客户端与账号配置。运行时仅使用已有登录，不保存账号令牌。
 
-配置一次，指定**原生 Codex 可执行文件**（Windows 为包内 codex.exe，不能传 codex.ps1/cmd）及账号实际可用的不同模型：
+配置一次，只需指定**原生 Codex 可执行文件**（Windows 为包内 codex.exe，不能传 codex.ps1/cmd）。新配置默认自动选型，不必填写两个模型名：
 
 ```bash
 python -m agent_runtime.codex_host --profile /absolute/user/runtime.json \
-  --codex /absolute/codex --writer-model MODEL_A --reviewer-model MODEL_B
+  --codex /absolute/codex
 python -m agent_runtime.codex_host --profile /absolute/user/runtime.json --probe
 python -m agent_runtime.collaborative_flow \
   --project-root /absolute/project --workflow-root /absolute/agent \
@@ -20,9 +20,23 @@ python -m agent_runtime.collaborative_flow \
   --output /tmp/task-01-evidence
 ```
 
-Windows 同样使用 `python -m ...`，参数传绝对 Windows 路径；PowerShell 将示例写成一行或用反引号续行。原生文件可在安装目录用 `Get-ChildItem -Recurse -Filter codex.exe` 定位。本机使用现有 ChatGPT 登录，主模型 `gpt-6.1-sol`、审查模型 `gpt-6-astra`；他人使用自己的账号可用模型，不保证这些名称对所有账号开放。
+Windows 同样使用 `python -m ...`，参数传绝对 Windows 路径；PowerShell 将示例写成一行或用反引号续行。原生文件可在安装目录用 `Get-ChildItem -Recurse -Filter codex.exe` 定位。复用本机既有登录，不假定某一模型系列对所有账号开放。
 
-`--probe` 实际调用两个模型并保存服务端身份和完成状态；单纯安装或写配置不等于已启用。默认 profile 为 `~/.codex/chosen-agent/runtime.json`。命令哈希固定，升级 executable 后必须显式协调 profile；已有任务的模型、权限路径和预算绑定不能静默替换。
+自动策略从 `config/read` 获取有效默认模型，从分页 `model/list` 获取候选能力和推理档位，再由**默认模型真实调用**在候选枚举中选择主写和审查模型。两个规范模型 ID 必须不同；实际 nonce/已完成调用核验所选模型和 provider，不能把目录存在当作账号可用证明。支持档位随模型记录，排除自动委派档位；没有两个兼容候选、默认模型失效、响应越界或调用失败时阻断，不退回同模型自审。接口依据[官方 app-server 文档](https://learn.chatgpt.com/docs/app-server)。
+
+每次选型尝试至多三个实际模型调用，失败和重试都计入原任务 host 总预算；默认模型若也被选中，可复用其已验证的选型调用。选型签名、实际身份和理由保存在原任务账本；恢复和人类/双 AI 切换直接复用，不因账号默认或目录变化暗换模型。模型输入只携带选型摘要/哈希，完整证明保留在宿主记录。已完成选型的宿主可只读核验历史回执；每次新模型调用仍在任务锁内检查当前状态并登记预算，取消、完成和旧的未决动作均不能借旧宿主重放。控制器只为本次实际派发提供线程内临时凭据，不从持久 inflight 标记推断重放授权。
+
+选型未完成或失败时，普通模型调用不能记账或启动后端；只有当前选型尝试所属线程可提交启动调用。普通调用须核对已解决配对的签名与原绑定，旧宿主不能借旧配对插入新选型过程。账本锁只用于核对和记账，不跨网络调用持有。
+
+已有固定配置显式开启自动策略：
+
+```bash
+python -m agent_runtime.codex_host --profile /absolute/user/runtime.json --auto-models --probe
+```
+
+迁移保留原固定配置，旧任务按原 binding、模型、预算和回执恢复，只有新任务动态选型。新配置可用单个 `--writer-model MODEL` 或 `--reviewer-model MODEL` 固定一方；同时显式给两者且不传 `--auto-models` 则保留 v1 固定配置模式。没有在代码中固定主写/审查模型系列。
+
+`--probe` 实际选型并验证不同模型（旧固定配置仍按原两模型验证），保存服务端身份和完成状态；其诊断结果不直接用于新任务绑定。单纯安装或写配置不等于已启用。默认 profile 为 `~/.codex/chosen-agent/runtime.json`。命令哈希固定，升级 executable 后必须显式协调 profile；已有任务的模型、权限路径和预算绑定不能静默替换。
 
 两个模型均以只读 sandbox、禁用工具、独立上下文运行。主模型返回完整文件替换提案，由可信宿主校验路径和原文件哈希后写入。`--write-path` 可重复指定源文件；guide、测试、受管任务目录、Git 和运行状态禁止成为提案目的地。调用失败计入持久预算，异常工具、同模型、过期响应或签名不符均阻断。测试清单必须预先存在，内置后端不自动生成或修改验收。
 
@@ -45,6 +59,8 @@ Windows 同样使用 `python -m ...`，参数传绝对 Windows 路径；PowerShe
 单题支持数字选项或自由文本；多题支持 `{"question-id":"answer"}`，`/cancel` 取消。`--status` 读取持久状态；`--answer '{"question-id":"new detail"}'` 可恢复并提交人类反馈；`--cancel` 记录取消。此进程运行时负责等待，并在双 AI 模式于检查点调用审查者；退出后不声称有后台监督器。已有 tmux/任务监督器可管理这个前台命令，必须另核验真实进程。输入断开不会冒充人类答复，恢复读取原截止时间。
 
 显式切换同一任务：沿用原命令的项目与任务参数，加 `--switch-mode human --reason '需要人类讨论' --status`；恢复双模型用 `--switch-mode dual-ai --reason '恢复独立模型复核' --status`。切换增加 revision、归档旧计划并撤销旧批准，保留回答、问题、审查与返修预算；不会新建替代任务。进行中或结果不明的外部动作、已取消/完成任务和旧受保护账本不能借切换绕过。`--mode` 仍只声明初始模式，不能暗中更改已有任务。
+
+首次自动选型失败且收到可信终态响应，或证实尚未发出模型请求时，核对宿主 ledger 后沿原命令加 `--retry-model-selection --reason '核对及恢复理由'`。已发出请求却没有可信终态响应时，即使本机后端退出也保留 pending；崩溃留下 selecting/pending/reserved 时同样先核对。沿用相同项目、任务、profile、workflow 和路径参数，执行 `--backend codex --reconcile-model-selection --reason '核对理由'`，再单独重试。核对步骤不调用模型，验证签名记录、原宿主和后端 PID 均已退出；原宿主仍在运行、PID 被复用、机器/PID 命名空间变化或后端启动后未留下 PID 时保持阻断，不自动杀进程。此核对仅证明本机传输结束，不声称服务端计算或计费完成；不能生成完成回执。原调用、失败和已用预算保留；有效选型不能借此重选，inflight/取消/完成任务也不能绕过。内置 CLI 在触发模型前检查执行信任、输出目录和任务测试清单，避免参数缺失仍消耗选型调用。
 
 ## 宿主接口
 

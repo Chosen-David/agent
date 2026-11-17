@@ -220,6 +220,8 @@ class Flow:
         return not unresolved
 
     def call(self, host, method, payload):
+        from contextlib import nullcontext
+        import threading
         self.active()
         previous = self.state.get('last_implementation')
         if method == 'implement' and previous and previous['payload_sha256'] == sha(payload):
@@ -229,8 +231,11 @@ class Flow:
             raise ValueError(method + ' backend unavailable')
         self.state['inflight'] = {'method': method, 'revision': self.state['revision'], 'payload_sha256': sha(payload)}
         self.save()
+        self._live_dispatch = (self.raw, method, threading.get_ident(), object())
         try:
-            result = callback(deepcopy(payload))
+            dispatch = getattr(host, 'dispatch_context', None)
+            with dispatch(self, method) if callable(dispatch) else nullcontext():
+                result = callback(deepcopy(payload))
         except Exception as exc:
             from .codex_host import HostPreflightError, ProposalRejected
             if isinstance(exc, HostPreflightError):
@@ -239,6 +244,8 @@ class Flow:
                                   feedback={'summary': str(exc)})
                 self.event('host-rejected-before-side-effects')
             raise
+        finally:
+            del self._live_dispatch
         if method == 'implement':
             self.state['last_implementation'] = {'payload_sha256': sha(payload), 'result': result}
         self.state.pop('inflight')
@@ -663,6 +670,8 @@ def main():
     parser.add_argument('--reason', help='required explanation for explicit mode change')
     parser.add_argument('--add-review-calls', type=int, help='explicitly extend original review ledger, preserving used calls')
     parser.add_argument('--retry-final-review', action='store_true', help='review unchanged passing evidence without rerunning implementation')
+    parser.add_argument('--retry-model-selection', action='store_true', help='explicitly retry unresolved automatic selection without resetting calls')
+    parser.add_argument('--reconcile-model-selection', action='store_true', help='verify original local processes ended before a separate explicit retry')
     parser.add_argument('--output', type=Path)
     parser.add_argument('--status', action='store_true')
     parser.add_argument('--answer', help='resume with a human JSON answer; invalidates affected plan')
@@ -695,12 +704,43 @@ def main():
             flow.answer(json.loads(args.answer))
         if args.adapter is not None and args.backend is not None:
             raise ValueError('select one trusted host, not both adapter and backend')
-        if args.backend == 'codex':
+        if flow.state['phase'] in ('cancelled', 'done'):
+            print(flow.state['phase'])
+            return 0
+        flow.active()
+        if args.reconcile_model_selection:
+            if args.backend != 'codex' or args.retry_model_selection:
+                raise ValueError('reconcile using --backend codex, then retry in a separate command')
+            if not args.reason or not args.reason.strip():
+                raise ValueError('explicit reconciliation reason required')
             from .codex_host import CodexHost
             host = CodexHost(flow.root, flow.task_id, args.runtime_profile,
                              workflow=args.workflow_root, project=args.project,
                              write_paths=args.write_path, context_paths=args.context_path,
-                             trust_project_code=args.trust_project_code)
+                             reconcile_selection_reason=args.reason)
+            print(json.dumps(host.reconciliation, ensure_ascii=False))
+            return 0
+        if args.backend == 'codex':
+            from .codex_host import CodexHost
+            if not args.trust_project_code:
+                raise ValueError('builtin execution requires explicit --trust-project-code; tests run as current OS user')
+            if args.retry_model_selection:
+                flow.active()
+                if not args.reason or not args.reason.strip():
+                    raise ValueError('explicit reason required for model selection retry')
+            if args.output is None and not args.retry_final_review:
+                raise ValueError('external --output directory required before model calls')
+            if not args.retry_final_review:
+                try:
+                    regular_bytes(args.workflow_root.resolve(),
+                        f'agent_doc/{identifier(args.project)}/test/{flow.task_id}/suite.json')
+                except OSError as exc:
+                    raise ValueError('task suite must exist before model calls') from exc
+            host = CodexHost(flow.root, flow.task_id, args.runtime_profile,
+                             workflow=args.workflow_root, project=args.project,
+                             write_paths=args.write_path, context_paths=args.context_path,
+                             trust_project_code=args.trust_project_code,
+                             retry_selection_reason=args.reason if args.retry_model_selection else None)
             if not args.trust_project_code:
                 raise ValueError('builtin execution requires explicit --trust-project-code; tests run as current OS user')
         elif args.adapter is None:
