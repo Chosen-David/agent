@@ -61,13 +61,17 @@ def worker(directory, target, result_path):
     return 0 if passed else 1
 
 
-def run(workflow, project, target, output):
+def prepare_suite(workflow, project, target, *, task=None):
     if not project or any(c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-" for c in project):
         raise ValueError("project must be a single stable identifier")
     workflow, target = workflow.resolve(), target.resolve()
     if Path(git(target, "rev-parse", "--show-toplevel")).resolve() != target:
         raise ValueError("--target must be the exact Git repository root")
     directory = workflow / "agent_doc" / project / "test"
+    if task is not None:
+        if not isinstance(task, str) or not task or any(c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-" for c in task):
+            raise ValueError("task must be a single stable identifier")
+        directory = directory / task
     if directory.resolve() != directory:
         raise ValueError("test workspace must not use symlink redirects")
     manifest_path = directory / "suite.json"
@@ -100,6 +104,13 @@ def run(workflow, project, target, output):
             raise ValueError("check timeout must be 1..300 seconds")
         if not isinstance(check["requirement"], str) or not check["requirement"].strip():
             raise ValueError("check must identify its prompt/guide requirement")
+    return workflow, target, directory, manifest_bytes, manifest, checks
+
+
+def run(workflow, project, target, output, *, task=None):
+    workflow, target, directory, manifest_bytes, manifest, checks = prepare_suite(
+        workflow, project, target, task=task)
+    manifest_path = directory / "suite.json"
     output = output.absolute()
     if output.resolve().is_relative_to(workflow) or output.resolve().is_relative_to(target):
         raise ValueError("write run evidence outside workflow and target repositories")
@@ -169,9 +180,10 @@ def main():
     parser.add_argument("--project", required=True)
     parser.add_argument("--target", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--task", help="run only this task directory and its suite.json")
     args = parser.parse_args()
     try:
-        return run(args.workflow_root, args.project, args.target, args.output)
+        return run(args.workflow_root, args.project, args.target, args.output, task=args.task)
     except (OSError, ValueError, subprocess.CalledProcessError) as exc:
         print(json.dumps({"status": "blocked", "error": str(exc)}), file=sys.stderr)
         return 2

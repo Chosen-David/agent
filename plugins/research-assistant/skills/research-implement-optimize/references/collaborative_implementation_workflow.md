@@ -108,3 +108,9 @@
 ### 工具环境
 
 依赖集中到WORKFLOW_ROOT/.venv：用其Python执行和安装Python包，不用全局pip。按实际选定工具固定版本；本流程与当前agent检查只依赖标准库。Playwright若被选中，其Python包入.venv、浏览器缓存指定 `.venv/playwright-browsers`；TLA+若被选中，固定版本及校验值的JAR放 `.venv/tools/tla`，Java运行时单独检测，缺失不冒充已安装。系统运行时不能靠pip安装；不为未选中的工具预装依赖。外部项目测试应显式选择所需解释器，不能把另一个项目的环境默认为可用。
+
+## 人类优先的命令行全流程
+
+完整 checkout 可用 `python -m agent_runtime.collaborative_flow`，接口与真实能力边界见 [命令行接入](https://github.com/Chosen-David/agent/blob/main/docs/collaborative_cli.md)。默认人类模式，展示问题后约十分钟未回复切换为双 AI 讨论；不验收毫秒级计时。业务/权限/预算问题仍由人类决定。晚到反馈失效旧计划，正在运行的作用先核对，不自动重放。缺真实审查后端时 blocked，不能用同一主 AI 替代。
+
+实现阶段实际探测环境并加载已有能力正文；任务自己的 suite.json 必须预先准备。验收使用 `scripts/project_test.py --task TASK_ID` 直接路由当前任务测试，保留版本/输出绑定。主 AI 写代码，审查 AI 在讨论、设计、多步骤完成点和结果检查点复核；程序负责持久状态/计时，已有监督器的真实部署和进程读回仍需宿主完成。

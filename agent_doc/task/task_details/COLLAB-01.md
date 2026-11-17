@@ -11,6 +11,8 @@ Date: 2026-11-17
 
 计划补充 v4（2026-11-17）：用户授权直接升级，并改为批量实现后统一测试、集中修复，完成直接推远端 main。实现可选双模型协议、绑定两阶段任务文件与真实宿主身份；默认人类模式保留。GPT 接入复用本库 Codex 安装器，同步已提交 Skills 和受管指令；配置同步与真实模型运行分别报告，不修改人类指南。
 
+计划补充 v5（2026-11-17）：用户明确四项验收：默认人类讨论与约十分钟超时双 AI 接续；实际环境探测并加载相关 Skill；直接路由任务验收脚本；串联可见规划、任务链、审查监督、实现与有界返修。计时只验收正常等待/超时接续/答复终止/恢复语义，不做毫秒级边界检查。沿用既有模型认证与项目测试入口；完整宿主调用和隔离须真实证据，不用合成测试冒充。
+
 ## Progress
 基线 main 7ac2e578d7969a327b59ba76d784b9e37b0c30aa，完整克隆。已读单主工作流、指南与决策协议；不启用子 agent。
 新增 agent_doc/agent/test/collaborative-task/test_contract.py：8 项契约用例，全部因目标模块尚未实现而失败（预期红灯）；不是 8 个已确认产品缺陷，也不是变异杀死结果。
@@ -61,3 +63,21 @@ Date: 2026-11-17
 - `/tmp/agent-system99/collab-03/reader.log` sha256 `c5143b0490431e0882fb352aad3e8dd7e53b19d5454f1c562c9770cec478b260`
 - `/tmp/agent-system99/collab-03/project-checks/report.json` sha256 `7472bb1986ca6eb6e9366ea778d59b9d4dabc2197e6227db783b9ba5262b969c`
 发布候选保留远端统一测试入口和本地双模型/批处理升级，未改人类 guide。待推送读回后同步 Codex；真实双模型宿主调用与审查质量评估仍未完成，不能将安装视为此项通过。
+
+### 2026-11-17：人类优先全流程运行时
+
+实现 agent_runtime.collaborative_flow：人类讨论默认、约十分钟超时双 AI 接续、选择/文本输入、关键决定保留人类、晚到答复与持久恢复、可见决策摘要、串行依赖步骤、环境探测与真实 Skill 正文加载、任务测试直达和有界返修。支持显式可信宿主，复用原模型认证；没有实际模型后端时 blocked，不将合成宿主称为上线。已有保护任务禁止经新入口降级，未知副作用不自动重放。
+讨论阶段先准备任务 test；新增 --task 路由复用项目测试入口的目标/源版本和日志绑定。用户明确计时无须精确，验收覆盖正常等待、超时接续、答复停止等待和恢复，不做毫秒级边界。
+初始 12 项红灯因模块尚未实现；随后 19 项通过。扩展测试发现共享测试入口抽取函数后漏传 manifest_path，引发三项真实路径失败；已修复。全库首轮 2195 项，4 failures、1 error、19 skips（412.760s）：三项上述路径问题、一项原链接检查把章节锚点当文件名、Reader 缺 fitz。链接检查改用已有 Markdown 解析器；PyMuPDF 1.26.6 安装在 .venv。
+修复后关联 84 项通过（12.434s），Reader 3 项通过（1.627s）。任务专用清单 27 项通过；三项代码变异各自有通过对照，并被断言检出：越权委托人类决定、忽略变更测试、正常等待时提前切换。后续 CPU 型号解析补全后同组 27 项再次通过。统一项目清单也通过，含 51 项原回归、33 项已有协作协议、27 项本轮流程和变异；未宣称修复后全库重跑全绿，剩余可选依赖/平台跳过未验证。
+实际环境探测到 Python 3.12.14、CPU 环境；未观测到 GPU/驱动或 CUDA toolkit。H20 路由用合成环境检查，不宣称 H20 实测或性能提升。现有工作流/Skill 入口同步到新 CLI 文档；详情展示决策摘要，不是内部 CoT。
+期间合并远端 cc6db960 的集中嵌套测试接入，保留其他工作。真实双模型调用、宿主工具权限与隔离、后台监督部署仍需真实接入验收，整个 COLLAB-01 保持未结案。
+- `/tmp/agent-system99/collab-04/red.log` sha256 `bec3361f1ed74161dc5df561f4a4044428c0065e3870c633b7c45e9ecbec2f67`
+- `/tmp/agent-system99/collab-04/full.log` sha256 `d3481817e902747740f02b45fea8301dad1b391647e9a7472bb07d0fe8fda64b`
+- `/tmp/agent-system99/collab-04/final-regression.log` sha256 `be7a39dcefb7fdcaf244432d5fe8e4a7d86f54813be4f89ea806cfe9c6056cb2`
+- `/tmp/agent-system99/collab-04/environment-final.log` sha256 `0d6acc34c636e830b51e390073a3c2b6deb4bc88793ca0f26e4c0a625d226746`
+- `/tmp/agent-system99/collab-04/reader-fixed.log` sha256 `4e713f4fac3842ce474eff57c054f41c51410a8d5a439d090aac32579d1d41e8`
+- `/tmp/agent-system99/collab-04/task-final/report.json` sha256 `9e4c49dd806ad9f6c9885403569de071ce77e49f311ad0000b27a9da91b42f71`
+- `/tmp/agent-system99/collab-04/merged-checks/report.json` sha256 `28bc6f36fd77b74845e372365c740b7d70b666f03863ad89715276a7f28869ff`
+
+发布前再合并 a8bf4f4b 的验证成本统计，集中检查再次全部通过。报告 `/tmp/agent-system99/collab-04/remote-final-checks/report.json` sha256 `32e619cf6548cf335bc94c295b5d182ed93ba211315ac5eef514d0e152e0c628`。本轮源代码与文档待普通非强制推送；真实双模型后端仍为明确剩余项。
