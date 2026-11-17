@@ -53,3 +53,27 @@
 5. **共同确定下一步**：按用户已约定的协作粒度继续；需要新语义决定时停在具体问题上。已有明确授权无需机械重复审批。完成需要真实任务验收，不能用报告里的 PASS 字段代替。
 
 验收脚本更新后重跑受影响检查。记录命令未执行、失败、跳过和未覆盖范围；不宣称本流程保证零缺陷、不理解偏差或未实测的性能提升。已有独立验收合同继续保留，作者自检不替代独立证据。
+
+## 本地验证接入：生成、维护、纠正
+
+这是pstack方法的单主串行适配，复用当前Skill与唯一TASK，不需要远端插件运行时。固定上游 `cursor/plugins@3fa33bb0f927bea2ccacd48a3cfda95145fb6bae` 的 `pstack/skills/{create-verification-skill,maintain-verification-skill,correct}/SKILL.md`；改编许可见 [pstack MIT](https://github.com/cursor/plugins/blob/3fa33bb0f927bea2ccacd48a3cfda95145fb6bae/pstack/LICENSE)。不启用其子agent、自动PR、全局配置或定时任务。
+
+### 生成真实路径验证
+
+1. 从当前prompt、经核实的人类GUIDE与源码确定验收，先检查已有入口和测试。显式区分WORKFLOW_ROOT和PROJECT_ROOT；检查源码放 `WORKFLOW_ROOT/agent_doc/<项目名>/test/<task-id>/`，不从Skill所在目录猜目标。已有TASK/guide/账本按当前权威路径读取，不复制迁移。
+2. 为实际用户功能建立简短功能映射：要求来源、源码入口、前置条件、启动/就绪检查、实际操作、可观察断言、禁止副作用、证据和清理。优先复用已有CLI/HTTP/浏览器驱动；没有运行后端就标blocked，不能写虚构的就绪或成功步骤。
+3. 生成轻量脚本并登记现有suite.json的checks，kind选shell/python/unittest，给出requirement和有界timeout_seconds。用 `WORKFLOW_ROOT/.venv/bin/python WORKFLOW_ROOT/scripts/project_test.py --workflow-root WORKFLOW_ROOT --project PROJECT_NAME --target PROJECT_ROOT --output /tmp/agent-system99/RUN_ID/checks` 执行；路径占位必须替换为实际绝对路径。不新增第二调度器或任务清单。
+4. 实际运行启动→只读健康检查→至少一个真实功能→观察结果和副作用→清理。新建脚本从未运行只能算草稿；初次单路径跑通不能声称全功能覆盖。短CLI每次启动新进程；有状态应用使用本次拥有的隔离数据/端口。异常后重新检查健康状态，不盲目重试。
+5. 用临时副本或夹具注入已知错误，再用相同验收确认具体断言失败；未变异对照必须能运行。依赖缺失、检查器崩溃和超时不算检出。只清理本次拥有的资源，不按进程名杀进程；清理后回读原始证据仍存在。
+
+### 维护验证
+
+从已有功能映射逐项读相关源码，串行实际运行每个映射功能；源码看似未变也不能替代真实运行。区分：描述漂移、驱动缺口、产品回归、后端缺失。只修验证材料的维护任务不得暗改产品或降低验收；产品缺陷回到当前TASK处理。修过的驱动重新执行，证据保留在清理范围外。报告clean/changed/blocked及实际覆盖；无法访问的功能仍列未验证，不将其计入通过。
+
+### 把纠正转成检查
+
+收到用户纠正时查真实失败，区分一次纠正和有证据的重复错误。先尝试通过接口/所有权/数据结构消除错误选择，再考虑类型、lint、行为测试；仅无法编码的判断保留文字。规则与执行检查对应放在已有suite requirement和功能映射，不向AGENTS.md累加长清单。用原错误或对应变异证明规则会失败，保留合法反例，同一命令本地和CI运行。人工批准的例外不得从外部Skill自行推导，不能删除原独立验收合同。
+
+### 工具环境
+
+依赖集中到WORKFLOW_ROOT/.venv：用其Python执行和安装Python包，不用全局pip。按实际选定工具固定版本；本流程与当前agent检查只依赖标准库。Playwright若被选中，其Python包入.venv、浏览器缓存指定 `.venv/playwright-browsers`；TLA+若被选中，固定版本及校验值的JAR放 `.venv/tools/tla`，Java运行时单独检测，缺失不冒充已安装。系统运行时不能靠pip安装；不为未选中的工具预装依赖。外部项目测试应显式选择所需解释器，不能把另一个项目的环境默认为可用。

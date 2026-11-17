@@ -241,3 +241,7 @@ python scripts/project_docs.py --root . validate
 [开始接入](#快速开始) · [浏览工作流](workflows/) · [查看实现](CODEMAP.md)
 
 </div>
+
+### 集中项目测试（v1）
+
+AI维护的外置检查放在 `agent_doc/<项目名>/test/`；真实代码根由 `scripts/project_test.py --target` 显式选择。agent自身使用 [agent_doc/agent/test](agent_doc/agent/test/README.md)，同一入口已配置CI。当前只完成测试入口接入，原任务、指南与受管记录仍按现有路径读取，后续迁移保持单一权威来源。

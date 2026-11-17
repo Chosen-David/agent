@@ -54,3 +54,7 @@ description: "端到端代码实现与性能优化，适用于算法或系统实
 规划实验/测量或复用实证结论前按 [既有结果检索与复用](references/result_reuse_workflow.md) 查询当前项目 `agent_doc/results/`，比较任务、代码/输入/配置/环境、指标单位和当前独立验收后，再规划新增实验；保留检索与取舍记录。新数据存 `agent_doc/results/<run_id>/`，旧文件可按真实路径/哈希索引。复用不跳过独立代码/数据门禁、用户明确复现或新主张验收。
 
 历史保护计划的兼容边界见 [旧双主控协议](references/dual_main_workflow.md)。不启动第二主控，不追溯改写已有批准；缺独立证据的旧合同保留 blocked/pending，再按当前用户要求版本化协调。
+
+需要生成或维护真实用户路径验证、将用户纠正变成可执行检查时，读取 [本地验证接入](references/collaborative_implementation_workflow.md#本地验证接入生成维护纠正)，复用集中test与单主串行入口。
+
+本地验证适配的第三方许可随包保留于 [pstack MIT](references/pstack-LICENSE)。

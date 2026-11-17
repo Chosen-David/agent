@@ -81,3 +81,7 @@ description: "协调科研项目从 Idea、实验到论文修订。用于需要�
 历史保护计划的兼容边界见 [旧双主控协议](references/dual_main_workflow.md)。不启动第二主控，不追溯改写已有批准；缺独立证据的旧合同保留 blocked/pending，再按当前用户要求版本化协调。
 
 实验取证、贡献叙述或论文图表修订时，读取 [全面取证与贡献导向写作](references/paper_exemplar_learning.md) 的 §9（evidence-to-contribution）：用覆盖矩阵和已有 claim ledger 组织可信贡献，关键退化在相关主结果旁披露，次要限制集中讨论；只加载该节不强制重启全稿范文学习。它是角色执行规范，不代表已自动运行或通过行为评测。
+
+需要生成或维护真实用户路径验证、将用户纠正变成可执行检查时，读取 [本地验证接入](references/collaborative_implementation_workflow.md#本地验证接入生成维护纠正)，复用集中test与单主串行入口。
+
+本地验证适配的第三方许可随包保留于 [pstack MIT](references/pstack-LICENSE)。

@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "origin": "https://github.com/Chosen-David/agent.git",
+  "checks": [
+    {
+      "id": "lint",
+      "kind": "shell",
+      "path": "lint.sh",
+      "timeout_seconds": 10,
+      "requirement": "user prompt: lightweight lint checks with actionable failures"
+    },
+    {
+      "id": "comments",
+      "kind": "python",
+      "path": "comment_policy.py",
+      "timeout_seconds": 20,
+      "requirement": "user prompt 2026-11-17: default no new explanatory comments; preserve license, interpreter and required tooling directives"
+    },
+    {
+      "id": "structure",
+      "kind": "python",
+      "path": "compile_structure.py",
+      "timeout_seconds": 20,
+      "requirement": "user prompt: compile/structure checks; preserve current core-to-runtime dependency direction"
+    },
+    {
+      "id": "mutation",
+      "kind": "python",
+      "path": "mutation.py",
+      "timeout_seconds": 30,
+      "requirement": "user prompt: deliberately wrong code must be rejected; unchanged baseline must pass"
+    },
+    {
+      "id": "regression",
+      "kind": "unittest",
+      "path": ".",
+      "timeout_seconds": 60,
+      "requirement": "GUIDE.md single-main policy: pending work retains ownership; prompt: external test runner binds the intended project"
+    }
+  ]
+}
