@@ -21,6 +21,21 @@ class FlowTests(unittest.TestCase):
         self.flow = self.api.Flow(self.root, 'FLOW-01', clock=lambda: self.now)
         self.flow.create('Implement exact addition')
 
+    def test_explicit_dual_mode_starts_without_human_timeout(self):
+        flow = self.api.Flow(self.root, 'DUAL-01', clock=lambda: self.now)
+        flow.create('Review with a distinct model', mode='dual-ai')
+        self.assertEqual(flow.state['mode'], 'dual-ai')
+        self.assertIsNone(flow.state['deadline'])
+        with self.assertRaisesRegex(ValueError, 'backend'):
+            flow.review(None, {'step': 'acceptance'})
+        self.assertNotEqual(flow.state['phase'], 'done')
+
+    def test_unknown_initial_mode_does_not_create_task(self):
+        flow = self.api.Flow(self.root, 'BAD-01')
+        with self.assertRaisesRegex(ValueError, 'mode'):
+            flow.create('Task', mode='automatic')
+        self.assertIsNone(flow.state)
+
     def question(self, kind='implementation'):
         self.flow.ask([{'id': 'choice', 'question': 'Choose strategy',
                        'options': ['A', 'B'], 'allow_free_text': True,

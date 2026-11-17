@@ -114,13 +114,15 @@ class Flow:
         self.state['events'].append(item)
         self.save()
 
-    def create(self, prompt):
+    def create(self, prompt, *, mode="human"):
+        if mode not in ("human", "dual-ai"):
+            raise ValueError("unknown collaboration mode")
         if self.state is not None or not isinstance(prompt, str) or not prompt.strip():
             raise ValueError('existing task or empty prompt')
         if protected_lineage({'tasks': [{'task_refs': [self.task_id]}]}, self.root) is not None:
             raise ValueError('existing protected task requires its original host/ledger reconciliation')
         self.state = {'version': 1, 'root': str(self.root), 'task_id': self.task_id,
-                      'prompt': prompt, 'mode': 'human', 'phase': 'discussion', 'revision': 1,
+                      'prompt': prompt, 'mode': mode, 'phase': 'discussion', 'revision': 1,
                       'questions': [], 'answers': {}, 'choice_visible': False, 'deadline': None,
                       'events': [], 'reviews': [], 'review_calls': 0, 'completed_steps': []}
         self.event('created')
@@ -440,6 +442,7 @@ def main():
     source = parser.add_mutually_exclusive_group()
     source.add_argument('--prompt')
     source.add_argument('--prompt-file', type=Path, help='existing TASK/specification file inside the target project')
+    parser.add_argument('--mode', choices=('human', 'dual-ai'), help='initial mode; existing tasks keep their recorded mode')
     parser.add_argument('--adapter', type=Path, help='explicit trusted host exposing build(root, task_id)')
     parser.add_argument('--output', type=Path)
     parser.add_argument('--status', action='store_true')
@@ -452,11 +455,13 @@ def main():
             if args.prompt_file is not None:
                 relative = str(args.prompt_file.absolute().relative_to(flow.root))
                 raw = regular_bytes(flow.root, relative)
-                flow.create(raw.decode())
+                flow.create(raw.decode(), mode=args.mode or "human")
                 flow.state['prompt_ref'] = {'path': relative, 'sha256': hashlib.sha256(raw).hexdigest()}
                 flow.save()
             else:
-                flow.create(args.prompt)
+                flow.create(args.prompt, mode=args.mode or "human")
+        elif args.mode is not None and args.mode != flow.state["mode"]:
+            raise ValueError("existing task mode differs; reconcile the original task before switching")
         if args.status:
             print(json.dumps(flow.state, ensure_ascii=False))
             return 0
