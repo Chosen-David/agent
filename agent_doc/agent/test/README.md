@@ -41,3 +41,7 @@
 集中入口显式登记`collaborative-task/`为独立unittest检查，复用现有33项打包/审查协议回归。Python unittest不会自动进入没有包标记的嵌套任务目录；新增任务目录时须在suite登记实际入口，不能由顶层51项通过推断已覆盖它。原根tests包装入口仍保留；集中CI与本地入口现在执行相同登记项。
 
 复用边界参考[SkillCache，arXiv:2611.10022v1，2026-11-05](https://arxiv.org/pdf/2611.10022v1) §§3–5.3：成功轨迹与源码保留、编译后仍需实际重放。这里采用其“复用不代替执行覆盖核对”的原则修正现有清单，没有引入capsule运行时；不采用重放失败时以观察到的旧输出替代实际输出的机制，现有pending/未知作用围栏保持。论文正文尚未完整精读，不据其摘要数字声称本库模型收益。
+
+重复修改的生命周期计账用 `lifecycle_cost.py --input TRACE.json --output NEW_REPORT.json`（同一.venv及tiktoken缓存）。TRACE的`events`逐项保存`phase`和实际`text`，phase为creation/discovery/maintenance/diagnosis/execution；首次建脚本、发现入口、维护及诊断均计入，重试也保留为事件。`checks`每项包含实际代码版本`revision`、用例`case`、预先确定的布尔`defective`、`outcome`（pass/detected/error）及原始`evidence`。同版本同用例重复拒绝，重试成本放events，最终结果放checks；不同验收脚本版本需合入revision标识。detected必须由对应断言/诊断确认，崩溃、依赖错误、超时填error。
+
+输出分阶段载荷token、漏检、误报及未验证缺陷；缺阶段、少于两个实际版本或检查器错误使coverage_complete为false。有未验证缺陷不输出漏检率，避免将崩溃当检出。输入标签与文本完整性需人工核对，脚本不能认证宿主未遗漏消息；coverage_complete仅指上述记录覆盖条件。它不把字节当token，也不把预制轨迹当模型运行：端到端节省始终为null，须另取得完整宿主usage/缓存账单及同条件质量对照。该计账器的回归由现有顶层unittest入口自动发现，无需新调度器。
