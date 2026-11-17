@@ -26,6 +26,8 @@
 
 ## 快速开始
 
+Windows 需要 Linux 环境时，见 [WSL 安装指南](knowledge/entries/ai-infra/infra.windows-wsl-setup.md)；[PowerShell 脚本](scripts/setup_wsl.ps1)默认只读检查，`-Apply` 才下载/安装。
+
 选择与你的宿主匹配的一条接入路径。**需要完整的 Claude 项目调度时选本地安装；只按需使用插件技能时选 marketplace，避免在同一项目重复安装同名技能。**
 
 ### Claude Code · 完整项目接入

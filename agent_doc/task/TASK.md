@@ -1045,4 +1045,6 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-11-17
 
+- [x] [WSL-SETUP-01] Windows WSL 安装脚本及可检索指南：Windows18/Linux68回归、7负控通过；本机仅只读，独审/发布门禁由主控核验。 ([详情](task_details/WSL-SETUP-01.md))
+
 - [x] [COLLAB-01] v7 默认模型动态选型、真实双模型内置后端闭环及故障门禁验收通过；旧配对与预算保留，独立复核通过。 ([详情](task_details/COLLAB-01.md))

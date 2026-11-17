@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "id": "infra.windows-wsl-setup",
+  "version": 1,
+  "status": "published",
+  "kind": "method",
+  "title": "Windows 下载和安装 WSL：显式安装、重启与首次初始化",
+  "summary": "Windows PowerShell 5.1 下先只读检查，再显式调用微软 WSL 安装命令；区分已注册、探测未知、安装命令完成、待重启和首次 Linux 用户初始化，附可复用脚本入口及排错。",
+  "aliases": ["WSL", "Windows Subsystem for Linux", "WSL2", "Ubuntu 安装", "PowerShell WSL 自动下载"],
+  "domains": ["ai-infra"],
+  "structures": ["Windows WSL 安装", "Windows Linux 环境初始化", "发行版 注册 重启", "WSL installation setup"],
+  "assumptions": [
+    "Windows 10 version 2004 build 19041+ 或 Windows 11，Windows PowerShell 5.1；未实测 PowerShell7/Windows Server",
+    "联网的可信 Windows 系统 WSL 控制命令，默认 UTF-16LE 重定向输出；子进程不继承 WSL_UTF8",
+    "显式安装需要当前 Windows 用户的管理员权限；WSL2 需要硬件虚拟化",
+    "人类负责手动重启和首次 Linux 用户创建；发行版注册或命令返回0不等于已就绪"
+  ],
+  "sources": [
+    {"url": "https://learn.microsoft.com/en-us/windows/wsl/install", "locator": "Prerequisites / Install WSL command / Set up your Linux user info", "accessed": "2026-11-17"},
+    {"url": "https://learn.microsoft.com/en-us/windows/wsl/basic-commands", "locator": "Install options / List installed distributions / Set WSL version", "accessed": "2026-11-17"},
+    {"url": "https://github.com/microsoft/WSL/blob/master/diagnostics/collect-wsl-logs.ps1", "locator": "WSL_UTF8 and default UTF-16 output, lines10-13 at access time", "accessed": "2026-11-17"}
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": ["agent_doc/task/task_details/WSL-SETUP-01.md", "tests/test_setup_wsl.py", "agent_doc/agent/test/WSL-SETUP-01/suite.json"]
+  },
+  "requires": [],
+  "relations": []
+}
