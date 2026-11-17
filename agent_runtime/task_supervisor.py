@@ -161,7 +161,7 @@ def submit_review(plan_path, project_root, state_dir, adapter, out):
     """Explicit host adapter submits one review, preserving revise/reject feedback.
 
     The adapter exposes build(root, store, run_id)['plan_review_session']; its
-    ReviewSession authenticates callbacks for its declared same-main/legacy mode.
+    ReviewSession authenticates callbacks for its declared same-main, independent or dual-model mode.
     No callable, model identity or module path is obtained from plan JSON.
     """
     from .plan_review import ReviewSession
@@ -483,6 +483,8 @@ def main():
     p.add_argument('--mode', choices=('auto', 'manual'), default='auto')
     p.add_argument('--authorization-reference', required=True)
     p.add_argument('--out', required=True)
+    p.add_argument('--collaboration-mode', choices=('human', 'dual-ai'), default='human',
+                   help='draft review protocol; human mode remains self-check, not human approval')
     p.add_argument('--lineage-id', help='stable logical requirement lineage across revisions')
     p.add_argument('--legacy-unprotected', action='store_true', help='explicit compatibility only; no main-review protection')
     p = sub.add_parser('start')
@@ -505,7 +507,9 @@ def main():
     args = parser.parse_args()
     if args.command == 'prepare':
         plan = prepare(args.task_file or resolve_task_file(args.project_root), args.run_id, args.mode, args.authorization_reference,
-                       review_required=not args.legacy_unprotected, lineage_id=args.lineage_id)
+                       review_required=not args.legacy_unprotected, lineage_id=args.lineage_id,
+                       review_schema=('dual-model-plan-review/v1' if args.collaboration_mode == 'dual-ai'
+                                      else 'single-main-plan-review/v1'))
         atomic_json(args.out, plan)
         result = {'status': 'draft', 'plan': str(Path(args.out).resolve()), 'tasks': len(plan['tasks'])}
     elif args.command == 'review':

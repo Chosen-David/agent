@@ -7,6 +7,10 @@ Date: 2026-11-17
 用户授权：先读代码并复述，与用户讨论关键歧义；验收/约束脚本和变异假设先于实现，放 agent_doc/<项目名>/test/；逐步展示代码、结果、新发现并共同确定下一步。本次项目为 agent。不迁移旧项目目录或改人类指南。
 计划 v2（2026-11-17，依据用户纠正及“开始 work”）：以真实任务行为验收为主，不实现自报记录分类器。第一小步接入统一协作流程与已有 Skill 路由，测试安装/加载/离线引用和文件故障注入；后续用真实任务对话及工具轨迹共审意图、测试先行与小步实现，再决定是否需要宿主强制门禁。每步展示代码、实际证据、限制与下一步，不把文档/打包测试当模型行为验收。
 
+计划补充 v3（2026-11-17）：用户要求 AI–人类 / 双 AI 模式，并授权调研演讲和开源实现后整合。当前小步为来源核查、模式/审查契约及已有 API 故障回归；不启用第二模型或自动迁移历史保护计划。
+
+计划补充 v4（2026-11-17）：用户授权直接升级，并改为批量实现后统一测试、集中修复，完成直接推远端 main。实现可选双模型协议、绑定两阶段任务文件与真实宿主身份；默认人类模式保留。GPT 接入复用本库 Codex 安装器，同步已提交 Skills 和受管指令；配置同步与真实模型运行分别报告，不修改人类指南。
+
 ## Progress
 基线 main 7ac2e578d7969a327b59ba76d784b9e37b0c30aa，完整克隆。已读单主工作流、指南与决策协议；不启用子 agent。
 新增 agent_doc/agent/test/collaborative-task/test_contract.py：8 项契约用例，全部因目标模块尚未实现而失败（预期红灯）；不是 8 个已确认产品缺陷，也不是变异杀死结果。
@@ -35,3 +39,25 @@ Date: 2026-11-17
   - `/tmp/agent-system99/collab-01/regression.log` sha256 `3e0639ac0efe47a1bededcbef56733e74cffa36919b4c328c797e7322779ccbc`
   - `/tmp/agent-system99/collab-01/retest.log` sha256 `b8f0d0a864308cdd0d600da69cd282eed4aaac64f6897199c0617b94ddbe80e2`
   - `/tmp/agent-system99/collab-01/reader.log` sha256 `5f56f1c8afc9fd09f3a5ed874b6e06f7422531cb142a83e000d6a4bdaadc90d9`
+
+### 双 AI 来源调研与整合
+
+前一小步已发布远端 main d0f7766b，树与本地 49ad61f1 一致；本地已对齐远端提交身份。当前新改动基于再次 fetch 后同一版本。
+实际读两场演讲的官方文字版、Anthropic evaluator-optimizer 正文及四个固定版本上游源文件。采用/调整/拒绝与运行缺口见 docs/decisions/paired_ai_review.md；没有安装外部套件或启动子 agent。
+先写并运行五个既有审核机制的故障注入测试，全部通过（0.179s）；首次即绿，保护现有行为。初次测试发现导入 fixture TestCase 会被重复发现，改为模块导入后准确为五项。
+双模型尚未实跑：现有独立上下文核验允许同模型，不能替代可信模型身份检查。模式契约现已写入协作流程并同步两个插件副本；不改变默认单主或人类指南。
+
+本小步定向回归：`python -m unittest tests.test_collaborative_task tests.test_plan_review tests.test_single_main_plan tests.test_repository_task_integration tests.test_plugin_reference_sync -v`，44 项通过（14.106s）；未重跑全库，未修改运行时实现。日志 `/tmp/agent-system99/collab-02/regression.log` sha256 `c1a218b97213710a7bc0d2563cfe42ab419cec8cc1d01844c61cfef195631da3`。新研究与协议整合留在本地提交，尚未推送；整个 COLLAB-01 未完成。
+
+### 2026-11-17：批量运行时升级与回归
+
+新增可选双模型 ReviewSession 协议、可信模型身份/指定审查模型绑定、设计→实现两阶段规格/测试/代码引用及独立需求符合性/代码质量检查。复用原账本与预算，旧协议不降级。新增 23 项合成宿主测试；不宣称真实模型调用或质量收益。GPT 接入使用现有 Codex 安装器，待发布后同步已提交版本。
+全库统一回归 `python -m unittest discover -s tests -v`：2170 项，1 failure、8 skipped，402.134s。唯一失败为 prepare CLI 输出新增 collaboration_mode 字段破坏旧精确输出契约；已移除该新增输出字段，模式仍由参数和计划 schema 表达，不改旧断言。Reader 3 项通过，1.706s。日志位于 /tmp/agent-system99/collab-03/。
+发布前 fetch 发现远端 f6fdeb20 新增统一项目检查/pstack 验证流程；保留并合并后执行受影响回归。整个 COLLAB-01 的真实模型/对话验收仍未完成。
+
+合并 f6fdeb20 后，修复及关联回归 90 项全部通过（11.799s），包含旧 CLI 精确输出、双模型协议、旧审核、任务文档、插件镜像和 Codex 安装器。统一 project_test.py 在 .venv 标准库环境执行 lint/comments/structure/mutation/regression 五项，全部 pass；注释差异基准显式设为 f6fdeb20，不用自身 HEAD 作空检查。全库首轮的唯一失败已由原测试复验通过；未声称修复后重新运行完整 2170 项。
+- `/tmp/agent-system99/collab-03/batch-regression.log` sha256 `bb1385b302d65183a8bcced87fbea1798756bc5fff03062b6c32685f6ea01ed8`
+- `/tmp/agent-system99/collab-03/retest.log` sha256 `f33e5376fc4a2a121c00129508bc0c4e7a5aade9e6253de808120621aec7cd2b`
+- `/tmp/agent-system99/collab-03/reader.log` sha256 `c5143b0490431e0882fb352aad3e8dd7e53b19d5454f1c562c9770cec478b260`
+- `/tmp/agent-system99/collab-03/project-checks/report.json` sha256 `7472bb1986ca6eb6e9366ea778d59b9d4dabc2197e6227db783b9ba5262b969c`
+发布候选保留远端统一测试入口和本地双模型/批处理升级，未改人类 guide。待推送读回后同步 Codex；真实双模型宿主调用与审查质量评估仍未完成，不能将安装视为此项通过。

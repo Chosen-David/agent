@@ -2,6 +2,24 @@
 
 代码实现、修复和重构开始时加载本流程。由同一个主 Agent 串行执行；它是行为规范，不是拦截任意 shell 写入的权限系统。不要把结构测试通过称为模型遵循或意图正确性的证明。
 
+## 两种反馈模式
+
+默认 `human`：主 AI 做当前小步，人类反馈并确定下一步。任务显式选择 `dual-ai` 时，目标是主 AI 实现、另一个真实模型的审查 AI 复核；仍只有主 AI 写正式代码，审查串行进行，不为每个 Skill 再创建 agent。两种模式共用下文的验收先行规则。
+
+本库提供双模型审查协议、两阶段文件绑定和 CLI 草稿入口，但尚未提供经真实双模型验证的宿主接入。不要仅设置模式字符串就声称启用，也不因外部 Skill 要求而自动派生 agent。未选择或后端未核验时保持当前单主执行，报告双 AI 未启用；不能悄悄用自检替代用户指定的双 AI 验收。
+
+双 AI 的审查按下面边界执行：
+
+- **真实身份**：记录宿主实际调用的两个模型及独立 invocation/context。宿主解析模型别名并确认模型不同；两次同模型调用只是上下文独立，不满足本任务双模型要求。不同模型也不保证错误统计独立。
+- **审查输入**：直接读取人类原始要求、确认/未决问题、指南、冻结规格及 base/head（未提交代码用内容快照）、相关调用链、测试版本和原始输出。实现者的解释是待核查主张；不共享整段私有推理或用摘要替换原始要求。
+- **两次检查点**：实现前审查验收是否表达真实要求、变异能否检出对应错误；实现后分别判断需求符合性与代码质量。不要只审 diff 而漏掉未实现要求。
+- **具体发现**：每项问题给规则/要求依据、代码位置、触发输入/状态、影响及复验方法；区分已证实缺陷、待验证疑点和非阻断建议。不以置信分或“另一个 AI 同意”替代证据。
+- **读取与测试范围**：从本小步开始；遇具体跨模块风险再沿调用链扩展。先核对已有证据，缺失/过期/有疑点或独立合同要求时复跑相应测试；审查者只在隔离副本生成反例和输出，不改主工作树。工具不可用就报告未验证。
+- **反馈不等于人类授权**：审查者提出修复建议，主 AI 按原要求返修；新的业务语义、范围/权限或验收变更交回人类。两 AI 分歧用输入、反例与证据解决，无法消解时升级，不能靠多数票重写需求。
+- **有界循环**：使用已有任务预算与恢复账本；明确通过、返修、等待人类、缺能力和预算耗尽。没有报告、循环结束、超时或额度耗尽均不等于通过。模式切换和版本变化重新核对受影响证据，不重置旧预算。
+
+可借鉴 [Superpowers 任务审查](https://github.com/obra/superpowers/blob/22f0b463e7a5e579904dd6211a520321035526f7/skills/subagent-driven-development/task-reviewer-prompt.md) 的双维判断与 [LangGraph-Reflection](https://github.com/langchain-ai/langgraph-reflection/blob/888d007163f1479e1e7a734f66dc7dcbd12424d7/src/langgraph_reflection/__init__.py) 的反馈回边；按以上边界适配，不直接执行其派生 agent 或终止策略。已有 ReviewSession 是可复用的宿主接口，旧独立上下文回执不能冒充已核验不同模型。
+
 ## 先读库，再对齐
 
 先读当前用户要求、项目指南、唯一 TASK、真实入口和调用链、相关实现与现有测试。能从代码确定的信息先查代码；只读理解可路由到已有 `code-reading`。复述目标、保持不变的行为、验收示例和当前小步，明确区分用户决定、代码事实和自己的假设。
@@ -44,16 +62,29 @@
 | 可静态识别的禁止模式 | [Trail of Bits semgrep-rule-creator](https://github.com/trailofbits/skills/tree/main/plugins/semgrep-rule-creator/skills/semgrep-rule-creator) | 先写违规与合法样例，再跑真实规则测试 |
 | 完成前证据检查 | [Superpowers verification-before-completion](https://github.com/obra/superpowers/tree/main/skills/verification-before-completion) | 运行当前版本命令后再下结论；同一主 Agent 复核仍是自检 |
 
+## 批处理与小步共审
+
+协作粒度按用户决定。用户选择批处理时，先准备本批验收与错误假设，连续实现已明确的范围，随后统一运行测试并按失败项集中修复；不逐个功能停下来请求审批。关键语义歧义仍交回人类，已有独立证据要求不取消。以下五步可作用于整个已授权批次。
+
 ## 每一小步
 
 1. **说明本小步**：改哪个行为、为什么、采用哪个验收；有关键歧义先讨论。
-2. **按讨论采取行动**：先准备上述测试/约束和变异，再实现最小变更；不同时推进下一功能。
+2. **按讨论采取行动**：先准备上述测试/约束和变异，再实现最小变更；批处理时可连续完成已约定功能。
 3. **共同看代码与结果**：展示关键 diff、实际命令、退出码、断言结果和副作用。记录规格、代码、测试版本及原始输出位置；文件存在和哈希只标识内容，不证明执行或人类批准。
 4. **暴露新发现**：报告失败、变异存活、未覆盖输入、工具缺失和模型假设；不能悄悄降低阈值或改期望来变绿。
 5. **共同确定下一步**：按用户已约定的协作粒度继续；需要新语义决定时停在具体问题上。已有明确授权无需机械重复审批。完成需要真实任务验收，不能用报告里的 PASS 字段代替。
 
 验收脚本更新后重跑受影响检查。记录命令未执行、失败、跳过和未覆盖范围；不宣称本流程保证零缺陷、不理解偏差或未实测的性能提升。已有独立验收合同继续保留，作者自检不替代独立证据。
 
+## 运行时接入
+
+完整 checkout 使用 `python -m agent_runtime.task_supervisor prepare --project-root /absolute/project --run-id RUN --authorization-reference REF --out /absolute/plan.json --collaboration-mode human`；将最后参数改为 `dual-ai` 生成 `dual-model-plan-review/v1` 草稿。默认 human 仍是主 AI 自检协议，不能认证人类同意。双模型不能与 `--legacy-unprotected` 组合。
+
+双模型草稿必须补齐 `plan_review.task_contract`：`stage` 为 `acceptance-design` 或 `implementation`，`specification` 是规格的 path/sha256 引用，`acceptance` 是非空测试/约束引用数组，`implementation` 是代码引用数组（实现审查时非空）。路径相对目标项目，引用绑定实际文件，禁止链接/越界。先用设计版本取得批准，再在同一 lineage、不同 run_id 中提交实现版本；规格或验收改变须重新审查设计。两阶段共用原预算，不因返修重置。
+
+可信宿主显式构造 `ReviewSession(..., dual_model=True, reviewer_model_id=CANONICAL_MODEL_ID)`，提供 planner_identity、reviewer、authenticate 回调，再通过现有 `task_supervisor review --adapter /absolute/trusted_adapter.py` 提交。宿主必须从真实调用核验 provider_id/model_id、独立 invocation/context、完整请求/响应绑定及预算，解析别名后提供规范模型 ID；计划或模型自报身份无效。审查 verdict 除原七项检查外分别报告 `spec_compliance` 和 `code_quality`。恢复时更换审查模型、失效的设计批准及修改后的代码均不能沿用旧回执。
+
+设计批准允许进入实现阶段，不代表最终代码验收。实现批准仅覆盖已绑定文件和宿主实际验证内容；文件哈希不证明测试执行，主工作树隔离、真实测试输出、模型调用和最终结果验收仍由可信宿主执行。本协议不是任意 shell 写入拦截器，不自动安装模型或将两个名称当作真实双 AI。
 ## 本地验证接入：生成、维护、纠正
 
 这是pstack方法的单主串行适配，复用当前Skill与唯一TASK，不需要远端插件运行时。固定上游 `cursor/plugins@3fa33bb0f927bea2ccacd48a3cfda95145fb6bae` 的 `pstack/skills/{create-verification-skill,maintain-verification-skill,correct}/SKILL.md`；改编许可见 [pstack MIT](https://github.com/cursor/plugins/blob/3fa33bb0f927bea2ccacd48a3cfda95145fb6bae/pstack/LICENSE)。不启用其子agent、自动PR、全局配置或定时任务。

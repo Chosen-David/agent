@@ -155,8 +155,10 @@ def _review_prior_candidates(task, search):
 
 def prepare(task_file, run_id, mode, authorization_reference, *, review_required=True, lineage_id=None,
             review_schema='single-main-plan-review/v1'):
-    if review_schema not in ('main-plan-review/v1', 'single-main-plan-review/v1'):
+    if review_schema not in ('main-plan-review/v1', 'single-main-plan-review/v1', 'dual-model-plan-review/v1'):
         raise ValueError('unknown plan review schema')
+    if review_schema == 'dual-model-plan-review/v1' and not review_required:
+        raise ValueError('dual-model review cannot be unprotected')
     task_file = Path(task_file)
     root = task_file.resolve() if task_file.is_dir() else project_root_for_task(task_file)
     task_file = resolve_task_file(root)
@@ -173,7 +175,11 @@ def prepare(task_file, run_id, mode, authorization_reference, *, review_required
         **({'plan_review': {'schema_version': review_schema,
                             'lineage_id': lineage_id or 'requirements:' + hashlib.sha256(
                                 ('\0'.join(sorted(item['id'] for item in items))).encode()).hexdigest(),
-                            'evidence_refs': []}} if review_required else {}),
+                            'evidence_refs': [],
+                            **({'task_contract': {'stage': 'acceptance-design',
+                                'specification': None, 'acceptance': [], 'implementation': []}}
+                               if review_schema == 'dual-model-plan-review/v1' else {})}}
+           if review_required else {}),
         'user_goal': 'Complete all TASK.md requirements with reportable evidence',
         'authorization_reference': authorization_reference,
         'task_source': {'path': str(task_file), 'sha256': task_snapshot['sha256'], 'mode': mode},

@@ -2,6 +2,8 @@
 
 一个主 agent 持有当前用户目标、唯一 TASK 与执行上下文。Skill 是主 agent 当前步骤的能力说明，不是另一个 agent、进程或独立审核者。本契约取代旧工作流中的自动委派、双主控和并行 agent 默认；专业方法、权限、许可证、失败证据和人类 guide 只读边界继续有效。
 
+用户明确选择双 AI 时，按 [协作式任务验收](collaborative_implementation_workflow.md) 启用串行审查；仅主 AI 写正式代码，需真实不同模型与独立上下文。此例外不授权多 agent 并行开发。用户选择批处理时可将已明确的一批实现作为当前步骤，统一测试后集中修复。
+
 ## 一次一步
 
 1. 启动或恢复时先核对当前用户要求、当前项目指南、`agent_doc/task/TASK.md`、对应详情的 Plan/Progress、相关 memory 更正与 advice 差异。复用已有导航和 MemoryLedger；不另建总任务表或共享聊天池。

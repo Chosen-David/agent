@@ -22,6 +22,7 @@ from .project_docs import assert_ai_writable, guard_write_path
 
 SCHEMA = 'main-plan-review/v1'
 SINGLE_SCHEMA = 'single-main-plan-review/v1'
+DUAL_SCHEMA = 'dual-model-plan-review/v1'
 CHECKS = ('intent', 'guide', 'assumptions', 'prior_results', 'acceptance', 'risk', 'resources')
 LIMIT = 1024 * 1024
 
@@ -61,14 +62,50 @@ def _refs(plan):
     return sorted({ref for task in plan.get('tasks', []) for ref in task.get('task_refs', [])})
 
 
+def _dual_contract(value):
+    contract = value.get('task_contract')
+    _need(isinstance(contract, dict) and set(contract) == {
+        'stage', 'specification', 'acceptance', 'implementation'},
+        'dual-model review requires a task contract with bound artifacts')
+    _need(contract['stage'] in ('acceptance-design', 'implementation'),
+          'unknown dual-model review stage')
+    _need(isinstance(contract['specification'], dict) and
+          isinstance(contract['acceptance'], list) and bool(contract['acceptance']) and
+          isinstance(contract['implementation'], list), 'task specification and acceptance artifacts required')
+    _need(contract['stage'] != 'implementation' or bool(contract['implementation']),
+          'implementation review requires code artifacts')
+    refs = [contract['specification'], *contract['acceptance'], *contract['implementation']]
+    for ref in refs:
+        _need(isinstance(ref, dict) and set(ref) == {'path', 'sha256'} and
+              _text(ref.get('path')) and _text(ref.get('sha256')), 'bound task artifact required')
+    _need(len({ref['path'] for ref in refs}) == len(refs), 'task artifact paths must be unique')
+    return contract
+
+
+def _design_review(contract, previous):
+    if not contract or contract['stage'] != 'implementation':
+        return None
+    designs = [r for r in previous if
+               r['request'].get('task_contract', {}).get('stage') == 'acceptance-design']
+    _need(bool(designs), 'acceptance design must be reviewed before implementation review')
+    design = designs[-1]
+    _need(design['review']['verdict']['decision'] == 'approve' and all(
+        design['request']['task_contract'][key] == contract[key]
+        for key in ('specification', 'acceptance')),
+        'acceptance design missing, rejected or stale; review current contract first')
+    return design
+
+
 def policy(plan):
     value = plan.get('plan_review')
     if value is None:
         return None
-    _need(isinstance(value, dict) and value.get('schema_version') in (SCHEMA, SINGLE_SCHEMA),
+    _need(isinstance(value, dict) and value.get('schema_version') in (SCHEMA, SINGLE_SCHEMA, DUAL_SCHEMA),
           'invalid main-plan review policy; cannot downgrade protected plans')
     _need(_text(value.get('lineage_id')) and isinstance(value.get('evidence_refs'), list),
           'review requires logical lineage_id and explicit evidence_refs')
+    if value['schema_version'] == DUAL_SCHEMA:
+        _dual_contract(value)
     return value
 
 
@@ -189,6 +226,10 @@ def current_inputs(root, plan, *, publication_task_refs=None):
     review_policy = policy(plan)
     for ref in review_policy['evidence_refs'] if review_policy else ():
         _bound(root, ref)
+    if review_policy and review_policy['schema_version'] == DUAL_SCHEMA:
+        contract = _dual_contract(review_policy)
+        for ref in [contract['specification'], *contract['acceptance'], *contract['implementation']]:
+            _bound(root, ref)
     # Prior results are discovery evidence, not scientific acceptance. Bind exact
     # registry bytes nevertheless; new lookup candidates are checked at dispatch.
     refs = {}
@@ -227,7 +268,7 @@ def _capture_input_recheck(plan, root):
     return recheck
 
 
-def _review(value):
+def _review(value, *, dual_model=False):
     _need(isinstance(value, dict) and set(value) == {'full_review', 'verdict'},
           'complete full_review and compact verdict required')
     _need(_text(value['full_review']) and len(canonical(value)) <= LIMIT,
@@ -237,7 +278,8 @@ def _review(value):
           and _text(verdict.get('summary')) and isinstance(verdict.get('findings'), list),
           'review verdict requires approve/revise/reject, summary and findings')
     checks = verdict.get('checks')
-    _need(isinstance(checks, dict) and set(checks) == set(CHECKS), 'all critical review checks required')
+    expected_checks = set(CHECKS) | ({'spec_compliance', 'code_quality'} if dual_model else set())
+    _need(isinstance(checks, dict) and set(checks) == expected_checks, 'all critical review checks required')
     for check in checks.values():
         _need(isinstance(check, dict) and check.get('status') in ('pass', 'fail', 'unknown')
               and _text(check.get('reason')), 'critical check requires explicit status and reason')
@@ -254,10 +296,16 @@ def _review(value):
     return verdict
 
 
-def _identity(value):
+def _identity(value, *, model_required=False):
     _need(isinstance(value, dict) and all(_text(value.get(k)) for k in
           ('invocation_id', 'context_id', 'host_source')), 'trusted invocation/context identity required')
-    return {k: value[k] for k in ('invocation_id', 'context_id', 'host_source')}
+    fields = ('invocation_id', 'context_id', 'host_source')
+    if model_required:
+        fields += ('provider_id', 'model_id')
+        _need(all(_text(value.get(k)) and value[k] == value[k].strip()
+                  for k in ('provider_id', 'model_id')),
+              'trusted canonical provider/model identity required')
+    return {k: value[k] for k in fields}
 
 
 def _authenticate(callback, request, review, proof):
@@ -269,9 +317,11 @@ def _authenticate(callback, request, review, proof):
     _need(isinstance(observed, dict), 'trusted verifier must return authenticated bindings, not a boolean')
     _need(observed.get('request_sha256') == sha(request) and observed.get('review_sha256') == sha(review),
           'authenticated review does not bind exact nonce/plan/full response')
-    planner, reviewer = _identity(observed.get('planner')), _identity(observed.get('reviewer'))
+    dual = request.get('schema_version') == DUAL_SCHEMA
+    planner = _identity(observed.get('planner'), model_required=dual)
+    reviewer = _identity(observed.get('reviewer'), model_required=dual)
     _need(planner == request['planner'], 'authenticated planner identity mismatch')
-    _need(request.get('schema_version') in (SCHEMA, SINGLE_SCHEMA), 'unknown authenticated review schema')
+    _need(request.get('schema_version') in (SCHEMA, SINGLE_SCHEMA, DUAL_SCHEMA), 'unknown authenticated review schema')
     if request['schema_version'] == SINGLE_SCHEMA:
         _need(planner == reviewer and observed.get('fresh_context') is False and
               observed.get('single_main') is True,
@@ -280,6 +330,11 @@ def _authenticate(callback, request, review, proof):
         _need(planner['invocation_id'] != reviewer['invocation_id'] and
               planner['context_id'] != reviewer['context_id'] and observed.get('fresh_context') is True,
               'planner self-approval or non-independent reviewer context')
+    if dual:
+        _need(reviewer['model_id'] == request.get('reviewer_model_id'),
+              'authenticated model differs from configured reviewer model')
+        _need(planner['model_id'] != reviewer['model_id'],
+              'dual-model review requires distinct authenticated models')
     _need(observed.get('budget_valid') is True, 'host review budget missing/exhausted; replan required')
     return observed
 
@@ -320,7 +375,7 @@ def check_plan_review(plan, root=None, verifier=None, *, allow_legacy=False,
           and request.get('lineage_id') == value['lineage_id'], 'stale/cross-project/replayed main review')
     _need(request.get('purpose', 'execution') == purpose and
           request.get('publication_task_refs') == scope, 'review purpose or trusted publication scope mismatch')
-    verdict = _review(receipt.get('review'))
+    verdict = _review(receipt.get('review'), dual_model=value['schema_version'] == DUAL_SCHEMA)
     _need(callable(verifier), 'trusted plan-review verifier unavailable; dispatch blocked')
     # A session verifies its durable request ledger and authenticates the model's
     # full response again. An alternate host verifier must provide the same facts.
@@ -361,12 +416,20 @@ class ReviewSession:
     """
     def __init__(self, root, lineage_id, *, planner_identity=None, reviewer=None,
                  authenticate=None, max_cycles=3, max_seconds=900, clock=time.time, publication_task_refs=None,
-                 single_main=False):
+                 single_main=False, dual_model=False, reviewer_model_id=None):
         self.root, self.lineage_id = Path(root).resolve(), lineage_id
         self.planner_identity, self.reviewer, self.authenticate = planner_identity, reviewer, authenticate
         self.clock = clock
         _need(type(single_main) is bool, 'single_main must be a trusted host boolean')
+        _need(type(dual_model) is bool and not (single_main and dual_model),
+              'dual_model must be a trusted boolean and cannot enable same-main review')
         self.single_main = single_main
+        self.dual_model = dual_model
+        _need((dual_model and _text(reviewer_model_id) and
+               reviewer_model_id == reviewer_model_id.strip()) or
+              (not dual_model and reviewer_model_id is None),
+              'dual-model backend requires a canonical configured reviewer model')
+        self.reviewer_model_id = reviewer_model_id
         self.publication_task_refs = _scope(publication_task_refs)
         self.purpose = 'publication' if self.publication_task_refs is not None else 'execution'
         _need(_text(lineage_id) and type(max_cycles) is int and 1 <= max_cycles <= 20
@@ -375,7 +438,8 @@ class ReviewSession:
         self.max_cycles, self.max_seconds = max_cycles, max_seconds
 
     def _check_host_mode(self, schema):
-        _need((schema == SINGLE_SCHEMA) == self.single_main,
+        _need((schema == SINGLE_SCHEMA) == self.single_main and
+              (schema == DUAL_SCHEMA) == self.dual_model,
               'host review mode unavailable; configure an explicit same-main backend for single-main self-check')
 
     def submit(self, plan):
@@ -387,7 +451,11 @@ class ReviewSession:
         _need(callable(self.planner_identity) and callable(self.reviewer) and callable(self.authenticate),
               'planner/reviewer/authentication host adapters unavailable; no review was run')
         current_inputs(self.root, plan, publication_task_refs=self.publication_task_refs)
-        planner = _identity(self.planner_identity(deepcopy(plan)))
+        planner = _identity(self.planner_identity(deepcopy(plan)),
+                            model_required=self.dual_model)
+        if self.dual_model:
+            _need(planner['model_id'] != self.reviewer_model_id,
+                  'dual-model review requires distinct authenticated models')
         now = self.clock()
         with _review_db(self.root) as db:
             db.execute('BEGIN IMMEDIATE')
@@ -412,12 +480,16 @@ class ReviewSession:
             _need(len(rows) < line['max_cycles'] and 0 <= now - line['started'] < line['max_seconds'],
                   'review budget exhausted; stop for replan, never mark done')
             previous = [json.loads(row['receipt']) for row in rows]
+            contract = _dual_contract(value) if self.dual_model else None
+            design = _design_review(contract, previous)
             request = {'schema_version': value['schema_version'], 'request_id': uuid.uuid4().hex,
                        'project': project_identity(self.root), 'lineage_id': self.lineage_id,
                        'cycle': len(rows) + 1, 'run_id': plan['run_id'], 'plan_sha256': plan_sha256(plan),
                        'purpose': self.purpose, 'publication_task_refs': self.publication_task_refs,
                        'planner': planner, 'deadline': line['started'] + line['max_seconds'],
-                       'previous_review_sha256': [sha(item['review']) for item in previous]}
+                       'previous_review_sha256': [sha(item['review']) for item in previous],
+                       **({'reviewer_model_id': self.reviewer_model_id,
+                           'task_contract': deepcopy(contract)} if self.dual_model else {})}
             # Scope/budget/identity validation precedes atomic ownership reservation.
             for ref in _refs(plan):
                 owner = db.execute('SELECT lineage,policy_schema FROM review_protected WHERE requirement=?', (ref,)).fetchone()
@@ -429,6 +501,8 @@ class ReviewSession:
                            (ref, self.lineage_id, value['schema_version']))
             db.execute('INSERT INTO review_requests VALUES (?,?,?,?,NULL)',
                        (request['request_id'], self.lineage_id, request['cycle'], canonical(request).decode()))
+        if design is not None:
+            _authenticate(self.authenticate, design['request'], design['review'], design['proof'])
         result = self.reviewer(deepcopy(request), deepcopy(plan), deepcopy(previous))
         return self.resolve(plan, request['request_id'], result)
 
@@ -445,6 +519,8 @@ class ReviewSession:
               'no matching review request to reconcile')
         request = json.loads(row['request'])
         self._check_host_mode(request.get('schema_version'))
+        _need(not self.dual_model or request.get('reviewer_model_id') == self.reviewer_model_id,
+              'configured reviewer model changed after request')
         _need(policy(plan) is not None and policy(plan)['lineage_id'] == self.lineage_id and
               policy(plan)['schema_version'] == request['schema_version'] and
               request['plan_sha256'] == plan_sha256(plan) and request['run_id'] == plan['run_id'] and
@@ -452,7 +528,7 @@ class ReviewSession:
               request.get('publication_task_refs') == self.publication_task_refs, 'recovered review plan/project/scope mismatch')
         _need(isinstance(result, dict), 'reviewer returned no full response')
         review, proof = result.get('review'), result.get('proof')
-        _review(review)
+        _review(review, dual_model=self.dual_model)
         _authenticate(self.authenticate, request, review, proof)
         _need(self.clock() <= request['deadline'], 'review time budget exhausted; stop for replan')
         current_inputs(self.root, plan, publication_task_refs=self.publication_task_refs)
@@ -467,6 +543,8 @@ class ReviewSession:
 
     def verify(self, root, request, review, proof):
         self._check_host_mode(request.get('schema_version'))
+        _need(not self.dual_model or request.get('reviewer_model_id') == self.reviewer_model_id,
+              'configured reviewer model changed after request')
         _need(Path(root).resolve() == self.root and request.get('lineage_id') == self.lineage_id and
               request.get('purpose', 'execution') == self.purpose and
               request.get('publication_task_refs') == self.publication_task_refs,
@@ -478,8 +556,14 @@ class ReviewSession:
                   line['publication_scope'] == (canonical(self.publication_task_refs).decode() if self.publication_task_refs is not None else None),
                   'trusted publication scope changed after restart')
             latest = db.execute('SELECT MAX(cycle) FROM review_requests WHERE lineage=?', (self.lineage_id,)).fetchone()[0]
+            previous = [json.loads(r['receipt']) for r in db.execute(
+                'SELECT receipt FROM review_requests WHERE lineage=? AND cycle<? ORDER BY cycle',
+                (self.lineage_id, request.get('cycle', 0))).fetchall() if r['receipt'] is not None]
         expected = {'schema_version': request.get('schema_version'), 'request': request, 'review': review, 'proof': proof}
         _need(row is not None and row['receipt'] is not None and json.loads(row['receipt']) == expected
               and json.loads(row['request']) == request and row['cycle'] == latest,
               'receipt absent/replayed/superseded in authoritative review ledger')
+        design = _design_review(request.get('task_contract') if self.dual_model else None, previous)
+        if design is not None:
+            _authenticate(self.authenticate, design['request'], design['review'], design['proof'])
         return _authenticate(self.authenticate, request, review, proof)
