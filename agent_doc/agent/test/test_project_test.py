@@ -39,11 +39,13 @@ class ExternalTestEntryTests(unittest.TestCase):
             "--project", "example", "--target", str(target or self.target), "--output", str(output)],
             capture_output=True, text=True, timeout=30)
         self.assertEqual(result.returncode, expected, result.stdout + result.stderr)
+        self.receipt = json.loads(result.stdout) if result.stdout else None
         return json.loads((output / "report.json").read_text()) if (output / "report.json").exists() else None
 
     def test_sibling_target_import_and_no_target_artifacts(self):
         report = self.check(" def test_value(self): self.assertEqual(product.VALUE, 42)\n", 0)
         self.assertEqual(report["status"], "pass")
+        self.assertEqual(set(self.receipt), {"status", "report"})
         self.assertEqual(report["before"], report["after"])
         self.assertEqual(self.git("status", "--porcelain"), b"")
         self.assertFalse((self.target / "agent_doc").exists())
@@ -51,6 +53,9 @@ class ExternalTestEntryTests(unittest.TestCase):
     def test_real_assertion_failure_is_not_pass(self):
         report = self.check(" def test_value(self): self.assertEqual(product.VALUE, 99)\n", 1)
         self.assertEqual(report["checks"][0]["result"]["failures"], 1)
+        self.assertEqual(self.receipt["checks"][0]["result"]["failures"], 1)
+        self.assertEqual(self.receipt["checks"][0]["status"], "fail")
+        self.assertTrue(Path(self.receipt["checks"][0]["log"]).is_file())
 
     def test_empty_suite_is_not_pass(self):
         report = self.check(" pass\n", 1)
@@ -72,6 +77,8 @@ class ExternalTestEntryTests(unittest.TestCase):
     def test_code_change_during_test_invalidates_pass(self):
         report = self.check(" def test_value(self):\n  from pathlib import Path\n  Path('product.py').write_text('VALUE = 43\\n')\n", 1)
         self.assertFalse(report["stable_inputs"])
+        self.assertFalse(self.receipt["stable_inputs"])
+        self.assertEqual(self.receipt["status"], "fail")
 
     def test_expected_failure_is_not_completed_check(self):
         report = self.check(" @unittest.expectedFailure\n def test_value(self): self.fail()\n", 1)
@@ -94,6 +101,7 @@ class ExternalTestEntryTests(unittest.TestCase):
         self.assertEqual([item["status"] for item in report["checks"]], ["fail", "not-run"])
         self.assertEqual(report["checks"][0]["returncode"], 7)
         self.assertFalse((self.base / "evidence/later.log").exists())
+        self.assertEqual(self.receipt["checks"][1], {"id": "later", "status": "not-run"})
 
     def test_python_and_shell_checks_execute_in_order(self):
         self.configure([self.script("lint", "shell", 'test -f "$AGENT_TEST_PROJECT_ROOT/product.py"\n'),

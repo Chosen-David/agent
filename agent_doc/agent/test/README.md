@@ -33,3 +33,7 @@
 注释策略以 [concise engineering](../../../workflows/concise_engineering.md) 为准。`comment_policy.py` 用Python tokenize检查新增COMMENT token，保留必要指令及公开docstring；仅覆盖Python，不能判定docstring是否必要或任意语言的注释。Shell新增普通注释由主agent自检。默认相对HEAD检查已暂存、未暂存和未跟踪Python；CI用PR基准或push前SHA设置 `AGENT_TEST_BASE`，无有效基准即阻塞。历史注释不批量删除；新提交复验须显式指定改动前SHA，不能对自身HEAD做空差异检查。
 
 真实功能、源码入口及未覆盖项见 [features.md](features.md)。首次运行先用 `python -m venv /absolute/agent/.venv` 创建环境；本套件不需要第三方Python包。
+
+重复验收先核对当前要求与suite覆盖，再直接执行已有入口；不要每次重写或整份读取脚本。成功回执保持status/report两字段；失败/阻塞回执附各检查状态、退出码、计数和日志路径，not-run不伪造日志。先读失败项日志，需要核对来源/输入/范围时再读完整report；简短回执不是独立验收。修改测试前仍需阅读对应实现和要求。
+
+可选载荷测量：在.venv安装`tiktoken==0.12.0`后，设置`TIKTOKEN_CACHE_DIR=WORKFLOW_ROOT/.venv/tiktoken-cache`，运行`.venv/bin/python agent_doc/agent/test/token_cost.py --output /tmp/agent-system99/RUN_ID/payloads`。它对真实core.py的通过/语法错/依赖错场景执行相同检查，比较内联相同代码与复用文件调用的命令和输出token；保存原命令、原输出及哈希。这里不启动第二模型，内联是等价载荷对照，不是模型自行生成脚本的实验；没有覆盖推理、历史重传、缓存计费与首次编写维护成本，不报告端到端token节省。冷启动的完整suite清单单独计入，不能只报热复用。

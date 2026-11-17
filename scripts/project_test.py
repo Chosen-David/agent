@@ -148,7 +148,16 @@ def run(workflow, project, target, output):
                             else "pass" if stable and not failed else "fail")
     finally:
         (output / "report.json").write_text(json.dumps(report, indent=2) + "\n")
-    print(json.dumps({"status": report["status"], "report": str(output / "report.json")}))
+    receipt = {"status": report["status"], "report": str(output / "report.json"),
+               "stable_inputs": report.get("stable_inputs", False), "checks": []}
+    for item in report["checks"]:
+        check = {key: item[key] for key in ("id", "status", "returncode", "reason", "result") if key in item}
+        if item["status"] != "not-run":
+            check["log"] = str(output / (item["id"] + ".log"))
+        receipt["checks"].append(check)
+    if report["status"] == "pass":
+        receipt = {"status": "pass", "report": str(output / "report.json")}
+    print(json.dumps(receipt))
     return 0 if report["status"] == "pass" else 1
 
 
