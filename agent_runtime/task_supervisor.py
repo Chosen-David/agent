@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager
-import fcntl
+from . import file_lock as fcntl
 import hashlib
 import importlib.util
 import json
@@ -46,11 +46,17 @@ class SupervisorInputError(ValueError):
 def _lock_file(path):
     """Keep a stable regular lock inode; reject special files before flock."""
     path = guard_write_path(path)
-    flags = os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW | os.O_NONBLOCK
+    if path.exists() and (path.is_symlink() or getattr(path.lstat(), 'st_file_attributes', 0) &
+                          getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 1024)):
+        raise SupervisorInputError('supervisor lock must not be redirected')
+    flags = os.O_CREAT | os.O_RDWR | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
     fd = os.open(path, flags, 0o666)
     try:
         if not stat.S_ISREG(os.fstat(fd).st_mode):
             raise SupervisorInputError('supervisor lock must be a regular file')
+        opened, named = os.fstat(fd), path.lstat()
+        if (opened.st_dev, opened.st_ino) != (named.st_dev, named.st_ino):
+            raise SupervisorInputError('supervisor lock changed while opening')
         yield fd
     finally:
         # Closing also releases flock on body/locking errors and normal exit.

@@ -40,7 +40,13 @@ python /absolute/path/to/agent/scripts/project_docs.py --root /absolute/path/to/
 
 目标布局也在备份和写入前检查，并在持有更新锁时复查：新文件路径已有目录或特殊文件、父路径仍为文件时，返回 `layout conflict`，保留完整旧安装和目录，不创建 pending/备份。上游文件↔目录转换需先人工核对归属并另行迁移；脚本不自动删除目录。普通新子目录仍可创建。该检查不提供针对任意外部进程并发修改的文件系统事务保证；真实 I/O 中断仍按下面的恢复流程处理。复现和回归见 [第二轮记录](round2/report.md)。
 
-## 恢复与范围
+## 真实双模型运行
+
+Skill 安装与模型执行分开验证。完整 checkout 已提供 `agent_runtime.codex_host`：先配置账号可用的两个不同模型及原生 Codex executable，再运行 `--probe` 获取两个真实服务端身份；任务通过 `collaborative_flow --backend codex` 串行调用。接入、Windows 路径、可信代码执行、切换和恢复示例见 [协作 CLI](../collaborative_cli.md)。本机独立安装的 CLI 不改变全局账号配置；`setup_codex.py --check` 仍只验证受管安装，不能代替真实调用。新会话继续按宿主执行证据判定双模型模式，不声称自动影响所有聊天。
+
+配置默认位置为 `~/.codex/chosen-agent/runtime.json`，宿主回执和调用预算保存在旁边的 `receipts/`；不可提交到项目 Git。升级或切换模型须沿原任务明确协调，不删除账本以清空预算。最终审查的认证由宿主在实际调用完成后执行，审查模型负责检查内容，不要求它为尚未返回的自身调用提供回执。
+
+## 安装中断恢复
 
 更新前在私有 state/backups 保存被替换文件和原全局指引，原子写入单个文件，最后核对完整快照并提交安装清单。若 I/O 中断，保留 pending.json、旧清单和备份，下一次会阻塞。先核对 before/after、实际文件、备份及运行状态，再恢复完整旧快照或完成已验证新快照；确认一致后才清理自有 pending、临时文件与锁。不能按锁龄自动删除，也不能强行覆盖本机修改。
 

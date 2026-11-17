@@ -1045,4 +1045,4 @@ AI-maintained concise index; implementation and evidence live in linked details.
 
 ## 2026-11-17
 
-- [ ] [COLLAB-01] 共同澄清、验收先行、逐步实现与 Skill 路由重构；协作流程与实际安装/加载验收已接入；真实任务对话验收待共同推进。 ([详情](task_details/COLLAB-01.md))
+- [x] [COLLAB-01] v6 串行双模型宿主、显式模式切换和任务验收闭环已实测；历史失败及未覆盖范围见详情。 ([详情](task_details/COLLAB-01.md))

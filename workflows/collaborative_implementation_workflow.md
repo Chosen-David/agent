@@ -111,6 +111,6 @@
 
 ## 人类优先的命令行全流程
 
-完整 checkout 可用 `python -m agent_runtime.collaborative_flow`，接口与真实能力边界见 [命令行接入](https://github.com/Chosen-David/agent/blob/main/docs/collaborative_cli.md)。默认人类模式，展示问题后约十分钟未回复切换为双 AI 讨论；不验收毫秒级计时。业务/权限/预算问题仍由人类决定。晚到反馈失效旧计划，正在运行的作用先核对，不自动重放。缺真实审查后端时 blocked，不能用同一主 AI 替代。
+完整 checkout 可用 `python -m agent_runtime.collaborative_flow`，接口与真实能力边界见 [命令行接入](https://github.com/Chosen-David/agent/blob/main/docs/collaborative_cli.md)。新 CLI 任务默认双 AI；`--mode human` 展示问题后约十分钟未回复切换为双 AI 讨论，不验收毫秒级计时。已有任务和 `task_supervisor` 的默认策略保留。`--backend codex` 接入已登录的官方 app-server，必须预先配置不同模型并准备任务测试；`--trust-project-code` 声明可信项目代码在当前 OS 用户下执行，并非沙箱。显式 `--switch-mode` 沿同一任务归档旧批准并保留预算。业务/权限/预算问题仍由人类决定。晚到反馈失效旧计划，正在运行的作用先核对，不自动重放。缺真实审查后端时 blocked，不能用同一主 AI 替代。
 
 实现阶段实际探测环境并加载已有能力正文；任务自己的 suite.json 必须预先准备。验收使用 `scripts/project_test.py --task TASK_ID` 直接路由当前任务测试，保留版本/输出绑定。主 AI 写代码，审查 AI 在讨论、设计、多步骤完成点和结果检查点复核；程序负责持久状态/计时，已有监督器的真实部署和进程读回仍需宿主完成。

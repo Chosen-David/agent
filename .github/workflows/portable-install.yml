@@ -31,6 +31,7 @@ jobs:
         with:
           python-version: ${{ matrix.python }}
       - run: python -B scripts/run_ci_tests.py discover -s tests -p test_serial_recovery.py -v
+      - run: python -B -X utf8 scripts/run_ci_tests.py tests.test_collaborative_runtime_host tests.test_collaborative_flow -v
       - if: runner.os == 'Linux'
         env:
           AGENT_REQUIRE_NATIVE_PROC: '1'

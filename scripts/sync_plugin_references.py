@@ -11,6 +11,8 @@ import argparse
 import json
 import posixpath
 import re
+import os
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -291,12 +293,57 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true", help="fail if generated references are stale")
     args = parser.parse_args()
+    # Shared references/scripts are now represented by committed file aliases.
+    # They belong to their shared source, not this legacy snapshot generator.
+    # core.symlinks=false checks these out as link-text files on Windows; writing
+    # generated content there would commit that content as a corrupt link target.
+    entries = (subprocess.check_output(['git', '-C', str(ROOT), 'ls-files', '-s', '-z']).split(b'\0')
+               if (ROOT / '.git').exists() else [])
+    aliases = {e.split(b'\t', 1)[1].decode(): e.split()[1].decode()
+               for e in entries if e.startswith(b'120000 ')}
+    blobs = {}
+
+    def alias_target(destination):
+        blob = aliases[destination]
+        if blob not in blobs:
+            blobs[blob] = subprocess.check_output(['git', '-C', str(ROOT), 'cat-file', 'blob', blob])
+        expected = blobs[blob]
+        path = ROOT / destination
+        actual = os.readlink(path).encode('utf8') if path.is_symlink() else path.read_bytes()
+        if actual != expected:
+            raise ValueError('modified committed alias; preserved: ' + destination)
+        return expected.decode('utf8')
+
+    def source_bytes(source):
+        seen = set()
+        while source in aliases:
+            if source in seen:
+                raise ValueError('cyclic committed source alias')
+            seen.add(source)
+            source = posixpath.normpath(posixpath.join(posixpath.dirname(source), alias_target(source)))
+            if source.startswith('../') or source.startswith('/') or '\\' in source:
+                raise ValueError('unsafe committed source alias')
+        path = ROOT / source
+        if path.is_symlink() or not path.resolve().is_relative_to(ROOT.resolve()):
+            raise ValueError('untracked source redirection')
+        return path.read_bytes()
+
+    for destination, blob in aliases.items():
+        if not any(destination in destinations for destinations in MAPPINGS.values()):
+            continue
+        try:
+            alias_target(destination)
+        except ValueError as exc:
+            print(str(exc))
+            return 1
+    mappings = {source: [d for d in destinations if d not in aliases]
+                for source, destinations in MAPPINGS.items()}
     # Different role-local links cannot share one generated file. Validate the
     # complete write set before touching even an unrelated stale destination.
     targets = {}
-    for source, destinations in MAPPINGS.items():
+    for source, destinations in mappings.items():
         for destination in destinations:
-            expected = ((ROOT / source).read_bytes()
+            expected = (source_bytes(source)
                         if source in RAW_COPY_SOURCES or source.endswith(('.json', '.py'))
                         else render(source, destination).encode('utf-8'))
             target = (ROOT / destination).resolve()
@@ -306,12 +353,12 @@ def main() -> int:
                 return 1
             targets[target] = (destination, expected)
     stale = []
-    for source, destinations in MAPPINGS.items():
+    for source, destinations in mappings.items():
         for destination in destinations:
             # Assets and Python modules are immutable snapshots: preserve bytes
             # across LF/CRLF hosts, not merely normalized text equality.
             if source in RAW_COPY_SOURCES or source.endswith(('.json', '.py')):
-                expected_bytes = (ROOT / source).read_bytes()
+                expected_bytes = source_bytes(source)
                 path = ROOT / destination
                 if path.exists() and path.read_bytes() == expected_bytes:
                     continue

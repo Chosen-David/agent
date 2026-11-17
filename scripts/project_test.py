@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 from pathlib import Path
 import subprocess
 import sys
@@ -19,11 +20,20 @@ def git(root, *args):
     return subprocess.check_output(["git", "-C", str(root), *args], stderr=subprocess.PIPE).decode().strip()
 
 
-def source_state(root):
+def source_manifest(root, *, exclude_owned=None):
+    exclude_owned = exclude_owned or {}
+    for name, expected in exclude_owned.items():
+        valid = (name == 'agent_doc/task/TASK.md' or re.fullmatch(
+            r'agent_doc/task/task_details/[A-Za-z0-9][A-Za-z0-9_-]{0,79}\.md', name))
+        if (not valid or not (root / name).resolve().is_relative_to(root.resolve()) or not (root / name).is_file() or
+                (root / name).is_symlink() or digest((root / name).read_bytes()) != expected):
+            raise ValueError('controller document changed externally: ' + name)
     names = subprocess.check_output(["git", "-C", str(root), "ls-files", "-z", "--cached", "--others", "--exclude-standard"])
     entries = {}
     for raw in sorted(set(names.split(b"\0")) - {b""}):
         name = os.fsdecode(raw)
+        if name in exclude_owned:
+            continue
         path = root / name
         if path.is_symlink():
             value = "link:" + os.readlink(path)
@@ -32,8 +42,16 @@ def source_state(root):
         else:
             value = "missing-or-submodule"
         entries[name] = value
+    return entries
+
+
+def source_state(root, *, exclude_owned=None):
+    entries = source_manifest(root, exclude_owned=exclude_owned)
+    # Excluded controller documents also must not perturb the porcelain status.
+    status = git(root, "status", "--porcelain", "--", ".", *[
+        ':(exclude)' + name for name in (exclude_owned or {})])
     return {"head": git(root, "rev-parse", "HEAD"),
-            "status": git(root, "status", "--porcelain"),
+            "status": status,
             "content_sha256": digest(json.dumps(entries, sort_keys=True).encode())}
 
 
@@ -107,7 +125,7 @@ def prepare_suite(workflow, project, target, *, task=None):
     return workflow, target, directory, manifest_bytes, manifest, checks
 
 
-def run(workflow, project, target, output, *, task=None):
+def run(workflow, project, target, output, *, task=None, controller_documents=None):
     workflow, target, directory, manifest_bytes, manifest, checks = prepare_suite(
         workflow, project, target, task=task)
     manifest_path = directory / "suite.json"
@@ -115,11 +133,17 @@ def run(workflow, project, target, output, *, task=None):
     if output.resolve().is_relative_to(workflow) or output.resolve().is_relative_to(target):
         raise ValueError("write run evidence outside workflow and target repositories")
     output.mkdir(parents=True, exist_ok=False)
-    before = source_state(target)
+    controller_documents = controller_documents or {}
+    allowed = {'agent_doc/task/TASK.md', 'agent_doc/task/task_details/' + str(task) + '.md'}
+    if (not isinstance(controller_documents, dict) or set(controller_documents) - allowed or
+            (controller_documents and not task)):
+        raise ValueError('only this task controller documents may be excluded')
+    before = source_state(target, exclude_owned=controller_documents)
     sources = suite_state(directory)
     report = {"version": 1, "project": project, "target": str(target), "origin": manifest["origin"],
         "before": before, "suite_sha256": digest(manifest_bytes), "sources": sources,
-        "runner_sha256": digest(Path(__file__).read_bytes()), "python": sys.version, "status": "blocked"}
+        "runner_sha256": digest(Path(__file__).read_bytes()), "python": sys.version, "status": "blocked",
+        "controller_documents": controller_documents}
     report["checks"] = []
     failed = False
     try:
@@ -135,7 +159,7 @@ def run(workflow, project, target, output, *, task=None):
             else:
                 command = ([sys.executable, "-B"] if check["kind"] == "python" else ["bash"]) + [str(path)]
             env = {**os.environ, "AGENT_TEST_PROJECT_ROOT": str(target), "AGENT_TEST_OUTPUT": str(output),
-                   "PYTHONDONTWRITEBYTECODE": "1", "TMPDIR": str(output), "PYTHONPATH": str(target)}
+                   "PYTHONDONTWRITEBYTECODE": "1", "PYTHONUTF8": "1", "TMPDIR": str(output), "PYTHONPATH": str(target)}
             started = time.monotonic()
             with (output / (check["id"] + ".log")).open("w") as log:
                 try:
@@ -151,8 +175,14 @@ def run(workflow, project, target, output, *, task=None):
                     item["status"] = "blocked"
                     item["reason"] = "timeout; do not advance until child effects are reconciled"
             item["wall_seconds"] = time.monotonic() - started
+            item['log'] = check['id'] + '.log'
+            log_hash = hashlib.sha256()
+            with (output / item['log']).open('rb') as recorded_log:
+                for chunk in iter(lambda: recorded_log.read(65536), b''):
+                    log_hash.update(chunk)
+            item['log_sha256'] = log_hash.hexdigest()
             failed = item["status"] != "pass"
-        report["after"] = source_state(target)
+        report["after"] = source_state(target, exclude_owned=controller_documents)
         stable = before == report["after"] and sources == suite_state(directory) and manifest_bytes == manifest_path.read_bytes()
         report["stable_inputs"] = stable
         report["status"] = ("blocked" if any(item["status"] == "blocked" for item in report["checks"])
@@ -181,9 +211,11 @@ def main():
     parser.add_argument("--target", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--task", help="run only this task directory and its suite.json")
+    parser.add_argument("--controller-documents-json", default='{}', help='exact controller-written task metadata hashes, not production inputs')
     args = parser.parse_args()
     try:
-        return run(args.workflow_root, args.project, args.target, args.output, task=args.task)
+        return run(args.workflow_root, args.project, args.target, args.output, task=args.task,
+                   controller_documents=json.loads(args.controller_documents_json))
     except (OSError, ValueError, subprocess.CalledProcessError) as exc:
         print(json.dumps({"status": "blocked", "error": str(exc)}), file=sys.stderr)
         return 2
