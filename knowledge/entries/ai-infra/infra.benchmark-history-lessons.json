@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "id": "infra.benchmark-history-lessons",
+  "version": 1,
+  "status": "published",
+  "kind": "case",
+  "title": "Two-Level Attention 性能脚本复盘：ABI、设备身份与计时分母",
+  "summary": "三个固定提交的代码证据：漏传TOKEN_BITS、硬编码GPU UUID、B1扩展batch的输出与TPOT契约；保留负结果，不把微基准、合成测试或原报告当本机端到端性能。",
+  "aliases": [
+    "two level attention",
+    "two-level-attention",
+    "性能测试脚本",
+    "benchmark",
+    "TPOT",
+    "TOKEN_BITS"
+  ],
+  "domains": [
+    "ai-infra",
+    "software-engineering"
+  ],
+  "structures": [
+    "性能测试 benchmark 计时 回归",
+    "GPU UUID 设备映射",
+    "batch 输出人口 TPOT 分母",
+    "提交复盘 错误案例"
+  ],
+  "assumptions": [
+    "仅固定提交的相关diff样本，不是全历史审计或当前缺陷认定",
+    "GPU运行记录引用原提交报告，本次未原生复现",
+    "使用者按真实kernel ABI、设备映射和计时范围调整验收"
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/Chosen-David/two-level-attention/commit/4bc6aa98730e060489f742bfe1875d687237e422",
+      "locator": "三个benchmark调用与ITERATIONS.md",
+      "accessed": "2026-11-17"
+    },
+    {
+      "url": "https://github.com/Chosen-David/two-level-attention/commit/7842c6fb590308976aa05902b3fb5b5f668ec5bd",
+      "locator": "exp/bench/request_gpu_monitor.py GPU0Monitor.__init__",
+      "accessed": "2026-11-17"
+    },
+    {
+      "url": "https://github.com/Chosen-David/two-level-attention/commit/84a16f1210133803a3bf4d69be2a2ef7bfff70cf",
+      "locator": "benchmark/official_baselines/longbench_official.py timed_pair/_generated_rows; tests/test_official_longbench.py",
+      "accessed": "2026-11-17"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "knowledge/entries/ai-infra/infra.benchmark-history-lessons.md"
+    ]
+  },
+  "requires": [],
+  "relations": []
+}
