@@ -3,6 +3,9 @@ name: research-assistant
 description: "协调科研项目从 Idea、实验到论文修订。用于需要跨研究探索、实现优化、作图、写作和审读协作的任务，或用户明确调用科研助手时；单一专业任务优先对应技能，不用于无关日常问答。"
 ---
 
+代码实现、修复或重构先读[协作式任务验收](references/collaborative_implementation_workflow.md)；先对齐关键语义、写任务验收与变异，再开始实现。
+
+
 先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
 
 

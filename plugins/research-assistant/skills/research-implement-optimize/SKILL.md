@@ -3,6 +3,9 @@ name: research-implement-optimize
 description: "端到端代码实现与性能优化，适用于算法或系统实现、CPU/GPU kernel、profiling 和高性能改造。调研先进解法、算法与 LeetCode 模式，比较时空复杂度和成熟库，按实际硬件选择 PTX/CPU 原语并实测；不把纯概念问答扩成优化项目。"
 ---
 
+代码实现、修复或重构先读[协作式任务验收](references/collaborative_implementation_workflow.md)；先对齐关键语义、写任务验收与变异，再开始实现。
+
+
 先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
 
 

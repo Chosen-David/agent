@@ -214,6 +214,12 @@ MAPPINGS['workflows/project_document_workflow.md'] = [
 # Target-project task-link examples must remain relative and executable offline.
 RAW_COPY_SOURCES.add('workflows/project_document_workflow.md')
 
+MAPPINGS['workflows/collaborative_implementation_workflow.md'] = [
+    f'plugins/research-assistant/skills/{role}/references/collaborative_implementation_workflow.md'
+    for role in ('research-assistant', 'research-implement-optimize')
+]
+RAW_COPY_SOURCES.add('workflows/collaborative_implementation_workflow.md')
+
 # The byte-exact project-document contract links ../docs/... from references/.
 # Bundle that existing navigation document in every consuming standalone skill;
 # its own repository evidence links use the normal renderer's canonical URLs.

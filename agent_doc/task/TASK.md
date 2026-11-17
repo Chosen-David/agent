@@ -1042,3 +1042,7 @@ AI-maintained concise index; implementation and evidence live in linked details.
 ## 2026-10-20
 
 - [x] [ATX-BOUNDARY-62] 原始标题边界33/72→72/72，独立37212边界/115语料及真实旧缓存迁移通过；全库1304（8跳过）/Reader3，发布回读另核，无模型/速度主张。 ([详情](task_details/ATX-BOUNDARY-62.md))
+
+## 2026-11-17
+
+- [ ] [COLLAB-01] 共同澄清、验收先行、逐步实现与 Skill 路由重构；协作流程与实际安装/加载验收已接入；真实任务对话验收待共同推进。 ([详情](task_details/COLLAB-01.md))

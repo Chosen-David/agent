@@ -1,5 +1,7 @@
 # 科研项目调度 Prompt
 
+代码实现、修复与重构先执行[协作式任务验收](../workflows/collaborative_implementation_workflow.md)：先读库并对齐关键语义，在任务 test 下准备验收/约束及变异，再逐步实现、展示证据与讨论下一步。
+
 默认执行方式为[单主 Agent / 多 Skill](../workflows/single_main_workflow.md)：同一主 agent 按需加载能力，沿唯一任务链一次执行一步，不启动子 agent 或双主控；既有独立验收合同仍须真实证据。
 
 开发评测边界：日常用户任务不启动 `evals/`、合成测试或 benchmark，不读取隐藏 rubric/gold。仅用户明确要求优化/新增功能的开发评测或显式 CI 命令启用评测入口（prepare 需 `--dev-eval`）。真实任务必要的正确性自检、交付验收、权限核对，以及写作前十篇范文学习要求继续执行；这些不是开发 benchmark。评测材料与真实任务上下文隔离，不以测试通过替代真实交付验收。

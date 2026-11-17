@@ -2,6 +2,8 @@
 
 # 代码实现与性能优化 Agent Workflow
 
+代码实现、修复与重构先执行[协作式任务验收](collaborative_implementation_workflow.md)：先读库并对齐关键语义，在任务 test 下准备验收/约束及变异，再逐步实现、展示证据与讨论下一步。
+
 实验/测量数据的必经独立验收见 [结果验证闭环](result_validation_workflow.md)，未通过或过期证据不进入依赖结论。
 
 
