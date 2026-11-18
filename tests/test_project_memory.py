@@ -251,6 +251,11 @@ class MemoryTests(unittest.TestCase):
     def test_reconcile_flags_newer_sibling_temporal_decay(self):
         self.ledger.add('old', 'observation', 'Training 4h', 'user', [], ['perf'], 'user_confirmed')
         self.ledger.add('new', 'observation', 'Training 2h', 'user', ['old'], ['perf'], 'user_confirmed')
+        with self.ledger._connect(write=True) as db:
+            db.execute("UPDATE entries SET created_at='2026-01-01T00:00:00.000Z'")
+        self.assertEqual(self.ledger.reconcile()['potentially_obsolete_total'], 0)
+        with self.ledger._connect(write=True) as db:
+            db.execute("UPDATE entries SET created_at='2026-01-02T00:00:00.000Z' WHERE id='new'")
         result = self.ledger.reconcile()
         self.assertEqual(result['active_total'], 2)
         self.assertEqual(result['potentially_obsolete_total'], 1)
