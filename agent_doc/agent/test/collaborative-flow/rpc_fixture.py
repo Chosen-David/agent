@@ -4,6 +4,13 @@ import sys
 
 mode = sys.argv[1]
 
+if mode in ("startup-sqlite", "startup-unknown"):
+    sys.stderr.write("private-fixture-token " * 10000)
+    if mode == "startup-sqlite":
+        sys.stderr.write("failed to open state DB: (code: 14) unable to open database file")
+    sys.stderr.flush()
+    raise SystemExit(1)
+
 
 def send(value):
     print(json.dumps(value), flush=True)

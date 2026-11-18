@@ -448,6 +448,20 @@ class RuntimeHostTests(unittest.TestCase):
         self.assertEqual(len(calls),count)
         self.assertEqual((case.root/'answer.txt').read_bytes(),b'42')
 
+    def test_startup_failure_has_bounded_safe_diagnostic_and_verified_cleanup(self):
+        from agent_runtime.codex_host import AppServer, BackendStartupError
+        from agent_runtime.model_process import pid_running
+        fixture = Path(__file__).with_name('rpc_fixture.py')
+        with tempfile.TemporaryDirectory() as directory:
+            for mode, diagnostic in (('startup-sqlite', 'state_database_unavailable'),
+                                     ('startup-unknown', 'unclassified')):
+                with self.subTest(mode=mode):
+                    with self.assertRaises(BackendStartupError) as caught:
+                        AppServer([sys.executable, '-B', str(fixture), mode], directory, 5)
+                    self.assertEqual(getattr(caught.exception, 'startup_diagnostic', None), diagnostic)
+                    self.assertFalse(pid_running(caught.exception.closed_backend_pid))
+                    self.assertNotIn('private-fixture-token', str(caught.exception))
+
     def test_app_server_rejects_tools_approvals_writable_sandbox_stale_or_failed_turn(self):
         from agent_runtime.codex_host import AppServer, object_schema
         fixture = Path(__file__).with_name('rpc_fixture.py')

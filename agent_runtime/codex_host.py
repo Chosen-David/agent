@@ -37,9 +37,11 @@ class ProposalRejected(HostPreflightError):
 
 
 class BackendStartupError(ValueError):
-    def __init__(self, cause, pid=None):
-        super().__init__('app-server startup failed after verified cleanup: ' + str(cause))
+    def __init__(self, cause, pid=None, diagnostic='unclassified'):
+        super().__init__('app-server startup failed after verified cleanup: ' + str(cause)
+                         + ' [startup_diagnostic=' + diagnostic + ']')
         self.closed_backend_pid = pid
+        self.startup_diagnostic = diagnostic
 
 
 def object_schema(properties):
@@ -128,11 +130,14 @@ class AppServer:
         self.queue = queue.Queue(maxsize=1024)
         try:
             self.process = subprocess.Popen([*command, 'app-server'], cwd=cwd,
-                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                 text=True, encoding='utf8', bufsize=1,
                 creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0))
         except OSError as exc:
             raise BackendStartupError(exc) from exc
+        self._stderr_tail = ""
+        self._stderr_reader = threading.Thread(target=self._read_stderr, daemon=True)
+        self._stderr_reader.start()
         threading.Thread(target=self._read, daemon=True).start()
         try:
             self.call('initialize', {'clientInfo': {'name': 'chosen_agent', 'version': '1.0'},
@@ -147,7 +152,20 @@ class AppServer:
                 raise ValueError('read-only host requires a configuration without lifecycle hooks')
         except Exception as exc:
             self.close()
-            raise BackendStartupError(exc, self.process.pid) from exc
+            raise BackendStartupError(exc, self.process.pid, self._startup_diagnostic()) from exc
+
+    def _read_stderr(self):
+        try:
+            while chunk := self.process.stderr.read(4096):
+                self._stderr_tail = (self._stderr_tail + chunk)[-8192:]
+        except (OSError, ValueError):
+            pass
+
+    def _startup_diagnostic(self):
+        text = self._stderr_tail.lower()
+        if 'failed to open state db' in text and 'unable to open database file' in text:
+            return 'state_database_unavailable'
+        return 'unclassified'
 
     def _read(self):
         try:
@@ -256,6 +274,8 @@ class AppServer:
             self.process.terminate()
             self.process.wait(timeout=5)
         self.process.stdout.close()
+        self._stderr_reader.join(timeout=3)
+        self.process.stderr.close()
 
 
 def _store(path, value):
