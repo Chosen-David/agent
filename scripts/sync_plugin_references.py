@@ -309,7 +309,11 @@ def main() -> int:
             blobs[blob] = subprocess.check_output(['git', '-C', str(ROOT), 'cat-file', 'blob', blob])
         expected = blobs[blob]
         path = ROOT / destination
-        actual = os.readlink(path).encode('utf8') if path.is_symlink() else path.read_bytes()
+        if path.is_symlink():
+            target = os.readlink(path)
+            actual = (target.replace('\\', '/') if os.name == 'nt' else target).encode('utf8')
+        else:
+            actual = path.read_bytes()
         if actual != expected:
             raise ValueError('modified committed alias; preserved: ' + destination)
         return expected.decode('utf8')

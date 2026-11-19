@@ -1,5 +1,8 @@
 import contextlib
 import io
+import os
+import subprocess
+from types import SimpleNamespace
 import tempfile
 import unittest
 from pathlib import Path
@@ -41,6 +44,31 @@ class ReferenceAliasSyncTests(unittest.TestCase):
         with patch.object(sync, 'ROOT', self.root), patch.object(sync, 'MAPPINGS', self.mappings), patch('sys.argv', argv), contextlib.redirect_stdout(output):
             code = sync.main()
         return code, output.getvalue()
+
+
+    def test_native_windows_separators_do_not_hide_modified_aliases(self):
+        subprocess.run(['git', 'init', '-q', str(self.root)], check=True)
+        path = self.root / self.one
+        path.unlink()
+        target = os.path.relpath(self.root / 'shared/shared.md', path.parent).replace('\\', '/')
+        path.symlink_to(target)
+        subprocess.run(['git', '-C', str(self.root), 'add', self.one], check=True)
+        self.mappings = {self.source: [self.one]}
+        original = os.readlink(path)
+        for platform, observed, accepted in (
+                ('nt', target.replace('/', '\\'), True),
+                ('posix', target.replace('/', '\\'), False),
+                ('nt', target.replace('/', '\\') + '.changed', False),
+                ('nt', 'C:\\outside.md', False)):
+            with self.subTest(platform=platform, observed=observed):
+                native = SimpleNamespace(name=platform, readlink=lambda path: observed)
+                with patch.object(sync, 'os', native):
+                    code, output = self.invoke(check=True)
+                self.assertEqual(code, 0 if accepted else 1, output)
+                if not accepted:
+                    self.assertIn('modified committed alias', output)
+                self.assertEqual(os.readlink(path), original)
+
 
     def test_conflict_rejects_before_any_write(self):
         # An unrelated stale destination precedes the conflicting aliases.
