@@ -19,7 +19,7 @@ def check(root):
         except (OSError, SyntaxError) as exc:
             print(f"{path}: compile failure: {exc}")
             return 1
-        if path.name == "core.py":
+        if path == runtime / "core.py":
             for node in ast.walk(tree):
                 names = ([item.name for item in node.names] if isinstance(node, ast.Import)
                          else [node.module or ""] if isinstance(node, ast.ImportFrom) else [])
