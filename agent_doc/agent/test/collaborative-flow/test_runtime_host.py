@@ -438,12 +438,19 @@ class RuntimeHostTests(unittest.TestCase):
         case,host,_,calls,_=self.rejected_tracked_docs_pipeline()
         request=case.flow.state['reviews'][-1]['request'];original=codex_host.regular_bytes
         before=host.ledger.read_bytes();count=len(calls)
+        (case.root/'path-alias').mkdir()
+        case.root=case.root/'path-alias'/'..'
+        injected=[]
         def stale(root,relative):
             data=original(root,relative)
-            return b'stale submitted bytes' if Path(root)==case.root and relative=='answer.txt' else data
+            if Path(root).resolve()==case.root.resolve() and relative=='answer.txt':
+                injected.append(relative)
+                return b'stale submitted bytes'
+            return data
         with patch.object(codex_host,'regular_bytes',side_effect=stale):
             with self.assertRaisesRegex(ValueError,'source is not bound'):
                 host.review(request)
+        self.assertTrue(injected)
         self.assertEqual(host.ledger.read_bytes(),before)
         self.assertEqual(len(calls),count)
         self.assertEqual((case.root/'answer.txt').read_bytes(),b'42')
