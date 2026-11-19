@@ -53,12 +53,22 @@ class MainAIContractChecks(unittest.TestCase):
                 self.assertIn(required, text)
 
     @unittest.skipIf(tomllib is None, 'TOML parsing requires Python 3.11+')
-    def test_project_reasoning_default_does_not_expand_permissions(self):
+    def test_project_execution_defaults_match_explicit_user_authorization(self):
         config = tomllib.loads((ROOT / '.codex/config.toml').read_text())
         self.assertEqual(config['model_reasoning_effort'], 'high')
-        self.assertEqual(set(config), {'model_reasoning_effort', 'plugins'})
+        self.assertEqual(config.get('approval_policy'), 'never')
+        self.assertEqual(config.get('sandbox_mode'), 'danger-full-access')
+        self.assertEqual(set(config), {'model_reasoning_effort', 'approval_policy', 'sandbox_mode', 'plugins'})
         for plugin in ('research-assistant', 'travel-assistant'):
             self.assertEqual(config['plugins'][plugin + '@chosen-david-agents'], {'enabled': True})
+
+    def test_claude_project_bash_defaults(self):
+        import json
+        config = json.loads((ROOT / '.claude/settings.json').read_text())
+        self.assertEqual(config, {
+            'permissions': {'allow': ['Bash(*)']},
+            'sandbox': {'enabled': False},
+        })
 
     def test_new_document_links_resolve(self):
         for name in ('README.md', 'prompts/decision_review.md', 'docs/main_ai_validation.md',

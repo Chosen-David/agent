@@ -142,3 +142,9 @@ API 用 `SkillCopyLimits` 和 `skill_limits=`。清单不能自动放宽调用�
 - [旧子 Agent 协议（仅兼容）](https://code.claude.com/docs/en/sub-agents)
 
 本仓库的文件安装、幂等性、冲突保护、卸载、agent_doc/task/TASK.md 证据闭环由自动化测试验证；Claude 实际模型是否遵循所有流程必须通过真实任务观察，不能由配置文件保证。见 [本轮验证与限制](docs/tmux_supervisor_validation.md)。
+
+## 本库自主执行配置
+
+按用户 2026-11-19 授权，本库 `.codex/config.toml` 设置 `approval_policy = "never"` 与 `sandbox_mode = "danger-full-access"`。可信项目中的新 Codex CLI 会话可自动执行 shell 命令，具有启动用户可用的本机文件和网络访问权限。已有会话需重启并核对有效配置；更高优先级的宿主管理策略仍可限制执行，`never` 不会把被拒绝的命令变成成功。此配置仅针对本库，不修改用户全局设置或接入的其他项目。审查适配器显式的只读会话、受管授权账本和证据门槛继续按各自合同执行。
+
+本库 `.claude/settings.json` 为 Claude Code 设置 `permissions.allow = ["Bash(*)"]` 和 `sandbox.enabled = false`。从本库根目录启动并信任项目后，通过 `/permissions`、`/sandbox` 核对加载；更高优先级的 deny/ask 或组织强制沙箱仍有效。依据：[权限](https://code.claude.com/docs/en/permissions)、[设置](https://code.claude.com/docs/en/settings-reference)。安装器不把本库此项权限授权传播到其他项目。
