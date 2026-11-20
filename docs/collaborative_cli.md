@@ -9,16 +9,17 @@
 配置一次，只需指定**原生 Codex 可执行文件**（Windows 为包内 codex.exe，不能传 codex.ps1/cmd）。新配置默认自动选型，不必填写两个模型名：
 
 ```bash
-python -m agent_runtime.codex_host --profile /absolute/user/runtime.json \
-  --codex /absolute/codex
-python -m agent_runtime.codex_host --profile /absolute/user/runtime.json --probe
+python -m agent_runtime.codex_host --codex /absolute/codex
+python -m agent_runtime.codex_host --probe
 python -m agent_runtime.collaborative_flow \
   --project-root /absolute/project --workflow-root /absolute/agent \
   --project project_name --task-id TASK-01 --prompt '用户任务原文' \
-  --backend codex --runtime-profile /absolute/user/runtime.json \
+  --backend codex \
   --write-path src/example.py --context-path README.md --trust-project-code \
   --output /tmp/task-01-evidence
 ```
+
+两个命令默认读取同一个用户级 profile。自定义路径时，在 `codex_host` 上传 `--profile`，在 `collaborative_flow` 上传 `--runtime-profile`。技能安装和 `setup_codex.py --check` 只检查文件接线，首次启用后端要单独配置并运行探测。
 
 Windows 同样使用 `python -m ...`，参数传绝对 Windows 路径；PowerShell 将示例写成一行或用反引号续行。原生文件可在安装目录用 `Get-ChildItem -Recurse -Filter codex.exe` 定位。复用本机既有登录，不假定某一模型系列对所有账号开放。
 

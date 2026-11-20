@@ -7,6 +7,7 @@ import hashlib
 import sys
 import tempfile
 import subprocess
+from unittest.mock import patch
 from agent_runtime.plan_review import sha
 
 
@@ -847,6 +848,19 @@ raise AssertionError('disconnect fixture did not fail')
             protected = Path(directory)/'agent_doc/guide/runtime.json'
             with self.assertRaises(ValueError):_store(protected, {})
             self.assertFalse(protected.exists())
+
+    def test_default_runtime_profile_can_be_initialized_and_missing_profile_explains_setup(self):
+        from agent_runtime import codex_host
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            profile = home / '.codex/chosen-agent/runtime.json'
+            with patch.object(Path, 'home', return_value=home):
+                with self.assertRaisesRegex(ValueError, r'codex_host.*--codex'):
+                    codex_host.load_profile(profile)
+                self.assertFalse(profile.exists())
+                with patch.object(sys, 'argv', ['codex_host', '--codex', sys.executable]):
+                    self.assertEqual(codex_host.main(), 0)
+                self.assertEqual(codex_host.load_profile(profile)['selection_policy'], 'default-model/v1')
 
     def test_cli_preflight_refuses_before_opening_model_backend(self):
         from agent_runtime.collaborative_flow import Flow

@@ -19,6 +19,7 @@ import uuid
 from .intake import build_intake
 from .plan_review import DUAL_SCHEMA, _authenticate, _identity, _review, protected_lineage, sha
 from .project_docs import assert_ai_writable, atomic_write, initialize_project_docs, regular_bytes
+from .codex_host import default_profile_path
 
 
 def identifier(value):
@@ -662,7 +663,7 @@ def main():
     parser.add_argument('--mode', choices=('human', 'dual-ai'), help='initial mode; existing tasks keep their recorded mode')
     parser.add_argument('--adapter', type=Path, help='explicit trusted host exposing build(root, task_id)')
     parser.add_argument('--backend', choices=('codex',), help='built-in authenticated app-server host')
-    parser.add_argument('--runtime-profile', type=Path, default=Path.home() / '.codex/chosen-agent/runtime.json')
+    parser.add_argument('--runtime-profile', type=Path, default=default_profile_path())
     parser.add_argument('--write-path', action='append', default=[], help='allowed project-relative source file; repeatable')
     parser.add_argument('--context-path', action='append', default=[], help='project-relative inline context; repeatable')
     parser.add_argument('--trust-project-code', action='store_true', help='authorize tests/imports as current OS user, without execution isolation')

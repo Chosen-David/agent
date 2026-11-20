@@ -70,9 +70,22 @@ SCHEMAS = {
 }
 
 
+def default_profile_path():
+    return Path.home() / '.codex/chosen-agent/runtime.json'
+
+
 def load_profile(path):
-    path = Path(path).expanduser().resolve(strict=True)
-    return _validate_profile(json.loads(path.read_text(encoding='utf8')), path)
+    path = Path(path).expanduser().absolute()
+    try:
+        resolved = path.resolve(strict=True)
+        value = json.loads(resolved.read_text(encoding='utf8'))
+    except FileNotFoundError as exc:
+        raise ValueError(
+            f'Codex runtime profile missing at {path}. From the agent checkout, run '
+            'python -m agent_runtime.codex_host --profile PROFILE_PATH --codex ABSOLUTE_CODEX_EXECUTABLE, '
+            'then run the same module with --profile and --probe.'
+        ) from exc
+    return _validate_profile(value, resolved)
 
 
 def _validate_profile(value, path, *, check_executable=True):
@@ -997,7 +1010,8 @@ def probe_profile(profile, cwd, *, client_factory=AppServer):
 def main():
     import argparse
     parser = argparse.ArgumentParser(description='Configure a pinned native Codex runtime; no account-wide changes.')
-    parser.add_argument('--profile', type=Path, required=True)
+    parser.add_argument('--profile', type=Path, default=default_profile_path(),
+                        help='runtime profile path (default: ~/.codex/chosen-agent/runtime.json)')
     parser.add_argument('--codex', type=Path)
     parser.add_argument('--writer-model')
     parser.add_argument('--reviewer-model')

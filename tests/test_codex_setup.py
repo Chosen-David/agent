@@ -9,6 +9,7 @@ import unittest
 from unittest.mock import patch
 
 from scripts.setup_codex import synchronize
+from scripts.load_skill import load_codex_skill
 
 
 def _sync_in_child(queue, repo, dest, state, home):
@@ -54,6 +55,20 @@ class CodexSetupTests(unittest.TestCase):
 
     def sync(self, **kwargs):
         return synchronize(self.repo, self.dest, self.state, self.home, **kwargs)
+
+    def test_codex_loader_uses_user_installation_without_project_setup(self):
+        self.sync()
+        project = self.base / 'unconfigured-project'
+        project.mkdir()
+        result = load_codex_skill(project, 'one', repo=self.repo, state=self.state, codex_home=self.home)
+        self.assertEqual(result['project_root'], str(project.resolve()))
+        self.assertEqual(result['source'], str(self.dest / 'one/SKILL.md'))
+        self.assertFalse(result['launched'])
+        self.assertIn('Instructions', result['content'])
+        (self.dest / 'one/SKILL.md').write_text('local edit', encoding='utf-8')
+        with self.assertRaises(ValueError):
+            load_codex_skill(project, 'one', repo=self.repo, state=self.state, codex_home=self.home)
+        self.assertFalse((project / '.claude').exists())
 
     def test_install_idempotence_check_and_preserve_global_preferences(self):
         self.home.mkdir()

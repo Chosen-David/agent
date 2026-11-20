@@ -71,7 +71,7 @@ python scripts/setup_codex.py --check
 
 脚本管理用户级技能与调度入口，保留既有指引；同名或本机修改冲突会阻止覆盖。随后在目标项目中启动 Codex。文件接线成功与模型实际发现/调用是两项检查。
 
-[安装、版本同步与恢复说明 →](docs/codex_adoption/README.md)
+[安装、版本同步与恢复说明 →](docs/codex_adoption/README.md) · [双 AI 后端配置与真实探测 →](docs/collaborative_cli.md#内置-codex-后端)
 
 </details>
 

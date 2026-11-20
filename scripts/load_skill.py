@@ -4,11 +4,14 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from run_role import bootstrap
+from setup_codex import (INSTALLATION_STATE_LIMIT, digest, installation_state,
+                         load_json, owned_path, regular_bytes, synchronize)
 
 
 def load_skill(project, name):
@@ -41,6 +44,27 @@ def load_skill(project, name):
             'content_sha256': installer.sha(content)}
 
 
+def load_codex_skill(project, name, *, repo, state, codex_home):
+    project = Path(project).resolve(strict=True)
+    if not project.is_dir():
+        raise ValueError('project root must be a directory')
+    manifest = installation_state(load_json(
+        state / 'installation.json', max_bytes=INSTALLATION_STATE_LIMIT))
+    destination = Path(manifest['destination'])
+    synchronize(repo, destination, state, codex_home, check=True)
+    if name not in manifest['roles']:
+        raise ValueError('unknown Skill')
+    relative = name + '/SKILL.md'
+    path = owned_path(destination, relative)
+    data = regular_bytes(path)
+    content_sha256 = digest(data)
+    if content_sha256 != manifest['files'][relative]:
+        raise ValueError('installed Skill changed after check')
+    return {'schema_version': 1, 'execution_mode': 'single-main', 'launched': False,
+            'project_root': str(project), 'skill': name, 'source': str(path),
+            'content': data.decode('utf-8'), 'content_sha256': content_sha256}
+
+
 def main():
     for stream in (sys.stdout, sys.stderr):
         if hasattr(stream, 'reconfigure'):
@@ -48,9 +72,18 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--project', required=True)
     parser.add_argument('--skill', required=True)
+    parser.add_argument('--host', choices=('claude', 'codex'), default='claude',
+                        help='installation to read (default: project-local Claude)')
     args = parser.parse_args()
     try:
-        print(json.dumps(load_skill(args.project, args.skill), ensure_ascii=False))
+        if args.host == 'codex':
+            codex_home = Path(os.environ.get('CODEX_HOME', str(Path.home() / '.codex')))
+            result = load_codex_skill(args.project, args.skill,
+                repo=Path(__file__).resolve().parents[1], state=codex_home / 'chosen-agent',
+                codex_home=codex_home)
+        else:
+            result = load_skill(args.project, args.skill)
+        print(json.dumps(result, ensure_ascii=False))
         return 0
     except (OSError, ValueError) as exc:
         print('Skill load rejected: ' + str(exc), file=sys.stderr)

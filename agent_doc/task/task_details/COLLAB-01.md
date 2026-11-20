@@ -108,3 +108,9 @@ v6 范围澄清：项目代码和验收脚本由操作者明确声明可信，�
 最终 Windows 针对性回归 64 项通过，执行前后源文件哈希一致；原始记录 `C:/tmp/agent-system99/codex-runtime-fix-20261117/native-final-regression.json`，日志 SHA-256 `5d0cb91e35201d46f5ad6bea981f4226a92dc36fd5f82a55fea696081f054374`。Linux 关联检查 128 项中 127 通过、1 跳过；验收器 12 项通过。全库早期检查 2212 项存在两项未修改 main 也复现的 dispatch alias / memory 日期失败、缺失可选 fitz，以及已修复的六项生成器 fixture 回归；不报告全库全绿。Windows Bash 专用 fixture 未作为本轮可用能力声明。
 
 不同模型依次提出并落实超时副作用、恢复授权、半行输入、跟踪文档、旧验收版本及原始日志等阻断意见；第五次独立复核九项检查全部 pass、无 findings，approve 本轮限定实现。完整请求/真实身份/完整回复保留 `C:/tmp/agent-system99/codex-runtime-fix-20261117/implementation-review5.json`，不把合成故障测试当真实模型证据。v6 缺后端阻断已解除；未覆盖边界和既有失败保留原状态，不据此宣称其他项目或账号级模式自动生效。
+
+### Progress（2026-11-20）
+
+补齐 Linux 用户级 Codex runtime 配置，实际 app-server 探测完成两个不同模型的只读调用。运行时配置和探测记录保存在用户配置目录。CLI 配置与协作入口共用默认 profile 路径，缺失时提供显式配置和探测入口。已有任务绑定、预算、历史回执沿原机制保留。
+
+Codex 用户级技能加载入口使用同步器校验安装版本、文件哈希和全局指引，输出仍绑定实际目标项目。旧 Claude 加载入口兼容。协作 CLI 的任务验收套件使用工作流仓库中的项目分区；项目既有任务与实验资料的物理迁移需另行保留原受保护路径和私有存储边界。
