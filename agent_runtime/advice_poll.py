@@ -7,6 +7,8 @@ from pathlib import Path, PurePosixPath
 import re
 import stat
 
+from .project_docs import _relative, logical_path
+
 SCHEMA = 'advice-inventory/v1'
 PREFIX = 'agent_doc/advice/'
 MAX_FILES = 2000
@@ -71,7 +73,7 @@ def validate_snapshot(root, value):
 
 
 def _scan(root, max_files, max_bytes, max_dirs):
-    directory = _safe(root, root / 'agent_doc/advice')
+    directory = _relative(root, 'agent_doc/advice')
     files = {}
     used = 0
     if directory.exists():
@@ -82,14 +84,14 @@ def _scan(root, max_files, max_bytes, max_dirs):
         while pending:
             with os.scandir(pending.pop()) as entries:
                 for entry in entries:
-                    path = _safe(root, Path(entry.path))
+                    path = _relative(root, Path(entry.path))
                     if entry.is_dir(follow_symlinks=False):
                         directory_count += 1
                         if directory_count > max_dirs:
                             raise ValueError('advice directory bound exceeded; no partial snapshot')
                         pending.append(path)
                         continue
-                    rel = _path(path.relative_to(root).as_posix())
+                    rel = _path(logical_path(root, path).as_posix())
                     if len(files) >= max_files:
                         raise ValueError('advice file bound exceeded; no partial snapshot')
                     fd = os.open(path, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) |
