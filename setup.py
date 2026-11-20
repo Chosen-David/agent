@@ -15,7 +15,7 @@ import stat
 from typing import NamedTuple
 import tempfile
 
-from agent_runtime.project_docs import is_human_guide
+from agent_runtime.project_docs import is_human_guide, document_root, _relative
 from agent_runtime.external_json import load_json, regular_bytes
 from agent_runtime.knowledge_ingest import _publish_entry as _publish_skill
 from agent_runtime.model_routing import EMPTY_INVENTORY, routing_report, validate_inventory, validate_policy
@@ -419,8 +419,12 @@ def replace_skill_copy(path, source, previous, expected, *, skill_limits=None,
 
 def project_document_layout(target):
     """Read-only preflight; never create a second task list or touch guide files."""
-    task = checked_target(target, 'agent_doc/task/TASK.md')
-    directories = [checked_target(target, relative) for relative in
+    home = document_root(target)
+    local = target / 'agent_doc'
+    if home != local.resolve() and (local / 'task/TASK.md').exists():
+        raise ValueError('Local task index exists; reconcile before selecting external documents')
+    task = _relative(target, 'agent_doc/task/TASK.md')
+    directories = [_relative(target, relative) for relative in
                    ('agent_doc/task/task_details', 'agent_doc/advice', 'agent_doc/guide', 'agent_doc/results')]
     for directory in directories:
         for candidate in (directory, *directory.parents):
@@ -642,7 +646,7 @@ def check(target, *, skill_limits=None):
             errors.append('canonical agent_doc/task/TASK.md missing')
         for directory in document_directories:
             if not directory.is_dir():
-                errors.append('project document directory missing: ' + str(directory.relative_to(target)))
+                errors.append('project document directory missing: ' + str(directory))
     except (OSError, ValueError) as exc:
         errors.append(str(exc))
     return {'status': 'configured' if not errors else 'needs_setup', 'target': str(target),
