@@ -1,6 +1,11 @@
 # WSL-SETUP-01
 
-## Plan v1 — 2026-11-17
+Task-ID: WSL-SETUP-01
+Date: 2026-11-17
+
+## Plan
+
+### Plan v1 — 2026-11-17
 
 用户要求 Windows 自动下载 WSL 的脚本/指南入知识库。PROJECT_ROOT 为本库；基线 main `5013c5635673dc435f5956f3db1470dff0803857`，已 fetch 对齐并同步/检查 Codex 安装。保留原有五处本地工作，不纳入本次提交。
 
@@ -15,12 +20,14 @@
 
 不配置后台任务、不提交机器探测日志或凭据。私有测试/复核证据目录 `C:/tmp/agent-system99/wsl-setup-20261117/`。本轮为功能回归，不作性能/科学实验结论。
 
-## Progress v1
+## Progress
+
+### Progress v1
 
 - 现有知识库 `Windows WSL 安装` 检索只命中无关安装词，拒绝复用；已有 `run_knowledge_windows.py` 是运行器，不是安装器。采用 Microsoft Learn install/basic-commands，核查于 2026-11-17。
 - 设计复核1（真实不同模型）要求补进程边界及负控：采纳；修正非管理员既有发行版用例，扩大边界验证后再次复核。
 
-## Progress v2 — 有限功能验收
+### Progress v2 — 有限功能验收
 
 - `scripts/setup_wsl.ps1` 独立运行/默认只读，显式 Apply、系统路径、权限/能力校验、分离输出及原生退出码。微软可信控制命令采用明确 UTF-16LE 约定，子进程清除 WSL_UTF8，保留父环境；不作通用编码识别。真实探测发现全参数加引号破坏 WSL 原始解析，已修复并纳入只读负控。
 - 冻结设计10、验收修订11经实际不同模型通过。测试修订仅纠正夹具缺少预期 flag 和 Output 键大小写，未放宽行为；早期设计9的 approve/resources-unknown 被协议拒绝，保留失败记录，没有当成通过。

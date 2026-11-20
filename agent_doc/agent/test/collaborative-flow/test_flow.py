@@ -137,7 +137,10 @@ class FlowTests(unittest.TestCase):
         workflow = self.root / 'workflow'
         (workflow / 'scripts').mkdir(parents=True)
         shutil.copy(repo / 'scripts/project_test.py', workflow / 'scripts/project_test.py')
-        for source in ('config/role_registry.json',
+        for source in ('agent_runtime/__init__.py',
+                       'agent_runtime/project_docs.py',
+                       'agent_runtime/context_serialization.py',
+                       'config/role_registry.json',
                        'plugins/research-assistant/skills/research-implement-optimize/SKILL.md',
                        'plugins/research-assistant/skills/gpu-experiment-dispatch/SKILL.md'):
             dest = workflow / source

@@ -226,7 +226,7 @@ class DocumentSetupTests(unittest.TestCase):
         guide = self.target / 'agent_doc/guide'
         guide.mkdir(parents=True)
         (self.target / 'agent_doc/task').symlink_to(guide, target_is_directory=True)
-        with self.assertRaisesRegex(ValueError, 'symbolic link|redirects'):
+        with self.assertRaisesRegex(ValueError, 'symbolic link|symlinks|redirects'):
             setup.install(self.target)
         self.assertEqual(list(guide.iterdir()), [])
         self.assertFalse((self.target / '.claude').exists())
