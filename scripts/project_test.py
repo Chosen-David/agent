@@ -12,7 +12,7 @@ import time
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from agent_runtime.project_docs import document_root
+from agent_runtime.project_docs import document_root, _relative, regular_bytes
 
 
 def digest(data):
@@ -28,8 +28,8 @@ def source_manifest(root, *, exclude_owned=None):
     for name, expected in exclude_owned.items():
         valid = (name == 'agent_doc/task/TASK.md' or re.fullmatch(
             r'agent_doc/task/task_details/[A-Za-z0-9][A-Za-z0-9_-]{0,79}\.md', name))
-        if (not valid or not (root / name).resolve().is_relative_to(root.resolve()) or not (root / name).is_file() or
-                (root / name).is_symlink() or digest((root / name).read_bytes()) != expected):
+        if (not valid or not _relative(root, name).is_file() or
+                digest(regular_bytes(root, name)) != expected):
             raise ValueError('controller document changed externally: ' + name)
     names = subprocess.check_output(["git", "-C", str(root), "ls-files", "-z", "--cached", "--others", "--exclude-standard"])
     entries = {}

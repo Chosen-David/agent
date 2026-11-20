@@ -21,7 +21,7 @@ import uuid
 from .file_lock import flock, LOCK_EX, LOCK_NB
 from .external_json import regular_bytes as bounded_bytes
 from .plan_review import CHECKS, _identity, _review, sha
-from .project_docs import assert_ai_writable, atomic_write, regular_bytes, guard_write_path
+from .project_docs import assert_ai_writable, atomic_write, regular_bytes, guard_write_path, _relative
 from .codex_models import POLICY, discover_models, select_models
 from .model_process import process_scope, pid_running
 
@@ -646,20 +646,24 @@ class CodexHost:
 
     def _context(self, *, require_bound_logs=False):
         files = {}
-        rules = tuple(p for p in ('AGENTS.md', 'agent_doc/guide/GUIDE.md') if (self.root / p).exists())
+        rules = tuple(p for p in ('AGENTS.md', 'agent_doc/guide/GUIDE.md') if _relative(self.root, p).exists())
         for path in dict.fromkeys((*rules, *self.context_paths, *self.write_paths)):
-            target = self.root / path
+            target = _relative(self.root, path)
             data = regular_bytes(self.root, path) if target.exists() else b''
             files[path] = {'exists': target.exists(), 'sha256': hashlib.sha256(data).hexdigest(),
                            'content': data.decode('utf8')}
         suite = f'agent_doc/{self.project}/test/{self.task_id}'
         tests = {}
-        directory = self.workflow / suite
+        external = bool(os.environ.get('AGENT_DOC_ROOT'))
+        context_root = self.root if external else self.workflow
+        if external:
+            suite = f'agent_doc/test/{self.task_id}'
+        directory = _relative(context_root, suite)
         if directory.exists():
             for path in sorted(directory.rglob('*')):
                 if path.is_file() and '__pycache__' not in path.parts:
-                    relative = path.relative_to(self.workflow).as_posix()
-                    tests[relative] = regular_bytes(self.workflow, relative).decode('utf8')
+                    relative = (Path(suite) / path.relative_to(directory)).as_posix()
+                    tests[relative] = regular_bytes(context_root, relative).decode('utf8')
         flow = self.flow_class(self.root, self.task_id)
         checkpoints = []
         for row in (flow.state or {}).get('reviews', []):
