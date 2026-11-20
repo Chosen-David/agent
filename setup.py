@@ -15,6 +15,7 @@ import stat
 from typing import NamedTuple
 import tempfile
 
+from agent_runtime.project_docs import is_human_guide
 from agent_runtime.external_json import load_json, regular_bytes
 from agent_runtime.knowledge_ingest import _publish_entry as _publish_skill
 from agent_runtime.model_routing import EMPTY_INVENTORY, routing_report, validate_inventory, validate_policy
@@ -29,8 +30,7 @@ def installation_root(path):
     """Never reinterpret a human-only guide subtree as a writable new project."""
     path = Path(path).absolute()
     for candidate in (path, path.resolve()):
-        parts = tuple(part.casefold() for part in candidate.parts)
-        if any(parts[i] in ('doc', 'agent_doc') and parts[i + 1] == 'guide' for i in range(len(parts) - 1)):
+        if any(is_human_guide(part) for part in (candidate, *candidate.parents)):
             raise ValueError('Human-only agent_doc/guide cannot be an installer target')
     return path.resolve()
 

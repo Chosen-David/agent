@@ -42,8 +42,7 @@ def initialize_project_docs(root):
     supplied = Path(root).absolute()
     root = supplied.resolve()
     for candidate in (supplied, root):
-        parts = tuple(part.casefold() for part in candidate.parts)
-        if any(parts[i] in ('doc', 'agent_doc') and parts[i + 1] == 'guide' for i in range(len(parts) - 1)):
+        if _under_human_guide(candidate):
             raise DocumentError('human-only agent_doc/guide cannot be a project initialization target')
     if not root.is_dir():
         raise DocumentError('project root must be an existing directory')
@@ -682,6 +681,25 @@ def _rebase_links(text):
     return re.sub(r'^(\[[^]\n]+\]:\s*)(\S+)',
                   lambda match: match[1] + target(match[2]), text, flags=re.M)
 
+def is_human_guide(path):
+    return _under_human_guide(path)
+
+
+def _guide_directories(root):
+    directories = ['agent_doc/guide', 'doc/guide']
+    if root.parent.name.casefold() == 'agent_doc':
+        directories.append('guide')
+    namespace = _relative(root, 'agent_doc')
+    if namespace.is_dir():
+        for project in namespace.iterdir():
+            if project.is_dir() and not project.is_symlink():
+                guide = project / 'guide'
+                if guide.exists():
+                    _relative(root, guide)
+                    directories.append('agent_doc/' + project.name + '/guide')
+    return directories
+
+
 def _under_human_guide(path):
     for part in (path, *path.parents):
         if part.name.casefold() != 'guide':
@@ -721,14 +739,15 @@ def assert_ai_writable(root, path):
         if physical.is_relative_to(guide) or guide.is_relative_to(physical):
             raise DocumentError('human-only guide; AI writes are forbidden')
     target = root / relative
-    for directory in ('agent_doc/guide', 'doc/guide'):
+    guide_directories = _guide_directories(root)
+    for directory in guide_directories:
         guide = root / directory
         if target.is_relative_to(guide) or (guide.is_relative_to(target) and
                 (directory.startswith('agent_doc/') or guide.exists())):
             raise DocumentError('human-only guide; AI writes are forbidden')
     target = physical
     if target.exists() and target.is_file() and target.stat().st_nlink > 1:
-        for directory in ('agent_doc/guide', 'doc/guide'):
+        for directory in guide_directories:
             if _relative(root, directory).exists():
                 for name in _inventory(root, directory):
                     if os.path.samefile(target, _relative(root, name)):
