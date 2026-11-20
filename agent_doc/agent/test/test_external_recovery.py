@@ -85,3 +85,10 @@ class ExternalRecoveryTests(unittest.TestCase):
         self.assertEqual(rejected.returncode, 2, rejected.stdout + rejected.stderr)
         with self.assertRaisesRegex(ValueError, 'controller document changed'):
             runner.source_manifest(self.root, exclude_owned=refs)
+
+    def test_context_uses_existing_anchor_without_environment(self):
+        (self.root / 'agent_doc').symlink_to(self.docs, target_is_directory=True)
+        with patch.dict(os.environ, {'AGENT_DOC_ROOT': ''}):
+            packet = self.host()._context()
+        self.assertEqual(packet['files']['agent_doc/guide/GUIDE.md']['content'], 'human requirement')
+        self.assertTrue(packet['acceptance_tests'])

@@ -109,6 +109,10 @@ def document_root(root):
     return home
 
 
+def uses_external_documents(root):
+    return bool(os.environ.get('AGENT_DOC_ROOT')) or (Path(root).resolve() / 'agent_doc').is_symlink()
+
+
 def logical_path(root, path):
     """Return the project-relative identity of a physical or logical path."""
     root = Path(root).resolve()

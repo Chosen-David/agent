@@ -12,7 +12,7 @@ import time
 import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from agent_runtime.project_docs import document_root, _relative, regular_bytes
+from agent_runtime.project_docs import document_root, _relative, regular_bytes, uses_external_documents
 
 
 def digest(data):
@@ -88,7 +88,7 @@ def prepare_suite(workflow, project, target, *, task=None):
     workflow, target = workflow.resolve(), target.resolve()
     if Path(git(target, "rev-parse", "--show-toplevel")).resolve() != target:
         raise ValueError("--target must be the exact Git repository root")
-    directory = (document_root(target) / "test" if os.environ.get("AGENT_DOC_ROOT") else
+    directory = (document_root(target) / "test" if uses_external_documents(target) else
                  workflow / "agent_doc" / project / "test")
     if task is not None:
         if not isinstance(task, str) or not task or any(c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-" for c in task):
@@ -135,7 +135,7 @@ def run(workflow, project, target, output, *, task=None, controller_documents=No
     manifest_path = directory / "suite.json"
     output = output.absolute()
     if (output.resolve().is_relative_to(workflow) or output.resolve().is_relative_to(target) or
-            output.resolve().is_relative_to(document_root(target) if os.environ.get("AGENT_DOC_ROOT") else directory.parent)):
+            output.resolve().is_relative_to(document_root(target) if uses_external_documents(target) else directory.parent)):
         raise ValueError("write run evidence outside workflow and target repositories")
     output.mkdir(parents=True, exist_ok=False)
     controller_documents = controller_documents or {}

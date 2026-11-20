@@ -21,7 +21,7 @@ import uuid
 from .file_lock import flock, LOCK_EX, LOCK_NB
 from .external_json import regular_bytes as bounded_bytes
 from .plan_review import CHECKS, _identity, _review, sha
-from .project_docs import assert_ai_writable, atomic_write, regular_bytes, guard_write_path, _relative
+from .project_docs import assert_ai_writable, atomic_write, regular_bytes, guard_write_path, _relative, uses_external_documents
 from .codex_models import POLICY, discover_models, select_models
 from .model_process import process_scope, pid_running
 
@@ -654,7 +654,7 @@ class CodexHost:
                            'content': data.decode('utf8')}
         suite = f'agent_doc/{self.project}/test/{self.task_id}'
         tests = {}
-        external = bool(os.environ.get('AGENT_DOC_ROOT'))
+        external = uses_external_documents(self.root)
         context_root = self.root if external else self.workflow
         if external:
             suite = f'agent_doc/test/{self.task_id}'

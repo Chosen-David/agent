@@ -161,3 +161,14 @@ class ExternalTestEntryTests(unittest.TestCase):
             env=environment, capture_output=True, text=True, timeout=30)
         self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
         self.assertFalse(output.exists())
+
+    def test_external_anchor_supplies_suite_without_environment(self):
+        external = self.base / 'agent_doc/example'
+        external.mkdir(parents=True)
+        self.suite.rename(external / 'test')
+        self.suite = external / 'test'
+        (self.target / 'agent_doc').symlink_to(external, target_is_directory=True)
+        with patch.dict(os.environ, {'AGENT_DOC_ROOT': ''}):
+            report = self.check(" def test_value(self): self.assertEqual(product.VALUE, 42)\n", 0)
+        self.assertEqual(report['status'], 'pass')
+        self.assertEqual(report['before'], report['after'])
