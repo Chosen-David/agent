@@ -12,15 +12,9 @@ LIMIT = 1024 * 1024
 
 
 def _safe(root, relative):
-    path = root / relative
-    for candidate in (path, *path.parents):
-        if candidate == root:
-            break
-        if candidate.is_symlink():
-            raise ValueError('legacy result relocation must not contain symlinks')
-    if not path.resolve().is_relative_to(root):
-        raise ValueError('legacy result relocation outside project')
-    return path
+    from .project_docs import _relative
+
+    return _relative(root, relative)
 
 
 def _legacy_key(value):

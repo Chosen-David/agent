@@ -19,8 +19,8 @@ from .project_memory import check_task_memory
 from .knowledge import check_task_knowledge
 from .result_validation import _check_validated_bindings, check_task_results, validate_result_plan
 from .result_store import ResultStore, _check_reuse_bindings, check_task_reuse, register_task_result
-from .project_docs import (CANONICAL_TASK, assert_ai_writable, check_document_refs,
-                           check_task_documents, guard_write_path, parse_requirements,
+from .project_docs import (CANONICAL_TASK, _relative, assert_ai_writable, check_document_refs,
+                           check_task_documents, guard_write_path, logical_path, parse_requirements,
                            project_root_for_task, regular_bytes, resolve_task_file, snapshot_project_docs,
                            task_document_refs, validate_advice_assessments, validate_guide_reviews)
 
@@ -76,7 +76,7 @@ def task_source_snapshot(path, root=None):
     except UnicodeDecodeError as exc:
         raise ValueError('TASK.md must contain valid UTF-8') from exc
     return {'items': parse_requirements(
-                text, canonical=path.parts[-3:] == ('agent_doc', 'task', 'TASK.md')),
+                text, canonical=logical_path(root, path) == Path(CANONICAL_TASK)),
             'sha256': hashlib.sha256(raw).hexdigest()}
 
 
@@ -154,18 +154,23 @@ def _review_prior_candidates(task, search):
         raise ValueError('reuse decision requires explicit verified reuse action; do not rerun producer silently')
 
 def prepare(task_file, run_id, mode, authorization_reference, *, review_required=True, lineage_id=None,
-            review_schema='single-main-plan-review/v1'):
+            review_schema='single-main-plan-review/v1', project_root=None):
     if review_schema not in ('main-plan-review/v1', 'single-main-plan-review/v1', 'dual-model-plan-review/v1'):
         raise ValueError('unknown plan review schema')
     if review_schema == 'dual-model-plan-review/v1' and not review_required:
         raise ValueError('dual-model review cannot be unprotected')
     task_file = Path(task_file)
-    root = task_file.resolve() if task_file.is_dir() else project_root_for_task(task_file)
+    if project_root is not None:
+        root = Path(project_root).resolve()
+        if not task_file.is_dir() and _relative(root, task_file) != resolve_task_file(root):
+            raise ValueError('explicit task file does not match the bound project')
+    else:
+        root = task_file.resolve() if task_file.is_dir() else project_root_for_task(task_file)
     task_file = resolve_task_file(root)
     task_snapshot = task_source_snapshot(task_file, root)
     items = task_snapshot['items']
     documents = snapshot_project_docs(root)
-    expected_task_ref = {'path': task_file.relative_to(root).as_posix(),
+    expected_task_ref = {'path': logical_path(root, task_file).as_posix(),
                          'sha256': task_snapshot['sha256']}
     if documents.get('task_index') != expected_task_ref:
         raise ValueError('TASK.md changed while preparing the draft; retry from one current version')
@@ -182,7 +187,7 @@ def prepare(task_file, run_id, mode, authorization_reference, *, review_required
            if review_required else {}),
         'user_goal': 'Complete all TASK.md requirements with reportable evidence',
         'authorization_reference': authorization_reference,
-        'task_source': {'path': str(task_file), 'sha256': task_snapshot['sha256'], 'mode': mode},
+        'task_source': {'path': str(root / logical_path(root, task_file)), 'sha256': task_snapshot['sha256'], 'mode': mode},
         'project_documents': documents, 'guide_reviews': [], 'advice_assessments': [],
         'supervision': {'min_seconds': 30, 'max_seconds': 300,
                         'rationale': 'Main AI must refine ETA, risk and cadence before starting'},
@@ -264,11 +269,9 @@ def validate_contract(plan, root, *, check_adopted_advice=True, required_task_re
                 raise ValueError('prior_result_review has invalid record_refs')
     validate_result_plan(plan)
     root = Path(root).resolve()
-    path = (root / source['path']).resolve()
+    path = _relative(root, source['path'])
     if path != resolve_task_file(root):
         raise ValueError('the single task source must be agent_doc/task/TASK.md (legacy project-root TASK.md only before migration)')
-    if not path.is_relative_to(root):
-        raise ValueError('TASK.md missing, changed or outside project; reconcile and version the plan')
     task_snapshot = task_source_snapshot(path, root)
     if task_snapshot['sha256'] != source['sha256']:
         raise ValueError('TASK.md missing, changed or outside project; reconcile and version the plan')
@@ -279,7 +282,7 @@ def validate_contract(plan, root, *, check_adopted_advice=True, required_task_re
         if current['layout'] != 'legacy' or current['guides'] or current['advice']:
             raise ValueError('project document binding missing; explicitly replan legacy run')
     else:
-        expected_task_ref = {'path': path.relative_to(root).as_posix(),
+        expected_task_ref = {'path': logical_path(root, path).as_posix(),
                              'sha256': task_snapshot['sha256']}
         if documents.get('task_index') != expected_task_ref:
             raise ValueError('task source and project document snapshots differ; reconcile and version the plan')

@@ -28,7 +28,7 @@ from .scheduler import LocalScheduler, arm
 from .crash_restart import read_crash_state, record_crash
 from .external_json import ExternalJSONError, load_json
 from .project_docs import (DocumentError, assert_ai_writable, guard_write_path,
-                           regular_bytes, resolve_task_file)
+                           regular_bytes)
 from .task_manifest import (ReportingHandler, atomic_json, prepare, review,
                             TASK_SOURCE_LIMIT, validate_contract)
 
@@ -512,8 +512,9 @@ def main():
             p.add_argument('--reference', required=True)
     args = parser.parse_args()
     if args.command == 'prepare':
-        plan = prepare(args.task_file or resolve_task_file(args.project_root), args.run_id, args.mode, args.authorization_reference,
+        plan = prepare(args.task_file or args.project_root, args.run_id, args.mode, args.authorization_reference,
                        review_required=not args.legacy_unprotected, lineage_id=args.lineage_id,
+                       project_root=args.project_root,
                        review_schema=('dual-model-plan-review/v1' if args.collaboration_mode == 'dual-ai'
                                       else 'single-main-plan-review/v1'))
         atomic_json(args.out, plan)

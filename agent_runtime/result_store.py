@@ -22,7 +22,7 @@ import stat
 import tempfile
 import time
 
-from .project_docs import assert_ai_writable
+from .project_docs import DocumentError, _relative, assert_ai_writable
 from .result_validation import _check_validated_bindings, inspect_result
 from .legacy_result_paths import legacy_read_binding, check_relocated_digest, relocated_digest_matches
 
@@ -62,13 +62,10 @@ def _path(root, value):
     _need(_text(value), 'relative path required')
     raw = Path(value)
     _need(not raw.is_absolute() and '..' not in raw.parts, 'path outside project')
-    path = root / raw
-    for part in (path, *path.parents):
-        if part == root:
-            break
-        _need(not part.is_symlink(), 'result path must not contain symlinks')
-    _need(path.resolve().is_relative_to(root), 'path outside project')
-    return path
+    try:
+        return _relative(root, raw)
+    except DocumentError as error:
+        raise ResultStoreError(str(error)) from error
 
 
 def _read(root, value, limit=METADATA_LIMIT):
@@ -657,7 +654,7 @@ def register_task_result(root, task):
     manifest = _json(_read(store.root, contract['manifest_path'], 16 * METADATA_LIMIT))
     run_id = _identifier(manifest['run_id'])
     canonical = Path(contract['manifest_path']).is_relative_to(Path(HOME) / run_id)
-    if task.get('result_storage') == 'central' or (store.root / 'agent_doc/task/TASK.md').exists():
+    if task.get('result_storage') == 'central' or _relative(store.root, 'agent_doc/task/TASK.md').exists():
         _need(canonical, 'central result producer requires agent_doc/results/<run_id>/ manifest')
         _need(all(Path(ref['path']).is_relative_to(Path(HOME) / run_id)
                   for role in ('raw_data', 'outputs') for ref in manifest['artifacts'][role]),

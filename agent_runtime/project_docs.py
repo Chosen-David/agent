@@ -69,7 +69,7 @@ def initialize_project_docs(root):
     for directory in directories:
         if not directory.exists():
             directory.mkdir(parents=True, exist_ok=True)
-            created.append(directory.relative_to(root).as_posix())
+            created.append(logical_path(root, directory).as_posix())
     try:
         # Exclusive creation preserves an index created by another process.
         with task.open('x', encoding='utf-8', newline='\n') as stream:
@@ -93,13 +93,52 @@ def _date(value):
         raise DocumentError('task dates must be YYYY-MM-DD') from None
 
 
+def document_root(root):
+    """The selected physical document tree. An explicit override must be absolute."""
+    configured = os.environ.get('AGENT_DOC_ROOT')
+    if configured:
+        selected = Path(configured).expanduser()
+        if not selected.is_absolute():
+            raise DocumentError('AGENT_DOC_ROOT must be an absolute path')
+    else:
+        selected = Path(root).resolve() / 'agent_doc'
+    home = selected.resolve()
+    project = Path(root).resolve()
+    if home != project / 'agent_doc' and (
+            project.is_relative_to(home) or home.is_relative_to(project)):
+        raise DocumentError('external document root must be separate from the code project')
+    return home
+
+
+def logical_path(root, path):
+    """Return the project-relative identity of a physical or logical path."""
+    root = Path(root).resolve()
+    path = Path(path)
+    if '..' in path.parts:
+        raise DocumentError('document path traversal is forbidden')
+    path = Path(os.path.abspath(root / path))
+    logical_home = root / 'agent_doc'
+    if path.is_relative_to(logical_home):
+        return path.relative_to(root)
+    if not path.is_relative_to(root):
+        home = document_root(root)
+        if path.is_relative_to(home):
+            return Path('agent_doc') / path.relative_to(home)
+        raise DocumentError('document path outside project')
+    return path.relative_to(root)
+
+
 def _relative(root, path):
     root = Path(root).resolve()
-    path = Path(os.path.abspath(root / path))
-    if not path.is_relative_to(root):
-        raise DocumentError('document path outside project')
+    relative = logical_path(root, path)
+    if relative.parts[:1] == ('agent_doc',):
+        boundary = document_root(root)
+        path = boundary.joinpath(*relative.parts[1:])
+    else:
+        boundary = root
+        path = root / relative
     for part in (path, *path.parents):
-        if part == root:
+        if part == boundary:
             break
         try:
             info = part.lstat()
@@ -227,7 +266,7 @@ def _inventory(root, directory, *, hashes=True):
         for name in files:
             item = Path(parent) / name
             item = _relative(root, item)
-            result[item.relative_to(root).as_posix()] = regular_digest(root, item)[0] if hashes else None
+            result[logical_path(root, item).as_posix()] = regular_digest(root, item)[0] if hashes else None
     return dict(sorted(result.items()))
 
 
@@ -235,7 +274,7 @@ def snapshot_project_docs(root):
     root = Path(root).resolve()
     path = resolve_task_file(root)
     raw = regular_bytes(root, path)
-    canonical = path == root / CANONICAL_TASK
+    canonical = logical_path(root, path) == Path(CANONICAL_TASK)
     items = parse_requirements(raw.decode('utf-8'), canonical=canonical)
     details = {}
     if canonical:
@@ -253,7 +292,7 @@ def snapshot_project_docs(root):
                 raise DocumentError('task detail identity/date must match TASK.md: ' + item['id'])
             details[item['id']] = {'path': rel, 'sha256': hashlib.sha256(planning.encode('utf-8')).hexdigest()}
     return {'schema_version': 'project-documents/v1', 'layout': 'canonical' if canonical else 'legacy',
-            'task_index': {'path': path.relative_to(root).as_posix(), 'sha256': hashlib.sha256(raw).hexdigest()},
+            'task_index': {'path': logical_path(root, path).as_posix(), 'sha256': hashlib.sha256(raw).hexdigest()},
             'task_details': details, 'guides': _inventory(root, 'agent_doc/guide'),
             'advice': _inventory(root, 'agent_doc/advice'), 'adopted_advice': {}}
 
@@ -314,7 +353,7 @@ def task_navigation(root, *, max_chars=12000, progress_chars=64,
     """
     root = Path(root).resolve()
     index = resolve_task_file(root)
-    if index != root / CANONICAL_TASK:
+    if logical_path(root, index) != Path(CANONICAL_TASK):
         raise DocumentError('task navigation requires the canonical task index')
     if type(max_chars) is not int or not 1 <= max_chars <= 200000:
         raise DocumentError('invalid navigation character budget')
@@ -371,7 +410,7 @@ def task_navigation(root, *, max_chars=12000, progress_chars=64,
                 task['summary_source'] = {'chars': len(summary), 'sha256': hashlib.sha256(summary.encode('utf-8')).hexdigest(), 'truncated': len(summary) > summary_chars}
                 task['summary'] = summary[:summary_chars]
     digest = {'schema_version': 'task-navigation/v2', 'project_root': str(root),
-              'task_index': index.relative_to(root).as_posix(),
+              'task_index': logical_path(root, index).as_posix(),
               'selection': 'all' if include_checked else 'unchecked',
               'total_tasks': len(items), 'selected_tasks': len(selected),
               'omitted_checked_tasks': 0 if include_checked else sum(item['checked'] for item in items),
@@ -461,7 +500,7 @@ def check_document_refs(root, refs):
 def check_task_documents(root, task):
     refs = task.get('document_refs')
     if refs is None:
-        if (Path(root) / CANONICAL_TASK).exists() or _inventory(Path(root).resolve(), 'agent_doc/guide'):
+        if _relative(root, CANONICAL_TASK).exists() or _inventory(Path(root).resolve(), 'agent_doc/guide'):
             raise DocumentError('task document dependencies missing; explicitly replan before execution')
         return None
     current = check_document_refs(root, refs)
@@ -643,6 +682,19 @@ def _rebase_links(text):
     return re.sub(r'^(\[[^]\n]+\]:\s*)(\S+)',
                   lambda match: match[1] + target(match[2]), text, flags=re.M)
 
+def _under_human_guide(path):
+    for part in (path, *path.parents):
+        if part.name.casefold() != 'guide':
+            continue
+        if (part.parent.name.casefold() in ('doc', 'agent_doc') or
+                part.parent.parent.name.casefold() == 'agent_doc'):
+            return True
+        configured = os.environ.get('AGENT_DOC_ROOT')
+        if configured and part.parent == Path(configured).expanduser().resolve():
+            return True
+    return False
+
+
 def assert_ai_writable(root, path):
     """Preflight a controlled write, including redirects and hard-linked guides.
 
@@ -651,40 +703,68 @@ def assert_ai_writable(root, path):
     """
     supplied_root = Path(os.path.abspath(root))
     root = supplied_root.resolve()
+    if '..' in Path(path).parts:
+        raise DocumentError('document path traversal is forbidden')
     target = Path(os.path.abspath(root / path))
     for candidate in (supplied_root, root, target, target.resolve()):
-        if any(ancestor.name.casefold() == 'guide' and ancestor.parent.name.casefold() in ('doc', 'agent_doc')
-               for ancestor in (candidate, *candidate.parents)):
+        if _under_human_guide(candidate):
             raise DocumentError('agent_doc/guide is human-only; rebased roots and aliases cannot grant AI writes')
-    if not target.is_relative_to(root):
-        raise DocumentError('controlled write outside project')
+    try:
+        relative = logical_path(root, target)
+    except DocumentError as error:
+        raise DocumentError('controlled write outside project') from error
+    physical = _relative(root, relative)
+    if _under_human_guide(physical):
+        raise DocumentError('human-only guide; AI writes are forbidden')
+    if relative.parts[:1] == ('agent_doc',):
+        guide = document_root(root) / 'guide'
+        if physical.is_relative_to(guide) or guide.is_relative_to(physical):
+            raise DocumentError('human-only guide; AI writes are forbidden')
+    target = root / relative
     for directory in ('agent_doc/guide', 'doc/guide'):
         guide = root / directory
         if target.is_relative_to(guide) or (guide.is_relative_to(target) and
                 (directory.startswith('agent_doc/') or guide.exists())):
             raise DocumentError('human-only guide; AI writes are forbidden')
-    _relative(root, target)
+    target = physical
     if target.exists() and target.is_file() and target.stat().st_nlink > 1:
         for directory in ('agent_doc/guide', 'doc/guide'):
-            if (root / directory).exists():
+            if _relative(root, directory).exists():
                 for name in _inventory(root, directory):
-                    if os.path.samefile(target, root / name):
+                    if os.path.samefile(target, _relative(root, name)):
                         raise DocumentError('hard-linked human guide cannot be written by AI')
     return target
 
 
 def guard_write_path(path):
-    """Guard generic runtime writers, even without a project-root argument."""
+    """Guard generic writers. Use assert_ai_writable for bound external writes."""
+    path = Path(path)
+    if '..' in path.parts:
+        raise DocumentError('document path traversal is forbidden')
     path = Path(os.path.abspath(path))
-    for candidate in (path, path.resolve()):
-        for ancestor in (candidate, *candidate.parents):
-            if ancestor.name.casefold() == 'guide' and ancestor.parent.name.casefold() in ('doc', 'agent_doc'):
-                raise DocumentError('agent_doc/guide is human-only; AI writes are forbidden')
-    # Locate a known project to catch aliases and hardlinks as well.
+    candidates = (path, path.resolve())
+    if any(_under_human_guide(candidate) for candidate in candidates):
+        raise DocumentError('agent_doc/guide is human-only; AI writes are forbidden')
+    setting = os.environ.get('AGENT_DOC_ROOT')
+    external = Path(setting).expanduser().resolve() if setting else None
+    if external is not None and path.is_relative_to(external):
+        raise DocumentError('external document writes require a bound code project')
+    for root in path.parents:
+        if path.relative_to(root).parts[:1] != ('agent_doc',):
+            continue
+        if (root / '.git').exists() or (external is None and (root / CANONICAL_TASK).is_file()):
+            return assert_ai_writable(root, path)
+        if external is not None:
+            raise DocumentError('external document writes require a bound code project')
+    for candidate in candidates:
+        if external is not None and candidate.is_relative_to(external):
+            raise DocumentError('external document writes require a bound code project')
+        for part in (candidate, *candidate.parents):
+            if part.name.casefold() == 'guide' or (part / 'task/TASK.md').is_file():
+                raise DocumentError('document writes require a bound code project')
     for root in path.parents:
         if (root / CANONICAL_TASK).exists() or (root / 'TASK.md').exists() or (root / '.git').exists():
-            assert_ai_writable(root, path)
-            break
+            return assert_ai_writable(root, path)
     return path
 
 
@@ -808,14 +888,14 @@ def migrate(root, date):
     if regular_bytes(root, legacy) != raw:
         raise DocumentError('legacy TASK changed during migration')
     for name, data in files.items():
-        if not (root / name).exists():
+        if not _relative(root, name).exists():
             atomic_write(root, name, data)
     if regular_bytes(root, legacy) != raw:
         raise DocumentError('legacy TASK changed during migration; reconcile preserved copies')
     atomic_write(root, legacy, pointer)
     # Empty directory bootstrap only; never create .gitkeep/template/guide.md.
-    (root / 'agent_doc/guide').mkdir(parents=True, exist_ok=True)
-    (root / 'agent_doc/advice').mkdir(parents=True, exist_ok=True)
+    _relative(root, 'agent_doc/guide').mkdir(parents=True, exist_ok=True)
+    _relative(root, 'agent_doc/advice').mkdir(parents=True, exist_ok=True)
     return snapshot_project_docs(root)
 
 

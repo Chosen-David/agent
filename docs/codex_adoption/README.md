@@ -59,3 +59,22 @@ Skill 安装与模型执行分开验证。完整 checkout 已提供 `agent_runti
 安装器拒绝把 skills、state 或 codex-home 指向任何 `agent_doc/guide/` 子树（含路径别名），并预检状态文件/备份目录的重定向；这属于工具入口保护，不是操作系统 ACL 或针对恶意并发改路径的事务保证。
 
 新项目指令的执行前反思先查 `agent_doc/results/` 的既有数据/元数据和当前独立验证，规则由每个角色的 `references/result_reuse_workflow.md` 发现；完整 checkout 使用 `scripts/result_store.py`，纯 Skill 分发不谎称自带结果运行时。新数据统一入 `agent_doc/results/<run_id>/`，历史冻结引用保留真实路径和哈希；复用仍须代码/数据验收，明确复现与新主张必做实验不可跳过。
+
+### External project documents
+
+Set `AGENT_DOC_ROOT` to the absolute directory that contains `task/`,
+`guide/`, `advice/` and `results/`. Keep passing the code checkout to
+`--root`. The same setting must be present when preparing, resuming, or
+validating a run. The stored reference names still start with `agent_doc/`
+and code references remain relative to the checkout.
+
+```bash
+AGENT_DOC_ROOT="$HOME/agent_doc/ProjectA" python scripts/project_docs.py --root /work/ProjectA nav
+AGENT_DOC_ROOT="$HOME/agent_doc/ProjectA" python scripts/result_store.py --root /work/ProjectA search training
+```
+
+Without an explicit setting, a real `agent_doc` directory or a symlink at
+the checkout's `agent_doc` location selects the document tree. Paths
+under that tree still reject symlinks, and the selected `guide/`
+remains human-only. An external root is a host configuration choice.
+Result and task documents cannot select another root.

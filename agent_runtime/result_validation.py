@@ -18,6 +18,7 @@ import stat
 
 from .core import Outcome
 from .external_json import strict_json
+from .project_docs import DocumentError, _relative
 from .legacy_result_paths import legacy_read_binding, check_relocated_digest, relocated_digest_matches
 
 CHECKS = ('implementation', 'reference_boundary', 'data_integrity',
@@ -50,13 +51,10 @@ def _path(root, value):
     _need(_text(value), 'nonempty relative artifact path required')
     raw = Path(value)
     _need(not raw.is_absolute() and '..' not in raw.parts, 'artifact path outside project')
-    path = root / raw
-    for part in (path, *path.parents):
-        if part == root:
-            break
-        _need(not part.is_symlink(), 'artifact path must not contain symlinks')
-    _need(path.resolve().is_relative_to(root), 'artifact path outside project')
-    return path
+    try:
+        return _relative(root, raw)
+    except DocumentError as error:
+        raise ResultValidationError(str(error)) from error
 
 
 def _bytes(root, value, *, max_bytes=None):
