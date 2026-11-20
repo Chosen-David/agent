@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 RUNNER = Path(os.environ["AGENT_TEST_PROJECT_ROOT"]) / "scripts/project_test.py"
 
@@ -120,3 +121,43 @@ class ExternalTestEntryTests(unittest.TestCase):
         self.configure([self.script("crash", "python", "raise RuntimeError('checker crashed')\n")])
         report = self.check(" pass\n", 1)
         self.assertEqual(report["checks"][0]["status"], "fail")
+
+    def test_explicit_external_document_root_supplies_tests(self):
+        external = self.base / 'agent_doc/example'
+        external.mkdir(parents=True)
+        destination = external / 'test'
+        self.suite.rename(destination)
+        self.suite = destination
+        with patch.dict(os.environ, {'AGENT_DOC_ROOT': str(external)}):
+            report = self.check(" def test_value(self): self.assertEqual(product.VALUE, 42)\n", 0)
+        self.assertEqual(report['status'], 'pass')
+        self.assertFalse((self.target / 'agent_doc').exists())
+        self.assertFalse((self.workflow / 'agent_doc/example/test').exists())
+
+    def test_explicit_missing_external_suite_does_not_use_legacy(self):
+        external = self.base / 'agent_doc/example'
+        with patch.dict(os.environ, {'AGENT_DOC_ROOT': str(external)}):
+            self.assertIsNone(self.check(" def test_value(self): self.assertEqual(product.VALUE, 42)\n", 2))
+
+    def test_external_suite_rejects_wrong_product_value(self):
+        external = self.base / 'agent_doc/example'
+        external.mkdir(parents=True)
+        self.suite.rename(external / 'test')
+        self.suite = external / 'test'
+        with patch.dict(os.environ, {'AGENT_DOC_ROOT': str(external)}):
+            report = self.check(" def test_value(self): self.assertEqual(product.VALUE, 99)\n", 1)
+        self.assertEqual(report['checks'][0]['result']['failures'], 1)
+        self.assertEqual(report['checks'][0]['result']['errors'], 0)
+
+    def test_external_evidence_cannot_write_into_document_tree(self):
+        external = self.base / 'agent_doc/example'
+        external.mkdir(parents=True)
+        self.suite.rename(external / 'test')
+        self.suite = external / 'test'
+        output = external / 'results/new-evidence'
+        environment = dict(os.environ, AGENT_DOC_ROOT=str(external))
+        result = subprocess.run([sys.executable, '-B', str(RUNNER), '--workflow-root', str(self.workflow),
+            '--project', 'example', '--target', str(self.target), '--output', str(output)],
+            env=environment, capture_output=True, text=True, timeout=30)
+        self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+        self.assertFalse(output.exists())
