@@ -58,3 +58,12 @@ class CentralGuideTests(unittest.TestCase):
         os.link(self.source, alias)
         with self.assertRaises(DocumentError):
             assert_ai_writable(self.project, alias)
+
+    def test_codex_installer_rejects_central_guide_destinations(self):
+        spec = importlib.util.spec_from_file_location('central_guide_codex_setup', Path(__file__).resolve().parents[3] / 'scripts/setup_codex.py')
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        for path in (self.guide, self.guide / 'skills'):
+            with self.subTest(path=path):
+                with self.assertRaises(ValueError):
+                    module.writable_installation_root(path)

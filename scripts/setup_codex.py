@@ -20,6 +20,7 @@ import zipfile
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from agent_runtime.committed_aliases import CommittedAliases
+from agent_runtime.project_docs import is_human_guide
 from agent_runtime.external_json import ExternalJSONError, load_json, regular_bytes
 
 BEGIN = b'<!-- chosen-agent:begin -->'
@@ -33,8 +34,7 @@ def writable_installation_root(path):
     """Refuse explicit destinations or aliases under a human-only guide tree."""
     path = Path(path).absolute()
     for candidate in (path, path.resolve()):
-        parts = tuple(part.casefold() for part in candidate.parts)
-        if any(parts[i] in ('doc', 'agent_doc') and parts[i + 1] == 'guide' for i in range(len(parts) - 1)):
+        if is_human_guide(candidate):
             raise ValueError('Human-only agent_doc/guide cannot be an installer destination')
     return path.resolve()
 
