@@ -6,6 +6,7 @@ import shutil
 import subprocess
 import tempfile
 import unittest
+from tests.central_acceptance import acceptance_path
 
 ROOT = Path(__file__).resolve().parents[1]
 SHELL = shutil.which('powershell') or shutil.which('pwsh')
@@ -16,7 +17,7 @@ SCRIPT = Path(os.environ.get('WSL_SETUP_TEST_SCRIPT', ROOT / 'scripts/setup_wsl.
 class WslSetupTests(unittest.TestCase):
     def test_mandatory_acceptance_blocks_missing_powershell(self):
         import sys
-        entry = ROOT / 'agent_doc/agent/test/WSL-SETUP-01/acceptance.py'
+        entry = acceptance_path('WSL-SETUP-01/acceptance.py')
         env = {**os.environ, 'AGENT_TEST_PROJECT_ROOT': str(ROOT), 'PATH': ''}
         proc = subprocess.run([sys.executable, '-B', str(entry)], env=env,
                               capture_output=True, text=True, timeout=10)
