@@ -7,6 +7,7 @@ from pathlib import PurePosixPath
 
 from .advice_poll import _root, _safe, observe_advice
 from .maintenance_gate import _json_value
+from .project_docs import _relative
 
 
 def read_bound(root, path, *, max_bytes=2 * 1024 * 1024):
@@ -18,10 +19,9 @@ def read_bound(root, path, *, max_bytes=2 * 1024 * 1024):
         raise ValueError('explicit project-relative file required')
     if type(max_bytes) is not int or not 1 <= max_bytes <= 32 * 1024 * 1024:
         raise ValueError('invalid read budget')
-    source = _safe(root, root / path)
+    source = _relative(root, path) if path.startswith('agent_doc/') else _safe(root, root / path)
     if not source.is_file():
         raise ValueError('required regular source is missing')
-    # _safe also checks every parent for Windows junctions.
     fd = os.open(source, os.O_RDONLY | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0))
     try:
         with os.fdopen(fd, 'rb', closefd=False) as stream:
