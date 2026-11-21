@@ -1,3 +1,4 @@
+from tests.document_fixture import DocumentFixtureCase
 import importlib.util
 import os
 from pathlib import Path
@@ -5,13 +6,13 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(os.environ["AGENT_TEST_PROJECT_ROOT"])
 spec = importlib.util.spec_from_file_location('external_setup', ROOT / 'setup.py')
 setup = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(setup)
 
 
-class ExternalSetupTests(unittest.TestCase):
+class ExternalSetupTests(DocumentFixtureCase):
     def test_install_check_uninstall_preserve_external_documents(self):
         with tempfile.TemporaryDirectory() as temp:
             base = Path(temp)

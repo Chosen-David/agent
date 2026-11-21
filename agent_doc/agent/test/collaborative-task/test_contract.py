@@ -1,3 +1,5 @@
+from tests.document_fixture import DocumentFixtureCase
+import os
 import importlib.util
 import json
 from pathlib import Path
@@ -7,7 +9,7 @@ import sys
 import tempfile
 import unittest
 
-ROOT = Path(__file__).resolve().parents[4]
+ROOT = Path(os.environ["AGENT_TEST_PROJECT_ROOT"])
 sys.path.insert(0, str(ROOT))
 spec = importlib.util.spec_from_file_location('collab_setup', ROOT / 'setup.py')
 setup = importlib.util.module_from_spec(spec)
@@ -16,7 +18,7 @@ WORKFLOW = 'collaborative_implementation_workflow.md'
 ROLES = ('research-assistant', 'research-implement-optimize')
 
 
-class TaskContractTests(unittest.TestCase):
+class TaskContractTests(DocumentFixtureCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)

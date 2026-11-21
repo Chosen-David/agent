@@ -1,3 +1,5 @@
+from tests.document_fixture import DocumentFixtureCase
+import os
 """Selection contracts use synthetic names, not a fixed vendor model pair."""
 import importlib
 import json
@@ -11,7 +13,7 @@ from unittest.mock import patch
 from agent_runtime.plan_review import sha
 
 
-class ModelSelectionTests(unittest.TestCase):
+class ModelSelectionTests(DocumentFixtureCase):
     def api(self):
         return importlib.import_module('agent_runtime.codex_models')
 
@@ -658,7 +660,7 @@ except ValueError:
  if sys.argv[5]=='caught-reserved':os._exit(7)
  raise
 ''', encoding='utf8')
-                    command = [sys.executable,'-B',str(script),str(Path(__file__).resolve().parents[4]),
+                    command = [sys.executable,'-B',str(script),str(Path(os.environ["AGENT_TEST_PROJECT_ROOT"])),
                                str(root),str(profile),str(backend.pid),crash]
                     child = subprocess.run(command,capture_output=True,text=True,timeout=15)
                     self.assertEqual(child.returncode,7,child.stderr)
@@ -742,7 +744,7 @@ except ValueError:
  os._exit(7)
 raise AssertionError('disconnect fixture did not fail')
     ''',encoding='utf8')
-                result=subprocess.run([sys.executable,'-B',str(script),str(Path(__file__).resolve().parents[4]),
+                result=subprocess.run([sys.executable,'-B',str(script),str(Path(os.environ["AGENT_TEST_PROJECT_ROOT"])),
                                        str(root),str(profile),failure],capture_output=True,text=True,timeout=20)
                 self.assertEqual(result.returncode,7,result.stderr)
                 ledger=profile.parent/'receipts'/sha([str(root.resolve()),'AUTO-01'])/'ledger.json'

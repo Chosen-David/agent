@@ -1,14 +1,16 @@
+from tests.document_fixture import DocumentFixtureCase
+import os
 import copy
 from pathlib import Path
 import sys
 import unittest
 
-sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+sys.path.insert(0, str(Path(os.environ["AGENT_TEST_PROJECT_ROOT"])))
 from agent_runtime.plan_review import PlanReviewError, sha
 from tests import test_plan_review as fixture_module
 
 
-class ReviewEvidenceTests(unittest.TestCase):
+class ReviewEvidenceTests(DocumentFixtureCase):
     def setUp(self):
         self.fixture = fixture_module.PlanReviewTests()
         self.fixture.setUp()

@@ -1,3 +1,4 @@
+from tests.document_fixture import DocumentFixtureCase
 import importlib
 import json
 from pathlib import Path
@@ -11,7 +12,7 @@ from types import SimpleNamespace
 import unittest
 
 
-class FlowTests(unittest.TestCase):
+class FlowTests(DocumentFixtureCase):
     def setUp(self):
         self.api = importlib.import_module('agent_runtime.collaborative_flow')
         self.temp = tempfile.TemporaryDirectory()
@@ -106,7 +107,7 @@ class FlowTests(unittest.TestCase):
             other.cancel()
 
     def test_environment_routes_load_actual_skill_content(self):
-        workflow = Path(__file__).resolve().parents[4]
+        workflow = Path(os.environ["AGENT_TEST_PROJECT_ROOT"])
         env = {'python': '3.12', 'cpu': 'Xeon', 'gpus': ['NVIDIA H20'],
                'cuda_toolkit': '12.4', 'driver': '550'}
         routes = self.api.load_environment_skills(workflow, env)
@@ -133,7 +134,7 @@ class FlowTests(unittest.TestCase):
             self.api.Flow(self.root, '../escape')
 
     def setup_pipeline(self, *, bad=False):
-        repo = Path(__file__).resolve().parents[4]
+        repo = Path(os.environ["AGENT_TEST_PROJECT_ROOT"])
         workflow = self.root / 'workflow'
         (workflow / 'scripts').mkdir(parents=True)
         shutil.copy(repo / 'scripts/project_test.py', workflow / 'scripts/project_test.py')

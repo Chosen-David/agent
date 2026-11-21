@@ -1,3 +1,4 @@
+from tests.document_fixture import DocumentFixtureCase
 """Runtime acceptance: real Windows boundaries and explicit, non-downgrading modes."""
 import importlib
 import json
@@ -10,7 +11,7 @@ import unittest
 from copy import deepcopy
 
 
-class RuntimeHostTests(unittest.TestCase):
+class RuntimeHostTests(DocumentFixtureCase):
     def host_fixture(self, directory, *, root=None, task_id='HOST-01', write_paths=('source.py',),
                      workflow=None, project='test'):
         import hashlib
@@ -518,7 +519,7 @@ class RuntimeHostTests(unittest.TestCase):
     def test_generator_preserves_committed_aliases_on_symlinks_false_checkout(self):
         from unittest.mock import patch
         import importlib.util
-        repo = Path(__file__).resolve().parents[4]
+        repo = Path(os.environ["AGENT_TEST_PROJECT_ROOT"])
         spec = importlib.util.spec_from_file_location('test_reference_generator', repo/'scripts/sync_plugin_references.py')
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)

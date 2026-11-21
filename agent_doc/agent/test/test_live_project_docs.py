@@ -1,3 +1,4 @@
+from tests.document_fixture import DocumentFixtureCase
 import json
 import os
 from pathlib import Path
@@ -10,7 +11,7 @@ ROOT = Path(os.environ["AGENT_TEST_PROJECT_ROOT"])
 ENTRY = ROOT / "scripts/project_docs.py"
 
 
-class LiveProjectDocsTests(unittest.TestCase):
+class LiveProjectDocsTests(DocumentFixtureCase):
     def test_real_cli_initialization_repeat_and_missing_target(self):
         evidence = []
         with tempfile.TemporaryDirectory() as tmp:

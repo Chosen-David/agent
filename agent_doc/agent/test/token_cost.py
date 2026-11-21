@@ -17,7 +17,7 @@ def main():
     import tiktoken
     encoding = tiktoken.get_encoding('o200k_base')
     here = Path(__file__).resolve().parent
-    root = here.parents[2]
+    root = Path(os.environ["AGENT_TEST_PROJECT_ROOT"])
     output = args.output.resolve()
     if output.is_relative_to(root):
         parser.error('evidence must be outside the repository')

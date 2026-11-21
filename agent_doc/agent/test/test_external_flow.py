@@ -1,3 +1,4 @@
+from tests.document_fixture import DocumentFixtureCase
 import json
 import os
 from pathlib import Path
@@ -9,10 +10,10 @@ from unittest.mock import patch
 from agent_runtime.collaborative_flow import Flow
 
 
-WORKFLOW = Path(__file__).resolve().parents[3]
+WORKFLOW = Path(os.environ["AGENT_TEST_PROJECT_ROOT"])
 
 
-class ExternalFlowTests(unittest.TestCase):
+class ExternalFlowTests(DocumentFixtureCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)

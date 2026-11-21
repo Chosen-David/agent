@@ -1,3 +1,4 @@
+from tests.document_fixture import DocumentFixtureCase
 import os
 from pathlib import Path
 import subprocess
@@ -9,7 +10,7 @@ import unittest
 CHECKER = Path(__file__).with_name('compile_structure.py')
 
 
-class CompileStructureScopeTests(unittest.TestCase):
+class CompileStructureScopeTests(DocumentFixtureCase):
     def invoke(self, core, nested):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

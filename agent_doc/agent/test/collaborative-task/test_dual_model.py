@@ -1,3 +1,5 @@
+from tests.document_fixture import DocumentFixtureCase
+import os
 import copy
 import hashlib
 import json
@@ -6,7 +8,7 @@ import subprocess
 import sys
 import unittest
 
-ROOT = Path(__file__).resolve().parents[4]
+ROOT = Path(os.environ["AGENT_TEST_PROJECT_ROOT"])
 sys.path.insert(0, str(ROOT))
 from agent_runtime.core import Store
 from agent_runtime.plan_review import PlanReviewError, ReviewSession, check_plan_review, sha
@@ -16,7 +18,7 @@ from tests import test_plan_review as fixtures
 DUAL = 'dual-model-plan-review/v1'
 
 
-class DualModelTests(unittest.TestCase):
+class DualModelTests(DocumentFixtureCase):
     def fixture(self, reviewer_model='model-b', provider='provider-b'):
         case = fixtures.PlanReviewTests()
         case.setUp()

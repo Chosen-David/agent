@@ -1,3 +1,4 @@
+import os
 import importlib.util
 import io
 from pathlib import Path
@@ -6,7 +7,7 @@ import types
 import unittest
 from unittest.mock import patch
 
-root = Path(__file__).resolve().parents[4]
+root = Path(os.environ["AGENT_TEST_PROJECT_ROOT"])
 sys.path.insert(0, str(root))
 spec = importlib.util.spec_from_file_location('flow_mutation_tests', Path(__file__).with_name('test_flow.py'))
 tests = importlib.util.module_from_spec(spec)

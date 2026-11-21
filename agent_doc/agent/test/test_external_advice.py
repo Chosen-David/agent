@@ -1,3 +1,4 @@
+from tests.document_fixture import DocumentFixtureCase
 import hashlib
 import json
 import os
@@ -8,10 +9,10 @@ import tempfile
 import unittest
 
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(os.environ["AGENT_TEST_PROJECT_ROOT"])
 
 
-class ExternalAdviceTests(unittest.TestCase):
+class ExternalAdviceTests(DocumentFixtureCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)

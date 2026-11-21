@@ -1,3 +1,4 @@
+from tests.document_fixture import DocumentFixtureCase
 import importlib.util
 import os
 from pathlib import Path
@@ -7,7 +8,7 @@ import unittest
 from agent_runtime.project_docs import DocumentError, assert_ai_writable, guard_write_path, initialize_project_docs
 
 
-class CentralGuideTests(unittest.TestCase):
+class CentralGuideTests(DocumentFixtureCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
@@ -46,7 +47,7 @@ class CentralGuideTests(unittest.TestCase):
     def test_bootstrap_cannot_rebase_into_central_guide(self):
         with self.assertRaises(DocumentError):
             initialize_project_docs(self.guide)
-        spec = importlib.util.spec_from_file_location('central_guide_setup', Path(__file__).resolve().parents[3] / 'setup.py')
+        spec = importlib.util.spec_from_file_location('central_guide_setup', Path(os.environ["AGENT_TEST_PROJECT_ROOT"]) / 'setup.py')
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         with self.assertRaises(ValueError):
@@ -60,7 +61,7 @@ class CentralGuideTests(unittest.TestCase):
             assert_ai_writable(self.project, alias)
 
     def test_codex_installer_rejects_central_guide_destinations(self):
-        spec = importlib.util.spec_from_file_location('central_guide_codex_setup', Path(__file__).resolve().parents[3] / 'scripts/setup_codex.py')
+        spec = importlib.util.spec_from_file_location('central_guide_codex_setup', Path(os.environ["AGENT_TEST_PROJECT_ROOT"]) / 'scripts/setup_codex.py')
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         for path in (self.guide, self.guide / 'skills'):

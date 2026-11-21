@@ -1,3 +1,4 @@
+from tests.document_fixture import DocumentFixtureCase
 import subprocess
 import sys
 import tempfile
@@ -7,7 +8,7 @@ from pathlib import Path
 from comment_policy import violations
 
 
-class CommentPolicyTests(unittest.TestCase):
+class CommentPolicyTests(DocumentFixtureCase):
     def test_added_comment_mutations_are_rejected(self):
         baseline = b"value = 1\n"
         self.assertEqual(violations(baseline, {1}), [])

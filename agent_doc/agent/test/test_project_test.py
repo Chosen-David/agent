@@ -1,3 +1,4 @@
+from tests.document_fixture import DocumentFixtureCase
 """Exercise the public CLI with a real sibling Git repository and external tests."""
 import json
 import os
@@ -11,7 +12,7 @@ from unittest.mock import patch
 RUNNER = Path(os.environ["AGENT_TEST_PROJECT_ROOT"]) / "scripts/project_test.py"
 
 
-class ExternalTestEntryTests(unittest.TestCase):
+class ExternalTestEntryTests(DocumentFixtureCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)

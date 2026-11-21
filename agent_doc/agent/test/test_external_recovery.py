@@ -1,3 +1,4 @@
+from tests.document_fixture import DocumentFixtureCase
 import hashlib
 import importlib.util
 import json
@@ -12,13 +13,13 @@ from unittest.mock import patch
 
 from agent_runtime.codex_host import CodexHost
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(os.environ["AGENT_TEST_PROJECT_ROOT"])
 spec = importlib.util.spec_from_file_location('external_recovery_runner', ROOT / 'scripts/project_test.py')
 runner = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(runner)
 
 
-class ExternalRecoveryTests(unittest.TestCase):
+class ExternalRecoveryTests(DocumentFixtureCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)

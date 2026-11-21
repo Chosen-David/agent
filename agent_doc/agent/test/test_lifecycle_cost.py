@@ -1,10 +1,11 @@
+from tests.document_fixture import DocumentFixtureCase
 import copy
 import unittest
 
 from lifecycle_cost import summarize
 
 
-class LifecycleCostTests(unittest.TestCase):
+class LifecycleCostTests(DocumentFixtureCase):
     def record(self):
         return {'events': [{'phase': phase, 'text': phase} for phase in
                            ('creation', 'discovery', 'maintenance', 'diagnosis', 'execution')],

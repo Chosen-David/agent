@@ -1,3 +1,4 @@
+from tests.document_fixture import DocumentFixtureCase
 import os
 from pathlib import Path
 import shutil
@@ -10,7 +11,7 @@ import unittest
 DIRECTORY = Path(__file__).resolve().parent
 
 
-class MutationEvidenceTests(unittest.TestCase):
+class MutationEvidenceTests(DocumentFixtureCase):
     def run_probe(self, syntax_body):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

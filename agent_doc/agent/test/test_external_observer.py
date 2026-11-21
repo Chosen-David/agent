@@ -1,3 +1,4 @@
+from tests.document_fixture import DocumentFixtureCase
 import hashlib
 import os
 from pathlib import Path
@@ -10,7 +11,7 @@ from agent_runtime.maintenance_observer import read_bound
 from agent_runtime.task_context import task_view
 
 
-class ExternalObserverTests(unittest.TestCase):
+class ExternalObserverTests(DocumentFixtureCase):
     def setUp(self):
         temporary = tempfile.TemporaryDirectory()
         self.addCleanup(temporary.cleanup)
