@@ -82,18 +82,23 @@ def worker(directory, target, result_path):
     return 0 if passed else 1
 
 
-def prepare_suite(workflow, project, target, *, task=None):
+def suite_directory(workflow, project, target, *, task=None):
     if not project or any(c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-" for c in project):
         raise ValueError("project must be a single stable identifier")
-    workflow, target = workflow.resolve(), target.resolve()
-    if Path(git(target, "rev-parse", "--show-toplevel")).resolve() != target:
-        raise ValueError("--target must be the exact Git repository root")
     directory = (document_root(target) / "test" if uses_external_documents(target) else
                  workflow / "agent_doc" / project / "test")
     if task is not None:
         if not isinstance(task, str) or not task or any(c not in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-" for c in task):
             raise ValueError("task must be a single stable identifier")
         directory = directory / task
+    return directory
+
+
+def prepare_suite(workflow, project, target, *, task=None):
+    workflow, target = workflow.resolve(), target.resolve()
+    directory = suite_directory(workflow, project, target, task=task)
+    if Path(git(target, "rev-parse", "--show-toplevel")).resolve() != target:
+        raise ValueError("--target must be the exact Git repository root")
     if directory.resolve() != directory:
         raise ValueError("test workspace must not use symlink redirects")
     manifest_path = directory / "suite.json"

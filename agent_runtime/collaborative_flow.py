@@ -360,16 +360,14 @@ class Flow:
                 raise ValueError('task chain must be ordered, unique and acyclic')
             seen.add(step['id'])
         workflow = Path(workflow).resolve()
-        directory = f'agent_doc/{identifier(project)}/test/{self.task_id}'
-        try:
-            suite = regular_bytes(workflow, directory + '/suite.json')
-        except OSError as exc:
-            raise ValueError('task suite must exist before implementation') from exc
         spec = importlib.util.spec_from_file_location('collaboration_project_test', workflow / 'scripts/project_test.py')
         runner = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(runner)
-        runner.prepare_suite(workflow, project, self.root, task=self.task_id)
-        binding = runner.suite_state(workflow / directory)
+        try:
+            spec.loader.exec_module(runner)
+            _, _, directory, suite, _, _ = runner.prepare_suite(workflow, project, self.root, task=self.task_id)
+        except OSError as exc:
+            raise ValueError('task suite must exist before implementation') from exc
+        binding = runner.suite_state(directory)
         manifest = json.loads(suite)
         if not manifest.get('checks'):
             raise ValueError('task suite must declare checks')
@@ -435,7 +433,7 @@ class Flow:
         spec = importlib.util.spec_from_file_location('flow_tests', workflow / 'scripts/project_test.py')
         runner = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(runner)
-        directory = workflow / 'agent_doc' / self.state['project'] / 'test' / self.task_id
+        directory = runner.suite_directory(workflow, self.state['project'], self.root, task=self.task_id)
         if runner.suite_state(directory) != self.state['test_binding']:
             raise ValueError('acceptance changed; replan and review before implementation')
 
