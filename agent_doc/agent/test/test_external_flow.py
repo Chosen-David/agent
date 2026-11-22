@@ -3,6 +3,9 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
+import io
+from contextlib import redirect_stderr
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -57,6 +60,24 @@ class ExternalFlowTests(DocumentFixtureCase):
         self.prepare()
         self.flow.check_tests()
         self.assertTrue((self.project / 'agent_doc').is_symlink())
+
+    def test_builtin_cli_uses_external_suite_before_host_initialization(self):
+        from agent_runtime.collaborative_flow import main
+        for anchor in (False, True):
+            with self.subTest(anchor=anchor):
+                if anchor:
+                    os.environ.pop('AGENT_DOC_ROOT')
+                    (self.project / 'agent_doc').symlink_to(self.docs, target_is_directory=True)
+                arguments = ['flow', '--project-root', str(self.project),
+                             '--workflow-root', str(WORKFLOW), '--project', 'example',
+                             '--task-id', 'FIX-01', '--backend', 'codex',
+                             '--trust-project-code', '--output', str(self.docs.parent / 'output')]
+                with patch.object(sys, 'argv', arguments), redirect_stderr(io.StringIO()) as error, \
+                     patch('agent_runtime.codex_host.CodexHost',
+                           side_effect=ValueError('fixture host reached')) as host:
+                    self.assertEqual(main(), 2)
+                self.assertEqual(host.call_count, 1, error.getvalue())
+                self.assertIn('fixture host reached', error.getvalue())
 
     def test_changed_external_check_requires_replanning(self):
         self.prepare()

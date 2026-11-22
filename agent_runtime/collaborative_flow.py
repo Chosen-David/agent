@@ -731,8 +731,12 @@ def main():
                 raise ValueError('external --output directory required before model calls')
             if not args.retry_final_review:
                 try:
-                    regular_bytes(args.workflow_root.resolve(),
-                        f'agent_doc/{identifier(args.project)}/test/{flow.task_id}/suite.json')
+                    from scripts.project_test import prepare_suite, suite_directory
+                    directory = suite_directory(args.workflow_root.resolve(),
+                                                identifier(args.project), flow.root, task=flow.task_id)
+                    regular_bytes(directory, 'suite.json')
+                    prepare_suite(args.workflow_root, identifier(args.project), flow.root,
+                                  task=flow.task_id)
                 except OSError as exc:
                     raise ValueError('task suite must exist before model calls') from exc
             host = CodexHost(flow.root, flow.task_id, args.runtime_profile,
