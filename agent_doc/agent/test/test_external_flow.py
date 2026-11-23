@@ -5,7 +5,7 @@ from pathlib import Path
 import subprocess
 import sys
 import io
-from contextlib import redirect_stderr
+from contextlib import redirect_stderr, redirect_stdout
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -84,6 +84,28 @@ class ExternalFlowTests(DocumentFixtureCase):
         (self.suite / 'check.py').write_text('print("changed")\n')
         with self.assertRaisesRegex(ValueError, 'acceptance changed'):
             self.flow.check_tests()
+
+    def test_cli_prints_existing_external_plan(self):
+        from agent_runtime.collaborative_flow import main
+        self.prepare()
+        for anchor in (False, True):
+            with self.subTest(anchor=anchor):
+                if anchor:
+                    os.environ.pop('AGENT_DOC_ROOT')
+                    (self.project / 'agent_doc').symlink_to(self.docs, target_is_directory=True)
+                arguments = ['flow', '--project-root', str(self.project),
+                             '--workflow-root', str(WORKFLOW), '--project', 'example',
+                             '--task-id', 'FIX-01', '--backend', 'codex',
+                             '--trust-project-code', '--output', str(self.docs.parent / 'output')]
+                with patch.object(sys, 'argv', arguments), redirect_stdout(io.StringIO()) as output, \
+                     redirect_stderr(io.StringIO()), \
+                     patch('agent_runtime.codex_host.CodexHost'), \
+                     patch.object(Flow, 'execute', side_effect=ValueError('fixture execution boundary')):
+                    self.assertEqual(main(), 2)
+                printed = next(line.removeprefix('规划：') for line in output.getvalue().splitlines()
+                               if line.startswith('规划：'))
+                self.assertEqual(Path(printed), self.docs / 'task/task_details/FIX-01.md')
+                self.assertTrue(Path(printed).is_file())
 
     def test_changed_origin_refused_before_planning(self):
         self.manifest['origin'] = 'https://example.invalid/other'

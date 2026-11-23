@@ -18,7 +18,7 @@ import uuid
 
 from .intake import build_intake
 from .plan_review import DUAL_SCHEMA, _authenticate, _identity, _review, protected_lineage, sha
-from .project_docs import assert_ai_writable, atomic_write, initialize_project_docs, regular_bytes
+from .project_docs import assert_ai_writable, atomic_write, document_root, initialize_project_docs, regular_bytes
 from .codex_host import default_profile_path
 
 
@@ -791,7 +791,7 @@ def main():
                         raise ValueError('discussion unresolved; human decision or replan required')
                 proposed = flow.call(host, 'plan', flow.discussion_context())
                 flow.plan(proposed, args.workflow_root, args.project)
-            print('规划：' + str(flow.root / 'agent_doc/task/task_details' / (flow.task_id + '.md')))
+            print('规划：' + str(document_root(flow.root) / 'task/task_details' / (flow.task_id + '.md')))
             print('<' + ('人类-AI模式' if flow.state['mode'] == 'human' else '双AI模式') + '> 实现与任务验收')
             output = args.output / ('revision-' + str(flow.state['revision']) + '-attempt-' + str(flow.state.get('repair_count', 0)))
             flow.execute(host, output)
