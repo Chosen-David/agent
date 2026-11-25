@@ -26,6 +26,14 @@
 
 可借鉴 [Superpowers 任务审查](https://github.com/obra/superpowers/blob/22f0b463e7a5e579904dd6211a520321035526f7/skills/subagent-driven-development/task-reviewer-prompt.md) 的双维判断与 [LangGraph-Reflection](https://github.com/langchain-ai/langgraph-reflection/blob/888d007163f1479e1e7a734f66dc7dcbd12424d7/src/langgraph_reflection/__init__.py) 的反馈回边；按以上边界适配，不直接执行其派生 agent 或终止策略。已有 ReviewSession 是可复用的宿主接口，旧独立上下文回执不能冒充已核验不同模型。
 
+## 工程审查与调研建议
+
+主写在研究或性能相关的审查前，定位用户目标、当前实现、历史结果和约束。按需要查近期论文原文、演讲实录、上游官方实现（记录版本），把相关摘录、链接、迁移条件和反例随项目上下文传给只读 reviewer。CLI 可用已有的 `--context-path` 指定本地资料；保持包有界。注明谁检索了资料。
+
+Reviewer 解释当前代码在做什么，指出有具体位置的冗余、等待、复制或算法限制，对照已有结果给出可执行建议。局部可读性问题给出更简单的写法与行为回归检查。调研方向说明与当前实现的差别、最小 A/B、目标指标和放弃条件；未测的潜在收益标为待验证。用现有 finding 字段表达，探索不阻塞需求验收。没有可靠依据时不凑条目。
+
+主写把有实质内容的审查正文及来源记入当前项目 `agent_doc/advice/<task-id>-<version>.md`，关联审查调用或收据；查阅既有条目，按 adopt/adapt/reject/defer 写明理由与后续验证。审查角色保持只读。
+
 ## 先读库，再对齐
 
 先读当前用户要求、项目指南、唯一 TASK、真实入口和调用链、相关实现与现有测试。能从代码确定的信息先查代码；只读理解可路由到已有 `code-reading`。复述目标、保持不变的行为、验收示例和当前小步，明确区分用户决定、代码事实和自己的假设。

@@ -561,7 +561,12 @@ class ProjectDocumentsTests(unittest.TestCase):
         evidence = self.root / 'prior.txt'; evidence.write_text('preserved previous result')
         registered = ResultStore(self.root).register_history('earlier', 'Preserve evidence', [
             {'path': 'prior.txt', 'sha256': hashlib.sha256(evidence.read_bytes()).hexdigest()}])
+        home = self.root / 'agent_doc/results'
+        (home / 'legacy').mkdir()
+        (home / 'README.md').write_text('| Dir | Info |\n|---|---|\n| [legacy](./legacy/) | Preserve evidence |')
         plan = self.plan(); task = plan['tasks'][0]
+        route = task['prior_result_search']['readme_routes'][0]
+        self.assertEqual(route['directory'], 'legacy')
         self.assertEqual(task['prior_result_search']['results'][0]['run_id'], 'earlier')
         # A forged plan-side no-hit does not substitute for a fresh live lookup.
         task['prior_result_search'] = {'status': 'no_hits', 'results': []}
@@ -580,6 +585,10 @@ class ProjectDocumentsTests(unittest.TestCase):
         task['prior_result_review'] = {'decision': 'rerun', 'reason': 'prior record lacks verified conditions',
                                        'record_refs': [{'run_id': 'earlier',
                                                         'record_sha256': registered['record_ref']['sha256']}]}
+        self.assertEqual(wrapper.run(task, None).status, 'blocked')
+        task['prior_result_review']['readme_routes'] = [
+            dict(directory='legacy', row_sha256=route['row_sha256'], decision='verify_delta',
+                 reason='legacy evidence lacks a bound environment')]
         self.assertEqual(wrapper.run(task, None).status, 'pending')
         self.assertTrue(handler.called)
         self.assertEqual(handler.received['prior_result_search']['results'][0]['run_id'], 'earlier')

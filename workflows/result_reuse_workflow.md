@@ -19,6 +19,8 @@
 
 索引用于发现候选。引用性能或数值结论时仍须读取原始证据并执行下文的条件匹配及独立验收；索引本身不覆盖冻结记录，不改变任务状态，也不授予重跑权限。
 
+运行时的 search、decide、实验计划和派发共用 ResultStore.search。结果 README 表格首列可写 `[专题](./专题/)`（实际目标使用结果目录已有合法 run_id 字符）。按整行描述检索，`readme_routes` 返回目录、索引行号、行哈希与短摘录；`results` 保留已登记候选。实验派发前在 `prior_result_review.readme_routes` 逐条回填 directory、row_sha256、decision（inspect/verify_delta/reject/registered）和 reason。先打开证据，能匹配旧 run 时走已有登记与独立复用流程；README 不能签发 reuse proof。
+
 ## 新命令的具体判断
 
 1. 以任务目的、对象和指标检索结果目录，记录查询、候选 run_id、record_sha256、扫描数量、截断和错误。没命中只表示本次有界查询没找到；部分扫描、损坏记录或词汇不重合不证明没有历史结果。

@@ -134,13 +134,29 @@ def _review_prior_candidates(task, search):
     """Rationale is required before repeating data work; it is not acceptance."""
     producer = (task.get('experiment_result') is not None or task.get('produces_data') is True
                 or task.get('task_type') == 'experiment')
-    if not producer or not (search['results'] or search['partial'] or search['errors']):
-        return
+    routes = search.get('readme_routes', [])
     assessment = task.get('prior_result_review')
+    supplied_routes = isinstance(assessment, dict) and 'readme_routes' in assessment
+    if not producer or not (supplied_routes or routes or search['results'] or search['partial'] or search['errors']):
+        return
     if (not isinstance(assessment, dict) or assessment.get('decision') not in ('rerun', 'verify_delta', 'reuse')
             or not isinstance(assessment.get('reason'), str) or not assessment['reason'].strip()
             or not isinstance(assessment.get('record_refs'), list)):
         raise ValueError('prior-result candidates/lookup gaps require an explicit planner review before data production')
+    if routes or 'readme_routes' in assessment:
+        reviews = assessment.get('readme_routes')
+        if not isinstance(reviews, list):
+            raise ValueError('review each displayed README route before data production')
+        expected_routes = {(row['directory'], row['row_sha256']) for row in routes}
+        reviewed_routes = set()
+        for row in reviews:
+            if (not isinstance(row, dict) or row.get('decision') not in ('inspect', 'verify_delta', 'reject', 'registered')
+                    or not isinstance(row.get('reason'), str) or not row['reason'].strip()
+                    or not all(isinstance(row.get(k), str) for k in ('directory', 'row_sha256'))):
+                raise ValueError('README route review requires directory, row_sha256, decision and reason')
+            reviewed_routes.add((row['directory'], row['row_sha256']))
+        if reviewed_routes != expected_routes or len(reviews) != len(expected_routes):
+            raise ValueError('README route reviews are stale, duplicated or incomplete')
     supplied = []
     for ref in assessment['record_refs']:
         if not isinstance(ref, dict) or not all(isinstance(ref.get(k), str) and ref[k]

@@ -323,7 +323,7 @@ class ResultStore:
     def _record_path(self, run_id):
         return f'{HOME}/{_identifier(run_id)}/record.json'
 
-    def _directories(self, max_scan):
+    def _directories(self, max_scan, *, searching=False):
         _need(type(max_scan) is int and 1 <= max_scan <= DIRECTORY_ENTRY_LIMIT,
               f'max_scan must be 1..{DIRECTORY_ENTRY_LIMIT}')
         home = _path(self.root, HOME)
@@ -337,6 +337,8 @@ class ResultStore:
                 if entry_count > DIRECTORY_ENTRY_LIMIT:
                     # Never expose an order-dependent prefix from an oversized registry.
                     return [], True, entry_count
+                if searching and entry.name == "README.md" and entry.is_symlink():
+                    continue  # The guarded index read reports this as a lookup gap.
                 if entry.is_symlink():
                     raise ResultStoreError('result directory contains symlink: ' + entry.name)
                 if entry.is_dir(follow_symlinks=False):
@@ -452,12 +454,67 @@ class ResultStore:
                           'validation_at_registration': {'status': 'unknown', 'proof': None},
                           'trust_note': 'Historical refs only; old bytes are not migrated or certified.'})
 
+    def _readme_routes(self, names, tokens, limit):
+        """Rank index rows for existing direct children. Never open a linked target."""
+        index = f'{HOME}/README.md'
+        try:
+            content = _read(self.root, index).decode('utf-8')
+        except FileNotFoundError:
+            return [], False
+        eligible = set(names)
+        best = {}
+        in_table = False
+        header_columns = 0
+        fence = ''
+        for number, line in enumerate(content.splitlines(), 1):
+            if line.expandtabs(4).startswith('    '):
+                in_table = False
+                header_columns = 0
+                continue
+            stripped = line.lstrip()
+            marker = re.match(r'^`{3,}|^~{3,}', stripped)
+            if fence:
+                if stripped.rstrip() == fence or (stripped.rstrip().startswith(fence)
+                        and set(stripped.rstrip()) == {fence[0]}):
+                    fence = ''
+                continue
+            if marker:
+                fence = marker[0]
+                in_table = False
+                header_columns = 0
+                continue
+            if not stripped.startswith('|'):
+                in_table = False
+                header_columns = 0
+                continue
+            if not in_table:
+                cells = stripped.rstrip()[1:].removesuffix('|').split('|')
+                delimiter = re.fullmatch(r'\|(?:\s*:?-{3,}:?\s*\|)+\s*', stripped)
+                if delimiter:
+                    in_table = len(cells) == header_columns
+                    header_columns = 0
+                else:
+                    header_columns = len(cells) if all(cell.strip() for cell in cells) else 0
+                continue
+            match = re.match(r'^\s*\|\s*\[[^\]\n]*\]\((?:\./)?([A-Za-z0-9][A-Za-z0-9_.-]{0,95})/\)\s*\|', line)
+            if not match or match[1] not in eligible:
+                continue
+            name = match[1]
+            folded = line.casefold()
+            score = sum(token in folded for token in tokens)
+            if score and (name not in best or score > best[name]['score']):
+                best[name] = {'directory': name, 'line': number, 'index': index,
+                              'row_sha256': hashlib.sha256(line.encode()).hexdigest(),
+                              'excerpt': line[:400], 'score': score}
+        ranked = sorted(best.values(), key=lambda row: (-row['score'], row['directory']))
+        return ranked[:limit], len(ranked) > limit
+
     def search(self, query, *, limit=5, max_scan=200, context=None):
         _need(_text(query) and len(query) <= 2000, 'bounded nonempty query required')
         _need(type(limit) is int and 1 <= limit <= 20, 'limit must be 1..20')
         if context is not None:
             _context(context)
-        names, partial, _ = self._directories(max_scan)
+        names, partial, _ = self._directories(max_scan, searching=True)
         tokens = _tokens(query)
         exact_eligible = None
         context_checked = False
@@ -500,9 +557,16 @@ class ResultStore:
                         hits.pop()
             except (OSError, ValueError, KeyError, TypeError, _ResultJSONDepthError) as exc:
                 errors.append({'run_id': name, 'error': str(exc)})
+        try:
+            routes, more_routes = self._readme_routes(names, tokens, limit)
+            partial = partial or more_routes
+        except (OSError, ValueError) as exc:
+            routes, partial = [], True
+            errors.append({'path': f'{HOME}/README.md', 'error': str(exc)})
         hits.sort(key=lambda h: (-h['score'], h['run_id']))
         return {'schema_version': 'project-result-search/v1', 'query': query,
-                'status': 'candidates' if hits else 'incomplete' if partial or errors else 'no_hits',
+                'status': 'candidates' if hits or routes else 'incomplete' if partial or errors else 'no_hits',
+                **({'readme_routes': routes} if routes else {}),
                 'results': hits[:limit], 'strategy': 'lexical+exact-context' if context is not None else 'lexical',
                 'scanned': len(names), 'partial': partial or hit_count > limit,
                 'errors': errors, 'authority': 'retrieval only; no applicability or acceptance proof'}

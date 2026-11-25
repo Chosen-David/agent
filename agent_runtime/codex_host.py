@@ -785,6 +785,14 @@ class CodexHost:
                   'Authentication of YOUR current review is the host responsibility AFTER your completed turn. '
                   'Do not require your future receipt as a prerequisite for returning a content verdict. '
                   'Prior authenticated checkpoints are supplied in context; current completion remains blocked until the host authenticates your response.\n'
+                  + ('Review the actual goal, hot path and constraints. In full_review explain the work in its domain. '
+                     'Inspect redundant computation, copies, synchronization, complexity and maintainability when relevant. '
+                     'Use supplied primary-source notes and prior results to compare credible alternatives. Identify where '
+                     'each applies or fails. If evidence is missing, name the specific evidence needed; do not invent sources. '
+                     'For substantive advice use target, feedback, requested_change and acceptance_check: cite the function '
+                     'and evidence, propose a simpler implementation or a falsifiable experiment with baseline and stop condition. '
+                     'Mark exploratory directions nonblocking. Avoid filler. The writer archives substantive advice.\n'
+                     if method == 'review' else '')
                   + json.dumps(packet, ensure_ascii=False))
         if len(prompt.encode('utf8')) > MAX_PACKET:
             raise HostPreflightError('model packet exceeds 256KB; narrow context explicitly')
