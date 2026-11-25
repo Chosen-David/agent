@@ -596,7 +596,7 @@ class CodexHost:
                     try:
                         backend = getattr(client, 'process', None)
                         discovery_process(phase='discovering', backend_pid=getattr(backend, 'pid', None))
-                        writer_only = flow.state['mode'] == 'human'
+                        writer_only = flow.state['mode'] != 'dual-ai'
                         snapshot = discover_models(client, self.empty, writer_only=writer_only)
                     finally:
                         client.close()

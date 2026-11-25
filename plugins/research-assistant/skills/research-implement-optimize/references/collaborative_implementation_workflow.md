@@ -4,13 +4,13 @@
 
 ## 入口适用范围
 
-加载本流程只要求执行验收先行，不等于启动 `agent_runtime.collaborative_flow` 或选择双 AI。普通开发默认由当前主 Agent 直接执行已授权的实现、测试和自检；不需要 `~/.codex/chosen-agent/runtime.json`，也不以该文件缺失阻塞普通开发。训练后端、优化器等改动类型本身不构成双模型审查授权。
+加载本流程只要求执行验收先行，不等于启动 `agent_runtime.collaborative_flow` 或选择双 AI。普通开发默认沿用当前主 Agent 的全部宿主权限，直接执行已授权的实现、测试、修复和交付。主 AI 自主决定实现细节，连续执行到验收完成，全程无需启动、轮询或等待监督器；不需要 `~/.codex/chosen-agent/runtime.json`，也不以该文件缺失阻塞普通开发。训练后端、优化器等改动类型本身不构成双模型审查授权。
 
 独立审查只在已授权监督器到期时运行一次；现有任务合同的独立证据要求保留至相应轮次；缺后端仅阻塞依赖该审查的步骤。不能从 CLI 默认值推导用户选择，不能为了满足本流程自动调用该 CLI。已存在的双 AI 合同保持待核验，不以自检替代；需求变更沿原任务版本协调。
 
 ## 两种反馈模式
 
-默认 `human`：主 AI 做当前小步，人类反馈并确定下一步。任务显式选择 `dual-ai` 时，目标是主 AI 实现、另一个真实模型的审查 AI 复核；仍只有主 AI 写正式代码，审查串行进行，不为每个 Skill 再创建 agent。两种模式共用下文的验收先行规则。
+显式 `human`：主 AI 做当前小步，人类反馈并确定下一步。任务显式选择 `dual-ai` 时，目标是主 AI 实现、另一个真实模型的审查 AI 复核；仍只有主 AI 写正式代码，审查串行进行，不为每个 Skill 再创建 agent。两种模式共用下文的验收先行规则。
 
 完整 checkout 已提供实际验证过的 Codex 双模型宿主、两阶段文件绑定和 CLI 入口，详见 [接入与证据](https://github.com/Chosen-David/agent/blob/main/docs/collaborative_cli.md)。新 runtime profile 默认由有效默认模型根据账号目录自动选择两方，实际调用核验后按任务固定；可显式约束模型。旧任务保持原模型和账本。不要仅设置模式字符串就声称启用，也不因外部 Skill 要求而自动派生 agent。后端、身份或实际调用未核验时 blocked，不能悄悄用自检替代用户指定的双 AI 验收。
 
@@ -125,6 +125,6 @@ Reviewer 解释当前代码在做什么，指出有具体位置的冗余、等�
 
 ## 人类优先的命令行全流程
 
-完整 checkout 可用 `python -m agent_runtime.collaborative_flow`，接口与真实能力边界见 [命令行接入](https://github.com/Chosen-David/agent/blob/main/docs/collaborative_cli.md)。新 CLI 任务默认 human；超时保留待答问题。普通开发沿用当前主 AI，只有受管监督器到期才启动一次只读审查。已有任务和 `task_supervisor` 的默认策略保留。`--backend codex` 接入已登录的官方 app-server，必须预先配置不同模型并准备任务测试；`--trust-project-code` 声明可信项目代码在当前 OS 用户下执行，并非沙箱。显式 `--switch-mode` 沿同一任务归档旧批准并保留预算。业务/权限/预算问题仍由人类决定。晚到反馈失效旧计划，正在运行的作用先核对，不自动重放。缺真实审查后端时 blocked，不能用同一主 AI 替代。
+完整 checkout 可用 `python -m agent_runtime.collaborative_flow`，接口与真实能力边界见 [命令行接入](https://github.com/Chosen-David/agent/blob/main/docs/collaborative_cli.md)。新 CLI 任务默认 solo，主 AI 自主决定实现细节并持续执行到验收完成。显式 human 模式支持人工交互；超时保留待答问题。普通开发沿用当前主 AI，只有受管监督器到期才启动一次只读审查。已有任务和 `task_supervisor` 的默认策略保留。`--backend codex` 接入已登录的官方 app-server，必须预先配置不同模型并准备任务测试；`--trust-project-code` 声明可信项目代码在当前 OS 用户下执行，并非沙箱。显式 `--switch-mode` 沿同一任务归档旧批准并保留预算。业务/权限/预算问题仍由人类决定。晚到反馈失效旧计划，正在运行的作用先核对，不自动重放。缺真实审查后端时 blocked，不能用同一主 AI 替代。
 
 实现阶段实际探测环境并加载已有能力正文；任务自己的 suite.json 必须预先准备。验收使用 `scripts/project_test.py --task TASK_ID` 直接路由当前任务测试，保留版本/输出绑定。主 AI 写代码，审查 AI 在讨论、设计、多步骤完成点和结果检查点复核；程序负责持久状态/计时，已有监督器的真实部署和进程读回仍需宿主完成。

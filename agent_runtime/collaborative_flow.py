@@ -1,4 +1,4 @@
-"""Persistent human-first collaboration; trusted hosts supply model execution."""
+"""Persistent solo-first collaboration; trusted hosts supply model execution."""
 from copy import deepcopy
 from contextlib import contextmanager
 import datetime
@@ -115,8 +115,8 @@ class Flow:
         self.state['events'].append(item)
         self.save()
 
-    def create(self, prompt, *, mode="human"):
-        if mode not in ("human", "dual-ai"):
+    def create(self, prompt, *, mode="solo"):
+        if mode not in ("solo", "human", "dual-ai"):
             raise ValueError("unknown collaboration mode")
         if self.state is not None or not isinstance(prompt, str) or not prompt.strip():
             raise ValueError('existing task or empty prompt')
@@ -147,7 +147,10 @@ class Flow:
             raise ValueError('too many unresolved questions')
         for q in normalized:
             self.state['answers'].pop(q['id'], None)
-        human = self.state['mode'] == 'human'
+        if self.state['mode'] == 'solo':
+            self.state['implementation_choices'] = [q for q in normalized if q['kind'] == 'implementation']
+            normalized = [q for q in normalized if q['kind'] != 'implementation']
+        human = self.state['mode'] != 'dual-ai' and bool(normalized)
         self.state.update(questions=normalized, phase='waiting' if human else 'discussion',
                           choice_visible=human, deadline=self.clock() + 600 if human else None,
                           waiting_since=self.clock())
@@ -156,7 +159,7 @@ class Flow:
     def switch_mode(self, mode, reason):
         """Explicitly revise this task; never replace its budget or ledger."""
         self.active()
-        if mode not in ('human', 'dual-ai') or not isinstance(reason, str) or not reason.strip():
+        if mode not in ('solo', 'human', 'dual-ai') or not isinstance(reason, str) or not reason.strip():
             raise ValueError('valid mode and explicit reason required')
         if self.state['phase'] not in ('discussion', 'waiting', 'planned', 'repair', 'blocked'):
             raise ValueError('finish or reconcile the current phase before switching')
@@ -207,7 +210,7 @@ class Flow:
         self.state['revision'] += 1
         for key in ('plan', 'test_binding', 'acceptance', 'design_review'):
             self.state.pop(key, None)
-        self.state.update(mode='human', phase='blocked' if self.state.get('inflight') else 'discussion',
+        self.state.update(mode='solo' if self.state['mode'] == 'solo' else 'human', phase='blocked' if self.state.get('inflight') else 'discussion',
                           choice_visible=False, deadline=None, completed_steps=[])
         self.event('human-feedback')
 
@@ -656,14 +659,14 @@ def main():
     source = parser.add_mutually_exclusive_group()
     source.add_argument('--prompt')
     source.add_argument('--prompt-file', type=Path, help='existing TASK/specification file inside the target project')
-    parser.add_argument('--mode', choices=('human', 'dual-ai'), help='initial mode; existing tasks keep their recorded mode')
+    parser.add_argument('--mode', choices=('solo', 'human', 'dual-ai'), help='initial mode; existing tasks keep their recorded mode')
     parser.add_argument('--adapter', type=Path, help='explicit trusted host exposing build(root, task_id)')
     parser.add_argument('--backend', choices=('codex',), help='built-in authenticated app-server host')
     parser.add_argument('--runtime-profile', type=Path, default=default_profile_path())
     parser.add_argument('--write-path', action='append', default=[], help='allowed project-relative source file; repeatable')
     parser.add_argument('--context-path', action='append', default=[], help='project-relative inline context; repeatable')
     parser.add_argument('--trust-project-code', action='store_true', help='authorize tests/imports as current OS user, without execution isolation')
-    parser.add_argument('--switch-mode', choices=('human', 'dual-ai'), help='explicitly revise this same active task')
+    parser.add_argument('--switch-mode', choices=('solo', 'human', 'dual-ai'), help='explicitly revise this same active task')
     parser.add_argument('--reason', help='required explanation for explicit mode change')
     parser.add_argument('--add-review-calls', type=int, help='explicitly extend original review ledger, preserving used calls')
     parser.add_argument('--retry-final-review', action='store_true', help='review unchanged passing evidence without rerunning implementation')
@@ -680,11 +683,11 @@ def main():
             if args.prompt_file is not None:
                 relative = str(args.prompt_file.absolute().relative_to(flow.root))
                 raw = regular_bytes(flow.root, relative)
-                flow.create(raw.decode(), mode=args.mode or "human")
+                flow.create(raw.decode(), mode=args.mode or "solo")
                 flow.state['prompt_ref'] = {'path': relative, 'sha256': hashlib.sha256(raw).hexdigest()}
                 flow.save()
             else:
-                flow.create(args.prompt, mode=args.mode or "human")
+                flow.create(args.prompt, mode=args.mode or "solo")
         elif args.mode is not None and args.mode != flow.state["mode"]:
             raise ValueError("existing task mode differs; reconcile the original task before switching")
         if args.switch_mode:
@@ -771,12 +774,12 @@ def main():
         while True:
             if flow.state['phase'] == 'repair':
                 repairs = flow.state.get('repair_count', 0)
-                if repairs >= 2:
+                if repairs >= 2 and flow.state['mode'] != 'solo':
                     raise ValueError('repair budget exhausted; human replan required')
                 flow.state.update(repair_count=repairs + 1, phase='discussion')
                 flow.event('repair-requested')
             if flow.state['phase'] == 'discussion':
-                print('<' + ('人类-AI模式' if flow.state['mode'] == 'human' else '双AI模式') + '> 思考和讨论')
+                print('<' + {'solo': '单AI模式', 'human': '人类-AI模式', 'dual-ai': '双AI模式'}[flow.state['mode']] + '> 思考和讨论')
                 discussion = flow.call(host, 'discuss', flow.discussion_context())
                 print(discussion['summary'])
                 if discussion.get('questions'):
@@ -792,7 +795,7 @@ def main():
                 proposed = flow.call(host, 'plan', flow.discussion_context())
                 flow.plan(proposed, args.workflow_root, args.project)
             print('规划：' + str(document_root(flow.root) / 'task/task_details' / (flow.task_id + '.md')))
-            print('<' + ('人类-AI模式' if flow.state['mode'] == 'human' else '双AI模式') + '> 实现与任务验收')
+            print('<' + {'solo': '单AI模式', 'human': '人类-AI模式', 'dual-ai': '双AI模式'}[flow.state['mode']] + '> 实现与任务验收')
             output = args.output / ('revision-' + str(flow.state['revision']) + '-attempt-' + str(flow.state.get('repair_count', 0)))
             flow.execute(host, output)
             if flow.state['phase'] != 'repair':

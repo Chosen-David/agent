@@ -20,7 +20,7 @@ class FlowTests(DocumentFixtureCase):
         self.root = Path(self.temp.name)
         self.now = 100.0
         self.flow = self.api.Flow(self.root, 'FLOW-01', clock=lambda: self.now)
-        self.flow.create('Implement exact addition')
+        self.flow.create('Implement exact addition', mode='human')
 
     def test_explicit_dual_mode_starts_without_human_timeout(self):
         flow = self.api.Flow(self.root, 'DUAL-01', clock=lambda: self.now)
@@ -30,6 +30,20 @@ class FlowTests(DocumentFixtureCase):
         with self.assertRaisesRegex(ValueError, 'backend'):
             flow.review(None, {'step': 'acceptance'})
         self.assertNotEqual(flow.state['phase'], 'done')
+
+    def test_default_cli_solo_plans_implementation_choices_without_waiting(self):
+        run = subprocess.run([sys.executable, '-m', 'agent_runtime.collaborative_flow',
+            '--project-root', str(self.root), '--project', 'agent', '--task-id', 'SOLO',
+            '--prompt', 'Implement addition', '--status'], capture_output=True, text=True)
+        self.assertEqual(run.returncode, 0, run.stderr)
+        flow = self.api.Flow(self.root, 'SOLO')
+        self.assertEqual(flow.state['mode'], 'solo')
+        flow.ask([{'id': 'choice', 'question': 'Choose implementation', 'options': ['A', 'B'],
+                   'kind': 'implementation'}])
+        self.assertEqual(flow.state['phase'], 'discussion')
+        self.assertEqual(flow.state['questions'], [])
+        self.assertIsNone(flow.state['deadline'])
+        self.assertEqual(flow.discussion_context()['implementation_choices'][0]['id'], 'choice')
 
     def test_unknown_initial_mode_does_not_create_task(self):
         flow = self.api.Flow(self.root, 'BAD-01')
@@ -177,6 +191,15 @@ class FlowTests(DocumentFixtureCase):
         self.assertTrue(calls[0]['skills'][0]['content'])
         self.assertEqual(json.loads((output/'report.json').read_text())['checks'][0]['id'], 'answer')
         self.assertIn('Decision summary', (self.root/'agent_doc/task/task_details/FLOW-01.md').read_text())
+
+    def test_solo_runs_through_acceptance_without_supervisor(self):
+        self.flow.switch_mode('solo', 'autonomous implementation')
+        host, output, calls, _ = self.setup_pipeline()
+        self.flow.execute(host, output)
+        self.assertEqual(len(calls), 1)
+        self.assertEqual(self.flow.state['phase'], 'done')
+        self.assertEqual(self.flow.state['review_calls'], 0)
+        self.assertEqual(json.loads((output/'report.json').read_text())['status'], 'pass')
 
     def test_wrong_implementation_reaches_repair_not_done(self):
         host, output, _, _ = self.setup_pipeline(bad=True)
