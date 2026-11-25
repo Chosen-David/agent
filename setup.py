@@ -63,6 +63,7 @@ Project A 的指南、任务、建议和结果属于 Project A/agent_doc/；缺�
 已核实人类 agent_doc/guide/GUIDE.md 是最高项目规划依据；AI 绝不创建、编辑、删除或移动 agent_doc/guide/ 内文件。
 agent_doc/task/TASK.md 是唯一日期索引，关联方法/进度/证据在 agent_doc/task/task_details/*.md；已有内容和 Plan/Progress 边界保留。简单任务不另建文档体系。
 agent_doc/advice/ 必须核验并记录 adopt/adapt/reject/defer 与理由，不能当授权；尊重当前宿主权限和用户约束。
+归档主 AI 维护当前项目 agent_doc/results/README.md 及其维护计划：实验前先查，首次归档登记，证据或验收变化更新原条目，交接时核对目录、链接和实际查询。已有项目在下次获准归档时补齐计划，保留人工说明。
 实证依据按 Skill 的 references/result_reuse_workflow.md 检索 agent_doc/results/ 并核对适用条件；实验/测量/共享结果按 references/result_validation_workflow.md 独立 verify_experiment_result，原始数据保持 pending 直到 usable-with-scope。用户/指南要求和已建立的实验合同不得降格。
 同一主 agent 切换复核 Skill 是自检，不是独立批准；已有独立验收合同缺后端时保留 pending。安装不启动模型或后台服务。
 用源码 scripts/load_skill.py 读取当前步骤的 Skill；它只返回内容，不调用模型，不启动进程。旧角色执行入口不再派发独立 agent。

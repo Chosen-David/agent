@@ -55,6 +55,13 @@ def initialize_project_docs(root):
                 break
             if candidate.exists() and not candidate.is_dir():
                 raise DocumentError('project document directory conflict: ' + str(candidate))
+    result_index = 'agent_doc/results/README.md'
+    index_path = _relative(root, result_index)
+    if index_path.exists():
+        if not index_path.is_file():
+            raise DocumentError('results README must be a regular file')
+    else:
+        assert_ai_writable(root, result_index)
     if task.exists() and not task.is_file():
         raise DocumentError('canonical task index must be a regular file')
     legacy = _relative(root, 'TASK.md')
@@ -79,6 +86,26 @@ def initialize_project_docs(root):
         created.append(CANONICAL_TASK)
     except FileExistsError:
         pass
+    if not index_path.exists():
+        with tempfile.NamedTemporaryFile(dir=index_path.parent, delete=False) as seed:
+            temporary = Path(seed.name)
+        try:
+            temporary.write_text(
+                '# 项目结果索引\n\n## 索引维护计划\n\n'
+                '产生或整理结果的主 AI 在以下节点维护本页，保留人工说明和历史记录。\n\n'
+                '1. 实验前查询已有结果，核对原始数据与验收，在任务详情说明复用、补验或重跑理由。\n'
+                '2. 首次归档时按实际一级目录添加一行，首列使用相对目录链接，注明条件、证据入口与状态。\n'
+                '3. 新增子实验、重测或验收范围变化时更新已有条目，保留失败及被替代的证据。\n'
+                '4. 归档结束或交接时核对漏项、重复项和失效链接，用一次真实查询检查变更条目。\n\n'
+                '## 结果目录\n\n| 目录 | 内容与关键条件 | 证据与复用范围 |\n|---|---|---|\n',
+                encoding='utf-8')
+            os.link(temporary, index_path)
+            created.append(result_index)
+        except FileExistsError:
+            if not _relative(root, result_index).is_file():
+                raise DocumentError('results README must be a regular file')
+        finally:
+            temporary.unlink()
     return {'status': 'initialized', 'project_root': str(root),
             'task_index': CANONICAL_TASK, 'created': created,
             'next': 'Read this project\'s human guide if present; register authorized tasks before dispatch. '

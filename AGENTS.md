@@ -57,6 +57,7 @@ Follow `workflows/knowledge_access_workflow.md` for the main AI and each task-re
 
 ## Prior result search before planning new work
 
+The producing main AI maintains the current project's agent_doc/results/README.md and its maintenance plan: check prior results before experiments, index the first archive, revise the existing entry on new evidence or review, and reconcile directories, links and a real lookup at handoff. Preserve human entries; apply this to existing projects at the next authorized results update.
 Before planning experiments/measurements or reusing empirical claims, follow `workflows/result_reuse_workflow.md`: first query existing data/metadata/independent validation in the current project's `agent_doc/results/`, record actual hits and reuse/rejection reasons, then decide what tests or experiments remain necessary. Match task/goal, code, inputs, configuration, environment, metrics/units and acceptance scope. Reuse only matching data with current independent code/data validation; registration, old pass labels and similar titles do not suffice. Reuse never bypasses `verify_experiment_result` or consumer `required_result_refs`. Changed assumptions need targeted verification; explicit reproduction, required experiments and new-claim acceptance remain mandatory. New results belong in `agent_doc/results/<run_id>/`; frozen historical/large artifacts may be indexed by real path/hash without moving or claiming all data were copied. Preserve original records, failures and privacy boundaries.
 
 ## Mandatory post-result validation

@@ -19,9 +19,11 @@
 
 在已授权的结果归档或维护范围内，新增结果目录、增加重要子实验、验收范围或状态变化时，同步更新对应条目。每个直接子目录保留一个可定位的相对链接，简记问题/内容、关键条件、证据入口与复用限制；大型专题链接子索引或关键子报告。保留原有人工说明和并发更新；没有证据的状态标未知，失败、停止、被替代和空目录如实标注。发布索引前比对实际子目录和条目，检查缺项、重复项及失效链接。
 
+每个项目在结果 README 中保留一份简短维护计划。产生或整理结果的主 AI 负责四个时点：实验前在任务详情说明复用、补验或重跑的原因；首次归档时登记实际目录和证据入口；新增子实验、重测或验收变化时修订原条目及范围；归档结束或交接时比对直接子目录、排查重复和失效链接，用真实查询核对变更条目能否被找到。已有项目下次获准维护结果时合并本计划，保留人工说明与并发修改。索引尚未覆盖的历史目录记录为待补项，不能据此推断没有旧实验。
+
 索引用于发现候选。引用性能或数值结论时仍须读取原始证据并执行下文的条件匹配及独立验收；索引本身不覆盖冻结记录，不改变任务状态，也不授予重跑权限。
 
-运行时的 search、decide、实验计划和派发共用 ResultStore.search。结果 README 表格首列可写 `[专题](https://github.com/Chosen-David/agent/blob/main/workflows/专题)`（实际目标使用结果目录已有合法 run_id 字符）。按整行描述检索，`readme_routes` 返回目录、索引行号、行哈希与短摘录；`results` 保留已登记候选。实验派发前在 `prior_result_review.readme_routes` 逐条回填 directory、row_sha256、decision（inspect/verify_delta/reject/registered）和 reason。先打开证据，能匹配旧 run 时走已有登记与独立复用流程；README 不能签发 reuse proof。
+运行时的 search、decide、实验计划和派发共用 ResultStore.search。结果 README 表格首列使用 Markdown 目录链接，标签为专题名称，链接目标形如 `./run-id/`（run-id 取实际一级目录名）。按整行描述检索，`readme_routes` 返回目录、索引行号、行哈希与短摘录；`results` 保留已登记候选。实验派发前在 `prior_result_review.readme_routes` 逐条回填 directory、row_sha256、decision（inspect/verify_delta/reject/registered）和 reason。先打开证据，能匹配旧 run 时走已有登记与独立复用流程；README 不能签发 reuse proof。
 
 ## 新命令的具体判断
 

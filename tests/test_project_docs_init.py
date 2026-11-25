@@ -41,7 +41,8 @@ class ProjectDocumentInitTests(unittest.TestCase):
     def test_idempotent_and_preserves_all_existing_project_files(self):
         initialize_project_docs(self.project)
         files = [self.project / CANONICAL_TASK, self.project / 'agent_doc/task/task_details/A.md',
-                 self.project / 'agent_doc/advice/A.md', self.project / 'agent_doc/results/existing.json']
+                 self.project / 'agent_doc/advice/A.md', self.project / 'agent_doc/results/existing.json',
+                 self.project / 'agent_doc/results/README.md']
         for index, path in enumerate(files):
             path.write_bytes(f'existing-{index}\r\n'.encode())
         before = [(p.read_bytes(), p.stat().st_mtime_ns) for p in files]
@@ -56,6 +57,12 @@ class ProjectDocumentInitTests(unittest.TestCase):
             initialize_project_docs(self.project)
         self.assertEqual([p.name for p in (self.project / 'agent_doc').iterdir()], ['results'])
         self.assertEqual((self.project / 'agent_doc/results').read_bytes(), b'preserve')
+
+    def test_index_conflict_before_bootstrap(self):
+        (self.project / 'agent_doc/results/README.md').mkdir(parents=True)
+        with self.assertRaisesRegex(DocumentError, 'README'):
+            initialize_project_docs(self.project)
+        self.assertFalse((self.project / CANONICAL_TASK).exists())
 
     def test_legacy_task_requires_explicit_migration(self):
         (self.project / 'TASK.md').write_bytes(b'- [ ] [OLD] Existing task\n')
@@ -92,6 +99,10 @@ class ProjectDocumentInitTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
         self.assertEqual(json.loads(result.stdout)['project_root'], str(self.project.resolve()))
         self.assertEqual((REPO / CANONICAL_TASK).read_bytes(), before)
+        self.assertIn('agent_doc/results/README.md', json.loads(result.stdout)['created'])
+        plan = (self.project / 'agent_doc/results/README.md').read_text(encoding='utf-8')
+        for term in ('实验前', '首次归档', '验收范围变化', '交接', '真实查询'):
+            self.assertIn(term, plan)
         missing = subprocess.run([sys.executable, str(script), 'init'], cwd=REPO,
                                  capture_output=True, text=True, encoding='utf-8')
         self.assertEqual(missing.returncode, 2)
