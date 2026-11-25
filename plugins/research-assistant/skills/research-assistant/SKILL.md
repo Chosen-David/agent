@@ -85,3 +85,5 @@ description: "协调科研项目从 Idea、实验到论文修订。用于需要�
 需要生成或维护真实用户路径验证、将用户纠正变成可执行检查时，读取 [本地验证接入](references/collaborative_implementation_workflow.md#本地验证接入生成维护纠正)，复用集中test与单主串行入口。
 
 本地验证适配的第三方许可随包保留于 [pstack MIT](references/pstack-LICENSE)。
+
+静态 HTML/CSS 网页与前端美化请求：当前主 agent 按 [静态网页设计与验收](references/static_frontend_workflow.md) 实现；按需加载 research-implement-optimize，不派生第二 AI。

@@ -1,6 +1,6 @@
 ---
 name: research-implement-optimize
-description: "端到端代码实现与性能优化，适用于算法或系统实现、CPU/GPU kernel、profiling 和高性能改造。调研先进解法、算法与 LeetCode 模式，比较时空复杂度和成熟库，按实际硬件选择 PTX/CPU 原语并实测；不把纯概念问答扩成优化项目。"
+description: "端到端代码实现与性能优化，适用于静态 HTML/CSS 网页设计、前端界面实现、算法或系统实现、CPU/GPU kernel、profiling 和高性能改造。调研先进解法、算法与 LeetCode 模式，比较时空复杂度和成熟库，按实际硬件选择 PTX/CPU 原语并实测；不把纯概念问答扩成优化项目。"
 ---
 
 代码实现、修复或重构先读[协作式任务验收](references/collaborative_implementation_workflow.md)；先对齐关键语义、写任务验收与变异，再开始实现。
@@ -14,6 +14,8 @@ description: "端到端代码实现与性能优化，适用于算法或系统实
 写注释、技术文档或维护上下文文件时，按需执行 [精简检查](references/concise_engineering.md)，保留行为、原因、风险与证据。
 
 涉及 AI Infra/AI 算法/数据结构的实现选型，先读 [工程知识复用](references/engineering_reuse.md)，检索原论文实验/消融与固定 commit 的实现，再比较候选。许可/API/语义核查和目标正确性/性能验收仍必要。
+
+制作或精修 HTML、静态网页、展示页和前端界面时，先读 [静态网页设计与验收](references/static_frontend_workflow.md)。由当前主 agent 完成设计、实现与浏览器自检。
 
 先按影响范围选择入口：
 
