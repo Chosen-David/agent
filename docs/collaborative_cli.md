@@ -1,6 +1,6 @@
 # 串行协作任务命令行
 
-`python -m agent_runtime.collaborative_flow` 串行连接讨论、任务规划、环境 Skill、实现和任务验收。新 CLI 任务默认 `dual-ai`，一位主模型提出代码修改，另一个不同模型只读审查。`--mode human` 进入人类讨论；显示问题后等待约 10 分钟，未回复则进入双 AI 讨论。业务、权限和预算问题仍等待人类决定。已有任务保持原模式和预算；Python API `Flow.create()` 保留 human 默认值。
+普通开发由当前主 AI 连续执行。新 CLI 任务默认 human，等待答复超时保留待决问题。独立审查由受管监督器的到期事件触发；历史显式 dual-ai 合同使用原有账本。
 
 ## 内置 Codex 后端
 
@@ -122,4 +122,20 @@ Windows 与 POSIX 使用各自原生排他文件锁。Windows 输入轮询支持
 
 `done` 表示本次任务测试通过，双 AI 模式还要求当前审查通过；不是人类批准、一般正确性证明或未实测的性能收益。测试结果属于对应快照，写入收尾进度不追溯改变原始报告。
 
-GPT/Codex 新任务可显式传 `--mode dual-ai` 以便命令自身表达协作策略。缺真实不同模型宿主仍 blocked；设置模式、安装 Skill 或通过合成测试均不代表双模型已运行。此入口不改 ChatGPT/Codex 的账号级设置，当前聊天采用何种模式仍由宿主实际执行决定。
+前台 CLI 读取已有 dual-ai 任务时保留状态；需要独立审查的执行停在 pending，交由监督器到期处理。缺真实不同模型宿主仍 blocked；设置模式、安装 Skill 或通过合成测试均不代表双模型已运行。此入口不改 ChatGPT/Codex 的账号级设置，当前聊天采用何种模式仍由宿主实际执行决定。
+
+### 监督器到期审查
+
+普通任务直接使用当前主 AI。需要定时复核的任务，在原有受信任的 task_supervisor adapter 的 build 返回值中绑定回调：
+
+```python
+from agent_runtime.scheduled_review import codex_timer_reviewer
+
+backend["review_on_tick"] = codex_timer_reviewer(
+    root, profile=profile_path, writer_model=actual_writer_model,
+    reviewer_model=task_bound_reviewer_model, owner_thread=writer_thread_id,
+    owner_socket=writer_host_socket, evidence=current_evidence,
+)
+```
+
+由宿主提供已确认的模型、线程和所属 socket。current_evidence(run_id) 在每轮读取当前任务要求、源码版本、已有 advice、实现差异、性能原始数据及待验收项。SQLite 预约到期事件后调用一次，主执行器继续该轮调度。每轮保存独立模型身份、请求摘要和建议到项目 advice 目录，通过所属宿主队列向现有写入者投递。队列成功仅记 queued_unconfirmed；实现进展以变更、测试及对应验收记录为准。审查失败记录在监督器 journal；下次到期再试。默认 artifact 后端没有模型绑定，单独启动它只执行工件核查。完成仍由原任务验收和终止回执决定。

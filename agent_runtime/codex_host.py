@@ -22,7 +22,7 @@ from .file_lock import flock, LOCK_EX, LOCK_NB
 from .external_json import regular_bytes as bounded_bytes
 from .plan_review import CHECKS, _identity, _review, sha
 from .project_docs import assert_ai_writable, atomic_write, regular_bytes, guard_write_path, _relative, uses_external_documents
-from .codex_models import POLICY, discover_models, select_models
+from .codex_models import POLICY, discover_models, select_models, select_writer
 from .model_process import process_scope, pid_running
 
 MAX_PACKET = 256_000
@@ -596,13 +596,15 @@ class CodexHost:
                     try:
                         backend = getattr(client, 'process', None)
                         discovery_process(phase='discovering', backend_pid=getattr(backend, 'pid', None))
-                        snapshot = discover_models(client, self.empty)
+                        writer_only = flow.state['mode'] == 'human'
+                        snapshot = discover_models(client, self.empty, writer_only=writer_only)
                     finally:
                         client.close()
                         if backend is None or (callable(getattr(backend, 'poll', None)) and backend.poll() is not None):
                             discovery_process(phase='closed')
                     discovery_finished = True
-                    selected = select_models(snapshot, self.profile, flow.state['prompt'], self._model_call)
+                    selected = (select_writer(snapshot, self.profile) if writer_only else
+                                select_models(snapshot, self.profile, flow.state['prompt'], self._model_call))
                     def complete(current):
                         finish(current, 'resolved')
                         current.update(selection=selected,

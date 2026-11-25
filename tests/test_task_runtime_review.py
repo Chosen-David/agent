@@ -80,6 +80,28 @@ else:
             with self.assertRaisesRegex(ValueError, 'grew beyond'):
                 ArtifactHandler(self.root)._evidence(self.artifact_task())
 
+    def test_new_review_monitor_waits_for_first_interval(self):
+        fresh = dict(plan(), run_id='new')
+        self.store.create(fresh)
+        scheduler = LocalScheduler(self.store, lambda: self.now, wait_first_interval=True)
+        arm(scheduler, 'new')
+        calls = []
+        engine = SimpleNamespace(tick=lambda *args: {'next_check_seconds': 10})
+        self.assertFalse(scheduler.drain_once(engine, 'new', on_due=lambda *args: calls.append(args)))
+        self.now += 1
+        self.assertTrue(scheduler.drain_once(engine, 'new', on_due=lambda *args: calls.append(args)))
+        self.assertEqual(len(calls), 1)
+
+    def test_scheduled_reviews_share_due_event_and_continue_past_four(self):
+        reviews, steps = [], []
+        engine = SimpleNamespace(tick=lambda *args: steps.append(args) or {'next_check_seconds': 10})
+        for _ in range(6):
+            self.assertTrue(self.scheduler.drain_once(engine, on_due=lambda *args: reviews.append(args)))
+            self.assertFalse(self.scheduler.drain_once(engine, on_due=lambda *args: reviews.append(args)))
+            self.now += 10
+        self.assertEqual(reviews, steps)
+        self.assertEqual(len(set(reviews)), 6)
+
     def test_wake_during_tick_survives_old_drain_writeback(self):
         outer = self
         class WakeDuringTick:

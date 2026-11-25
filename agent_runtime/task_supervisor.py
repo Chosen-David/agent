@@ -145,7 +145,7 @@ def tmux(*args, check=True):
                           capture_output=True, text=True, check=check, timeout=10)
 
 
-def load_backend(config, store):
+def load_backend(config, store, *, timer_hooks=None):
     root = config['project_root']
     if config.get('adapter'):
         spec = importlib.util.spec_from_file_location('agent_host_adapter', config['adapter'])
@@ -156,6 +156,8 @@ def load_backend(config, store):
         handler = ArtifactHandler(root)
         backend = {'handlers': {'verify_artifacts': handler},
                    'authorize': lambda plan, task, candidate: candidate is handler}
+    if timer_hooks is not None and 'review_on_tick' in backend:
+        timer_hooks.append(backend['review_on_tick'])
     handlers = {name: ReportingHandler(h, root, backend.get('result_verifier')) for name, h in backend['handlers'].items()}
     authorize = backend['authorize']
     return (handlers, lambda plan, task, wrapper: authorize(plan, task, wrapper.handler),
@@ -235,8 +237,9 @@ def worker(config):
         if not _proc_pid_namespace_matches():
             raise RuntimeError('managed supervisor requires /proc in its PID namespace')
         store = Store(state_dir / 'state.sqlite')
-        scheduler = LocalScheduler(store)
-        handlers, authorize, maintain, result_verifier, plan_review_verifier = load_backend(config, store)
+        timer_hooks = []
+        handlers, authorize, maintain, result_verifier, plan_review_verifier = load_backend(config, store, timer_hooks=timer_hooks)
+        scheduler = LocalScheduler(store, wait_first_interval=bool(timer_hooks))
         engine = ManagedEngine(config, store, handlers, authorize, result_verifier=result_verifier,
                                plan_review_verifier=plan_review_verifier)
         service_id = 'tmux:' + uuid.uuid4().hex
@@ -294,7 +297,7 @@ def worker(config):
                             atomic_json(state_dir / 'monitor.json', receipt)
                             if receipt['status'] != 'started':
                                 raise RuntimeError(receipt['reason'])
-                        scheduler.drain_once(engine, config['run_id'])
+                        scheduler.drain_once(engine, config['run_id'], on_due=timer_hooks[0] if timer_hooks else None)
                     # Failed/source-changed chains keep the owner alive for recovery;
                     # they never produce a success report or repeatedly run failed work.
                     publish(config, store, result_verifier=result_verifier, plan_review_verifier=plan_review_verifier, maintenance_available=maintain is not None)

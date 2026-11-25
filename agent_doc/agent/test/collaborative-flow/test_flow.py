@@ -49,9 +49,9 @@ class FlowTests(DocumentFixtureCase):
         self.assertFalse(self.flow.timeout())
         self.now = 900
         self.assertTrue(self.flow.timeout())
-        self.assertEqual(self.flow.state['mode'], 'dual-ai')
-        self.assertFalse(self.flow.state['choice_visible'])
-        self.assertEqual(self.flow.state['phase'], 'discussion')
+        self.assertEqual(self.flow.state['mode'], 'human')
+        self.assertTrue(self.flow.state['choice_visible'])
+        self.assertEqual(self.flow.state['phase'], 'blocked')
 
     def test_restart_preserves_question_deadline(self):
         self.question()
@@ -243,6 +243,17 @@ class FlowTests(DocumentFixtureCase):
         self.assertEqual(run.returncode,0,run.stderr)
         self.assertEqual(json.loads(run.stdout)['mode'],'human')
 
+    def test_cli_preserves_unsupervised_dual_contract_without_calling_host(self):
+        self.flow.switch_mode('dual-ai', 'existing explicit contract')
+        run = subprocess.run([sys.executable, '-m', 'agent_runtime.collaborative_flow',
+            '--project-root', str(self.root), '--project', 'agent', '--task-id', 'FLOW-01',
+            '--adapter', str(self.root/'must-not-be-opened.py')], capture_output=True, text=True)
+        self.assertEqual(run.returncode, 2)
+        self.assertIn('due supervisor event', run.stderr)
+        again = self.api.Flow(self.root, 'FLOW-01')
+        self.assertEqual(again.state['mode'], 'dual-ai')
+        self.assertEqual(again.state['review_calls'], 0)
+
     def test_numeric_choice_through_real_pipe(self):
         self.question()
         reader, writer = os.pipe()
@@ -257,9 +268,9 @@ class FlowTests(DocumentFixtureCase):
         self.now = 900
         reader, writer = os.pipe()
         os.close(writer)
-        with os.fdopen(reader) as stream:
+        with os.fdopen(reader) as stream, self.assertRaisesRegex(ValueError, 'pending'):
             self.api.wait_for_human(self.flow, stream, lambda _: None)
-        self.assertEqual(self.flow.state['mode'], 'dual-ai')
+        self.assertEqual(self.flow.state['mode'], 'human')
 
     def test_reasked_question_does_not_reuse_old_answer(self):
         self.question()

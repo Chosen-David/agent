@@ -273,6 +273,18 @@ class ModelSelectionTests(DocumentFixtureCase):
                              client_factory=Client, **kwargs)
         return build, Client, root, profile
 
+    def test_single_writer_catalog_does_not_launch_reviewer_or_selector(self):
+        from agent_runtime.collaborative_flow import Flow
+        with tempfile.TemporaryDirectory() as directory:
+            build, client, root, _ = self.runtime_fixture(directory)
+            Flow(root, 'SOLO').create('Use one writer')
+            host = build('SOLO')
+            self.assertEqual(host.profile['writer_model'], 'model-A')
+            self.assertIsNone(host.reviewer_model_id)
+            self.assertEqual(client.runs, [])
+            self.assertEqual(build('SOLO').profile['writer_model'], 'model-A')
+            self.assertEqual(client.runs, [])
+
     def test_new_tasks_follow_changed_default_but_resume_keeps_signed_pair_without_calls(self):
         with tempfile.TemporaryDirectory() as directory:
             build, client, _, _ = self.runtime_fixture(directory)
@@ -868,7 +880,7 @@ raise AssertionError('disconnect fixture did not fail')
         from agent_runtime.collaborative_flow import Flow
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)/'project';root.mkdir()
-            Flow(root, 'CLI-01').create('Check required arguments', mode='dual-ai')
+            Flow(root, 'CLI-01').create('Check required arguments', mode='human')
             command = [sys.executable, '-B', '-X', 'utf8', '-m', 'agent_runtime.collaborative_flow',
                 '--project-root', str(root), '--workflow-root', str(Path(directory)/'workflow'),
                 '--project', 'test', '--task-id', 'CLI-01', '--backend', 'codex',

@@ -26,7 +26,7 @@ def model_effort(row):
     return default if default in supported else supported[0]
 
 
-def discover_models(client, cwd):
+def discover_models(client, cwd, *, writer_only=False):
     config = client.call('config/read', {'includeLayers': False, 'cwd': str(cwd)})['config']
     provider = config.get('model_provider')
     if provider is not None:
@@ -83,7 +83,9 @@ def discover_models(client, cwd):
         seen.add(cursor)
     else:
         raise ValueError('model catalog pagination exceeds bound')
-    if len(models) < 2:
+    if not models:
+        raise ValueError('no compatible writer model')
+    if not writer_only and len(models) < 2:
         raise ValueError('two compatible canonical models required; dual-model execution blocked')
     configured = config.get('model')
     if configured is not None:
@@ -106,6 +108,16 @@ def _completed(identity, result, observed, model, provider):
             observed.get('response_sha256') != sha(result)):
         raise ValueError('selection/readiness requires exact authenticated completed model/provider identity')
     return actual
+
+
+def select_writer(snapshot, profile):
+    requested = profile.get('writer_model') or snapshot['default_model']
+    writer = snapshot['aliases'].get(requested, requested)
+    if writer not in snapshot['models']:
+        raise ValueError('configured writer missing from supported catalog')
+    return {'writer_model': writer, 'reviewer_model': None, 'selector': 'host-catalog',
+            'provider_id': snapshot['provider_id'], 'efforts': {writer: model_effort(snapshot['models'][writer])},
+            'decision': {'reason': 'single writer selected from host configuration'}}
 
 
 def select_models(snapshot, profile, task, invoke):

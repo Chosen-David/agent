@@ -39,8 +39,9 @@ def arm(scheduler: Scheduler, run_id: str):
 
 
 class LocalScheduler:
-    def __init__(self, store: Store, clock=time.time):
+    def __init__(self, store: Store, clock=time.time, *, wait_first_interval=False):
         self.store, self.clock = store, clock
+        self.wait_first_interval = wait_first_interval
 
     def capabilities(self):
         with self.store.transaction() as db:
@@ -52,13 +53,14 @@ class LocalScheduler:
     def create(self, run_id):
         monitor_id = 'local:' + run_id
         with self.store.transaction() as db:
-            _, state = self.store.load(db, run_id)
+            plan, state = self.store.load(db, run_id)
             if state['status'] in ('done', 'cancelled', 'failed'):
                 raise ValueError('terminal chain cannot be armed')
             if not db.execute('SELECT 1 FROM services WHERE expires>?', (self.clock(),)).fetchone():
                 raise RuntimeError('local service offline')
             db.execute('INSERT INTO monitors(id,chain_id,status,due) VALUES (?,?,?,?) ON CONFLICT(chain_id) DO NOTHING',
-                       (monitor_id, run_id, 'active', self.clock()))
+                       (monitor_id, run_id, 'active', self.clock() + (plan['supervision']['min_seconds']
+                                             if self.wait_first_interval else 0)))
         return monitor_id
 
     def read(self, monitor_id):
@@ -91,7 +93,7 @@ class LocalScheduler:
             db.execute('INSERT INTO services VALUES (?,?) ON CONFLICT(id) DO UPDATE SET expires=excluded.expires',
                        (service_id, self.clock() + ttl))
 
-    def drain_once(self, engine: Engine, run_id=None):
+    def drain_once(self, engine: Engine, run_id=None, *, on_due=None):
         """Atomic due reservation prevents duplicate timer delivery across processes."""
         now = self.clock()
         with self.store.transaction() as db:
@@ -110,7 +112,18 @@ class LocalScheduler:
             db.execute('UPDATE monitors SET due=?,version=? WHERE id=?', (now + delay, version, row['id']))
             state['last_check_at'] = now
             self.store.save(db, row['chain_id'], state)
-        state = engine.tick(row['chain_id'], 'local-timer:' + uuid.uuid4().hex)
+        event_id = 'local-timer:' + uuid.uuid4().hex
+        if on_due is not None:
+            try:
+                receipt = on_due(row['chain_id'], event_id)
+                kind = 'scheduled_review'
+            except Exception as exc:
+                receipt = {'error': f'{type(exc).__name__}: {exc}'}
+                kind = 'scheduled_review_error'
+            with self.store.transaction() as db:
+                self.store.log(db, row['chain_id'], self.clock(), kind,
+                               {'event_id': event_id, 'receipt': receipt})
+        state = engine.tick(row['chain_id'], event_id)
         with self.store.transaction() as db:
             db.execute("UPDATE monitors SET due=? WHERE id=? AND status='active' AND version=?",
                        (self.clock() + state.get('next_check_seconds', plan['supervision']['min_seconds']), row['id'], version))

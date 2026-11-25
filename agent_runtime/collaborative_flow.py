@@ -179,7 +179,7 @@ class Flow:
     def timeout(self):
         if self.state['phase'] != 'waiting' or self.clock() < self.state['deadline']:
             return False
-        self.state.update(mode='dual-ai', phase='discussion', choice_visible=False, deadline=None)
+        self.state.update(phase='blocked', choice_visible=True, deadline=None)
         self.event('human-timeout')
         return True
 
@@ -611,8 +611,7 @@ def input_line(stream, seconds):
 
 def wait_for_human(flow, stream=sys.stdin, display=print):
     if flow.timeout():
-        display('<双AI模式> 原选择框已关闭，保留问题记录；正在请求审查 AI')
-        return
+        raise ValueError('unanswered question pending; resume with --answer')
     display('<人类-AI模式> 思考和讨论：单题输入选项编号或细节；多题输入 JSON；/cancel 取消')
     for q in flow.state['questions']:
         display(q['id'] + ': ' + q['question'])
@@ -641,8 +640,7 @@ def wait_for_human(flow, stream=sys.stdin, display=print):
                 continue
             return
         if flow.timeout():
-            display('<双AI模式> 原选择框已关闭，保留问题记录；正在请求审查 AI')
-            return
+            raise ValueError('unanswered question pending; resume with --answer')
 
 
 def main():
@@ -682,11 +680,11 @@ def main():
             if args.prompt_file is not None:
                 relative = str(args.prompt_file.absolute().relative_to(flow.root))
                 raw = regular_bytes(flow.root, relative)
-                flow.create(raw.decode(), mode=args.mode or "dual-ai")
+                flow.create(raw.decode(), mode=args.mode or "human")
                 flow.state['prompt_ref'] = {'path': relative, 'sha256': hashlib.sha256(raw).hexdigest()}
                 flow.save()
             else:
-                flow.create(args.prompt, mode=args.mode or "dual-ai")
+                flow.create(args.prompt, mode=args.mode or "human")
         elif args.mode is not None and args.mode != flow.state["mode"]:
             raise ValueError("existing task mode differs; reconcile the original task before switching")
         if args.switch_mode:
@@ -719,6 +717,8 @@ def main():
                              reconcile_selection_reason=args.reason)
             print(json.dumps(host.reconciliation, ensure_ascii=False))
             return 0
+        if flow.state['mode'] == 'dual-ai':
+            raise ValueError('independent review requires a due supervisor event; existing contract remains pending')
         if args.backend == 'codex':
             from .codex_host import CodexHost
             if not args.trust_project_code:
