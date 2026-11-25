@@ -114,7 +114,7 @@ else:
         self.assertEqual(engine.woken, 101)
         self.assertEqual(self.scheduler.read(self.monitor)['due'], 101)
 
-    def test_old_drain_cannot_overwrite_newer_drain(self):
+    def test_expired_reservation_cannot_overlap_active_drain(self):
         outer = self
         class NewDrain:
             def tick(self, *_):
@@ -123,11 +123,14 @@ else:
             def tick(self, *_):
                 outer.now = 101  # First reservation expires while old tick runs.
                 self.rival = LocalScheduler(Store(outer.store.path), lambda: outer.now)
-                outer.assertTrue(self.rival.drain_once(NewDrain()))
-                outer.assertEqual(self.rival.read(outer.monitor)['due'], 111)
+                outer.assertFalse(self.rival.drain_once(NewDrain()))
+                outer.assertEqual(self.rival.read(outer.monitor)['due'], 101)
                 return {'next_check_seconds': 60}
         self.assertTrue(self.scheduler.drain_once(OldDrain()))
-        self.assertEqual(self.scheduler.read(self.monitor)['due'], 111)
+        self.assertEqual(self.scheduler.read(self.monitor)['due'], 161)
+        self.now = 161
+        self.assertTrue(self.scheduler.drain_once(NewDrain()))
+        self.assertEqual(self.scheduler.read(self.monitor)['due'], 171)
 
     def test_monitor_version_migration_preserves_existing_record(self):
         path = self.root / 'old-db'

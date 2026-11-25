@@ -6,10 +6,15 @@ allows explicit restart on the same disk; it cannot keep a powered-off host aliv
 from __future__ import annotations
 
 import time
+import os
+import stat
+from pathlib import Path
 from typing import Protocol
 import uuid
 
 from .core import Engine, Store
+from .project_docs import guard_write_path
+from .file_lock import flock, LOCK_EX, LOCK_NB
 
 
 class Scheduler(Protocol):
@@ -94,7 +99,27 @@ class LocalScheduler:
                        (service_id, self.clock() + ttl))
 
     def drain_once(self, engine: Engine, run_id=None, *, on_due=None):
-        """Atomic due reservation prevents duplicate timer delivery across processes."""
+        """Serialize review and tick on this local store; release ownership on process exit."""
+        path = guard_write_path(Path(self.store.path).with_name(Path(self.store.path).name + '.drain.lock'))
+        if path.is_symlink():
+            raise ValueError('scheduler lock must not be redirected')
+        flags = os.O_CREAT | os.O_RDWR | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
+        fd = os.open(path, flags, 0o600)
+        try:
+            opened, named = os.fstat(fd), path.lstat()
+            if (not stat.S_ISREG(opened.st_mode) or
+                    (opened.st_dev, opened.st_ino) != (named.st_dev, named.st_ino) or
+                    getattr(named, 'st_file_attributes', 0) & getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 1024)):
+                raise ValueError('scheduler lock must be a stable regular file')
+            try:
+                flock(fd, LOCK_EX | LOCK_NB)
+            except BlockingIOError:
+                return False
+            return self._drain_owned(engine, run_id, on_due=on_due)
+        finally:
+            os.close(fd)
+
+    def _drain_owned(self, engine, run_id, *, on_due):
         now = self.clock()
         with self.store.transaction() as db:
             row = db.execute("SELECT * FROM monitors WHERE status='active' AND due<=? "
