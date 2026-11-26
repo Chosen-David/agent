@@ -34,6 +34,8 @@ jobs:
         if: runner.os == 'Windows'
         run: python -B scripts/project_test.py --workflow-root . --project agent --task WSL-SETUP-01 --target . --output "${{ runner.temp }}/wsl-setup"
       - run: python -B scripts/run_ci_tests.py discover -s tests -p test_serial_recovery.py -v
+      - if: runner.os == 'Linux'
+        run: python -B scripts/run_ci_tests.py tests.test_scheduler_ownership tests.test_scheduled_review tests.test_task_runtime_review -v
       - run: python -B -X utf8 scripts/run_ci_tests.py tests.test_codex_model_selection tests.test_collaborative_runtime_host tests.test_collaborative_flow -v
       - if: runner.os == 'Linux'
         env:
