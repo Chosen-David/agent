@@ -41,8 +41,8 @@ class WorkerFinalReportTests(unittest.TestCase):
             if recover:
                 raise RecoveryObserved()
 
-        def backend(*args):
-            result = list(load(*args))
+        def backend(*args, **kwargs):
+            result = list(load(*args, **kwargs))
             result[2] = maintain
             return tuple(result)
 
