@@ -66,3 +66,32 @@ class CodeFlowHTMLTests(unittest.TestCase):
             self.assertEqual(result.returncode, 2, result.stderr)
             self.assertIn('flow rejected:', result.stderr)
             self.assertNotIn('Traceback', result.stderr)
+
+    def test_xml_forbidden_characters_rejected_before_export(self):
+        for character in ('\x00', '\x01', '\x0b', '\x1f', '\ud800', '\ufffe', '\uffff'):
+            for location in ('title', 'node', 'edge', 'evidence'):
+                with self.subTest(character=repr(character), location=location):
+                    graph = self.graph()
+                    if location == 'title':
+                        graph['title'] += character
+                    elif location == 'node':
+                        graph['nodes'][0]['label'] += character
+                    elif location == 'edge':
+                        graph['edges'][0]['condition'] += character
+                    else:
+                        graph['nodes'][0]['evidence'][0]['symbol'] += character
+                    result, page, svg = self.run_cli(graph)
+                    self.assertEqual(result.returncode, 2, result.stderr)
+                    self.assertIn('characters forbidden in XML', result.stderr)
+                    self.assertNotIn('Traceback', result.stderr)
+                    self.assertEqual((page, svg), ('', ''))
+
+    def test_xml_legal_whitespace_and_unicode_preserved(self):
+        import xml.etree.ElementTree as ET
+        graph = self.graph()
+        graph['title'] = '中文\t<&>\n\r\U0001f600'
+        result, _, svg = self.run_cli(graph)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        parsed = ET.fromstring(svg)
+        self.assertIn('中文', parsed.find('{http://www.w3.org/2000/svg}title').text)
+        self.assertIn('\U0001f600', svg)

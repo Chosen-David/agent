@@ -12,6 +12,8 @@ KINDS = {'source_fact': '源码事实', 'static_inference': '静态推断', 'unk
 def text(value):
     if not isinstance(value, str) or not value.strip():
         raise ValueError('nonempty text required')
+    if re.search(r'[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff\ufffe\uffff]', value):
+        raise ValueError('text contains characters forbidden in XML')
     return html.escape(value, quote=True)
 
 
