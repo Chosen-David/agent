@@ -3,6 +3,7 @@
 import argparse
 import html
 import json
+import os
 from pathlib import Path
 import re
 
@@ -88,6 +89,16 @@ def render(graph):
     return page, svg
 
 
+def write_if_changed(path, content):
+    raw = content.replace('\n', os.linesep).encode('utf-8')
+    try:
+        if path.read_bytes() == raw:
+            return
+    except OSError:
+        pass
+    path.write_bytes(raw)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('manifest', type=Path)
@@ -98,8 +109,8 @@ def main():
     except (ValueError, KeyError, TypeError, OSError) as exc:
         parser.exit(2, f'flow rejected: {exc}\n')
     args.out.mkdir(parents=True, exist_ok=True)
-    (args.out / 'index.html').write_text(page, encoding='utf-8')
-    (args.out / 'flow.svg').write_text(svg, encoding='utf-8')
+    write_if_changed(args.out / 'index.html', page)
+    write_if_changed(args.out / 'flow.svg', svg)
 
 
 if __name__ == '__main__':

@@ -95,3 +95,35 @@ class CodeFlowHTMLTests(unittest.TestCase):
         parsed = ET.fromstring(svg)
         self.assertIn('中文', parsed.find('{http://www.w3.org/2000/svg}title').text)
         self.assertIn('\U0001f600', svg)
+
+    def test_repeat_export_preserves_files_and_repairs_changed_outputs(self):
+        import os
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            manifest = root / 'flow.json'
+            graph = self.graph()
+            manifest.write_text(json.dumps(graph), encoding='utf-8')
+            command = [sys.executable, str(SCRIPT), str(manifest), '--out', str(root / 'out')]
+            def export():
+                result = subprocess.run(command, capture_output=True)
+                self.assertEqual(result.returncode, 0, result.stderr)
+            export()
+            files = [root / 'out/index.html', root / 'out/flow.svg']
+            expected = [path.read_bytes() for path in files]
+            timestamp = 1600000000000000000
+            for path in files:
+                os.utime(path, ns=(timestamp, timestamp))
+            export()
+            self.assertEqual([path.read_bytes() for path in files], expected)
+            self.assertEqual([path.stat().st_mtime_ns for path in files], [timestamp] * 2)
+            files[1].unlink()
+            export()
+            self.assertEqual(files[1].read_bytes(), expected[1])
+            self.assertEqual(files[0].stat().st_mtime_ns, timestamp)
+            files[0].write_bytes(b'corrupt')
+            export()
+            self.assertEqual(files[0].read_bytes(), expected[0])
+            graph['title'] = 'Updated title'
+            manifest.write_text(json.dumps(graph), encoding='utf-8')
+            export()
+            self.assertTrue(all(path.read_bytes() != previous for path, previous in zip(files, expected)))
