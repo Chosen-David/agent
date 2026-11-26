@@ -14,11 +14,11 @@ class CodeFlowHTMLTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             source = root / 'flow.json'
-            source.write_text(json.dumps(graph))
+            source.write_text(json.dumps(graph), encoding='utf-8')
             result = subprocess.run([sys.executable, str(SCRIPT), str(source), '--out',
-                                     str(root / 'out')], capture_output=True, text=True)
-            html = (root / 'out/index.html').read_text() if (root / 'out/index.html').exists() else ''
-            svg = (root / 'out/flow.svg').read_text() if (root / 'out/flow.svg').exists() else ''
+                                     str(root / 'out')], capture_output=True, text=True, encoding='utf-8')
+            html = (root / 'out/index.html').read_text(encoding='utf-8') if (root / 'out/index.html').exists() else ''
+            svg = (root / 'out/flow.svg').read_text(encoding='utf-8') if (root / 'out/flow.svg').exists() else ''
             return result, html, svg
 
     def graph(self):
@@ -44,7 +44,7 @@ class CodeFlowHTMLTests(unittest.TestCase):
 
     def test_packaged_source_example_exports_valid_svg(self):
         import xml.etree.ElementTree as ET
-        graph = json.loads((SCRIPT.parent.parent / 'references/flow.example.json').read_text())
+        graph = json.loads((SCRIPT.parent.parent / 'references/flow.example.json').read_text(encoding='utf-8'))
         result, page, svg = self.run_cli(graph)
         self.assertEqual(result.returncode, 0, result.stderr)
         ET.fromstring(svg)
