@@ -25,3 +25,9 @@ description: "只读理解代码库、追踪真实调用链与数据流，核查
 规划实验/测量或复用实证结论前按 [既有结果检索与复用](references/result_reuse_workflow.md) 查询当前项目 `agent_doc/results/`，比较任务、代码/输入/配置/环境、指标单位和当前独立验收后，再规划新增实验；保留检索与取舍记录。新数据存 `agent_doc/results/<run_id>/`，旧文件可按真实路径/哈希索引。复用不跳过独立代码/数据门禁、用户明确复现或新主张验收。
 
 历史保护计划的兼容边界见 [旧双主控协议](references/dual_main_workflow.md)。不启动第二主控，不追溯改写已有批准；缺独立证据的旧合同保留 blocked/pending，再按当前用户要求版本化协调。
+
+## 源码与数据流 HTML
+
+用户要求可视化代码、架构或数据流时，先完成上面的源码证据包，再读 [静态网页设计与验收](references/static_frontend_workflow.md) 的代码到 HTML 路径。使用本包 `scripts/render_flow.py` 生成离线 HTML/SVG 起点，保留分支条件和未知项；当前主 agent 串行排版与浏览器自检。输出到获授权产物目录，保持目标源码只读；不要自动安装或启动另一 agent。
+
+可用 `references/flow.example.json` 跑通模板：`python scripts/render_flow.py references/flow.example.json --out /absolute/authorized-output`。示例固定本库源码版本，不代表当前目标项目；实际使用必须替换为该项目核验后的证据。

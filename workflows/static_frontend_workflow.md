@@ -19,3 +19,13 @@
 - [Vercel Web Interface Guidelines](https://github.com/vercel-labs/web-interface-guidelines/blob/main/command.md)，Git blob `3eb3a212b7b89493922ea418489d4c6f67ae8bd5`：采纳语义元素、焦点、减少动画、资源尺寸与长内容检查；框架专用 hydration/路由规则仅在实际框架需要时应用，不为静态 HTML 引入 React。字体大小写与文案规则服从用户语言和品牌。
 
 这两份材料是工具/官方指南，不计入 SYSTEM-99 的论文正文阅读数。没有真实页面对照评测前，不宣称页面质量或性能已提升。
+
+## 从代码与数据流制作 HTML
+
+源码讲解页先按 code-reading 的证据包核对真实入口、调用点、分支与配置；目录依赖不能当执行顺序。冻结 commit/path/symbol/行号；每条边写出数据、形状或单位、状态变化及成立条件。不知道的标 unknown，静态推断标 static_inference；源码位置不能证明运行时已经执行。
+
+按“概览 → 节点 → 连线条件 → 源码证据”渐进展开，图中文字保持短小，长说明留在原生 details 中。精确拓扑使用 SVG；复杂跨模块图先拆视图，不塞成无法阅读的全景图。主 agent 串行完成源码核查、设计与浏览器自检。
+
+code-reading 包内提供无依赖离线入口 `scripts/render_flow.py MANIFEST.json --out OUTPUT_DIR`，生成 index.html 和 flow.svg；它只排版人工核对的关系，不自动提取或认证调用图。manifest 含 title、nodes、edges：node 为 id/label/kind/detail/evidence；edge 为 source/target/label/kind/condition/evidence。kind 只接受 source_fact/static_inference/unknown；evidence 非空列表，每项为完整 commit、path、symbol、start_line、end_line。仅允许简短唯一节点 ID，最多40节点/100边；超过时拆图。由 source_evidence.py 取得定位后，人工核实关系，再构造 manifest；输入应落在项目临时目录，输出遵守目标项目写入授权，不写只读源码目标。
+
+模板只是起点，按页面内容调整视觉层次。离线 SVG 保留连线编号、条件和推断状态；PNG 沿现有精确示意导出路径处理，未生成不声称已交付。使用真实入口在390px/1440px查看截图、缩放和所有 details/下载链接；缺浏览器时报告视觉验收未完成。渲染器不会核验源码内容、性能或真实性，也不能把格式检查称为语义验收。

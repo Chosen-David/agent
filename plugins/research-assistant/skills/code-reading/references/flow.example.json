@@ -1,0 +1,115 @@
+{
+  "title": "源码证据如何生成",
+  "nodes": [
+    {
+      "id": "main",
+      "label": "CLI 参数入口",
+      "kind": "source_fact",
+      "detail": "解析冻结 commit、源码路径与范围；失败以退出码2返回。",
+      "evidence": [
+        {
+          "commit": "2b6dfb55a661aa5022d8baf0219ce3c0e8b91c00",
+          "path": "plugins/research-assistant/skills/code-reading/scripts/source_evidence.py",
+          "symbol": "main",
+          "start_line": 81,
+          "end_line": 94
+        }
+      ]
+    },
+    {
+      "id": "capture",
+      "label": "定位与校验",
+      "kind": "source_fact",
+      "detail": "校验对象、路径和范围；读取源码但不导入执行目标。",
+      "evidence": [
+        {
+          "commit": "2b6dfb55a661aa5022d8baf0219ce3c0e8b91c00",
+          "path": "plugins/research-assistant/skills/code-reading/scripts/source_evidence.py",
+          "symbol": "capture",
+          "start_line": 32,
+          "end_line": 78
+        }
+      ]
+    },
+    {
+      "id": "git",
+      "label": "Git 只读读取",
+      "kind": "source_fact",
+      "detail": "执行对象类型及源码 blob 读取，禁用 lazy fetch 和可选写锁。",
+      "evidence": [
+        {
+          "commit": "2b6dfb55a661aa5022d8baf0219ce3c0e8b91c00",
+          "path": "plugins/research-assistant/skills/code-reading/scripts/source_evidence.py",
+          "symbol": "git",
+          "start_line": 13,
+          "end_line": 17
+        }
+      ]
+    },
+    {
+      "id": "symbols",
+      "label": "Python AST 定义定位",
+      "kind": "source_fact",
+      "detail": "仅 symbol 模式解析 Python 定义，包括嵌套作用域；结果为行号范围。",
+      "evidence": [
+        {
+          "commit": "2b6dfb55a661aa5022d8baf0219ce3c0e8b91c00",
+          "path": "plugins/research-assistant/skills/code-reading/scripts/source_evidence.py",
+          "symbol": "symbols",
+          "start_line": 20,
+          "end_line": 29
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "main",
+      "target": "capture",
+      "label": "解析后的 repo/commit/path/start/end/symbol",
+      "condition": "参数解析成功；capture(**vars(args))",
+      "kind": "source_fact",
+      "evidence": [
+        {
+          "commit": "2b6dfb55a661aa5022d8baf0219ce3c0e8b91c00",
+          "path": "plugins/research-assistant/skills/code-reading/scripts/source_evidence.py",
+          "symbol": "main",
+          "start_line": 81,
+          "end_line": 94
+        }
+      ]
+    },
+    {
+      "source": "capture",
+      "target": "git",
+      "label": "commit → 对象类型 / path → blob / 原始字节",
+      "condition": "依次检查 commit、路径对象类型，再读取源码；任一步失败中止",
+      "kind": "source_fact",
+      "evidence": [
+        {
+          "commit": "2b6dfb55a661aa5022d8baf0219ce3c0e8b91c00",
+          "path": "plugins/research-assistant/skills/code-reading/scripts/source_evidence.py",
+          "symbol": "capture",
+          "start_line": 32,
+          "end_line": 78
+        }
+      ]
+    },
+    {
+      "source": "capture",
+      "target": "symbols",
+      "label": "ast.parse(source) → 定义名称及行号",
+      "condition": "仅设置 symbol 且文件是 .py；无 symbol 使用显式 start/end",
+      "kind": "source_fact",
+      "evidence": [
+        {
+          "commit": "2b6dfb55a661aa5022d8baf0219ce3c0e8b91c00",
+          "path": "plugins/research-assistant/skills/code-reading/scripts/source_evidence.py",
+          "symbol": "capture",
+          "start_line": 32,
+          "end_line": 78
+        }
+      ]
+    }
+  ]
+}
