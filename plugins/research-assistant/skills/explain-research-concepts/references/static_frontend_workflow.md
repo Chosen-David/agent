@@ -22,6 +22,19 @@
 
 这两份材料是工具/官方指南，不计入 SYSTEM-99 的论文正文阅读数。没有真实页面对照评测前，不宣称页面质量或性能已提升。
 
+## 论文交互页的设计转译
+
+以作者实际项目页和对应实现为参照，选择服务当前理解障碍的方法，不复制整站皮肤、遥测或模型依赖。先比较同题材范例的首屏、主图、操作、展开与来源；把拟借鉴的方法落实为用户可操作的行为，再看成品返修。通用前端规范负责排版与可用性，不能代替领域图形设计。
+
+- 主图承担解释：固定一个可手算的例子，让读者点选对象后联动高亮相关节点、连线、数值和说明；对象身份与颜色跨视图保持。提供点击/键盘路径，不只支持hover。实际验收至少一次“选择对象 → 改参数/步骤 → 对照 → reset”，检查高亮与数值仍一致。
+- 先概览，再局部展开推导/证据；展开保留原对象参照，返回后恢复上下文。时间轴、单步与暂停用于观察机制变化，不把自动滚屏或装饰动画当交互。读者应能预测一个未展示输入，再通过控件核对；这只是验收题，不冒充学习效果实验。
+- 字体层级、行宽、配色和图形密度由内容决定。科学视图保留单位、假设、图注与事实来源；窄屏重排或明确局部滚动，不把全图缩到文字不可读。借鉴论文展示的内容组织，不凭网页精美宣称达到发表/科学正确性标准。
+- explain-research-concepts与research-implement-optimize包内可运行 `python scripts/check_page.py DELIVERY.html --offline --with-video`，无视频省略最后参数。它检查声明的HTML资源、锚点、控件名称和视频回退；通过仅为structural-pass，visual_review=pending。动态生成资源、CSS布局、交互语义和媒体解码仍需真实浏览器；不能用该工具给审美打分。
+
+2026-11-27实际打开并操作：[Transformer Explainer](https://poloclub.github.io/transformer-explainer/) 的Temperature解释跳转与主图，[Diffusion Explainer](https://poloclub.github.io/diffusion-explainer/) 的Refiner展开及步进视图。前者代码固定 `poloclub/transformer-explainer@bfe50afba10b9b560b84143ee1107d977defa74f`，读AttentionMatrix前155行、Temperature全文、Textbook前85行；后者固定 `poloclub/diffusion-explainer@0820016ce908a8e66619b7a1c9369af1498160d6`，读controller全文。采纳对象联动、局部解释、可暂停时间轴到本流程与HSDP实例；不引600MB浏览器模型、遥测、默认自动播放和仅鼠标SVG控件。实现选节不等于全库审计，网站/代码不是论文正文精读。
+
+同日复核Anthropic frontend-design `e4bb5d960d87126ff3b3a8af1a104b7db67560ba` 与Vercel agent-skills `5a37a6329fbad3666c3207392a6a7c0110e92efb`：继续采用内容驱动设计、实现后截图检查和原生控件，保留本库单一流程，不另装竞争Skill或执行远程安装命令。[Distill Feature Visualization](https://distill.pub/2017/feature-visualization/)仅阅读概览与目标定义选节；本次不引其旧组件/外观模板，前两者已覆盖当前交互需求。
+
 ## 从代码与数据流制作 HTML
 
 源码讲解页先按 code-reading 的证据包核对真实入口、调用点、分支与配置；目录依赖不能当执行顺序。冻结 commit/path/symbol/行号；每条边写出数据、形状或单位、状态变化及成立条件。不知道的标 unknown，静态推断标 static_inference；源码位置不能证明运行时已经执行。
@@ -35,7 +48,7 @@ code-reading 包内提供无依赖离线入口 `scripts/render_flow.py MANIFEST.
 
 ## 教学与论文演示页面
 
-知识讲解页沿 [叙事与教学图型](explanation_patterns.md) 定位理解障碍，并按 [视频讲解](video_explanation_workflow.md) 制作必要短片。参考3Blue1Brown的图形推理：贯穿例子、稳定对象、保留变换前参照、图形变化后连接公式；不把黑底/配色当教学方法。科研展示同时核对论文来源、假设、单位、坐标和误差，不用装饰替代证据。
+论文讲解页先沿 [论文原图与关键图串讲](visual_explanation_workflow.md) 保留原图、来源版本及编码表，再选关键图组织全篇；重绘示意与作者原图分开。知识讲解页沿 [叙事与教学图型](explanation_patterns.md) 定位理解障碍，并按 [视频讲解](video_explanation_workflow.md) 制作必要短片。参考3Blue1Brown的图形推理：贯穿例子、稳定对象、保留变换前参照、图形变化后连接公式；不把黑底/配色当教学方法。科研展示同时核对论文来源、假设、单位、坐标和误差，不用装饰替代证据。
 
 - 首屏呈现一个关键问题、核心图形和简短答案；以对象/数据为视觉中心，正文、公式和细节按“现象 → 操作 → 推导 → 边界”展开。用字体尺度、留白、对齐、有限颜色和清晰图注建立论文演示的层次，不把整篇内容铺成同尺寸卡片。复杂页提供章节导航和可寻址锚点，折叠推导仍能找到来源。
 - 只有改变理解的控件才保留。滑杆/切换/单步/对照必须绑定真实计算或固定可追溯数据；改变输入时同步图、数值、公式标签和单位，保留reset及初始状态。播放/暂停与逐步观察可并存，不依靠随机动画伪造实验。说明参数范围、极值、非法输入和例子的适用边界。区分原始数据、教学模拟与静态推断。

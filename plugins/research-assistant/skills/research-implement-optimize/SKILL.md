@@ -15,7 +15,7 @@ description: "端到端代码实现与性能优化，适用于静态 HTML/CSS �
 
 涉及 AI Infra/AI 算法/数据结构的实现选型，先读 [工程知识复用](references/engineering_reuse.md)，检索原论文实验/消融与固定 commit 的实现，再比较候选。许可/API/语义核查和目标正确性/性能验收仍必要。
 
-制作或精修 HTML、静态网页、展示页和前端界面时，先读 [静态网页设计与验收](references/static_frontend_workflow.md)。由当前主 agent 完成设计、实现与浏览器自检。
+制作或精修 HTML、静态网页、展示页和前端界面时，先读 [静态网页设计与验收](references/static_frontend_workflow.md)。参考作者论文项目页的对象联动与局部展开，运行包内 `scripts/check_page.py` 检查声明资源/控件，再由当前主 agent 完成设计、实现与浏览器自检；结构通过不代表精美。
 
 先按影响范围选择入口：
 

@@ -7,6 +7,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -53,14 +54,23 @@ class VideoExplanationTests(unittest.TestCase):
 
     def test_skill_routes_to_packaged_workflow(self):
         skill = SCRIPT.parents[1]
-        self.assertIn('references/video_explanation_workflow.md', (skill / 'SKILL.md').read_text())
-        reference = (skill / 'references/video_explanation_workflow.md').read_text()
+        self.assertIn('references/video_explanation_workflow.md', (skill / 'SKILL.md').read_text(encoding="utf-8"))
+        reference = (skill / 'references/video_explanation_workflow.md').read_text(encoding="utf-8")
         self.assertIn('teaching_review=pending', reference)
         self.assertIn('3Blue1Brown', reference)
-        html = (skill / 'references/static_frontend_workflow.md').read_text()
+        html = (skill / 'references/static_frontend_workflow.md').read_text(encoding="utf-8")
         self.assertIn('video controls', html)
         self.assertIn('WebVTT', html)
-        self.assertIn('references/static_frontend_workflow.md', (skill / 'SKILL.md').read_text())
+        self.assertIn('references/static_frontend_workflow.md', (skill / 'SKILL.md').read_text(encoding="utf-8"))
+
+    def test_packaged_workflow_under_non_utf8_default(self):
+        original = Path.read_text
+
+        def locale_read(path, encoding=None, errors=None):
+            return original(path, encoding=encoding or 'cp1252', errors=errors)
+
+        with patch.object(Path, 'read_text', locale_read):
+            self.test_skill_routes_to_packaged_workflow()
 
     @unittest.skipUnless(shutil.which('ffmpeg') and shutil.which('ffprobe'), 'media backend unavailable')
     def test_real_encoded_media_and_missing_audio_control(self):
