@@ -21,6 +21,7 @@ import weakref
 from typing import Callable, Protocol
 import uuid
 
+from .file_lock import try_owner_lock
 from .project_docs import guard_write_path
 
 
@@ -464,6 +465,16 @@ class Engine:
         """
         if not isinstance(event_id, str) or not event_id:
             raise ValueError('event ID required')
+        identity = hashlib.sha256(run_id.encode()).hexdigest()
+        path = Path(self.store.path + '.' + identity + '.tick.lock')
+        if not path.exists():
+            self.store.snapshot(run_id)
+        with try_owner_lock(path) as owned:
+            if not owned:
+                return dict(self.store.snapshot(run_id)['state'], tick_delivery='deferred_active_writer')
+            return self._tick_owned(run_id, event_id)
+
+    def _tick_owned(self, run_id, event_id):
         now, claim = self.clock(), None
         # Before terminal fast paths and each actual claim, including restart.
         try:

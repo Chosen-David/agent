@@ -90,7 +90,7 @@
 1. **正式入口收口**：打分必须走正式入口（冻结 manifest + 评分门禁 + 身份闭包 + 原子发布），不是「产出文件都在目录里就算完成」；min-samples、行数、schema、跨臂身份逐项过门禁，fail-closed。
 2. **「生成完」≠「证据闭环」，两件事分开列**：任务链清单里「全部格已产出」与「全部数字已 commit 可验、可入下游（论文/报告）」是两个验收态；后者还差收口打分 + 收口产物入库。汇报时分开说，不合并。
 3. **数字落 commit**：收口产物（summary/receipt/结果 JSON）与代码同 commit push，任何人可从 commit SHA 复算；不落 commit 的数字只算中间态。
-4. **多 worker 并发写共享 git 索引**：多个 CPU agent 并发在同一仓库 commit 实测撞 `index.lock`。规程：**CPU 侧子任务用 `git worktree add` 隔离工作区 + 独立输出目录，只由主协调者串行汇入**；GPU 远程机不 git（见 §2，文件回传是唯一通道），不存在此问题。
+4. **多 worker 并发写共享 git 索引**：多个 CPU agent 并发在同一仓库 commit 实测撞 `index.lock`。规程：**当前主写先用 `scripts/workspace_status.py --repo PROJECT --intent develop` 核对版本和工作区归属，同任务兼容则复用；确需隔离交由宿主或已授权的独立工作区，使用独立输出目录**；GPU 远程机不 git（见 §2，文件回传是唯一通道），不存在此问题。
 
 ## 与规划层的衔接
 
@@ -113,7 +113,7 @@
 | T3 | **capture 期 profiler cuda_us 全 0**（CUDA Graph 模式限制） | opattr 归因误读"copy 类不存在" → 错误优化方向 | graph 模式 busy 以 CUPTI/census 设备时间为准；profiler 的 cuda_us 字段参考形状不参考数值 |
 | T4 | **生产 KV 是 head-major 置换视图** | `is_contiguous()` 返回 False → 门控全关 → 优化零收益 | 查门控必须走 `stride(2)==1`，不能看 `is_contiguous()` |
 | T5 | **跨机 rsync 兼容性**A 机 yum 源无 rsync / B 机走非标端口 / C 机用 sshpass | 报 No such file / Connection refused / exit 5 + 似密码错 | 每台机独立：①`mkdir -p` 目标 ②sshpass 必须 `-e`（走 SSHPASS 环境变量） ③回传前小文件双端 md5 校验 |
-| T6 | **pc40 宿主仓库被其他会话切到非生产分支** | shadow 包 tli_indexer ≠ 生产 commit，census/判决全偏 | 判决类脚本开工前 `git log -1` 核对远端；被切走则 `git worktree add` 到生产 SHA 隔离执行 |
+| T6 | **pc40 宿主仓库被其他会话切到非生产分支** | shadow 包 tli_indexer ≠ 生产 commit，census/判决全偏 | 判决类脚本开工前 `git log -1` 核对远端；只读取证用固定 SHA 的 git show；需执行时检查工作区所有者，交由宿主选取与生产 SHA 相符的隔离工作区 |
 | T7 | **census 采集被并行会话 GPU0 大任务污染** | gemm 时间非单调（如 4.36/5.71/5.14），bottleneck 结论无效 | 重跑前 `nvidia-smi` 确认 compute-apps 无冲突进程；被污染的 run 整组废弃，不拿第二次覆盖 |
 
 固化来源：MEMORY.md E166h / E166d2 / E168i / E168j / E168h 段；geometry_verdict / opattr_verdict 事件。

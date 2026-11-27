@@ -1,0 +1,5 @@
+# Workspace lifecycle host cases
+
+Use the existing development evaluation pipeline with this tasks.json and rubric.json, a pinned revision, and an external fixture root. The host supplies small.txt, query.txt and resource.json. Bind actual repositories, revisions, workspaces, existing outputs and live consumer observations before dispatch. Keep the expected value, dirty/ignored paths, ownership and side-effect counters on the evaluation side. Vary paths, file sizes and the number of active consumers between matched trials. The same resource file can contain the three named resource scenarios.
+
+Run the actual assigned tools in the selected task directory. Preserve the start/finish receipts, command/tool observations, final files, workspace registrations and model usage. A correct explanation alone does not establish that the host used the intended tool. A denied tool yields a blocked trial. Do not give the private rubric to the worker. This catalog is opt-in and creates no ordinary task dispatch.

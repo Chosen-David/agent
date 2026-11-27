@@ -9,25 +9,35 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@v5
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: '3.12'
-      - name: Create isolated tool environment
-        run: python -m venv .venv
       - name: Run external checks against this checkout
         env:
           AGENT_TEST_BASE: ${{ github.event.pull_request.base.sha || github.event.before }}
         run: >-
-          .venv/bin/python -B scripts/project_test.py
+          python -B scripts/project_test.py
           --workflow-root "$GITHUB_WORKSPACE" --project agent
           --target "$GITHUB_WORKSPACE" --output "$RUNNER_TEMP/agent-project-checks"
+      - name: Run workspace lifecycle and supervisor acceptance
+        run: >-
+          python -B scripts/project_test.py
+          --workflow-root "$GITHUB_WORKSPACE" --project agent --task workspace-lifecycle
+          --target "$GITHUB_WORKSPACE" --output "$RUNNER_TEMP/agent-lifecycle-checks"
+      - name: Verify detached supervisor progress across a worker restart
+        env:
+          AGENT_TEST_REAL_TMUX: '1'
+        run: python -B scripts/run_ci_tests.py tests.test_managed_supervisor.RealTmuxTests -v
       - name: Preserve checks and original failures
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: agent-project-checks
-          path: ${{ runner.temp }}/agent-project-checks
+          path: |
+            ${{ runner.temp }}/agent-project-checks
+            ${{ runner.temp }}/agent-lifecycle-checks
           if-no-files-found: warn

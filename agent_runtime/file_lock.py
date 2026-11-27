@@ -1,6 +1,8 @@
 """Small flock-compatible exclusive locks for Windows and POSIX."""
+from contextlib import contextmanager
 import errno
 import os
+import stat
 import time
 
 LOCK_EX, LOCK_NB, LOCK_UN = 2, 4, 8
@@ -29,3 +31,25 @@ def flock(stream, operation):
                 time.sleep(.05)
     finally:
         os.lseek(fd, position, os.SEEK_SET)
+
+@contextmanager
+def try_owner_lock(path):
+    from .project_docs import guard_write_path
+    path = guard_write_path(path)
+    if path.is_symlink():
+        raise ValueError('owner lock must not be redirected')
+    flags = os.O_CREAT | os.O_RDWR | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
+    fd = os.open(path, flags, 0o600)
+    try:
+        opened, named = os.fstat(fd), path.lstat()
+        if (not stat.S_ISREG(opened.st_mode) or (opened.st_dev, opened.st_ino) != (named.st_dev, named.st_ino)
+                or getattr(named, 'st_file_attributes', 0) & getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 1024)):
+            raise ValueError('owner lock must be a stable regular file')
+        try:
+            flock(fd, LOCK_EX | LOCK_NB)
+        except BlockingIOError:
+            yield False
+        else:
+            yield True
+    finally:
+        os.close(fd)

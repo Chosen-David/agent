@@ -128,6 +128,10 @@ def _ref(value):
 
 
 def _check_ref(root, ref):
+    _verified_ref_size(root, ref, byte_limit=ARTIFACT_LIMIT)
+
+
+def _verified_ref_size(root, ref, *, byte_limit):
     _ref(ref)
     read_path, relocated_digest = legacy_read_binding(root, ref['path'])
     path = _path(root, read_path)
@@ -137,17 +141,26 @@ def _check_ref(root, ref):
         with os.fdopen(fd, 'rb', closefd=False) as stream:
             info = os.fstat(stream.fileno())
             _need(stat.S_ISREG(info.st_mode), 'artifact must be a regular file')
-            _need(info.st_size <= ARTIFACT_LIMIT, 'artifact exceeds 256 MiB; use bounded shard manifests')
+            if 'expected_size_bytes' in ref:
+                expected = ref['expected_size_bytes']
+                _need(type(expected) is int and expected >= 0, 'invalid expected artifact size')
+                _need(info.st_size == expected, 'stale artifact size: ' + ref['path'])
+            _need(info.st_size <= byte_limit, 'artifact exceeds hash budget; use bounded shard manifests')
             chunk_size = min(65536, max(1, info.st_size + 1))
-            while block := stream.read(chunk_size):
+            while size < byte_limit and (block := stream.read(min(chunk_size, byte_limit - size))):
                 size += len(block)
-                _need(size <= ARTIFACT_LIMIT, 'artifact grew beyond hash bound')
                 digest.update(block)
+            final = os.fstat(fd)
+            _need(final.st_size <= byte_limit, 'artifact grew beyond hash bound')
+            _need((info.st_size, info.st_ctime_ns, info.st_mtime_ns) ==
+                  (final.st_size, final.st_ctime_ns, final.st_mtime_ns) and size == final.st_size,
+                  'artifact changed during verification')
     finally:
         os.close(fd)
     _need(digest.hexdigest() == ref['sha256'], 'stale artifact: ' + ref['path'])
     _need(relocated_digest_matches(digest.hexdigest(), relocated_digest),
           'relocated historical result bytes changed')
+    return size
 
 
 def _lexical_score(value, tokens):
@@ -453,6 +466,107 @@ class ResultStore:
                           'historical_artifacts': deepcopy(artifacts), 'contract': None,
                           'validation_at_registration': {'status': 'unknown', 'proof': None},
                           'trust_note': 'Historical refs only; old bytes are not migrated or certified.'})
+
+    def _verify_recovery(self, manifest_path, *, byte_limit, provider):
+        """Verify a complete immutable generation with a host-supplied trial restore."""
+        raw = _read(self.root, manifest_path)
+        manifest = _json(raw)
+        _need(manifest.get('schema_version') == 'recovery-manifest/v1', 'invalid recovery manifest')
+        _identifier(manifest.get('run_id'))
+        for key in ('producer', 'source_run', 'code_revision', 'input_revision', 'retention_reason'):
+            _need(_text(manifest.get(key)), 'missing recovery field: ' + key)
+        for key in ('consumers', 'dependencies'):
+            values = manifest.get(key)
+            _need(isinstance(values, list) and all(_text(value) for value in values),
+                  'invalid recovery references: ' + key)
+        _need(type(byte_limit) is int and byte_limit >= 0, 'explicit hash byte budget required')
+        _need(manifest.get('save_state') == 'complete', 'save protocol incomplete')
+        _need(callable(getattr(provider, 'save_completed', None)) and callable(getattr(provider, 'restore', None)),
+              'trusted save completion and restore adapter required')
+        _need(provider.save_completed(self.root, deepcopy(manifest)) is True, 'save protocol completion unverified')
+        refs = manifest.get('files')
+        ranks = manifest.get('world_size')
+        _need(type(ranks) is int and 1 <= ranks <= 100000, 'invalid world size')
+        _need(isinstance(refs, list) and 1 <= len(refs) <= 100000, 'recovery files required')
+        seen, shards, metadata, planned = set(), set(), False, 0
+        for ref in refs:
+            _ref(ref)
+            path = ref['path']
+            _need(path not in seen and path == Path(path).as_posix(), 'duplicate or noncanonical recovery path')
+            seen.add(path)
+            amount = ref.get('expected_size_bytes')
+            _need(type(amount) is int and amount >= 0, 'expected size required')
+            planned += amount
+            if ref.get('type') == 'rank':
+                rank = ref.get('rank')
+                _need(type(rank) is int and 0 <= rank < ranks, 'invalid shard rank')
+                shards.add(rank)
+            else:
+                _need(ref.get('type') == 'metadata', 'invalid recovery file type')
+                metadata = True
+        _need(metadata and len(shards) == ranks, 'missing ranks or checkpoint metadata')
+        _need(planned <= byte_limit, 'hash read budget insufficient')
+        def snapshot():
+            identities = {}
+            for ref in refs:
+                info = _path(self.root, ref['path']).stat()
+                _need(stat.S_ISREG(info.st_mode) and info.st_size == ref['expected_size_bytes'],
+                      'stale recovery file type or size')
+                identities[ref['path']] = (info.st_dev, info.st_ino, info.st_ctime_ns, info.st_mtime_ns)
+            return identities
+        before = snapshot()
+        consumed = sum(_verified_ref_size(self.root, ref, byte_limit=ref['expected_size_bytes']) for ref in refs)
+        _need(provider.restore(self.root, deepcopy(manifest)) is True, 'trial restore failed')
+        _need(snapshot() == before, 'checkpoint changed during trial restore')
+        manifest_ref = {'path': manifest_path, 'sha256': hashlib.sha256(raw).hexdigest(),
+                        'expected_size_bytes': len(raw)}
+        _check_ref(self.root, manifest_ref)
+        return manifest, manifest_ref, consumed
+
+    def register_recovery(self, manifest_path, *, byte_limit, provider):
+        manifest, manifest_ref, consumed = self._verify_recovery(manifest_path, byte_limit=byte_limit, provider=provider)
+        return self._save({'schema_version': SCHEMA, 'run_id': manifest['run_id'], 'summary': manifest['retention_reason'],
+                           'origin': 'historical-external-reference', 'context': {}, 'contract': None,
+                           'registered_at': dt.datetime.now(dt.timezone.utc).isoformat(),
+                           'historical_artifacts': [manifest_ref], 'recovery_manifest_ref': manifest_ref,
+                           'hash_payload_bytes_read': consumed,
+                           'validation_at_registration': {'status': 'unknown', 'proof': None},
+                           'trust_note': 'Adapter trial restore at registration; recheck at consumption.'})
+
+    def review_recovery(self, run_id, replacement_id, *, byte_limit, provider):
+        """Dry-run only. Live references and semantic substitutability come from the host."""
+        decision = {'run_id': run_id, 'replacement_id': replacement_id, 'dry_run': True,
+                    'action': 'retain', 'reasons': []}
+        if run_id == replacement_id:
+            decision['reasons'].append('distinct recovery point required')
+            return decision
+        records = [self.show(identity)['record'] for identity in (run_id, replacement_id)]
+        manifests = []
+        for record in records:
+            ref = record['recovery_manifest_ref']
+            raw = _read(self.root, ref['path'])
+            _need(hashlib.sha256(raw).hexdigest() == ref['sha256'], 'stale recovery manifest reference')
+            manifest = _json(raw)
+            _need(manifest['run_id'] == record['run_id'], 'recovery manifest identity changed')
+            manifests.append(manifest)
+        def file_ids(manifest):
+            return {_path(self.root, item['path']).resolve() for item in manifest['files']}
+        if file_ids(manifests[0]) & file_ids(manifests[1]):
+            decision['reasons'].append('replacement references original payload')
+        _need(callable(getattr(provider, 'release_facts', None)), 'trusted live release facts adapter required')
+        facts = provider.release_facts(self.root, *map(deepcopy, manifests))
+        for key in ('owner_verified', 'save_complete', 'replacement_compatible', 'retention_satisfied'):
+            if not isinstance(facts, dict) or facts.get(key) is not True:
+                decision['reasons'].append('unverified ' + key)
+        for key in ('active_writes', 'consumers', 'recovery_dependencies', 'retention_holds', 'locks'):
+            if not isinstance(facts, dict) or facts.get(key) != []:
+                decision['reasons'].append('active or unknown ' + key)
+        if not decision['reasons']:
+            ref = records[1]['recovery_manifest_ref']
+            _, current, count = self._verify_recovery(ref['path'], byte_limit=byte_limit, provider=provider)
+            _need(current == ref, 'replacement manifest changed')
+            decision.update(action='candidate-for-review', replacement_hash_payload_bytes_read=count)
+        return decision
 
     def _readme_routes(self, names, tokens, limit):
         """Rank index rows for existing direct children. Never open a linked target."""

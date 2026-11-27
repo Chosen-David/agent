@@ -33,6 +33,7 @@ jobs:
       - name: Check WSL setup contracts without installing
         if: runner.os == 'Windows'
         run: python -B scripts/project_test.py --workflow-root . --project agent --task WSL-SETUP-01 --target . --output "${{ runner.temp }}/wsl-setup"
+      - run: python -B scripts/run_ci_tests.py tests.test_storage_budget tests.test_recovery_registration tests.test_workspace_status.WorkspaceTests.test_history_and_resume_leave_registration_unchanged tests.test_workspace_status.WorkspaceTests.test_host_unknown_and_dirty_workspace_retained -v
       - run: python -B scripts/run_ci_tests.py discover -s tests -p test_serial_recovery.py -v
       - if: runner.os == 'Linux'
         run: python -B scripts/run_ci_tests.py tests.test_scheduler_ownership tests.test_scheduled_review tests.test_task_runtime_review -v
@@ -126,6 +127,7 @@ jobs:
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1
         with:
           python-version: '3.12'
+      - run: python -B scripts/run_ci_tests.py tests.test_storage_budget tests.test_recovery_registration tests.test_workspace_status.WorkspaceTests.test_history_and_resume_leave_registration_unchanged tests.test_workspace_status.WorkspaceTests.test_host_unknown_and_dirty_workspace_retained -v
       - run: python -B scripts/run_ci_tests.py discover -s tests -p test_serial_recovery.py -v
       - run: python -B scripts/run_ci_tests.py discover -s tests -p test_completed_review_recovery.py -v
       - run: python -B scripts/run_ci_tests.py discover -s tests -p test_terminal_revalidation.py -v

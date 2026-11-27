@@ -4,6 +4,7 @@ import argparse
 import html
 import json
 import os
+import time
 from pathlib import Path
 import re
 
@@ -91,26 +92,42 @@ def render(graph):
 
 def write_if_changed(path, content):
     raw = content.replace('\n', os.linesep).encode('utf-8')
+    existing = None
     try:
-        if path.read_bytes() == raw:
-            return
+        if path.stat().st_size == len(raw):
+            with path.open('rb') as stream:
+                existing = stream.read(len(raw) + 1)
     except OSError:
         pass
-    path.write_bytes(raw)
+    written = 0 if existing == raw else path.write_bytes(raw)
+    return written, len(existing or b'')
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('manifest', type=Path)
     parser.add_argument('--out', type=Path, required=True)
+    parser.add_argument('--metrics', action='store_true', help='emit per-output application I/O as JSON')
     args = parser.parse_args()
+    started = time.monotonic()
+    events = []
     try:
         page, svg = render(json.loads(args.manifest.read_text(encoding='utf-8')))
     except (ValueError, KeyError, TypeError, OSError) as exc:
         parser.exit(2, f'flow rejected: {exc}\n')
     args.out.mkdir(parents=True, exist_ok=True)
-    write_if_changed(args.out / 'index.html', page)
-    write_if_changed(args.out / 'flow.svg', svg)
+    for name, content in (('index.html', page), ('flow.svg', svg)):
+        path = args.out / name
+        written, compared = write_if_changed(path, content)
+        if args.metrics:
+            info = path.stat()
+            events.append({'target': str(path.resolve()), 'action': 'write' if written else 'reuse',
+                           'application_bytes_written': written, 'comparison_bytes_read': compared,
+                           'logical_bytes': info.st_size,
+                           'allocated_bytes': info.st_blocks * 512 if hasattr(info, 'st_blocks') else None})
+    if args.metrics:
+        print(json.dumps({'source': str(args.manifest.resolve()), 'outputs': events,
+                          'elapsed_seconds': time.monotonic() - started}))
 
 
 if __name__ == '__main__':

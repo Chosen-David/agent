@@ -271,6 +271,16 @@ def synchronize(repo, destination, state, codex_home, *, adopt=False, check=Fals
         check_file_layout(destination, files)
         changed = {p: data for p, data in files.items() if actual.get(p) != wanted[p]}
         removed = sorted(set(prior['files']) - set(files)) if prior else []
+        if (state / 'pending.json').exists():
+            raise ValueError('Interrupted sync; inspect pending.json and backups before recovery')
+        current_manifest = (installation_state(load_json(manifest_path, max_bytes=INSTALLATION_STATE_LIMIT))
+                            if manifest_path.exists() else None)
+        if current_manifest != prior:
+            raise ValueError('Installation ownership changed during preflight')
+        if not changed and not removed and instructions == current and prior == new:
+            return {'status': 'configured', 'revision': revision, 'skills': len(roles),
+                    'files': len(files), 'updated_files': 0, 'model_probe': 'not_run',
+                    'scheduler': 'not_started'}
         backup = state/'backups'/str(time.time_ns())
         writable_installation_root(backup)
         for relative in [*changed, *removed]:

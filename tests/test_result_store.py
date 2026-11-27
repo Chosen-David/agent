@@ -392,6 +392,22 @@ class ResultStoreTests(unittest.TestCase):
         with self.assertRaises(ResultStoreError):
             register_task_result(self.root, task)
 
+    def test_size_prefilter_and_same_size_integrity(self):
+        artifact = self.root / 'data.bin'
+        artifact.write_bytes(b'first')
+        ref = {'path': artifact.name, 'sha256': hashlib.sha256(b'first').hexdigest(),
+               'expected_size_bytes': 4}
+        with self.assertRaisesRegex(ResultStoreError, 'stale artifact size'):
+            self.store.register_history('old', 'test result', [ref])
+        ref['expected_size_bytes'] = 5
+        record = self.store.register_history('old', 'test result', [ref])
+        self.assertEqual(record['record']['historical_artifacts'], [ref])
+        artifact.write_bytes(b'other')
+        decision = self.store.decide_run('old', {})
+        self.assertEqual(decision['validation_status'], 'stale')
+        self.assertTrue(any('stale artifact' in item for item in decision['reasons']))
+        self.assertEqual(list(self.root.rglob('*.bin')), [artifact])
+
     def test_historical_refs_preserved_unknown_and_native_location_required(self):
         outside = self.root / 'old-result.json'
         outside.write_text('{"metric": 42}')

@@ -376,3 +376,39 @@ class RealTmuxTests(unittest.TestCase):
                 if config:
                     Store(state_dir / 'state.sqlite').cancel(plan['run_id'], 'test cleanup')
                     tmux('kill-session', '-t', '=' + config['session'], check=False)
+
+    def test_dependency_retry_worker_restart_and_verified_completion(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            source = root / 'TASK.md'
+            source.write_text('- [ ] [A] Produce payload\n- [ ] [B] Consume payload\n')
+            plan = prepare(source, 'lifecycle-proof', 'auto', 'explicit fixture', review_required=False)
+            plan['supervision'].update(min_seconds=1, max_seconds=1)
+            for task in plan['tasks']:
+                name = task['task_id']
+                payload = b'validated payload' if name == 'A' else b'validated payload consumed'
+                task.update(action='fixture', depends_on=[] if name == 'A' else ['A'],
+                            max_attempts=2, estimated_seconds=1)
+                task['done_when'] = {'artifacts': [dict(path=name + '.bin', sha256=hashlib.sha256(payload).hexdigest())]}
+            atomic_json(root / 'plan.json', plan)
+            state = root / 'run'
+            args = [sys.executable, '-m', 'agent_runtime.task_supervisor', 'start', '--legacy-unprotected',
+                    '--plan', str(root / 'plan.json'), '--project-root', str(root), '--state-dir', str(state),
+                    '--adapter', str(ROOT / 'tests/fixtures/workspace_lifecycle_adapter.py')]
+            try:
+                launcher = subprocess.run(args, cwd=ROOT, capture_output=True, text=True, timeout=15)
+                self.assertEqual(launcher.returncode, 0, launcher.stderr)
+                self.assertEqual(json.loads(launcher.stdout)['status'], 'started')
+                wait_for((state / 'final-report.json').exists, seconds=40)
+                self.assertTrue(json.loads((state / 'final-report.json').read_bytes())['all_reportable'])
+                events = [json.loads(line) for line in (root / 'actions.jsonl').read_text().splitlines()]
+                self.assertEqual([e['task'] for e in events if e['kind'] == 'handler_start'], ['A', 'A', 'B'])
+                self.assertEqual([e['task'] for e in events if e['kind'] == 'payload_created'], ['A', 'B'])
+                self.assertEqual(len({e['pid'] for e in events}), 2)
+                self.assertEqual((root / 'B.bin').read_bytes(), b'validated payload consumed')
+            finally:
+                if (state / 'launch.json').exists():
+                    config = json.loads((state / 'launch.json').read_bytes())
+                    if not (state / 'final-report.json').exists():
+                        Store(state / 'state.sqlite').cancel(plan['run_id'], 'fixture teardown')
+                    tmux('kill-session', '-t', '=' + config['session'], check=False)

@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from scripts.setup_codex import synchronize
+from scripts.setup_codex import atomic, synchronize
 from scripts.load_skill import load_codex_skill
 
 
@@ -55,6 +55,15 @@ class CodexSetupTests(unittest.TestCase):
 
     def sync(self, **kwargs):
         return synchronize(self.repo, self.dest, self.state, self.home, **kwargs)
+
+    def test_verified_repeat_never_rewrites_recovery_or_manifest(self):
+        self.sync()
+        manifest = self.state / 'installation.json'
+        os.utime(manifest, (1000000000, 1000000000))
+        with patch('scripts.setup_codex.atomic', wraps=atomic) as writes:
+            self.assertEqual(self.sync()['updated_files'], 0)
+            self.assertEqual([str(call.args[0]) for call in writes.call_args_list], [])
+        self.assertEqual(manifest.stat().st_mtime_ns, 1000000000000000000)
 
     def test_codex_loader_uses_user_installation_without_project_setup(self):
         self.sync()

@@ -46,7 +46,7 @@ class Results(unittest.TestCase):
 
     def test_bounded_rank_preserves_errors(self):
         class Store(r.ResultStore):
-            def _directories(self,max_scan): return [str(i) for i in range(30)],False,None
+            def _directories(self,max_scan,*,searching=False): return [str(i) for i in range(30)],False,None
             def show(self,name):
                 if name=='4': raise r.ResultStoreError('bad')
                 record={'summary':'word','run_id':name,'result_id':None,'producer_task_id':None,'context':{},'origin':'historical','validation_at_registration':{'status':'pending'}}
@@ -57,7 +57,7 @@ class Results(unittest.TestCase):
 
     def test_custom_show_serializes_once(self):
         class Store(r.ResultStore):
-            def _directories(self,max_scan): return ['a'],False,None
+            def _directories(self,max_scan,*,searching=False): return ['a'],False,None
             def show(self,name):
                 return {'record':{'summary':'word other','context':{},'origin':'historical','validation_at_registration':{'status':'pending'}},'record_ref':{'sha256':'0'*64,'path':'a'}}
         original=r.json.dumps

@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -41,6 +42,24 @@ class CodeFlowHTMLTests(unittest.TestCase):
         self.assertIn('module.py', html)
         self.assertNotIn('https://', html)
         self.assertIn('viewBox=', svg)
+
+    def test_repeat_preserves_identical_outputs_and_repairs_same_size_drift(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            command = [sys.executable, str(SCRIPT),
+                       str(SCRIPT.parent.parent / 'references/flow.example.json'), '--out', tmp]
+            subprocess.run(command, check=True)
+            page, svg = root / 'index.html', root / 'flow.svg'
+            original = page.read_bytes()
+            for path in (page, svg):
+                os.utime(path, (1000000000, 1000000000))
+            timestamp = svg.stat().st_mtime_ns
+            subprocess.run(command, check=True)
+            self.assertEqual(page.stat().st_mtime_ns, timestamp)
+            page.write_bytes(b'!' + original[1:])
+            subprocess.run(command, check=True)
+            self.assertEqual(page.read_bytes(), original)
+            self.assertEqual(svg.stat().st_mtime_ns, timestamp)
 
     def test_packaged_source_example_exports_valid_svg(self):
         import xml.etree.ElementTree as ET

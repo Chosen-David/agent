@@ -6,15 +6,12 @@ allows explicit restart on the same disk; it cannot keep a powered-off host aliv
 from __future__ import annotations
 
 import time
-import os
-import stat
 from pathlib import Path
 from typing import Protocol
 import uuid
 
 from .core import Engine, Store
-from .project_docs import guard_write_path
-from .file_lock import flock, LOCK_EX, LOCK_NB
+from .file_lock import try_owner_lock
 
 
 class Scheduler(Protocol):
@@ -87,11 +84,16 @@ class LocalScheduler:
             raise ValueError('change reference required')
         with self.store.transaction() as db:
             plan, state = self.store.load(db, run_id)
+            if state['status'] in ('done', 'cancelled', 'failed'):
+                self.store.log(db, run_id, self.clock(), 'terminal_wake', reference)
+                return {'delivery': 'terminal', 'state': state['status'], 'progress_confirmed': False}
             earliest = max(self.clock(), state.get('last_check_at', 0) + plan['supervision']['min_seconds'])
-            db.execute("UPDATE monitors SET due=MIN(due,?),version=version+1 WHERE chain_id=? AND status='active'", (earliest, run_id))
+            update = db.execute("UPDATE monitors SET due=MIN(due,?),version=version+1 WHERE chain_id=? AND status='active'", (earliest, run_id))
             state['idle_ticks'] = 0
             self.store.save(db, run_id, state)
             self.store.log(db, run_id, self.clock(), 'change_event', reference)
+            return {'delivery': 'monitor_notified' if update.rowcount else 'manual_recheck_available',
+                    'progress_confirmed': False}
 
     def heartbeat(self, service_id, ttl=30):
         with self.store.transaction() as db:
@@ -100,24 +102,9 @@ class LocalScheduler:
 
     def drain_once(self, engine: Engine, run_id=None, *, on_due=None):
         """Serialize review and tick on this local store; release ownership on process exit."""
-        path = guard_write_path(Path(self.store.path).with_name(Path(self.store.path).name + '.drain.lock'))
-        if path.is_symlink():
-            raise ValueError('scheduler lock must not be redirected')
-        flags = os.O_CREAT | os.O_RDWR | getattr(os, 'O_NOFOLLOW', 0) | getattr(os, 'O_NONBLOCK', 0)
-        fd = os.open(path, flags, 0o600)
-        try:
-            opened, named = os.fstat(fd), path.lstat()
-            if (not stat.S_ISREG(opened.st_mode) or
-                    (opened.st_dev, opened.st_ino) != (named.st_dev, named.st_ino) or
-                    getattr(named, 'st_file_attributes', 0) & getattr(stat, 'FILE_ATTRIBUTE_REPARSE_POINT', 1024)):
-                raise ValueError('scheduler lock must be a stable regular file')
-            try:
-                flock(fd, LOCK_EX | LOCK_NB)
-            except BlockingIOError:
-                return False
-            return self._drain_owned(engine, run_id, on_due=on_due)
-        finally:
-            os.close(fd)
+        path = Path(self.store.path + '.drain.lock')
+        with try_owner_lock(path) as owned:
+            return self._drain_owned(engine, run_id, on_due=on_due) if owned else False
 
     def _drain_owned(self, engine, run_id, *, on_due):
         now = self.clock()

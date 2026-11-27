@@ -17,6 +17,9 @@ from agent_runtime.external_json import load_json
 from agent_runtime.result_store import METADATA_LIMIT, ResultStore, _json, _read, result_context
 
 
+from agent_runtime.storage_budget import storage_budget
+
+
 def external_object(path):
     value = load_json(path, max_bytes=METADATA_LIMIT)
     if not isinstance(value, dict):
@@ -47,6 +50,16 @@ def main(argv=None):
             command.add_argument('--explicit-reproduction', action='store_true')
             command.add_argument('--new-claim', action='store_true')
             command.add_argument('--max-age-seconds', type=float)
+    subs.add_parser('budget').add_argument('--plan', required=True)
+    recovery = subs.add_parser('register-recovery')
+    recovery.add_argument('--manifest', required=True)
+    recovery.add_argument('--max-hash-bytes', type=int, required=True)
+    recovery.add_argument('--restore-adapter', required=True, help='trusted host adapter with save_completed and restore callbacks')
+    review = subs.add_parser('review-recovery')
+    review.add_argument('run_id')
+    review.add_argument('--replacement', required=True)
+    review.add_argument('--max-hash-bytes', type=int, required=True)
+    review.add_argument('--restore-adapter', required=True, help='trusted host restore and live release_facts adapter')
     showing = subs.add_parser('show')
     showing.add_argument('run_id')
     showing.add_argument('--max-chars', type=int, default=20000)
@@ -64,7 +77,20 @@ def main(argv=None):
         if bounded and not 1 <= args.max_chars <= 1000000:
             raise ContextBudgetError('display max_chars must be 1..1000000')
         store = ResultStore(args.root, compact_storage=args.compact_storage)
-        if args.command == 'search':
+        if args.command == 'budget':
+            result = storage_budget(store.root, external_object(args.plan))
+        elif args.command in ('register-recovery', 'review-recovery'):
+            spec = importlib.util.spec_from_file_location('trusted_restore', args.restore_adapter)
+            if spec is None or spec.loader is None:
+                raise ValueError('invalid trusted restore adapter')
+            module = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(module)
+            if args.command == 'register-recovery':
+                result = store.register_recovery(args.manifest, byte_limit=args.max_hash_bytes, provider=module)
+            else:
+                result = store.review_recovery(args.run_id, args.replacement,
+                                               byte_limit=args.max_hash_bytes, provider=module)
+        elif args.command == 'search':
             result = store.search(args.query, limit=args.limit, max_scan=args.max_scan)
         elif args.command == 'show':
             result = store.show(args.run_id)
@@ -92,7 +118,7 @@ def main(argv=None):
         output = (render_cli_context(result, compact=compact, indent=2, max_chars=args.max_chars)
                   if bounded else render_context(result, compact=compact, indent=2))
         print(output)
-        return 0
+        return 2 if args.command == 'budget' and result['status'] == 'blocked' else 0
     except ContextBudgetError as exc:
         print(json.dumps({'status': 'blocked', 'error': str(exc)}, ensure_ascii=False), file=sys.stderr)
         return 2

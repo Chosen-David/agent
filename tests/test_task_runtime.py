@@ -253,18 +253,22 @@ class RuntimeContracts(unittest.TestCase):
                 replacement = SyntheticHandler(); replacement.idempotent = idempotent
                 state = self.engine(replacement).tick('test-run', 'recovery')
                 self.assertFalse(original_context.current())
-                if idempotent:
-                    self.assertEqual(state['status'], 'done')
-                    self.assertEqual(state['tasks']['a']['attempts'], 2)
-                    self.assertEqual(original_context.idempotency_key, replacement.calls[0][1].idempotency_key)
-                    self.assertNotEqual(original_context.token, replacement.calls[0][1].token)
-                else:
-                    self.assertEqual(state['status'], 'blocked')
-                    self.assertEqual(state['tasks']['a']['reason_kind'], 'ambiguous')
-                    self.assertEqual(replacement.calls, [])
+                self.assertEqual(replacement.calls, [])
+                self.assertEqual(state['tasks']['a']['attempts'], 1)
+                self.assertEqual(state['tasks']['a']['status'], 'doing')
             finally:
                 old.release.set()
             future.result(timeout=4)
+        state = self.engine(replacement).tick('test-run', 'recovery')
+        if idempotent:
+            self.assertEqual(state['status'], 'done')
+            self.assertEqual(state['tasks']['a']['attempts'], 2)
+            self.assertEqual(original_context.idempotency_key, replacement.calls[0][1].idempotency_key)
+            self.assertNotEqual(original_context.token, replacement.calls[0][1].token)
+        else:
+            self.assertEqual(state['status'], 'blocked')
+            self.assertEqual(state['tasks']['a']['reason_kind'], 'ambiguous')
+            self.assertEqual(replacement.calls, [])
         with self.store.transaction() as db:
             rejected = db.execute("SELECT count(*) FROM journal WHERE kind='stale_result_rejected'").fetchone()[0]
         self.assertEqual(rejected, 1)

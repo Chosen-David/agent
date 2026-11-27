@@ -93,3 +93,15 @@ scheduler.drain_once(SimpleNamespace(tick=lambda *args: {'next_check_seconds': 1
         with self.assertRaises((ValueError, OSError)):
             self.scheduler.drain_once(self.engine)
         self.assertEqual(target.read_text(), 'unchanged')
+
+    def test_late_wake_reports_terminal_without_mutating_cancelled_state(self):
+        with self.store.transaction() as db:
+            _, state = self.store.load(db, 'review')
+            state['idle_ticks'] = 4
+            self.store.save(db, 'review', state)
+        self.store.cancel('review', 'user stopped')
+        before = self.store.snapshot('review')
+        receipt = self.scheduler.wake('review', 'late callback')
+        self.assertEqual(self.store.snapshot('review'), before)
+        self.assertEqual(receipt['delivery'], 'terminal')
+        self.assertFalse(receipt['progress_confirmed'])

@@ -31,3 +31,11 @@ description: "管理项目文件并组织代码仓库。用于文件散落、跨
 规划实验/测量或复用实证结论前按 [既有结果检索与复用](references/result_reuse_workflow.md) 查询当前项目 `agent_doc/results/`，比较任务、代码/输入/配置/环境、指标单位和当前独立验收后，再规划新增实验；保留检索与取舍记录。新数据存 `agent_doc/results/<run_id>/`，旧文件可按真实路径/哈希索引。复用不跳过独立代码/数据门禁、用户明确复现或新主张验收。
 
 历史保护计划的兼容边界见 [旧双主控协议](references/dual_main_workflow.md)。不启动第二主控，不追溯改写已有批准；缺独立证据的旧合同保留 blocked/pending，再按当前用户要求版本化协调。
+
+工作区选择先核对当前任务、目标 commit、所有者和宿主会话。完整 checkout 可用 `python scripts/workspace_status.py --repo PROJECT --intent read|develop|isolate|reclaim` 查看本地 Git 事实；只有已有任务绑定时才传 `--source current-task`。只读历史用 code-reading 的 source_evidence 或 git show/diff。宿主隔离交由宿主接口处理，回收前保留 ignored/untracked、本地提交、活跃消费者和恢复点；该查询只报告。复用依赖环境先核对解释器、平台、锁文件与写权限。
+
+大产物写入前用 `python scripts/result_store.py --root EXISTING_DESTINATION budget --plan PLAN.json`。allocations 按唯一分配名列 disk_bytes、inodes、cpu_bytes、pinned_bytes，phases 列各时刻可能并存的新分配名数组；已有保留点已经占用容量。计入每个 rank、元数据、临时替换、异步并发、评估、归档和 staging；available 可提供 cpu_bytes 与 pinned_bytes 可用量。容量检查只描述当时条件。复用已有不可变结果沿 result_store 的 decide 和消费时复核；恢复点须有完整保存、完整性和恢复证据，保留仍被引用、仅存、正在写及用途未知的版本。
+
+完整 checkout 的 `scripts/workspace_status.py --help` 列出隔离与回收参数。显式本地隔离使用新的外部 slot，可信 lease adapter 的 `lease(repo, slot, task, run)` 在整个创建期间持有实际所有权锁并产出 True；拒绝宿主工作区嵌套。用重复的 `--sparse-dir` 和 `--require-file` 声明依赖并从检出树运行真实测试。中断查 slot/events.jsonl，引用仍活跃或未完成的 slot 保留。回收评估需要可信 `release_facts` 核对活跃任务、进程、消费者、锁和恢复依赖，仅返回 dry-run。
+
+训练适配器完成保存后写入不可变的 recovery-manifest/v1，交由 result_store 的 `register-recovery --manifest PATH --max-hash-bytes N --restore-adapter TRUSTED.py`。实际清单和适配器调用实例见完整 checkout 的 tests/test_recovery_registration.py。注册仅写引用，小样本 fixture 的恢复通过不外推到 PyTorch。释放前使用 `review-recovery RUN --replacement OTHER --max-hash-bytes N --restore-adapter TRUSTED.py`；检查活跃引用、保留条件和替代恢复点后输出候选，不执行删除。

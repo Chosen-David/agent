@@ -4,6 +4,8 @@ import argparse
 import hashlib
 import json
 import re
+import os
+import time
 import subprocess
 from pathlib import Path, PurePosixPath
 import sys
@@ -12,6 +14,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from agent_runtime.committed_aliases import CommittedAliases
 from agent_runtime.external_json import load_json, regular_bytes, strict_json
 from agent_runtime.project_docs import guard_write_path
+from agent_runtime.storage_budget import storage_budget
 
 ROOT = Path(__file__).resolve().parents[1]
 SNAPSHOT_ROOTS = {'plugins', 'prompts', 'workflows', 'templates', 'config', 'agent_runtime'}
@@ -89,7 +92,7 @@ def git(repo, *args):
 
 
 def prepare_run(repo, revision, out, tasks=None, rubric=None, fixture_root=None, adapter=None,
-                *, require_material_review=False):
+                *, require_material_review=False, io_metrics=None):
     """Freeze tracked skills and inputs; optional catalogs are explicit local files."""
     if type(require_material_review) is not bool:
         raise ValueError('require_material_review must be boolean')
@@ -149,7 +152,7 @@ def prepare_run(repo, revision, out, tasks=None, rubric=None, fixture_root=None,
         if (parts[0] not in SNAPSHOT_ROOTS and name not in SNAPSHOT_DEPENDENCIES) or any(p in ('tests', 'evals', '__pycache__') for p in parts) or parts[-1] == 'rubric.json':
             continue
         if mode in ('100644', '100755'):
-            snapshot[name] = blob(name)
+            snapshot[name] = aliases.resolve(name)
         elif mode == '120000' and len(parts) >= 5 and parts[0] == 'plugins' and parts[2] == 'skills':
             snapshot[name] = aliases.resolve(name)
         else:
@@ -164,24 +167,52 @@ def prepare_run(repo, revision, out, tasks=None, rubric=None, fixture_root=None,
     if type(adapter['max_attempts']) is not int or not 1 <= adapter['max_attempts'] <= 10:
         raise ValueError('max_attempts must be an integer between 1 and 10')
     guard_write_path(out)
+    volume = next(parent for parent in out.parents if parent.exists())
+    payload_bytes = sum(map(len, snapshot.values()))
+    payload_files = len(snapshot)
+    for case, inputs in prepared:
+        payload_bytes += len(case['prompt'].encode('utf-8')) + sum(map(len, inputs.values()))
+        payload_files += 1 + len(inputs)
+    minimum = {'disk_bytes': payload_bytes, 'inodes': payload_files,
+               'cpu_bytes': 0, 'pinned_bytes': 0}
+    budget = storage_budget(volume, {'allocations': {'payload': minimum}, 'phases': [['payload']]})
+    if any(budget['available'][unit] is not None for unit in budget['limiting_or_unknown']):
+        raise ValueError('insufficient snapshot capacity: ' + str(budget['limiting_or_unknown']))
     out.mkdir(parents=True, exist_ok=False)
+    started = time.monotonic()
+    if io_metrics is not None:
+        io_metrics.update(source=str(repo.resolve()), target=str(out), revision=sha,
+                          action='prepare-evaluation', owner='agent_eval_pipeline', status='writing',
+                          payload_files_created=0, application_bytes_written=0,
+                          peak_observed_new_payload_allocated_bytes=0, preflight_payload_minimum=minimum)
+
+    def write_payload(path, data):
+        path = guard_write_path(path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        with path.open('xb') as stream:
+            count = stream.write(data)
+        if io_metrics is not None:
+            io_metrics['payload_files_created'] += 1
+            io_metrics['application_bytes_written'] += count
+            blocks = getattr(path.stat(), 'st_blocks', None)
+            if blocks is not None:
+                io_metrics['peak_observed_new_payload_allocated_bytes'] += blocks * 512
+            else:
+                io_metrics['peak_observed_new_payload_allocated_bytes'] = None
+
     for name, data in snapshot.items():
-        target = guard_write_path(out / 'snapshot' / name)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_bytes(data)
+        write_payload(out / 'snapshot' / name, data)
     case_records = {}
     for case, inputs in prepared:
         directory = guard_write_path(out / 'cases' / case['id'])
         (directory / 'inputs').mkdir(parents=True)
         (directory / 'attempts').mkdir()
-        (directory / 'task.txt').write_text(case['prompt'], encoding='utf-8')
+        write_payload(directory / 'task.txt', case['prompt'].replace('\n', os.linesep).encode('utf-8'))
         for name, data in inputs.items():
-            target = guard_write_path(directory / 'inputs' / name)
-            target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_bytes(data)
+            write_payload(directory / 'inputs' / name, data)
         case_records[case['id']] = {'role': case['role'], 'skill': case['skill'],
             'input_hashes': hashes(directory / 'inputs'), 'task_hash': digest((directory / 'task.txt').read_bytes())}
-    write(out / 'rubric.json', rubric_data)
+    write_payload(out / 'rubric.json', encoded(rubric_data))
     manifest = {'schema_version': 1, 'revision': sha, 'adapter': adapter,
         'implementation_hash': digest(Path(__file__).read_bytes()),
         'expected_cases': [c['id'] for c, _ in prepared], 'cases': case_records,
@@ -191,8 +222,10 @@ def prepare_run(repo, revision, out, tasks=None, rubric=None, fixture_root=None,
         'isolation': 'Separate task directories and reviewer instructions; shared filesystem is NOT a security sandbox.'}
     if require_material_review:
         manifest['require_material_review'] = True
-    write(out / 'tasks.json', task_data)
-    write(out / 'manifest.json', manifest)
+    write_payload(out / 'tasks.json', encoded(task_data))
+    write_payload(out / 'manifest.json', encoded(manifest))
+    if io_metrics is not None:
+        io_metrics.update(status='complete', elapsed_write_seconds=time.monotonic() - started)
     return manifest
 
 
@@ -585,6 +618,7 @@ def main():
     p.add_argument('--repo', type=Path, default=ROOT)
     p.add_argument('--revision', required=True)
     p.add_argument('--out', type=Path, required=True)
+    p.add_argument('--io-metrics', action='store_true', help='emit preparation payload I/O alongside the manifest')
     p.add_argument('--require-material-review', action='store_true')
     p.add_argument('--dev-eval', action='store_true',
                    help='explicitly enable synthetic development evaluation (never ordinary task routing)')
@@ -615,9 +649,12 @@ def main():
         parser.error('prepare is development-only; pass --dev-eval explicitly')
     try:
         if args.command == 'prepare':
+            metrics = {} if args.io_metrics else None
             result = prepare_run(args.repo, args.revision, args.out, args.tasks, args.rubric, args.fixture_root,
                                  read(args.adapter) if args.adapter else None,
-                                 require_material_review=args.require_material_review)
+                                 require_material_review=args.require_material_review, io_metrics=metrics)
+            if metrics is not None:
+                result = dict(manifest=result, io_metrics=metrics)
         elif args.command == 'authorize-dispatch':
             result = authorize_dispatch(args.run, args.case, args.actor, material_review={
                 'path': str(args.material_review) if args.material_review else None,

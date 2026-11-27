@@ -76,8 +76,8 @@ def main():
         store.cancel(args.run_id, args.reference)
         result = store.snapshot(args.run_id)
     elif args.command == 'wake':
-        scheduler.wake(args.run_id, args.reference)
-        result = store.snapshot(args.run_id)
+        receipt = scheduler.wake(args.run_id, args.reference)
+        result = dict(store.snapshot(args.run_id), wake=receipt)
     elif args.command == 'tick':
         result = engine.tick(args.run_id, args.event_id or 'manual:' + uuid.uuid4().hex)
     else:

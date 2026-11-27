@@ -5,6 +5,7 @@ from pathlib import Path
 import subprocess
 import tempfile
 import unittest
+from unittest.mock import patch
 
 SPEC = importlib.util.spec_from_file_location('pipeline', Path(__file__).resolve().parents[1] / 'scripts/agent_eval_pipeline.py')
 pipeline = importlib.util.module_from_spec(SPEC)
@@ -47,6 +48,16 @@ class PipelineTests(unittest.TestCase):
         path = self.base / (name + '.json')
         path.write_text(json.dumps(data))
         return path
+
+    def test_known_space_shortfall_refuses_before_creating_run(self):
+        from collections import namedtuple
+        usage = namedtuple('usage', 'total used free')(1, 1, 0)
+        target = self.base / 'other' / 'run'
+        with patch('agent_runtime.storage_budget.shutil.disk_usage', return_value=usage):
+            with self.assertRaisesRegex(ValueError, 'insufficient snapshot capacity'):
+                pipeline.prepare_run(self.repo, self.sha, target)
+        self.assertFalse(target.parent.exists())
+        self.assertEqual(pipeline.verify_run(self.run)[1], [])
 
     def test_write_helper_refuses_both_guide_namespaces(self):
         for name in ('agent_doc', 'doc'):
