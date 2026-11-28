@@ -36,7 +36,7 @@ def execute(database, request, command):
     if hits and not mode.startswith('RERUN'):
         print(json.dumps(dict(action='review_historical_result', hits=hits)), flush=True)
         return 75
-    identity = {k:request[k] for k in ('family','trajectory','goal')}
+    identity = dict(scientific_fingerprint=fingerprint(context), trajectory=request['trajectory'], goal=request['goal'])
     if mode.startswith('RERUN'):
         identity.update(request_id=request['request_id'])
     key = fingerprint(identity)

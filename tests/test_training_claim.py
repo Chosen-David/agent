@@ -21,3 +21,14 @@ class ClaimTest(unittest.TestCase):
                 self.assertEqual(sorted(f.result() for f in futures),[0,75])
             self.assertEqual(execute(*args),75)
             self.assertEqual(out.read_text(),'x')
+
+    def test_semantic_change_and_display_alias(self):
+        with TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            request=dict(family='display-family',trajectory='one',goal='endpoint',purpose='normalize',
+                         mode='NEW_TRAIN',scientific_context={'execution':{'seed':42}},evidence_gap='missing')
+            cmd=[sys.executable,'-c','pass']
+            self.assertEqual(execute(root/'db',request,cmd),0)
+            self.assertEqual(execute(root/'db',dict(request,family='renamed'),cmd),75)
+            changed=dict(request,scientific_context={'execution':{'seed':43}})
+            self.assertEqual(execute(root/'db',changed,cmd),0)
