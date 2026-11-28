@@ -77,3 +77,20 @@ except ValueError as exc:
             children = [subprocess.Popen([sys.executable, '-c', code, str(path),
                                           json.dumps(w), json.dumps(policy)]) for w in workers[1:]]
             self.assertEqual(sorted(child.wait(timeout=30) for child in children), [0, 3])
+
+    def test_single_mode_and_final_budget(self):
+        with tempfile.TemporaryDirectory() as directory, patch(
+            'agent_runtime.research_workers.inspect_workers', side_effect=lambda records: records
+        ):
+            host = Admission(Store(Path(directory) / 'shared.sqlite'))
+            config = dict(project='p', cycle='first', budget=100, final_reserve=20)
+            host.reserve({'identity': 'main'}, parent=None, tokens=80, **config)
+            with self.assertRaisesRegex(ValueError, 'scheduling policy'):
+                host.reserve({'identity': 'extra'}, parent='main', mode='single', tokens=0, **config)
+            with self.assertRaisesRegex(ValueError, 'soft budget'):
+                host.reserve({'identity': 'extra'}, parent='main', tokens=0, **config)
+            host.settle('main', 80)
+            host.reserve({'identity': 'integration'}, parent=None, final=True, tokens=20, **config)
+            host.settle('integration', 18, outcome='accepted')
+            with self.assertRaisesRegex(ValueError, 'conflicting settlement'):
+                host.settle('integration', 18, outcome='insufficient')

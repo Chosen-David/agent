@@ -45,12 +45,21 @@ class Admission:
                 cycle TEXT NOT NULL, binding TEXT NOT NULL, reserved INTEGER NOT NULL,
                 used INTEGER, released INTEGER NOT NULL DEFAULT 0)""")
 
+            if 'outcome' not in {r['name'] for r in db.execute('PRAGMA table_info(agent_claims)')}:
+                db.execute('ALTER TABLE agent_claims ADD COLUMN outcome TEXT')
+
     def reserve(self, worker, *, parent, project, cycle, tokens, budget, final_reserve,
-                max_agents=2, max_spawns=4):
+                max_agents=2, max_spawns=4, mode="adaptive", cycle_budget=None, final=False):
         """Limits come from the trusted launcher, never from the worker packet."""
         limits = (tokens, budget, final_reserve, max_agents, max_spawns)
         if any(type(n) is not int or n < 0 for n in limits) or not max_agents:
             raise ValueError('invalid admission limits')
+        if mode not in ('single', 'adaptive', 'manual'):
+            raise ValueError('unknown scheduling mode')
+        if parent is not None and (mode == 'single' or final):
+            raise ValueError('worker outside authorized scheduling policy')
+        if cycle_budget is not None and (type(cycle_budget) is not int or cycle_budget < 0):
+            raise ValueError('invalid cycle budget')
         record = inspect_workers([worker])[0]
         binding = json.dumps(record, sort_keys=True)
         identity = record['identity']
@@ -76,21 +85,32 @@ class Admission:
                 inspect_workers([json.loads(row['binding']), record])
             committed = db.execute('SELECT COALESCE(SUM(COALESCE(used,reserved)),0) FROM agent_claims WHERE project=?',
                                    (project,)).fetchone()[0]
-            if committed + tokens + final_reserve > budget:
+            if parent is not None and committed >= budget * 0.8:
+                raise ValueError('soft budget reached; finish active work')
+            protected = 0 if final else final_reserve
+            if committed + tokens + protected > budget:
                 raise ValueError('project budget or final reserve exhausted')
+            if cycle_budget is not None:
+                cycle_used = db.execute(
+                    'SELECT COALESCE(SUM(COALESCE(used,reserved)),0) FROM agent_claims WHERE project=? AND cycle=?',
+                    (project, cycle)).fetchone()[0]
+                if cycle_used + tokens + protected > cycle_budget:
+                    raise ValueError('cycle budget or final reserve exhausted')
             db.execute('INSERT INTO agent_claims(identity,parent,project,cycle,binding,reserved) VALUES(?,?,?,?,?,?)',
                        (identity, parent, project, cycle, binding, tokens))
             return True
 
-    def settle(self, identity, used):
+    def settle(self, identity, used, *, outcome="released"):
         """Unknown final usage conservatively retains the full reservation."""
+        if outcome not in ('released', 'accepted', 'insufficient'):
+            raise ValueError('invalid terminal outcome')
         if used is not None and (type(used) is not int or used < 0):
             raise ValueError('invalid usage')
         with self.store.transaction() as db:
-            row = db.execute('SELECT released,used FROM agent_claims WHERE identity=?', (identity,)).fetchone()
-            if not row or row['released'] and row['used'] != used:
+            row = db.execute('SELECT released,used,outcome FROM agent_claims WHERE identity=?', (identity,)).fetchone()
+            if not row or row['released'] and (row['used'] != used or (row['outcome'] or 'released') != outcome):
                 raise ValueError('unknown or conflicting settlement')
-            db.execute('UPDATE agent_claims SET released=1,used=? WHERE identity=?', (used, identity))
+            db.execute('UPDATE agent_claims SET released=1,used=?,outcome=? WHERE identity=?', (used, outcome, identity))
 
 
 def run_native_worker(admission, worker, *, codex, project, cycle, primary,
@@ -125,8 +145,9 @@ def run_native_worker(admission, worker, *, codex, project, cycle, primary,
                 used = worker_turn_usage(evidence)['total_tokens']
             except ValueError:
                 used = None
-        admission.settle(worker['identity'], used)
-        if not validate_output(output):
+        accepted = validate_output(output)
+        admission.settle(worker['identity'], used, outcome='accepted' if accepted else 'insufficient')
+        if not accepted:
             raise ValueError('native turn completed without an accepted artifact')
     return result.returncode
 
