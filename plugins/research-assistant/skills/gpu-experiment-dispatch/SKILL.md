@@ -47,3 +47,5 @@ description: "多机异构 GPU 池实验派单全生命周期：SSH 接入、环
 L0 保留指标，L1 加诊断切片，L2 为模型权重，L3 需要完整可恢复训练状态。预算使用 --quota-free-bytes、--committed-bytes、--staging-bytes 表达外部配额、并发预留与临时副本。高水位仅触发协调，禁止凭压力百分比自动放行删除。恢复时使用 scripts/result_store.py longest-recovery，传入同一轨迹、含 Scheduler horizon 的科学配置指纹、最大目标 step 及可信 restore adapter。只有当前真实完整恢复和训练状态核验通过才会返回 resume。独立 seed、分支起点和固定里程碑各自保留。
 
 多调用者启动同一训练前，将已做复用决策的科学 family、轨迹 trajectory、termination goal、purpose、mode 写入请求，然后通过 `python -m agent_runtime.training_claim DB REQUEST -- PROGRAM ARGS` 认领并启动。多个启动者共享同一 SQLite；已有认领返回 75。失败、丢失心跳及进程成功退出都保留记录，先核实活动子进程及独立结果验收再决定后续。RERUN_REPLACE 与 RERUN_REPLICATE 需要原 run、原因和幂等请求 ID。
+
+训练器已有原子分片和严格恢复时沿用原生机制。可选 agent_runtime.dcp_generation.DCPGeneration 为已初始化 torch.distributed 的共享 POSIX 文件系统提供 L2/L3；模型与优化器传入 DCP 支持的状态，逐 rank 的数据游标、调度器和 RNG 由调用方捕获及恢复。所有 rank 共同调用，异步保存限一代，训练退出前 wait；恢复仅用于可信自有 Checkpoint。分布式 CPU 冒烟脚本见 agent_doc/agent/test/training-artifact-policy/cpu_roundtrip.py。
