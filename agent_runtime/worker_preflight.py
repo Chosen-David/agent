@@ -51,7 +51,6 @@ def check(store, codex, tree, output, requirements, *, refresh=False):
         prior = db.execute('SELECT checked,error FROM worker_capabilities WHERE binding=?', (binding,)).fetchone()
         if prior and prior['error'] and not refresh and 0 <= time.time()-prior['checked'] < 300:
             raise RuntimeError('worker sandbox circuit open: ' + prior['error'])
-    # Probe the same working directory and explicit native policy as the CLI shell.
     policy = dict(type='workspaceWrite', writableRoots=[], networkAccess=False,
                   excludeTmpdirEnvVar=True, excludeSlashTmp=True)
     server = AppServer([binary, *CONFIG], tree, 25)
@@ -59,7 +58,6 @@ def check(store, codex, tree, output, requirements, *, refresh=False):
         args = dict(cwd=str(tree), sandboxPolicy=policy)
         result = server.call('command/exec', dict(args, command=['/bin/pwd']))
         if result['exitCode'] == 0 and result['stdout'].strip() == str(tree):
-            # mktemp creates an exclusive fixture. Fail closed if Git or write/read/unlink fails.
             result = server.call('command/exec', dict(args, command=['/bin/sh', '-ec',
                 'git rev-parse --is-inside-work-tree | grep -qx true; '
                 'f=$(mktemp .worker-probe.XXXXXXXX); trap \'rm -f -- "$f"\' EXIT; '
@@ -71,7 +69,6 @@ def check(store, codex, tree, output, requirements, *, refresh=False):
     error = result['stderr'].strip()[:1000] if result['exitCode'] else ''
     if result['exitCode'] and not error:
         error = 'sandbox capability probe exited ' + str(result['exitCode'])
-    # Only a known sandbox initialization denial opens a persistent circuit.
     if error and 'bwrap: Failed to make / slave: Permission denied' not in error:
         raise RuntimeError('worker capability unavailable: ' + error)
     with store.transaction() as db:
