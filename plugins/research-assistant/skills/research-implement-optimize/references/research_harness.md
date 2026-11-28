@@ -15,3 +15,5 @@
 5. 完成阶段后统一验收；在预算允许且有独立价值时交叉复算。记录初始差异、修复与复验，并由用户对完整目标验收。维护计划、结果索引、失败原因及应用边界。未经生命周期批准不清理资产。
 
 原生 CLI 开发 Worker 由可信宿主传入 required_capabilities（file_read、file_write、shell_exec、test_exec、git_worktree）。能力更窄、需要网络或 GPU 的任务不进入此开发入口。先用同目录的 App Server command/exec 验证 shell 与工作树读写；已知挂载拒绝按环境短期熔断。成功探测仅覆盖 Shell 基础能力，任务本身仍需通过产物验证。宿主不可用时主 Agent 继续合法任务；不要把 externalSandbox 当作降级开关。
+
+可信研发宿主可由操作员在私有文件 ~/.codex/chosen-agent/trusted-research.json 中登记 host、binary（绝对物理路径）及 projects（项目 ID 到已授权工作树绝对路径数组）。三者同时匹配时，CLI 和无模型预检均显式使用 danger-full-access、never；其他工作树沿用 restricted。相同 OS 用户下，登记文件和工作树是协作约束。历史只读审核合同单独执行。非零退出通过宿主 reconcile_failure 确认外部作用已核对后结算；无法确定时保留原认领。

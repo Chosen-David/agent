@@ -1,6 +1,7 @@
 """Inspect two host-assigned research worktrees before admitting parallel writes."""
 import argparse
 import json
+import shutil
 from pathlib import Path
 import subprocess
 
@@ -31,13 +32,17 @@ def inspect_workers(workers):
     return records
 
 
+def _host_store_path():
+    return Path.home() / ".local/share/chosen-agent-experiments/research.sqlite"
+
+
 class Admission:
     """Shared host Store for cooperating launchers. Ambiguous claims stay reserved."""
 
     def __init__(self, store=None):
         if store is None:
             from .core import Store
-            store = Store(Path.home() / ".local/share/chosen-agent-experiments/research.sqlite")
+            store = Store(_host_store_path())
         self.store = store
         with store.transaction() as db:
             db.execute("""CREATE TABLE IF NOT EXISTS agent_claims (
@@ -47,6 +52,16 @@ class Admission:
 
             if 'outcome' not in {r['name'] for r in db.execute('PRAGMA table_info(agent_claims)')}:
                 db.execute('ALTER TABLE agent_claims ADD COLUMN outcome TEXT')
+
+            if 'process_record' not in {r['name'] for r in db.execute('PRAGMA table_info(agent_claims)')}:
+                db.execute('ALTER TABLE agent_claims ADD COLUMN process_record TEXT')
+
+    def record_process(self, identity, record):
+        with self.store.transaction() as db:
+            changed = db.execute('UPDATE agent_claims SET process_record=? WHERE identity=? AND released=0',
+                                 (json.dumps(record, sort_keys=True), identity))
+            if changed.rowcount != 1:
+                raise ValueError('worker claim no longer active')
 
     def reserve(self, worker, *, parent, project, cycle, tokens, budget, final_reserve,
                 max_agents=2, max_spawns=4, mode="adaptive", cycle_budget=None, final=False):
@@ -102,7 +117,7 @@ class Admission:
 
     def settle(self, identity, used, *, outcome="released"):
         """Unknown final usage conservatively retains the full reservation."""
-        if outcome not in ('released', 'accepted', 'insufficient'):
+        if outcome not in ('released', 'accepted', 'insufficient', 'not_started', 'failed'):
             raise ValueError('invalid terminal outcome')
         if used is not None and (type(used) is not int or used < 0):
             raise ValueError('invalid usage')
@@ -114,7 +129,7 @@ class Admission:
 
 
 def run_native_worker(admission, worker, *, codex, project, cycle, primary,
-                      budget, tokens, final_reserve, root, basis, request, objective, validate_output):
+                      budget, tokens, final_reserve, root, basis, request, objective, validate_output, reconcile_failure=None):
     """Run from the durable host, with an already admitted primary and trusted bindings."""
     from .handoff_basis import basis_context
 
@@ -130,30 +145,61 @@ def run_native_worker(admission, worker, *, codex, project, cycle, primary,
         raise ValueError('native worker output must be inside its authorized worktree')
     from . import worker_preflight
     inspect_workers([worker])
-    worker_preflight.check(admission.store, codex, tree, output,
-                           set(worker.get('required_capabilities', ())))
+    executable = shutil.which(str(codex))
+    if not executable:
+        raise FileNotFoundError(str(codex))
+    codex = Path(executable).resolve(strict=True)
+    mode = worker_preflight.check(admission.store, codex, tree, output,
+                           set(worker.get('required_capabilities', ())), project=project)
+    if mode == 'danger-full-access' and Path(admission.store.path).resolve() != _host_store_path().resolve():
+        raise ValueError('trusted native workers require shared host admission')
     if not admission.reserve(worker, parent=primary, project=project, cycle=cycle,
                              budget=budget, tokens=tokens, final_reserve=final_reserve):
         raise ValueError('existing invocation requires reconciliation')
-    output.mkdir(parents=True, exist_ok=True)
-    with (output / 'codex-events.jsonl').open('x') as events:
-        result = subprocess.run([str(codex), *worker_preflight.CONFIG, '-a', 'never',
-                                 'exec', '--json', '--sandbox', worker_preflight.MODE,
-                                 '--disable', 'multi_agent', '--disable', 'multi_agent_v2',
-                                 '-C', str(tree), '-'],
-                                input=prompt, text=True, stdout=events, cwd=tree)
-    if result.returncode == 0:
-        from .token_usage import worker_turn_usage
-        with (output / 'codex-events.jsonl').open() as evidence:
-            try:
-                used = worker_turn_usage(evidence)['total_tokens']
-            except ValueError:
-                used = None
+    event_path = output / 'codex-events.jsonl'
+    identity = worker['identity']
+    config = worker_preflight.CONFIG if mode == worker_preflight.MODE else []
+    argv = [str(codex), *config, '-a', 'never', 'exec', '--json', '--sandbox', mode,
+            '--disable', 'multi_agent', '--disable', 'multi_agent_v2', '-C', str(tree), '-']
+    process = None
+    try:
+        output.mkdir(parents=True, exist_ok=True)
+        with event_path.open('x') as events:
+            process = subprocess.Popen(argv, stdin=subprocess.PIPE, text=True, stdout=events, cwd=tree)
+    except OSError:
+        if process is None:
+            admission.settle(identity, 0, outcome='not_started')
+        raise
+    # Interruption after spawn may leave external work running. Preserve its claim.
+    record = {'pid': process.pid, 'event_path': str(event_path), 'mode': mode,
+              'boot': Path('/proc/sys/kernel/random/boot_id').read_text().strip()}
+    # Keep the original PID incarnation for restart reconciliation.
+    try:
+        record['start_ticks'] = Path(f'/proc/{process.pid}/stat').read_text().rsplit(')', 1)[1].split()[19]
+    except FileNotFoundError:
+        pass
+    admission.record_process(identity, record)
+    process.communicate(prompt)
+    admission.record_process(identity, dict(record, returncode=process.returncode))
+    from .token_usage import worker_turn_usage
+    try:
+        with event_path.open() as evidence:
+            used = worker_turn_usage(evidence)['total_tokens']
+    except (ValueError, OSError):
+        used = None
+    if process.returncode:
+        if reconcile_failure is not None and reconcile_failure(output, process.returncode) is True:
+            admission.settle(identity, used, outcome='failed')
+        return process.returncode
+    try:
         accepted = validate_output(output)
-        admission.settle(worker['identity'], used, outcome='accepted' if accepted else 'insufficient')
-        if not accepted:
-            raise ValueError('native turn completed without an accepted artifact')
-    return result.returncode
+    except Exception:
+        admission.settle(identity, used, outcome='insufficient')
+        raise
+    admission.settle(identity, used, outcome='accepted' if accepted else 'insufficient')
+    if not accepted:
+        raise ValueError('native turn completed without an accepted artifact')
+    return 0
 
 
 if __name__=='__main__':
