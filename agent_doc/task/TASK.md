@@ -1,5 +1,9 @@
 # Project tasks
 
+## 2026-11-28
+
+- [ ] [TRAINING-ASSETS] 分级资产、跨项目登记、最长有效恢复与动态淘汰已接入，生产 Loss 研究验收进行中。([详情](task_details/TRAINING-ASSETS.md))
+
 ## 2026-10-26
 
 - [x] [COPY-RESOURCE-01] 复制技能全阶段限额及卸载预检有限验收通过；双版本与独审已核，发布/原生CI另核，同属未完成SYSTEM-99。 ([详情](task_details/COPY-RESOURCE-01.md))
