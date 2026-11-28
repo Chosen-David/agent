@@ -113,6 +113,74 @@ class RuntimeContracts(unittest.TestCase):
     def state(self):
         return self.store.snapshot('test-run')['state']
 
+    def adaptive(self, *tasks):
+        candidate = plan(*tasks)
+        candidate['admission'] = {'mode': 'adaptive', 'max_parallel': 2}
+        return candidate
+
+    def test_adaptive_rejects_unbounded_capacity_and_ambiguous_resource_names(self):
+        for limit in (True, 0, 65, 1.5):
+            candidate = self.adaptive(task())
+            candidate['admission']['max_parallel'] = limit
+            with self.subTest(limit=limit), self.assertRaises(ValueError):
+                validate(candidate)
+        for resources in ('data', [''], ['/abs'], ['data/../child'], ['data//child']):
+            with self.subTest(resources=resources), self.assertRaises(ValueError):
+                validate(self.adaptive(dict(task(), exclusive_resources=resources)))
+
+    def test_adaptive_overlap_conflicts_capacity_and_dependency(self):
+        a = dict(task('a'), owner='first', exclusive_resources=['outputs/model'])
+        same_owner = dict(task('owner'), owner='first', exclusive_resources=[])
+        same_path = dict(task('path'), owner='second', exclusive_resources=['outputs'])
+        unknown = dict(task('unknown'), owner='third')
+        child = dict(task('child', ['a']), owner='fourth', exclusive_resources=[])
+        b = dict(task('b'), owner='fifth', exclusive_resources=['outputs/model2'])
+        c = dict(task('c'), owner='sixth', exclusive_resources=[])
+        self.store.create(self.adaptive(a, same_owner, same_path, unknown, child, b, c))
+        first, second = GateHandler(), GateHandler()
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            one = pool.submit(self.engine(first).tick, 'test-run', 'one')
+            try:
+                self.assertTrue(first.entered.wait(3))
+                self.clock.now += 6  # live handler still holds its task lock
+                two = pool.submit(self.engine(second).tick, 'test-run', 'two')
+                self.assertTrue(second.entered.wait(3))
+                snapshot = self.engine().tick('test-run', 'three')
+                self.assertEqual([k for k, n in snapshot['tasks'].items() if n['status'] == 'doing'],
+                                 ['a', 'b'])
+                self.assertEqual(snapshot['tasks']['a']['attempts'], 1)
+            finally:
+                first.release.set()
+                second.release.set()
+            one.result()
+            two.result()
+        self.assertEqual(self.state()['tasks']['a']['status'], 'doing')
+        self.assertEqual(self.state()['tasks']['b']['status'], 'done')
+        restarted = Engine(Store(self.db_path), {'synthetic': SyntheticHandler()},
+                           authorize=lambda *_: True, allow_legacy=True, clock=self.clock)
+        recovered = restarted.tick('test-run', 'restart')
+        self.assertNotIn('serial_recovery_error', recovered)
+        for index in range(10):
+            recovered = restarted.tick('test-run', str(index))
+        self.assertEqual(recovered['status'], 'done')
+        self.assertEqual(recovered['tasks']['a']['attempts'], 2)
+
+    def test_adaptive_restart_retains_pending_resource_and_budget(self):
+        a = dict(task('a'), owner='a', exclusive_resources=['data'])
+        b = dict(task('b'), owner='b', exclusive_resources=['data/child'])
+        c = dict(task('c'), owner='c', exclusive_resources=[])
+        self.store.create(self.adaptive(a, b, c))
+        pending = self.engine(SyntheticHandler(Outcome('pending', 'working')))
+        pending.tick('test-run', 'first')
+        restarted = Engine(Store(self.db_path), {'synthetic': SyntheticHandler()},
+                           authorize=lambda *_: True, allow_legacy=True, clock=self.clock)
+        state = restarted.tick('test-run', 'second')
+        self.assertEqual(state['tasks']['c']['status'], 'done')
+        self.assertEqual(state['tasks']['b']['attempts'], 0)
+        self.clock.now += 100
+        self.assertEqual(restarted.tick('test-run', 'third')['tasks']['a']['status'], 'done')
+        self.assertEqual(restarted.tick('test-run', 'fourth')['status'], 'done')
+
     def test_dag_rejects_cycles_unknown_duplicate_and_unbounded(self):
         invalid = [plan(task('a', ['a'])), plan(task('a', ['b'])),
                    plan(task('a'), task('a')), plan(task('a', ['b']), task('b', ['a']))]

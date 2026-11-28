@@ -6,7 +6,7 @@ No model, shell command, credentials, cloud service or daemon is auto-installed.
 """
 from __future__ import annotations
 
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 from copy import deepcopy
 from dataclasses import dataclass
 import hashlib
@@ -34,6 +34,16 @@ def number(value, low, high):
             and low <= value <= high)
 
 
+def _adaptive_conflict(left, right):
+    """Exclusive resource names are hierarchical, relative to the run's namespace."""
+    if left['owner'] == right['owner']:
+        return True
+    if 'exclusive_resources' not in left or 'exclusive_resources' not in right:
+        return True
+    return any(a == b or a.startswith(b + '/') or b.startswith(a + '/')
+               for a in left['exclusive_resources'] for b in right['exclusive_resources'])
+
+
 def validate(plan):
     if not isinstance(plan, dict):
         raise ValueError('task plan must be a JSON object')
@@ -54,10 +64,23 @@ def validate(plan):
     if len(id_set) != len(ids):
         raise ValueError('unique nonempty task IDs required')
     plain_ids = all(type(i) is str for i in ids)
+    admission = plan.get('admission', {'mode': 'serial'})
+    if admission != {'mode': 'serial'} and not (
+            isinstance(admission, dict) and set(admission) == {'mode', 'max_parallel'}
+            and admission['mode'] == 'adaptive' and type(admission['max_parallel']) is int
+            and 1 <= admission['max_parallel'] <= 64):
+        raise ValueError('admission requires serial mode or adaptive mode with max_parallel 1..64')
     for task in tasks:
         for field in ('action', 'owner'):
             if not isinstance(task.get(field), str) or not task[field]:
                 raise ValueError(f'missing {field}')
+        if admission['mode'] == 'adaptive' and 'exclusive_resources' in task:
+            resources = task['exclusive_resources']
+            if (not isinstance(resources, list) or any(
+                    not isinstance(key, str) or key.strip() != key or '\\' in key
+                    or any(part in ('', '.', '..') for part in key.split('/'))
+                    for key in resources)):
+                raise ValueError('exclusive_resources requires canonical slash-separated resource names')
         if not isinstance(task.get('done_when'), dict) or not task['done_when']:
             raise ValueError('missing done_when')
         deps = task.get('depends_on', [])
@@ -467,15 +490,23 @@ class Engine:
             raise ValueError('event ID required')
         identity = hashlib.sha256(run_id.encode()).hexdigest()
         path = Path(self.store.path + '.' + identity + '.tick.lock')
-        if not path.exists():
-            self.store.snapshot(run_id)
+        plan = self.store.snapshot(run_id)['plan']
+        if plan.get('admission', {}).get('mode') == 'adaptive':
+            with ExitStack() as locks:
+                return self._tick_owned(run_id, event_id, locks)
         with try_owner_lock(path) as owned:
             if not owned:
                 return dict(self.store.snapshot(run_id)['state'], tick_delivery='deferred_active_writer')
             return self._tick_owned(run_id, event_id)
 
-    def _tick_owned(self, run_id, event_id):
+    def _tick_owned(self, run_id, event_id, locks=None):
         now, claim = self.clock(), None
+        adaptive = locks is not None
+
+        def claim_lock(task_id):
+            identity = hashlib.sha256(packed([run_id, task_id]).encode()).hexdigest()
+            return try_owner_lock(Path(self.store.path + '.' + identity + '.claim.lock'))
+
         # Before terminal fast paths and each actual claim, including restart.
         try:
             self._review_plan(self.store.snapshot(run_id)['plan'])
@@ -523,7 +554,7 @@ class Engine:
             # Older ledgers have no active_step. Recover from outstanding work,
             # before lease expiry changes doing into todo/ambiguous; never infer
             # ownership from the fairness cursor or reset observation budgets.
-            if not state.get('active_step'):
+            if not adaptive and not state.get('active_step'):
                 outstanding = _outstanding_steps(state)
                 state.pop('serial_recovery_error', None)
                 if len(outstanding) == 1:
@@ -535,6 +566,11 @@ class Engine:
                 node = state['tasks'][task['task_id']]
                 handler = self.handlers.get(task['action'])
                 if node['status'] == 'doing' and node['lease_until'] <= now:
+                    if adaptive:
+                        # Lease expiry alone cannot prove the local adapter has exited.
+                        with claim_lock(task['task_id']) as available:
+                            if not available:
+                                continue
                     if handler and handler.idempotent:
                         node.update(status='todo' if node['attempts'] < task['max_attempts'] else 'failed',
                                     token=None, next_at=now, reason='expired lease; retry uses original idempotency key')
@@ -559,11 +595,14 @@ class Engine:
             active = state.get('active_step')
             doing = (bool(state.get('serial_recovery_error')) or
                      any(node['status'] == 'doing' for node in state['tasks'].values()))
+            if adaptive:
+                outstanding = set(_outstanding_steps(state))
+                occupied = [item for item in tasks if item['task_id'] in outstanding]
             for offset in range(len(tasks)):
                 index = (cursor + offset) % len(tasks)
                 task = tasks[index]
                 node = state['tasks'][task['task_id']]
-                if doing or (active is not None and task['task_id'] != active):
+                if not adaptive and (doing or (active is not None and task['task_id'] != active)):
                     continue
                 if node['status'] != 'todo':
                     continue
@@ -583,8 +622,16 @@ class Engine:
                 if not self._authorized(plan, task, handler):
                     node.update(status='blocked', reason_kind='permission', reason='host authorization required')
                     continue
+                if adaptive:
+                    others = [item for item in occupied if item['task_id'] != task['task_id']]
+                    if (len(others) >= plan['admission']['max_parallel']
+                            or any(_adaptive_conflict(task, item) for item in others)):
+                        continue
+                    if not locks.enter_context(claim_lock(task['task_id'])):
+                        continue
                 token = uuid.uuid4().hex
-                state['active_step'] = task['task_id']
+                if not adaptive:
+                    state['active_step'] = task['task_id']
                 node.update(status='doing', attempts=node['attempts'] + 1, token=token,
                             lease_until=now + self.lease_seconds, reason=None, reason_kind=None,
                             dispatches=node.get('dispatches', 0) + 1)
