@@ -1257,3 +1257,5 @@ Version114 token路由实测续接（未结轮）：main f6fdeb20同条件，单
 全量 Linux 自检第一次 2312 项报 5 fail / 3 error / 34 skip，full-linux.log 原样保留。其中四项为采样期间测试夹具与新保存回调版本不同，旧 _check_ref 返回契约被计量修改破坏一项（已拆分计量返回，恢复 None）；两处旧搜索测试钩子不接 searching 参数（已适配调用签名）；PDF 测试缺 fitz 已从本机既有兼容 wheel 只读复用通过，未安装第二环境。中央全套检查若 stable_inputs=false 即使八子项通过也不验收。余下现场解除条件、命令和变更快照见 /tmp/agent-system99/workspace-20261126/RESUME.md；第二次固定候选回归从 full-linux-fixed.log、central-fixed/、lifecycle-fixed/ 回读。本记录不提前宣告其状态。
 
 2026-11-28 · 独占用户、本机 Forge 原生历史代次接受按批次、物理身份、替代点和清单级证据的一次性事后授权。原有自动 L3 退役保持原契约。训练机同挂载临时验收覆盖原生读取、内核阻止新打开、读者退出后实际永久释放、路径换代、引用与隔离续接。V4 profile 认领向子任务提供独占输出、指定登记输入与默认关闭写盘的 Forge 参数。训练机原始验收和实测回收按批次留存在 /tmp/agent-system99；整轮 SYSTEM-99 仍未完成。
+
+该批训练机执行完成：四个历史代次永久删除，文件分配量合计 392311336960 字节，挂载可用空间净增 392311332864 字节。四项重放均返回 already-purged，两个 LATEST 指针、保留代次和接力会话回读通过。受管 profile 从已登记 loss 代次读取真实权重完成 GPU 局部计算计时，以及临时写入和回读；仅验证该测量窗口。生产批次及原始字节记录在 /tmp/agent-system99/scoped-retirement-1795852665/production-executed.log。

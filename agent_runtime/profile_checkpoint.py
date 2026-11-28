@@ -1,5 +1,6 @@
 """Run a synchronous Forge profile with job-owned checkpoint output and a registered input."""
 import argparse
+import ctypes
 from contextlib import ExitStack
 import fcntl
 import hashlib
@@ -17,12 +18,16 @@ from .checkpoint_retention import CheckpointRetention
 
 def run(database, directory, argv, *, artifact=None, io=False):
     directory=Path(directory).absolute()
-    directory.mkdir(parents=True,exist_ok=True)
     if directory.resolve()!=directory:
         raise ValueError('physical profile directory required')
     store=CheckpointRetention(database)
     with ExitStack() as stack:
         stack.callback(store.db.close)
+        if artifact:
+            selected=store.db.execute('SELECT physical FROM checkpoint_assets WHERE artifact=?',(artifact,)).fetchone()
+            if not selected or directory.is_relative_to(Path(selected[0])):
+                raise ValueError('profile requires separate output and registered input')
+        directory.mkdir(parents=True,exist_ok=True)
         lock=stack.enter_context((directory/'profile.lock').open('a+b'))
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         state=directory/'profile-owner.json'
@@ -68,16 +73,29 @@ def run(database, directory, argv, *, artifact=None, io=False):
         if not io:
             # A timing-only run cannot commit even its first shard.
             scratch.chmod(0o500)
+            libc=ctypes.CDLL(None,use_errno=True)
+            watch=libc.inotify_init1(os.O_NONBLOCK|os.O_CLOEXEC)
+            if watch<0:
+                raise OSError(ctypes.get_errno(),'inotify_init1')
+            stack.callback(os.close,watch)
+            if libc.inotify_add_watch(watch,os.fsencode(scratch),0x100|0x80)<0:
+                raise OSError(ctypes.get_errno(),'inotify_add_watch')
         start=time.time()
         child=subprocess.run(argv,env=env,pass_fds=(lock.fileno(),))
         files=[str(p.relative_to(scratch)) for p in scratch.rglob('*') if p.is_file()]
-        result=dict(argv=argv,started=start,ended=time.time(),rc=child.returncode,input_artifact=artifact,
+        created=False
+        if not io:
+            try:
+                created=bool(os.read(watch,65536))
+            except BlockingIOError:
+                pass
+        result=dict(timing_output_creation_observed=created if not io else None,argv=argv,started=start,ended=time.time(),rc=child.returncode,input_artifact=artifact,
                     input_path=str(inp) if inp else None,io=io,output_files=files,
                     input_manifest_sha256=hashlib.sha256((inp/'manifest.json').read_bytes()).hexdigest() if inp else None,
                     effective_settings={k:env[k] for k in ('FSDP2_SAVE_DIR','FSDP2_SAVE_EVERY_N_STEPS','FSDP2_SAVE_ON_END')})
         receipt.write_text(json.dumps(result,indent=2))
         cleanup(record)
-        if files and not io:
+        if (files or created) and not io:
             raise RuntimeError('unexpected checkpoint files during timing')
         return child.returncode
 
