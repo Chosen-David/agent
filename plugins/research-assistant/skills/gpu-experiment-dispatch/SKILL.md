@@ -57,3 +57,5 @@ L0 保留指标，L1 加诊断切片，L2 为模型权重，L3 需要完整可�
 恢复同一已认领任务时，绑定经过试恢复的具体代次。若上一尝试失败或心跳丢失，可信宿主须在 previous_launch_stopped 中核实上一整组进程已停；这时保留原尝试记录，在一个事务内交接认领与空间预留。仅心跳过期不可接管。
 
 主机统一布局可在同一个 Registry DB 运行 `python -m agent_runtime.training_workspace DB bind WORKTREE PROJECT ASSET_ROOT DOCUMENTS`。新作业用 `layout WORKTREE --run-id ID --path-only` 选取物理路径。绑定保留既有 outputs 入口和实际目标；若训练框架会重建工作树 outputs 链接，把它的运行根放入该 run 的独立目录，保留实际代码与数据身份。
+
+本机独占用户的原生 Forge 历史产物可由宿主调用 CheckpointRetention.authorize_historical 和 retire_authorized。事后授权必须逐项绑定原目录、替代目录及批次，仅适用于用户明确接受清单验证的处置。宿主 live_check 必须核对本账号排队、重试、活跃进程及生产方持有标记。Linux 文件租约覆盖本机普通文件打开；不可用于推断其他节点的工作已被隔离。由共享 training_claim 启动的 profile 自动使用当次专属输出，input_artifact 引用现有登记资产，measure_checkpoint_io 仅用于专测写入；要在同步子进程退出前落盘指标并等待所有异步保存完成。

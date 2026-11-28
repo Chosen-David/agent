@@ -7,6 +7,7 @@ from pathlib import Path
 import socket
 import sqlite3
 import subprocess
+import sys
 import time
 import uuid
 
@@ -126,6 +127,15 @@ def execute(database, request, command, *, adapter=None):
             return 75
         print(json.dumps(dict(claim=key,owner=owner,request=request)),flush=True)
         try:
+            if request.get('artifact_plan') and budget['policy']=='profile':
+                options=[]
+                if request.get('input_artifact'):
+                    options.extend(['--input',request['input_artifact']])
+                if request.get('measure_checkpoint_io'):
+                    options.append('--io')
+                profile_dir=Path(budget['physical_output']).parent / ('profile-'+key)
+                command=[sys.executable,'-m','agent_runtime.profile_checkpoint',*options,
+                         str(database),str(profile_dir),'--',*command]
             child = subprocess.Popen(command)
         except OSError:
             with db:

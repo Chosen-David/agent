@@ -32,6 +32,14 @@ class CheckpointRetention:
                 seq INTEGER PRIMARY KEY, artifact TEXT, operation TEXT, detail TEXT);
         """)
 
+    def authorize_historical(self, source, replacement, batch):
+        from .historical_retirement import authorize
+        return authorize(self, source, replacement, batch)
+
+    def retire_authorized(self, artifact, *, live_check):
+        from .historical_retirement import retire
+        return retire(self, artifact, live_check=live_check)
+
     def register(self, artifact, path, *, run, trajectory, family, step, level,
                  origin='historical', auto=False, purge_after_quarantine=False):
         if not all(isinstance(x,str) and x.strip() for x in (artifact,run,trajectory,family)):
