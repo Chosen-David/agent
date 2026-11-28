@@ -13,7 +13,8 @@ class ClaimTest(unittest.TestCase):
             out=root/'writes'
             command=[sys.executable,'-c',
                      'import sys;open(sys.argv[1],"a").write("x")',str(out)]
-            request=dict(family='f',trajectory='t',purpose='loss',goal='100',mode='NEW_TRAIN')
+            request=dict(family='f',trajectory='t',purpose='loss',goal='100',mode='NEW_TRAIN',
+                         scientific_context={'scope':'new test'},evidence_gap='terminal loss missing')
             args=(root/'db',request,command)
             with concurrent.futures.ThreadPoolExecutor(2) as pool:
                 futures=[pool.submit(execute,*args) for _ in range(2)]

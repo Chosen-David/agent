@@ -54,7 +54,7 @@ class ExperimentCatalog:
                                 ((project, run) for (run,) in rows if run not in seen))
         return dict(project=project, registered=len(seen), refreshed=updated)
 
-    def find(self, context):
+    def find(self, context, *, verifier=None):
         rows = self.db.execute("SELECT project,run,document_home,digest FROM runs WHERE context=? ORDER BY project,run",
                                (fingerprint(context),))
         hits = []
@@ -64,7 +64,7 @@ class ExperimentCatalog:
                                  decision="verify_delta", reasons=["restore producer document binding"]))
                 continue
             store = ResultStore(project)
-            decision = store.decide_run(run, context)
+            decision = store.decide_run(run, context, verifier=verifier)
             if decision['record_sha256'] != digest:
                 raise ValueError("source record changed; refresh catalog")
             hits.append(dict(project=project, **decision))

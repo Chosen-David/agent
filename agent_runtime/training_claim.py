@@ -9,7 +9,8 @@ import subprocess
 import time
 import uuid
 
-from .experiment_catalog import fingerprint
+from .experiment_catalog import ExperimentCatalog, fingerprint
+from .result_store import _context
 
 
 def execute(database, request, command):
@@ -23,6 +24,18 @@ def execute(database, request, command):
         raise ValueError('unsupported launch mode')
     if mode.startswith('RERUN') and not all(request.get(k) for k in ('reason','prior_run','request_id')):
         raise ValueError('explicit rerun needs reason, prior run and stable request ID')
+    context = request.get('scientific_context')
+    _context(context)
+    if not context or not isinstance(request.get('evidence_gap'), str) or not request['evidence_gap'].strip():
+        raise ValueError('scientific conditions and an explicit evidence gap required')
+    catalog = ExperimentCatalog(database)
+    try:
+        hits = catalog.find(context)
+    finally:
+        catalog.db.close()
+    if hits and not mode.startswith('RERUN'):
+        print(json.dumps(dict(action='review_historical_result', hits=hits)), flush=True)
+        return 75
     identity = {k:request[k] for k in ('family','trajectory','goal')}
     if mode.startswith('RERUN'):
         identity.update(request_id=request['request_id'])
