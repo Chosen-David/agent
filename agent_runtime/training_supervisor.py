@@ -114,6 +114,37 @@ class TrainingSupervisor:
                             (task,seq,claim,owner,str(evidence),reason or 'initial binding',time.time()))
             return seq
 
+    def follow_retry(self, task, *, remediate=None):
+        """Reconcile a registered successor or dispatch a trusted idempotent remediation DAG.
+
+        A successor declares retry_of={task, claim, owner} in its training request.
+        Only its original logical task can adopt it, within the original attempt budget.
+        The host callback must use the supplied event key for single-flight dispatch.
+        """
+        result = self.tick(task)
+        if result['state'] != 'retry-needed':
+            return result
+        predecessor = {field: result[field] for field in ('task', 'claim', 'owner')}
+
+        def successors():
+            return self.db.execute("""SELECT claim,owner FROM training_claims
+                WHERE json_extract(request,'$.retry_of.task')=?
+                  AND json_extract(request,'$.retry_of.claim')=?
+                  AND json_extract(request,'$.retry_of.owner')=?""",
+                (task, result['claim'], result['owner'])).fetchall()
+
+        attempts = successors()
+        if not attempts and remediate is not None:
+            remediate(predecessor.copy(), 'training-remediation:' + fingerprint(predecessor))
+            attempts = successors()
+        if len(attempts) > 1:
+            raise ValueError('ambiguous registered successors require reconciliation')
+        if attempts:
+            claim, owner = attempts[0]
+            self.bind(task, claim, owner, after_owner=result['owner'], reason='registered retry lineage')
+            return self.tick(task)
+        return result
+
     def tick(self, task):
         with self.db:
             self.db.execute('BEGIN IMMEDIATE')
@@ -147,7 +178,7 @@ def main():
     cli = argparse.ArgumentParser(description=__doc__)
     cli.add_argument('database', type=Path)
     ops = cli.add_subparsers(dest='op', required=True)
-    for name in ('bind','rebind','tick','watch'):
+    for name in ('bind','rebind','tick','watch','follow-retry'):
         op = ops.add_parser(name)
         op.add_argument('task')
         if name == 'watch':
@@ -179,8 +210,9 @@ def main():
             seq = supervisor.bind(args.task,args.claim,args.owner,after_owner=args.after_owner,reason=args.reason)
             print(json.dumps(dict(attempt=seq)))
         else:
-            if args.op == 'tick':
-                result = supervisor.tick(args.task)
+            if args.op in ('tick', 'follow-retry'):
+                result = (supervisor.follow_retry(args.task) if args.op == 'follow-retry'
+                          else supervisor.tick(args.task))
                 print(json.dumps(result), flush=True)
                 return 0 if result['state'] in ('waiting-attempt','review-enqueued') else 75
             if min(args.interval, args.timeout) < 1 or args.retry_wait < 0:
@@ -189,7 +221,7 @@ def main():
             retry_deadline = None
             previous_attempt = None
             while True:
-                result = supervisor.tick(args.task)
+                result = supervisor.follow_retry(args.task)
                 print(json.dumps(result), flush=True)
                 if result['state'] == 'review-enqueued':
                     return 0

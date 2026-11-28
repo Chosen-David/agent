@@ -22,7 +22,7 @@ class RetryTest(unittest.TestCase):
                            on_pass='report', on_reject='repair', authorization='controlled test',
                            takeover=True, dependencies=[])
 
-    def train(self,label,rc,variant):
+    def train(self,label,rc,variant, retry_of=None):
         output = self.root / label
         output.mkdir()
         plan = dict(physical_output=str(output), run_id=label, policy='profile', steps=2,
@@ -32,6 +32,8 @@ class RetryTest(unittest.TestCase):
         req = dict(family='test-family', trajectory=label, purpose='performance', goal='2 updates',
                    mode='NEW_TRAIN', evidence_gap='test attempt', artifact_plan=str(budget),
                    scientific_context={'scope':'optimizer','execution':{'variant':variant}})
+        if retry_of is not None:
+            req["retry_of"] = retry_of
         command = [sys.executable, '-c', 'import pathlib,sys; pathlib.Path(sys.argv[1]).write_text(sys.argv[2]); sys.exit(int(sys.argv[3]))',
                    str(output/'result'),label,str(rc)]
         self.assertEqual(execute(self.database,req,command),rc)
@@ -82,6 +84,31 @@ class RetryTest(unittest.TestCase):
         self.assertEqual(restarted.reviews.advance('review', Reader()), 'completed')
         with self.assertRaisesRegex(ValueError,'predecessor'):
             self.supervisor.bind('review',*new,after_owner='stale',reason='repair launch')
+
+    def test_follow_registered_retry_after_real_failure(self):
+        expected, old = self.train('broken', 7, 'stable')
+        self.first(old, expected)
+        calls = []
+        def launch(predecessor, event):
+            calls.append(event)
+            self.train('fixed', 0, 'stable', retry_of=predecessor)
+        self.assertEqual(self.supervisor.follow_retry('review',remediate=launch)['state'], 'review-enqueued')
+        restarted = TrainingSupervisor(self.database)
+        self.addCleanup(restarted.db.close)
+        self.assertEqual(restarted.follow_retry('review',remediate=launch)['attempt'], 2)
+        self.assertEqual(len(calls), 1)
+        spec = json.loads(restarted.db.execute('SELECT spec FROM research_reviews').fetchone()[0])
+        self.assertEqual(Path(spec['evidence']).read_text(),'fixed')
+
+    def test_refuse_ambiguous_registered_successors(self):
+        expected, old = self.train('broken', 7, 'stable')
+        self.first(old, expected)
+        lineage = dict(task='review', claim=old[0], owner=old[1])
+        for label in ('first', 'second'):
+            self.train(label,0,'stable',retry_of=lineage)
+        with self.assertRaisesRegex(ValueError,'ambiguous'):
+            self.supervisor.follow_retry('review')
+        self.assertFalse(self.supervisor.db.execute('SELECT 1 FROM research_reviews').fetchone())
 
     def test_failure_budget_and_changed_successor(self):
         expected, old = self.train('old', 2, 'stable')
