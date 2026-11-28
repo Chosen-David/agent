@@ -45,3 +45,5 @@ description: "多机异构 GPU 池实验派单全生命周期：SSH 接入、环
 多个项目共用本地 SQLite 索引时，先用现有 ResultStore 登记原始来源，然后执行 `python -m agent_runtime.experiment_catalog DB scan PROJECT` 增量刷新，使用同一 DB 的 `find CONTEXT.json` 查找跨项目同条件候选。每次命中回到生产项目复验。历史材料缺少独立验收时保留 verify_delta；空结果仅表示已登记范围内没有完全匹配。
 
 L0 保留指标，L1 加诊断切片，L2 为模型权重，L3 需要完整可恢复训练状态。预算使用 --quota-free-bytes、--committed-bytes、--staging-bytes 表达外部配额、并发预留与临时副本。高水位仅触发协调，禁止凭压力百分比自动放行删除。恢复时使用 scripts/result_store.py longest-recovery，传入同一轨迹、含 Scheduler horizon 的科学配置指纹、最大目标 step 及可信 restore adapter。只有当前真实完整恢复和训练状态核验通过才会返回 resume。独立 seed、分支起点和固定里程碑各自保留。
+
+多调用者启动同一训练前，将已做复用决策的科学 family、轨迹 trajectory、termination goal、purpose、mode 写入请求，然后通过 `python -m agent_runtime.training_claim DB REQUEST -- PROGRAM ARGS` 认领并启动。多个启动者共享同一 SQLite；已有认领返回 75。失败、丢失心跳及进程成功退出都保留记录，先核实活动子进程及独立结果验收再决定后续。RERUN_REPLACE 与 RERUN_REPLICATE 需要原 run、原因和幂等请求 ID。
