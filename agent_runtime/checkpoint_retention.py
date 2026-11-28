@@ -111,6 +111,32 @@ class CheckpointRetention:
             self._event(artifact,'retention-review',json.dumps(result))
         return result
 
+    def replacement_candidates(self, claim, *, store, verifier):
+        """Record an accepted explicit replacement; keep original evidence and all holds."""
+        row = self.db.execute('SELECT status,request FROM training_claims WHERE claim=?',(claim,)).fetchone()
+        if not row:
+            raise ValueError('unknown execution claim')
+        req = json.loads(row[1])
+        if row[0] != 'awaiting-validation' or req.get('mode') != 'RERUN_REPLACE':
+            raise ValueError('completed explicit replacement run required')
+        new,old = req['run_id'],req['prior_run']
+        if new == old:
+            raise ValueError('replacement needs a distinct run')
+        checked = store.decide_run(new,req['scientific_context'],verifier=verifier)
+        if checked['decision'] != 'reuse' or checked['validation_status'] != 'usable-with-scope':
+            raise ValueError('replacement is not accepted for its stated scope')
+        candidates=[]
+        with self.db:
+            self.db.execute('BEGIN IMMEDIATE')
+            for artifact, level in self.db.execute('SELECT artifact,level FROM checkpoint_assets WHERE run=?',(old,)):
+                held = self.db.execute('SELECT 1 FROM checkpoint_refs WHERE artifact=? LIMIT 1',(artifact,)).fetchone()
+                if level in ('L2','L3') and not held:
+                    candidates.append(artifact)
+                    self._event(artifact,'replaced-candidate',json.dumps(dict(claim=claim,old=old,new=new,
+                        proof=checked['record_sha256'],reason=req['reason'])))
+        return dict(action='candidate-for-review',old=old,new=new,artifacts=candidates,
+                    reclaimed_bytes=0,scope='producer live holds and unique recovery still require review')
+
     def quarantine(self, artifact, replacement, *, store, provider, byte_limit):
         """Withdraw a preauthorized, managed generation under a live host-wide release lease.
 

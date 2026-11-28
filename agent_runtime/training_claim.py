@@ -71,6 +71,7 @@ def execute(database, request, command, *, adapter=None):
         identity.update(request_id=request['request_id'])
     key = fingerprint(identity)
     owner = uuid.uuid4().hex
+    request = dict(request, run_id=request.get('run_id') or owner)
     db = sqlite3.connect(database, timeout=30)
     try:
         db.execute("""CREATE TABLE IF NOT EXISTS training_claims

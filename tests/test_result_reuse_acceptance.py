@@ -106,6 +106,27 @@ class PriorResultReuseAcceptanceTests(unittest.TestCase):
         self.assertEqual(json.loads(row[0])['action'],'REUSE_RESULT')
         catalog.db.close()
 
+    def test_replacement_marks_only_unheld_large_assets_after_result_acceptance(self):
+        from agent_runtime.checkpoint_retention import CheckpointRetention
+        from agent_runtime.training_claim import execute
+        self.register(verifier=self.cheap_verifier)
+        db=self.root/'training.sqlite'
+        ledger=CheckpointRetention(db)
+        for label,level in [('weights','L2'),('pinned','L3'),('metrics','L0')]:
+            path=self.root/label
+            path.write_text(label)
+            ledger.register(label,path,run='prior',trajectory='old',family='old',step=3,level=level)
+        ledger.reference('pinned','human','best model')
+        request=dict(mode='RERUN_REPLACE',reason='invalid prior setup',request_id='explicit1',
+            family='f',trajectory='t',goal='endpoint',purpose='replace invalid trial',
+            prior_run='prior',run_id=self.run_id,evidence_gap='prior invalid',scientific_context=self.context)
+        self.assertEqual(execute(db,request,[sys.executable,'-c','pass']),0)
+        key=ledger.db.execute('SELECT claim FROM training_claims').fetchone()[0]
+        self.assertEqual(ledger.replacement_candidates(key,store=self.store,
+            verifier=self.cheap_verifier)['artifacts'],['weights'])
+        self.assertTrue((self.root/'weights').exists())
+        ledger.db.close()
+
     def test_native_storage_is_central_and_legacy_paths_are_explicit(self):
         with self.assertRaises(ValueError):self.store.register(self.contract)
         before=(self.root/'run/raw.json').read_bytes()
