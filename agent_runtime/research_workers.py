@@ -128,12 +128,16 @@ def run_native_worker(admission, worker, *, codex, project, cycle, primary,
     tree = Path(worker['worktree']).resolve(strict=True)
     if not output.is_relative_to(tree):
         raise ValueError('native worker output must be inside its authorized worktree')
+    from . import worker_preflight
+    worker_preflight.check(admission.store, codex, tree, output,
+                           set(worker.get('required_capabilities', ())))
     if not admission.reserve(worker, parent=primary, project=project, cycle=cycle,
                              budget=budget, tokens=tokens, final_reserve=final_reserve):
         raise ValueError('existing invocation requires reconciliation')
     output.mkdir(parents=True, exist_ok=True)
     with (output / 'codex-events.jsonl').open('x') as events:
-        result = subprocess.run([str(codex), 'exec', '--json', '--sandbox', 'workspace-write',
+        result = subprocess.run([str(codex), *worker_preflight.CONFIG, '-a', 'never',
+                                 'exec', '--json', '--sandbox', worker_preflight.MODE,
                                  '--disable', 'multi_agent', '--disable', 'multi_agent_v2',
                                  '-C', str(tree), '-'],
                                 input=prompt, text=True, stdout=events, cwd=tree)
