@@ -567,7 +567,6 @@ class Engine:
                 handler = self.handlers.get(task['action'])
                 if node['status'] == 'doing' and node['lease_until'] <= now:
                     if adaptive:
-                        # Lease expiry alone cannot prove the local adapter has exited.
                         with claim_lock(task['task_id']) as available:
                             if not available:
                                 continue

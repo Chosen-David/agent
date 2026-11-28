@@ -131,7 +131,6 @@ def run_native_worker(admission, worker, *, codex, project, cycle, primary,
     if not admission.reserve(worker, parent=primary, project=project, cycle=cycle,
                              budget=budget, tokens=tokens, final_reserve=final_reserve):
         raise ValueError('existing invocation requires reconciliation')
-    # Exclusive creation preserves original evidence on a resumed or ambiguous claim.
     output.mkdir(parents=True, exist_ok=True)
     with (output / 'codex-events.jsonl').open('x') as events:
         result = subprocess.run([str(codex), 'exec', '--json', '--sandbox', 'workspace-write',
