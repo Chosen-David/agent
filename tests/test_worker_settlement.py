@@ -15,7 +15,7 @@ class Settlement(unittest.TestCase):
              patch('agent_runtime.worker_preflight.check', return_value='workspace-write'):
             return run_native_worker(self.host, worker, codex=binary, project='test', cycle='a',
                     primary='primary', budget=50, tokens=10, final_reserve=5, root=root,
-                    basis={}, request={}, objective='fixture', validate_output=lambda p: False, **options)
+                    basis={}, request={}, objective='fixture', validate_output=options.pop("validate_output", lambda p: False), **options)
 
     def test_process_boundaries(self):
         for binary, reconciled, expected in [('/bin/false', True, 'failed'),
@@ -56,3 +56,11 @@ class Settlement(unittest.TestCase):
             with self.assertRaises(FileNotFoundError):
                 self.run_child(root, str(binary))
             self.host.settle.assert_called_once_with('one', 0, outcome='not_started')
+
+    def test_nonempty_rejection_record_cannot_accept_artifact(self):
+        self.host = Mock()
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaisesRegex(ValueError, 'without an accepted artifact'):
+                self.run_child(Path(tmp), '/bin/true',
+                               validate_output=lambda path: {'status': 'insufficient'})
+            self.host.settle.assert_called_once_with('one', None, outcome='insufficient')

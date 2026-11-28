@@ -192,7 +192,7 @@ def run_native_worker(admission, worker, *, codex, project, cycle, primary,
             admission.settle(identity, used, outcome='failed')
         return process.returncode
     try:
-        accepted = validate_output(output)
+        accepted = validate_output(output) is True
     except Exception:
         admission.settle(identity, used, outcome='insufficient')
         raise
