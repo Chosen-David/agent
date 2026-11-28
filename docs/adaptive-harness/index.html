@@ -1,0 +1,35 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>科研执行与预算 · 研发核验记录</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f2f0e9;color:#182823;font:16px/1.7 system-ui,sans-serif}main{max-width:940px;margin:auto;padding:48px 5vw 72px}header{border-top:7px solid #165543;border-bottom:1px solid #a5aea4;padding:32px 0 20px}h1{font-size:clamp(28px,5vw,54px);line-height:1.16;margin:.25em 0}h2{margin:1.8em 0 .5em}p{max-width:77ch}small,a{color:#315b51}summary{font-weight:680;cursor:pointer;padding:.8em 0}details{border-bottom:1px solid #bdc5ba}table{border-collapse:collapse;width:100%;font-size:.94em}th,td{text-align:left;padding:8px;border-bottom:1px solid #c7cec3;vertical-align:top}code{overflow-wrap:anywhere}meter{width:100%;height:18px}select{padding:5px;background:white}output{font-variant-numeric:tabular-nums}aside{padding:12px 16px;border-left:3px solid #ad7134;background:#ede4d4}
+</style><main><header><small>Chosen-David/agent　／　2026.11.28　／　源码与宿主核验</small><h1>科研执行与预算</h1><p>同一研究任务可以占用 GPU 数小时，而模型只需处理有研究价值的事件。新版在 SQLite 事务中区分任务所有权与受管 Agent 名额，并以实际产物判断 Worker 是否完成交付。</p></header>
+<h2>执行路径</h2>
+<table><thead><tr><th>入口</th><th>何时使用</th><th>完成依据</th></tr></thead><tbody>
+<tr><td>Single</td><td>顺序依赖、同一文件反复修复</td><td>一个主 Agent 与必要测试</td></tr>
+<tr><td>旧 Dual-AI</td><td>显式绑定的审核或历史任务恢复</td><td>认证回执、原预算与版本</td></tr>
+<tr><td>固定 Dual-Agent</td><td>此前 V5 的两项独立任务</td><td>隔离工作树与各自产物</td></tr>
+<tr><td>Adaptive</td><td>默认一个执行者。有独立产物时预留名额和预算</td><td>任务依赖、独占资源、产物校验、阶段验收</td></tr></tbody></table>
+<details><summary>架构审计与清理依据</summary><table>
+<tr><th>决策</th><th>代码与消费者</th><th>实际变化与边界</th></tr>
+<tr><td>KEEP</td><td>codex_host、collaborative_flow</td><td>历史只读认证与预算仍有消费者，保留原合同。</td></tr>
+<tr><td>REUSE</td><td>handoff_basis、Store.transaction、token_usage</td><td>派遣复用证据闭包与 SQLite 事务。CLI usage 复用单次完成事件解析。</td></tr>
+<tr><td>SIMPLIFY</td><td>research_workers、core.Engine</td><td>同一 DAG 支持显式独立资源认领。待核实的外部副作用保留所有权。</td></tr>
+<tr><td>MERGE</td><td>Prompt、安装模板、技能入口</td><td>新任务模式指向 workflows/research_harness.md。十六个技能去掉无条件禁止派遣的指令。</td></tr>
+<tr><td>REPLACE</td><td>新 Worker 执行</td><td>宿主工具型 Worker、Codex CLI 复用原生循环。受限 CLI 的本机工具执行遇到 bwrap 错误。</td></tr>
+<tr><td>DELETE</td><td>setup.agent_text、_AGENT_BODY</td><td>安装器不再生成旧角色文件。唯一活跃消费者是模板测试，改为验证实际安装清单和人类指南边界。</td></tr>
+<tr><td>ARCHIVE</td><td>历史超时记录和科研复核</td><td>保留真实证据；用户授权的前向策略迁移已使 P0 开始训练。</td></tr></table></details>
+<details><summary>设计来源与适用范围</summary><p>仓库作为知识入口、机械测试与轻量准入来自 OpenAI 的工程实践。Codex 提供原生线程和工具执行。Google 的对照研究支持按任务可并行性选架构。Anthropic 的生产经验强调协调与上下文成本。MeterRouter 是预算路由预印本；本次只采用可解释规则。各来源均不能证明本项目已节省 Token。</p>
+<p><a href="https://openai.com/index/harness-engineering/">OpenAI 工程实践</a> · <a href="https://developers.openai.com/blog/codex-as-a-platform">Codex 平台</a> · <a href="https://www.research.google/blog/towards-a-science-of-scaling-agent-systems-when-and-why-agent-systems-work/">Google 受控研究</a> · <a href="https://www.anthropic.com/research/multi-agent-research-system">Anthropic 工程经验</a> · <a href="https://arxiv.org/abs/2611.34327">MeterRouter 预印本</a></p></details>
+<h2>一个真实 Worker 的成本</h2><p>Codex CLI 0.172.0 的线程 <code>01a22169-1140-7103-b790-792004abb3c2</code> 收到任务包并尝试执行命令。宿主拒绝 bwrap 挂载，目标产物未生成。</p>
+<label>用量视图　<select id="kind"><option value="input">输入</option><option value="cache">其中缓存输入</option><option value="output">输出</option><option value="total">输入与输出总计</option></select></label>　<output id="count"></output><meter id="bar" min="0" max="72693"></meter>
+<aside>该次执行预留 35,000 tokens，实际 72,693。Token 预留只能控制是否接单。本后端仍可能在执行期间超出预留。零个合格产物使该次每合格产物成本无定义。</aside>
+<details><summary>上下文、预算和公平比较</summary><p>Worker 输入由任务目标、工作树、输出目录和 basis_context 序列化依据组成。系统指令和工具事件也消耗输入。55,552 个缓存 Token 已包含在 72,401 个输入 Token 内。受管跨进程默认总数为二，主 Agent 占一席；每 Cycle 默认四次派遣。缺少实际用量时保留预留值。当前尚无同任务、同验收质量的 S0–S5 对照，无法绘制成本–质量 Pareto 前沿。</p></details>
+<h2>科研观察</h2><details open><summary>V5 · 有效子空间相对整个输出的补偿比例</summary><p>在 step 2 的十个全局矩阵上，FP64 回放得到 s_active/s_ER = 1/√有效方向能量占比。40 个阈值–矩阵组合的最大恒等式误差为 2.22×10⁻¹⁶。</p>
+<label>有效方向阈值 ρ　<select id="rho"><option>0.3</option><option>0.5</option><option>0.7</option><option>0.9</option></select></label>　样本最大比例 <output id="ratio"></output><p>该量只描述归一化空间的局部几何。长期 Action、Video 与 Total Loss 仍须在统一配方下评估。</p></details>
+<details><summary>运行监督与 V4 证据</summary><p>Pion 由同一受管认领在四个 H200 rank 上运行。30 秒监督循环将步数写入 progress.jsonl，观测路径不调用模型。训练期间 CPU 任务完成了上述历史谱回放。V4 保留多 rank 正确性与性能台账，本轮没有占用 Pion 的 GPU 再做性能对照。</p></details>
+<details><summary>验收范围与待解决问题</summary><p>Engine 隔离工作树提交 6f13f884，覆盖并行、资源冲突、串行恢复。跨进程测试由两个独立 Python 进程竞争最后一个名额。逻辑资源名依赖可信宿主映射。工作树不能代替操作系统权限。CLI 的宿主挂载限制仍存在。全机所有非受管会话、完整质量–成本对照以及正式优化器胜负仍无验收证据。</p></details></main>
+<script>
+const kind=document.querySelector('#kind'),rho=document.querySelector('#rho');
+function render(){const n={input:72401,cache:55552,output:292,total:72693}[kind.value];document.querySelector('#count').textContent=n.toLocaleString()+' tokens';document.querySelector('#bar').value=n;document.querySelector('#ratio').textContent=(rho.value==='0.9'?1.1849140995:1.0152741383).toFixed(5)}
+kind.onchange=rho.onchange=render;render();
+</script></html>
