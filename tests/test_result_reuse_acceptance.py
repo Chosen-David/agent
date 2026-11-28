@@ -86,6 +86,26 @@ class PriorResultReuseAcceptanceTests(unittest.TestCase):
         self.assertEqual(result['validation_status'],'usable-with-scope')
         self.assertFalse(result['automatic_skip_authorized'])
 
+    def test_federated_launch_records_reuse_instead_of_running_new_training(self):
+        from agent_runtime.experiment_catalog import ExperimentCatalog
+        from agent_runtime.training_claim import execute
+        self.register(verifier=self.cheap_verifier)
+        database=self.root/'training.sqlite'
+        catalog=ExperimentCatalog(database)
+        catalog.scan(self.root)
+        req=dict(family='renamed', trajectory='fresh', goal='comparison',
+                 scientific_context=self.context, mode='NEW_TRAIN',purpose='identical question',
+                 evidence_gap='check prior evidence')
+        class Adapter:
+            verify=staticmethod(self.cheap_verifier)
+        marker=self.root/'unexpected-launch'
+        self.assertEqual(execute(database, req, [sys.executable,'-c',
+            'from pathlib import Path;Path('+repr(str(marker))+').touch()'],adapter=Adapter()),75)
+        self.assertFalse(marker.exists())
+        row=catalog.db.execute('SELECT decision FROM training_decisions').fetchone()
+        self.assertEqual(json.loads(row[0])['action'],'REUSE_RESULT')
+        catalog.db.close()
+
     def test_native_storage_is_central_and_legacy_paths_are_explicit(self):
         with self.assertRaises(ValueError):self.store.register(self.contract)
         before=(self.root/'run/raw.json').read_bytes()

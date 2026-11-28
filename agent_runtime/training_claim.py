@@ -1,5 +1,6 @@
 """Durable single-flight launch for an explicitly bound training request."""
 import argparse
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -10,10 +11,10 @@ import time
 import uuid
 
 from .experiment_catalog import ExperimentCatalog, fingerprint
-from .result_store import _context
+from .result_store import ResultStore, _context
 
 
-def execute(database, request, command):
+def execute(database, request, command, *, adapter=None):
     if not command or not isinstance(request, dict):
         raise ValueError('bound request and command required')
     for field in ('family', 'trajectory', 'purpose', 'goal', 'mode'):
@@ -30,12 +31,41 @@ def execute(database, request, command):
         raise ValueError('scientific conditions and an explicit evidence gap required')
     catalog = ExperimentCatalog(database)
     try:
-        hits = catalog.find(context)
+        hits = catalog.find(context, verifier=getattr(adapter, 'verify', None))
+        rerun = mode.startswith('RERUN')
+        if hits and not rerun:
+            action = 'REUSE_RESULT' if any(h['decision']=='reuse' for h in hits) else 'review_historical_result'
+            decision = dict(action=action, hits=hits, purpose=request['purpose'])
+            with catalog.db:
+                catalog.db.execute("""CREATE TABLE IF NOT EXISTS training_decisions
+                    (sequence INTEGER PRIMARY KEY, at REAL, context TEXT, decision TEXT)""")
+                catalog.db.execute('INSERT INTO training_decisions(at,context,decision) VALUES(?,?,?)',
+                                   (time.time(),fingerprint(context),json.dumps(decision)))
+            print(json.dumps(decision),flush=True)
+            return 75
+        has_assets = catalog.db.execute("""SELECT 1 FROM sqlite_master
+            WHERE type='table' AND name='checkpoint_assets'""").fetchone()
+        candidates = []
+        if has_assets and not rerun:
+            candidates = [row[0] for row in catalog.db.execute("""SELECT artifact FROM checkpoint_assets
+                WHERE trajectory=? AND family=? AND level='L3' ORDER BY step DESC""",
+                (request['trajectory'],request['family']))]
+        if candidates or mode=='RESUME':
+            if adapter is None or not request.get('producer_project') or not candidates:
+                print(json.dumps(dict(action='verify_recovery', candidates=candidates)), flush=True)
+                return 75
+            recovery = ResultStore(request['producer_project']).longest_recovery(candidates,
+                trajectory_id=request['trajectory'],family_sha256=request['family'],
+                target_step=request['target_step'],byte_limit=request['hash_budget'],provider=adapter)
+            if recovery['action']!='resume':
+                print(json.dumps(recovery), flush=True)
+                return 75
+            command = adapter.resume_command(command,recovery)
+            if not isinstance(command,list) or not command or not all(isinstance(v,str) for v in command):
+                raise ValueError('trusted adapter must bind the checked restore point to argv')
+            request = dict(request, bound_recovery=recovery)
     finally:
         catalog.db.close()
-    if hits and not mode.startswith('RERUN'):
-        print(json.dumps(dict(action='review_historical_result', hits=hits)), flush=True)
-        return 75
     identity = dict(scientific_fingerprint=fingerprint(context), trajectory=request['trajectory'], goal=request['goal'])
     if mode.startswith('RERUN'):
         identity.update(request_id=request['request_id'])
@@ -80,12 +110,20 @@ def execute(database, request, command):
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--adapter', help='trusted host verifier and native restore adapter')
     parser.add_argument('database')
     parser.add_argument('request',type=Path)
     parser.add_argument('command',nargs=argparse.REMAINDER)
     args=parser.parse_args()
     command=args.command[1:] if args.command[:1]==['--'] else args.command
-    return execute(args.database,json.loads(args.request.read_text()),command)
+    adapter = None
+    if args.adapter:
+        spec = importlib.util.spec_from_file_location('trusted_training_adapter',args.adapter)
+        if spec is None or spec.loader is None:
+            raise ValueError('invalid host adapter')
+        adapter = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(adapter)
+    return execute(args.database,json.loads(args.request.read_text()),command,adapter=adapter)
 
 
 if __name__=='__main__':
