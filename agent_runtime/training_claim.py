@@ -133,7 +133,7 @@ def execute(database, request, command, *, adapter=None):
                     options.extend(['--input',request['input_artifact']])
                 if request.get('measure_checkpoint_io'):
                     options.append('--io')
-                profile_dir=Path(budget['physical_output']).parent / ('profile-'+key)
+                profile_dir=Path(budget['physical_output']) / ('profile-'+key)
                 command=[sys.executable,'-m','agent_runtime.profile_checkpoint',*options,
                          str(database),str(profile_dir),'--',*command]
             child = subprocess.Popen(command)
