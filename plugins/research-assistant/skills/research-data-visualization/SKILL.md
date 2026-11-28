@@ -3,7 +3,7 @@ name: research-data-visualization
 description: "将真实研究数据、可追溯汇总表、仿真输出或明确公式绘制成美观且数值忠实的论文图。用于图型选择、统计图、准确曲线与已有数据图精修；不负责流程架构示意或凭空造结果。"
 ---
 
-先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+Skill 在当前执行者上下文内使用；任务派遣遵循宿主绑定的科研策略。串行任务见[单主执行契约](references/single_main_workflow.md)。
 
 
 # 论文数据可视化

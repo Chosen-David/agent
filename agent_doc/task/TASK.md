@@ -2,6 +2,8 @@
 
 ## 2026-11-28
 
+- [ ] [Adaptive Harness](task_details/ADAPTIVE-HARNESS.md) 受管准入、生产宿主检查与成本对照。
+
 - [ ] [TRAINING-ASSETS] 分级资产、跨项目登记、最长有效恢复与动态淘汰已接入，生产 Loss 研究验收进行中。([详情](task_details/TRAINING-ASSETS.md))
 
 ## 2026-10-26

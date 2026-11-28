@@ -3,7 +3,7 @@ name: research-explore
 description: "研究选题、Idea 查新与可行性探索：检索原始文献、挑战机制与替代解释，形成可证伪假设、最小判别实验和任务链。用于新方向、研究假设或负结果分析，不把计划写成已验证结论。"
 ---
 
-先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+Skill 在当前执行者上下文内使用；任务派遣遵循宿主绑定的科研策略。串行任务见[单主执行契约](references/single_main_workflow.md)。
 
 
 # 科研探索

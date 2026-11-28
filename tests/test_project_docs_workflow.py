@@ -148,11 +148,10 @@ class DocumentWorkflowTests(unittest.TestCase):
             for required in ('agent_doc/task/TASK.md', 'agent_doc/task/task_details/*.md',
                              'agent_doc/guide/GUIDE.md', 'agent_doc/advice/', 'adopt/adapt/reject/defer'):
                 self.assertIn(required, text)
-        for role, _, description in setup.catalog():
-            text = setup.agent_text(role, description)
-            self.assertIn('references/project_document_workflow.md', text)
-            self.assertIn('document_refs', text)
-            self.assertIn('agent_doc/guide/', text)
+        files, _ = setup.expected_files()
+        self.assertIn('research_harness.md', setup.block())
+        self.assertIn('adaptive/v1', files['.claude/agent-workflows/research_harness.md'])
+        self.assertFalse(any(name.startswith('.claude/agents/') for name in files))
 
 
 class DocumentSetupTests(unittest.TestCase):

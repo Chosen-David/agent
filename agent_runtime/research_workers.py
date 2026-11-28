@@ -31,6 +31,106 @@ def inspect_workers(workers):
     return records
 
 
+class Admission:
+    """Shared host Store for cooperating launchers. Ambiguous claims stay reserved."""
+
+    def __init__(self, store=None):
+        if store is None:
+            from .core import Store
+            store = Store(Path.home() / ".local/share/chosen-agent-experiments/research.sqlite")
+        self.store = store
+        with store.transaction() as db:
+            db.execute("""CREATE TABLE IF NOT EXISTS agent_claims (
+                identity TEXT PRIMARY KEY, parent TEXT, project TEXT NOT NULL,
+                cycle TEXT NOT NULL, binding TEXT NOT NULL, reserved INTEGER NOT NULL,
+                used INTEGER, released INTEGER NOT NULL DEFAULT 0)""")
+
+    def reserve(self, worker, *, parent, project, cycle, tokens, budget, final_reserve,
+                max_agents=2, max_spawns=4):
+        """Limits come from the trusted launcher, never from the worker packet."""
+        limits = (tokens, budget, final_reserve, max_agents, max_spawns)
+        if any(type(n) is not int or n < 0 for n in limits) or not max_agents:
+            raise ValueError('invalid admission limits')
+        record = inspect_workers([worker])[0]
+        binding = json.dumps(record, sort_keys=True)
+        identity = record['identity']
+        with self.store.transaction() as db:
+            prior = db.execute('SELECT * FROM agent_claims WHERE identity=?', (identity,)).fetchone()
+            if prior:
+                if (prior['project'], prior['cycle'], prior['parent'], prior['binding'],
+                    prior['reserved'], prior['released']) != (project, cycle, parent, binding, tokens, 0):
+                    raise ValueError('identity already used with another claim')
+                return False
+            active = db.execute('SELECT * FROM agent_claims WHERE released=0').fetchall()
+            if len(active) >= max_agents:
+                raise ValueError('managed host agent limit reached')
+            if parent is not None:
+                if not any(r['identity'] == parent and r['parent'] is None and
+                           r['project'] == project and r['cycle'] == cycle for r in active):
+                    raise ValueError('active primary in this cycle required')
+                count = db.execute('SELECT COUNT(*) FROM agent_claims WHERE project=? AND cycle=? AND parent IS NOT NULL',
+                                   (project, cycle)).fetchone()[0]
+                if count >= max_spawns:
+                    raise ValueError('cycle worker dispatch limit reached')
+            for row in active:
+                inspect_workers([json.loads(row['binding']), record])
+            committed = db.execute('SELECT COALESCE(SUM(COALESCE(used,reserved)),0) FROM agent_claims WHERE project=?',
+                                   (project,)).fetchone()[0]
+            if committed + tokens + final_reserve > budget:
+                raise ValueError('project budget or final reserve exhausted')
+            db.execute('INSERT INTO agent_claims(identity,parent,project,cycle,binding,reserved) VALUES(?,?,?,?,?,?)',
+                       (identity, parent, project, cycle, binding, tokens))
+            return True
+
+    def settle(self, identity, used):
+        """Unknown final usage conservatively retains the full reservation."""
+        if used is not None and (type(used) is not int or used < 0):
+            raise ValueError('invalid usage')
+        with self.store.transaction() as db:
+            row = db.execute('SELECT released,used FROM agent_claims WHERE identity=?', (identity,)).fetchone()
+            if not row or row['released'] and row['used'] != used:
+                raise ValueError('unknown or conflicting settlement')
+            db.execute('UPDATE agent_claims SET released=1,used=? WHERE identity=?', (used, identity))
+
+
+def run_native_worker(admission, worker, *, codex, project, cycle, primary,
+                      budget, tokens, final_reserve, root, basis, request, objective, validate_output):
+    """Run from the durable host, with an already admitted primary and trusted bindings."""
+    from .handoff_basis import basis_context
+
+    if not callable(validate_output):
+        raise ValueError('host artifact validator required')
+    packet = basis_context(root, basis, request)
+    prompt = json.dumps({'task': worker['task'], 'objective': objective,
+                         'worktree': worker['worktree'], 'output': worker['output'],
+                         'basis': json.loads(packet['payload'])}, ensure_ascii=False)
+    output = Path(worker['output']).resolve()
+    tree = Path(worker['worktree']).resolve(strict=True)
+    if not output.is_relative_to(tree):
+        raise ValueError('native worker output must be inside its authorized worktree')
+    if not admission.reserve(worker, parent=primary, project=project, cycle=cycle,
+                             budget=budget, tokens=tokens, final_reserve=final_reserve):
+        raise ValueError('existing invocation requires reconciliation')
+    # Exclusive creation preserves original evidence on a resumed or ambiguous claim.
+    output.mkdir(parents=True, exist_ok=True)
+    with (output / 'codex-events.jsonl').open('x') as events:
+        result = subprocess.run([str(codex), 'exec', '--json', '--sandbox', 'workspace-write',
+                                 '--disable', 'multi_agent', '--disable', 'multi_agent_v2',
+                                 '-C', str(tree), '-'],
+                                input=prompt, text=True, stdout=events, cwd=tree)
+    if result.returncode == 0:
+        from .token_usage import worker_turn_usage
+        with (output / 'codex-events.jsonl').open() as evidence:
+            try:
+                used = worker_turn_usage(evidence)['total_tokens']
+            except ValueError:
+                used = None
+        admission.settle(worker['identity'], used)
+        if not validate_output(output):
+            raise ValueError('native turn completed without an accepted artifact')
+    return result.returncode
+
+
 if __name__=='__main__':
     p=argparse.ArgumentParser()
     p.add_argument('assignments',type=Path)

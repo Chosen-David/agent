@@ -77,7 +77,7 @@ def short_appserver_usage(events, thread_id, turn_id):
             'source': 'Codex app-server final fresh-turn tokenUsage snapshot',
             'scope': 'one no-tool inference turn; cache not subtracted; development/this chat excluded'}
 
-def short_probe_usage(lines):
+def _fresh_cli_usage(lines, *, allow_tools):
     events = []
     for line in lines:
         try:
@@ -108,7 +108,7 @@ def short_probe_usage(lines):
             sum(e.get('type') == 'turn.started' for e in events) != 1 or
             any(e.get('type') in ('error','turn.failed') for e in events)):
         raise ValueError('need one successful fresh server turn; no resumed/cumulative snapshots')
-    if any(e.get('type','').startswith('item.') and
+    if not allow_tools and any(e.get('type','').startswith('item.') and
            _usage_object(e.get('item',{}), 'probe item').get('type') not in ('agent_message','reasoning') for e in events):
         raise ValueError('probe executed tools or other work; bounded no-tool accounting is invalid')
     usage = turns[0].get('usage', {})
@@ -123,4 +123,13 @@ def short_probe_usage(lines):
             'cached_input_tokens':usage['cached_input_tokens'], 'output_tokens':usage['output_tokens'],
             'total_tokens':usage['input_tokens'] + usage['output_tokens'],
             'source':'Codex fresh single turn.completed server usage',
-            'scope':'whole short no-tool inference turn; cached input not subtracted; development/this chat excluded'}
+            'scope': ('fresh native worker turn including tools' if allow_tools else
+                      'whole short no-tool inference turn; cached input not subtracted; development/this chat excluded')}
+
+
+def short_probe_usage(lines):
+    return _fresh_cli_usage(lines, allow_tools=False)
+
+
+def worker_turn_usage(lines):
+    return _fresh_cli_usage(lines, allow_tools=True)

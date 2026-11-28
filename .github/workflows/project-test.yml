@@ -23,6 +23,8 @@ jobs:
           python -B scripts/project_test.py
           --workflow-root "$GITHUB_WORKSPACE" --project agent
           --target "$GITHUB_WORKSPACE" --output "$RUNNER_TEMP/agent-project-checks"
+      - name: Check managed admissions and serial compatibility
+        run: python -m unittest tests.test_adaptive_slots tests.test_task_runtime tests.test_single_main
       - name: Run workspace lifecycle and supervisor acceptance
         run: >-
           python -B scripts/project_test.py

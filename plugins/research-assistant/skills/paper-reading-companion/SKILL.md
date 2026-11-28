@@ -3,7 +3,7 @@ name: paper-reading-companion
 description: "陪用户阅读具体论文 PDF 或链接，定位英文原页、段落、公式和图表，维护阅读状态并衔接知识点解释；支持生成原页与解释并排的离线 HTML。用于边读边问，不等同投稿审稿或全页质量检查。"
 ---
 
-先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+Skill 在当前执行者上下文内使用；任务派遣遵循宿主绑定的科研策略。串行任务见[单主执行契约](references/single_main_workflow.md)。
 
 
 # 论文伴读
