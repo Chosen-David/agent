@@ -11,7 +11,7 @@ POLICIES = LIGHTWEIGHT | {"convergence", "recovery", "final"}
 
 def plan(output, run_id, policy, steps, checkpoint_bytes, extra_bytes, reserve_bytes,
          interval=None, quota_free_bytes=None, committed_bytes=0, staging_bytes=0,
-         watermarks=(70, 80, 90, 95), essential=False):
+         watermarks=(70, 80, 90, 95), essential=False, previous_pressure=None):
     if policy not in POLICIES or steps < 1 or min(checkpoint_bytes, extra_bytes, reserve_bytes) < 0:
         raise ValueError("invalid policy, steps or byte estimate")
     if not run_id.strip() or (interval is not None and interval < 1):
@@ -41,6 +41,10 @@ def plan(output, run_id, policy, steps, checkpoint_bytes, extra_bytes, reserve_b
     projected = 100 * (disk.total - disk.free + committed_bytes + required) / disk.total
     stages = ("normal", "plan", "review-authorized-reclamation", "restrict", "emergency")
     pressure = stages[sum(projected >= limit for limit in watermarks)]
+    if previous_pressure is not None and previous_pressure not in stages:
+        raise ValueError("unknown previous storage pressure")
+    if previous_pressure in stages[2:] and pressure == 'plan':
+        pressure = 'review-authorized-reclamation'
     permitted = pressure != "emergency" and (pressure != "restrict" or essential)
     level = {"profile": "L0", "correctness": "L1", "spectral": "L1", "final": "L2",
              "convergence": "L3", "recovery": "L3"}[policy]
@@ -51,7 +55,8 @@ def plan(output, run_id, policy, steps, checkpoint_bytes, extra_bytes, reserve_b
                 save_final=save_final, checkpoint_count=count,
                 checkpoint_bytes=checkpoint_bytes, extra_bytes=extra_bytes,
                 estimated_bytes=required, reserve_bytes=reserve_bytes,
-                free_bytes=free, available_after_reservations=available,
+                free_bytes=free, available_after_reservations=available, quota_free_bytes=quota_free_bytes,
+                disk_device=ancestor.stat().st_dev, watermarks=list(watermarks), essential=essential,
                 committed_bytes=committed_bytes, staging_bytes=staging_bytes,
                 projected_disk_percent=projected, pressure=pressure,
                 fits=permitted and required + reserve_bytes <= available)
@@ -72,6 +77,7 @@ def main():
     parser.add_argument("--staging-bytes", type=int, default=0)
     parser.add_argument("--watermarks", type=float, nargs=4, default=(70,80,90,95))
     parser.add_argument("--essential", action="store_true")
+    parser.add_argument("--previous-pressure")
     args = parser.parse_args()
     try:
         report = plan(**vars(args))

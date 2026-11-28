@@ -170,3 +170,34 @@ class DCPGeneration:
         self._check_all(error)
         dcp.load(state, checkpoint_id=path/'dcp', process_group=self.io_group)
         return state, local
+
+
+def recovery_record(project, generation, *, artifact_id, source_run, producer, code_revision,
+                    input_revision, retention_reason, consumers=(), dependencies=()):
+    """Translate an immutable DCP generation to the existing ResultStore contract."""
+    root = Path(project).resolve(strict=True)
+    path = Path(generation).resolve(strict=True)
+    path.relative_to(root)
+    if path.name.startswith('.'):
+        raise ValueError('partial or withdrawn generation')
+    header = path/'generation.json'
+    raw = header.read_bytes()
+    metadata = json.loads(raw)
+    if metadata['asset_level'] != 'L3':
+        raise ValueError('only full training state can enter the recovery store')
+    files=[]
+    for name,digest in {**metadata['files'],'generation.json':hashlib.sha256(raw).hexdigest()}.items():
+        source = (path/name).resolve(strict=True)
+        if source != path/name or not source.is_relative_to(path):
+            raise ValueError('noncanonical generation member')
+        item=dict(path=str(source.relative_to(root)),sha256=digest,expected_size_bytes=source.stat().st_size,
+                  type='metadata')
+        if name.startswith('local-') and name.endswith('.pt'):
+            item.update(type='rank',rank=int(name[6:-3]))
+        files.append(item)
+    return dict(schema_version='recovery-manifest/v1', run_id=artifact_id, source_run=source_run,
+                producer=producer,code_revision=code_revision,input_revision=input_revision,
+                retention_reason=retention_reason,consumers=list(consumers),dependencies=list(dependencies),
+                save_state='complete',files=files, world_size=metadata['world_size'],
+                trajectory_id=metadata['trajectory_id'],family_sha256=metadata['family_sha256'],
+                completed_step=metadata['completed_step'],asset_level='L3')

@@ -12,6 +12,7 @@ import uuid
 
 from .experiment_catalog import ExperimentCatalog, fingerprint
 from .result_store import ResultStore, _context
+from .training_artifacts import plan
 
 
 def execute(database, request, command, *, adapter=None):
@@ -77,10 +78,33 @@ def execute(database, request, command, *, adapter=None):
         db.execute("""CREATE TABLE IF NOT EXISTS training_claims
         (claim TEXT PRIMARY KEY, owner TEXT, host TEXT, pid INTEGER, child INTEGER,
          heartbeat REAL, status TEXT, request TEXT, rc INTEGER)""")
+        db.execute("""CREATE TABLE IF NOT EXISTS training_reservations
+            (claim TEXT PRIMARY KEY, device TEXT, bytes INTEGER, pressure TEXT, released INTEGER)""")
         with db:
+            db.execute('BEGIN IMMEDIATE')
             changed = db.execute("INSERT OR IGNORE INTO training_claims VALUES(?,?,?,?,?,?,?,?,?)",
                 (key,owner,socket.gethostname(),os.getpid(),None,time.time(),'claimed',
                  json.dumps(request,sort_keys=True),None)).rowcount
+            if changed and request.get('artifact_plan'):
+                supplied = json.loads(Path(request['artifact_plan']).read_text())
+                common = dict(output=supplied['physical_output'],run_id=supplied['run_id'],
+                    policy=supplied['policy'],steps=supplied['steps'],interval=supplied['interval'],
+                    checkpoint_bytes=supplied['checkpoint_bytes'],extra_bytes=supplied['extra_bytes'],
+                    reserve_bytes=supplied['reserve_bytes'],quota_free_bytes=supplied.get('quota_free_bytes'),
+                    staging_bytes=supplied.get('staging_bytes',0),watermarks=supplied.get('watermarks',(70,80,90,95)),
+                    essential=supplied.get('essential',False))
+                device = str(plan(**common)['disk_device'])
+                reserved = db.execute('SELECT COALESCE(SUM(bytes),0) FROM training_reservations WHERE device=? AND released=0',
+                                      (device,)).fetchone()[0]
+                last = db.execute('SELECT pressure FROM training_reservations WHERE device=? ORDER BY rowid DESC LIMIT 1',
+                                  (device,)).fetchone()
+                budget = plan(**common,committed_bytes=reserved+supplied.get('committed_bytes',0),
+                              previous_pressure=last[0] if last else None)
+                if not budget['fits']:
+                    raise ValueError('insufficient launch budget: '+json.dumps(budget))
+                db.execute('INSERT INTO training_reservations VALUES(?,?,?,?,0)',
+                           (key,device,budget['estimated_bytes'],budget['pressure']))
+                print(json.dumps(dict(reservation=budget,claim=key)),flush=True)
         if not changed:
             row = db.execute('SELECT status,host,pid,child FROM training_claims WHERE claim=?',(key,)).fetchone()
             print(json.dumps(dict(claim=key, existing=row, action='inspect_existing')),flush=True)
@@ -91,6 +115,7 @@ def execute(database, request, command, *, adapter=None):
         except OSError:
             with db:
                 db.execute("UPDATE training_claims SET status='launch-failed' WHERE claim=?",(key,))
+                db.execute("UPDATE training_reservations SET released=1 WHERE claim=?",(key,))
             raise
         while True:
             with db:
@@ -104,6 +129,7 @@ def execute(database, request, command, *, adapter=None):
         with db:
             db.execute('UPDATE training_claims SET heartbeat=?,status=?,rc=? WHERE claim=? AND owner=?',
                        (time.time(),'awaiting-validation' if rc==0 else 'failed',rc,key,owner))
+            db.execute("UPDATE training_reservations SET released=1 WHERE claim=?",(key,))
         return rc if rc>=0 else 128-rc
     finally:
         db.close()

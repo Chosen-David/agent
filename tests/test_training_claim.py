@@ -32,3 +32,28 @@ class ClaimTest(unittest.TestCase):
             self.assertEqual(execute(root/'db',dict(request,family='renamed'),cmd),75)
             changed=dict(request,scientific_context={'execution':{'seed':43}})
             self.assertEqual(execute(root/'db',changed,cmd),0)
+
+    def test_shared_quota_reservation(self):
+        import json
+        import time
+        from agent_runtime.training_artifacts import plan
+        with TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            path=root/'budget'
+            budget=plan(root,'sample','profile',10,0,75,0,quota_free_bytes=100)
+            path.write_text(json.dumps(budget))
+            req=dict(family='f',trajectory='a',goal='endpoint',purpose='capacity',mode='NEW_TRAIN',
+                scientific_context={'scope':'capacity'},evidence_gap='new data',artifact_plan=str(path))
+            marker=root/'started'
+            cmd=[sys.executable,'-c','from pathlib import Path; import sys,time;Path(sys.argv[1]).touch();time.sleep(1)',str(marker)]
+            with concurrent.futures.ThreadPoolExecutor(1) as pool:
+                first=pool.submit(execute,root/'db',req,cmd)
+                for _ in range(100):
+                    if marker.exists():
+                        break
+                    time.sleep(.01)
+                self.assertTrue(marker.exists())
+                with self.assertRaisesRegex(ValueError,'insufficient launch budget'):
+                    execute(root/'db',dict(req,trajectory='b'),[sys.executable,'-c','pass'])
+                self.assertEqual(first.result(),0)
+            self.assertEqual(execute(root/'db',dict(req,trajectory='b'),[sys.executable,'-c','pass']),0)
