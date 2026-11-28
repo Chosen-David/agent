@@ -211,7 +211,7 @@ def deliver_training_exit(database, claim, owner, *, on_success, on_failure):
         return None
     if status == 'awaiting-validation' and rc == 0:
         engine, run_id = on_success
-    elif status == 'failed' and type(rc) is int and rc != 0:
+    elif (status == 'failed' and type(rc) is int and rc != 0) or (status == 'launch-failed' and rc is None):
         engine, run_id = on_failure
     else:
         raise ValueError('ambiguous training exit requires reconciliation')

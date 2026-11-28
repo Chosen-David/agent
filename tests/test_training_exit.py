@@ -31,6 +31,10 @@ class TrainingExitTests(unittest.TestCase):
                 db.commit()
                 deliver()
                 self.assertEqual(failure.tick.call_args.args[0], 'diagnosis')
+                db.execute("UPDATE training_claims SET status='launch-failed',rc=NULL")
+                db.commit()
+                deliver()
+                self.assertEqual(failure.tick.call_args.args[0], 'diagnosis')
                 db.execute("UPDATE training_claims SET owner='new-attempt'")
                 db.commit()
                 with self.assertRaisesRegex(ValueError, 'superseded'):
