@@ -55,3 +55,5 @@ L0 保留指标，L1 加诊断切片，L2 为模型权重，L3 需要完整可�
 新资产创建时可分别预授权隔离和永久淘汰。永久淘汰还需第二次独占 host lease、确认代次与替代者的物理绑定、完整恢复、保留期与全部活跃引用检查。库按不同事件记录 quarantine、purge-intent 和实际完成；隔离所释放字节为零。历史资产不能后补预授权。对未接入 lease 的生产系统保留只读计划。
 
 恢复同一已认领任务时，绑定经过试恢复的具体代次。若上一尝试失败或心跳丢失，可信宿主须在 previous_launch_stopped 中核实上一整组进程已停；这时保留原尝试记录，在一个事务内交接认领与空间预留。仅心跳过期不可接管。
+
+主机统一布局可在同一个 Registry DB 运行 `python -m agent_runtime.training_workspace DB bind WORKTREE PROJECT ASSET_ROOT DOCUMENTS`。新作业用 `layout WORKTREE --run-id ID --path-only` 选取物理路径。绑定保留既有 outputs 入口和实际目标；若训练框架会重建工作树 outputs 链接，把它的运行根放入该 run 的独立目录，保留实际代码与数据身份。
