@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "id": "infra.checkpoint-recovery-boundaries",
+  "version": 1,
+  "status": "candidate",
+  "kind": "case",
+  "title": "分布式训练恢复：异步通信、逐 rank 状态与实际保存策略",
+  "summary": "复用前检查轨迹、调度 horizon、逐 rank 状态和真实恢复。后台 DCP 使用独立通信组，生产适配器核对环境覆盖后的保存策略。",
+  "aliases": [
+    "checkpoint",
+    "DCP",
+    "最长恢复点",
+    "checkpoint retention",
+    "single-flight"
+  ],
+  "domains": [
+    "ai-infra",
+    "software-engineering"
+  ],
+  "structures": [
+    "分布式 checkpoint 异步 collective",
+    "实验复用与轨迹恢复",
+    "分层资产与科研引用"
+  ],
+  "assumptions": [
+    "多个 rank 共用 POSIX 文件系统",
+    "训练器提供严格的模型、优化器、调度器、数据位置及 RNG 状态",
+    "CPU Gloo 回归不能证明具体 GPU 训练轨迹等价"
+  ],
+  "sources": [
+    {
+      "url": "https://github.com/pytorch/pytorch/blob/v2.9.0/torch/distributed/checkpoint/state_dict_saver.py",
+      "locator": "async_save and AsyncSaveResponse",
+      "accessed": "2026-11-28"
+    },
+    {
+      "url": "https://github.com/Chosen-David/agent/commit/18f83ed4ce326fc71fc9d44ed2862cc79824218b",
+      "locator": "DCPGeneration and cpu_roundtrip.py",
+      "accessed": "2026-11-28"
+    }
+  ],
+  "verification": {
+    "source": "checked",
+    "proof": "not-applicable",
+    "checks": [
+      "agent_doc/agent/test/training-artifact-policy/cpu_roundtrip.py"
+    ]
+  },
+  "requires": [],
+  "relations": []
+}
