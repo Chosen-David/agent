@@ -243,3 +243,64 @@ class CheckpointRetention:
             with self.db:
                 self._event(artifact,'quarantine-purged',json.dumps(dict(target=str(target),allocated_bytes=allocated)))
             return dict(status='purged',removed_allocated_bytes=allocated)
+
+
+def stage_copy(source, destination_parent, *, expected_hashes, provider):
+    """Copy under a producer read lease into a fresh, verified, same-destination generation.
+
+    Existing locations and catalog references stay intact; promotion and retirement are
+    distinct operations. The provider tests the staged files before publication.
+    """
+    import hashlib
+    source=Path(source).resolve(strict=True)
+    parent=Path(destination_parent).resolve(strict=True)
+    if not source.is_dir() or not parent.is_dir() or parent.is_relative_to(source):
+        raise ValueError('separate source and destination directories required')
+    if not expected_hashes or any(not isinstance(d,str) or len(d)!=64 for d in expected_hashes.values()):
+        raise ValueError('manifest with content digests required')
+    token=uuid.uuid4().hex
+    staging=parent/('.copy-'+token)
+    final=parent/token
+    with provider.copy_lease(source):
+        members=list(source.rglob('*'))
+        if any(f.is_symlink() or not (f.is_dir() or f.is_file()) for f in members):
+            raise ValueError('shared links or special source members require separate reconciliation')
+        names={str(f.relative_to(source)) for f in members if f.is_file()}
+        if names!=set(expected_hashes):
+            raise ValueError('source inventory differs from frozen manifest')
+        inventory={}
+        for name in expected_hashes:
+            rel=Path(name)
+            if rel.is_absolute() or '..' in rel.parts or rel.as_posix()!=name:
+                raise ValueError('noncanonical manifest member')
+            f=source/rel
+            if f.resolve(strict=True)!=f or not f.is_file():
+                raise ValueError('invalid source member')
+            s=f.stat()
+            inventory[name]=(s.st_dev,s.st_ino,s.st_size,s.st_ctime_ns)
+        if sum(s[2] for s in inventory.values())>shutil.disk_usage(parent).free:
+            raise ValueError('insufficient copy staging space')
+        staging.mkdir()
+        for f in members:
+            if f.is_dir():
+                (staging/f.relative_to(source)).mkdir(parents=True,exist_ok=True)
+        for name,identity in inventory.items():
+            inp=source/name
+            out=staging/name
+            out.parent.mkdir(parents=True,exist_ok=True)
+            with inp.open('rb') as src,out.open('xb') as dst:
+                shutil.copyfileobj(src,dst,1<<20)
+                dst.flush()
+                os.fsync(dst.fileno())
+            with out.open('rb') as stream:
+                if hashlib.file_digest(stream,'sha256').hexdigest()!=expected_hashes[name]:
+                    raise ValueError('staged copy digest mismatch: '+name)
+            s=inp.stat()
+            if (s.st_dev,s.st_ino,s.st_size,s.st_ctime_ns)!=identity:
+                raise ValueError('source changed while copying')
+        if provider.test_staged(staging) is not True:
+            raise ValueError('staged generation failed read or restore test')
+        if final.exists():
+            raise FileExistsError(final)
+        staging.rename(final)
+        return dict(source=str(source),verified_copy=str(final),state='staged',reclaimed_bytes=0)

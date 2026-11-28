@@ -65,3 +65,26 @@ class RetentionTest(unittest.TestCase):
             self.assertFalse(Path(result['target']).exists())
             self.assertTrue(files[0].exists() and files[2].exists())
             ledger.db.close()
+
+    def test_cross_filesystem_staging_failure_preserves_source(self):
+        import hashlib
+        import os
+        from contextlib import nullcontext
+        from agent_runtime.checkpoint_retention import stage_copy
+        class Reader:
+            def copy_lease(self, source):
+                return nullcontext()
+            def test_staged(self, staged):
+                return (staged/'weights').read_bytes()==b'original'
+        dest='/dev/shm' if os.path.isdir('/dev/shm') and os.access('/dev/shm',os.W_OK) else None
+        with tempfile.TemporaryDirectory() as first,tempfile.TemporaryDirectory(dir=dest) as second:
+            source=Path(first)
+            (source/'weights').write_bytes(b'original')
+            hashes={'weights':hashlib.sha256(b'original').hexdigest()}
+            with self.assertRaisesRegex(ValueError,'mismatch'):
+                stage_copy(source,second,expected_hashes={'weights':'0'*64},provider=Reader())
+            self.assertEqual((source/'weights').read_bytes(),b'original')
+            self.assertFalse(any(not p.name.startswith('.') for p in Path(second).iterdir()))
+            result=stage_copy(source,second,expected_hashes=hashes,provider=Reader())
+            self.assertEqual((Path(result['verified_copy'])/'weights').read_bytes(),b'original')
+            self.assertTrue((source/'weights').exists())
