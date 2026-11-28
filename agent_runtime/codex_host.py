@@ -232,6 +232,7 @@ class AppServer:
             'developerInstructions': 'One writer; independent reviewer has no write authority. Do not spawn agents, execute commands or read files. Use only the supplied packet. Never invent observations or human consent.',
             'config': {'model_reasoning_effort': effort, 'project_doc_max_bytes': 0,
                        'features.shell_tool': False, 'features.multi_agent': False,
+                       'features.multi_agent_v2': False,
                        'features.apps': False, 'features.plugins': False,
                        'web_search': 'disabled', 'tools.view_image': False,
                        'mcp_servers': {name: {'enabled': False} for name in self.disabled_servers},
