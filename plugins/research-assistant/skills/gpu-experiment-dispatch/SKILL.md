@@ -49,3 +49,5 @@ L0 保留指标，L1 加诊断切片，L2 为模型权重，L3 需要完整可�
 多调用者启动同一训练前，将已做复用决策的科学 family、轨迹 trajectory、termination goal、purpose、mode 写入请求，然后通过 `python -m agent_runtime.training_claim DB REQUEST -- PROGRAM ARGS` 认领并启动。多个启动者共享同一 SQLite；已有认领返回 75。失败、丢失心跳及进程成功退出都保留记录，先核实活动子进程及独立结果验收再决定后续。RERUN_REPLACE 与 RERUN_REPLICATE 需要原 run、原因和幂等请求 ID。
 
 训练器已有原子分片和严格恢复时沿用原生机制。可选 agent_runtime.dcp_generation.DCPGeneration 为已初始化 torch.distributed 的共享 POSIX 文件系统提供 L2/L3；模型与优化器传入 DCP 支持的状态，逐 rank 的数据游标、调度器和 RNG 由调用方捕获及恢复。所有 rank 共同调用，异步保存限一代，训练退出前 wait；恢复仅用于可信自有 Checkpoint。分布式 CPU 冒烟脚本见 agent_doc/agent/test/training-artifact-policy/cpu_roundtrip.py。
+
+通过 agent_runtime.checkpoint_retention.CheckpointRetention 登记真实物理代次；所有里程碑、最佳模型、诊断和分支起点以 reference 记录持有原因与消费者。review 先检查本地引用、物理身份及轨迹，随后调用生产方 ResultStore.review_recovery 核对实时写入、使用者与替代物真实恢复；历史资产仅产生只读候选计划。快照清除引用前记录诊断结束与产物。
