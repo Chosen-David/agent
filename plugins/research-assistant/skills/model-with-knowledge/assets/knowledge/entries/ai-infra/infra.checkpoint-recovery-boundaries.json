@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "id": "infra.checkpoint-recovery-boundaries",
-  "version": 1,
+  "version": 2,
   "status": "candidate",
   "kind": "case",
   "title": "分布式训练恢复：异步通信、逐 rank 状态与实际保存策略",
@@ -11,7 +11,10 @@
     "DCP",
     "最长恢复点",
     "checkpoint retention",
-    "single-flight"
+    "single-flight",
+    "验收交接",
+    "awaiting-validation",
+    "exit 75"
   ],
   "domains": [
     "ai-infra",
@@ -20,12 +23,14 @@
   "structures": [
     "分布式 checkpoint 异步 collective",
     "实验复用与轨迹恢复",
-    "分层资产与科研引用"
+    "分层资产与科研引用",
+    "已结束训练与原 cycle 续接之间的验收依赖"
   ],
   "assumptions": [
     "多个 rank 共用 POSIX 文件系统",
     "训练器提供严格的模型、优化器、调度器、数据位置及 RNG 状态",
-    "CPU Gloo 回归不能证明具体 GPU 训练轨迹等价"
+    "CPU Gloo 回归不能证明具体 GPU 训练轨迹等价",
+    "已成功退出的训练仍需要真实独立消费者。人工窗口到期只触发已授权复核；使用同一认领键观察真实后续进度。"
   ],
   "sources": [
     {
@@ -37,13 +42,19 @@
       "url": "https://github.com/Chosen-David/agent/commit/18f83ed4ce326fc71fc9d44ed2862cc79824218b",
       "locator": "DCPGeneration and cpu_roundtrip.py",
       "accessed": "2026-11-28"
+    },
+    {
+      "url": "https://github.com/Chosen-David/agent/commit/1dc72d1b0604d7b49d04926428c53a1d30eebbbc",
+      "locator": "ResearchHandoff, scientific receipt binding and opt-in training_claim outbox",
+      "accessed": "2026-11-28"
     }
   ],
   "verification": {
     "source": "checked",
     "proof": "not-applicable",
     "checks": [
-      "agent_doc/agent/test/training-artifact-policy/cpu_roundtrip.py"
+      "agent_doc/agent/test/training-artifact-policy/cpu_roundtrip.py",
+      "tests/test_research_handoff.py"
     ]
   },
   "requires": [],
