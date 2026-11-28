@@ -3,7 +3,7 @@ name: gpu-experiment-dispatch
 description: "多机异构 GPU 池实验派单全生命周期：SSH 接入、环境栈部署与冒烟、任务清点与成本权重规划、确定性分片互斥派单、点火三重验证、定时监督收割与证据落袋。源身份以 git commit SHA 为首选（派单前核对远端 checkout），停车/杀进程只走精确 PID 三步、严禁 pkill -f 模糊模式。适用于全量重跑（口径变更）、断点补格（幂等续跑）、小试判决（配对统计门禁）三类场景；不把单卡脚本扩成池化调度，也不凭 pid 存在断定任务健康。"
 ---
 
-先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+Skill 在当前执行者上下文内使用；任务派遣遵循宿主绑定的科研策略。串行任务见[单主执行契约](references/single_main_workflow.md)。
 
 
 # GPU 实验多机派单

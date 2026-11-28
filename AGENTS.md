@@ -2,7 +2,7 @@
 
 代码实现、修复与重构先执行[协作式任务验收](workflows/collaborative_implementation_workflow.md)：先读库并对齐关键语义，在任务 test 下准备验收/约束及变异，再逐步实现、展示证据与讨论下一步。
 
-Authorized research uses [Dual-Agent Research Harness](workflows/research_harness.md). Both producers use tools, distinct worktrees and independent output directories. Select ready work from the shared plan and reconcile training claims before scheduling GPUs. Routine feedback becomes follow-up work. Mechanical failures block affected consumers. Final cross-evaluation records scope and unresolved evidence.
+New tasks follow the [Adaptive Research Harness](workflows/research_harness.md). Reconcile existing claims before GPU dispatch.
 
 For ordinary single-agent work use [single main / multiple Skills](workflows/single_main_workflow.md). Explicit legacy model-approval tasks retain their previous receipts, budgets and protocol until the user changes scope. A review Skill used by the producer is self-check only.
 
@@ -67,7 +67,7 @@ For each empirical experiment/measurement round that produces data, follow `work
 
 ## 独立主控计划审核
 
-当前执行遵循单主 Agent 契约；`workflows/dual_main_workflow.md` 仅保留旧保护计划的审核/恢复协议。不要启动第二主控，也不把同一主 agent 的复核 Skill 当独立回执。旧保护计划缺可信回执仍 blocked，按用户新要求版本化协调，不删保护字段或追溯改写批准。Progress 追加不失效。
+新任务遵循 workflows/research_harness.md 的模式与派遣策略。历史受保护计划沿原合同恢复，迁移须保留批准、预算与证据历史。
 
 ## Causal task decomposition
 

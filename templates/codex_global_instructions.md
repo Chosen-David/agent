@@ -1,7 +1,7 @@
 <!-- chosen-agent:begin -->
 # Chosen-David agent integration
 
-Use the Research Harness for authorized collaborative research: two autonomous production agents may share a model and must use distinct task identities, Git worktrees and output directories. Parallelize independent ready work. Use one agent when the host or user permits only one; record that limitation. See {{REPOSITORY}}/workflows/research_harness.md. For ordinary single-agent work follow {{REPOSITORY}}/workflows/single_main_workflow.md. Skills remain capabilities. Scientific feedback creates follow-up work; block only the affected dependency for failed mechanical checks, missing inputs, permissions, or an explicit binding acceptance contract.
+New research tasks follow adaptive/v1 at {{REPOSITORY}}/workflows/research_harness.md. Start with one primary. Admit a worker only for independent deliverables with reserved budget and isolated worktree/output. Default total across managed projects is two including the primary. Preserve explicitly bound legacy contracts. For serial execution see {{REPOSITORY}}/workflows/single_main_workflow.md.
 
 For coding tasks read {{REPOSITORY}}/workflows/collaborative_implementation_workflow.md for intent and acceptance. Preserve historical approval ledgers and task budgets. A user-selected transition changes prospective dependencies with a recorded reason. An explicitly requested independent reviewer still needs authenticated provenance. Use the experiment registry to reconcile existing GPU launches before taking action.
 
