@@ -111,3 +111,15 @@ class HandoffIntegration(unittest.TestCase):
                  scientific_context={'scope':'test'},evidence_gap='new',requires_independent_review=True)
         with self.assertRaisesRegex(ValueError,'bound research review'):
             execute(self.root/'catalog',req,[sys.executable,'-c','raise AssertionError()'])
+
+    def test_reconcile_only_after_stopped_and_with_budget(self):
+        self.h.submit(dict(self.s,task='rpc',max_review_attempts=2))
+        self.h._set('rpc','running','old invocation')
+        self.h._set('rpc','blocked-ambiguous','deadline')
+        self.recover=lambda s:None
+        self.prior_review_stopped=lambda s:{}
+        self.assertEqual(self.h.reconcile_review('rpc',self),'blocked-ambiguous')
+        self.prior_review_stopped=lambda s:dict(reader_exited=True,read_only=True,no_downstream_effect=True,evidence='host observer test')
+        self.assertEqual(self.h.reconcile_review('rpc',self),'retryable')
+        self.time+=601;self.h.service('reviewer',True,'test')
+        self.assertEqual(self.h.advance('rpc',self),'passed')

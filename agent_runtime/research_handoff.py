@@ -77,11 +77,41 @@ class ResearchHandoff:
                 actions[action.__name__]=outcome
                 if outcome=='launched':break
         for task in tasks:
-            try:actions[task]=self.advance(task,host)
+            try:
+                actions[task]=self.advance(task,host)
+                if actions[task]=='blocked-ambiguous' and callable(getattr(host,'prior_review_stopped',None)):
+                    actions[task]=self.reconcile_review(task,host)
+                if actions[task] in ('blocked-ambiguous','blocked-backend') and callable(getattr(host,'notify_blocked',None)):
+                    host.notify_blocked(task,actions[task])
+
             except Exception as exc:
                 self._set(task,'blocked-backend',str(exc))
                 actions[task]='blocked-backend'
         return actions
+
+    def reconcile_review(self,task,host):
+        """Bounded re-dispatch only after the host accounts for the prior RPC."""
+        with self.lock(task) as owned:
+            if not owned:return 'busy'
+            row=self.db.execute('SELECT * FROM research_reviews WHERE task=?',(task,)).fetchone()
+            if not row or row['state']!='blocked-ambiguous':return 'unchanged'
+            spec=json.loads(row['spec'])
+            receipt=host.recover(spec)
+            if receipt is not None:
+                if not host.valid(spec,receipt):raise ValueError('unverified recovered review')
+                verdict=receipt['decision']
+                if verdict not in ('passed','repair','rejected'):raise ValueError('invalid recovered decision')
+                self._set(task,verdict,receipt['reason'],receipt)
+                return verdict
+            attempts=self.db.execute("SELECT count(*) FROM research_events WHERE task=? AND state='running'",(task,)).fetchone()[0]
+            limit=spec.get('max_review_attempts',1)
+            if type(limit) is not int or not 1<=limit<=20 or attempts>=limit:return 'blocked-ambiguous'
+            proof=host.prior_review_stopped(spec)
+            if not isinstance(proof,dict) or not all(proof.get(k) is True for k in
+                    ('reader_exited','read_only','no_downstream_effect')) or not proof.get('evidence'):
+                return 'blocked-ambiguous'
+            self._set(task,'retryable',json.dumps(proof,sort_keys=True))
+            return 'retryable'
 
     def _event(self,task,state,reason):
         self.db.execute('INSERT INTO research_events(task,at,state,reason) VALUES(?,?,?,?)',
