@@ -4,7 +4,7 @@
 
 代码实现、修复与重构先执行[协作式任务验收](collaborative_implementation_workflow.md)：先读库并对齐关键语义，在任务 test 下准备验收/约束及变异，再逐步实现、展示证据与讨论下一步。
 
-按[科研执行策略](https://github.com/Chosen-David/agent/blob/main/workflows/research_harness.md)选择执行模式。简单任务由主 Agent 按需加载 Skill。
+按[科研执行策略](research_harness.md)选择执行模式。简单任务由主 Agent 按需加载 Skill。
 
 开发评测边界：日常用户任务不启动 `evals/`、合成测试或 benchmark，不读取隐藏 rubric/gold。仅用户明确要求优化/新增功能的开发评测或显式 CI 命令启用评测入口（prepare 需 `--dev-eval`）。真实任务必要的正确性自检、交付验收、权限核对，以及写作前十篇范文学习要求继续执行；这些不是开发 benchmark。评测材料与真实任务上下文隔离，不以测试通过替代真实交付验收。
 完整论文/投稿任务必须先执行 [论文交付契约](paper_delivery_contract.md)：写作前绑定角色与目标，分别验收科研论证、证据和全页阅读；审计记录为私密伴随材料，不替代论文。
