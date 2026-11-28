@@ -80,11 +80,26 @@ def execute(database, request, command, *, adapter=None):
          heartbeat REAL, status TEXT, request TEXT, rc INTEGER)""")
         db.execute("""CREATE TABLE IF NOT EXISTS training_reservations
             (claim TEXT PRIMARY KEY, device TEXT, bytes INTEGER, pressure TEXT, released INTEGER)""")
+        db.execute("""CREATE TABLE IF NOT EXISTS training_attempt_history
+            (sequence INTEGER PRIMARY KEY, claim TEXT, previous TEXT, replaced_at REAL)""")
         with db:
             db.execute('BEGIN IMMEDIATE')
             changed = db.execute("INSERT OR IGNORE INTO training_claims VALUES(?,?,?,?,?,?,?,?,?)",
                 (key,owner,socket.gethostname(),os.getpid(),None,time.time(),'claimed',
                  json.dumps(request,sort_keys=True),None)).rowcount
+            if not changed and 'bound_recovery' in request:
+                db.row_factory=sqlite3.Row
+                prior=dict(db.execute('SELECT * FROM training_claims WHERE claim=?',(key,)).fetchone())
+                db.row_factory=None
+                stopped=getattr(adapter,'previous_launch_stopped',None)
+                if (prior['status'] in ('failed','launch-failed','running','claimed') and
+                        callable(stopped) and stopped(prior) is True):
+                    db.execute('INSERT INTO training_attempt_history(claim,previous,replaced_at) VALUES(?,?,?)',
+                               (key,json.dumps(prior,sort_keys=True),time.time()))
+                    db.execute('DELETE FROM training_reservations WHERE claim=?',(key,))
+                    db.execute('UPDATE training_claims SET owner=?,host=?,pid=?,child=NULL,heartbeat=?,status=?,request=?,rc=NULL WHERE claim=?',
+                               (owner,socket.gethostname(),os.getpid(),time.time(),'claimed',json.dumps(request,sort_keys=True),key))
+                    changed=1
             if changed and request.get('artifact_plan'):
                 supplied = json.loads(Path(request['artifact_plan']).read_text())
                 common = dict(output=supplied['physical_output'],run_id=supplied['run_id'],
@@ -114,8 +129,8 @@ def execute(database, request, command, *, adapter=None):
             child = subprocess.Popen(command)
         except OSError:
             with db:
-                db.execute("UPDATE training_claims SET status='launch-failed' WHERE claim=?",(key,))
-                db.execute("UPDATE training_reservations SET released=1 WHERE claim=?",(key,))
+                db.execute("UPDATE training_claims SET status='launch-failed' WHERE claim=? AND owner=?",(key,owner))
+                db.execute("UPDATE training_reservations SET released=1 WHERE claim=? AND EXISTS(SELECT 1 FROM training_claims WHERE claim=? AND owner=?)",(key,key,owner))
             raise
         while True:
             with db:
@@ -129,7 +144,7 @@ def execute(database, request, command, *, adapter=None):
         with db:
             db.execute('UPDATE training_claims SET heartbeat=?,status=?,rc=? WHERE claim=? AND owner=?',
                        (time.time(),'awaiting-validation' if rc==0 else 'failed',rc,key,owner))
-            db.execute("UPDATE training_reservations SET released=1 WHERE claim=?",(key,))
+            db.execute("UPDATE training_reservations SET released=1 WHERE claim=? AND EXISTS(SELECT 1 FROM training_claims WHERE claim=? AND owner=?)",(key,key,owner))
         return rc if rc>=0 else 128-rc
     finally:
         db.close()
