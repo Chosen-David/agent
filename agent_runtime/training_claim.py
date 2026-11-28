@@ -190,6 +190,34 @@ def execute(database, request, command, *, adapter=None):
         db.close()
 
 
+def deliver_training_exit(database, claim, owner, *, on_success, on_failure):
+    """Deliver a reconciled terminal attempt to a host-bound Engine run.
+
+    Polling an active attempt performs no model calls. Engine.tick persists the
+    event key and owns permission, claim, replay and external-effect checks.
+    Success here means process completion; downstream evidence gates still apply.
+    """
+    uri = Path(database).resolve(strict=True).as_uri() + '?mode=ro'
+    db = sqlite3.connect(uri, uri=True, timeout=30)
+    try:
+        row = db.execute('SELECT owner,status,rc FROM training_claims WHERE claim=?',
+                         (claim,)).fetchone()
+    finally:
+        db.close()
+    if row is None or row[0] != owner:
+        raise ValueError('training attempt missing or superseded')
+    _, status, rc = row
+    if rc is None and status in ('running', 'claimed'):
+        return None
+    if status == 'awaiting-validation' and rc == 0:
+        engine, run_id = on_success
+    elif status == 'failed' and type(rc) is int and rc != 0:
+        engine, run_id = on_failure
+    else:
+        raise ValueError('ambiguous training exit requires reconciliation')
+    return engine.tick(run_id, 'training-exit:' + fingerprint([claim, owner, status, rc]))
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--adapter', help='trusted host verifier and native restore adapter')
