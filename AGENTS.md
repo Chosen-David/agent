@@ -2,9 +2,9 @@
 
 代码实现、修复与重构先执行[协作式任务验收](workflows/collaborative_implementation_workflow.md)：先读库并对齐关键语义，在任务 test 下准备验收/约束及变异，再逐步实现、展示证据与讨论下一步。
 
-Explicit user-selected dual-AI review and batch implementation follow [collaborative implementation](workflows/collaborative_implementation_workflow.md); otherwise the default below applies. Only the main AI writes production code.
+Authorized research uses [Dual-Agent Research Harness](workflows/research_harness.md). Both producers use tools, distinct worktrees and independent output directories. Select ready work from the shared plan and reconcile training claims before scheduling GPUs. Routine feedback becomes follow-up work. Mechanical failures block affected consumers. Final cross-evaluation records scope and unresolved evidence.
 
-Execution policy: [single main / multiple Skills](workflows/single_main_workflow.md). One main agent performs one task-chain step at a time, loading existing Skills on demand. Do not spawn/delegate subagents or activate planner-main/review-main. This current user decision supersedes historical parallel-role instructions; preserve permission, guide, evidence and independent-validation boundaries. A review Skill invoked by the same main agent is self-check only.
+For ordinary single-agent work use [single main / multiple Skills](workflows/single_main_workflow.md). Explicit legacy model-approval tasks retain their previous receipts, budgets and protocol until the user changes scope. A review Skill used by the producer is self-check only.
 
 For maintenance of this repository, keep drafts, temporary logs, candidate snapshots and upload caches together under `/tmp/agent-system99/<run_id>/`, never in `agent_doc/results/`. Keep only necessary progress, conclusions and artifact path/hash references in the existing TASK detail. Preserve historical evidence; this temporary-artifact rule does not migrate authoritative runtime ledgers or relax project write guards.
 

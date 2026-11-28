@@ -2,6 +2,9 @@
 
 # 单主 Agent / 多 Skill 任务链 v1
 
+本文件适用于普通单 Agent 或已绑定的历史串行模式。用户已授权双 Agent 科研生产时使用同级的 research_harness.md；以下串行默认仅限本文件适用的模式。
+
+
 一个主 agent 持有当前用户目标、唯一 TASK 与执行上下文。Skill 是主 agent 当前步骤的能力说明，不是另一个 agent、进程或独立审核者。本契约取代旧工作流中的自动委派、双主控和并行 agent 默认；专业方法、权限、许可证、失败证据和人类 guide 只读边界继续有效。
 
 用户明确选择双 AI 时，按 [协作式任务验收](https://github.com/Chosen-David/agent/blob/main/workflows/collaborative_implementation_workflow.md) 启用串行审查；仅主 AI 写正式代码，需真实不同模型与独立上下文。此例外不授权多 agent 并行开发。用户选择批处理时可将已明确的一批实现作为当前步骤，统一测试后集中修复。
