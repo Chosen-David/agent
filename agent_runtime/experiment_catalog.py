@@ -16,6 +16,28 @@ def fingerprint(context):
     return hashlib.sha256(data).hexdigest()
 
 
+def training_family(spec):
+    """Fingerprint a versioned scientific recipe; runtime-only fields live in metadata."""
+    if set(spec) - {'schema', 'science', 'metadata'} or spec.get('schema') != 'training-family/v1':
+        raise ValueError('use the explicit training-family/v1 envelope')
+    required = {'model', 'data', 'optimizer_math', 'scheduler', 'seed', 'initialization',
+                'precision', 'evaluation'}
+    science = spec.get('science')
+    if not isinstance(science, dict) or required - science.keys():
+        raise ValueError('incomplete training identity')
+    def normalize(value):
+        if value is None or value == '' or value == {} or value == []:
+            raise ValueError('unknown field cannot certify equivalence')
+        if isinstance(value, dict):
+            return {k: normalize(v) for k,v in value.items()}
+        if isinstance(value, list):
+            return [normalize(v) for v in value]
+        if type(value) is float and value.is_integer():
+            return int(value)
+        return value
+    return fingerprint(normalize(science))
+
+
 class ExperimentCatalog:
     def __init__(self, database):
         self.db = sqlite3.connect(database)

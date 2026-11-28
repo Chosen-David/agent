@@ -26,3 +26,13 @@ class CatalogTest(unittest.TestCase):
                 self.assertEqual(catalog.find(context)[0]['validation_status'], 'stale')
             finally:
                 catalog.db.close()
+
+    def test_scientific_family(self):
+        from agent_runtime.experiment_catalog import training_family
+        science=dict(model='v1',data='d',optimizer_math='m',scheduler={'horizon':1000},seed=42,
+                     initialization='hash',precision='bf16',evaluation='holdout')
+        spec=dict(schema='training-family/v1',science=science,metadata={'name':'older','output':'/a'})
+        self.assertEqual(training_family(spec),training_family(dict(spec,metadata={'name':'renamed'})))
+        self.assertNotEqual(training_family(spec),training_family(dict(spec,science=dict(science,scheduler={'horizon':2000}))))
+        with self.assertRaises(ValueError):
+            training_family(dict(spec,science=dict(science,initialization=None)))
