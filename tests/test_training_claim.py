@@ -33,6 +33,22 @@ class ClaimTest(unittest.TestCase):
             changed=dict(request,scientific_context={'execution':{'seed':43}})
             self.assertEqual(execute(root/'db',changed,cmd),0)
 
+    def test_formal_benchmark_aliases_and_window(self):
+        with TemporaryDirectory() as tmp:
+            context = dict(scope='optimizer comparison', code_revision='revision',
+                           artifacts={'recipe': 'fixture'}, metrics=[{'name': 'step', 'unit': 'ms'}],
+                           execution=dict(steps=200, warmup=20, world_size=8,
+                                          profiler=False, checkpoint_writes=0))
+            request = dict(family='f', trajectory='display-a', purpose='performance', goal='200 steps',
+                           mode='NEW_TRAIN', scientific_context=context, evidence_gap='new layout',
+                           benchmark_protocol='trainer-performance/v1')
+            command = [sys.executable, '-c', 'pass']
+            self.assertEqual(execute(Path(tmp)/'db', request, command), 0)
+            self.assertEqual(execute(Path(tmp)/'db', dict(request, trajectory='display-b'), command), 75)
+            context['execution']['warmup'] = 200
+            with self.assertRaisesRegex(ValueError, 'window'):
+                execute(Path(tmp)/'db', request, command)
+
     def test_shared_quota_reservation(self):
         import json
         import time

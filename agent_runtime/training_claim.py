@@ -80,6 +80,21 @@ def execute(database, request, command, *, adapter=None):
     finally:
         catalog.db.close()
     identity = dict(scientific_fingerprint=fingerprint(context), trajectory=request['trajectory'], goal=request['goal'])
+    if request.get('benchmark_protocol') is not None:
+        protocol = request['benchmark_protocol']
+        if protocol != 'trainer-performance/v1' or mode == 'RESUME':
+            raise ValueError('unsupported benchmark protocol or launch mode')
+        _context(context, complete=True)
+        execution = context['execution']
+        for field in ('steps', 'warmup', 'world_size'):
+            if type(execution.get(field)) is not int:
+                raise ValueError('benchmark requires integer ' + field)
+        if not 0 <= execution['warmup'] < execution['steps'] or execution['world_size'] < 1:
+            raise ValueError('invalid benchmark window or world size')
+        if execution.get('profiler') is not False or execution.get('checkpoint_writes') != 0:
+            raise ValueError('formal benchmark requires profiling and checkpoint writes disabled')
+        # Display aliases for one measurement must compete for the same claim.
+        identity = dict(benchmark_protocol=protocol, scientific_fingerprint=fingerprint(context))
     if mode.startswith('RERUN'):
         identity.update(request_id=request['request_id'])
     key = fingerprint(identity)
