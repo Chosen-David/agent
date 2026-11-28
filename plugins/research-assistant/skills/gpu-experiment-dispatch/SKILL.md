@@ -51,3 +51,5 @@ L0 保留指标，L1 加诊断切片，L2 为模型权重，L3 需要完整可�
 训练器已有原子分片和严格恢复时沿用原生机制。可选 agent_runtime.dcp_generation.DCPGeneration 为已初始化 torch.distributed 的共享 POSIX 文件系统提供 L2/L3；模型与优化器传入 DCP 支持的状态，逐 rank 的数据游标、调度器和 RNG 由调用方捕获及恢复。所有 rank 共同调用，异步保存限一代，训练退出前 wait；恢复仅用于可信自有 Checkpoint。分布式 CPU 冒烟脚本见 agent_doc/agent/test/training-artifact-policy/cpu_roundtrip.py。
 
 通过 agent_runtime.checkpoint_retention.CheckpointRetention 登记真实物理代次；所有里程碑、最佳模型、诊断和分支起点以 reference 记录持有原因与消费者。review 先检查本地引用、物理身份及轨迹，随后调用生产方 ResultStore.review_recovery 核对实时写入、使用者与替代物真实恢复；历史资产仅产生只读候选计划。快照清除引用前记录诊断结束与产物。
+
+新资产创建时可分别预授权隔离和永久淘汰。永久淘汰还需第二次独占 host lease、确认代次与替代者的物理绑定、完整恢复、保留期与全部活跃引用检查。库按不同事件记录 quarantine、purge-intent 和实际完成；隔离所释放字节为零。历史资产不能后补预授权。对未接入 lease 的生产系统保留只读计划。

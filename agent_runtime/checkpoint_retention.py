@@ -6,6 +6,8 @@ atomic release transaction; without it the result remains a plan.
 """
 import json
 import os
+import shutil
+import stat
 import uuid
 import sqlite3
 from pathlib import Path
@@ -21,6 +23,8 @@ class CheckpointRetention:
                 run TEXT NOT NULL, trajectory TEXT NOT NULL, family TEXT NOT NULL, step INTEGER,
                 level TEXT NOT NULL, origin TEXT NOT NULL, auto INTEGER NOT NULL,
                 UNIQUE(dev,ino));
+            CREATE TABLE IF NOT EXISTS checkpoint_purge_policy(
+                artifact TEXT PRIMARY KEY REFERENCES checkpoint_assets);
             CREATE TABLE IF NOT EXISTS checkpoint_refs(
                 artifact TEXT REFERENCES checkpoint_assets, consumer TEXT, purpose TEXT,
                 PRIMARY KEY(artifact,consumer,purpose));
@@ -29,13 +33,15 @@ class CheckpointRetention:
         """)
 
     def register(self, artifact, path, *, run, trajectory, family, step, level,
-                 origin='historical', auto=False):
+                 origin='historical', auto=False, purge_after_quarantine=False):
         if not all(isinstance(x,str) and x.strip() for x in (artifact,run,trajectory,family)):
             raise ValueError('immutable artifact, run, family and trajectory required')
         if type(step) is not int or step < 0 or level not in {'L0','L1','L2','L3'}:
             raise ValueError('invalid checkpoint level or step')
         if origin not in {'historical','managed'} or type(auto) is not bool or (auto and origin!='managed'):
             raise ValueError('automatic retirement requires producer opt-in at creation')
+        if type(purge_after_quarantine) is not bool or (purge_after_quarantine and not auto):
+            raise ValueError('permanent retirement requires an explicit managed auto policy')
         physical = Path(path).resolve(strict=True)
         st = physical.stat()
         values = (artifact,str(physical),st.st_dev,st.st_ino,run,trajectory,family,step,level,origin,int(auto))
@@ -45,9 +51,15 @@ class CheckpointRetention:
                                   (artifact,st.st_dev,st.st_ino)).fetchone()
             if row:
                 if row == values:
+                    policy = self.db.execute('SELECT 1 FROM checkpoint_purge_policy WHERE artifact=?',
+                                             (artifact,)).fetchone()
+                    if bool(policy) != purge_after_quarantine:
+                        raise ValueError('retirement authorization is fixed at creation')
                     return artifact
                 raise ValueError('asset identity conflict; reference the original artifact ID')
             self.db.execute('INSERT INTO checkpoint_assets VALUES(?,?,?,?,?,?,?,?,?,?,?)',values)
+            if purge_after_quarantine:
+                self.db.execute('INSERT INTO checkpoint_purge_policy VALUES(?)',(artifact,))
             self._event(artifact,'registered',str(physical))
         return artifact
 
@@ -63,7 +75,7 @@ class CheckpointRetention:
             last = self.db.execute("""SELECT operation FROM checkpoint_history
                 WHERE artifact=? AND operation LIKE 'quarantin%' ORDER BY seq DESC LIMIT 1""",
                 (artifact,)).fetchone()
-            if not release and last in {('quarantined',),('quarantine-intent',)}:
+            if not release and last in {('quarantined',),('quarantine-intent',),('quarantine-purge-intent',),('quarantine-purged',)}:
                 raise ValueError('generation is withdrawn or under reconciliation')
             if release:
                 count = self.db.execute('DELETE FROM checkpoint_refs WHERE artifact=? AND consumer=? AND purpose=?',
@@ -150,12 +162,17 @@ class CheckpointRetention:
             return dict(status='protected', reason='no creation-time managed retirement policy')
         source = Path(row[0])
         with provider.release_lease(artifact,replacement):
+            replacement_row=self.db.execute('SELECT physical FROM checkpoint_assets WHERE artifact=?',(replacement,)).fetchone()
+            match=getattr(provider,'generation_matches',None)
+            if (not replacement_row or not callable(match) or match(artifact,source) is not True
+                    or match(replacement,Path(replacement_row[0])) is not True):
+                return dict(status='protected',reason='producer-to-physical generation binding unverified')
             review = self.review(artifact,replacement,store=store,provider=provider,byte_limit=byte_limit)
             if review['status'] != 'candidate-for-review':
                 return review
             # Serialize local reference creation with the withdrawal and repeat physical checks.
             target = source.with_name('.quarantine-' + uuid.uuid4().hex)
-            detail = json.dumps(dict(source=str(source), target=str(target)))
+            detail = json.dumps(dict(source=str(source), target=str(target), replacement=replacement))
             with self.db:
                 self._event(artifact,'quarantine-intent',detail)
             with self.db:
@@ -176,3 +193,53 @@ class CheckpointRetention:
                     os.close(fd)
                 self._event(artifact,'quarantined',detail)
             return dict(status='quarantined',source=str(source),target=str(target),reclaimed_bytes=0)
+
+    def purge_quarantined(self, artifact, replacement, *, provider):
+        """Purge only a separately preauthorized managed generation under a second host fence."""
+        approved=self.db.execute('SELECT 1 FROM checkpoint_purge_policy WHERE artifact=?',(artifact,)).fetchone()
+        if not approved:
+            return dict(status='protected',reason='no creation-time permanent retirement authorization')
+        with provider.release_lease(artifact,replacement):
+            with self.db:
+                self.db.execute('BEGIN IMMEDIATE')
+                events=self.db.execute("""SELECT operation,detail FROM checkpoint_history
+                    WHERE artifact=? AND operation LIKE 'quarantin%' ORDER BY seq DESC LIMIT 1""",
+                    (artifact,)).fetchone()
+                if not events or events[0]!='quarantined':
+                    return dict(status='protected',reason='requires completed reversible quarantine')
+                row=self.db.execute('SELECT physical,dev,ino,origin,auto FROM checkpoint_assets WHERE artifact=?',
+                                    (artifact,)).fetchone()
+                record=json.loads(events[1])
+                target=Path(record['target'])
+                if (record.get('replacement')!=replacement or row[3:]!=('managed',1) or target.parent!=Path(row[0]).parent
+                        or not target.name.startswith('.quarantine-')):
+                    raise ValueError('inconsistent managed quarantine identity')
+                st=target.lstat()
+                if (st.st_dev,st.st_ino)!=row[1:3] or Path(row[0]).exists():
+                    raise ValueError('quarantined identity changed or source is live')
+                holds=self.db.execute('SELECT 1 FROM checkpoint_refs WHERE artifact=?',(artifact,)).fetchone()
+                facts=provider.purge_facts(artifact,replacement,target)
+                required=('restore_verified','lightweight_history_retained','replacement_reachable',
+                          'all_references_checked','grace_elapsed','no_unique_scientific_value')
+                empty=('active_writes','consumers','recovery_dependencies','retention_holds','leases')
+                if (holds or not isinstance(facts,dict) or any(facts.get(k) is not True for k in required)
+                        or any(facts.get(k)!=[] for k in empty)):
+                    return dict(status='protected',reason='live or unverified research and recovery facts')
+                entries=[target]
+                if stat.S_ISDIR(st.st_mode):
+                    entries.extend(target.rglob('*'))
+                allocated=0
+                for member in entries:
+                    info=member.lstat()
+                    if info.st_dev!=st.st_dev or not (stat.S_ISDIR(info.st_mode) or
+                            (stat.S_ISREG(info.st_mode) and info.st_nlink==1)):
+                        return dict(status='protected',reason='shared, linked or special payload')
+                    allocated += info.st_blocks*512
+                self._event(artifact,'quarantine-purge-intent',events[1])
+            if target.is_dir():
+                shutil.rmtree(target)
+            else:
+                target.unlink()
+            with self.db:
+                self._event(artifact,'quarantine-purged',json.dumps(dict(target=str(target),allocated_bytes=allocated)))
+            return dict(status='purged',removed_allocated_bytes=allocated)
