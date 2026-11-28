@@ -32,6 +32,8 @@ def execute(database, request, command, *, adapter=None):
     if not context or not isinstance(request.get('evidence_gap'), str) or not request['evidence_gap'].strip():
         raise ValueError('scientific conditions and an explicit evidence gap required')
     review_spec=request.get('review_handoff')
+    if request.get('requires_independent_review') and not review_spec:
+        raise ValueError('training requires a bound research review handoff before launch')
     if review_spec:
         from .research_handoff import ResearchHandoff
         ledger=ResearchHandoff(database)

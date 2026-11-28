@@ -71,7 +71,6 @@ class HandoffIntegration(unittest.TestCase):
 
     def test_timeout_dispatch_is_scoped(self):
         from agent_runtime.collaborative_flow import Flow
-        import inspect
         for kind,expected in [('implementation','review-dispatched'),('permission','blocked')]:
             flow=Flow(self.root,kind,clock=lambda:self.time)
             flow.create('test',mode='human')
@@ -104,3 +103,11 @@ class HandoffIntegration(unittest.TestCase):
         self.assertEqual(self.advance(),'blocked-ambiguous')
         self.assertEqual(self.advance(),'blocked-ambiguous')
         self.assertFalse(self.launch.exists())
+
+
+    def test_required_consumer_before_gpu(self):
+        from agent_runtime.training_claim import execute
+        req=dict(family='f',trajectory='t',goal='g',purpose='test',mode='NEW_TRAIN',
+                 scientific_context={'scope':'test'},evidence_gap='new',requires_independent_review=True)
+        with self.assertRaisesRegex(ValueError,'bound research review'):
+            execute(self.root/'catalog',req,[sys.executable,'-c','raise AssertionError()'])
