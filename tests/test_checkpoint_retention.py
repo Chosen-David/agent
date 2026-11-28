@@ -29,3 +29,28 @@ class RetentionTest(unittest.TestCase):
             self.assertTrue(source.exists())
             self.assertEqual(result['references'],[('analysis','momentum milestone')])
             ledger.db.close()
+
+    def test_preapproved_quarantine_preserves_payload_and_history(self):
+        from contextlib import nullcontext
+        class Host:
+            def release_lease(self, artifact, replacement):
+                return nullcontext()
+            def review_recovery(self, artifact, replacement, **kwargs):
+                return dict(action='candidate-for-review',reasons=[])
+        with tempfile.TemporaryDirectory() as tmp:
+            root=Path(tmp)
+            ledger=CheckpointRetention(root/'db')
+            files=[root/name for name in ('legacy','first','last')]
+            for i,f in enumerate(files):
+                f.write_bytes(bytes([i]))
+                ledger.register(f.name,f,run='r',family='f',trajectory='t',step=i,level='L3',
+                                origin='historical' if i==0 else 'managed',auto=i!=0)
+            kwargs=dict(store=Host(),provider=Host(),byte_limit=10)
+            self.assertEqual(ledger.quarantine('legacy','last',**kwargs)['status'],'protected')
+            result=ledger.quarantine('first','last',**kwargs)
+            self.assertEqual(Path(result['target']).read_bytes(),bytes([1]))
+            self.assertEqual(files[2].read_bytes(),bytes([2]))
+            self.assertEqual(files[0].read_bytes(),bytes([0]))
+            with self.assertRaises(ValueError):
+                ledger.reference('first','late','reader')
+            ledger.db.close()

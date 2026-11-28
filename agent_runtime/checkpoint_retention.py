@@ -5,6 +5,8 @@ This catalog never removes payloads. Quarantine requires an explicit adapter-own
 atomic release transaction; without it the result remains a plan.
 """
 import json
+import os
+import uuid
 import sqlite3
 from pathlib import Path
 
@@ -57,6 +59,12 @@ class CheckpointRetention:
         if not consumer or not purpose:
             raise ValueError('named consumer and purpose required')
         with self.db:
+            self.db.execute('BEGIN IMMEDIATE')
+            last = self.db.execute("""SELECT operation FROM checkpoint_history
+                WHERE artifact=? AND operation LIKE 'quarantin%' ORDER BY seq DESC LIMIT 1""",
+                (artifact,)).fetchone()
+            if not release and last in {('quarantined',),('quarantine-intent',)}:
+                raise ValueError('generation is withdrawn or under reconciliation')
             if release:
                 count = self.db.execute('DELETE FROM checkpoint_refs WHERE artifact=? AND consumer=? AND purpose=?',
                                         (artifact,consumer,purpose)).rowcount
@@ -102,3 +110,43 @@ class CheckpointRetention:
                         references=holds,preauthorized=bool(old[10]), origin=old[9], reclaimed_bytes=0)
             self._event(artifact,'retention-review',json.dumps(result))
         return result
+
+    def quarantine(self, artifact, replacement, *, store, provider, byte_limit):
+        """Withdraw a preauthorized, managed generation under a live host-wide release lease.
+
+        The producer adapter must fence all writers and readers (including independent
+        launchers) for both assets across review and rename. Quarantine is same-device
+        and reversible. An intent is committed before rename for crash reconciliation.
+        """
+        row = self.db.execute('SELECT physical,origin,auto FROM checkpoint_assets WHERE artifact=?',
+                              (artifact,)).fetchone()
+        if not row or row[1:] != ('managed',1):
+            return dict(status='protected', reason='no creation-time managed retirement policy')
+        source = Path(row[0])
+        with provider.release_lease(artifact,replacement):
+            review = self.review(artifact,replacement,store=store,provider=provider,byte_limit=byte_limit)
+            if review['status'] != 'candidate-for-review':
+                return review
+            # Serialize local reference creation with the withdrawal and repeat physical checks.
+            target = source.with_name('.quarantine-' + uuid.uuid4().hex)
+            detail = json.dumps(dict(source=str(source), target=str(target)))
+            with self.db:
+                self._event(artifact,'quarantine-intent',detail)
+            with self.db:
+                self.db.execute('BEGIN IMMEDIATE')
+                holds = self.db.execute('SELECT 1 FROM checkpoint_refs WHERE artifact=? LIMIT 1',
+                                        (artifact,)).fetchone()
+                expected = self.db.execute('SELECT dev,ino FROM checkpoint_assets WHERE artifact=?',
+                                           (artifact,)).fetchone()
+                st = source.lstat()
+                if holds or (st.st_dev,st.st_ino) != expected or target.exists():
+                    self._event(artifact,'quarantine-cancelled',detail)
+                    return dict(status='protected',reason='references or identity changed')
+                source.rename(target)
+                fd = os.open(target.parent,os.O_RDONLY)
+                try:
+                    os.fsync(fd)
+                finally:
+                    os.close(fd)
+                self._event(artifact,'quarantined',detail)
+            return dict(status='quarantined',source=str(source),target=str(target),reclaimed_bytes=0)

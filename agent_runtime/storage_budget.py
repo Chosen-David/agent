@@ -17,6 +17,9 @@ def storage_budget(root, plan):
     if not isinstance(allocations, dict) or not isinstance(phases, list) or not phases:
         raise ValueError('allocations and at least one phase required')
     units = ('disk_bytes', 'inodes', 'cpu_bytes', 'pinned_bytes')
+    if 'gpu_bytes' in plan.get('available', {}) or any(
+            isinstance(item, dict) and 'gpu_bytes' in item for item in allocations.values()):
+        units += ('gpu_bytes',)
     peak = dict.fromkeys(units, 0)
     used = set()
     for phase in phases:
@@ -45,7 +48,7 @@ def storage_budget(root, plan):
         fs = os.statvfs(path)
         if fs.f_files:
             capacity['inodes'] = fs.f_favail
-    for unit in ('cpu_bytes', 'pinned_bytes'):
+    for unit in (key for key in units if key.endswith('_bytes') and key != 'disk_bytes'):
         value = plan.get('available', {}).get(unit)
         if value is not None and (type(value) is not int or value < 0):
             raise ValueError('invalid staging capacity')
