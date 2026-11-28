@@ -60,6 +60,13 @@ def main(argv=None):
     review.add_argument('--replacement', required=True)
     review.add_argument('--max-hash-bytes', type=int, required=True)
     review.add_argument('--restore-adapter', required=True, help='trusted host restore and live release_facts adapter')
+    longest = subs.add_parser('longest-recovery')
+    longest.add_argument('run_ids', nargs='+')
+    longest.add_argument('--trajectory', required=True)
+    longest.add_argument('--family-sha256', required=True)
+    longest.add_argument('--target-step', type=int, required=True)
+    longest.add_argument('--max-hash-bytes', type=int, required=True)
+    longest.add_argument('--restore-adapter', required=True)
     showing = subs.add_parser('show')
     showing.add_argument('run_id')
     showing.add_argument('--max-chars', type=int, default=20000)
@@ -79,7 +86,7 @@ def main(argv=None):
         store = ResultStore(args.root, compact_storage=args.compact_storage)
         if args.command == 'budget':
             result = storage_budget(store.root, external_object(args.plan))
-        elif args.command in ('register-recovery', 'review-recovery'):
+        elif args.command in ('register-recovery', 'review-recovery', 'longest-recovery'):
             spec = importlib.util.spec_from_file_location('trusted_restore', args.restore_adapter)
             if spec is None or spec.loader is None:
                 raise ValueError('invalid trusted restore adapter')
@@ -87,6 +94,10 @@ def main(argv=None):
             spec.loader.exec_module(module)
             if args.command == 'register-recovery':
                 result = store.register_recovery(args.manifest, byte_limit=args.max_hash_bytes, provider=module)
+            elif args.command == 'longest-recovery':
+                result = store.longest_recovery(args.run_ids, trajectory_id=args.trajectory,
+                    family_sha256=args.family_sha256, target_step=args.target_step,
+                    byte_limit=args.max_hash_bytes, provider=module)
             else:
                 result = store.review_recovery(args.run_id, args.replacement,
                                                byte_limit=args.max_hash_bytes, provider=module)

@@ -533,6 +533,46 @@ class ResultStore:
                            'validation_at_registration': {'status': 'unknown', 'proof': None},
                            'trust_note': 'Adapter trial restore at registration; recheck at consumption.'})
 
+    def longest_recovery(self, candidates, *, trajectory_id, family_sha256, target_step,
+                         byte_limit, provider):
+        """Choose the furthest compatible, trial-restored point within the total read budget."""
+        _need(_text(trajectory_id) and isinstance(family_sha256, str) and
+              re.fullmatch(r'[0-9a-f]{64}', family_sha256), 'bound trajectory and family required')
+        _need(type(target_step) is int and target_step > 0 and type(byte_limit) is int
+              and byte_limit >= 0, 'invalid step or hash budget')
+        _need(callable(getattr(provider, 'verify_training_state', None)),
+              'adapter must verify optimizer, scheduler, RNG, and data progress')
+        ranked = []
+        for run in set(candidates):
+            record = self.show(run)['record']
+            ref = record.get('recovery_manifest_ref')
+            if not ref:
+                continue
+            raw = _read(self.root, ref['path'])
+            _need(hashlib.sha256(raw).hexdigest() == ref['sha256'], 'stale recovery manifest')
+            m = _json(raw)
+            step = m.get('completed_step')
+            if (m.get('trajectory_id') == trajectory_id and m.get('family_sha256') == family_sha256
+                    and type(step) is int and 0 < step <= target_step and m.get('asset_level') == 'L3'):
+                ranked.append((step, run, ref, m))
+        remaining = byte_limit
+        failed = []
+        for step, run, ref, manifest in sorted(ranked, key=lambda row: (-row[0], row[1])):
+            cost = sum(f['expected_size_bytes'] for f in manifest['files'])
+            if cost > remaining:
+                return dict(action='verify_delta', reason='insufficient verification budget', failed=failed)
+            remaining -= cost
+            try:
+                checked, current, _ = self._verify_recovery(ref['path'], byte_limit=cost, provider=provider)
+                _need(current == ref and checked['run_id'] == run, 'recovery identity changed')
+                _need(provider.verify_training_state(self.root, deepcopy(checked)) is True,
+                      'full training state not verified')
+            except (OSError, ValueError) as exc:
+                failed.append(dict(run_id=run, reason=str(exc)))
+                continue
+            return dict(action='resume', run_id=run, step=step, manifest_ref=ref, failed=failed)
+        return dict(action='verify_delta', reason='no compatible verified recovery point', failed=failed)
+
     def review_recovery(self, run_id, replacement_id, *, byte_limit, provider):
         """Dry-run only. Live references and semantic substitutability come from the host."""
         decision = {'run_id': run_id, 'replacement_id': replacement_id, 'dry_run': True,
