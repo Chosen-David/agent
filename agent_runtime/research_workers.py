@@ -129,6 +129,7 @@ def run_native_worker(admission, worker, *, codex, project, cycle, primary,
     if not output.is_relative_to(tree):
         raise ValueError('native worker output must be inside its authorized worktree')
     from . import worker_preflight
+    inspect_workers([worker])
     worker_preflight.check(admission.store, codex, tree, output,
                            set(worker.get('required_capabilities', ())))
     if not admission.reserve(worker, parent=primary, project=project, cycle=cycle,
