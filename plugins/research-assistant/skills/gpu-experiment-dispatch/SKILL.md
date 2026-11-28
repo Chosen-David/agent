@@ -41,3 +41,5 @@ description: "多机异构 GPU 池实验派单全生命周期：SSH 接入、环
 ### 训练存储预检
 
 从工作流 checkout 运行 `python -m agent_runtime.training_artifacts OUTPUT RUN_ID POLICY --steps N --checkpoint-bytes BYTES --extra-bytes BYTES --reserve-bytes BYTES`。OUTPUT 取训练器实际写入位置。用同规模完整分片估算单点字节，extra 包括日志和诊断。保存 JSON 并检查退出码，将 interval 与 save_final 映射到训练器实际配置。此命令只读，预算按累计保存计算；并发任务的预留另计。配置等价与历史结果验证继续走 ResultStore。
+
+多个项目共用本地 SQLite 索引时，先用现有 ResultStore 登记原始来源，然后执行 `python -m agent_runtime.experiment_catalog DB scan PROJECT` 增量刷新，使用同一 DB 的 `find CONTEXT.json` 查找跨项目同条件候选。每次命中回到生产项目复验。历史材料缺少独立验收时保留 verify_delta；空结果仅表示已登记范围内没有完全匹配。
