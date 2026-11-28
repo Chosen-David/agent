@@ -156,8 +156,14 @@ def load_backend(config, store, *, timer_hooks=None):
         handler = ArtifactHandler(root)
         backend = {'handlers': {'verify_artifacts': handler},
                    'authorize': lambda plan, task, candidate: candidate is handler}
-    if timer_hooks is not None and 'review_on_tick' in backend:
-        timer_hooks.append(backend['review_on_tick'])
+    if timer_hooks is not None:
+        callbacks=[backend[k] for k in ('review_on_tick','research_on_tick') if k in backend]
+        if len(callbacks)==1:
+            timer_hooks.append(callbacks[0])
+        elif callbacks:
+            def on_due(run_id,event_id):
+                return {name:backend[name](run_id,event_id) for name in ('review_on_tick','research_on_tick')}
+            timer_hooks.append(on_due)
     handlers = {name: ReportingHandler(h, root, backend.get('result_verifier')) for name, h in backend['handlers'].items()}
     authorize = backend['authorize']
     return (handlers, lambda plan, task, wrapper: authorize(plan, task, wrapper.handler),

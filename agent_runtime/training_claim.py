@@ -31,6 +31,15 @@ def execute(database, request, command, *, adapter=None):
     _context(context)
     if not context or not isinstance(request.get('evidence_gap'), str) or not request['evidence_gap'].strip():
         raise ValueError('scientific conditions and an explicit evidence gap required')
+    review_spec=request.get('review_handoff')
+    if review_spec:
+        from .research_handoff import ResearchHandoff
+        ledger=ResearchHandoff(database)
+        try:
+            ledger.validate(review_spec)
+            ledger.preflight(review_spec['pool'])
+        finally:
+            ledger.db.close()
     catalog = ExperimentCatalog(database)
     try:
         hits = catalog.find(context, verifier=getattr(adapter, 'verify', None))
@@ -152,6 +161,10 @@ def execute(database, request, command, *, adapter=None):
             except subprocess.TimeoutExpired:
                 continue
         with db:
+            if rc==0 and review_spec:
+                # Publish the completed claim and its consumer in one transaction.
+                db.execute('BEGIN IMMEDIATE')
+                ResearchHandoff.insert(db,review_spec,time.time())
             db.execute('UPDATE training_claims SET heartbeat=?,status=?,rc=? WHERE claim=? AND owner=?',
                        (time.time(),'awaiting-validation' if rc==0 else 'failed',rc,key,owner))
             db.execute("UPDATE training_reservations SET released=1 WHERE claim=? AND EXISTS(SELECT 1 FROM training_claims WHERE claim=? AND owner=?)",(key,key,owner))

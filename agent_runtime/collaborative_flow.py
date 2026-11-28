@@ -179,9 +179,22 @@ class Flow:
                           deadline=None, completed_steps=[])
         self.event('mode-switched')
 
-    def timeout(self):
+    def timeout(self, dispatch_research_review=None):
         if self.state['phase'] != 'waiting' or self.clock() < self.state['deadline']:
             return False
+        if (dispatch_research_review is not None and self.state['questions'] and
+                all(q['kind']=='implementation' for q in self.state['questions'])):
+            # Only the trusted owning host can match explicit research takeover
+            # authorization and a live consumer to this exact task and revision.
+            transfer=dispatch_research_review(self.task_id,deepcopy(self.state))
+            if transfer:
+                if not isinstance(transfer,dict) or not all(transfer.get(k) for k in
+                        ('task','cycle','consumer','authorization')):
+                    raise ValueError('incomplete research review handoff')
+                self.state.update(phase='review-dispatched',choice_visible=False,
+                                  research_handoff=transfer,deadline=None)
+                self.event('research-review-dispatched')
+                return True
         self.state.update(phase='blocked', choice_visible=True, deadline=None)
         self.event('human-timeout')
         return True
@@ -612,8 +625,9 @@ def input_line(stream, seconds):
     return None
 
 
-def wait_for_human(flow, stream=sys.stdin, display=print):
-    if flow.timeout():
+def wait_for_human(flow, stream=sys.stdin, display=print, dispatch_research_review=None):
+    if flow.timeout(dispatch_research_review):
+        if flow.state['phase']=='review-dispatched':return
         raise ValueError('unanswered question pending; resume with --answer')
     display('<人类-AI模式> 思考和讨论：单题输入选项编号或细节；多题输入 JSON；/cancel 取消')
     for q in flow.state['questions']:
@@ -642,7 +656,8 @@ def wait_for_human(flow, stream=sys.stdin, display=print):
                 display(str(exc))
                 continue
             return
-        if flow.timeout():
+        if flow.timeout(dispatch_research_review):
+            if flow.state['phase']=='review-dispatched':return
             raise ValueError('unanswered question pending; resume with --answer')
 
 
@@ -756,8 +771,10 @@ def main():
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
             host = module.build(flow.root, flow.task_id)
+        if flow.state['phase']=='review-dispatched':return 75
         if flow.state['phase'] == 'waiting':
-            wait_for_human(flow)
+            wait_for_human(flow,dispatch_research_review=getattr(host,'dispatch_research_review',None))
+        if flow.state['phase']=='review-dispatched':return 75
         if flow.state['phase'] in ('cancelled', 'done'):
             print(flow.state['phase'])
             return 0
@@ -785,7 +802,8 @@ def main():
                 if discussion.get('questions'):
                     flow.ask(discussion['questions'])
                     if flow.state['phase'] == 'waiting':
-                        wait_for_human(flow)
+                        wait_for_human(flow,dispatch_research_review=getattr(host,'dispatch_research_review',None))
+                if flow.state['phase']=='review-dispatched':return 75
                 if flow.state['phase'] == 'cancelled':
                     return 0
                 if flow.state['mode'] == 'dual-ai':

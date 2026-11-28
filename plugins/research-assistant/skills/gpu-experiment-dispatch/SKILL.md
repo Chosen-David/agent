@@ -59,3 +59,5 @@ L0 保留指标，L1 加诊断切片，L2 为模型权重，L3 需要完整可�
 主机统一布局可在同一个 Registry DB 运行 `python -m agent_runtime.training_workspace DB bind WORKTREE PROJECT ASSET_ROOT DOCUMENTS`。新作业用 `layout WORKTREE --run-id ID --path-only` 选取物理路径。绑定保留既有 outputs 入口和实际目标；若训练框架会重建工作树 outputs 链接，把它的运行根放入该 run 的独立目录，保留实际代码与数据身份。
 
 本机独占用户的原生 Forge 历史产物可由宿主调用 CheckpointRetention.authorize_historical 和 retire_authorized。事后授权必须逐项绑定原目录、替代目录及批次，仅适用于用户明确接受清单验证的处置。宿主 live_check 必须核对本账号排队、重试、活跃进程及生产方持有标记。Linux 文件租约覆盖本机普通文件打开；不可用于推断其他节点的工作已被隔离。由共享 training_claim 启动的 profile 自动使用当次专属输出，input_artifact 引用现有登记资产，measure_checkpoint_io 仅用于专测写入；要在同步子进程退出前落盘指标并等待所有异步保存完成。
+
+训练子进程成功退出后，若需要自动独立科研验收，宿主应先提供有心跳的具体复核池，再在 training_claim 请求绑定 review_handoff。缺少已授权接单者时于训练前报错。成功退出与研究验收交接在同一数据库事务内提交。ResearchHandoff 记录十分钟人工窗口、当前消费者、依赖、凭据及原 cycle 延续；task_supervisor 宿主可提供 research_on_tick 推进这些已登记任务。显式 takeover 仅限绑定的研究验收；权限与预算问题仍需人类决策。超时仅派发复核，不授予科学通过。宿主 resume 必须以原训练认领键对账并回读进程和步数。对未知调用进行复核或恢复前，先查真实回执；禁止由 shell 的 exit 75 或旧 authorize 文件直接放行。
