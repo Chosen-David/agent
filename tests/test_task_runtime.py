@@ -142,7 +142,7 @@ class RuntimeContracts(unittest.TestCase):
             one = pool.submit(self.engine(first).tick, 'test-run', 'one')
             try:
                 self.assertTrue(first.entered.wait(3))
-                self.clock.now += 6  # live handler still holds its task lock
+                self.clock.now += 6
                 two = pool.submit(self.engine(second).tick, 'test-run', 'two')
                 self.assertTrue(second.entered.wait(3))
                 snapshot = self.engine().tick('test-run', 'three')
