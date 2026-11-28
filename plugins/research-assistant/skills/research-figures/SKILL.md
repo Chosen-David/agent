@@ -3,7 +3,7 @@ name: research-figures
 description: "兼容论文作图入口：按证据与表达目的路由到论文数据可视化或流程架构图；负责全篇图规划、混合多面板整合和知识解释方调用的网页教学图。单一数据图或示意图优先专业技能。"
 ---
 
-先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+Skill 在当前执行者上下文内使用；任务派遣遵循宿主绑定的科研策略。串行任务见[单主执行契约](references/single_main_workflow.md)。
 
 
 # 论文作图协调

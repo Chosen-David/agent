@@ -3,7 +3,7 @@ name: research-read-pdf
 description: "从读者角度逐页查看最终论文 PDF 的渲染图片，检查乱码、重叠、图表含义、符号和叙事理解，提供全页覆盖记录与疑点任务链。用于论文最终 PDF 视觉审读，不以文本提取或缩略图代替逐页阅读。"
 ---
 
-先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+Skill 在当前执行者上下文内使用；任务派遣遵循宿主绑定的科研策略。串行任务见[单主执行契约](references/single_main_workflow.md)。
 
 
 # 论文逐页读者

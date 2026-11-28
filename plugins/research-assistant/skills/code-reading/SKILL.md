@@ -3,7 +3,7 @@ name: code-reading
 description: "只读理解代码库、追踪真实调用链与数据流，核查报告机制和默认/可选配置；以 commit、函数、行号交付证据。适用于代码解释与实现前核查，不自动修改目标。用户授权的审查轮次按升级路径执行：先查回信，再审最新本地代码找 bug（有则写 advice），无 bug 时探测数据结构/算法/AI 算法的 CPU/GPU 性能优化点，本地实测确认真实改进才写 advice，都没有则零输出不提交。"
 ---
 
-先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+Skill 在当前执行者上下文内使用；任务派遣遵循宿主绑定的科研策略。串行任务见[单主执行契约](references/single_main_workflow.md)。
 
 
 # 代码阅读

@@ -6,7 +6,7 @@ description: "协调科研项目从 Idea、实验到论文修订。用于需要�
 代码实现、修复或重构先读[协作式任务验收](references/collaborative_implementation_workflow.md)；先对齐关键语义、写任务验收与变异，再开始实现。
 
 
-先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+Skill 在当前执行者上下文内使用；任务派遣遵循宿主绑定的科研策略。串行任务见[单主执行契约](references/single_main_workflow.md)。
 
 
 交付技术说明、整理注释或上下文文件时，按需执行 [精简检查](references/concise_engineering.md)；论文驱动优化须保留本轮实际正文阅读与采用依据。

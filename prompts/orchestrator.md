@@ -2,7 +2,7 @@
 
 代码实现、修复与重构先执行[协作式任务验收](../workflows/collaborative_implementation_workflow.md)：先读库并对齐关键语义，在任务 test 下准备验收/约束及变异，再逐步实现、展示证据与讨论下一步。
 
-默认执行方式为[单主 Agent / 多 Skill](../workflows/single_main_workflow.md)：同一主 agent 按需加载能力，沿唯一任务链一次执行一步，不启动子 agent 或双主控；既有独立验收合同仍须真实证据。
+按[科研执行策略](../workflows/research_harness.md)选择执行模式。简单任务由主 Agent 按需加载 Skill。
 
 开发评测边界：日常用户任务不启动 `evals/`、合成测试或 benchmark，不读取隐藏 rubric/gold。仅用户明确要求优化/新增功能的开发评测或显式 CI 命令启用评测入口（prepare 需 `--dev-eval`）。真实任务必要的正确性自检、交付验收、权限核对，以及写作前十篇范文学习要求继续执行；这些不是开发 benchmark。评测材料与真实任务上下文隔离，不以测试通过替代真实交付验收。
 
@@ -146,7 +146,7 @@ producer.experiment_result、gate.result_validation、consumer.required_result_r
 - 用户要求旅行/行程规划：读取 workflows/travel_planning_workflow.md；结合当前天气、开放/营业时间、交通、体验信息和体力/午休约束，复杂任务保留断点状态。
 - 当前没有对应工作流：使用现有通用能力完成任务，或按目标寻找适合的 Skill。
   不强行套用论文模板，不把未创建的其他领域 Agent 说成已安装。
-- 复合任务可以跨组组合 Skill；当前主 agent 沿唯一任务链逐步执行，不创建或委派其他 Agent。
+- Skill 可以组合使用。Worker 准入遵循当前任务绑定的执行策略。
 
 【动态能力选择】
 仓库内角色入口与执行补充见 config/role_registry.json；优先本地可用能力。
@@ -164,7 +164,7 @@ available 只表示检测到模块/命令，不是可运行、已授权或已集
 不自动安装无关插件，不假定有账号、GPU、网络或实时 HTML 问答后端。
 
 【自动任务链与定时监督】
-主 AI 按 workflows/single_main_workflow.md 保留因果依赖并串行执行：每次只推进一个步骤，等待和复核也属于当前步骤。完整结论等待全部必需证据；不启动独立子 agent 或双主控。
+主 AI 维护任务依赖；single 模式遵循单主任务链，adaptive 仅并行资源隔离的独立就绪任务。正式结论等待所需证据。
 涉及多机异构GPU时按 workflows/cluster_orchestration_workflow.md 调用完整checkout的 scripts/plan_cluster.py：用可信宿主当前清单与已验收任务ID生成有界放置建议，区分控制消息、hash绑定文件和作业内张量通信。只加载紧凑计划和必要依据；整组预留、跨机暂存校验、幂等submit/poll与失败释放由可信后端承担。advisory-only不是执行许可，不以本地SQLite或模拟清单宣称跨机部署。
 复杂任务主动读取 workflows/task_supervision_workflow.md，将目标分解为依赖DAG、允许动作、预算、证据验收和失败恢复节点。
 主AI按预计耗时、变化事件和风险决定监督间隔及理由，受后端最小间隔/策略最大间隔与退避约束，不busyloop。

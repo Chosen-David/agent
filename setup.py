@@ -57,7 +57,7 @@ def block():
 ## Chosen-David Agent Workflows
 
 简单、目标明确的任务直接完成，仅加载相关 Skill。普通低风险本地修复运行必要回归并汇报结果；不自动建立 DAG、第二 Agent、实验合同或 tmux 监督器。
-执行方式只用一个主 agent：先读 `.claude/agent-workflows/single_main_workflow.md`，按任务链一次执行一个步骤，按需加载专业 Skill，不创建子 agent 或双主控。
+执行策略见 `.claude/agent-workflows/research_harness.md`。默认主 Agent 独立执行；串行合同见 `.claude/agent-workflows/single_main_workflow.md`。
 工作流源码位置见 `.claude/agent-workflows/installation.json` 的 repository；project_root 是当前项目。源码工具从仓库解析，项目输入和输出始终相对当前项目。
 Project A 的指南、任务、建议和结果属于 Project A/agent_doc/；缺失时不回退到工作流库的历史文件。切换项目重新核对指南、任务、记忆和交接中的 project_root。
 已核实人类 agent_doc/guide/GUIDE.md 是最高项目规划依据；AI 绝不创建、编辑、删除或移动 agent_doc/guide/ 内文件。
@@ -104,44 +104,13 @@ def catalog():
     return result
 
 
-# Shared agent body — single source of truth for the 11-line instruction block
-# generated into every agent-*.md by agent_text(). Keep in sync with the
-# "扩展约定" section of prompts/orchestrator.md which documents this contract.
-_AGENT_BODY = '''\
-默认使用中文回复，除非用户用英文提问或明确要求英文。技术术语/代码/路径保留原文。
-回复简洁直接，不废话不客套。代码注释精简，不写显而易见的注释。
-按预加载的 {name} Skill 执行主 AI 分配的任务。不得替换用户目标或扩大授权。
-先核对交接中的 task_id、agent_doc/task/TASK.md requirement ID、document_refs、输入、约束、依赖和验收。
-普通低风险本地修复直接运行必要回归，不自动建立 DAG、第二 Agent 或实验合同。用户/指南要求和既有合同仍有效。
-涉及规划实验/测量或复用实证结论时，才读 references/result_reuse_workflow.md 并检索 agent_doc/results/；与当前任务无关则跳过。
-涉及项目文档写入或 task_details 维护时，才读 references/project_document_workflow.md；先核对人类指南和建议取舍，AI 永不写 agent_doc/guide/。
-只维护分配给本角色的 task_details 详情和输出，不并发修改总清单；建议不构成授权。
-按当前任务实际需要选择性读取 Skill 内 execution/workflow 等引用；短问答/简单任务不强制加载全文。
-实验/测量数据须按 references/result_validation_workflow.md 经独立 verify_experiment_result；未通过不用于结论。
-向主 AI 返回结论、真实证据、验收状态、未完成项与恢复条件。
-不要自行声明全链完成；由主 AI 按任务范围汇总。仅向已存在且获授权的监督运行交接状态，不自动创建监督器。'''
-
-
-def agent_text(role, description, model='inherit'):
-    name = role['id']
-    # JSON strings are also valid quoted YAML scalars; no extra YAML dependency.
-    return f'''---
-name: agent-{name}
-description: {json.dumps(description, ensure_ascii=False)}
-model: {json.dumps(model)}
-skills:
-  - {name}
----
-
-{_AGENT_BODY.format(name=name)}'''
-
-
 def expected_files(inventory=None):
     policy = validate_policy(load_json(REPO / 'config/role_model_policy.json'))
     report = routing_report(policy, inventory)
     orchestrator = (REPO / 'prompts/orchestrator.md').read_text(encoding='utf-8')
     files = {'.claude/agent-workflows/orchestrator.md': orchestrator.replace(
-        '../workflows/single_main_workflow.md', 'single_main_workflow.md')}
+        '../workflows/research_harness.md', 'research_harness.md')}
+    files['.claude/agent-workflows/research_harness.md'] = (REPO / 'workflows/research_harness.md').read_text(encoding='utf-8')
     files['.claude/agent-workflows/single_main_workflow.md'] = (REPO / 'workflows/single_main_workflow.md').read_text(encoding='utf-8')
     for name, value in (('model-policy', policy), ('model-routing', report)):
         files['.claude/agent-workflows/' + name + '.json'] = json.dumps(value, ensure_ascii=False, indent=2) + '\n'

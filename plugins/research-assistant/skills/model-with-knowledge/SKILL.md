@@ -3,7 +3,7 @@ name: model-with-knowledge
 description: 按问题结构检索数学/物理、AI Infra、AI算法与跨物种神经科学研究，以及固定版本数据结构/算法实现。用于建模、采样分布校正、算法成本条件、实验前决策、仿生AI假设筛选与代码复用；核对来源、前提与迁移限制，不以文献替代必做验证。
 ---
 
-先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+Skill 在当前执行者上下文内使用；任务派遣遵循宿主绑定的科研策略。串行任务见[单主执行契约](references/single_main_workflow.md)。
 
 
 # 知识建模与推导

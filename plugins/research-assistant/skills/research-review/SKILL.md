@@ -3,7 +3,7 @@ name: research-review
 description: "按实际顶会或期刊标准审阅论文贡献、正确性、方法与证据，输出定位明确的意见和核验修订复查任务链。用于科学审稿、投稿前自查及审稿复查；最终 PDF 版面逐页检查使用 research-read-pdf。"
 ---
 
-先读[单主 Agent 执行契约](references/single_main_workflow.md)：由当前主 agent 自己使用本 Skill，一次只执行任务链的一步，不创建/委派其他 agent。切换复核 Skill 只算自检，不能冒充独立验收。
+Skill 在当前执行者上下文内使用；任务派遣遵循宿主绑定的科研策略。串行任务见[单主执行契约](references/single_main_workflow.md)。
 
 
 # 论文审稿
